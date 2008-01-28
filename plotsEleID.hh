@@ -24,31 +24,50 @@ private:
 
   // sample
   char* category;
-  bool splitelectrons;
-  bool isGt15GeV;
 
   // output files
-  TFile *tfileEB, *tfileEE, *tfileIso, *tfileEff;
+  TFile *tfilePdfs, *tfileIso, *tfileEff;
 
   // histos
-  TH1F *dPhiCalo[2];
-  TH1F *dPhiVtx[2];
-  TH1F *dEta[2];
-  TH1F *EoPout[2];
-  TH1F *HoE[2];  
-  TH1F *shapeFisher[2];  
-  TH1F *dPhiCaloUnsplit[2];
-  TH1F *dPhiVtxUnsplit[2];
-  TH1F *dEtaUnsplit[2];
-  TH1F *EoPoutUnsplit[2];
-  TH1F *HoEUnsplit[2];  
-  TH1F *shapeFisherUnsplit[2];  
-  TH1F *dPhiCalo0[2],    *dPhiCalo1[2],     *dPhiCalo2[2],    *dPhiCalo3[2];
-  TH1F *dPhiVtx0[2],     *dPhiVtx1[2],      *dPhiVtx2[2],     *dPhiVtx3[2];
-  TH1F *dEta0[2],        *dEta1[2],         *dEta2[2],        *dEta3[2];
-  TH1F *EoPout0[2],      *EoPout1[2],       *EoPout2[2],      *EoPout3[2];
-  TH1F *HoE0[2],         *HoE1[2],          *HoE2[2],         *HoE3[2];
-  TH1F *shapeFisher0[2], *shapeFisher1[2],  *shapeFisher2[2], *shapeFisher3[2];
+  // ECALsubdet: 0 = EB; 1 = EE
+  // ptBin: 0 = < 15GeV; 1 = > 15 GeV 
+  // class: 0 = non-showering; 1 = showering
+  // fullclass: 0 = golden; 1 = bigbrem; 2 = narrow; 3 = showering+cracks
+
+  // Hadrons: not splitted
+  TH1F *dPhiCaloHad[2][2];
+  TH1F *dPhiVtxHad[2][2];
+  TH1F *dEtaHad[2][2];
+  TH1F *EoPoutHad[2][2];
+  TH1F *HoEHad[2][2];  
+  TH1F *shapeFisherHad[2][2];  
+
+  // Electrons: not splitted
+  // histo[ecalsubdet][ptbin]
+  TH1F *dPhiCaloUnsplitEle[2][2];
+  TH1F *dPhiVtxUnsplitEle[2][2];
+  TH1F *dEtaUnsplitEle[2][2];
+  TH1F *EoPoutUnsplitEle[2][2];
+  TH1F *HoEUnsplitEle[2][2];  
+  TH1F *shapeFisherUnsplitEle[2][2];  
+  
+  // Electrons class-splitted
+  // histo[ecalsubdet][ptbin][class]
+  TH1F *dPhiCaloClassEle[2][2][2];
+  TH1F *dPhiVtxClassEle[2][2][2];
+  TH1F *dEtaClassEle[2][2][2];
+  TH1F *EoPoutClassEle[2][2][2];
+  TH1F *HoEClassEle[2][2][2];
+  TH1F *shapeFisherClassEle[2][2][2];
+
+  // Electrons fullclass-splitted
+  // histo[ecalsubdet][ptbin][fullclass]
+  TH1F *dPhiCaloFullclassEle[2][2][4];
+  TH1F *dPhiVtxFullclassEle[2][2][4];
+  TH1F *dEtaFullclassEle[2][2][4];
+  TH1F *EoPoutFullclassEle[2][2][4];
+  TH1F *HoEFullclassEle[2][2][4];
+  TH1F *shapeFisherFullclassEle[2][2][4];
 
   TH1F *H_dRmin_tracker_withVeto,      *E_dRmin_tracker_withVeto;
   TH1F *H_dRmin_tracker_withVeto_zoom, *E_dRmin_tracker_withVeto_zoom;
