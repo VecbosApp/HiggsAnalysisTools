@@ -1,0 +1,55 @@
+# README file for HiggsAnalysisTools
+
+How to compile and run
+----------------------
+> cd HiggsAnalysisTools
+> make all
+
+if you modify the file HiggsSelection.{cc,hh}) you have to
+clean to recompile:
+> make clean ; make all
+
+prepare a text file (ex. "file.txt") with the full-path names of the ROOT files to chain:
+> cat file.txt
+/castor/cern.ch/user/c/crovelli/HWW_2007/qqH160_noEleID_bugFixed/qqH160-1.root
+/castor/cern.ch/user/c/crovelli/HWW_2007/qqH160_noEleID_bugFixed/qqH160-10.root
+[...]
+
+> ./HiggsApp list.txt
+
+wait for the output (for the moment only a table with efficiencies)
+
+
+
+How to configure the selection
+------------------------------
+There are two configuration files.
+
+* 2e2nuCuts.txt
+* 2e2nuSwitches.txt
+
+*** in 2e2nuCuts.txt are specified the cuts to apply, with the syntax:
+	varA	min	max
+if one of the variables that selection expects (see "addCut"s in the code HiggsSelection.cc)
+is missing, the cut is not applied (aka "switched OFF")
+
+*** in 2e2nuSwitches.txt are specified which of the cuts expected are ON or OFF. Syntax is:
+	varA	1  
+	varB	0
+varA cut is ON and varB cut is OFF.
+If one switch is missing, then the cut is OFF.
+Note that it is expected one switch per cut, but more switches than cuts can be present.
+(example: "jetVeto", which do not correspond to an interval to cut, then it is not in 2e2nuCuts.txt)
+
+
+Applications: *Higgs* and *ElectronID*
+--------------------------------------
+One can choose to apply the full Higgs Selection, or
+a reduced selection with only the Electron ID standalone.
+The last one will be definitively put in the electron producer in CMSSW,
+but for studies purposes it is reproduced here.
+To switch to ElectronID one has to put 
+#define 2
+in Applications.hh, recompile and run.
+
+Enjoy....
