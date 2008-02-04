@@ -41,6 +41,16 @@ private:
   TH1F *EoPoutHad[2][2];
   TH1F *HoEHad[2][2];  
   TH1F *shapeFisherHad[2][2];  
+  TH1F *sigmaEtaEtaHad[2][2];
+  TH1F *sigmaEtaPhiHad[2][2];
+  TH1F *sigmaPhiPhiHad[2][2];
+  TH1F *s1s9Had[2][2];
+  TH1F *s9s25Had[2][2];
+  TH1F *LATHad[2][2];
+  TH1F *etaLATHad[2][2];
+  TH1F *phiLATHad[2][2];
+  TH1F *a20Had[2][2];
+  TH1F *a42Had[2][2];
 
   // Electrons: not splitted
   // histo[ecalsubdet][ptbin]
@@ -50,6 +60,16 @@ private:
   TH1F *EoPoutUnsplitEle[2][2];
   TH1F *HoEUnsplitEle[2][2];  
   TH1F *shapeFisherUnsplitEle[2][2];  
+  TH1F *sigmaEtaEtaUnsplitEle[2][2];
+  TH1F *sigmaEtaPhiUnsplitEle[2][2];
+  TH1F *sigmaPhiPhiUnsplitEle[2][2];
+  TH1F *s1s9UnsplitEle[2][2];
+  TH1F *s9s25UnsplitEle[2][2];
+  TH1F *LATUnsplitEle[2][2];
+  TH1F *etaLATUnsplitEle[2][2];
+  TH1F *phiLATUnsplitEle[2][2];
+  TH1F *a20UnsplitEle[2][2];
+  TH1F *a42UnsplitEle[2][2];
   
   // Electrons class-splitted
   // histo[ecalsubdet][ptbin][class]
@@ -59,6 +79,16 @@ private:
   TH1F *EoPoutClassEle[2][2][2];
   TH1F *HoEClassEle[2][2][2];
   TH1F *shapeFisherClassEle[2][2][2];
+  TH1F *sigmaEtaEtaClassEle[2][2][2];
+  TH1F *sigmaEtaPhiClassEle[2][2][2];
+  TH1F *sigmaPhiPhiClassEle[2][2][2];
+  TH1F *s1s9ClassEle[2][2][2];
+  TH1F *s9s25ClassEle[2][2][2];
+  TH1F *LATClassEle[2][2][2];
+  TH1F *etaLATClassEle[2][2][2];
+  TH1F *phiLATClassEle[2][2][2];
+  TH1F *a20ClassEle[2][2][2];
+  TH1F *a42ClassEle[2][2][2];
 
   // Electrons fullclass-splitted
   // histo[ecalsubdet][ptbin][fullclass]
@@ -68,6 +98,16 @@ private:
   TH1F *EoPoutFullclassEle[2][2][4];
   TH1F *HoEFullclassEle[2][2][4];
   TH1F *shapeFisherFullclassEle[2][2][4];
+  TH1F *sigmaEtaEtaFullclassEle[2][2][4];
+  TH1F *sigmaEtaPhiFullclassEle[2][2][4];
+  TH1F *sigmaPhiPhiFullclassEle[2][2][4];
+  TH1F *s1s9FullclassEle[2][2][4];
+  TH1F *s9s25FullclassEle[2][2][4];
+  TH1F *LATFullclassEle[2][2][4];
+  TH1F *etaLATFullclassEle[2][2][4];
+  TH1F *phiLATFullclassEle[2][2][4];
+  TH1F *a20FullclassEle[2][2][4];
+  TH1F *a42FullclassEle[2][2][4];
 
   TH1F *H_dRmin_tracker_withVeto,      *E_dRmin_tracker_withVeto;
   TH1F *H_dRmin_tracker_withVeto_zoom, *E_dRmin_tracker_withVeto_zoom;
@@ -88,6 +128,9 @@ private:
   int ntot, ntotEB, ntotEE;
   int nGsfClass0[2], nGsfClass1[2], nGsfClass2[2], nGsfClass3[2];
   int trackIso, caloIso;
+
+  // for StatPatterRecognition
+  int nStatPatternRecognitionVars;
 
 };
 #endif

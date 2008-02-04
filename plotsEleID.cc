@@ -25,10 +25,33 @@ plotsEleID::plotsEleID(TTree *tree)
   float HoEMax      =  0.1;
   float fisherMin   = -15.0;
   float fisherMax   =  15.0;
+  float sigmaEtaEtaMin = 0.0;
+  float sigmaEtaEtaMax = 0.1;
+  float sigmaEtaPhiMin = 0.0;
+  float sigmaEtaPhiMax = 0.1;
+  float sigmaPhiPhiMin = 0.0;
+  float sigmaPhiPhiMax = 0.1;
+  float s1s9Min  = 0.0;
+  float s1s9Max  = 1.0;
+  float s9s25Min = 0.0;
+  float s9s25Max = 1.0;
+  float LATMin   = 0.0;
+  float LATMax   = 1.0;
+  float etaLATMin = 0.0;
+  float etaLATMax = 1.0;
+  float phiLATMin = 0.0;
+  float phiLATMax = 1.0;
+  float a20Min    = 0.0;
+  float a20Max    = 1.0;
+  float a42Min    = 0.0;
+  float a42Max    = 0.5;
 
   // sample region
   //category = "hadrons";  
   category = "electrons";  
+
+  // max number of shape variables to be inserted in the Fisher training
+  nStatPatternRecognitionVars = 10;
 
   // booking histos eleID
   // iecal = 0 --> barrel
@@ -53,6 +76,26 @@ plotsEleID::plotsEleID(TTree *tree)
       HoEHad[iecal][iptbin]         = new TH1F(histo, histo, nbins, HoEMin, HoEMax);
       sprintf(histo,"shapeFisher_hadrons_%d_%d",iecal,iptbin);
       shapeFisherHad[iecal][iptbin] = new TH1F(histo, histo, nbins, fisherMin, fisherMax);
+      sprintf(histo,"sigmaEtaEta_hadrons_%d_%d",iecal,iptbin);
+      sigmaEtaEtaHad[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaEtaEtaMin, sigmaEtaEtaMax);
+      sprintf(histo,"sigmaEtaPhi_hadrons_%d_%d",iecal,iptbin);
+      sigmaEtaPhiHad[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaEtaPhiMin, sigmaEtaPhiMax);
+      sprintf(histo,"sigmaPhiPhi_hadrons_%d_%d",iecal,iptbin);
+      sigmaPhiPhiHad[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaPhiPhiMin, sigmaPhiPhiMax);
+      sprintf(histo,"s1s9_hadrons_%d_%d",iecal,iptbin);
+      s1s9Had[iecal][iptbin] = new TH1F(histo, histo, nbins, s1s9Min, s1s9Max);
+      sprintf(histo,"s9s25_hadrons_%d_%d",iecal,iptbin);
+      s9s25Had[iecal][iptbin] = new TH1F(histo, histo, nbins, s9s25Min, s9s25Max);
+      sprintf(histo,"LAT_hadrons_%d_%d",iecal,iptbin);
+      LATHad[iecal][iptbin] = new TH1F(histo, histo, nbins, LATMin, LATMax);
+      sprintf(histo,"etaLAT_hadrons_%d_%d",iecal,iptbin);
+      etaLATHad[iecal][iptbin] = new TH1F(histo, histo, nbins, etaLATMin, etaLATMax);
+      sprintf(histo,"phiLAT_hadrons_%d_%d",iecal,iptbin);
+      phiLATHad[iecal][iptbin] = new TH1F(histo, histo, nbins, phiLATMin, phiLATMax);
+      sprintf(histo,"a20_hadrons_%d_%d",iecal,iptbin);
+      a20Had[iecal][iptbin] = new TH1F(histo, histo, nbins, a20Min, a20Max);
+      sprintf(histo,"a42_hadrons_%d_%d",iecal,iptbin);
+      a42Had[iecal][iptbin] = new TH1F(histo, histo, nbins, a42Min, a42Max);
 
       sprintf(histo,"dPhiCaloUnsplit_electrons_%d_%d",iecal,iptbin);
       dPhiCaloUnsplitEle[iecal][iptbin]    = new TH1F(histo, histo, nbins, dPhiCaloMin, dPhiCaloMax);
@@ -66,6 +109,26 @@ plotsEleID::plotsEleID(TTree *tree)
       HoEUnsplitEle[iecal][iptbin]         = new TH1F(histo, histo, nbins, HoEMin, HoEMax);
       sprintf(histo,"shapeFisherUnsplit_electrons_%d_%d",iecal,iptbin);
       shapeFisherUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, fisherMin, fisherMax);
+      sprintf(histo,"sigmaEtaEtaUnsplit_electrons_%d_%d",iecal,iptbin);
+      sigmaEtaEtaUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaEtaEtaMin, sigmaEtaEtaMax);
+      sprintf(histo,"sigmaEtaPhiUnsplit_electrons_%d_%d",iecal,iptbin);
+      sigmaEtaPhiUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaEtaPhiMin, sigmaEtaPhiMax);
+      sprintf(histo,"sigmaPhiPhiUnsplit_electrons_%d_%d",iecal,iptbin);
+      sigmaPhiPhiUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, sigmaPhiPhiMin, sigmaPhiPhiMax);
+      sprintf(histo,"s1s9Unsplit_electrons_%d_%d",iecal,iptbin);
+      s1s9UnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, s1s9Min, s1s9Max);
+      sprintf(histo,"s9s25Unsplit_electrons_%d_%d",iecal,iptbin);
+      s9s25UnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, s9s25Min, s9s25Max);
+      sprintf(histo,"LATUnsplit_electrons_%d_%d",iecal,iptbin);
+      LATUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, LATMin, LATMax);
+      sprintf(histo,"etaLATUnsplit_electrons_%d_%d",iecal,iptbin);
+      etaLATUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, etaLATMin, etaLATMax);
+      sprintf(histo,"phiLATUnsplit_electrons_%d_%d",iecal,iptbin);
+      phiLATUnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, phiLATMin, phiLATMax);
+      sprintf(histo,"a20Unsplit_electrons_%d_%d",iecal,iptbin);
+      a20UnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, a20Min, a20Max);
+      sprintf(histo,"a42Unsplit_electrons_%d_%d",iecal,iptbin);
+      a42UnsplitEle[iecal][iptbin] = new TH1F(histo, histo, nbins, a42Min, a42Max);
 
       // iclass = 0: non-showering
       // iclass = 1: showering
@@ -83,6 +146,26 @@ plotsEleID::plotsEleID(TTree *tree)
 	HoEClassEle[iecal][iptbin][iclass]         = new TH1F(histo, histo, nbins, HoEMin, HoEMax);
 	sprintf(histo,"shapeFisherClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
 	shapeFisherClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, fisherMin, fisherMax);
+	sprintf(histo,"sigmaEtaEtaClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	sigmaEtaEtaClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, sigmaEtaEtaMin, sigmaEtaEtaMax);
+	sprintf(histo,"sigmaEtaPhiClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	sigmaEtaPhiClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, sigmaEtaPhiMin, sigmaEtaPhiMax);
+	sprintf(histo,"sigmaPhiPhiClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	sigmaPhiPhiClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, sigmaPhiPhiMin, sigmaPhiPhiMax);
+	sprintf(histo,"s1s9Class_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	s1s9ClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, s1s9Min, s1s9Max);
+	sprintf(histo,"s9s25Class_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	s9s25ClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, s9s25Min, s9s25Max);
+	sprintf(histo,"LATClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	LATClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, LATMin, LATMax);
+	sprintf(histo,"etaLATClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	etaLATClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, etaLATMin, etaLATMax);
+	sprintf(histo,"phiLATClass_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	phiLATClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, phiLATMin, phiLATMax);
+	sprintf(histo,"a20Class_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	a20ClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, a20Min, a20Max);
+	sprintf(histo,"a42Class_electrons_%d_%d_%d",iecal,iptbin,iclass);
+	a42ClassEle[iecal][iptbin][iclass] = new TH1F(histo, histo, nbins, a42Min, a42Max);
 
       }
 
@@ -105,6 +188,26 @@ plotsEleID::plotsEleID(TTree *tree)
 	HoEFullclassEle[iecal][iptbin][ifullclass]         = new TH1F(histo, histo, nbins, HoEMin, HoEMax);
 	sprintf(histo,"shapeFisherFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
 	shapeFisherFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, fisherMin, fisherMax);
+	sprintf(histo,"sigmaEtaEtaFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	sigmaEtaEtaFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, sigmaEtaEtaMin, sigmaEtaEtaMax);
+	sprintf(histo,"sigmaEtaPhiFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	sigmaEtaPhiFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, sigmaEtaPhiMin, sigmaEtaPhiMax);
+	sprintf(histo,"sigmaPhiPhiFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	sigmaPhiPhiFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, sigmaPhiPhiMin, sigmaPhiPhiMax);
+	sprintf(histo,"s1s9Fullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	s1s9FullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, s1s9Min, s1s9Max);
+	sprintf(histo,"s9s25Fullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	s9s25FullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, s9s25Min, s9s25Max);
+	sprintf(histo,"LATFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	LATFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, LATMin, LATMax);
+	sprintf(histo,"etaLATFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	etaLATFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, etaLATMin, etaLATMax);
+	sprintf(histo,"phiLATFullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	phiLATFullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, phiLATMin, phiLATMax);
+	sprintf(histo,"a20Fullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	a20FullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, a20Min, a20Max);
+	sprintf(histo,"a42Fullclass_electrons_%d_%d_%d",iecal,iptbin,ifullclass);
+	a42FullclassEle[iecal][iptbin][ifullclass] = new TH1F(histo, histo, nbins, a42Min, a42Max);
 
       }
 
@@ -200,6 +303,16 @@ plotsEleID::~plotsEleID() {
 	EoPoutHad[iecal][iptbin]      -> Write();
 	HoEHad[iecal][iptbin]         -> Write();
 	shapeFisherHad[iecal][iptbin] -> Write();
+	sigmaEtaEtaHad[iecal][iptbin] -> Write();
+	sigmaEtaPhiHad[iecal][iptbin] -> Write();
+	sigmaPhiPhiHad[iecal][iptbin] -> Write();
+	s1s9Had[iecal][iptbin]        -> Write();
+	s9s25Had[iecal][iptbin]       -> Write();
+	LATHad[iecal][iptbin]         -> Write();
+	etaLATHad[iecal][iptbin]      -> Write();
+	phiLATHad[iecal][iptbin]      -> Write();
+	a20Had[iecal][iptbin]         -> Write();
+	a42Had[iecal][iptbin]         -> Write();
       }
       else if(strcmp(category,"electrons")==0) {
 
@@ -209,6 +322,16 @@ plotsEleID::~plotsEleID() {
 	EoPoutUnsplitEle[iecal][iptbin]      -> Write();
 	HoEUnsplitEle[iecal][iptbin]         -> Write();
 	shapeFisherUnsplitEle[iecal][iptbin] -> Write();
+	sigmaEtaEtaUnsplitEle[iecal][iptbin] -> Write();
+	sigmaEtaPhiUnsplitEle[iecal][iptbin] -> Write();
+	sigmaPhiPhiUnsplitEle[iecal][iptbin] -> Write();
+	s1s9UnsplitEle[iecal][iptbin]        -> Write();
+	s9s25UnsplitEle[iecal][iptbin]       -> Write();
+	LATUnsplitEle[iecal][iptbin]         -> Write();
+	etaLATUnsplitEle[iecal][iptbin]      -> Write();
+	phiLATUnsplitEle[iecal][iptbin]      -> Write();
+	a20UnsplitEle[iecal][iptbin]         -> Write();
+	a42UnsplitEle[iecal][iptbin]         -> Write();
 
 	for(int iclass=0; iclass<2; iclass++) {
 
@@ -218,6 +341,16 @@ plotsEleID::~plotsEleID() {
 	  EoPoutClassEle[iecal][iptbin][iclass]      -> Write();
 	  HoEClassEle[iecal][iptbin][iclass]         -> Write();
 	  shapeFisherClassEle[iecal][iptbin][iclass] -> Write();
+	  sigmaEtaEtaClassEle[iecal][iptbin][iclass] -> Write();
+	  sigmaEtaPhiClassEle[iecal][iptbin][iclass] -> Write();
+	  sigmaPhiPhiClassEle[iecal][iptbin][iclass] -> Write();
+	  s1s9ClassEle[iecal][iptbin][iclass]        -> Write();
+	  s9s25ClassEle[iecal][iptbin][iclass]       -> Write();
+	  LATClassEle[iecal][iptbin][iclass]         -> Write();
+	  etaLATClassEle[iecal][iptbin][iclass]      -> Write();
+	  phiLATClassEle[iecal][iptbin][iclass]      -> Write();
+	  a20ClassEle[iecal][iptbin][iclass]         -> Write();
+	  a42ClassEle[iecal][iptbin][iclass]         -> Write();
 
 	}
 
@@ -229,6 +362,16 @@ plotsEleID::~plotsEleID() {
 	  EoPoutFullclassEle[iecal][iptbin][ifullclass]      -> Write();
 	  HoEFullclassEle[iecal][iptbin][ifullclass]         -> Write();
 	  shapeFisherFullclassEle[iecal][iptbin][ifullclass] -> Write();
+	  sigmaEtaEtaFullclassEle[iecal][iptbin][ifullclass] -> Write();
+	  sigmaEtaPhiFullclassEle[iecal][iptbin][ifullclass] -> Write();
+	  sigmaPhiPhiFullclassEle[iecal][iptbin][ifullclass] -> Write();
+	  s1s9FullclassEle[iecal][iptbin][ifullclass]        -> Write();
+	  s9s25FullclassEle[iecal][iptbin][ifullclass]       -> Write();
+	  LATFullclassEle[iecal][iptbin][ifullclass]         -> Write();
+	  etaLATFullclassEle[iecal][iptbin][ifullclass]      -> Write();
+	  phiLATFullclassEle[iecal][iptbin][ifullclass]      -> Write();
+	  a20FullclassEle[iecal][iptbin][ifullclass]         -> Write();
+	  a42FullclassEle[iecal][iptbin][ifullclass]         -> Write();
 
 	}
 
@@ -270,12 +413,23 @@ plotsEleID::~plotsEleID() {
     for(int iptbin=0; iptbin<2; iptbin++) {
 
       if(strcmp(category,"hadrons")==0) {
+
 	delete dPhiCaloHad[iecal][iptbin];
 	delete dPhiVtxHad[iecal][iptbin];
 	delete dEtaHad[iecal][iptbin];
 	delete EoPoutHad[iecal][iptbin];
 	delete HoEHad[iecal][iptbin];
 	delete shapeFisherHad[iecal][iptbin];
+	delete sigmaEtaEtaHad[iecal][iptbin];
+	delete sigmaEtaPhiHad[iecal][iptbin];
+	delete sigmaPhiPhiHad[iecal][iptbin];
+	delete s1s9Had[iecal][iptbin];
+	delete s9s25Had[iecal][iptbin];
+	delete LATHad[iecal][iptbin];
+	delete etaLATHad[iecal][iptbin];
+	delete phiLATHad[iecal][iptbin];
+	delete a20Had[iecal][iptbin];
+	delete a42Had[iecal][iptbin];
 
       }
       else if(strcmp(category,"electrons")==0) {
@@ -286,6 +440,16 @@ plotsEleID::~plotsEleID() {
 	delete EoPoutUnsplitEle[iecal][iptbin];
 	delete HoEUnsplitEle[iecal][iptbin];
 	delete shapeFisherUnsplitEle[iecal][iptbin];
+	delete sigmaEtaEtaUnsplitEle[iecal][iptbin];
+	delete sigmaEtaPhiUnsplitEle[iecal][iptbin];
+	delete sigmaPhiPhiUnsplitEle[iecal][iptbin];
+	delete s1s9UnsplitEle[iecal][iptbin];
+	delete s9s25UnsplitEle[iecal][iptbin];
+	delete LATUnsplitEle[iecal][iptbin];
+	delete etaLATUnsplitEle[iecal][iptbin];
+	delete phiLATUnsplitEle[iecal][iptbin];
+	delete a20UnsplitEle[iecal][iptbin];
+	delete a42UnsplitEle[iecal][iptbin];
 	
 	for(int iclass=0; iclass<2; iclass++) {
 
@@ -295,6 +459,16 @@ plotsEleID::~plotsEleID() {
 	  delete EoPoutClassEle[iecal][iptbin][iclass];
 	  delete HoEClassEle[iecal][iptbin][iclass];
 	  delete shapeFisherClassEle[iecal][iptbin][iclass];
+	  delete sigmaEtaEtaClassEle[iecal][iptbin][iclass];
+	  delete sigmaEtaPhiClassEle[iecal][iptbin][iclass];
+	  delete sigmaPhiPhiClassEle[iecal][iptbin][iclass];
+	  delete s1s9ClassEle[iecal][iptbin][iclass];
+	  delete s9s25ClassEle[iecal][iptbin][iclass];
+	  delete LATClassEle[iecal][iptbin][iclass];
+	  delete etaLATClassEle[iecal][iptbin][iclass];
+	  delete phiLATClassEle[iecal][iptbin][iclass];
+	  delete a20ClassEle[iecal][iptbin][iclass];
+	  delete a42ClassEle[iecal][iptbin][iclass];
 
 	}
 
@@ -306,6 +480,16 @@ plotsEleID::~plotsEleID() {
 	  delete EoPoutFullclassEle[iecal][iptbin][ifullclass];
 	  delete HoEFullclassEle[iecal][iptbin][ifullclass];
 	  delete shapeFisherFullclassEle[iecal][iptbin][ifullclass];
+	  delete sigmaEtaEtaFullclassEle[iecal][iptbin][ifullclass];
+	  delete sigmaEtaPhiFullclassEle[iecal][iptbin][ifullclass];
+	  delete sigmaPhiPhiFullclassEle[iecal][iptbin][ifullclass];
+	  delete s1s9FullclassEle[iecal][iptbin][ifullclass];
+	  delete s9s25FullclassEle[iecal][iptbin][ifullclass];
+	  delete LATFullclassEle[iecal][iptbin][ifullclass];
+	  delete etaLATFullclassEle[iecal][iptbin][ifullclass];
+	  delete phiLATFullclassEle[iecal][iptbin][ifullclass];
+	  delete a20FullclassEle[iecal][iptbin][ifullclass];
+	  delete a42FullclassEle[iecal][iptbin][ifullclass];
 
 	}
 	
@@ -456,12 +640,22 @@ void plotsEleID::Loop() {
 	ntot++;
 
 	// eleID
-	dPhiCaloHad    [iecal][iptbin] -> Fill(eleDeltaPhiAtCaloEle[iele]);
-	dPhiVtxHad     [iecal][iptbin] -> Fill(eleDeltaPhiAtVtxEle[iele]);
-	dEtaHad        [iecal][iptbin] -> Fill(eleDeltaEtaAtCaloEle[iele]);
-	EoPoutHad      [iecal][iptbin] -> Fill(eleCorrEoPoutEle[iele]);
-	HoEHad         [iecal][iptbin] -> Fill(eleHoEEle[iele]);
-	shapeFisherHad [iecal][iptbin] -> Fill(fisher);
+	dPhiCaloHad    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	dPhiVtxHad     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	dEtaHad        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	EoPoutHad      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
+	HoEHad         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
+	shapeFisherHad [iecal][iptbin] -> Fill ( fisher );
+	sigmaEtaEtaHad [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaPhiPhiHad [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	s1s9Had        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
+	s9s25Had       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
+	LATHad         [iecal][iptbin] -> Fill ( latEle[iele] );
+	etaLATHad      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
+	phiLATHad      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
+	a20Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	a42Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
 
 	// isolation
 	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.5)           { H_ptFrac_tracker         -> Fill(eleTrackerIso_sumPtEle[iele]);}
@@ -530,26 +724,56 @@ void plotsEleID::Loop() {
 	else if ( ifullclass == 2 ) nGsfClass2[iecal]++;
 	else if ( ifullclass == 3 ) nGsfClass3[iecal]++;
 	
-	dPhiCaloUnsplitEle[iecal][iptbin]   -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxUnsplitEle[iecal][iptbin]    -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaUnsplitEle[iecal][iptbin]       -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutUnsplitEle[iecal][iptbin]     -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEUnsplitEle[iecal][iptbin]        -> Fill ( eleHoEEle[iele] );
-	shapeFisherUnsplitEle[iecal][iptbin] -> Fill ( fisher ); 
+	dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	dEtaUnsplitEle        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	EoPoutUnsplitEle      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
+	HoEUnsplitEle         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
+	shapeFisherUnsplitEle [iecal][iptbin] -> Fill ( fisher ); 
+	sigmaEtaEtaUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaPhiPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	s1s9UnsplitEle        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
+	s9s25UnsplitEle       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
+	LATUnsplitEle         [iecal][iptbin] -> Fill ( latEle[iele] );
+	etaLATUnsplitEle      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
+	phiLATUnsplitEle      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
+	a20UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	a42UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
 	
-	dPhiCaloClassEle[iecal][iptbin][iclass]   -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxClassEle[iecal][iptbin][iclass]    -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaClassEle[iecal][iptbin][iclass]       -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutClassEle[iecal][iptbin][iclass]     -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEClassEle[iecal][iptbin][iclass]        -> Fill ( eleHoEEle[iele] );
-	shapeFisherClassEle[iecal][iptbin][iclass] -> Fill ( fisher ); 
-	
-	dPhiCaloFullclassEle[iecal][iptbin][ifullclass]   -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxFullclassEle[iecal][iptbin][ifullclass]    -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaFullclassEle[iecal][iptbin][ifullclass]       -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutFullclassEle[iecal][iptbin][ifullclass]     -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEFullclassEle[iecal][iptbin][ifullclass]        -> Fill ( eleHoEEle[iele] );
-	shapeFisherFullclassEle[iecal][iptbin][ifullclass] -> Fill ( fisher ); 
+	dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	dEtaClassEle        [iecal][iptbin][iclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	EoPoutClassEle      [iecal][iptbin][iclass] -> Fill ( eleCorrEoPoutEle[iele] );
+	HoEClassEle         [iecal][iptbin][iclass] -> Fill ( eleHoEEle[iele] );
+	shapeFisherClassEle [iecal][iptbin][iclass] -> Fill ( fisher ); 
+	sigmaEtaEtaClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaPhiPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	s1s9ClassEle        [iecal][iptbin][iclass] -> Fill ( s1s9Ele[iele] );
+	s9s25ClassEle       [iecal][iptbin][iclass] -> Fill ( s9s25Ele[iele] );
+	LATClassEle         [iecal][iptbin][iclass] -> Fill ( latEle[iele] );
+	etaLATClassEle      [iecal][iptbin][iclass] -> Fill ( etaLatEle[iele] );
+	phiLATClassEle      [iecal][iptbin][iclass] -> Fill ( phiLatEle[iele] );
+	a20ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
+	a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
+
+	dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	dEtaFullclassEle        [iecal][iptbin][ifullclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	EoPoutFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( eleCorrEoPoutEle[iele] );
+	HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( eleHoEEle[iele] );
+	shapeFisherFullclassEle [iecal][iptbin][ifullclass] -> Fill ( fisher ); 
+	sigmaEtaEtaFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaPhiPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	s1s9FullclassEle        [iecal][iptbin][ifullclass] -> Fill ( s1s9Ele[iele] );
+	s9s25FullclassEle       [iecal][iptbin][ifullclass] -> Fill ( s9s25Ele[iele] );
+	LATFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( latEle[iele] );
+	etaLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( etaLatEle[iele] );
+	phiLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( phiLatEle[iele] );
+	a20FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
+	a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
 	
       }
 
