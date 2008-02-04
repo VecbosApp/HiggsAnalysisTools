@@ -82,6 +82,8 @@ $(OUTLIB)EfficiencyEvaluator.o: $(INCLUDEDIR)EfficiencyEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)EfficiencyEvaluator.o $<
 $(OUTLIB)Monitor.o: $(INCLUDEDIR)Monitor.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)Monitor.o $<
+$(OUTLIB)SprDataFiller.o: $(INCLUDEDIR)SprDataFiller.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)SprDataFiller.o $<
 $(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)kFactorEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
 $(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)RedHiggsTree.cc
@@ -98,7 +100,7 @@ $(OUTLIB)eleID_Higgs_Studies.o: $(INCLUDEDIR)eleID_Higgs_Studies.cc
 #----------------------------------------------------#
 
 # ==================== HiggsApp =============================================
-HiggsApp:  $(INCLUDEDIR)HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIB)Selection.o $(OUTLIB)EfficiencyEvaluator.o $(OUTLIB)Counters.o $(OUTLIB)Monitor.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEWKTree.o
+HiggsApp:  $(INCLUDEDIR)HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIB)Selection.o $(OUTLIB)EfficiencyEvaluator.o $(OUTLIB)Counters.o $(OUTLIB)Monitor.o $(OUTLIB)SprDataFiller.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEWKTree.o
 	$(CXX) $(CXXFLAGS) -o HiggsApp $(OUTLIB)/*.o $(GLIBS) $ $<
 HiggsApp.clean:
 	rm -f HiggsApp
