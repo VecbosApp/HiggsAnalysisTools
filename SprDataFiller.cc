@@ -18,7 +18,7 @@ void SprDataFiller::setName(const char *name) {
 
 void SprDataFiller::add(std::string varName, float *var) {
 
-  _data.insert( std::make_pair( varName, var ) );
+  _data.push_back( std::make_pair( varName, var ) );
 
 }
 
@@ -57,11 +57,11 @@ void SprDataFiller::initialize() {
   _validFile << "# number of entries total = " << _nentries << std::endl;
   _validFile << nVariables << std::endl;
   
-  std::map< std::string, float* >::const_iterator mapItr;
+  std::vector< std::pair< std::string, float* > >::const_iterator dataItr;
 
-  for ( mapItr=_data.begin(); mapItr!=_data.end(); ++mapItr ) {
-    _trainFile << mapItr->first;
-    _validFile << mapItr->first;
+  for ( dataItr=_data.begin(); dataItr!=_data.end(); ++dataItr ) {
+    _trainFile << dataItr->first << "\t";
+    _validFile << dataItr->first << "\t";
   }
 
   _trainFile << std::endl;
@@ -80,10 +80,10 @@ void SprDataFiller::fillEvent(int ievent, int signal) {
     
     _trainFile << "#\t" << ievent << std::endl;
 
-    std::map< std::string, float* >::const_iterator mapItr;
-    for ( mapItr=_data.begin(); mapItr!=_data.end(); ++mapItr ) {
+    std::vector< std::pair < std::string, float* > >::const_iterator dataItr;
+    for ( dataItr=_data.begin(); dataItr!=_data.end(); ++dataItr ) {
 
-      _trainFile << *(mapItr->second) << "\t";
+      _trainFile << *(dataItr->second) << "\t";
 
     }
     _trainFile << signal << std::endl;
@@ -92,10 +92,10 @@ void SprDataFiller::fillEvent(int ievent, int signal) {
     
     _validFile << "#\t" << ievent << std::endl;
 
-    std::map< std::string, float* >::const_iterator mapItr;
-    for ( mapItr=_data.begin(); mapItr!=_data.end(); ++mapItr ) {
+    std::vector< std::pair < std::string, float* > >::const_iterator dataItr;
+    for ( dataItr=_data.begin(); dataItr!=_data.end(); ++dataItr ) {
 
-      _validFile << *(mapItr->second) << "\t";
+      _validFile << *(dataItr->second) << "\t";
 
     }
     _validFile << signal << std::endl;
