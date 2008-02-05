@@ -12,18 +12,18 @@
 plotsEleID::plotsEleID(TTree *tree) 
   : HiggsBase(tree) {
 
-  int nbins = 50;
+  int nbins = 100;
 
-  float dPhiCaloMin = -0.1;
-  float dPhiCaloMax =  0.1;
-  float dPhiVtxMin  = -0.1;
+  float dPhiCaloMin = -0.3;
+  float dPhiCaloMax =  0.3;
+  float dPhiVtxMin  = -0.1; // pixelMatchGsfElectron pre-selection: |dPhi| < 0.1
   float dPhiVtxMax  =  0.1;
-  float dEtaMin     = -0.02;
-  float dEtaMax     =  0.02;
+  float dEtaMin     = -0.05;
+  float dEtaMax     =  0.05;
   float EoPoutMin   =  0.0;
-  float EoPoutMax   =  10.0;
-  float HoEMin      = -0.1;
-  float HoEMax      =  0.1;
+  float EoPoutMax   =  50.0;
+  float HoEMin      = -0.2; // pixelMatchGsfElectron pre-selection: |H/E| < 0.2
+  float HoEMax      =  0.2;
   float fisherMin   = -15.0;
   float fisherMax   =  15.0;
   float sigmaEtaEtaMin = 0.0;
