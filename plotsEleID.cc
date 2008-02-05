@@ -528,17 +528,33 @@ void plotsEleID::Loop() {
   std::string sprName;
   if ( strcmp(category,"hadrons")==0 ) sprName = "clusterShapeVars-hadrons";
   else if ( strcmp(category,"electrons")==0 ) sprName = "clusterShapeVars-electrons";
+
   float sigmaEtaEta, sigmaEtaPhi, sigmaPhiPhi, s1s9, s9s25, LAT, etaLAT, phiLAT, a20, a42;
-  SprDataFiller clusterShapeFiller;
-  clusterShapeFiller.setName( sprName.c_str() );
-  clusterShapeFiller.setEntries(nentries);
-  clusterShapeFiller.add("sigmaEtaEta",&sigmaEtaEta);
-  clusterShapeFiller.add("sigmaEtaPhi",&sigmaEtaPhi);
-  clusterShapeFiller.add("sigmaPhiPhi",&sigmaPhiPhi);
-  clusterShapeFiller.add("s1s9",&s1s9);
-  clusterShapeFiller.add("s9s25",&s9s25);
-  clusterShapeFiller.add("a20",&a20);
-  clusterShapeFiller.add("a42",&a42);
+
+  // filler[iecal][iptbin]
+  std::string completeSprName[2][2];
+  completeSprName[0][0] = sprName+"-EB"+"-lowPt";
+  completeSprName[0][1] = sprName+"-EB"+"-highPt";
+  completeSprName[1][0] = sprName+"-EE"+"-lowPt";
+  completeSprName[1][1] = sprName+"-EE"+"-highPt";
+
+  SprDataFiller clusterShapeFiller[2][2];
+  
+  for (int iecal=0; iecal<2; iecal++ ) {
+    for (int iptbin=0; iptbin<2; iptbin++ ) {
+
+      clusterShapeFiller[iecal][iptbin].setName( completeSprName[iecal][iptbin].c_str() );
+      clusterShapeFiller[iecal][iptbin].setEntries(nentries);
+      clusterShapeFiller[iecal][iptbin].add("sigmaEtaEta",&sigmaEtaEta);
+      clusterShapeFiller[iecal][iptbin].add("sigmaEtaPhi",&sigmaEtaPhi);
+      clusterShapeFiller[iecal][iptbin].add("sigmaPhiPhi",&sigmaPhiPhi);
+      clusterShapeFiller[iecal][iptbin].add("s1s9",&s1s9);
+      clusterShapeFiller[iecal][iptbin].add("s9s25",&s9s25);
+      clusterShapeFiller[iecal][iptbin].add("a20",&a20);
+      clusterShapeFiller[iecal][iptbin].add("a42",&a42);
+
+    }
+  }
 
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -809,7 +825,7 @@ void plotsEleID::Loop() {
       int signal = -1;
       if ( strcmp(category,"hadrons")==0 ) signal = 0;
       else if ( strcmp(category,"electrons")==0 ) signal = 1;
-      clusterShapeFiller.fill(jentry,signal);
+      clusterShapeFiller[iecal][iptbin].fill(jentry,signal);
 
     }
 
