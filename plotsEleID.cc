@@ -45,7 +45,7 @@ plotsEleID::plotsEleID(TTree *tree)
   float a20Min    = 0.0;
   float a20Max    = 1.0;
   float a42Min    = 0.0;
-  float a42Max    = 0.5;
+  float a42Max    = 1.0;
 
   // sample region
   //category = "hadrons";  
