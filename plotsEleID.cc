@@ -6,6 +6,7 @@
 
 #include "Counters.hh"
 #include "Selection.hh"
+#include "SprDataFiller.hh"
 #include "plotsEleID.hh"
 
 plotsEleID::plotsEleID(TTree *tree) 
@@ -521,7 +522,23 @@ void plotsEleID::Loop() {
   _verbose=true;
   if(fChain == 0) return;
     
-  Long64_t nentries = fChain->GetEntriesFast();
+  Long64_t nentries = fChain->GetEntries();
+
+  // set up the filler for StatPatternRecognition
+  std::string sprName;
+  if ( strcmp(category,"hadrons")==0 ) sprName = "clusterShapeVars-hadrons";
+  else if ( strcmp(category,"electrons")==0 ) sprName = "clusterShapeVars-electrons";
+  float sigmaEtaEta, sigmaEtaPhi, sigmaPhiPhi, s1s9, s9s25, LAT, etaLAT, phiLAT, a20, a42;
+  SprDataFiller clusterShapeFiller;
+  clusterShapeFiller.setName( sprName.c_str() );
+  clusterShapeFiller.setEntries(nentries);
+  clusterShapeFiller.add("sigmaEtaEta",&sigmaEtaEta);
+  clusterShapeFiller.add("sigmaEtaPhi",&sigmaEtaPhi);
+  clusterShapeFiller.add("sigmaPhiPhi",&sigmaPhiPhi);
+  clusterShapeFiller.add("s1s9",&s1s9);
+  clusterShapeFiller.add("s9s25",&s9s25);
+  clusterShapeFiller.add("a20",&a20);
+  clusterShapeFiller.add("a42",&a42);
 
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -647,7 +664,7 @@ void plotsEleID::Loop() {
 	HoEHad         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
 	shapeFisherHad [iecal][iptbin] -> Fill ( fisher );
 	sigmaEtaEtaHad [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
 	sigmaPhiPhiHad [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
 	s1s9Had        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
 	s9s25Had       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
@@ -731,7 +748,7 @@ void plotsEleID::Loop() {
 	HoEUnsplitEle         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
 	shapeFisherUnsplitEle [iecal][iptbin] -> Fill ( fisher ); 
 	sigmaEtaEtaUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
 	sigmaPhiPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
 	s1s9UnsplitEle        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
 	s9s25UnsplitEle       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
@@ -748,7 +765,7 @@ void plotsEleID::Loop() {
 	HoEClassEle         [iecal][iptbin][iclass] -> Fill ( eleHoEEle[iele] );
 	shapeFisherClassEle [iecal][iptbin][iclass] -> Fill ( fisher ); 
 	sigmaEtaEtaClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
 	sigmaPhiPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
 	s1s9ClassEle        [iecal][iptbin][iclass] -> Fill ( s1s9Ele[iele] );
 	s9s25ClassEle       [iecal][iptbin][iclass] -> Fill ( s9s25Ele[iele] );
@@ -765,7 +782,7 @@ void plotsEleID::Loop() {
 	HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( eleHoEEle[iele] );
 	shapeFisherFullclassEle [iecal][iptbin][ifullclass] -> Fill ( fisher ); 
 	sigmaEtaEtaFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaPhiEle[iele]) );
+	sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
 	sigmaPhiPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
 	s1s9FullclassEle        [iecal][iptbin][ifullclass] -> Fill ( s1s9Ele[iele] );
 	s9s25FullclassEle       [iecal][iptbin][ifullclass] -> Fill ( s9s25Ele[iele] );
@@ -776,6 +793,23 @@ void plotsEleID::Loop() {
 	a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
 	
       }
+
+      // fill the StatPatternRecognition file
+      sigmaEtaEta = sqrt(covEtaEtaEle[iele]);
+      sigmaEtaPhi = sqrt(fabs(covEtaPhiEle[iele]));
+      sigmaPhiPhi = sqrt(covPhiPhiEle[iele]);
+      s1s9 = s1s9Ele[iele];
+      s9s25 = s9s25Ele[iele];
+      LAT = latEle[iele];
+      etaLAT = etaLatEle[iele];
+      phiLAT = phiLatEle[iele];
+      a20 = a20Ele[iele];
+      a42 = a42Ele[iele];
+
+      int signal = -1;
+      if ( strcmp(category,"hadrons")==0 ) signal = 0;
+      else if ( strcmp(category,"electrons")==0 ) signal = 1;
+      clusterShapeFiller.fill(jentry,signal);
 
     }
 
