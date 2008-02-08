@@ -90,7 +90,7 @@ void SprDataFiller::fillEvent(int ievent, int signal) {
   }
   else {
     
-    _validFile << "#\t" << ievent << std::endl;
+    //    _validFile << "#\t" << ievent << std::endl;
 
     std::vector< std::pair < std::string, float* > >::const_iterator dataItr;
     for ( dataItr=_data.begin(); dataItr!=_data.end(); ++dataItr ) {
