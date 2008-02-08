@@ -48,7 +48,7 @@ plotsEleID::plotsEleID(TTree *tree)
   float a42Max    = 1.0;
 
   // sample region
-  //category = "hadrons";  
+  // category = "hadrons";  
   category = "electrons";  
 
   // max number of shape variables to be inserted in the Fisher training
@@ -550,6 +550,9 @@ void plotsEleID::Loop() {
       clusterShapeFiller[iecal][iptbin].add("sigmaPhiPhi",&sigmaPhiPhi);
       clusterShapeFiller[iecal][iptbin].add("s1s9",&s1s9);
       clusterShapeFiller[iecal][iptbin].add("s9s25",&s9s25);
+      clusterShapeFiller[iecal][iptbin].add("LAT",&LAT);
+      clusterShapeFiller[iecal][iptbin].add("etaLAT",&etaLAT);
+      clusterShapeFiller[iecal][iptbin].add("phiLAT",&phiLAT);
       clusterShapeFiller[iecal][iptbin].add("a20",&a20);
       clusterShapeFiller[iecal][iptbin].add("a42",&a42);
 
@@ -756,7 +759,9 @@ void plotsEleID::Loop() {
 	else if ( ifullclass == 1 ) nGsfClass1[iecal]++;
 	else if ( ifullclass == 2 ) nGsfClass2[iecal]++;
 	else if ( ifullclass == 3 ) nGsfClass3[iecal]++;
-	
+
+	if( eleTrackerIso_sumPtEle[iele] > 0.08 ) continue;
+ 
 	dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
 	dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
 	dEtaUnsplitEle        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
