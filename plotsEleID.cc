@@ -48,8 +48,8 @@ plotsEleID::plotsEleID(TTree *tree)
   float a42Max    = 1.0;
 
   // sample region
-  // category = "hadrons";  
-  category = "electrons";  
+  category = "hadrons";  
+  // category = "electrons";  
 
   // max number of shape variables to be inserted in the Fisher training
   nStatPatternRecognitionVars = 10;
@@ -604,6 +604,9 @@ void plotsEleID::Loop() {
 	ifullclass = 3;
       }
 
+      bool looseIsolated = true;
+      if( eleTrackerIso_sumPtEle[iele] > 0.08 ) looseIsolated = false; 
+
       // efficiency
       int recCharge = chargeEle[iele];
       double recEta = etaEle[iele];
@@ -676,22 +679,24 @@ void plotsEleID::Loop() {
 	ntot++;
 
 	// eleID
-	dPhiCaloHad    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxHad     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaHad        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutHad      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEHad         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
-	shapeFisherHad [iecal][iptbin] -> Fill ( fisher );
-	sigmaEtaEtaHad [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
-	sigmaPhiPhiHad [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
-	s1s9Had        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
-	s9s25Had       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
-	LATHad         [iecal][iptbin] -> Fill ( latEle[iele] );
-	etaLATHad      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
-	phiLATHad      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
-	a20Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
-	a42Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	if( looseIsolated ) {
+	  dPhiCaloHad    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	  dPhiVtxHad     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	  dEtaHad        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	  EoPoutHad      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
+	  HoEHad         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
+	  shapeFisherHad [iecal][iptbin] -> Fill ( fisher );
+	  sigmaEtaEtaHad [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	  sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
+	  sigmaPhiPhiHad [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	  s1s9Had        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
+	  s9s25Had       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
+	  LATHad         [iecal][iptbin] -> Fill ( latEle[iele] );
+	  etaLATHad      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
+	  phiLATHad      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
+	  a20Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	  a42Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	}
 
 	// isolation
 	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.5)           { H_ptFrac_tracker         -> Fill(eleTrackerIso_sumPtEle[iele]);}
@@ -760,72 +765,74 @@ void plotsEleID::Loop() {
 	else if ( ifullclass == 2 ) nGsfClass2[iecal]++;
 	else if ( ifullclass == 3 ) nGsfClass3[iecal]++;
 
-	if( eleTrackerIso_sumPtEle[iele] > 0.08 ) continue;
- 
-	dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaUnsplitEle        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutUnsplitEle      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEUnsplitEle         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
-	shapeFisherUnsplitEle [iecal][iptbin] -> Fill ( fisher ); 
-	sigmaEtaEtaUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
-	sigmaPhiPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
-	s1s9UnsplitEle        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
-	s9s25UnsplitEle       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
-	LATUnsplitEle         [iecal][iptbin] -> Fill ( latEle[iele] );
-	etaLATUnsplitEle      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
-	phiLATUnsplitEle      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
-	a20UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
-	a42UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	if( looseIsolated ) { 
+	  dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	  dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	  dEtaUnsplitEle        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	  EoPoutUnsplitEle      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
+	  HoEUnsplitEle         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );
+	  shapeFisherUnsplitEle [iecal][iptbin] -> Fill ( fisher ); 
+	  sigmaEtaEtaUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	  sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
+	  sigmaPhiPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	  s1s9UnsplitEle        [iecal][iptbin] -> Fill ( s1s9Ele[iele] );
+	  s9s25UnsplitEle       [iecal][iptbin] -> Fill ( s9s25Ele[iele] );
+	  LATUnsplitEle         [iecal][iptbin] -> Fill ( latEle[iele] );
+	  etaLATUnsplitEle      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
+	  phiLATUnsplitEle      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
+	  a20UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	  a42UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele] );
 	
-	dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaClassEle        [iecal][iptbin][iclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutClassEle      [iecal][iptbin][iclass] -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEClassEle         [iecal][iptbin][iclass] -> Fill ( eleHoEEle[iele] );
-	shapeFisherClassEle [iecal][iptbin][iclass] -> Fill ( fisher ); 
-	sigmaEtaEtaClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
-	sigmaPhiPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
-	s1s9ClassEle        [iecal][iptbin][iclass] -> Fill ( s1s9Ele[iele] );
-	s9s25ClassEle       [iecal][iptbin][iclass] -> Fill ( s9s25Ele[iele] );
-	LATClassEle         [iecal][iptbin][iclass] -> Fill ( latEle[iele] );
-	etaLATClassEle      [iecal][iptbin][iclass] -> Fill ( etaLatEle[iele] );
-	phiLATClassEle      [iecal][iptbin][iclass] -> Fill ( phiLatEle[iele] );
-	a20ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
-	a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
+	  dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	  dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	  dEtaClassEle        [iecal][iptbin][iclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	  EoPoutClassEle      [iecal][iptbin][iclass] -> Fill ( eleCorrEoPoutEle[iele] );
+	  HoEClassEle         [iecal][iptbin][iclass] -> Fill ( eleHoEEle[iele] );
+	  shapeFisherClassEle [iecal][iptbin][iclass] -> Fill ( fisher ); 
+	  sigmaEtaEtaClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	  sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
+	  sigmaPhiPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	  s1s9ClassEle        [iecal][iptbin][iclass] -> Fill ( s1s9Ele[iele] );
+	  s9s25ClassEle       [iecal][iptbin][iclass] -> Fill ( s9s25Ele[iele] );
+	  LATClassEle         [iecal][iptbin][iclass] -> Fill ( latEle[iele] );
+	  etaLATClassEle      [iecal][iptbin][iclass] -> Fill ( etaLatEle[iele] );
+	  phiLATClassEle      [iecal][iptbin][iclass] -> Fill ( phiLatEle[iele] );
+	  a20ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
+	  a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele] );
 
-	dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
-	dEtaFullclassEle        [iecal][iptbin][ifullclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	EoPoutFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( eleCorrEoPoutEle[iele] );
-	HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( eleHoEEle[iele] );
-	shapeFisherFullclassEle [iecal][iptbin][ifullclass] -> Fill ( fisher ); 
-	sigmaEtaEtaFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
-	sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
-	sigmaPhiPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
-	s1s9FullclassEle        [iecal][iptbin][ifullclass] -> Fill ( s1s9Ele[iele] );
-	s9s25FullclassEle       [iecal][iptbin][ifullclass] -> Fill ( s9s25Ele[iele] );
-	LATFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( latEle[iele] );
-	etaLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( etaLatEle[iele] );
-	phiLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( phiLatEle[iele] );
-	a20FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
-	a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
-	
+	  dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
+	  dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	  dEtaFullclassEle        [iecal][iptbin][ifullclass] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
+	  EoPoutFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( eleCorrEoPoutEle[iele] );
+	  HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( eleHoEEle[iele] );
+	  shapeFisherFullclassEle [iecal][iptbin][ifullclass] -> Fill ( fisher ); 
+	  sigmaEtaEtaFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaEtaEle[iele]) );
+	  sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
+	  sigmaPhiPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covPhiPhiEle[iele]) );
+	  s1s9FullclassEle        [iecal][iptbin][ifullclass] -> Fill ( s1s9Ele[iele] );
+	  s9s25FullclassEle       [iecal][iptbin][ifullclass] -> Fill ( s9s25Ele[iele] );
+	  LATFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( latEle[iele] );
+	  etaLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( etaLatEle[iele] );
+	  phiLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( phiLatEle[iele] );
+	  a20FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
+	  a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele] );
+	}
+
       }
 
       // fill the StatPatternRecognition file
-      sigmaEtaEta = sqrt(covEtaEtaEle[iele]);
-      sigmaEtaPhi = sqrt(fabs(covEtaPhiEle[iele]));
-      sigmaPhiPhi = sqrt(covPhiPhiEle[iele]);
-      s1s9 = s1s9Ele[iele];
-      s9s25 = s9s25Ele[iele];
-      LAT = latEle[iele];
-      etaLAT = etaLatEle[iele];
-      phiLAT = phiLatEle[iele];
-      a20 = a20Ele[iele];
-      a42 = a42Ele[iele];
+      if( looseIsolated ) {
+	sigmaEtaEta = sqrt(covEtaEtaEle[iele]);
+	sigmaEtaPhi = sqrt(fabs(covEtaPhiEle[iele]));
+	sigmaPhiPhi = sqrt(covPhiPhiEle[iele]);
+	s1s9 = s1s9Ele[iele];
+	s9s25 = s9s25Ele[iele];
+	LAT = latEle[iele];
+	etaLAT = etaLatEle[iele];
+	phiLAT = phiLatEle[iele];
+	a20 = a20Ele[iele];
+	a42 = a42Ele[iele];
+      }
 
       int signal = -1;
       if ( strcmp(category,"hadrons")==0 ) signal = 0;
