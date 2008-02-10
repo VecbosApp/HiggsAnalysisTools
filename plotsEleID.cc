@@ -568,21 +568,31 @@ void plotsEleID::Loop() {
 
     for(int iele=0;iele<nEle;iele++) {
 
-      int iecal = -1;
-      float fisher;
-      if ( fabs(etaEle[iele]) <= 1.476 ) { // barrel
-	iecal = 0; 
-	fisher = 42.0238-3.38943*s9s25Ele[iele]-794.092*sqrt(covEtaEtaEle[iele])-15.3449*latEle[iele]-31.1032*a20Ele[iele];
-      }
-
-      if ( fabs(etaEle[iele]) > 1.476  ) { // endcap
-	iecal = 1; 
-	fisher = 27.2967+2.97453*s9s25Ele[iele]-169.219*sqrt(covEtaEtaEle[iele])-17.0445*latEle[iele]-24.8542*a20Ele[iele];
-      }
-
       int iptbin = -1;
       if ( etEle[iele] < 15.0 ) iptbin = 0;
       else iptbin = 1;
+
+      int iecal = -1;
+      float fisher;
+
+      if ( fabs(etaEle[iele]) <= 1.476 ) { // barrel
+        iecal = 0;
+        if ( iptbin == 0 ) {  // low pt
+          fisher = 0.693496 -12.7018 * sqrt(covEtaEtaEle[iele]) + 1.23863 * s9s25Ele[iele] -10.115 * etaLatEle[iele];
+        }
+        if ( iptbin == 1 ) {  // high pt
+          fisher = 6.02184 -49.2656 * sqrt(covEtaEtaEle[iele]) + 2.49634 * s9s25Ele[iele] -30.1528 * etaLatEle[iele];
+        }
+      }
+      if ( fabs(etaEle[iele]) > 1.476  ) { // endcap
+        iecal = 1;
+        if ( iptbin == 0 ) {  // low pt
+          fisher = -1.11814 -5.3288 * sqrt(covEtaEtaEle[iele]) + 4.51575 * s9s25Ele[iele] -6.47578 * etaLatEle[iele];
+        }
+        if ( iptbin == 1 ) {  // high pt
+          fisher = 0.536351 -11.7401 * sqrt(covEtaEtaEle[iele]) + 3.61809 * s9s25Ele[iele] -9.3025 * etaLatEle[iele];
+        }
+      }
 
       int iclass = -1;
       int ifullclass = -1;
