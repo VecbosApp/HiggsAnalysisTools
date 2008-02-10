@@ -78,7 +78,7 @@ void SprDataFiller::fillEvent(int ievent, int signal) {
   
   if( ((float)ievent)/((float)_nentries) < 0.5 ) {
     
-    _trainFile << "#\t" << ievent << std::endl;
+    //    _trainFile << "#\t" << ievent << std::endl;
 
     std::vector< std::pair < std::string, float* > >::const_iterator dataItr;
     for ( dataItr=_data.begin(); dataItr!=_data.end(); ++dataItr ) {
