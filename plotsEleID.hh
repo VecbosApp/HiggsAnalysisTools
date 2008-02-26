@@ -13,9 +13,11 @@
 
 class plotsEleID : public HiggsBase {
  public:
-    plotsEleID(TTree *tree=0);
-    virtual ~plotsEleID();
-    void Loop();
+  plotsEleID(TTree *tree=0);
+  virtual ~plotsEleID();
+  void Loop();
+  void setWeight(char* rootfile, double theInfEB[100], double theSupEB[100], double theWeightEB[100], double theInfEE[100], double theSupEE[100], double theWeightEE[100], int eneBin);
+  double getWeight(double theInfEB[100], double theSupEB[100], double theWeightEB[100], double theInfEE[100], double theSupEE[100], double theWeightEE[100], int eneBin, double eneele, int etabin);
 
 private:
 
@@ -25,8 +27,11 @@ private:
   // sample
   char* category;
 
+  // hardcoded
+  bool toWeight;
+
   // output files
-  TFile *tfilePdfs, *tfileIso, *tfileEff;
+  TFile *tfilePdfs, *tfileIso, *tfileEff, *tfileEne;
 
   // histos
   // ECALsubdet: 0 = EB; 1 = EE
@@ -70,6 +75,7 @@ private:
   TH1F *phiLATUnsplitEle[2][2];
   TH1F *a20UnsplitEle[2][2];
   TH1F *a42UnsplitEle[2][2];
+  TH1F *eneUnsplitEle[2];  // [ecalsubdet]
   
   // Electrons class-splitted
   // histo[ecalsubdet][ptbin][class]
@@ -123,6 +129,16 @@ private:
   TH1F *H_Reco_eta_wogm,   *E_Reco_eta_wogm;
   TH1F *H_Gene_eta,        *E_Gene_eta;
 
+  // pt reweighting
+  int   eneBin;  
+  float eneMin,  eneMax;
+  double theEleWeightEB[75], theEleWeightEE[75];           //  75 = bins number 
+  double theEleInfEB[75],    theEleSupEB[75]; 
+  double theEleInfEE[75],    theEleSupEE[75]; 
+  double theZeeWeightEB[75], theZeeWeightEE[75];           //  75 = bins number 
+  double theZeeInfEB[75],    theZeeSupEB[75]; 
+  double theZeeInfEE[75],    theZeeSupEE[75]; 
+  
   // counters
   int ntotEve;
   int ntot, ntotEB, ntotEE;
