@@ -793,7 +793,7 @@ void plotsEleID::Loop() {
 	  etaLATHad      [iecal][iptbin] -> Fill ( etaLatEle[iele] );
 	  phiLATHad      [iecal][iptbin] -> Fill ( phiLatEle[iele] );
 	  a20Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
-	  a42Had         [iecal][iptbin] -> Fill ( a20Ele[iele] );
+	  a42Had         [iecal][iptbin] -> Fill ( a42Ele[iele] );
 	}
 
 	// isolation
@@ -880,7 +880,7 @@ void plotsEleID::Loop() {
 	  etaLATUnsplitEle      [iecal][iptbin] -> Fill ( etaLatEle[iele], theWeight );
 	  phiLATUnsplitEle      [iecal][iptbin] -> Fill ( phiLatEle[iele], theWeight );
 	  a20UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele], theWeight );
-	  a42UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele], theWeight );
+	  a42UnsplitEle         [iecal][iptbin] -> Fill ( a42Ele[iele], theWeight );
 
 	  dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtCaloEle[iele], theWeight );
 	  dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtVtxEle[iele], theWeight );
@@ -897,7 +897,7 @@ void plotsEleID::Loop() {
 	  etaLATClassEle      [iecal][iptbin][iclass] -> Fill ( etaLatEle[iele], theWeight );
 	  phiLATClassEle      [iecal][iptbin][iclass] -> Fill ( phiLatEle[iele], theWeight );
 	  a20ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele], theWeight );
-	  a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele], theWeight );
+	  a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a42Ele[iele], theWeight );
 
 	  dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtCaloEle[iele], theWeight );
 	  dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtVtxEle[iele], theWeight );
@@ -914,7 +914,7 @@ void plotsEleID::Loop() {
 	  etaLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( etaLatEle[iele], theWeight );
 	  phiLATFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( phiLatEle[iele], theWeight );
 	  a20FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele], theWeight );
-	  a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a20Ele[iele], theWeight );
+	  a42FullclassEle         [iecal][iptbin][ifullclass] -> Fill ( a42Ele[iele], theWeight );
 	}
       }
 
