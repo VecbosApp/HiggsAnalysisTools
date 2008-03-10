@@ -37,116 +37,116 @@ public :
    Bool_t          firedTrg[90];   //[nTrg]
    Bool_t          evtPresel;
    Int_t           nEle;
-   Int_t           chargeEle[3];   //[nEle]
-   Float_t         energyEle[3];   //[nEle]
-   Float_t         etEle[3];   //[nEle]
-   Float_t         momentumEle[3];   //[nEle]
-   Float_t         thetaEle[3];   //[nEle]
-   Float_t         etaEle[3];   //[nEle]
-   Float_t         phiEle[3];   //[nEle]
-   Float_t         pxEle[3];   //[nEle]
-   Float_t         pyEle[3];   //[nEle]
-   Float_t         pzEle[3];   //[nEle]
-   Float_t         vertexXEle[3];   //[nEle]
-   Float_t         vertexYEle[3];   //[nEle]
-   Float_t         vertexZEle[3];   //[nEle]
-   Float_t         massEle[3];   //[nEle]
-   Float_t         mtEle[3];   //[nEle]
-   Int_t           pdgIdEle[3];   //[nEle]
-   Int_t           nDauEle[3];   //[nEle]
-   Int_t           d1IndexEle[3];   //[nEle]
-   Int_t           d2IndexEle[3];   //[nEle]
-   Int_t           d1pdgIdEle[3];   //[nEle]
-   Int_t           d2pdgIdEle[3];   //[nEle]
-   Float_t         ecalEle[3];   //[nEle]
-   Int_t           nCluEle[3];   //[nEle]
-   Int_t           nCryEle[3];   //[nEle]
-   Float_t         e3x3Ele[3];   //[nEle]
-   Float_t         e5x5Ele[3];   //[nEle]
-   Float_t         eMaxEle[3];   //[nEle]
-   Float_t         latEle[3];   //[nEle]
-   Float_t         phiLatEle[3];   //[nEle]
-   Float_t         etaLatEle[3];   //[nEle]
-   Float_t         erawEle[3];   //[nEle]
-   Float_t         caloEtaEle[3];   //[nEle]
-   Float_t         caloPhiEle[3];   //[nEle]
-   Float_t         e2x2Ele[3];   //[nEle]
-   Float_t         e2ndEle[3];   //[nEle]
-   Float_t         s1s9Ele[3];   //[nEle]
-   Float_t         s9s25Ele[3];   //[nEle]
-   Float_t         covEtaEtaEle[3];   //[nEle]
-   Float_t         covEtaPhiEle[3];   //[nEle]
-   Float_t         covPhiPhiEle[3];   //[nEle]
-   Float_t         a20Ele[3];   //[nEle]
-   Float_t         a42Ele[3];   //[nEle]
-   Float_t         pxAtOuterEle[3];   //[nEle]
-   Float_t         pyAtOuterEle[3];   //[nEle]
-   Float_t         pzAtOuterEle[3];   //[nEle]
-   Float_t         xAtOuterEle[3];   //[nEle]
-   Float_t         yAtOuterEle[3];   //[nEle]
-   Float_t         zAtOuterEle[3];   //[nEle]
-   Float_t         pxAtInnerEle[3];   //[nEle]
-   Float_t         pyAtInnerEle[3];   //[nEle]
-   Float_t         pzAtInnerEle[3];   //[nEle]
-   Float_t         xAtInnerEle[3];   //[nEle]
-   Float_t         yAtInnerEle[3];   //[nEle]
-   Float_t         zAtInnerEle[3];   //[nEle]
-   Float_t         eleTrackNormalizedChi2Ele[3];   //[nEle]
-   Float_t         eleTrackDxyEle[3];   //[nEle]
-   Float_t         eleTrackD0Ele[3];   //[nEle]
-   Float_t         eleTrackDszEle[3];   //[nEle]
-   Float_t         eleTrackDzEle[3];   //[nEle]
-   Float_t         eleTrackDxyErrorEle[3];   //[nEle]
-   Float_t         eleTrackD0ErrorEle[3];   //[nEle]
-   Float_t         eleTrackDszErrorEle[3];   //[nEle]
-   Float_t         eleTrackDzErrorEle[3];   //[nEle]
-   Float_t         eleTrackValidHitsEle[3];   //[nEle]
-   Float_t         eleTrackLostHitsEle[3];   //[nEle]
-   Float_t         eleTrackVxEle[3];   //[nEle]
-   Float_t         eleTrackVyEle[3];   //[nEle]
-   Float_t         eleTrackVzEle[3];   //[nEle]
-   Float_t         eleFullCorrEEle[3];   //[nEle]
-   Float_t         eleCaloCorrEEle[3];   //[nEle]
-   Float_t         eleNxtalCorrEEle[3];   //[nEle]
-   Float_t         eleRawEEle[3];   //[nEle]
-   Float_t         eleTrackerPEle[3];   //[nEle]
-   Int_t           eleClassEle[3];   //[nEle]
-   Float_t         eleHoEEle[3];   //[nEle]
-   Float_t         eleCorrEoPEle[3];   //[nEle]
-   Float_t         eleNotCorrEoPEle[3];   //[nEle]
-   Float_t         eleCorrEoPoutEle[3];   //[nEle]
-   Float_t         eleNotCorrEoPoutEle[3];   //[nEle]
-   Float_t         eleDeltaEtaAtVtxEle[3];   //[nEle]
-   Float_t         eleDeltaPhiAtVtxEle[3];   //[nEle]
-   Float_t         eleDeltaEtaAtCaloEle[3];   //[nEle]
-   Float_t         eleDeltaPhiAtCaloEle[3];   //[nEle]
-   Float_t         eleTrackerIso_sumPtEle[3];   //[nEle]
-   Float_t         eleCaloIso_sumPtEle[3];   //[nEle]
-   Bool_t          eleIdCutBasedEle[3];   //[nEle]
-   Float_t         eleLikelihoodEle[3];   //[nEle]
-   Float_t         eleTipEle[3];   //[nEle]
+   Int_t           chargeEle[50];   //[nEle]
+   Float_t         energyEle[50];   //[nEle]
+   Float_t         etEle[50];   //[nEle]
+   Float_t         momentumEle[50];   //[nEle]
+   Float_t         thetaEle[50];   //[nEle]
+   Float_t         etaEle[50];   //[nEle]
+   Float_t         phiEle[50];   //[nEle]
+   Float_t         pxEle[50];   //[nEle]
+   Float_t         pyEle[50];   //[nEle]
+   Float_t         pzEle[50];   //[nEle]
+   Float_t         vertexXEle[50];   //[nEle]
+   Float_t         vertexYEle[50];   //[nEle]
+   Float_t         vertexZEle[50];   //[nEle]
+   Float_t         massEle[50];   //[nEle]
+   Float_t         mtEle[50];   //[nEle]
+   Int_t           pdgIdEle[50];   //[nEle]
+   Int_t           nDauEle[50];   //[nEle]
+   Int_t           d1IndexEle[50];   //[nEle]
+   Int_t           d2IndexEle[50];   //[nEle]
+   Int_t           d1pdgIdEle[50];   //[nEle]
+   Int_t           d2pdgIdEle[50];   //[nEle]
+   Float_t         ecalEle[50];   //[nEle]
+   Int_t           nCluEle[50];   //[nEle]
+   Int_t           nCryEle[50];   //[nEle]
+   Float_t         e3x3Ele[50];   //[nEle]
+   Float_t         e5x5Ele[50];   //[nEle]
+   Float_t         eMaxEle[50];   //[nEle]
+/*    Float_t         latEle[50];   //[nEle] */
+/*    Float_t         phiLatEle[50];   //[nEle] */
+/*    Float_t         etaLatEle[50];   //[nEle] */
+   Float_t         erawEle[50];   //[nEle]
+   Float_t         caloEtaEle[50];   //[nEle]
+   Float_t         caloPhiEle[50];   //[nEle]
+   Float_t         e2x2Ele[50];   //[nEle]
+   Float_t         e2ndEle[50];   //[nEle]
+   Float_t         s1s9Ele[50];   //[nEle]
+   Float_t         s9s25Ele[50];   //[nEle]
+   Float_t         covEtaEtaEle[50];   //[nEle]
+   Float_t         covEtaPhiEle[50];   //[nEle]
+   Float_t         covPhiPhiEle[50];   //[nEle]
+/*    Float_t         a20Ele[50];   //[nEle] */
+/*    Float_t         a42Ele[50];   //[nEle] */
+   Float_t         pxAtOuterEle[50];   //[nEle]
+   Float_t         pyAtOuterEle[50];   //[nEle]
+   Float_t         pzAtOuterEle[50];   //[nEle]
+   Float_t         xAtOuterEle[50];   //[nEle]
+   Float_t         yAtOuterEle[50];   //[nEle]
+   Float_t         zAtOuterEle[50];   //[nEle]
+   Float_t         pxAtInnerEle[50];   //[nEle]
+   Float_t         pyAtInnerEle[50];   //[nEle]
+   Float_t         pzAtInnerEle[50];   //[nEle]
+   Float_t         xAtInnerEle[50];   //[nEle]
+   Float_t         yAtInnerEle[50];   //[nEle]
+   Float_t         zAtInnerEle[50];   //[nEle]
+   Float_t         eleTrackNormalizedChi2Ele[50];   //[nEle]
+   Float_t         eleTrackDxyEle[50];   //[nEle]
+   Float_t         eleTrackD0Ele[50];   //[nEle]
+   Float_t         eleTrackDszEle[50];   //[nEle]
+   Float_t         eleTrackDzEle[50];   //[nEle]
+   Float_t         eleTrackDxyErrorEle[50];   //[nEle]
+   Float_t         eleTrackD0ErrorEle[50];   //[nEle]
+   Float_t         eleTrackDszErrorEle[50];   //[nEle]
+   Float_t         eleTrackDzErrorEle[50];   //[nEle]
+   Float_t         eleTrackValidHitsEle[50];   //[nEle]
+   Float_t         eleTrackLostHitsEle[50];   //[nEle]
+   Float_t         eleTrackVxEle[50];   //[nEle]
+   Float_t         eleTrackVyEle[50];   //[nEle]
+   Float_t         eleTrackVzEle[50];   //[nEle]
+   Float_t         eleFullCorrEEle[50];   //[nEle]
+   Float_t         eleCaloCorrEEle[50];   //[nEle]
+   Float_t         eleNxtalCorrEEle[50];   //[nEle]
+   Float_t         eleRawEEle[50];   //[nEle]
+   Float_t         eleTrackerPEle[50];   //[nEle]
+   Int_t           eleClassEle[50];   //[nEle]
+   Float_t         eleHoEEle[50];   //[nEle]
+   Float_t         eleCorrEoPEle[50];   //[nEle]
+   Float_t         eleNotCorrEoPEle[50];   //[nEle]
+   Float_t         eleCorrEoPoutEle[50];   //[nEle]
+   Float_t         eleNotCorrEoPoutEle[50];   //[nEle]
+   Float_t         eleDeltaEtaAtVtxEle[50];   //[nEle]
+   Float_t         eleDeltaPhiAtVtxEle[50];   //[nEle]
+   Float_t         eleDeltaEtaAtCaloEle[50];   //[nEle]
+   Float_t         eleDeltaPhiAtCaloEle[50];   //[nEle]
+   Float_t         eleTrackerIso_sumPtEle[50];   //[nEle]
+   Float_t         eleCaloIso_sumPtEle[50];   //[nEle]
+   Bool_t          eleIdCutBasedEle[50];   //[nEle]
+   Float_t         eleLikelihoodEle[50];   //[nEle]
+   Float_t         eleTipEle[50];   //[nEle]
    Int_t           nMuon;
-   Int_t           chargeMuon[1];   //[nMuon]
-   Float_t         energyMuon[1];   //[nMuon]
-   Float_t         etMuon[1];   //[nMuon]
-   Float_t         momentumMuon[1];   //[nMuon]
-   Float_t         thetaMuon[1];   //[nMuon]
-   Float_t         etaMuon[1];   //[nMuon]
-   Float_t         phiMuon[1];   //[nMuon]
-   Float_t         pxMuon[1];   //[nMuon]
-   Float_t         pyMuon[1];   //[nMuon]
-   Float_t         pzMuon[1];   //[nMuon]
-   Float_t         vertexXMuon[1];   //[nMuon]
-   Float_t         vertexYMuon[1];   //[nMuon]
-   Float_t         vertexZMuon[1];   //[nMuon]
-   Float_t         massMuon[1];   //[nMuon]
-   Float_t         mtMuon[1];   //[nMuon]
-   Int_t           pdgIdMuon[1];   //[nMuon]
-   Int_t           nDauMuon[1];   //[nMuon]
-   Int_t           d1IndexMuon[1];   //[nMuon]
-   Int_t           d2IndexMuon[1];   //[nMuon]
-   Int_t           d1pdgIdMuon[1];   //[nMuon]
-   Int_t           d2pdgIdMuon[1];   //[nMuon]
+   Int_t           chargeMuon[50];   //[nMuon]
+   Float_t         energyMuon[50];   //[nMuon]
+   Float_t         etMuon[50];   //[nMuon]
+   Float_t         momentumMuon[50];   //[nMuon]
+   Float_t         thetaMuon[50];   //[nMuon]
+   Float_t         etaMuon[50];   //[nMuon]
+   Float_t         phiMuon[50];   //[nMuon]
+   Float_t         pxMuon[50];   //[nMuon]
+   Float_t         pyMuon[50];   //[nMuon]
+   Float_t         pzMuon[50];   //[nMuon]
+   Float_t         vertexXMuon[50];   //[nMuon]
+   Float_t         vertexYMuon[50];   //[nMuon]
+   Float_t         vertexZMuon[50];   //[nMuon]
+   Float_t         massMuon[50];   //[nMuon]
+   Float_t         mtMuon[50];   //[nMuon]
+   Int_t           pdgIdMuon[50];   //[nMuon]
+   Int_t           nDauMuon[50];   //[nMuon]
+   Int_t           d1IndexMuon[50];   //[nMuon]
+   Int_t           d2IndexMuon[50];   //[nMuon]
+   Int_t           d1pdgIdMuon[50];   //[nMuon]
+   Int_t           d2pdgIdMuon[50];   //[nMuon]
    Int_t           nMet;
    Int_t           chargeMet[1];   //[nMet]
    Float_t         energyMet[1];   //[nMet]
@@ -283,9 +283,9 @@ public :
    TBranch        *b_e3x3Ele;   //!
    TBranch        *b_e5x5Ele;   //!
    TBranch        *b_eMaxEle;   //!
-   TBranch        *b_latEle;   //!
-   TBranch        *b_phiLatEle;   //!
-   TBranch        *b_etaLatEle;   //!
+/*    TBranch        *b_latEle;   //! */
+/*    TBranch        *b_phiLatEle;   //! */
+/*    TBranch        *b_etaLatEle;   //! */
    TBranch        *b_erawEle;   //!
    TBranch        *b_caloEtaEle;   //!
    TBranch        *b_caloPhiEle;   //!
@@ -296,8 +296,8 @@ public :
    TBranch        *b_covEtaEtaEle;   //!
    TBranch        *b_covEtaPhiEle;   //!
    TBranch        *b_covPhiPhiEle;   //!
-   TBranch        *b_a20Ele;   //!
-   TBranch        *b_a42Ele;   //!
+/*    TBranch        *b_a20Ele;   //! */
+/*    TBranch        *b_a42Ele;   //! */
    TBranch        *b_pxAtOuterEle;   //!
    TBranch        *b_pyAtOuterEle;   //!
    TBranch        *b_pzAtOuterEle;   //!
@@ -573,9 +573,9 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("e3x3Ele", e3x3Ele, &b_e3x3Ele);
    fChain->SetBranchAddress("e5x5Ele", e5x5Ele, &b_e5x5Ele);
    fChain->SetBranchAddress("eMaxEle", eMaxEle, &b_eMaxEle);
-   fChain->SetBranchAddress("latEle", latEle, &b_latEle);
-   fChain->SetBranchAddress("phiLatEle", phiLatEle, &b_phiLatEle);
-   fChain->SetBranchAddress("etaLatEle", etaLatEle, &b_etaLatEle);
+/*    fChain->SetBranchAddress("latEle", latEle, &b_latEle); */
+/*    fChain->SetBranchAddress("phiLatEle", phiLatEle, &b_phiLatEle); */
+/*    fChain->SetBranchAddress("etaLatEle", etaLatEle, &b_etaLatEle); */
    fChain->SetBranchAddress("erawEle", erawEle, &b_erawEle);
    fChain->SetBranchAddress("caloEtaEle", caloEtaEle, &b_caloEtaEle);
    fChain->SetBranchAddress("caloPhiEle", caloPhiEle, &b_caloPhiEle);
@@ -586,8 +586,8 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("covEtaEtaEle", covEtaEtaEle, &b_covEtaEtaEle);
    fChain->SetBranchAddress("covEtaPhiEle", covEtaPhiEle, &b_covEtaPhiEle);
    fChain->SetBranchAddress("covPhiPhiEle", covPhiPhiEle, &b_covPhiPhiEle);
-   fChain->SetBranchAddress("a20Ele", a20Ele, &b_a20Ele);
-   fChain->SetBranchAddress("a42Ele", a42Ele, &b_a42Ele);
+/*    fChain->SetBranchAddress("a20Ele", a20Ele, &b_a20Ele); */
+/*    fChain->SetBranchAddress("a42Ele", a42Ele, &b_a42Ele); */
    fChain->SetBranchAddress("pxAtOuterEle", pxAtOuterEle, &b_pxAtOuterEle);
    fChain->SetBranchAddress("pyAtOuterEle", pyAtOuterEle, &b_pyAtOuterEle);
    fChain->SetBranchAddress("pzAtOuterEle", pzAtOuterEle, &b_pzAtOuterEle);
