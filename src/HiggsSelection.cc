@@ -43,32 +43,29 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _selection = new Selection(fileCuts,fileSwitches);
   _selection->addSwitch("MCtruth");
   _selection->addSwitch("trigger");
-  _selection->addSwitch("presel");
+  _selection->addSwitch("preselection");
   _selection->addSwitch("jetVeto");
   _selection->addSwitch("classDepEleId");
   _selection->addSwitch("apply_kFactor");
-  _selection->addCut("nRecoEle");
-  _selection->addCut("etaEleAcc");
-  _selection->addCut("ptEleAcc");
+  _selection->addCut("nRecoLeptons");
+  _selection->addCut("etaElectronAcc");
+  _selection->addCut("ptElectronAcc");
+  _selection->addCut("etaMuonAcc");
+  _selection->addCut("ptMuonAcc");
+  _selection->addCut("HardLeptonThreshold");
+  _selection->addCut("METpreselection");
+  _selection->addCut("dileptonInvMassMin");
   _selection->addCut("trackerPtSum");
   _selection->addCut("hcalPtSum");
-  _selection->addCut("etaPresJetAcc");
-  _selection->addCut("etPresJetAcc");
-  _selection->addCut("maxPtElePres");
-  _selection->addCut("minPtElePres");
-  _selection->addCut("METPres");
-  _selection->addCut("eleInvMassPres");
   _selection->addCut("jetConeWidth");
   _selection->addCut("etaJetAcc");
   _selection->addCut("etJetLowAcc");
   _selection->addCut("etJetHighAcc");
   _selection->addCut("alphaJet");
-  _selection->addCut("maxPtEle");
-  _selection->addCut("minPtEle");
-  _selection->addCut("detaLeptons");
   _selection->addCut("MET");
   _selection->addCut("deltaPhi");
   _selection->addCut("eleInvMass");
+  _selection->addCut("detaLeptons");
 
   Selection *_goldenSelectionEB = new Selection("config/higgs/electronIDGoldenCutsEB.txt","config/higgs/electronIDSwitches.txt");
   Selection *_bigbremSelectionEB = new Selection("config/higgs/electronIDBigBremCutsEB.txt","config/higgs/electronIDSwitches.txt");
@@ -111,18 +108,19 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _counter.AddVar("event");
   _counter.AddVar("MCtruth");
   _counter.AddVar("trigger");
-  _counter.AddVar("nRecoEle");
+  _counter.AddVar("nRecoLeptons");
   _counter.AddVar("twoGoodRec");
+  _counter.AddVar("HardLeptonThreshold");
+  _counter.AddVar("METpreselection");
+  _counter.AddVar("dileptonInvMassMin");
+  _counter.AddVar("preselection");
   _counter.AddVar("eleID");
   _counter.AddVar("trackerIsol");
   _counter.AddVar("hcalIsol");
-  _counter.AddVar("presel");
   _counter.AddVar("jetVeto");
   _counter.AddVar("MET");
   _counter.AddVar("deltaPhi");
   _counter.AddVar("eleInvMass");
-  _counter.AddVar("maxPtEle");
-  _counter.AddVar("minPtEle");
   _counter.AddVar("detaLeptons");
   _counter.AddVar("final");
   
@@ -139,14 +137,11 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _eleCounter.AddVar("Likelihood");
   _eleCounter.AddVar("finalEleID");
 
-
-  // the kinematic vectors
-  _p3Ele = new TVector3(0.,0.,0.);
-  _p3Pos = new TVector3(0.,0.,0.);
-  _p3Met = new TVector3(0.,0.,0.);
-  
-  _p4Ele = new TLorentzVector(0.,0.,0.,0.);
-  _p4Pos = new TLorentzVector(0.,0.,0.,0.);
+  m_p4ElectronPlus = new TLorentzVector(0.,0.,0.,0.);
+  m_p4ElectronMinus = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MuonPlus = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MuonMinus = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MET = new TLorentzVector(0.,0.,0.,0.);
 
   // the Monitoring Histograms
    _monitorGenerator = new Monitor(0);
@@ -154,6 +149,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
    _monitorEventAfterReco = new Monitor(0);
    _monitorMet = new Monitor(&nMet);
    _bestElectrons = new std::vector<int>;
+   _bestMuons = new std::vector<int>;
    _monitorElectrons = new Monitor(&nEle,_bestElectrons);
    _bestJets = new std::vector<int>;
    _excludedJets = new std::vector<int>;
@@ -165,16 +161,18 @@ HiggsSelection::HiggsSelection(TTree *tree)
 }
 
 HiggsSelection::~HiggsSelection(){
-  delete _p3Ele;
-  delete _p3Pos;
-  delete _p3Met;
-  delete _p4Ele;
-  delete _p4Pos;
+
+  delete m_p4ElectronPlus;
+  delete m_p4ElectronMinus;
+  delete m_p4MuonPlus;
+  delete m_p4MuonMinus;
+  delete m_p4MET;
   delete _monitorGenerator;
   delete _monitorEventAfterSelection;
   delete _monitorEventAfterReco;
   delete _monitorMet;
   delete _bestElectrons;
+  delete _bestMuons;
   delete _monitorElectrons;
   delete _bestJets;
   delete _excludedJets;
@@ -355,7 +353,7 @@ void HiggsSelection::Loop() {
   myOutTree = new RedHiggsTree(reducedTreeName.c_str());
   // myOutTree = new RedHiggsTree("/cmsrm/pc18/crovelli/tree.root");
 
-  float met, deltaPhi, transvMass, eleInvMass, maxPtEle, minPtEle, detaLeptons;
+  float met, deltaPhi, transvMass, dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
 
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -386,74 +384,118 @@ void HiggsSelection::Loop() {
       _counter.IncrVar("trigger",weight); 
 
 
-      if(_selection->getSwitch("nRecoEle") && 
-	 !_selection->passCut("nRecoEle",nEle)) continue;   
-      _counter.IncrVar("nRecoEle",weight);
-      int theEle(getBestLeptonPair().first), thePos(getBestLeptonPair().second);
+      if ( _selection->getSwitch("nRecoLeptons") && 
+	   ( !_selection->passCut("nRecoLeptons", nEle) && 
+	     !_selection->passCut("nRecoLeptons", nMuon) ) 
+	   ) continue;   
+      _counter.IncrVar("nRecoLeptons",weight);
 
+      // get the best electrons, best muons
+      std::pair<int,int> theElectrons = getBestElectronPair();
+      int theElectron(theElectrons.first), thePositron(theElectrons.second);
 
-      if(theEle<0 || thePos<0) continue; 
+      std::pair<int,int> theMuons = getBestMuonPair();
+      int theMuonPlus(theMuons.first), theMuonMinus(theMuons.second);
+
+      std::cout << "processing jevt " << jentry << std::endl;
+      std::cout << "DEBUG: " << "theElectron = " << theElectron << " thePositron = " << thePositron
+		<< "\ttheMuonPlus = " << theMuonPlus << " theMuonMinus = " << theMuonMinus << std::endl;
+      
+
+      m_channel[ee] = false;
+      m_channel[mm] = false;
+      m_channel[em] = false;
+      if ( theElectron > -1 && thePositron > -1 ) m_channel[ee] = true;
+      if ( theMuonPlus > -1 && theMuonMinus > -1 ) m_channel[mm] = true;
+      if ( ( theElectron > -1 && theMuonPlus > -1 ) ||
+	   ( thePositron > -1 && theMuonMinus > -1 ) ) m_channel[em] = true;
+
+      std::cout << "\tDEBUG: " << "m_channel[ee] = " << m_channel[ee]
+		<< "m_channel[mm] = " << m_channel[mm]
+		<< "m_channel[em] = " << m_channel[em] << std::endl;
+	
+      if( !m_channel[ee] && !m_channel[mm] && !m_channel[em]) continue; 
       _counter.IncrVar("twoGoodRec",weight);
-      setKinematics(theEle,thePos);
-      addVariables();
+
+      float hardestElectronPt = TMath::Max(etMuon[theMuonPlus],etMuon[theMuonMinus]);
+      float slowestElectronPt = TMath::Min(etMuon[theMuonPlus],etMuon[theMuonMinus]);
+      float hardestMuonPt = TMath::Max(etMuon[theMuonPlus],etMuon[theMuonMinus]);
+      float slowestMuonPt = TMath::Min(etMuon[theMuonPlus],etMuon[theMuonMinus]);
+
+      if ( _selection->getSwitch("HardLeptonThreshold") &&
+	   (!_selection->passCut("HardLeptonThreshold", hardestElectronPt) && 
+	    !_selection->passCut("HardLeptonThreshold", hardestMuonPt) )
+	   ) continue;
+      _counter.IncrVar("HardLeptonThreshold",weight);
+
+      setKinematics( );
       estimateJetMatch(0.0);
       _monitorJets->Fill(weight);
       _monitorEventAfterReco->Fill(weight);
 
 
-      if(!isEleID(theEle) || !isEleID(thePos)) continue; 
+      if ( _selection->getSwitch("METpreselection") && 
+	   !_selection->passCut("METpreselection", etMet[0] ) ) continue;
+      _counter.IncrVar("METpreselection",weight);
+
+
+      if ( _selection->getSwitch("dileptonInvMassMin") && 
+	   (!_selection->passCut("dileptonInvMassMin", m_mll[ee]) &&
+	    !_selection->passCut("dileptonInvMassMin", m_mll[mm]) &&
+	    !_selection->passCut("dileptonInvMassMin", m_mll[em]) )
+	   ) continue;
+      _counter.IncrVar("dileptonInvMassMin",weight);
+
+
+      // the cut is not really applied, should be reproduced by previous ones
+      if( _selection->getSwitch("preselection") && evtPresel ) { 
+	_counter.IncrVar("preselection",weight);
+      }
+
+
+      // from here: add muons, eleID with: 1) egamma cuts 2) custom cuts 3) lik... etc
+      if (theElectron < 0 || thePositron < 0 ) continue; // FIXME
+      if(!isEleID(theElectron) || !isEleID(thePositron)) continue; 
       _counter.IncrVar("eleID",weight);
 
 
+
       if(_selection->getSwitch("trackerPtSum") && 
-	 ( !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[theEle]) || 
-	   !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[thePos]) ) ) continue; 
+	 ( !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[theElectron]) || 
+	   !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[thePositron]) ) ) continue; 
       _counter.IncrVar("trackerIsol",weight);
 
 
+
       if(_selection->getSwitch("hcalPtSum") &&
-	 ( !_selection->passCut("hcalPtSum",eleCaloIso_sumPtEle[theEle]) || 
-	   !_selection->passCut("hcalPtSum",eleCaloIso_sumPtEle[thePos]) ) ) continue; 
+	 ( !_selection->passCut("hcalPtSum",eleCaloIso_sumPtEle[theElectron]) || 
+	   !_selection->passCut("hcalPtSum",eleCaloIso_sumPtEle[thePositron]) ) ) continue; 
       _counter.IncrVar("hcalIsol",weight);
 
 
-      met=etMet[0];
-      eleInvMass = (*_p4Ele+*_p4Pos).M();
-      minPtEle = _minPt;
-      maxPtEle = _maxPt;
-      if(_selection->getSwitch("presel") && 
-	 ( preselJetVeto() ||
-	   !_selection->passCut("maxPtElePres",maxPtEle) ||
-	   !_selection->passCut("minPtElePres",minPtEle) ||
-	   !_selection->passCut("METPres",met) ||
-	   !_selection->passCut("eleInvMassPres",eleInvMass)
-	   )
-	 ) continue; 
-      _counter.IncrVar("presel",weight);
 
       if(_selection->getSwitch("jetVeto") && jetVeto()) continue; 
       _counter.IncrVar("jetVeto",weight);
+
+
       
       if(_selection->getSwitch("MET") && !_selection->passCut("MET",met)) continue; 
       _counter.IncrVar("MET",weight);
 
-      deltaPhi = fabs(180./TMath::Pi()*_p3Ele->DeltaPhi(*_p3Pos));
-      transvMass = _transvMass[0];
+
+
       if(_selection->getSwitch("deltaPhi") && 
-	 !_selection->passCut("deltaPhi",deltaPhi) ) continue; 
+	 !_selection->passCut("deltaPhi", m_deltaPhi[ee]) ) continue; 
       _counter.IncrVar("deltaPhi",weight);
 
+
+
       if(_selection->getSwitch("eleInvMass") && 
-	 !_selection->passCut("eleInvMass",eleInvMass)) continue; 
+	 !_selection->passCut("eleInvMass", m_mll[ee])) continue; 
       _counter.IncrVar("eleInvMass",weight);
 
-      if(_selection->getSwitch("maxPtEle") && !_selection->passCut("maxPtEle",maxPtEle)) continue; 
-      _counter.IncrVar("maxPtEle",weight);
 
-      if(_selection->getSwitch("minPtEle") && !_selection->passCut("minPtEle",minPtEle)) continue; 
-      _counter.IncrVar("minPtEle",weight);
-
-      detaLeptons = etaEle[theEle]-etaEle[thePos];
+      detaLeptons = etaEle[theElectron]-etaEle[thePositron];
       if(_selection->getSwitch("detaLeptons") && 
 	 !_selection->passCut("detaLeptons",detaLeptons) ) continue; 
       _counter.IncrVar("detaLeptons",weight);
@@ -465,7 +507,8 @@ void HiggsSelection::Loop() {
       _monitorGenJets->Fill(weight);
 
       // dumping the reco variables in a tree - after all the cuts
-      myOutTree -> fillAll(met, deltaPhi, transvMass, eleInvMass, maxPtEle, minPtEle, detaLeptons);
+      
+      myOutTree -> fillAll(etMet[0], m_deltaPhi[ee], m_transvMass[ee], m_mll[ee], hardestElectronPt, slowestElectronPt, detaLeptons);
       myOutTree -> store();
 
   }
@@ -503,18 +546,19 @@ void HiggsSelection::displayEfficiencies() {
   _counter.Draw();
   _counter.Draw("MCtruth","event");
   _counter.Draw("trigger","MCtruth");
-  _counter.Draw("nRecoEle","trigger");
-  _counter.Draw("twoGoodRec","nRecoEle");
+  _counter.Draw("nRecoLeptons","trigger");
+  _counter.Draw("twoGoodRec","nRecoLeptons");
+  _counter.Draw("HardLeptonThreshold","twoGoodRec");
+  _counter.Draw("METpreselection","HardLeptonThreshold");
+  _counter.Draw("dileptonInvMassMin","METpreselection");
+  _counter.Draw("preselection","dileptonInvMassMin");
   _counter.Draw("eleID","twoGoodRec");
   _counter.Draw("trackerIsol","eleID");
   _counter.Draw("hcalIsol","trackerIsol");
-  _counter.Draw("presel","hcalIsol");
   _counter.Draw("jetVeto","presel");
   _counter.Draw("MET","jetVeto");
   _counter.Draw("deltaPhi","MET");
   _counter.Draw("eleInvMass","deltaPhi");
-  _counter.Draw("maxPtEle","eleInvMass");
-  _counter.Draw("minPtEle","maxPtEle");
   _counter.Draw("detaLeptons","minPtEle");
   _counter.Draw("final","MCtruth");
 
@@ -532,24 +576,44 @@ void HiggsSelection::displayEfficiencies() {
 
 }
 
-std::pair<int,int> HiggsSelection::getBestLeptonPair() {
-  int theEle=-1;
-  int thePos=-1;
-  float maxPtEle=-1000.;
-  float maxPtPos=-1000.;
+std::pair<int,int> HiggsSelection::getBestElectronPair() {
+  int theLep1=-1;
+  int theLep2=-1;
+  float maxPtLep1=-1000.;
+  float maxPtLep2=-1000.;
   std::vector<int> goodRecoLeptons;
   for(int i=0;i<nEle;i++) {
-    if(_selection->getSwitch("etaEleAcc") && !_selection->passCut("etaEleAcc",etaEle[i]) ) continue;
-    TVector3 pEle(pxEle[i],pyEle[i],pzEle[i]);
-    float thisPt=pEle.Pt();
-    if(_selection->getSwitch("ptEleAcc") && !_selection->passCut("ptEleAcc",thisPt) ) continue;
+    if(_selection->getSwitch("etaElectronAcc") && !_selection->passCut("etaElectronAcc",etaEle[i]) ) continue;
+    TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
+    float thisPt=pLepton.Pt();
+    if(_selection->getSwitch("ptElectronAcc") && !_selection->passCut("ptElectronAcc",thisPt) ) continue;
     float thisCharge = chargeEle[i];
-    if (thisCharge > 0 && thisPt> maxPtPos){ maxPtPos = thisPt; thePos = i; }
-    if (thisCharge < 0 && thisPt> maxPtEle){ maxPtEle = thisPt; theEle = i; }
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
   }
   _bestElectrons->clear();
-  _bestElectrons->push_back(theEle);  _bestElectrons->push_back(thePos); 
-  return make_pair(theEle,thePos);
+  _bestElectrons->push_back(theLep1);  _bestElectrons->push_back(theLep2); 
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsSelection::getBestMuonPair() {
+  int theLep1=-1;
+  int theLep2=-1;
+  float maxPtLep1=-1000.;
+  float maxPtLep2=-1000.;
+  std::vector<int> goodRecoLeptons;
+  for(int i=0;i<nMuon;i++) {
+    if(_selection->getSwitch("etaMuonAcc") && !_selection->passCut("etaMuonAcc",etaMuon[i]) ) continue;
+    TVector3 pLepton(pxMuon[i],pyMuon[i],pzMuon[i]);
+    float thisPt=pLepton.Pt();
+    if(_selection->getSwitch("ptMuonAcc") && !_selection->passCut("ptMuonAcc",thisPt) ) continue;
+    float thisCharge = chargeMuon[i];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
+  }
+  _bestMuons->clear();
+  _bestMuons->push_back(theLep1);  _bestMuons->push_back(theLep2); 
+  return make_pair(theLep1,theLep2);
 }
 
 bool HiggsSelection::isEleID(int eleIndex) {
@@ -589,38 +653,119 @@ bool HiggsSelection::isEleID(int eleIndex) {
 
 
 
-void HiggsSelection::addVariables() {
+void HiggsSelection::setKinematics( ) {
 
+  int theElectronPlus = (*_bestElectrons)[0], theElectronMinus = (*_bestElectrons)[1];
+  int theMuonPlus = (*_bestMuons)[0], theMuonMinus = (*_bestMuons)[1];
 
-  // --- Variables for electrons ---
-  _deltaPhi[0]=fabs(180./TMath::Pi()* _p3Ele->DeltaPhi(*_p3Pos));
-  _mll[0]=(*_p4Ele+*_p4Pos).M();
-  for(int i=0;i<nEle;i++) {
-    _eOverP[i]=ecalEle[i]/energyEle[i];
+  // lepton four-vectors
+  m_p4ElectronMinus->SetXYZT(pxEle[theElectronMinus],pyEle[theElectronMinus],pzEle[theElectronMinus],energyEle[theElectronMinus]);
+  m_p4ElectronPlus->SetXYZT(pxEle[theElectronPlus],pyEle[theElectronPlus],pzEle[theElectronPlus],energyEle[theElectronPlus]);
+
+  m_p4MuonMinus->SetXYZT(pxEle[theMuonMinus],pyEle[theMuonMinus],pzEle[theMuonMinus],energyEle[theMuonMinus]);
+  m_p4MuonPlus->SetXYZT(pxEle[theMuonPlus],pyEle[theMuonPlus],pzEle[theMuonPlus],energyEle[theMuonPlus]);
+
+  // MET
+  m_p4MET->SetXYZT(pxMet[0],pyMet[0],pzMet[0],energyMet[0]);
+
+  // compute delta Phi in degrees, di-lepton invariant mass, transverse mass
+  TVector3 dilepPt;
+  if ( m_channel[ee] ) {
+
+    m_deltaPhi[ee] = fabs( 180./TMath::Pi() * 
+			   m_p4ElectronMinus->Vect().DeltaPhi(m_p4ElectronPlus->Vect()) );
+    m_mll[ee] = (*m_p4ElectronMinus + *m_p4ElectronPlus).M();
+    dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4ElectronPlus->Vect().X(),
+		    m_p4ElectronMinus->Vect().Y()+m_p4ElectronPlus->Vect().Y(),
+		    0.0 );
+    m_transvMass[ee]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+
+  }
+  else {
+
+    m_deltaPhi[ee] = -1.;
+    m_mll[ee] = -1.;
+    m_transvMass[ee] = -1.;
+
   }
 
-  _highestPt[0]=_maxPt;
-  _lowestPt[0]=_minPt;
-  _nEle[0]=(float)nEle;
+  if ( m_channel[mm] ) {
 
-  // now find the electrons inside the jets to get alpha
-  int ieleRecoAsJet=0;
-  for(int j=0;j<nJet;j++) {
-    TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
-    if(_selection->passCut("jetConeWidth",(p3Jet.DeltaR(*_p3Pos))) ||
-       _selection->passCut("jetConeWidth",(p3Jet.DeltaR(*_p3Ele))) ) {
-      _alphaEle[ieleRecoAsJet]=alphaJet[j];
-      _emFracEle[ieleRecoAsJet]=emFracJet[j];
-      _hadFracEle[ieleRecoAsJet]=hadFracJet[j];
-      ieleRecoAsJet++;
+    m_deltaPhi[mm] = fabs( 180./TMath::Pi() * 
+			   m_p4MuonMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()) );
+    m_mll[mm] = (*m_p4MuonMinus + *m_p4MuonPlus).M();
+    dilepPt.SetXYZ( m_p4MuonMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
+		    m_p4MuonMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
+		    0.0 );
+    m_transvMass[mm]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+
+  }
+  else { 
+
+    m_deltaPhi[mm] = -1.;
+    m_mll[mm] = -1.;
+    m_transvMass[mm] = -1.;
+
+  }
+
+  if ( m_channel[em] ) {
+    float deltaPhiEPlusMuMinus = -1.0;
+    float deltaPhiEMinusMuPlus = -1.0;
+    if ( theElectronPlus > -1 && theMuonMinus > -1 ) {
+
+      deltaPhiEPlusMuMinus = fabs( 180./TMath::Pi() *
+				   m_p4ElectronPlus->Vect().DeltaPhi(m_p4MuonMinus->Vect()) );
+
+      m_deltaPhi[em] = deltaPhiEPlusMuMinus;
+
+      dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
+		      m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
+		      0.0 );
+      m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+
+    }
+    if ( theElectronMinus > -1 && theMuonPlus > -1 ) {
+
+      deltaPhiEMinusMuPlus = fabs( 180./TMath::Pi() *
+				   m_p4ElectronMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()) );
+
+      m_deltaPhi[em] = deltaPhiEMinusMuPlus;
+
+      dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
+		      m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
+		      0.0 );
+      m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+
+    }
+    if ( theElectronPlus > -1 && theMuonMinus > -1 &&
+	 theElectronMinus > -1 && theMuonPlus > -1) {
+      
+      if ( deltaPhiEPlusMuMinus < deltaPhiEMinusMuPlus ) {
+	m_deltaPhi[em] = deltaPhiEPlusMuMinus;
+	dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
+			m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
+			0.0 );
+	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+      }
+      else {
+	m_deltaPhi[em] = deltaPhiEMinusMuPlus;
+	dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
+			m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
+			0.0 );
+	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+      }
+
     }
   }
 
+  else {
 
-  TVector3 dilepPt(_p3Ele->X()+_p3Pos->X(),_p3Ele->Y()+_p3Pos->Y());
-  _transvMass[0]=sqrt(2*dilepPt.Mag()*_p3Met->Mag()*(1-cos(dilepPt.Angle(*_p3Met)) ) );
+    m_deltaPhi[em] = -1.;
+    m_transvMass[em] = -1.;
 
+  }
 
+  m_mll[em] = 50.; // const value inside the interval, always accepted
 
 
   // --- Higgs and electron generator level ---
@@ -636,45 +781,11 @@ void HiggsSelection::addVariables() {
   }
 
 
-
-  // --- variables for jets ---
-  _nJet[0]=(float)nJet;
-
-  int theHighestPtJet=0;
-  float maxJetPt=-100;
-  for(int i=0;i<nJet;i++) {
-    TVector3 p3GenJet(pxGenJet[i],pyGenJet[i],pzGenJet[i]);
-    if(etGenJet[i]>maxJetPt) {
-      maxJetPt=etGenJet[i];
-      theHighestPtJet=i;
-    }
-  }
-
-  _bestGenJets->clear();
-  _bestGenJets->push_back(theHighestPtJet);
-  _nGenJet[0]=(float)nGenJet;
-
-
-}
-
-void HiggsSelection::setKinematics(int theEle, int thePos) {
-  // three-vectors
-  _p3Ele->SetXYZ(pxEle[theEle],pyEle[theEle],pzEle[theEle]);
-  _p3Pos->SetXYZ(pxEle[thePos],pyEle[thePos],pzEle[thePos]);
-  _p3Met->SetXYZ(pxMet[0],pyMet[0],pzMet[0]);
-
-  // four-vectors
-  _p4Ele->SetXYZT(pxEle[theEle],pyEle[theEle],pzEle[theEle],energyEle[theEle]);
-  _p4Pos->SetXYZT(pxEle[thePos],pyEle[thePos],pzEle[thePos],energyEle[thePos]);
-
-  _maxPt=TMath::Max(_p3Ele->Pt(),_p3Pos->Pt());
-  _minPt=TMath::Min(_p3Ele->Pt(),_p3Pos->Pt());
-
 }
 
 bool HiggsSelection::jetVeto() {
   // first check that kinematics has been set
-  assert(_p3Ele->Mag() && _p3Pos->Mag());
+  assert(m_p4ElectronPlus->Vect().Mag() && m_p4ElectronMinus->Vect().Mag());
   bool foundJet=false;
   float maxPtJet=0.;
   for(int j=0;j<nJet;j++){
@@ -682,8 +793,8 @@ bool HiggsSelection::jetVeto() {
     // check if the electron or the positron falls into the jet
     // (the electron IS a jet)
     std::vector<float> deltaR;
-    deltaR.push_back(p3Jet.DeltaR(*_p3Ele));
-    deltaR.push_back(p3Jet.DeltaR(*_p3Pos));
+    deltaR.push_back( p3Jet.DeltaR(m_p4ElectronMinus->Vect()) );
+    deltaR.push_back( p3Jet.DeltaR(m_p4ElectronPlus->Vect()) );
     if(_selection->getSwitch("jetConeWidth") && _selection->passCut("jetConeWidth",deltaR[0])) continue;
     if(_selection->getSwitch("jetConeWidth") && _selection->passCut("jetConeWidth",deltaR[1])) continue;
 
@@ -703,14 +814,14 @@ bool HiggsSelection::jetVeto() {
 
 bool HiggsSelection::preselJetVeto() {
   // first check that kinematics has been set
-  assert(_p3Ele->Mag() && _p3Pos->Mag());
+  assert(m_p4ElectronPlus->Vect().Mag() && m_p4ElectronMinus->Vect().Mag());
   int numJet=0;
   bool found2Jet=false;
   for(int j=0;j<nJet;j++){
     TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
     std::vector<float> deltaR;
-    deltaR.push_back(p3Jet.DeltaR(*_p3Ele));
-    deltaR.push_back(p3Jet.DeltaR(*_p3Pos));
+    deltaR.push_back(p3Jet.DeltaR( m_p4ElectronMinus->Vect()) );
+    deltaR.push_back(p3Jet.DeltaR( m_p4ElectronPlus->Vect()) );
     if(_selection->getSwitch("jetConeWidth") && _selection->passCut("jetConeWidth",deltaR[0])) continue;
     if(_selection->getSwitch("jetConeWidth") && _selection->passCut("jetConeWidth",deltaR[1])) continue;
     
@@ -724,11 +835,12 @@ bool HiggsSelection::preselJetVeto() {
 }
 
 float HiggsSelection::Fisher(int eleIndex) {
-  float fisher;
-  if(eleClassEle[eleIndex]<100)
-    fisher = 42.0238-3.38943*s9s25Ele[eleIndex]-794.092*sqrt(covEtaEtaEle[eleIndex])-15.3449*latEle[eleIndex]-31.1032*a20Ele[eleIndex];
-  else
-    fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];
+  float fisher=0;
+  // CMSSW_1_3_1 coefficients, obsolete!
+//   if(eleClassEle[eleIndex]<100)
+//     fisher = 42.0238-3.38943*s9s25Ele[eleIndex]-794.092*sqrt(covEtaEtaEle[eleIndex])-15.3449*latEle[eleIndex]-31.1032*a20Ele[eleIndex];
+//   else
+//     fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];
   return fisher;
 }
 
@@ -741,22 +853,22 @@ void HiggsSelection::bookHistos() {
 
   _monitorGenJets->book1D("et","generated jet tranverse energy (GeV)",etGenJet,50,0,300,"All+Fake+Best");
 
-  // Event quantities
-  _monitorEventAfterReco->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
-  _monitorEventAfterReco->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
-  _monitorEventAfterReco->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
-  _monitorEventAfterReco->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,165.);
-  _monitorEventAfterReco->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
-  _monitorEventAfterReco->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
-  _monitorEventAfterReco->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
+  // Event quantities - FIXME
+//   _monitorEventAfterReco->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
+//   _monitorEventAfterReco->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
+//   _monitorEventAfterReco->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
+//   _monitorEventAfterReco->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,165.);
+//   _monitorEventAfterReco->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
+//   _monitorEventAfterReco->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
+//   _monitorEventAfterReco->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
 
-  _monitorEventAfterSelection->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
-  _monitorEventAfterSelection->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
-  _monitorEventAfterSelection->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
-  _monitorEventAfterSelection->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,50.);
-  _monitorEventAfterSelection->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
-  _monitorEventAfterSelection->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
-  _monitorEventAfterSelection->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
+//   _monitorEventAfterSelection->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
+//   _monitorEventAfterSelection->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
+//   _monitorEventAfterSelection->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
+//   _monitorEventAfterSelection->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,50.);
+//   _monitorEventAfterSelection->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
+//   _monitorEventAfterSelection->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
+//   _monitorEventAfterSelection->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
 
   // Met quantities
   _monitorMet->book1D("metEt","Missing trensverse energy (GeV)",etMet,50,0,150,"All");
@@ -777,11 +889,6 @@ void HiggsSelection::bookHistos() {
   _monitorElectrons->book1D("phi","electron #phi",phiEle,50,-TMath::Pi(),TMath::Pi(),"All+Fake+Best");
   _monitorElectrons->book1D("s1s9","electron #sum 1/#sum 9",s1s9Ele,50,0.,1.,"All+Fake+Best");
   _monitorElectrons->book1D("s9s25","electron #sum 9/#sum 25",s9s25Ele,50,0.,1.,"All+Fake+Best");
-  _monitorElectrons->book1D("eOverP","electron E/P",_eOverP,50,0.75,1.1,"All+Fake+Best");
-  _monitorElectrons->book1D("alphaEle","electron #alpha",_alphaEle,50,0.,3.,"All+Fake+Best");
-  _monitorElectrons->book1D("emFracEle","electron e.m. energy fraction",_emFracEle,50,0.,1.,"All+Fake+Best");
-  _monitorElectrons->book1D("hadFracEle","electron hadronic energy fraction",_hadFracEle,50,0.,1.,"All+Fake+Best");
-
 
   // Jet match fraction
   RecoJets_pt = new TH1F("RecoJets_pt","reconstructed jet p_{T}",25,0.0,50.0);

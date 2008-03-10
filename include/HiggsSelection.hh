@@ -41,14 +41,23 @@ private:
   bool findMcTree(const char* processType);
 
   void bookHistos();
-  std::pair<int,int> getBestLeptonPair();
-  void setKinematics(int,int);  
-  void addVariables();
+  //! get the two hardest electrons with opposite charge
+  std::pair<int,int> getBestElectronPair();
+  //! get the two hardest muons with opposite charge 
+  std::pair<int,int> getBestMuonPair();
+  //! set the 4 vectors, invariant mass, etc.
+  void setKinematics();  
+  //! true if there is a real jet in the event
   bool jetVeto();
+  //! true if there is a "preselection" jet in the event
   bool preselJetVeto();
+  //! returns the output of the custom cut electron ID
   bool isEleID(int eleIndex);
+  //! evaluate cluster shape Fisher discriminant
   float Fisher(int eleIndex);
+  //! genJet - recoJet matching study
   void estimateJetMatch(float ptmin=10.0);
+  //! get the kFactor of the event
   float getkFactor(std::string process);
 
 
@@ -69,13 +78,25 @@ private:
   int _massVal;
   std::string _process;
 
-  TVector3 *_p3Ele, *_p3Pos, *_p3Met;
-  TLorentzVector *_p4Ele, *_p4Pos;
-  float _maxPt,_minPt;
+  //! an integer defining the sub-channel
+  enum { ee=0, mm=1, em=2 };
+
+  //! array containing the possibility of having reconstructed a certain sub-channel
+  bool m_channel[3];
+
+  //! kinematics of the event
+  TLorentzVector *m_p4ElectronPlus, *m_p4ElectronMinus;
+  TLorentzVector *m_p4MuonPlus, *m_p4MuonMinus;
+  TLorentzVector *m_p4MET;
+  float m_deltaPhi[3];
+  float m_mll[3];
+  float m_transvMass[3];
+
   int _theGenEle, _theGenPos;
 
   //! vectors to store indices of best candidates
   std::vector<int> *_bestElectrons;
+  std::vector<int> *_bestMuons;
   std::vector<int> *_bestJets;
   std::vector<int> *_bestGenJets;
 
@@ -95,12 +116,7 @@ private:
   RedHiggsTree *myOutTree;
 
   //! new variables
-  float _eOverP[100];
-  float _deltaPhi[1];
-  float _mll[1];
-  float _transvMass[1];
-  float _highestPt[1], _lowestPt[1];
-  float _nEle[1], _nJet[1];
+  float m_eOverP[100];
 
   float _highestPtGen[1], _lowestPtGen[1];
   float _genHiggsPt[1];
