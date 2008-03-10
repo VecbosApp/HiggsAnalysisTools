@@ -397,9 +397,9 @@ void HiggsSelection::Loop() {
       std::pair<int,int> theMuons = getBestMuonPair();
       int theMuonPlus(theMuons.first), theMuonMinus(theMuons.second);
 
-      std::cout << "processing jevt " << jentry << std::endl;
-      std::cout << "DEBUG: " << "theElectron = " << theElectron << " thePositron = " << thePositron
-		<< "\ttheMuonPlus = " << theMuonPlus << " theMuonMinus = " << theMuonMinus << std::endl;
+//       std::cout << "processing jevt " << jentry << std::endl;
+//       std::cout << "DEBUG: " << "theElectron = " << theElectron << " thePositron = " << thePositron
+// 		<< "\ttheMuonPlus = " << theMuonPlus << " theMuonMinus = " << theMuonMinus << std::endl;
       
 
       m_channel[ee] = false;
@@ -410,9 +410,9 @@ void HiggsSelection::Loop() {
       if ( ( theElectron > -1 && theMuonPlus > -1 ) ||
 	   ( thePositron > -1 && theMuonMinus > -1 ) ) m_channel[em] = true;
 
-      std::cout << "\tDEBUG: " << "m_channel[ee] = " << m_channel[ee]
-		<< "m_channel[mm] = " << m_channel[mm]
-		<< "m_channel[em] = " << m_channel[em] << std::endl;
+//       std::cout << "\tDEBUG: " << "m_channel[ee] = " << m_channel[ee]
+// 		<< "m_channel[mm] = " << m_channel[mm]
+// 		<< "m_channel[em] = " << m_channel[em] << std::endl;
 	
       if( !m_channel[ee] && !m_channel[mm] && !m_channel[em]) continue; 
       _counter.IncrVar("twoGoodRec",weight);
