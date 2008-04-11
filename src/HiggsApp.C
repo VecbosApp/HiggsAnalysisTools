@@ -161,6 +161,17 @@ int main(int argc, char* argv[]) {
 
 #if Application == 10  
   ZewkSelection ztoee(theChain);
+
+  TriggerMask mask(treeCond);
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+
+  ztoee.requireTrigger(requiredTriggers);
+
   ztoee.Loop();
   ztoee.displayEfficiencies();
 #endif

@@ -5,6 +5,7 @@
 
 #include "CommonTools/include/Counters.hh"
 #include "CommonTools/include/Selection.hh"
+#include "CommonTools/include/Utils.hh"   
 #include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
 #include "HiggsAnalysisTools/include/ZewkSelection.hh"
 
@@ -116,30 +117,33 @@ ZewkSelection::~ZewkSelection(){
 
 bool ZewkSelection::findMcTree(const char* processType) {
   
-  bool processOk = false;  
-  if(strcmp(processType,"bbar_550")==0) {
-    if ( (genFilterEff == 0.00019) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 5 && genPtHat < 50)
-	 )	 
-      { processOk = true; }
-  }
+//   bool processOk = false;  
+//   if(strcmp(processType,"bbar_550")==0) {
+//     if ( (genFilterEff == 0.00019) 
+// 	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+// 	 && (genPtHat > 5 && genPtHat < 50)
+// 	 )	 
+//       { processOk = true; }
+//   }
   
-  if(strcmp(processType,"bbar_50170")==0) {
-    if ( (genFilterEff == 0.0068) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 50 && genPtHat < 170)
-	 ){ processOk = true; }
-  }
+//   if(strcmp(processType,"bbar_50170")==0) {
+//     if ( (genFilterEff == 0.0068) 
+// 	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+// 	 && (genPtHat > 50 && genPtHat < 170)
+// 	 ){ processOk = true; }
+//   }
 
-  if (strcmp(processType,"bbar_170up")==0) {
-    if ( (genFilterEff == 0.0195) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 170)
-	 ){ processOk = true; }
-  }
+//   if (strcmp(processType,"bbar_170up")==0) {
+//     if ( (genFilterEff == 0.0195) 
+// 	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+// 	 && (genPtHat > 170)
+// 	 ){ processOk = true; }
+//   }
   
-  return processOk;
+//  return processOk;
+
+  return true;
+
 }
 
 void ZewkSelection::Loop() {
@@ -158,7 +162,8 @@ void ZewkSelection::Loop() {
     
     // get the weight of the event for the soup
     float weight = 1.0;
-    if(_selection->getSwitch("apply_weight")) weight = genWeight;
+    //    if(_selection->getSwitch("apply_weight")) weight = genWeight;
+    if(_selection->getSwitch("apply_weight")) weight = 1.0;
 
     _counter.IncrVar("event",weight);
     
@@ -168,8 +173,10 @@ void ZewkSelection::Loop() {
        !foundMcTree ) continue;              
     _counter.IncrVar("MCtruth",weight);
 
-    if(_selection->getSwitch("trigger") && !(singleElePassedTrg)) continue;
+    Utils anaUtils;
+    if(_selection->getSwitch("trigger") && !( anaUtils.getTriggersOR(m_requiredTriggers, firedTrg) ) ) continue;
     _counter.IncrVar("eveHLT",weight); 
+    
     
     if(!_selection->passCut("nRecoEle",nEle)) continue;   	
     _counter.IncrVar("eleReco",weight);

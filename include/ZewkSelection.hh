@@ -12,8 +12,8 @@
 #define ZewkSelection_h
 
 #include <vector>
-#include "Monitor.hh"
-#include "HiggsBase.h"
+#include "CommonTools/include/Monitor.hh"
+#include "HiggsAnalysisTools/include/HiggsBase.h"
 #include <TVector3.h>
 #include <TLorentzVector.h>
 
@@ -23,6 +23,8 @@ public:
   virtual ~ZewkSelection();
   void Loop();
   void displayEfficiencies();
+  //! set the list of the required triggers
+  void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
   
 private:
 
@@ -49,5 +51,8 @@ private:
   // new variables
   float _eOverP[100];
   float _nEle[1];
+  //! the list of required triggers
+  vector<int> m_requiredTriggers;
+
 };
 #endif
