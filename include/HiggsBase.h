@@ -36,6 +36,8 @@ public :
    Int_t           nTrg;
    Bool_t          firedTrg[90];   //[nTrg]
    Bool_t          evtPresel;
+   Float_t         evtKfactor;
+   Float_t         evtMcAtNlo;
    Int_t           nEle;
    Int_t           chargeEle[50];   //[nEle]
    Float_t         energyEle[50];   //[nEle]
@@ -255,6 +257,8 @@ public :
    TBranch        *b_nTrg;   //!
    TBranch        *b_firedTrg;   //!
    TBranch        *b_evtPresel;   //!
+   TBranch        *b_evtKfactor;
+   TBranch        *b_evtMcAtNlo;
    TBranch        *b_nEle;   //!
    TBranch        *b_chargeEle;   //!
    TBranch        *b_energyEle;   //!
@@ -545,6 +549,8 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("nTrg", &nTrg, &b_nTrg);
    fChain->SetBranchAddress("firedTrg", firedTrg, &b_firedTrg);
    fChain->SetBranchAddress("evtPresel", &evtPresel, &b_evtPresel);
+   fChain->SetBranchAddress("evtKfactor", &evtKfactor, &b_evtKfactor);
+   fChain->SetBranchAddress("evtMcAtNlo", &evtMcAtNlo, &b_evtMcAtNlo);
    fChain->SetBranchAddress("nEle", &nEle, &b_nEle);
    fChain->SetBranchAddress("chargeEle", chargeEle, &b_chargeEle);
    fChain->SetBranchAddress("energyEle", energyEle, &b_energyEle);

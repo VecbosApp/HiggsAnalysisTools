@@ -98,14 +98,31 @@ int main(int argc, char* argv[]) {
   htoww.SetDatasetName(outFileName);
 
   TriggerMask mask(treeCond);
+
+  // require triggers for ee channel
   mask.requireTrigger("HLT1Electron");
   mask.requireTrigger("HLT1ElectronRelaxed");
   mask.requireTrigger("HLT2Electron");
   mask.requireTrigger("HLT2ElectronRelaxed");
+  std::vector<int> requiredTriggersEE = mask.getBits();
+  htoww.requireTriggerEE(requiredTriggersEE);
+  mask.clear();
 
-  std::vector<int> requiredTriggers = mask.getBits();
+  // require triggers for mumu channel
+  mask.requireTrigger("HLT1MuonIso");
+  mask.requireTrigger("HLT1MuonNonIso");
+  mask.requireTrigger("HLT2MuonNonIso");
+  std::vector<int> requiredTriggersMuMu = mask.getBits();
+  htoww.requireTriggerMuMu(requiredTriggersMuMu);
+  mask.clear();
 
-  htoww.requireTrigger(requiredTriggers);
+  // require triggers for emu channel
+  mask.requireTrigger("HLTXElectronMuon");
+  mask.requireTrigger("HLTXElectronMuonRelaxed");
+  std::vector<int> requiredTriggersEMu = mask.getBits();
+  htoww.requireTriggerEMu(requiredTriggersEMu);
+  mask.clear();
+
   htoww.Loop();
   htoww.displayEfficiencies();
 
