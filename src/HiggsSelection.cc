@@ -384,12 +384,25 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionEE.SetInvMass(theInvMassEE);
       CutBasedHiggsSelectionEE.SetDetaLeptons(theDetaLeptonsEE);
       bool isSelectedEE = CutBasedHiggsSelectionEE.output();    
+      bool selUpToFinalLeptonsEE = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
+      bool selUpToJetVetoEE = CutBasedHiggsSelectionEE.outputUpToJetVeto();
 
+      myOutTreeEE -> fillAll(etMet[0], 
+			     theDeltaPhiEE, 
+			     theTransvMassEE, 
+			     theInvMassEE, 
+			     hardestElectronPt, 
+			     slowestElectronPt, 
+			     theDetaLeptonsEE,
+			     selUpToFinalLeptonsEE,
+			     selUpToJetVetoEE,
+			     isSelectedEE);
+      
       // dumping final tree
-      if(isSelectedEE) myOutTreeEE -> fillAll(etMet[0], theDeltaPhiEE, theTransvMassEE, theInvMassEE, hardestElectronPt, slowestElectronPt, theDetaLeptonsEE);
+      myOutTreeEE -> store();
+      
     }
-
-
+    
     // ---------------------------------------
     // mm final state
     if (m_channel[mm]){
@@ -397,7 +410,7 @@ void HiggsSelection::Loop() {
       theInvMassMM     = m_mll[mm];
       theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
       theTransvMassMM  = m_transvMass[mm];
-
+      
       // selections
       CutBasedHiggsSelectionMM.SetWeight(weight);
       CutBasedHiggsSelectionMM.SetHighElePt(hardestMuonPt);
@@ -414,9 +427,27 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionMM.SetInvMass(theInvMassMM);
       CutBasedHiggsSelectionMM.SetDetaLeptons(theDetaLeptonsMM);
       bool isSelectedMM = CutBasedHiggsSelectionMM.output();    
+      bool selUpToFinalLeptonsMM = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
+      bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
 
       // dumping final tree
-      if(isSelectedMM) myOutTreeMM -> fillAll(etMet[0], theDeltaPhiMM, theTransvMassMM, theInvMassMM, hardestMuonPt, slowestMuonPt, theDetaLeptonsMM);
+      if(isSelectedMM) { 
+	myOutTreeMM -> fillAll(etMet[0], 
+			       theDeltaPhiMM, 
+			       theTransvMassMM, 
+			       theInvMassMM, 
+			       hardestMuonPt, 
+			       slowestMuonPt, 
+			       theDetaLeptonsMM,
+			       selUpToFinalLeptonsMM,
+			       selUpToJetVetoMM,
+			       isSelectedMM);
+
+	// dumping final tree
+	myOutTreeMM -> store();
+
+      }
+
     }
     
     // ancora da finire
@@ -442,9 +473,6 @@ void HiggsSelection::Loop() {
     _monitorGenJets->Fill(weight);
     */
 
-    myOutTreeEE -> store(); 
-    myOutTreeMM -> store(); 
-    myOutTreeEM -> store(); 
   }
 
 
