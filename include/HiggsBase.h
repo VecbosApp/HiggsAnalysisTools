@@ -36,7 +36,7 @@ public :
    Int_t           nTrg;
    Bool_t          firedTrg[90];   //[nTrg]
    Bool_t          evtPresel;
-   Float_t         evtKfactor;
+   Double_t        evtKfactor;
    Float_t         evtMcAtNlo;
    Int_t           nEle;
    Int_t           chargeEle[50];   //[nEle]
