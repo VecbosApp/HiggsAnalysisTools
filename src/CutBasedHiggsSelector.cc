@@ -2,7 +2,10 @@
 #include <iostream>
 #include <math.h>
 
-CutBasedHiggsSelector::CutBasedHiggsSelector() {}
+CutBasedHiggsSelector::CutBasedHiggsSelector() {
+  m_finalLeptons = false;
+  m_jetVeto = false;
+}
 
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
 
@@ -74,8 +77,12 @@ bool CutBasedHiggsSelector::output() {
       (!_selection->passCut("hcalPtSum",m_eleCaloPtSum) || !_selection->passCut("hcalPtSum",m_posCaloPtSum))) return false; 
   higgsSelCounter.IncrVar("caloIso",m_weight);
 
+  m_finalLeptons = true;
+
   if(_selection->getSwitch("jetVeto") && !m_passedJetVeto) return false; 
   higgsSelCounter.IncrVar("jetVeto",m_weight);
+
+  m_jetVeto = true;
 
   if(_selection->getSwitch("MET") && !_selection->passCut("MET",m_met)) return false; 
   higgsSelCounter.IncrVar("MET",m_weight);

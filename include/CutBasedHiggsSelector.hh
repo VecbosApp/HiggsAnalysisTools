@@ -35,6 +35,13 @@ public:
 
   //! get output of the selector
   bool output();
+  //! the methods outputUpToFinalLeptons and outputUpToJetVeto need 
+  //! output() run before using them
+  //! get output of the selector until lepton ID + isolation
+  bool outputUpToFinalLeptons() { return m_finalLeptons; }
+  //! get output of the selector until jet veto
+  bool outputUpToJetVeto() {return m_jetVeto; }
+
 
   //! display the electron efficiency
   void diplayEfficiencies();
@@ -56,6 +63,11 @@ private:
 
   //! counters for the efficiencies display, based on electron candidates
   Counters higgsSelCounter;
+
+  //! true if the selection arrived to lepton ID and isolation
+  bool m_finalLeptons;
+  //! true if the selection arrived to jet veto
+  bool m_jetVeto;
 
 };
 
