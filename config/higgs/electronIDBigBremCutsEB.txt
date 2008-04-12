@@ -7,4 +7,9 @@ dphiOut		-1000.		1000.
 covEtaEta	 0.000025	0.000121
 eOverPout	 0.75		1000
 Fisher		 1.05		15
-Likelihood	 0.97		1.0
+likelihood	 0.97		1.0
+eOverPin        -999.           999.
+invEminusInvP   -999.           999.
+bremFraction    -999.           999.
+sigmaEtaEta     -999.           999.
+sigmaPhiPhi     -999.           999.
