@@ -1,0 +1,40 @@
+apply_kFactor		0
+MCtruth			1
+trigger			1
+classDepEleId		1
+preselection		1
+leptonAcceptance        1
+jetVeto			1
+
+nRecoLeptons		1
+nRecoLeptonsMix         1
+hardLeptonThreshold	1
+slowLeptonThreshold     1
+METpreselection		1
+dileptonInvMassMin	1
+etaElectronAcc		1
+ptElectronAcc		1
+etaMuonAcc		1
+ptMuonAcc		1
+trackerPtSum		1
+hcalPtSum		1
+MET			1
+deltaPhi		1
+maxPtElectron		1
+minPtElectron		1
+dileptonInvMassMax	1
+detaLeptons		0
+jetConeWidth		1
+etaJetAcc		1
+etJetHighAcc		1
+etJetLowAcc		1
+alphaJet		1
+
+
+
+
+
+
+
+
+

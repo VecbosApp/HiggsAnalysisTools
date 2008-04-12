@@ -1,22 +1,26 @@
-nRecoEle		2		2
-etaEleAcc		-2.5		2.5
-ptEleAcc		10		10000
+nRecoLeptons		2		10000
+nRecoLeptonsMix		1		10000
+hardLeptonThreshold	20		10000
+slowLeptonThreshold     10              10000
+METpreselection		30		10000
+dileptonInvMassMin	12		10000
+etaElectronAcc		-2.5		2.5
+ptElectronAcc		10		10000
+etaMuonAcc		-2.5		2.5
+ptMuonAcc		10		10000
 trackerPtSum		0		0.05
 hcalPtSum		0		0.05
-etaPresJetAcc		-2.5		2.5
-etPresJetAcc		20		10000
-maxPtElePres            20              10000
-minPtElePres            10              10000
-METPres			30		10000
-eleInvMassPres		12		10000
-jetConeWidth		0.0		0.5
+MET			50		10000
+deltaPhi		0		45
+maxPtElectron		25		50
+minPtElectron		15		10000
+dileptonInvMassMax	12		50
+detaLeptons		-1		1
+jetConeWidth		0.0		0.2
 etaJetAcc		-2.5		2.5
 etJetHighAcc		20		10000
 etJetLowAcc		15		10000
 alphaJet		0.2		10000
-maxPtEle		25		49
-minPtEle		25		10000
-detaLeptons		-1		1
-MET			51		10000
-deltaPhi		0		45
-eleInvMass		12		40
+
+
+
