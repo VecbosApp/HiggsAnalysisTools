@@ -13,7 +13,6 @@ void CommonHiggsPreselector::Configure(const char *configDir) {
 
   _selection = new Selection(fileCuts,fileSwitches);
   
-  _selection->addSwitch("apply_kFactor");
   _selection->addSwitch("MCtruth");
   _selection->addSwitch("trigger");
   _selection->addSwitch("preselection");
@@ -45,8 +44,7 @@ void CommonHiggsPreselector::Configure(const char *configDir) {
 
 bool CommonHiggsPreselector::output() {
   
-  float m_weight = 1.;
-  if(_selection->getSwitch("apply_kFactor")) m_weight = m_kFactor;
+  float m_weight = m_kFactor;
   presCounter.IncrVar("event",m_weight);
 
   // common preselection cut: this is not really applied, should be reproduced by hand

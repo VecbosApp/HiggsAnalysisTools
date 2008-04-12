@@ -49,6 +49,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   std::string fileCuts  = higgsConfigDir + "2e2nuCuts.txt";
   std::string fileSwitches = higgsConfigDir + "2e2nuSwitches.txt";
   _addedPres = new Selection(fileCuts,fileSwitches);
+  _addedPres->addSwitch("apply_kFactor");
   _addedPres->addCut("etaElectronAcc");
   _addedPres->addCut("ptElectronAcc");
   _addedPres->addCut("etaMuonAcc");
@@ -255,7 +256,9 @@ void HiggsSelection::Loop() {
     if (jentry%1000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
     
     // get the kFactor of the event
-    float weight = getkFactor("H_gg");
+    
+    float weight = 1;
+    if (_addedPres->getSwitch("apply_kFactor")) weight = getkFactor("H_gg");
 
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
