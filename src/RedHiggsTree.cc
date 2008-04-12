@@ -24,6 +24,10 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("maxPtEle",            &maxPtEle,              "maxPtEle/F");  
   myTree->Branch("minPtEle",            &minPtEle,              "minPtEle/F");  
   myTree->Branch("detaLeptons",         &myDetaLeptons,         "detaLeptons/F");  
+  myTree->Branch("finalLeptons",        &myFinalLeptons,        "finalLeptons/B");
+  myTree->Branch("jetVeto",             &myJetVeto,             "jetVeto/B");
+  myTree->Branch("finalSelection",      &myFinalSelection,      "finalSelection/B");
+
 }
 
 
@@ -46,8 +50,10 @@ void RedHiggsTree::save()
 }
 
 
-void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta)
+void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta,
+			   bool finalLeptons, bool jetVeto, bool finalSelection)
 {
+
   myMet         = mt;
   myDeltaPhi    = dphi;
   myTransvMass  = tmass;
@@ -55,4 +61,8 @@ void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float m
   maxPtEle      = max;
   minPtEle      = min;
   myDetaLeptons = deta;
+  myFinalLeptons = finalLeptons;
+  myJetVeto = jetVeto;
+  myFinalSelection = finalSelection;
+
 }
