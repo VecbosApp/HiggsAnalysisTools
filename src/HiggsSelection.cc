@@ -255,7 +255,7 @@ void HiggsSelection::Loop() {
     if (jentry%1000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
     
     // get the kFactor of the event
-    float weight = getkFactor(_process);
+    float weight = getkFactor("H_gg");
 
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
