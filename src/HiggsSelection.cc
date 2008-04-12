@@ -67,7 +67,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _addedSel->addCut("alphaJet");
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("config/higgs/"); 
+  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/tightEleId/"); 
 
   
   // kinematics
@@ -130,8 +130,15 @@ bool HiggsSelection::findMcTree(const char* processType) {
   
   // now we look for ee || mumu || emu
   
-  // signal: e / mu / tau
+  // signal: 2e2nu
   if(strcmp(processType,"HtoWWto2e2nu")==0) {
+    if( idMc[9]  == -11) _theGenEle = 9;
+    if( idMc[11] ==  11) _theGenPos = 11;
+    return (_theGenEle > -1 && _theGenPos > -1 );
+  }
+
+  // signal: 2l2nu
+  if(strcmp(processType,"HtoWWto2l2nu")==0) {
     int indlminus=999, indlplus=999;
     for(int imc=6;imc<25;imc++) {
       if(idMc[imc]>10 && idMc[imc]<19 && idMc[mothMc[imc]]==-24)  indlminus=imc;
@@ -145,6 +152,8 @@ bool HiggsSelection::findMcTree(const char* processType) {
     }
     return (indlminus<25 && indlplus<25);
   }
+  
+
   // WW: e / mu / tau
   else if(strcmp(processType,"WW")==0) {
     _process = "WW";
@@ -253,7 +262,7 @@ void HiggsSelection::Loop() {
 
     // trigger
     Utils anaUtils;
-    bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+    bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggers, firedTrg);
 
     // get the best electrons, best muons  
     std::pair<int,int> theElectrons = getBestElectronPair();
@@ -323,6 +332,9 @@ void HiggsSelection::Loop() {
     bool thePositronID = true;
     if (theElectron > -1) theElectronID = isEleID(theElectron);
     if (thePositron > -1) thePositronID = isEleID(thePositron);
+    // loose egamma electron ID
+//     if (theElectron > -1) theElectronID = eleIdCutBasedEle[theElectron];
+//     if (thePositron > -1) thePositronID = eleIdCutBasedEle[thePositron];
 
     // extra tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
