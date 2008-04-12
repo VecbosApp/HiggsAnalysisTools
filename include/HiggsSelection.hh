@@ -36,12 +36,8 @@ public:
   void SetDatasetName(std::string filename) {_datasetName=filename;};
   //! display the efficiency table
   void displayEfficiencies();
-  //! set the list of the required triggers for channel 2e2nu
-  void requireTriggerEE(vector<int> requiredTriggers) { m_requiredTriggersEE = requiredTriggers; }
-  //! set the list of the required triggers for channel 2mu2nu
-  void requireTriggerMuMu(vector<int> requiredTriggers) { m_requiredTriggersMuMu = requiredTriggers; }
-  //! set the list of the required triggers for channel emu2nu
-  void requireTriggerEMu(vector<int> requiredTriggers) { m_requiredTriggersEMu = requiredTriggers; }
+  //! set the list of the required triggers
+  void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
   
 private:
 
@@ -79,12 +75,8 @@ private:
   CutBasedHiggsSelector CutBasedHiggsSelectionMM;
   //! be verbose during runtime
   bool _verbose;
-  //! the list of required triggers for channel 2e2nu
-  vector<int> m_requiredTriggersEE;
-  //! the list of required triggers for channel 2mu2nu
-  vector<int> m_requiredTriggersMuMu;
-  //! the list of required triggers for channel emu2nu
-  vector<int> m_requiredTriggersEMu;
+  //! the list of required triggers
+  vector<int> m_requiredTriggers;
 
   //! process variables to initialize kFactors
   int _massVal;
