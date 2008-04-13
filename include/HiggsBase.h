@@ -240,6 +240,12 @@ public :
    Int_t           d2IndexGenJet[68];   //[nGenJet]
    Int_t           d1pdgIdGenJet[68];   //[nGenJet]
    Int_t           d2pdgIdGenJet[68];   //[nGenJet]
+   Double_t        genProcessId;
+   Double_t        genPtHat;
+   Double_t        genFilterEff;
+   Double_t        genXsec;
+   Double_t        genWeight;
+   Double_t        genAlpgenID;
 
    // List of branches
    TBranch        *b_nMc;   //!
@@ -461,6 +467,12 @@ public :
    TBranch        *b_d2IndexGenJet;   //!
    TBranch        *b_d1pdgIdGenJet;   //!
    TBranch        *b_d2pdgIdGenJet;   //!
+   TBranch        *b_genProcessId;   //!
+   TBranch        *b_genPtHat;   //!
+   TBranch        *b_genFilterEff;   //!
+   TBranch        *b_genXsec;   //!
+   TBranch        *b_genWeight;   //!
+   TBranch        *b_genAlpgenID;   //!
 
    HiggsBase(TTree *tree=0);
    virtual ~HiggsBase();
@@ -753,6 +765,12 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("d2IndexGenJet", d2IndexGenJet, &b_d2IndexGenJet);
    fChain->SetBranchAddress("d1pdgIdGenJet", d1pdgIdGenJet, &b_d1pdgIdGenJet);
    fChain->SetBranchAddress("d2pdgIdGenJet", d2pdgIdGenJet, &b_d2pdgIdGenJet);
+   fChain->SetBranchAddress("genProcessId", &genProcessId, &b_genProcessId);
+   fChain->SetBranchAddress("genPtHat", &genPtHat, &b_genPtHat);
+   fChain->SetBranchAddress("genFilterEff", &genFilterEff, &b_genFilterEff);
+   fChain->SetBranchAddress("genXsec", &genXsec, &b_genXsec);
+   fChain->SetBranchAddress("genWeight", &genWeight, &b_genWeight);
+   fChain->SetBranchAddress("genAlpgenID", &genAlpgenID, &b_genAlpgenID);
    Notify();
 }
 
