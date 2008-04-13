@@ -28,7 +28,7 @@ public:
   void SetPosTrackerPtSum(float posTkPtSum)   { m_posTkPtSum    = posTkPtSum; }
   void SetEleCaloPtSum(float eleCaloPtSum)    { m_eleCaloPtSum  = eleCaloPtSum; }
   void SetPosCaloPtSum(float posCaloPtSum)    { m_posCaloPtSum  = posCaloPtSum; }
-  void SetJetVeto(float passedCJV)            { m_passedJetVeto = passedCJV; }
+  void SetJetVeto(bool passedCJV)             { m_passedJetVeto = passedCJV; }
   void SetMet(float met)                      { m_met           = met;}
   void SetDeltaPhi(float deltaPhi)            { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)         { m_detaLeptons   = deltaEta;}
