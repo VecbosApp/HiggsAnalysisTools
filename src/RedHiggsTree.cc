@@ -30,10 +30,17 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
 
 }
 
-
 RedHiggsTree::~RedHiggsTree() 
 {
   delete myFile;
+}
+
+void RedHiggsTree::addCSA07Infos() {
+
+  myTree->Branch("CSA07weight",              &myWeight,              "CSA07weight/D");
+  myTree->Branch("CSA07processId",           &myProcesId,            "CSA07processId/D");
+  myTree->Branch("CSA07lumi",                &myLumi,                "CSA07lumi/F");
+
 }
 
 void RedHiggsTree::store()
@@ -64,5 +71,14 @@ void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float m
   myFinalLeptons = finalLeptons;
   myJetVeto = jetVeto;
   myFinalSelection = finalSelection;
+
+}
+
+void RedHiggsTree::fillCSA07(double weight, double processId, float lumi) 
+{
+
+  myWeight = weight;
+  myProcesId = processId;
+  myLumi = lumi;
 
 }
