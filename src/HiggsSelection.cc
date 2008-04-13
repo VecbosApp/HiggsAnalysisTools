@@ -261,7 +261,9 @@ void HiggsSelection::Loop() {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if (jentry%1000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
-    
+
+    resetKinematics();
+
     // get the kFactor of the event
     
     float weight = 1;
@@ -302,7 +304,7 @@ void HiggsSelection::Loop() {
     // kinematics at preselection level 
     // only few variables since here we still do not know if two good leptons are reconstructed
     setPreselKinematics();
-
+    
     // setting preselections
     CommonHiggsPreselection.SetWeight(weight);
     CommonHiggsPreselection.SetMcTruth(foundMcTree);
@@ -358,8 +360,8 @@ void HiggsSelection::Loop() {
     if (theElectron > -1) theEleCaloPtSum = eleCaloIso_sumPtEle[theElectron];
     if (thePositron > -1) thePosCaloPtSum = eleCaloIso_sumPtEle[thePositron];
 
-    // jet veto
-    bool passedJetVeto = jetVeto();
+    // jet veto: method gives true if good jet is found
+    bool passedJetVeto = !goodJetFound();
 
     // kine variables
     float theDeltaPhiEE, theInvMassEE, theTransvMassEE, theDetaLeptonsEE = 0.;
@@ -765,42 +767,61 @@ void HiggsSelection::setKinematics( ) {
 }
 
 
-bool HiggsSelection::jetVeto() {
+bool HiggsSelection::goodJetFound() {
 
+//   std::cout << "start loop on jets" << std::endl;
+//   std::cout << "e-: " << m_p4ElectronMinus->X() << "," << m_p4ElectronMinus->Y() << "," << m_p4ElectronMinus->Z() << std::endl;
+//   std::cout << "e+: " << m_p4ElectronPlus->X() << "," << m_p4ElectronPlus->Y() << "," << m_p4ElectronPlus->Z() << std::endl;
+  
   // first check that kinematics has been set
   bool foundJet=false;
   float maxPtJet=0.;
-  for(int j=0;j<nJet;j++){
-    
+  for(int j=0;j<nJet;j++) {
+
     // check if the electron or the positron falls into the jet
     // common cleaning class
     TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
-
+//     std::cout << "jet: " << p3Jet.X() << "," << p3Jet.Y() << "," << p3Jet.Z() << std::endl;
+//     std::cout << "guardo se e' l'e-" << std::endl;
     if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
+      //      std::cout << "deltaR w e-: " << deltaR << std::endl;
       if(_addedSel->getSwitch("jetConeWidth") && 
 	 _addedSel->passCut("jetConeWidth",deltaR) &&
 	 (m_HoEElectronMinus < 0.2) &&  
 	 (m_CaloEneElectronMinus/energyJet[j] > 0.9)
 	 ) continue;
     }
+    //    std::cout << "non e' e-" << std::endl;
+
+//     std::cout << "guardo se e' l'e+" << std::endl;
+//     std::cout << "positron mom = " << m_p4ElectronPlus->Vect().Mag() << std::endl;
     if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
+      //      std::cout << "deltaR w e+: " << deltaR << std::endl;
       if(_addedSel->getSwitch("jetConeWidth") && 
 	 _addedSel->passCut("jetConeWidth",deltaR) &&
 	 (m_HoEElectronPlus < 0.2) &&  
 	 (m_CaloEneElectronPlus/energyJet[j] > 0.9)
 	 ) continue;
     }
+    //    std::cout << "non e' e+" << std::endl;
 
     // jet veto
+//     std::cout << "etaJet[j] = " << etaJet[j]
+// 	      << "\tetJet[j] = " << etJet[j]
+// 	      << "\talphaJet[j] = " << alphaJet[j] << std::endl;
+ 
     if(etJet[j]>maxPtJet) maxPtJet=etJet[j];
     if(_addedSel->getSwitch("etaJetAcc") && !_addedSel->passCut("etaJetAcc",etaJet[j])) continue;
-    if((_addedSel->getSwitch("etJetLowAcc") && !_addedSel->passCut("etJetLowAcc",etJet[j]) ) ||
-       ((_addedSel->getSwitch("etJetHighAcc") && !_addedSel->passCut("etJetHighAcc",etJet[j]) &&
-	 (_addedSel->getSwitch("jetAlpha") && !_addedSel->passCut("jetAlpha",alphaJet[j]))))
+    if(_addedSel->getSwitch("etJetLowAcc") && !_addedSel->passCut("etJetLowAcc",etJet[j]) ) continue;
+
+    if( (_addedSel->getSwitch("etJetHighAcc") && _addedSel->passCut("etJetHighAcc",etJet[j])) &&
+	(_addedSel->getSwitch("jetAlpha") && !_addedSel->passCut("jetAlpha",alphaJet[j]))
        ) continue;
     foundJet=true;
+    //    std::cout << "found jet." << std::endl;
+    break;
   }
 
   etHighestJet->Fill(maxPtJet);
@@ -905,5 +926,34 @@ void HiggsSelection::estimateJetMatch(float ptmin) {
       }
     }
   }
+
+}
+
+void HiggsSelection::resetKinematics() {
+
+  theElectron = -1;
+  thePositron = -1;
+  theMuonMinus = -1;
+  theMuonPlus = -1;
+  m_p4ElectronMinus->SetXYZT(0,0,0,0);
+  m_p4ElectronPlus->SetXYZT(0,0,0,0);
+  m_p4MuonMinus->SetXYZT(0,0,0,0);
+  m_p4MuonPlus->SetXYZT(0,0,0,0);
+  m_p4MET->SetXYZT(0,0,0,0);
+  m_HoEElectronMinus = 0;
+  m_HoEElectronPlus = 0;
+  m_CaloEneElectronMinus = 0;
+  m_CaloEneElectronPlus = 0;
+
+  for(int ichan=0;ichan<3;ichan++) {
+    m_deltaPhi[ichan] = 0;
+    m_mll[ichan] = 0;
+    m_transvMass[ichan] = 0;
+  }
+  
+  hardestElectronPt = 0;
+  hardestMuonPt = 0;
+  slowestElectronPt = 0;
+  slowestMuonPt = 0;
 
 }
