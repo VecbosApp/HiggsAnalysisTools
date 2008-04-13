@@ -33,8 +33,8 @@ private:
   bool myFinalLeptons;
   bool myJetVeto;
   bool myFinalSelection;
-  float myWeight;
-  int myProcesId;
+  double myWeight;
+  double myProcesId;
   float myLumi;
 
   TFile* myFile;
