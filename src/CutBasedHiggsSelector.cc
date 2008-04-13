@@ -30,7 +30,6 @@ void CutBasedHiggsSelector::Configure(const char *configDir) {
   _selection->addCut("dileptonInvMassMax");
   _selection->addCut("detaLeptons");
 
-  cout << "sommario cutbasedselection" << endl;
   _selection->summary();
 
   higgsSelCounter.SetTitle("FULL SELECTION EVENT COUNTER");
@@ -52,6 +51,9 @@ void CutBasedHiggsSelector::Configure(const char *configDir) {
 }
 
 bool CutBasedHiggsSelector::output() {
+
+  m_finalLeptons = false;
+  m_jetVeto = false;
 
   higgsSelCounter.IncrVar("preselected",m_weight);
 
