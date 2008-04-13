@@ -1,4 +1,5 @@
 apply_kFactor		0
+addCSA07Infos		0
 MCtruth			1
 trigger			1
 classDepEleId		1
