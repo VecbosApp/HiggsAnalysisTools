@@ -50,6 +50,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   std::string fileSwitches = higgsConfigDir + "2e2nuSwitches.txt";
   _addedPres = new Selection(fileCuts,fileSwitches);
   _addedPres->addSwitch("apply_kFactor");
+  _addedPres->addSwitch("addCSA07Infos");
   _addedPres->addCut("etaElectronAcc");
   _addedPres->addCut("ptElectronAcc");
   _addedPres->addCut("etaMuonAcc");
@@ -242,7 +243,13 @@ void HiggsSelection::Loop() {
   myOutTreeEE = new RedHiggsTree(reducedTreeNameEE.c_str());
   myOutTreeMM = new RedHiggsTree(reducedTreeNameMM.c_str());
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
-  
+
+  if (_addedPres->getSwitch("addCSA07Infos")) {
+    myOutTreeEE->addCSA07Infos();
+    myOutTreeMM->addCSA07Infos();
+    myOutTreeEM->addCSA07Infos();
+  }
+
   float met, deltaPhi, transvMass; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
   
@@ -397,6 +404,9 @@ void HiggsSelection::Loop() {
 			     selUpToFinalLeptonsEE,
 			     selUpToJetVetoEE,
 			     isSelectedEE);
+      if ( _addedPres->getSwitch("addCSA07Infos") ) {
+	myOutTreeEE->fillCSA07(genWeight,genAlpgenID,1000.);
+      }
       
       // dumping final tree
       myOutTreeEE -> store();
@@ -430,24 +440,24 @@ void HiggsSelection::Loop() {
       bool selUpToFinalLeptonsMM = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
       bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
 
-      // dumping final tree
-      if(isSelectedMM) { 
-	myOutTreeMM -> fillAll(etMet[0], 
-			       theDeltaPhiMM, 
-			       theTransvMassMM, 
-			       theInvMassMM, 
-			       hardestMuonPt, 
-			       slowestMuonPt, 
-			       theDetaLeptonsMM,
-			       selUpToFinalLeptonsMM,
-			       selUpToJetVetoMM,
-			       isSelectedMM);
-
-	// dumping final tree
-	myOutTreeMM -> store();
-
+      myOutTreeMM -> fillAll(etMet[0], 
+			     theDeltaPhiMM, 
+			     theTransvMassMM, 
+			     theInvMassMM, 
+			     hardestMuonPt, 
+			     slowestMuonPt, 
+			     theDetaLeptonsMM,
+			     selUpToFinalLeptonsMM,
+			     selUpToJetVetoMM,
+			     isSelectedMM);
+      
+      if ( _addedPres->getSwitch("addCSA07Infos") ) {
+	myOutTreeMM->fillCSA07(genWeight,genAlpgenID,1000.);
       }
-
+      
+      // dumping final tree
+      myOutTreeMM -> store();
+      
     }
     
     // ancora da finire
