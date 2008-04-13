@@ -30,6 +30,9 @@ rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/Wgamma | awk '{print "/castor
 echo "staging ZZ_incl..."
 rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/ZZ_incl | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/ZZ_incl/" $9}' | xargs -i stager_get -U ZZ_incl -M {}
 
+echo "staging WZ..."
+rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/WZ | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/WZ/" $9}' | xargs -i stager_get -U WZ -M {}
+
 echo "staging tW_incl..."
 rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/tW_incl | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/tW_incl/" $9}' | xargs -i stager_get -U tW_incl -M {}
 
@@ -78,6 +81,7 @@ stager_qry -U WW_MCatNLOWWtt
 stager_qry -U WW_incl
 stager_qry -U Wgamma
 stager_qry -U ZZ_incl
+stager_qry -U WZ
 stager_qry -U tW_incl
 stager_qry -U DrellYan_ll_10
 stager_qry -U ChowderPDElectronSkim
