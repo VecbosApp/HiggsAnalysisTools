@@ -100,10 +100,10 @@ $(OUTLIB)eleID_Higgs_Studies.o: $(INCLUDEDIR)/src/eleID_Higgs_Studies.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)eleID_Higgs_Studies.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)CutBasedEleIDSelector.o $<
-$(OUTLIB)CommonHiggsPreselector.o: $(INCLUDEDIRCOMMON)/HiggsAnalysisTools/src/CommonHiggsPreselector.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)CommonHiggsPreselector.o $<
-$(OUTLIB)CutBasedHiggsSelector.o: $(INCLUDEDIRCOMMON)/HiggsAnalysisTools/src/CutBasedHiggsSelector.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)CutBasedHiggsSelector.o $<
+$(OUTLIB)CommonHiggsPreselector.o: $(INCLUDEDIR)/src/CommonHiggsPreselector.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)CommonHiggsPreselector.o $<
+$(OUTLIB)CutBasedHiggsSelector.o: $(INCLUDEDIR)/src/CutBasedHiggsSelector.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)CutBasedHiggsSelector.o $<
 
 #----------------------------------------------------#
 
