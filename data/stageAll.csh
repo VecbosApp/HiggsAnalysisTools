@@ -21,6 +21,9 @@ rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/WW_MCatNLO/WWte | awk '{print
 rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/WW_MCatNLO/WWtm | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/WW_MCatNLO/WWtm/" $9}' | xargs -i stager_get -U WW_MCatNLOWWtm -M {}
 rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/WW_MCatNLO/WWtt | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/WW_MCatNLO/WWtt/" $9}' | xargs -i stager_get -U WW_MCatNLOWWtt -M {}
 
+echo "staging WW incl..."
+rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/WW_incl | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/WW_incl/" $9}' | xargs -i stager_get -U WW_incl -M {}
+
 echo "staging Wgamma..."
 rfdir /castor/cern.ch/user/e/emanuele/Higgs169_new/Wgamma | awk '{print "/castor/cern.ch/user/e/emanuele/Higgs169_new/Wgamma/" $9}' | xargs -i stager_get -U Wgamma -M {}
 
@@ -72,6 +75,7 @@ stager_qry -U WW_MCatNLOWWmt
 stager_qry -U WW_MCatNLOWWte
 stager_qry -U WW_MCatNLOWWtm
 stager_qry -U WW_MCatNLOWWtt
+stager_qry -U WW_incl
 stager_qry -U Wgamma
 stager_qry -U ZZ_incl
 stager_qry -U tW_incl
