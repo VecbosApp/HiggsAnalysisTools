@@ -53,7 +53,7 @@ private:
   //! set the 4 vectors, invariant mass, etc. before preselections
   void setPreselKinematics();  
   //! true if there is a real jet in the event
-  bool jetVeto();
+  bool goodJetFound();
   //! returns the output of the custom cut electron ID
   bool isEleID(int eleIndex);
   //! evaluate cluster shape Fisher discriminant
@@ -62,7 +62,8 @@ private:
   void estimateJetMatch(float ptmin=10.0);
   //! get the kFactor of the event
   float getkFactor(std::string process);
-
+  //! reset the kinematic quantities at the beginning of event
+  void resetKinematics();
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
