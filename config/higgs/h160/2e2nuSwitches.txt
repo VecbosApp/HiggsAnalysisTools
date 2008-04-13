@@ -1,6 +1,6 @@
 apply_kFactor		0
 addCSA07Infos		0
-MCtruth			1
+MCtruth			0
 trigger			1
 classDepEleId		1
 preselection		1
