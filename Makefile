@@ -131,4 +131,4 @@ clean:
 	rm -f ReducedTree_HwwEleId
 	rm -f eleID_Higgs_Studies
 
-all:  HiggsApp eleID_Higgs_Studies ReducedTree_HwwEleId
+all:  HiggsApp
