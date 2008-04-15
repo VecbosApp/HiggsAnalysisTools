@@ -8,7 +8,7 @@
 #include "CommonTools/include/Selection.hh"
 #include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
 #include "HiggsAnalysisTools/include/WewkSelection.hh"
-
+#include "CommonTools/include/Utils.hh"
 
 /* 
 // taken from PhysicsTools/HepMCCandAlgos/plugins/CSA07EventWeightProducer.cc:
@@ -129,28 +129,32 @@ WewkSelection::~WewkSelection(){
 
 bool WewkSelection::findMcTree(const char* processType) {
 
-  bool processOk = false;  
-  if(strcmp(processType,"bbar_550")==0) {
+  bool processOk = true;
+  
+  /*
+    bool processOk = false;  
+    if(strcmp(processType,"bbar_550")==0) {
     if ( (genFilterEff == 0.00019) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 5 && genPtHat < 50)
-	 )	 
-      { processOk = true; }
+    && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+    && (genPtHat > 5 && genPtHat < 50)
+    )	 
+    { processOk = true; }
+    }
+    
+  if(strcmp(processType,"bbar_50170")==0) {
+  if ( (genFilterEff == 0.0068) 
+  && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+  && (genPtHat > 50 && genPtHat < 170)
+  ){ processOk = true; }
   }
   
-  if(strcmp(processType,"bbar_50170")==0) {
-    if ( (genFilterEff == 0.0068) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 50 && genPtHat < 170)
-	 ){ processOk = true; }
-  }
-
   if (strcmp(processType,"bbar_170up")==0) {
-    if ( (genFilterEff == 0.0195) 
-	 && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
-	 && (genPtHat > 170)
-	 ){ processOk = true; }
+  if ( (genFilterEff == 0.0195) 
+  && (genProcessId == 11 || genProcessId == 12 || genProcessId == 13 || genProcessId == 28 || genProcessId == 68 || genProcessId == 53 || genProcessId == 95)
+  && (genPtHat > 170)
+  ){ processOk = true; }
   }
+  */
   
   return processOk;
 }
@@ -173,9 +177,10 @@ void WewkSelection::Loop() {
     if (_verbose && jentry%1000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
 
     // get the weight of the event for the soup
+    
     float weight = 1.0;
-    if(_selection->getSwitch("apply_weight")) weight = genWeight;
-
+    //    if(_selection->getSwitch("apply_weight")) weight = genWeight;
+    
     _counter.IncrVar("event",weight);
 
     // event type for the soup
@@ -184,8 +189,13 @@ void WewkSelection::Loop() {
        !foundMcTree ) continue;              
     _counter.IncrVar("MCtruth",weight);
 
-    if(_selection->getSwitch("trigger") && !(singleElePassedTrg)) continue;
-    _counter.IncrVar("eveHLT",weight); 
+
+    Utils anaUtils;
+    if(_selection->getSwitch("trigger") && !( anaUtils.getTriggersOR(m_requiredTriggers, firedTrg) ) ) continue;
+    _counter.IncrVar("eveHLT",weight);
+
+    //    if(_selection->getSwitch("trigger") && !(singleElePassedTrg)) continue;
+    //_counter.IncrVar("eveHLT",weight); 
     
     if(!_selection->passCut("nRecoEle",nEle)) continue;   	
     _counter.IncrVar("eleReco",weight);
@@ -232,7 +242,8 @@ void WewkSelection::Loop() {
     float metx=pxMet[0];
     float mety=pyMet[0];
     myOutTree -> fillEleId(eleTrackerIso_sumPtEle[theEle], eleTipEle[theEle], pzEle[theEle], covEtaEtaEle[theEle], eleDeltaEtaAtVtxEle[theEle], eleDeltaPhiAtVtxEle[theEle], eleCorrEoPEle[theEle], eleHoEEle[theEle], chargeEle[theEle], etEle[theEle], etaEle[theEle], phiEle[theEle]); 
-    myOutTree -> fillAll(1, genWeight, met, metx, mety); 
+    myOutTree -> fillAll(1, 1. , met, metx, mety); 
+    // myOutTree -> fillAll(1, genWeight, met, metx, mety); 
     myOutTree -> store();
 
     if(_selection->getSwitch("MET1") && !_selection->passCut("MET1",met)) continue; 

@@ -12,7 +12,7 @@
 #define WewkSelection_h
 
 #include <vector>
-#include "Monitor.hh"
+#include "CommonTools/include/Monitor.hh"
 #include "HiggsBase.h"
 #include "RedEWKTree.h"
 
@@ -52,5 +52,9 @@ private:
   // new variables
   float _eOverP[100];
   float _nEle[1];
+
+  //! the list of required triggers
+  vector<int> m_requiredTriggers;
+
 };
 #endif
