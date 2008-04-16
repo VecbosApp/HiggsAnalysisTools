@@ -1,3 +1,19 @@
+// macro to get the number of exected events 
+// and to draw normalized distributions
+// ----
+// efficiencies are hardcoded for 2 selections:
+//   1) full selection
+//   2) after the CJV (trigger+reco+iso+ID+CJV)
+// ----
+// lumi to normalize is hardcoded (100 pb-1)
+// ----
+// usage: 
+// root -b
+// .L macros/higgsPlots.cxx++
+// drawKinematics("jetVeto"): draws distributions after CJV
+// drawKinematics("finalSelection"): draw distributions after the full selection (but stat is poor)
+// ----
+
 #include <vector>
 #include <iostream>
 
@@ -48,7 +64,7 @@ std::vector<float> expectedEvents(const char *selection) {
   }
 
   // now evaluate the expected events from Chowder CSA07
-  TFile *fileChowderPDElectronSkim = TFile::Open("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/ChowderPDElectronSkim-datasetEE.root");
+  TFile *fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
   TTree *treeChowderPDElectronSkim = (TTree*) fileChowderPDElectronSkim->Get("T1");
 
   // ALPGEN procees id:
@@ -103,17 +119,17 @@ void drawKinematics(const char* selection) {
   std::vector<float> expEvents = expectedEvents(selection);
 
   std::vector<TFile*> datasets;
-  TFile* H165 = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/HiggsH165_CMSSW_1_6_9-datasetEE.root");
+  TFile* H165 = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE.root");
   datasets.push_back(H165);
-  TFile* WW_incl = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/WW_incl-datasetEE.root");
+  TFile* WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE.root");
   datasets.push_back(WW_incl);
-  TFile* WZ = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/WZ-datasetEE.root");
+  TFile* WZ = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE.root");
   datasets.push_back(WZ);
-  TFile* ZZ_incl = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/ZZ_incl-datasetEE.root");
+  TFile* ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE.root");
   datasets.push_back(ZZ_incl);
-  TFile* tW_incl = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/tW_incl-datasetEE.root");
+  TFile* tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE.root");
   datasets.push_back(tW_incl);
-  TFile* Chowder = new TFile("/cmsrm/pc18/emanuele/releases/Higgs169_new/src/OfflineAnalysis/HiggsAnalysisTools/data/ChowderPDElectronSkim-datasetEE.root");
+  TFile* Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
   datasets.push_back(Chowder);
 
   std::vector<TH1F*> met;
@@ -139,6 +155,7 @@ void drawKinematics(const char* selection) {
     char buf[50];
     sprintf(buf,"met_%d",i);
     TH1F* metProcessX = (TH1F*) metH->Clone(buf);
+    metProcessX->Sumw2();
     met.push_back(metProcessX);
 
     if(i < 5) {
@@ -164,6 +181,7 @@ void drawKinematics(const char* selection) {
 
     sprintf(buf,"mll_%d",i);
     TH1F* mllProcessX = (TH1F*) mllH->Clone(buf);
+    mllProcessX->Sumw2();
     mll.push_back(mllProcessX);
 
     if(i < 5) {
@@ -188,6 +206,7 @@ void drawKinematics(const char* selection) {
 
     sprintf(buf,"deltaphi_%d",i);
     TH1F* deltaphiProcessX = (TH1F*) deltaphiH->Clone(buf);
+    deltaphiProcessX->Sumw2();
     deltaphi.push_back(deltaphiProcessX);
 
 
@@ -214,6 +233,7 @@ void drawKinematics(const char* selection) {
 
     sprintf(buf,"ptmax_%d",i);
     TH1F* ptmaxProcessX = (TH1F*) ptmaxH->Clone(buf);
+    ptmaxProcessX->Sumw2();
     ptmax.push_back(ptmaxProcessX);
 
     if(i < 5) {
@@ -238,6 +258,7 @@ void drawKinematics(const char* selection) {
 
     sprintf(buf,"ptmin_%d",i);
     TH1F* ptminProcessX = (TH1F*) ptminH->Clone(buf);
+    ptminProcessX->Sumw2();
     ptmin.push_back(ptminProcessX);
 
     if(i < 5) {
@@ -288,25 +309,25 @@ void drawKinematics(const char* selection) {
   met[6]->SetTitle("");
   met[6]->GetXaxis()->SetTitle("Missing E_{T} [GeV]");
   met[6]->GetYaxis()->SetTitle("normalized Events");
-  met[6]->Draw();
+  met[6]->Draw("hist");
 
   met[1]->SetFillColor(5);
-  met[1]->Draw("same");
+  met[1]->Draw("same hist");
 
   met[7]->SetFillColor(4);
-  met[7]->Draw("same");
+  met[7]->Draw("same hist");
 
   met[5]->SetFillColor(2);
-  met[5]->Draw("same");
+  met[5]->Draw("same hist");
 
   met[4]->SetFillColor(28);
-  met[4]->Draw("same");
+  met[4]->Draw("same hist");
 
   met[2]->SetFillColor(7);
-  met[2]->Draw("same");
+  met[2]->Draw("same hist");
 
   met[3]->SetFillColor(3);
-  met[3]->Draw("same");
+  met[3]->Draw("same hist");
   
   met[0]->SetMarkerStyle(8);
   met[0]->Sumw2();
@@ -327,25 +348,25 @@ void drawKinematics(const char* selection) {
   mll[6]->SetTitle("");
   mll[6]->GetXaxis()->SetTitle("m_{ll} [GeV]");
   mll[6]->GetYaxis()->SetTitle("normalized Events");
-  mll[6]->Draw();
+  mll[6]->Draw("hist");
 
   mll[1]->SetFillColor(5);
-  mll[1]->Draw("same");
+  mll[1]->Draw("same hist");
 
   mll[7]->SetFillColor(4);
-  mll[7]->Draw("same");
+  mll[7]->Draw("same hist");
 
   mll[5]->SetFillColor(2);
-  mll[5]->Draw("same");
+  mll[5]->Draw("same hist");
 
   mll[4]->SetFillColor(28);
-  mll[4]->Draw("same");
+  mll[4]->Draw("same hist");
 
   mll[2]->SetFillColor(7);
-  mll[2]->Draw("same");
+  mll[2]->Draw("same hist");
 
   mll[3]->SetFillColor(3);
-  mll[3]->Draw("same");
+  mll[3]->Draw("same hist");
   
   mll[0]->SetMarkerStyle(8);
   mll[0]->Sumw2();
@@ -367,25 +388,25 @@ void drawKinematics(const char* selection) {
   deltaphi[6]->SetTitle("");
   deltaphi[6]->GetXaxis()->SetTitle("#Delta #phi");
   deltaphi[6]->GetYaxis()->SetTitle("normalized Events");
-  deltaphi[6]->Draw();
+  deltaphi[6]->Draw("hist");
 
   deltaphi[1]->SetFillColor(5);
-  deltaphi[1]->Draw("same");
+  deltaphi[1]->Draw("same hist");
 
   deltaphi[7]->SetFillColor(4);
-  deltaphi[7]->Draw("same");
+  deltaphi[7]->Draw("same hist");
 
   deltaphi[5]->SetFillColor(2);
-  deltaphi[5]->Draw("same");
+  deltaphi[5]->Draw("same hist");
 
   deltaphi[4]->SetFillColor(28);
-  deltaphi[4]->Draw("same");
+  deltaphi[4]->Draw("same hist");
 
   deltaphi[2]->SetFillColor(7);
-  deltaphi[2]->Draw("same");
+  deltaphi[2]->Draw("same hist");
 
   deltaphi[3]->SetFillColor(3);
-  deltaphi[3]->Draw("same");
+  deltaphi[3]->Draw("same hist");
   
   deltaphi[0]->SetMarkerStyle(8);
   deltaphi[0]->Sumw2();
@@ -407,25 +428,25 @@ void drawKinematics(const char* selection) {
   ptmax[6]->SetTitle("");
   ptmax[6]->GetXaxis()->SetTitle("P^{e max}_{T} [GeV]");
   ptmax[6]->GetYaxis()->SetTitle("normalized Events");
-  ptmax[6]->Draw();
+  ptmax[6]->Draw("hist");
 
   ptmax[1]->SetFillColor(5);
-  ptmax[1]->Draw("same");
+  ptmax[1]->Draw("same hist");
 
   ptmax[7]->SetFillColor(4);
-  ptmax[7]->Draw("same");
+  ptmax[7]->Draw("same hist");
 
   ptmax[5]->SetFillColor(2);
-  ptmax[5]->Draw("same");
+  ptmax[5]->Draw("same hist");
 
   ptmax[4]->SetFillColor(28);
-  ptmax[4]->Draw("same");
+  ptmax[4]->Draw("same hist");
 
   ptmax[2]->SetFillColor(7);
-  ptmax[2]->Draw("same");
+  ptmax[2]->Draw("same hist");
 
   ptmax[3]->SetFillColor(3);
-  ptmax[3]->Draw("same");
+  ptmax[3]->Draw("same hist");
   
   ptmax[0]->SetMarkerStyle(8);
   ptmax[0]->Sumw2();
@@ -447,25 +468,25 @@ void drawKinematics(const char* selection) {
   ptmin[6]->SetTitle("");
   ptmin[6]->GetXaxis()->SetTitle("P^{e min}_{T} [GeV]");
   ptmin[6]->GetYaxis()->SetTitle("normalized Events");
-  ptmin[6]->Draw();
+  ptmin[6]->Draw("hist");
 
   ptmin[1]->SetFillColor(5);
-  ptmin[1]->Draw("same");
+  ptmin[1]->Draw("same hist");
 
   ptmin[7]->SetFillColor(4);
-  ptmin[7]->Draw("same");
+  ptmin[7]->Draw("same hist");
 
   ptmin[5]->SetFillColor(2);
-  ptmin[5]->Draw("same");
+  ptmin[5]->Draw("same hist");
 
   ptmin[4]->SetFillColor(28);
-  ptmin[4]->Draw("same");
+  ptmin[4]->Draw("same hist");
 
   ptmin[2]->SetFillColor(7);
-  ptmin[2]->Draw("same");
+  ptmin[2]->Draw("same hist");
 
   ptmin[3]->SetFillColor(3);
-  ptmin[3]->Draw("same");
+  ptmin[3]->Draw("same hist");
   
   ptmin[0]->SetMarkerStyle(8);
   ptmin[0]->Sumw2();
