@@ -12,7 +12,9 @@
 // .L macros/higgsPlots.cxx++
 // drawKinematics("jetVeto"): draws distributions after CJV
 // drawKinematics("finalSelection"): draw distributions after the full selection (but stat is poor)
-// ----
+// //     this uses the tight egamma electron ID (default)
+// drawKinematics("jetVeto","loose"): draws distributions after CJV with loose egamma electron ID
+// ---
 
 #include <vector>
 #include <iostream>
@@ -24,16 +26,19 @@
 #include <TLegend.h>
 #include <TStyle.h>
 
-std::vector<float> expectedEvents(const char *selection) {
+std::vector<float> expectedEvents(const char *selection, const char *eleID="tight") {
 
   // normalization lumi (pb-1)
   float lumi = 100.0;
 
   // for the normal processes, exp ev = L_int * xsec * efficiency
-  vector<float> efficiency; // the final one
-  vector<float> efficiencyAfterCJV;
+  vector<float> efficiency; // the final one - tight eleID from egamma
+  vector<float> efficiencyAfterCJV; // after CJV - tight eleID from egamma
+  vector<float> efficiencyLooseID; // the final one - loose eleID from egamma
+  vector<float> efficiencyAfterCJVLooseID; // after CJV - loose eleID from egamma
   vector<float> xsec;
 
+  // tight eleID from egamma
   efficiency.push_back(0.0037); // signal H165 (denominator: all 2l2nu)
   efficiency.push_back(0.000039); // WW inclusive (lep + had)
   efficiency.push_back(0.000016); // WZ (incl) -- very poor stat: resubmit CRAB 
@@ -46,6 +51,18 @@ std::vector<float> expectedEvents(const char *selection) {
   efficiencyAfterCJV.push_back(0.0026);  // ZZ (incl)
   efficiencyAfterCJV.push_back(0.00045); // tW (incl)
 
+  // loose eleID from egamma
+  efficiencyLooseID.push_back(0.0058); // signal H165 (denominator: all 2l2nu) 
+  efficiencyLooseID.push_back(0.000058); // WW inclusive (lep + had)
+  efficiencyLooseID.push_back(0.0000100); // WZ (incl) -- very poor stat: resubmit CRAB
+  efficiencyLooseID.push_back(0.0000080); // ZZ (incl)
+  efficiencyLooseID.push_back(0.000010); // tW (incl)
+
+  efficiencyAfterCJVLooseID.push_back(0.023); // signal H165 (denominator: all 2l2nu) 
+  efficiencyAfterCJVLooseID.push_back(0.0021); // WW inclusive (lep + had)
+  efficiencyAfterCJVLooseID.push_back(0.0028); // WZ (incl) -- very poor stat: resubmit CRAB
+  efficiencyAfterCJVLooseID.push_back(0.0032); // ZZ (incl)
+  efficiencyAfterCJVLooseID.push_back(0.00059); // tW (incl)
 
   // xsecs in pb
   // http://ceballos.web.cern.ch/ceballos/hwwlnln/cross-sections_csa07analysis.txt
@@ -57,14 +74,27 @@ std::vector<float> expectedEvents(const char *selection) {
 
   vector<float> expEv;
   for(int i=0; i< (int) xsec.size(); i++) {
-    if(strcmp(selection,"finalSelection")==0)
-      expEv.push_back( efficiency[i] * xsec[i] * lumi );
-    if(strcmp(selection,"jetVeto")==0)
-      expEv.push_back( efficiencyAfterCJV[i] * xsec[i] * lumi );
+    if( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 ) {
+      if(strcmp(selection,"finalSelection")==0)
+	expEv.push_back( efficiency[i] * xsec[i] * lumi );
+      if(strcmp(selection,"jetVeto")==0)
+	expEv.push_back( efficiencyAfterCJV[i] * xsec[i] * lumi );
+    }
+    else if( strcmp(eleID,"loose")==0 ) {
+      if(strcmp(selection,"finalSelection")==0)
+	expEv.push_back( efficiencyLooseID[i] * xsec[i] * lumi );
+      if(strcmp(selection,"jetVeto")==0)
+	expEv.push_back( efficiencyAfterCJVLooseID[i] * xsec[i] * lumi );
+    }
   }
 
   // now evaluate the expected events from Chowder CSA07
-  TFile *fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
+  TFile *fileChowderPDElectronSkim = 0;
+  if ( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 )
+    fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
+  else if ( strcmp(eleID,"loose")==0 )
+    fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE-looseegamma.root");
+
   TTree *treeChowderPDElectronSkim = (TTree*) fileChowderPDElectronSkim->Get("T1");
 
   // ALPGEN procees id:
@@ -113,23 +143,36 @@ std::vector<float> expectedEvents(const char *selection) {
 }
 
 
-void drawKinematics(const char* selection) {
+void drawKinematics(const char* selection, const char *eleID="tight") {
 
   // get the expected events for each process considered
-  std::vector<float> expEvents = expectedEvents(selection);
+  std::vector<float> expEvents = expectedEvents(selection,eleID);
 
   std::vector<TFile*> datasets;
-  TFile* H165 = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE.root");
+
+  TFile *H165 = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0;
+  if ( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 ) {
+    H165    = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE.root");
+    WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE.root");
+    WZ      = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE.root");
+    ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE.root");
+    tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE.root");
+    Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
+  }
+  else if ( strcmp(eleID,"loose")==0 ) {
+    H165    = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE-looseegamma.root");
+    WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE-looseegamma.root");
+    WZ      = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE-looseegamma.root");
+    ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE-looseegamma.root");
+    tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE-looseegamma.root");
+    Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE-looseegamma.root");
+  }
+
   datasets.push_back(H165);
-  TFile* WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE.root");
   datasets.push_back(WW_incl);
-  TFile* WZ = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE.root");
   datasets.push_back(WZ);
-  TFile* ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE.root");
   datasets.push_back(ZZ_incl);
-  TFile* tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE.root");
   datasets.push_back(tW_incl);
-  TFile* Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
   datasets.push_back(Chowder);
 
   std::vector<TH1F*> met;
@@ -330,7 +373,6 @@ void drawKinematics(const char* selection) {
   met[3]->Draw("same hist");
   
   met[0]->SetMarkerStyle(8);
-  met[0]->Sumw2();
   met[0]->Draw("same pe1");
 
   leg->Draw();
@@ -369,7 +411,6 @@ void drawKinematics(const char* selection) {
   mll[3]->Draw("same hist");
   
   mll[0]->SetMarkerStyle(8);
-  mll[0]->Sumw2();
   mll[0]->Draw("same pe1");
 
   leg->Draw();
@@ -409,7 +450,6 @@ void drawKinematics(const char* selection) {
   deltaphi[3]->Draw("same hist");
   
   deltaphi[0]->SetMarkerStyle(8);
-  deltaphi[0]->Sumw2();
   deltaphi[0]->Draw("same pe1");
 
   leg->Draw();
@@ -449,7 +489,6 @@ void drawKinematics(const char* selection) {
   ptmax[3]->Draw("same hist");
   
   ptmax[0]->SetMarkerStyle(8);
-  ptmax[0]->Sumw2();
   ptmax[0]->Draw("same pe1");
 
   leg->Draw();
@@ -489,7 +528,6 @@ void drawKinematics(const char* selection) {
   ptmin[3]->Draw("same hist");
   
   ptmin[0]->SetMarkerStyle(8);
-  ptmin[0]->Sumw2();
   ptmin[0]->Draw("same pe1");
 
   leg->Draw();
