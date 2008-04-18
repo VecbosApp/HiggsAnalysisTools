@@ -6,12 +6,9 @@ CommonHiggsPreselector::CommonHiggsPreselector() {}
 
 CommonHiggsPreselector::~CommonHiggsPreselector() {}
 
-void CommonHiggsPreselector::Configure(const char *configDir) {
+void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwitches) {
   
-  std::string fileCuts     = std::string(configDir) + "2e2nuCuts.txt";
-  std::string fileSwitches = std::string(configDir) + "2e2nuSwitches.txt";
-
-  _selection = new Selection(fileCuts,fileSwitches);
+  _selection = new Selection(std::string(fileCuts),std::string(fileSwitches));
   
   _selection->addSwitch("MCtruth");
   _selection->addSwitch("trigger");
