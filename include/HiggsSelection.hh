@@ -102,9 +102,13 @@ private:
   float m_deltaPhi[3];
   float m_mll[3];
   float m_transvMass[3];
+  //! used for ee final state
   float hardestElectronPt, hardestMuonPt;
+  //! used for mm final state
   float slowestElectronPt, slowestMuonPt;    
-
+  //! used for mixed final state
+  float hardestLeptonPt, slowestLeptonPt;
+  
   int _theGenEle, _theGenPos;
 
   //! vectors to store indices of best candidates

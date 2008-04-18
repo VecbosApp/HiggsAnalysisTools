@@ -476,15 +476,66 @@ void HiggsSelection::Loop() {
     
     // ancora da finire
     if (m_channel[em]){
+      
+      // electron ID, isolations for the only electron / positron
+      bool theEleIDEM = false;
+      bool theEleTrackerPtSumEM = 0.;
+      bool theEleCaloPtSumEM = 0.;
+
       theDeltaPhiEM    = m_deltaPhi[em];
       theInvMassEM     = m_mll[em];
       theTransvMassEM  = m_transvMass[em];
-      if(theElectron>-1 && theMuonPlus>-1){
+      if(theElectron>-1 && theMuonPlus>-1) {
 	theDetaLeptonsEM = etaEle[theElectron]-etaEle[theMuonPlus];
+	theEleIDEM = theElectronID;
+	theEleTrackerPtSumEM = theEleTrackerPtSum;
+	theEleCaloPtSumEM = theEleCaloPtSum;
       }
-      if(thePositron>-1 && theMuonMinus>-1){
+      if(thePositron>-1 && theMuonMinus>-1 ) {
 	theDetaLeptonsEM = etaEle[thePositron]-etaEle[theMuonMinus];
+	theEleIDEM = thePositronID;
+	theEleTrackerPtSumEM = thePosTrackerPtSum;
+	theEleCaloPtSumEM = thePosCaloPtSum;
       }
+
+
+      // selections
+      CutBasedHiggsSelectionEM.SetWeight(weight);
+      CutBasedHiggsSelectionEM.SetHighElePt(hardestElectronPt);
+      CutBasedHiggsSelectionEM.SetLowElePt(slowestMuonPt);
+      CutBasedHiggsSelectionEM.SetElectronId(true);
+      CutBasedHiggsSelectionEM.SetPositronId(theEleIDEM);
+      CutBasedHiggsSelectionEM.SetEleTrackerPtSum(0);
+      CutBasedHiggsSelectionEM.SetPosTrackerPtSum(theEleTrackerPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleCaloPtSum(0);
+      CutBasedHiggsSelectionEM.SetPosCaloPtSum(theEleCaloPtSumEM);
+      CutBasedHiggsSelectionEM.SetJetVeto(passedJetVeto);
+      CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
+      CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
+      CutBasedHiggsSelectionEM.SetInvMass(theInvMassMM);
+      CutBasedHiggsSelectionEM.SetDetaLeptons(theDetaLeptonsMM);
+      bool isSelectedEM = CutBasedHiggsSelectionEM.output();    
+      bool selUpToFinalLeptonsEM = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
+      bool selUpToJetVetoEM = CutBasedHiggsSelectionEM.outputUpToJetVeto();
+
+      myOutTreeEM -> fillAll(etMet[0], 
+			     theDeltaPhiEM, 
+			     theTransvMassEM, 
+			     theInvMassEM, 
+			     hardestMuonPt, 
+			     slowestMuonPt, 
+			     theDetaLeptonsEM,
+			     selUpToFinalLeptonsEM,
+			     selUpToJetVetoEM,
+			     isSelectedEM);
+      
+      if ( _preselection->getSwitch("addCSA07Infos") ) {
+	myOutTreeEM->fillCSA07(genWeight,genAlpgenID,1000.);
+      }
+      
+      // dumping final tree
+      myOutTreeEM -> store();
+
     }
 
     /*
@@ -532,6 +583,10 @@ void HiggsSelection::displayEfficiencies() {
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full MM selections: " << std::endl;
   CutBasedHiggsSelectionMM.diplayEfficiencies();
+
+  std::cout << "--------------------------------" << std::endl;
+  std::cout << "Full EM selections: " << std::endl;
+  CutBasedHiggsSelectionEM.diplayEfficiencies();
 
   EgammaCutBasedID.diplayEfficiencies();
 
@@ -730,6 +785,8 @@ void HiggsSelection::setKinematics( ) {
 		      0.0 );
       dilepPtEPlusMuMinus = dilepPt.Mag();
       m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect()))));
+      hardestLeptonPt = TMath::Max(etEle[thePositron],etMuon[theMuonMinus]);
+      slowestLeptonPt = TMath::Min(etEle[thePositron],etMuon[theMuonMinus]);
     }
     if ( theElectron > -1 && theMuonPlus > -1 ) {
       deltaPhiEMinusMuPlus = fabs( 180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
@@ -739,6 +796,8 @@ void HiggsSelection::setKinematics( ) {
 		      0.0 );
       dilepPtEMinusMuPlus = dilepPt.Mag();
       m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+      hardestLeptonPt = TMath::Max(etEle[theElectron],etMuon[theMuonPlus]);
+      slowestLeptonPt = TMath::Min(etEle[theElectron],etMuon[theMuonPlus]);
     }
     if ( thePositron > -1 && theMuonMinus > -1 &&
 	 theElectron > -1 && theMuonPlus > -1) {
@@ -750,6 +809,8 @@ void HiggsSelection::setKinematics( ) {
 			m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
 			0.0 );
 	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+	hardestLeptonPt = TMath::Max(etEle[thePositron],etMuon[theMuonMinus]);
+	slowestLeptonPt = TMath::Min(etEle[thePositron],etMuon[theMuonMinus]);
       }
       else {
 	m_deltaPhi[em] = deltaPhiEMinusMuPlus;
@@ -757,6 +818,8 @@ void HiggsSelection::setKinematics( ) {
 			m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 			0.0 );
 	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+	hardestLeptonPt = TMath::Max(etEle[theElectron],etMuon[theMuonPlus]);
+	slowestLeptonPt = TMath::Min(etEle[theElectron],etMuon[theMuonPlus]);
       }
     }
   }
