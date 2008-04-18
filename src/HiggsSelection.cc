@@ -42,34 +42,44 @@ HiggsSelection::HiggsSelection(TTree *tree)
   }
 
 
+  std::string fileCutsPreselection  = higgsConfigDir + "2l2nuCutsPreselection.txt";
+  std::string fileSwitchesPreselection = higgsConfigDir + "2l2nuSwitchesPreselection.txt";
+
   // preselection efficiencies
-  CommonHiggsPreselection.Configure(higgsConfigDir.c_str()); 
-  
+  CommonHiggsPreselection.Configure(fileCutsPreselection.c_str(), fileSwitchesPreselection.c_str()); 
+  _preselection = CommonHiggsPreselection.GetSelection();
+
   // extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
-  std::string fileCuts  = higgsConfigDir + "2e2nuCuts.txt";
-  std::string fileSwitches = higgsConfigDir + "2e2nuSwitches.txt";
-  _addedPres = new Selection(fileCuts,fileSwitches);
-  _addedPres->addSwitch("apply_kFactor");
-  _addedPres->addSwitch("addCSA07Infos");
-  _addedPres->addCut("etaElectronAcc");
-  _addedPres->addCut("ptElectronAcc");
-  _addedPres->addCut("etaMuonAcc");
-  _addedPres->addCut("ptMuonAcc");
+  //  _addedPres = new Selection(fileCutsPreselection,fileSwitchesPreselection);
+  _preselection->addSwitch("apply_kFactor");
+  _preselection->addSwitch("addCSA07Infos");
+  _preselection->addCut("etaElectronAcc");
+  _preselection->addCut("ptElectronAcc");
+  _preselection->addCut("etaMuonAcc");
+  _preselection->addCut("ptMuonAcc");
 
   // selection efficiencies
-  CutBasedHiggsSelectionEE.Configure(higgsConfigDir.c_str()); 
-  CutBasedHiggsSelectionMM.Configure(higgsConfigDir.c_str()); 
+  std::string fileCutsEE = higgsConfigDir + "2e2nuCuts.txt";
+  std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
+  CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
+  CutBasedHiggsSelectionEE.AppendPreselection(_preselection);
+  _selectionEE = CutBasedHiggsSelectionEE.GetSelection();  
 
-  // extra selection efficiencies  - to be put here not to pass the full list of jets to the selection class
-  _addedSel = new Selection(fileCuts,fileSwitches);
-  _addedSel->addCut("jetConeWidth");
-  _addedSel->addCut("etaJetAcc");
-  _addedSel->addCut("etJetLowAcc");
-  _addedSel->addCut("etJetHighAcc");
-  _addedSel->addCut("alphaJet");
+  std::string fileCutsMM = higgsConfigDir + "2mu2nuCuts.txt";
+  std::string fileSwitchesMM = higgsConfigDir + "2l2nuSwitches.txt";
+  CutBasedHiggsSelectionMM.Configure(fileCutsMM.c_str(),fileSwitchesMM.c_str()); 
+  CutBasedHiggsSelectionMM.AppendPreselection(_preselection);
+  _selectionMM = CutBasedHiggsSelectionMM.GetSelection();
+
+  std::string fileCutsEM = higgsConfigDir + "emu2nuCuts.txt";
+  std::string fileSwitchesEM = higgsConfigDir + "2l2nuSwitches.txt";
+  CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str()); 
+  CutBasedHiggsSelectionEM.AppendPreselection(_preselection);
+  _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
+
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/tightEleId/"); 
+  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
 
   
   // kinematics
@@ -116,8 +126,10 @@ HiggsSelection::~HiggsSelection(){
   delete _bestGenJets;
   delete _monitorGenJets;
   delete _monitorJets;
-  delete _addedPres;
-  delete _addedSel;
+  delete _preselection;
+  delete _selectionEE;
+  delete _selectionMM;
+  delete _selectionEM;
   myOutTreeEE -> save();
   myOutTreeMM -> save();
   myOutTreeEM -> save();
@@ -244,7 +256,7 @@ void HiggsSelection::Loop() {
   myOutTreeMM = new RedHiggsTree(reducedTreeNameMM.c_str());
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
 
-  if (_addedPres->getSwitch("addCSA07Infos")) {
+  if (_preselection->getSwitch("addCSA07Infos")) {
     myOutTreeEE->addCSA07Infos();
     myOutTreeMM->addCSA07Infos();
     myOutTreeEM->addCSA07Infos();
@@ -267,7 +279,7 @@ void HiggsSelection::Loop() {
     // get the kFactor of the event
     
     float weight = 1;
-    if (_addedPres->getSwitch("apply_kFactor")) weight = getkFactor("H_gg");
+    if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("H_gg");
 
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
@@ -406,7 +418,7 @@ void HiggsSelection::Loop() {
 			     selUpToFinalLeptonsEE,
 			     selUpToJetVetoEE,
 			     isSelectedEE);
-      if ( _addedPres->getSwitch("addCSA07Infos") ) {
+      if ( _preselection->getSwitch("addCSA07Infos") ) {
 	myOutTreeEE->fillCSA07(genWeight,genAlpgenID,1000.);
       }
       
@@ -453,7 +465,7 @@ void HiggsSelection::Loop() {
 			     selUpToJetVetoMM,
 			     isSelectedMM);
       
-      if ( _addedPres->getSwitch("addCSA07Infos") ) {
+      if ( _preselection->getSwitch("addCSA07Infos") ) {
 	myOutTreeMM->fillCSA07(genWeight,genAlpgenID,1000.);
       }
       
@@ -544,10 +556,10 @@ std::pair<int,int> HiggsSelection::getBestElectronPair() {
   float maxPtLep2=-1000.;
   std::vector<int> goodRecoLeptons;
   for(int i=0;i<nEle;i++) {
-    if(_addedPres->getSwitch("etaElectronAcc") && !_addedPres->passCut("etaElectronAcc",etaEle[i]) ) continue;
+    if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
-    if(_addedPres->getSwitch("ptElectronAcc") && !_addedPres->passCut("ptElectronAcc",thisPt) ) continue;
+    if(_preselection->getSwitch("ptElectronAcc") && !_preselection->passCut("ptElectronAcc",thisPt) ) continue;
     // fixme: (in the future) put here full electron ID not to loose efficiency I think
     float thisCharge = chargeEle[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
@@ -565,10 +577,10 @@ std::pair<int,int> HiggsSelection::getBestMuonPair() {
   float maxPtLep2=-1000.;
   std::vector<int> goodRecoLeptons;
   for(int i=0;i<nMuon;i++) {
-    if(_addedPres->getSwitch("etaMuonAcc") && !_addedPres->passCut("etaMuonAcc",etaMuon[i]) ) continue;
+    if(_preselection->getSwitch("etaMuonAcc") && !_preselection->passCut("etaMuonAcc",etaMuon[i]) ) continue;
     TVector3 pLepton(pxMuon[i],pyMuon[i],pzMuon[i]);
     float thisPt=pLepton.Pt();
-    if(_addedPres->getSwitch("ptMuonAcc") && !_addedPres->passCut("ptMuonAcc",thisPt) ) continue;
+    if(_preselection->getSwitch("ptMuonAcc") && !_preselection->passCut("ptMuonAcc",thisPt) ) continue;
     // fixme: (in the future) put here full electron ID not to loose efficiency I think
     float thisCharge = chargeMuon[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
@@ -769,10 +781,6 @@ void HiggsSelection::setKinematics( ) {
 
 bool HiggsSelection::goodJetFound() {
 
-//   std::cout << "start loop on jets" << std::endl;
-//   std::cout << "e-: " << m_p4ElectronMinus->X() << "," << m_p4ElectronMinus->Y() << "," << m_p4ElectronMinus->Z() << std::endl;
-//   std::cout << "e+: " << m_p4ElectronPlus->X() << "," << m_p4ElectronPlus->Y() << "," << m_p4ElectronPlus->Z() << std::endl;
-  
   // first check that kinematics has been set
   bool foundJet=false;
   float maxPtJet=0.;
@@ -781,46 +789,31 @@ bool HiggsSelection::goodJetFound() {
     // check if the electron or the positron falls into the jet
     // common cleaning class
     TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
-//     std::cout << "jet: " << p3Jet.X() << "," << p3Jet.Y() << "," << p3Jet.Z() << std::endl;
-//     std::cout << "guardo se e' l'e-" << std::endl;
     if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
-      //      std::cout << "deltaR w e-: " << deltaR << std::endl;
-      if(_addedSel->getSwitch("jetConeWidth") && 
-	 _addedSel->passCut("jetConeWidth",deltaR) &&
+      // taking from ee config file, but jets veto is the same for all the channels
+      if(_selectionEE->getSwitch("jetConeWidth") && 
+	 _selectionEE->passCut("jetConeWidth",deltaR) &&
 	 (m_HoEElectronMinus < 0.2) &&  
 	 (m_CaloEneElectronMinus/energyJet[j] > 0.9)
 	 ) continue;
     }
-    //    std::cout << "non e' e-" << std::endl;
-
-//     std::cout << "guardo se e' l'e+" << std::endl;
-//     std::cout << "positron mom = " << m_p4ElectronPlus->Vect().Mag() << std::endl;
     if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
-      //      std::cout << "deltaR w e+: " << deltaR << std::endl;
-      if(_addedSel->getSwitch("jetConeWidth") && 
-	 _addedSel->passCut("jetConeWidth",deltaR) &&
+      if(_selectionEE->getSwitch("jetConeWidth") && 
+	 _selectionEE->passCut("jetConeWidth",deltaR) &&
 	 (m_HoEElectronPlus < 0.2) &&  
 	 (m_CaloEneElectronPlus/energyJet[j] > 0.9)
 	 ) continue;
     }
-    //    std::cout << "non e' e+" << std::endl;
-
-    // jet veto
-//     std::cout << "etaJet[j] = " << etaJet[j]
-// 	      << "\tetJet[j] = " << etJet[j]
-// 	      << "\talphaJet[j] = " << alphaJet[j] << std::endl;
- 
     if(etJet[j]>maxPtJet) maxPtJet=etJet[j];
-    if(_addedSel->getSwitch("etaJetAcc") && !_addedSel->passCut("etaJetAcc",etaJet[j])) continue;
-    if(_addedSel->getSwitch("etJetLowAcc") && !_addedSel->passCut("etJetLowAcc",etJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etJet[j]) ) continue;
 
-    if( (_addedSel->getSwitch("etJetHighAcc") && _addedSel->passCut("etJetHighAcc",etJet[j])) &&
-	(_addedSel->getSwitch("jetAlpha") && !_addedSel->passCut("jetAlpha",alphaJet[j]))
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etJet[j])) &&
+	(_selectionEE->getSwitch("jetAlpha") && !_selectionEE->passCut("jetAlpha",alphaJet[j]))
        ) continue;
     foundJet=true;
-    //    std::cout << "found jet." << std::endl;
     break;
   }
 

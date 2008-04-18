@@ -68,12 +68,13 @@ private:
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
   //! to evaluate preselection efficiency
-  Selection* _addedPres;
+  Selection *_preselection;
   CommonHiggsPreselector CommonHiggsPreselection;
   //! to evaluate full selection efficiency
-  Selection* _addedSel;
+  Selection *_selectionEE, *_selectionMM, *_selectionEM;
   CutBasedHiggsSelector CutBasedHiggsSelectionEE;
   CutBasedHiggsSelector CutBasedHiggsSelectionMM;
+  CutBasedHiggsSelector CutBasedHiggsSelectionEM;
   //! be verbose during runtime
   bool _verbose;
   //! the list of required triggers
