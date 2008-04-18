@@ -7,8 +7,8 @@ classDepEleId		1
 jetVeto			1
 MET			1
 deltaPhi		1
-maxPtElectron		1
-minPtElectron		1
+maxPtLepton		1
+minPtLepton		1
 dileptonInvMassMax	1
 detaLeptons		0
 jetConeWidth		1

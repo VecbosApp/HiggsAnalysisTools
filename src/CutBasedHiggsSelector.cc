@@ -29,8 +29,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("hcalPtSum");
   _selection->addCut("MET");
   _selection->addCut("deltaPhi");
-  _selection->addCut("maxPtElectron");
-  _selection->addCut("minPtElectron");
+  _selection->addCut("maxPtLepton");
+  _selection->addCut("minPtLepton");
   _selection->addCut("dileptonInvMassMax");
   _selection->addCut("detaLeptons");
 
@@ -47,8 +47,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   higgsSelCounter.AddVar("jetVeto");
   higgsSelCounter.AddVar("MET");
   higgsSelCounter.AddVar("deltaPhi");
-  higgsSelCounter.AddVar("maxPtElectron");
-  higgsSelCounter.AddVar("minPtElectron");
+  higgsSelCounter.AddVar("maxPtLepton");
+  higgsSelCounter.AddVar("minPtLepton");
   higgsSelCounter.AddVar("dileptonInvMassMax");
   higgsSelCounter.AddVar("detaLeptons");
   higgsSelCounter.AddVar("final");
@@ -96,11 +96,11 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
   higgsSelCounter.IncrVar("deltaPhi",m_weight); 
 
-  if (_selection->getSwitch("maxPtElectron") && !_selection->passCut("maxPtElectron", m_highPt)) return false;
-  higgsSelCounter.IncrVar("maxPtElectron",m_weight);
+  if (_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
+  higgsSelCounter.IncrVar("maxPtLepton",m_weight);
 
-  if (_selection->getSwitch("minPtElectron") && !_selection->passCut("minPtElectron", m_lowPt)) return false;
-  higgsSelCounter.IncrVar("minPtElectron",m_weight);
+  if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
+  higgsSelCounter.IncrVar("minPtLepton",m_weight);
 
   if (_selection->getSwitch("dileptonInvMassMax") && !_selection->passCut("dileptonInvMassMax", m_invMass)) return false;
   higgsSelCounter.IncrVar("dileptonInvMassMax",m_weight);
@@ -126,9 +126,9 @@ void CutBasedHiggsSelector::diplayEfficiencies() {
   higgsSelCounter.Draw("jetVeto","caloIso");
   higgsSelCounter.Draw("MET","jetVeto");
   higgsSelCounter.Draw("deltaPhi","MET");
-  higgsSelCounter.Draw("maxPtElectron","deltaPhi");
-  higgsSelCounter.Draw("minPtElectron","maxPtElectron");
-  higgsSelCounter.Draw("dileptonInvMassMax","minPtElectron");
+  higgsSelCounter.Draw("maxPtLepton","deltaPhi");
+  higgsSelCounter.Draw("minPtLepton","maxPtLepton");
+  higgsSelCounter.Draw("dileptonInvMassMax","minPtLepton");
   higgsSelCounter.Draw("detaLeptons","dileptonInvMassMax");
   higgsSelCounter.Draw("detaLeptons","preselected");
 }

@@ -5,8 +5,8 @@ trackerPtSum		0		0.05
 hcalPtSum		0		0.05
 MET			50		10000
 deltaPhi		0		45
-maxPtElectron		25		50
-minPtElectron		15		10000
+maxPtLepton		25		50
+minPtLepton		15		10000
 dileptonInvMassMax	12		50
 detaLeptons		-1		1
 jetConeWidth		0.0		0.2
