@@ -9,12 +9,16 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
 
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
 
-void CutBasedHiggsSelector::Configure(const char *configDir) {
+void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwitches) {
 
-  std::string fileCuts     = std::string(configDir) + "2e2nuCuts.txt";
-  std::string fileSwitches = std::string(configDir) + "2e2nuSwitches.txt";
+  _selection = new Selection(std::string(fileCuts),std::string(fileSwitches));
 
-  _selection = new Selection(fileCuts,fileSwitches);
+  // tehse cuts are applied in the HiggsSelection class, but are configured here
+  _selection->addCut("jetConeWidth");
+  _selection->addCut("etaJetAcc");
+  _selection->addCut("etJetLowAcc");
+  _selection->addCut("etJetHighAcc");
+  _selection->addCut("alphaJet");
 
   _selection->addSwitch("classDepEleId");
   _selection->addSwitch("jetVeto");

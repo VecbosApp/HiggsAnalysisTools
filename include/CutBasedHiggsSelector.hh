@@ -15,7 +15,13 @@ public:
   virtual ~CutBasedHiggsSelector();   
 
   //! configure from files
-  void Configure(const char *configDir);
+  void Configure(const char *fileCuts, const char *fileSwitches);
+
+  //! configure pre-selection (it is not necessarily applied)
+  void AppendPreselection(Selection *preselection) { _selection->append(preselection); }
+
+  //! get the applied selection
+  Selection* GetSelection() { return _selection; }
 
   //! set event by event observables
   void SetWeight(float weight)                { m_weight        = weight;    }
