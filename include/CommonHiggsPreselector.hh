@@ -15,7 +15,7 @@ public:
   virtual ~CommonHiggsPreselector();   
 
   //! configure from files
-  void Configure(const char *configDir);
+  void Configure(const char *fileCuts, const char *fileSwitches);
 
   //! set event by event observables
   void SetWeight(float kFactor)       { m_kFactor     = kFactor;     }
@@ -41,6 +41,9 @@ public:
 
   //! display the electron efficiency
   void diplayEfficiencies();
+
+  //! get the slection
+  Selection* GetSelection() { return _selection; }
 
 private:
   
