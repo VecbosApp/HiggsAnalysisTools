@@ -9,7 +9,7 @@
 // ----
 // usage: 
 // root -b
-// .L macros/higgsPlots.cxx++
+// .L macro/higgsPlots.cxx++
 // drawKinematics("jetVeto"): draws distributions after CJV
 // drawKinematics("finalSelection"): draw distributions after the full selection (but stat is poor)
 // //     this uses the tight egamma electron ID (default)
@@ -66,7 +66,7 @@ std::vector<float> expectedEvents(const char *selection, const char *eleID="tigh
 
   // xsecs in pb
   // http://ceballos.web.cern.ch/ceballos/hwwlnln/cross-sections_csa07analysis.txt
-  xsec.push_back(2.36); // signal H165 pb-1 -> WW -> 2l2nu
+  xsec.push_back(2.36); // signal H160 pb-1 -> WW -> 2l2nu
   xsec.push_back(114.3); // WW inclusive (lep + had)
   xsec.push_back(49.9); // WZ (incl) 
   xsec.push_back(15.3); // ZZ (incl)
@@ -137,7 +137,7 @@ std::vector<float> expectedEvents(const char *selection, const char *eleID="tigh
     std::cout << "process n. " << i << "\texpected events in " << lumi << " pb-1:\t"
 	      << expEv[i] << std::endl;
   }
-  
+
   return expEv;
 
 }
@@ -534,7 +534,6 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
   cptmin.SaveAs("ptmin.eps");
   cptmin.SaveAs("ptmin.root");
-
 
 
 }
