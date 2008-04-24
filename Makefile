@@ -66,7 +66,7 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 .PREFIXES: ./lib/
 
 
-$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc $(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc $(INCLUDEDIR)/src/ClassEfficiencyStudy.cc $(INCLUDEDIR)/src/WplusJets.cc
+$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc $(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc $(INCLUDEDIR)/src/ClassEfficiencyStudy.cc $(INCLUDEDIR)/src/WplusJets.cc $(INCLUDEDIR)/src/HiggsEleIdOptim.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsBase.o $<
 $(OUTLIBCOMMON)Conditions.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Conditions.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)Conditions.o $<
@@ -86,6 +86,8 @@ $(OUTLIBCOMMON)TriggerMask.o: $(INCLUDEDIRCOMMON)/CommonTools/src/TriggerMask.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)TriggerMask.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
+$(OUTLIB)HiggsEleIdOptim.o: $(INCLUDEDIR)/src/HiggsEleIdOptim.C
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsEleIdOptim.o $<
 $(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronID.o $<
 $(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc

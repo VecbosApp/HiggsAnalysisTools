@@ -51,6 +51,10 @@
 #if Application == 10
 #include "HiggsAnalysisTools/src/ZewkSelection.cc"
 #endif
+#if Application == 11
+#include "HiggsAnalysisTools/src/HiggsEleIdOptim.cc"
+#endif
+
 
 int main(int argc, char* argv[]) {
 
@@ -181,6 +185,27 @@ int main(int argc, char* argv[]) {
 
   ztoee.Loop();
   ztoee.displayEfficiencies();
+#endif
+
+#if Application == 11
+
+  HiggsEleIdOptim heleId(theChain);
+  std::string outFileName(inputFileName);
+  outFileName+=".root";
+
+  TriggerMask mask(treeCond);
+
+  // require triggers for ee channel
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+  heleId.requireTrigger(requiredTriggers);
+
+  heleId.Loop();
+
 #endif
 
   return 0;
