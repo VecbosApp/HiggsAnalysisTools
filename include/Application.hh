@@ -13,4 +13,4 @@
 //  11 = electron ID optimization for Higgs studies    
 //  12 = Z+jets -> ee  'fast version'
 
-#define Application 12
+#define Application 1
