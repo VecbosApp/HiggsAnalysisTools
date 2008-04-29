@@ -11,5 +11,6 @@
 //   9 = W -> enu with EWK note selections
 //  10 = Z -> ee  with EWK note selections
 //  11 = electron ID optimization for Higgs studies    
+//  12 = Z+jets -> ee  'fast version'
 
-#define Application 1
+#define Application 12

@@ -54,7 +54,9 @@
 #if Application == 11
 #include "HiggsAnalysisTools/src/HiggsEleIdOptim.cc"
 #endif
-
+#if Application == 12
+#include "HiggsAnalysisTools/src/ZplusJetsSelection.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -206,6 +208,24 @@ int main(int argc, char* argv[]) {
 
   heleId.Loop();
 
+#endif
+
+#if Application == 12  
+  ZplusJetsSelection zjetstoee(theChain);
+
+  TriggerMask mask(treeCond);
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+
+  zjetstoee.requireTrigger(requiredTriggers);
+
+  zjetstoee.Loop();
+  zjetstoee.writeHistos();
+  zjetstoee.displayEfficiencies();
 #endif
 
   return 0;
