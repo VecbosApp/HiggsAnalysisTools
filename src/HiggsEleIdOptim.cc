@@ -64,7 +64,8 @@ HiggsEleIdOptim::~HiggsEleIdOptim(){
 		for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
 		  *outFile << iiDeta      << " " << iiDphi      << " " << iiHoE    << " " << iiS9S25  << " " 
 			   << iiEoPoutmin << " " << iiEoPoutmax << " " << iiSeemin << " " << iiSeemax << " " 
-			   << passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax] << endl;
+			   << passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax] << " " 
+			   << passedIsol  << endl;
 	      }}}}}}}}
 
   delete m_p4ElectronPlus;
@@ -172,9 +173,8 @@ void HiggsEleIdOptim::Loop() {
 		    thePosIDScan[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax]=false;
 		  }}}}}}}}
 
-    // electron is not a EB golden - apply loose egamma cuts 
+    // electron is not a EB golden - loose egamma cuts already applied
     if (eleClassEle[theElectron]!=0){
-      theElectronID=isEleID(theElectron);
       for(int iiDeta=0; iiDeta<6; iiDeta++){
 	for(int iiDphi=0; iiDphi<5; iiDphi++){
 	  for(int iiHoE=0; iiHoE<5; iiHoE++){
@@ -183,13 +183,12 @@ void HiggsEleIdOptim::Loop() {
 		for(int iiEoPoutmax=0; iiEoPoutmax<3; iiEoPoutmax++){
 		  for(int iiSeemin=0; iiSeemin<3; iiSeemin++){
 		    for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
-		      theEleIDScan[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax]=theElectronID;
+		      theEleIDScan[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax]=true;
 		    }}}}}}}}
     } 
 
-    // positron is not a EB golden - apply loose egamma cuts
+    // positron is not a EB golden - loose egamma cuts already applied
     if (eleClassEle[thePositron]!=0){
-      thePositronID=isEleID(thePositron);
       for(int iiDeta=0; iiDeta<6; iiDeta++){
 	for(int iiDphi=0; iiDphi<5; iiDphi++){
 	  for(int iiHoE=0; iiHoE<5; iiHoE++){
@@ -198,7 +197,7 @@ void HiggsEleIdOptim::Loop() {
 		for(int iiEoPoutmax=0; iiEoPoutmax<3; iiEoPoutmax++){
 		  for(int iiSeemin=0; iiSeemin<3; iiSeemin++){
 		    for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
-		      thePosIDScan[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax]=thePositronID;
+		      thePosIDScan[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPoutmin][iiEoPoutmax][iiSeemin][iiSeemax]=true;
 		    }}}}}}}}
     } 
     
@@ -265,98 +264,6 @@ std::pair<int,int> HiggsEleIdOptim::getBestElectronPair() {
   _bestElectrons->push_back(theLep1);  
   _bestElectrons->push_back(theLep2); 
   return make_pair(theLep1,theLep2);
-}
-
-bool HiggsEleIdOptim::isEleID(int eleIndex) {
-
-  double HOverEMaxCut, S9S25MaxCut, DEtaMaxCut, DPhiMaxCut, SeeMaxCut, EoPoutMaxCut;
-  double HOverEMinCut, S9S25MinCut, DEtaMinCut, DPhiMinCut, SeeMinCut, EoPoutMinCut;
-  
-  // default loose golden barrel
-  if (eleClassEle[eleIndex]==0){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.09;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.7; 
-    EoPoutMaxCut = 2.5;    EoPoutMinCut = 0.6;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose golden endcap
-  if (eleClassEle[eleIndex]==100){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.09;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.8; 
-    EoPoutMaxCut = 2.5;    EoPoutMinCut = 0.6;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
- 
-  // default loose big brem barrel
-  if (eleClassEle[eleIndex]==10){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.06;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.7; 
-    EoPoutMaxCut = 999.;   EoPoutMinCut = 1.7;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose big brem endcap
-  if (eleClassEle[eleIndex]==110){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.06;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.8; 
-    EoPoutMaxCut = 999.;   EoPoutMinCut = 1.7;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose narrow barrel
-  if (eleClassEle[eleIndex]==20){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.07;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.7; 
-    EoPoutMaxCut = 2.2;    EoPoutMinCut = 0.9;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose narrow endcap
-  if (eleClassEle[eleIndex]==120){
-    DEtaMaxCut   = 0.008;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.06;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.07;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.8; 
-    EoPoutMaxCut = 2.2;    EoPoutMinCut = 0.9;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose  showering/crack barrel 
-  if (eleClassEle[eleIndex]>=30 && eleClassEle[eleIndex]<=40){
-    DEtaMaxCut   = 0.009;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.08;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.12;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.5; 
-    EoPoutMaxCut = 999.;   EoPoutMinCut = 0.5;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  // default loose  showering/crack endcap
-  if (eleClassEle[eleIndex]>=130 && eleClassEle[eleIndex]<=140){
-    DEtaMaxCut   = 0.009;  DEtaMinCut   = 0.0; 
-    DPhiMaxCut   = 0.09;   DPhiMinCut   = 0.0;     
-    HOverEMaxCut = 0.12;   HOverEMinCut = 0.0;   
-    S9S25MaxCut  = 1.0;    S9S25MinCut  = 0.5; 
-    EoPoutMaxCut = 999.;   EoPoutMinCut = 0.5;  
-    SeeMaxCut    = 999.;   SeeMinCut    = 0.0;     
-  }
-  
-  bool idPassed = false;
-  if( (fabs(eleDeltaEtaAtVtxEle[eleIndex])<=DEtaMaxCut) && (fabs(eleDeltaEtaAtVtxEle[eleIndex])>=DEtaMinCut)){
-    if( (fabs(eleDeltaPhiAtVtxEle[eleIndex])<=DPhiMaxCut) && (fabs(eleDeltaPhiAtVtxEle[eleIndex])>=DPhiMinCut)){
-      if( (eleHoEEle[eleIndex]<=HOverEMaxCut) && (eleHoEEle[eleIndex]>=HOverEMinCut) ){
-	if( (s9s25Ele[eleIndex]<=S9S25MaxCut) && (s9s25Ele[eleIndex]>=S9S25MinCut) ){
-	  if( (sqrt(covEtaEtaEle[eleIndex])<=SeeMaxCut) && (sqrt(covEtaEtaEle[eleIndex])>=SeeMinCut) ){
-	    if( (eleCorrEoPoutEle[eleIndex]<=EoPoutMaxCut) && (eleCorrEoPoutEle[eleIndex]>=EoPoutMinCut) ){
-	      idPassed = true;
-	    }}}}}}
-
-  return idPassed; 
 }
 
 bool HiggsEleIdOptim::isEleIDScan(int eleIndex, int iiDeta, int iiDphi, int iiHoE, int iiS9S25, int iiEoPoutmin, int iiEoPoutmax, int iiSeemin, int iiSeemax) {
@@ -499,7 +406,7 @@ bool HiggsEleIdOptim::isEleIDScan(int eleIndex, int iiDeta, int iiDphi, int iiHo
   bool idPassed = false;
   if( (fabs(eleDeltaEtaAtVtxEle[eleIndex])<=DEtaMaxCut) && (fabs(eleDeltaEtaAtVtxEle[eleIndex])>=DEtaMinCut)){
     if( (fabs(eleDeltaPhiAtVtxEle[eleIndex])<=DPhiMaxCut) && (fabs(eleDeltaPhiAtVtxEle[eleIndex])>=DPhiMinCut)){
-      if( (eleHoEEle[eleIndex]<=HOverEMaxCut) && (eleHoEEle[eleIndex]>=HOverEMinCut) ){
+      if( (fabs(eleHoEEle[eleIndex])<=HOverEMaxCut) && (fabs(eleHoEEle[eleIndex])>=HOverEMinCut) ){
 	if( (s9s25Ele[eleIndex]<=S9S25MaxCut) && (s9s25Ele[eleIndex]>=S9S25MinCut) ){
 	  if( (sqrt(covEtaEtaEle[eleIndex])<=SeeMaxCut) && (sqrt(covEtaEtaEle[eleIndex])>=SeeMinCut) ){
 	    if( (eleCorrEoPoutEle[eleIndex]<=EoPoutMaxCut) && (eleCorrEoPoutEle[eleIndex]>=EoPoutMinCut) ){
