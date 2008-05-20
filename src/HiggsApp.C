@@ -52,7 +52,7 @@
 #include "HiggsAnalysisTools/src/ZewkSelection.cc"
 #endif
 #if Application == 11
-#include "HiggsAnalysisTools/src/HiggsEleIdOptim.cc"
+#include "HiggsAnalysisTools/src/HiggsEleIdOptimToyMC.cc"
 #endif
 #if Application == 12
 #include "HiggsAnalysisTools/src/ZplusJetsSelection.cc"
@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
 
 #if Application == 11
 
-  HiggsEleIdOptim heleId(theChain);
+  HiggsEleIdOptimToyMC heleIdtoy(theChain);
   std::string outFileName(inputFileName);
   outFileName+=".root";
 
@@ -204,9 +204,9 @@ int main(int argc, char* argv[]) {
   mask.requireTrigger("HLT2ElectronRelaxed");
 
   std::vector<int> requiredTriggers = mask.getBits();
-  heleId.requireTrigger(requiredTriggers);
+  heleIdtoy.requireTrigger(requiredTriggers);
 
-  heleId.Loop();
+  heleIdtoy.Loop();
 
 #endif
 
