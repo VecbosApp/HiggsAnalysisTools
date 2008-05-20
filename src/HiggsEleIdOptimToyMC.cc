@@ -11,13 +11,14 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   : HiggsBase(tree) {
 
   // to be changed:
-  // 1) signal or background
-  nVar = 6;         // 2) number of variables
-                    // 3) electron class
-  theClass = 0;     // 0 = golden, EB
-                    // 1 = golden, EE
-                    // 2 = showering, EB
-                    // 3 = showering, EE
+  // A) signal or background
+  nVar = 6;         // B) number of variables
+                    // C) electron class
+  theClass = 2;     //    0 = golden, EB
+                    //    1 = golden, EE
+                    //    2 = showering, EB
+                    //    3 = showering, EE
+  theHmass = 190;   // D) higgs mass
 
   // kinematics
   _p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
@@ -318,12 +319,33 @@ void HiggsEleIdOptimToyMC::Loop() {
     // full kine analysis - to be modified according the mass hypothesis
     if (!isEle || !isPos)       continue;
     if (goodJetFound())         continue;
-    if (etMet[0] < 50)          continue;
-    if (_deltaPhi > 45)         continue;
-    if (hardestElectronPt < 25) continue;
-    if (hardestElectronPt > 50) continue;
-    if (slowestElectronPt < 15) continue;
-    if (_mll > 50)              continue;
+    // other kinematic selections depending on the mass
+    if (theHmass==130) {
+      if (etMet[0]<40)            continue;
+      if (etMet[0]>80)            continue;
+      if (_deltaPhi > 90)         continue;
+      if (hardestElectronPt > 49) continue;
+      if (hardestElectronPt < 20) continue;
+      if (slowestElectronPt < 10) continue;
+      if (_mll > 40)              continue;
+    }
+    if (theHmass==160) {
+      if (etMet[0] < 50)          continue;
+      if (_deltaPhi > 45)         continue;
+      if (hardestElectronPt < 25) continue;
+      if (hardestElectronPt > 50) continue;
+      if (slowestElectronPt < 15) continue;
+      if (_mll > 50)              continue;
+    }
+    if (theHmass==190) {
+      if (etMet[0]<48)            continue;
+      if (_deltaPhi > 50)         continue;
+      if (hardestElectronPt > 73) continue;
+      if (hardestElectronPt < 31) continue;
+      if (slowestElectronPt < 25) continue;
+      if (_mll > 40)              continue;
+    }
+
     fullKine=fullKine+theWeight;
 
   } // end loop over entries

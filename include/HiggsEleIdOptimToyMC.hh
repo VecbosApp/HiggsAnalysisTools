@@ -79,6 +79,7 @@ private:
   THnSparseF *HL_NVarDim;
   int nVar;
   int theClass;
+  int theHmass;
 
   //! counters
   float allEvents, passedMc, triggered, commonPresel; 
