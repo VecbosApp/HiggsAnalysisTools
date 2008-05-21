@@ -14,7 +14,7 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   // A) signal or background
   nVar = 6;         // B) number of variables
                     // C) electron class
-  theClass = 2;     //    0 = golden, EB
+  theClass = 0;     //    0 = golden, EB
                     //    1 = golden, EE
                     //    2 = showering, EB
                     //    3 = showering, EE
@@ -187,7 +187,7 @@ void HiggsEleIdOptimToyMC::Loop() {
     if (hardestElectronPt < 20) continue; 
     if (slowestElectronPt < 10) continue; 
     if (etMet[0] < 30)          continue; 
-    if (_mll < 12)             continue; 
+    if (_mll < 12)              continue; 
     elePresel=elePresel+theWeight; 
 
     // did we pass the loose electronId?
@@ -316,9 +316,8 @@ void HiggsEleIdOptimToyMC::Loop() {
       }
     }
 
-    // full kine analysis - to be modified according the mass hypothesis
-    if (!isEle || !isPos)       continue;
-    if (goodJetFound())         continue;
+    // full kine analysis
+    if (goodJetFound())           continue;
     // other kinematic selections depending on the mass
     if (theHmass==130) {
       if (etMet[0]<40)            continue;
@@ -330,12 +329,12 @@ void HiggsEleIdOptimToyMC::Loop() {
       if (_mll > 40)              continue;
     }
     if (theHmass==160) {
-      if (etMet[0] < 50)          continue;
+      if (etMet[0] < 51)          continue;
       if (_deltaPhi > 45)         continue;
       if (hardestElectronPt < 25) continue;
-      if (hardestElectronPt > 50) continue;
-      if (slowestElectronPt < 15) continue;
-      if (_mll > 50)              continue;
+      if (hardestElectronPt > 49) continue;
+      if (slowestElectronPt < 25) continue;
+      if (_mll > 40)              continue;
     }
     if (theHmass==190) {
       if (etMet[0]<48)            continue;
