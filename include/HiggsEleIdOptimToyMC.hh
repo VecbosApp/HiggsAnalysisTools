@@ -16,6 +16,7 @@
 #include "CommonTools/include/Selection.hh"
 #include "CommonTools/include/Counters.hh"
 #include "RedEleIDOptimTree.hh"
+#include "RedLikeOptimTree.hh"
 
 #include "HiggsBase.h"
 #include <TH1.h>
@@ -69,6 +70,7 @@ private:
   //! histos
   TFile *outRootFile;
   RedEleIDOptimTree *outRootTree;
+  RedLikeOptimTree  *outLikeTree;
   int   theBins[6];
   double theMin[6], theMax[6], theWidth[6];
   TH1F *HH_dEta,  *HH_dPhi, *HH_HoE;
@@ -77,6 +79,7 @@ private:
   TH1F *HL_dEta,  *HL_dPhi, *HL_HoE;
   TH1F *HL_S9S25, *HL_See,  *HL_EoPout;
   THnSparseF *HL_NVarDim;
+  TH1F *HH_like,  *HL_like;
   int nVar;
   int theClass;
   int theHmass;

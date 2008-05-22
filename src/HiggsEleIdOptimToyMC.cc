@@ -10,15 +10,18 @@
 HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree) 
   : HiggsBase(tree) {
 
-  // to be changed:
+  // to be changed (A & B only for likelihood studies):
   // A) signal or background
-  nVar = 6;         // B) number of variables
-                    // C) electron class
+  // B) higgs mass
+  theHmass = 160;   
+  // C) number of variables - not used for likelihood studies
+  nVar = 6;         
+  // D) electron class - not used for likelihood studies
   theClass = 0;     //    0 = golden, EB
                     //    1 = golden, EE
                     //    2 = showering, EB
                     //    3 = showering, EE
-  theHmass = 190;   // D) higgs mass
+
 
   // kinematics
   _p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
@@ -56,6 +59,10 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   HL_See    = new TH1F("HL_See",    "HL_See",    35,  0.0, 0.02);
   HL_EoPout = new TH1F("HL_EoPout", "HL_EoPout", 35,  0.5, 4.0);
 
+  // likelihood studies - not divided by class
+  HH_like   = new TH1F("HH_like",   "HH_like",   100, 0.0, 1.0);
+  HL_like   = new TH1F("HL_like",   "HL_like",   100, 0.0, 1.0);
+
   // N dimensions histo
   theBins[0] = 35;
   theBins[1] = 35;
@@ -81,8 +88,9 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   HH_NVarDim = new THnSparseF("HH_NVarDim", "HH_NVarDim", nVar, theBins, theMin, theMax);
   HL_NVarDim = new THnSparseF("HL_NVarDim", "HL_NVarDim", nVar, theBins, theMin, theMax);
 
-  // output tree
+  // output trees
   outRootTree = new RedEleIDOptimTree("myOutTree.root");
+  outLikeTree = new RedLikeOptimTree("myLikeTree.root");
 
   // output root file
   outRootFile = new TFile("outHistos.root","RECREATE");
@@ -106,6 +114,7 @@ HiggsEleIdOptimToyMC::~HiggsEleIdOptimToyMC(){
   // saving histos and tree
   outRootFile->Close();
   outRootTree->save();
+  outLikeTree->save();
 
   // deleting
   delete _p4ElectronPlus;
@@ -159,8 +168,8 @@ void HiggsEleIdOptimToyMC::Loop() {
     allEvents=allEvents+theWeight; 
 
     // look to the MC truth decay tree
-    // bool foundMcTree = findMcTree("HtoWWto2e2nu");
-    bool foundMcTree = findMcTree("Wjets");
+    bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    // bool foundMcTree = findMcTree("Wjets");
     if ( !foundMcTree ) continue;
     passedMc=passedMc+theWeight;    
 
@@ -316,6 +325,19 @@ void HiggsEleIdOptimToyMC::Loop() {
       }
     }
 
+    // likelihood studies: filling the histos according the Pt
+    if(isHigherEle){
+      HH_like -> Fill(eleLikelihoodEle[theElectron],theWeight);
+      HL_like -> Fill(eleLikelihoodEle[thePositron],theWeight);
+      outLikeTree->fillAll(eleLikelihoodEle[theElectron], eleLikelihoodEle[thePositron]); 
+    }
+    if(!isHigherEle){
+      HH_like -> Fill(eleLikelihoodEle[thePositron],theWeight);
+      HL_like -> Fill(eleLikelihoodEle[theElectron],theWeight);
+      outLikeTree->fillAll(eleLikelihoodEle[thePositron], eleLikelihoodEle[theElectron]); 
+    }
+    outLikeTree -> store();
+    
     // full kine analysis
     if (goodJetFound())           continue;
     // other kinematic selections depending on the mass
@@ -378,6 +400,7 @@ void HiggsEleIdOptimToyMC::Loop() {
   HH_S9S25        -> Write();
   HH_See          -> Write();
   HH_EoPout       -> Write();
+  HH_like         -> Write();
   HH_NVarDim      -> Write();
   HL_dEta         -> Write();
   HL_dPhi         -> Write();
@@ -385,6 +408,7 @@ void HiggsEleIdOptimToyMC::Loop() {
   HL_S9S25        -> Write();
   HL_See          -> Write();
   HL_EoPout       -> Write();
+  HL_like         -> Write();
   HL_NVarDim      -> Write();
 }
 
