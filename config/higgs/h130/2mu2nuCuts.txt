@@ -3,10 +3,10 @@ slowLeptonThreshold     10              10000
 dileptonInvMassMin      12              10000 
 trackerPtSum		0		0.05
 hcalPtSum		0		0.05
-MET			51		10000
-deltaPhi		0		45
-maxPtLepton		25		49
-minPtLepton		25		10000
+MET			40		80
+deltaPhi		0		90
+maxPtLepton		20		49
+minPtLepton		10		10000
 dileptonInvMassMax	12		40
 detaLeptons		-1		1
 jetConeWidth		0.0		0.2
