@@ -19,11 +19,13 @@ HiggsSelection::HiggsSelection(TTree *tree)
 
   // choose the Higgs Mass
   std::string higgsConfigDir;
+  std::string higgsConfigDirMass;
   std::ifstream setfile("config/higgs/higgsMass.txt");
+  higgsConfigDir="config/higgs/";
   if(!setfile.good()) {
     std::cout << "Cannot read the higgsMass file to choose the selection: config/higgs/higgsMass.txt" << std::endl
 	      << "using default (160 GeV)" << std::endl;
-    higgsConfigDir="config/higgs/h160/";
+    higgsConfigDirMass="config/higgs/h160/";
   }
   else {
     std::string var, massVal; 
@@ -34,7 +36,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
       if(!setfile.good()) break;
       if(var.compare("HiggsMass")==0) { 
 	found=true;
-	higgsConfigDir="config/higgs/h" + massVal + "/";
+	higgsConfigDirMass="config/higgs/h" + massVal + "/";
 	std::cout << "Reading configuration for Higgs mass = " << massVal << " GeV/c^2" << std::endl;
 	break;
       }
@@ -42,7 +44,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   }
 
 
-  std::string fileCutsPreselection  = higgsConfigDir + "2l2nuCutsPreselection.txt";
+  std::string fileCutsPreselection     = higgsConfigDir + "2l2nuCutsPreselection.txt";
   std::string fileSwitchesPreselection = higgsConfigDir + "2l2nuSwitchesPreselection.txt";
 
   // preselection efficiencies
@@ -59,19 +61,19 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _preselection->addCut("ptMuonAcc");
 
   // selection efficiencies
-  std::string fileCutsEE = higgsConfigDir + "2e2nuCuts.txt";
+  std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
   std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
   CutBasedHiggsSelectionEE.AppendPreselection(_preselection);
   _selectionEE = CutBasedHiggsSelectionEE.GetSelection();  
 
-  std::string fileCutsMM = higgsConfigDir + "2mu2nuCuts.txt";
+  std::string fileCutsMM     = higgsConfigDirMass + "2mu2nuCuts.txt";
   std::string fileSwitchesMM = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionMM.Configure(fileCutsMM.c_str(),fileSwitchesMM.c_str()); 
   CutBasedHiggsSelectionMM.AppendPreselection(_preselection);
   _selectionMM = CutBasedHiggsSelectionMM.GetSelection();
 
-  std::string fileCutsEM = higgsConfigDir + "emu2nuCuts.txt";
+  std::string fileCutsEM     = higgsConfigDirMass + "emu2nuCuts.txt";
   std::string fileSwitchesEM = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str()); 
   CutBasedHiggsSelectionEM.AppendPreselection(_preselection);
@@ -80,8 +82,13 @@ HiggsSelection::HiggsSelection(TTree *tree)
   
   // single electron efficiency
   EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/tightEleId/"); 
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/hwwAnEleId/");
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m160/");
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_tightOthers_m160/");
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m190/");
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_tightOthers_m190/");
 
-  
   // kinematics
   m_p4ElectronPlus = new TLorentzVector(0.,0.,0.,0.);
   m_p4ElectronMinus = new TLorentzVector(0.,0.,0.,0.);
@@ -357,8 +364,8 @@ void HiggsSelection::Loop() {
     if (theElectron > -1) theElectronID = isEleID(theElectron);
     if (thePositron > -1) thePositronID = isEleID(thePositron);
     // loose egamma electron ID
-//     if (theElectron > -1) theElectronID = eleIdCutBasedEle[theElectron];
-//     if (thePositron > -1) thePositronID = eleIdCutBasedEle[thePositron];
+    // if (theElectron > -1) theElectronID = eleIdCutBasedEle[theElectron];
+    // if (thePositron > -1) thePositronID = eleIdCutBasedEle[thePositron];
 
     // extra tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
