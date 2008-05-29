@@ -57,6 +57,9 @@
 #if Application == 12
 #include "HiggsAnalysisTools/src/ZplusJetsSelection.cc"
 #endif
+#if Application == 13
+#include "HiggsAnalysisTools/src/HiggsIsolationOptimToyMC.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -227,6 +230,23 @@ int main(int argc, char* argv[]) {
   zjetstoee.writeHistos();
   zjetstoee.displayEfficiencies();
 #endif
+
+#if Application == 13
+
+  HiggsIsolationOptimToyMC hisoltoy(theChain);
+  std::string outFileName(inputFileName);
+  outFileName+=".root";
+  TriggerMask mask(treeCond);
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+  std::vector<int> requiredTriggers = mask.getBits();
+  hisoltoy.requireTrigger(requiredTriggers);
+  hisoltoy.Loop();
+
+#endif
+
 
   return 0;
 

@@ -66,7 +66,11 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 .PREFIXES: ./lib/
 
 
-$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc $(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc $(INCLUDEDIR)/src/ClassEfficiencyStudy.cc $(INCLUDEDIR)/src/WplusJets.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc
+$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc 
+# no more used ------------------------------------
+#$(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc 
+#$(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc 
+#$(INCLUDEDIR)/src/ClassEfficiencyStudy.cc $(INCLUDEDIR)/src/WplusJets.cc 
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsBase.o $<
 $(OUTLIBCOMMON)Conditions.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Conditions.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)Conditions.o $<
@@ -86,37 +90,44 @@ $(OUTLIBCOMMON)TriggerMask.o: $(INCLUDEDIRCOMMON)/CommonTools/src/TriggerMask.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)TriggerMask.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
-$(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ZplusJetsSelection.o $<
 $(OUTLIB)HiggsEleIdOptimToyMC.o: $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsEleIdOptimToyMC.o $<
-$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronID.o $<
-$(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
-$(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)/src/RedHiggsTree.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedHiggsTree.o $<
-$(OUTLIB)RedEWKTree.o: $(INCLUDEDIR)/src/RedEWKTree.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEWKTree.o $<
-$(OUTLIB)RedEleIDTree.o: $(INCLUDEDIR)/src/RedEleIDTree.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEleIDTree.o $<
 $(OUTLIB)RedEleIDOptimTree.o: $(INCLUDEDIR)/src/RedEleIDOptimTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEleIDOptimTree.o $<
 $(OUTLIB)RedLikeOptimTree.o: $(INCLUDEDIR)/src/RedLikeOptimTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedLikeOptimTree.o $<
-$(OUTLIB)eleID_Higgs_Studies.o: $(INCLUDEDIR)/src/eleID_Higgs_Studies.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)eleID_Higgs_Studies.o $<
+$(OUTLIB)HiggsIsolationOptimToyMC.o: $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.C
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsIsolationOptimToyMC.o $<
+$(OUTLIB)RedIsolationOptimTree.o: $(INCLUDEDIR)/src/RedIsolationOptimTree.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedIsolationOptimTree.o $<
+$(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
+$(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)/src/RedHiggsTree.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedHiggsTree.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)CutBasedEleIDSelector.o $<
 $(OUTLIB)CommonHiggsPreselector.o: $(INCLUDEDIR)/src/CommonHiggsPreselector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)CommonHiggsPreselector.o $<
 $(OUTLIB)CutBasedHiggsSelector.o: $(INCLUDEDIR)/src/CutBasedHiggsSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)CutBasedHiggsSelector.o $<
+$(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ZplusJetsSelection.o $<
+# no more used ------------------------------------
+#$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
+#	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronID.o $<
+#$(OUTLIB)RedEWKTree.o: $(INCLUDEDIR)/src/RedEWKTree.cc
+#	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEWKTree.o $<
+#$(OUTLIB)RedEleIDTree.o: $(INCLUDEDIR)/src/RedEleIDTree.cc
+#	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEleIDTree.o $<
+#$(OUTLIB)eleID_Higgs_Studies.o: $(INCLUDEDIR)/src/eleID_Higgs_Studies.cc
+#	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)eleID_Higgs_Studies.o $<
 
 #----------------------------------------------------#
 
 # ==================== HiggsApp =============================================
-HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedEWKTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o 
+HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o 
+# no more used ------------------------------------
+#$(OUTLIB)RedEWKTree.o 
 	$(CXX) $(CXXFLAGS) -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $ $<
 HiggsApp.clean:
 	rm -f HiggsApp
@@ -124,30 +135,29 @@ HiggsApp.clean:
 # ==================== eleID =============================================
 eleID_Higgs_Studies:  $(INCLUDEDIR)eleID_Higgs_Studies.cpp $(OUTLIB)RedEleIDTree.o 
 	$(CXX) $(CXXFLAGS) -o eleID_Higgs_Studies $(OUTLIB)/*.o $(GLIBS) $ $<
-eleID_Higgs_Studies.clean:
-	rm -f eleID_Higgs_Studies
+#eleID_Higgs_Studies.clean:
+#	rm -f eleID_Higgs_Studies
 
 eleIDtableToy:  $(INCLUDEDIR)/src/eleIDtableToy.cpp
 	$(CXX) $(CXXFLAGS) -o eleIDtableToy $(GLIBS) $ $<
 eleIDtableToy.clean:
 	rm -f eleIDtableToy
-
 eleIDtableLike:  $(INCLUDEDIR)/src/eleIDtableLike.cpp
 	$(CXX) $(CXXFLAGS) -o eleIDtableLike $(GLIBS) $ $<
 eleIDtableLike.clean:
 	rm -f eleIDtableLike
 
 # ==================== reduced trees =============================================
-ReducedTree_HwwEleId:  $(INCLUDEDIR)ReducedTree_HwwEleId.cpp $(OUTLIB)RedEleIDTree.o 
-	$(CXX) $(CXXFLAGS) -o ReducedTree_HwwEleId $(OUTLIB)/*.o $(GLIBS) $ $<
-ReducedTree_HwwEleId.clean:
-	rm -f ReducedTree_HwwEleId
+#ReducedTree_HwwEleId:  $(INCLUDEDIR)ReducedTree_HwwEleId.cpp $(OUTLIB)RedEleIDTree.o 
+#	$(CXX) $(CXXFLAGS) -o ReducedTree_HwwEleId $(OUTLIB)/*.o $(GLIBS) $ $<
+#ReducedTree_HwwEleId.clean:
+#	rm -f ReducedTree_HwwEleId
 
 clean:
 	rm -f $(OUTLIB)*.o $(OUTLIBCOMMON)*.o
 	rm -f HiggsApp
-	rm -f ReducedTree_HwwEleId
-	rm -f eleID_Higgs_Studies
+	# rm -f ReducedTree_HwwEleId
+	# rm -f eleID_Higgs_Studies
 	rm -f eleIDtableToy
 	rm -f eleIDtableLike
 

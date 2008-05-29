@@ -12,5 +12,6 @@
 //  10 = Z -> ee  with EWK note selections
 //  11 = electron ID optimization for Higgs studies    
 //  12 = Z+jets -> ee  'fast version'
+//  13 = isolation optimization for Higgs studies    
 
 #define Application 1
