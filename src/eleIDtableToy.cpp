@@ -30,7 +30,7 @@ bool isEleIDScan(float thisDeta, float thisDphi, float thisHoE, float thisS9s25,
 
 int main ( int argc, char **argv)
 {
-  if (argc < 8){ 
+  if (argc < 9){ 
     cout << "Argument missing! Insert: "        << std::endl; 
     cout << "1) inputFile - root tree for sgn " << std::endl;
     cout << "2) inputFile - root tree for bkg " << std::endl;
@@ -43,6 +43,7 @@ int main ( int argc, char **argv)
     cout << "5) signal kine efficiency"         << std::endl;
     cout << "6) background preEleID # events"   << std::endl;
     cout << "7) background kine efficiency"     << std::endl;
+    cout << "8) discovery (1) or exclusion (0) limits" << std::endl;
     return 0;
   }
 
@@ -97,6 +98,9 @@ int main ( int argc, char **argv)
   float sgnKineEff     = atof(argv[5]);   
   float bkgPreEleIDEvt = atof(argv[6]);    
   float bkgKineEff     = atof(argv[7]);     
+
+  // discovery or exclusion
+  int discovery = atoi(argv[8]); 
 
   // counters
   float passedEleID[6][5][5][3][3][3][3][3][2];
@@ -166,7 +170,13 @@ int main ( int argc, char **argv)
 		  float effSgn        = sgnPreEleIDEff*thisBinSgnEff*sgnKineEff;
 		  float bkgEvents     = bkgPreEleIDEvt*thisBinBkgEff*bkgKineEff;
 		  float sqrtB         = sqrt(bkgEvents);
-		  float signPunzi     = effSgn/(0.5+sqrtB);
+		  float signPunzi;
+		  if(discovery==1){  // 5 sigma 
+		    signPunzi = effSgn/(2.5+sqrtB);
+		  }
+		  if(discovery==0){ // 2 sigma
+		    signPunzi = effSgn/(1.+sqrtB);
+		  }
 
 		  // saving the full output
 		  *outTxtFile << iiDeta << " " << iiDphi << " " << iiHoE << " " << iiS9S25 << " " << iiEoPmin << " " << iiEoPmax << " " << iiSeemin << " " << iiSeemax << " " << thisBinSgnEff << " " << thisBinBkgEff << " " << signPunzi << endl;
