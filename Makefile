@@ -146,6 +146,10 @@ eleIDtableLike:  $(INCLUDEDIR)/src/eleIDtableLike.cpp
 	$(CXX) $(CXXFLAGS) -o eleIDtableLike $(GLIBS) $ $<
 eleIDtableLike.clean:
 	rm -f eleIDtableLike
+isolationTableToy:  $(INCLUDEDIR)/src/isolationTableToy.cpp
+	$(CXX) $(CXXFLAGS) -o isolationTableToy $(GLIBS) $ $<
+isolationTableToy.clean:
+	rm -f isolationTableToy
 
 # ==================== reduced trees =============================================
 #ReducedTree_HwwEleId:  $(INCLUDEDIR)ReducedTree_HwwEleId.cpp $(OUTLIB)RedEleIDTree.o 
@@ -160,5 +164,6 @@ clean:
 	# rm -f eleID_Higgs_Studies
 	rm -f eleIDtableToy
 	rm -f eleIDtableLike
+	rm -f isolationTableToy
 
 all:  HiggsApp
