@@ -51,6 +51,10 @@ private:
   bool goodJetFound();
   //! full electron id
   bool isEleID(int eleIndex);
+  //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
+  float getSecondEleTkPt(int first, int second, float deltaR);
+  //! if the 2nd ele falls in deltaR from first, get its Et in ECAL
+  float getSecondEleEmEt(int first, int second, float deltaR);
   //! be verbose during runtime
   bool _verbose;
   //! the list of required triggers

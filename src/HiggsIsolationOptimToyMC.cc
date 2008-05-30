@@ -44,14 +44,14 @@ HiggsIsolationOptimToyMC::HiggsIsolationOptimToyMC(TTree *tree)
   fullKine     = 0.;
 
   // 1 dimension histos - high pt electron
-  HH_tracker = new TH1F("HH_tracker", "HH_tracker", 50,  0.0, 1.0);
-  HH_hcal    = new TH1F("HH_hcal",    "HH_hcal",    50,  0.0, 1.0);
-  HH_ecal    = new TH1F("HH_ecal",    "HH_ecal",    50,  0.0, 1.0);
+  HH_tracker = new TH1F("HH_tracker", "HH_tracker", 50,  0.0, 0.4);
+  HH_hcal    = new TH1F("HH_hcal",    "HH_hcal",    50,  0.0, 0.4);
+  HH_ecal    = new TH1F("HH_ecal",    "HH_ecal",    50,  0.0, 0.4);
 
   // 1 dimension histos - low pt electron
-  HL_tracker = new TH1F("HL_tracker", "HL_tracker", 50,  0.0, 1.0);
-  HL_hcal    = new TH1F("HL_hcal",    "HL_hcal",    50,  0.0, 1.0);
-  HL_ecal    = new TH1F("HL_ecal",    "HL_ecal",    50,  0.0, 1.0);
+  HL_tracker = new TH1F("HL_tracker", "HL_tracker", 50,  0.0, 0.4);
+  HL_hcal    = new TH1F("HL_hcal",    "HL_hcal",    50,  0.0, 0.4);
+  HL_ecal    = new TH1F("HL_ecal",    "HL_ecal",    50,  0.0, 0.4);
 
   // N dimensions histo
   theBins[0] = 50;
@@ -183,7 +183,7 @@ void HiggsIsolationOptimToyMC::Loop() {
     looseId=looseId+theWeight;   
 
     // did we pass loose electron tracker based isolation?
-    if (eleTrackerIso_sumPtEle[theElectron]>0.1 || eleTrackerIso_sumPtEle[thePositron]>0.1) continue;
+    if (eleSumPt03Ele[theElectron]>0.1 || eleSumPt03Ele[thePositron]>0.1) continue;
     looseIsol=looseIsol+theWeight;
 
 
@@ -196,12 +196,13 @@ void HiggsIsolationOptimToyMC::Loop() {
     
     // filling histos: 1 dim and N dim histos
     double toFillE[nVar], toFillP[nVar];
-    toFillE[0] = eleTrackerIso_sumPtEle[theElectron];
-    toFillE[1] = eleCaloIso_sumPtEle[theElectron];    // to be fixed: this is Hcal
-    toFillE[2] = eleCaloIso_sumPtEle[theElectron];    // to be fixed: this is Ecal
-    toFillP[0] = eleTrackerIso_sumPtEle[thePositron];
-    toFillP[1] = eleCaloIso_sumPtEle[thePositron];    // to be fixed: this is Hcal
-    toFillP[2] = eleCaloIso_sumPtEle[thePositron];    // to be fixed: this is Ecal
+    toFillE[0] = eleSumPt04Ele[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.4);
+    toFillE[1] = eleSumHadEt04Ele[theElectron];
+    toFillE[2] = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(thePositron,thePositron,0.4);
+
+    toFillP[0] = eleSumPt04Ele[thePositron] - getSecondEleTkPt(theElectron,thePositron,0.4);
+    toFillP[1] = eleSumHadEt04Ele[thePositron];
+    toFillP[2] = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(theElectron,thePositron,0.4);
 
     if(isHigherEle){  	// electron = high pt lepton
       HH_tracker -> Fill(toFillE[0],theWeight);
@@ -394,4 +395,36 @@ bool HiggsIsolationOptimToyMC::isEleID(int eleIndex) {
   bool isIdentified = EgammaCutBasedID.output();
 
   return isIdentified;
+}
+
+float HiggsIsolationOptimToyMC::getSecondEleTkPt(int first, int second, float deltaR) {
+
+  TVector3 firstEle(pxEle[first],pyEle[first],pzEle[first]);
+  TVector3 secondEle(pxEle[second],pyEle[second],pzEle[second]);
+
+  float secondEleTrackPt = 0.0;
+  float dr = firstEle.DeltaR(secondEle);
+
+  if( dr < deltaR ) { 
+    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+  }
+
+  return secondEleTrackPt;
+
+}
+
+float HiggsIsolationOptimToyMC::getSecondEleEmEt(int first, int second, float deltaR) {
+
+  TVector3 firstEle(pxEle[first],pyEle[first],pzEle[first]);
+  TVector3 secondEle(pxEle[second],pyEle[second],pzEle[second]);
+
+  float secondEleEmEt = 0.0;
+  float dr = firstEle.DeltaR(secondEle);
+
+  if( dr < deltaR ) { 
+    secondEleEmEt = eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+  }
+  
+  return secondEleEmEt;
+
 }
