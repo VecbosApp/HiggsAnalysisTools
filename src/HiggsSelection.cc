@@ -361,23 +361,37 @@ void HiggsSelection::Loop() {
     // electron ID (true by default - studied only if ee or emu channel)
     bool theElectronID = true;
     bool thePositronID = true;
+    // custom electron ID
     if (theElectron > -1) theElectronID = isEleID(theElectron);
     if (thePositron > -1) thePositronID = isEleID(thePositron);
+
     // loose egamma electron ID
     // if (theElectron > -1) theElectronID = eleIdCutBasedEle[theElectron];
     // if (thePositron > -1) thePositronID = eleIdCutBasedEle[thePositron];
 
+    // likelihood electron ID: asymmetric on two electrons
+    // if ( theElectron > -1 && thePositron > -1 ) {
+    //   if(etEle[theElectron] > etEle[thePositron]) {
+    // 	theElectronID = eleLikelihoodEle[theElectron] > 0.75;
+    // 	thePositronID = eleLikelihoodEle[thePositron] > 0.40;
+    //   }
+    //  else {
+    // 	theElectronID = eleLikelihoodEle[theElectron] > 0.40;
+    // 	thePositronID = eleLikelihoodEle[thePositron] > 0.75;
+    //  }
+    // }
+
     // extra tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
     float thePosTrackerPtSum = 0.;
-    if (theElectron > -1) theEleTrackerPtSum = eleTrackerIso_sumPtEle[theElectron];
-    if (thePositron > -1) thePosTrackerPtSum = eleTrackerIso_sumPtEle[thePositron];
+    if (theElectron > -1) theEleTrackerPtSum = eleSumPt04Ele[theElectron];
+    if (thePositron > -1) thePosTrackerPtSum = eleSumPt04Ele[thePositron];
 
     // hcal isolation for electrons
     float theEleCaloPtSum = 0.;
     float thePosCaloPtSum = 0.;
-    if (theElectron > -1) theEleCaloPtSum = eleCaloIso_sumPtEle[theElectron];
-    if (thePositron > -1) thePosCaloPtSum = eleCaloIso_sumPtEle[thePositron];
+    if (theElectron > -1) theEleCaloPtSum = eleSumHadEt04Ele[theElectron];
+    if (thePositron > -1) thePosCaloPtSum = eleSumHadEt04Ele[thePositron];
 
     // jet veto: method gives true if good jet is found
     bool passedJetVeto = !goodJetFound();
@@ -876,13 +890,14 @@ bool HiggsSelection::goodJetFound() {
 	 (m_CaloEneElectronPlus/energyJet[j] > 0.9)
 	 ) continue;
     }
+
     if(etJet[j]>maxPtJet) maxPtJet=etJet[j];
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaJet[j])) continue;
     if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etJet[j]) ) continue;
 
     if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etJet[j])) &&
-	(_selectionEE->getSwitch("jetAlpha") && !_selectionEE->passCut("jetAlpha",alphaJet[j]))
-       ) continue;
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaJet[j])) 
+	) continue;
     foundJet=true;
     break;
   }
