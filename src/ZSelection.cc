@@ -254,11 +254,11 @@ void ZSelection::Loop() {
       setKinematics(theEle,thePos);
       addVariables();
       if(_selection->getSwitch("trackerPtSum") && 
-	 ( !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[theEle]) || 
-	   !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[thePos]) ) ) continue; _counter.IncrVar("trackerIsol");
+	 ( !_selection->passCut("trackerPtSum",eleSumPt04Ele[theEle]) || 
+	   !_selection->passCut("trackerPtSum",eleSumPt04Ele[thePos]) ) ) continue; _counter.IncrVar("trackerIsol");
       if(_selection->getSwitch("hcalPtSum") &&
-	 ( !_selection->passCut("hcalPtSum",eleTrackerIso_sumPtEle[theEle]) || 
-	   !_selection->passCut("hcalPtSum",eleTrackerIso_sumPtEle[thePos]) ) ) continue; _counter.IncrVar("hcalIsol");
+	 ( !_selection->passCut("hcalPtSum",eleSumPt04Ele[theEle]) || 
+	   !_selection->passCut("hcalPtSum",eleSumPt04Ele[thePos]) ) ) continue; _counter.IncrVar("hcalIsol");
       if(!isEleID(theEle) || !isEleID(thePos)) continue; _counter.IncrVar("eleID");
       _monitorEventAfterReco->Fill();
       if(_selection->getSwitch("MET") && !_selection->passCut("MET",etMet[0])) continue; _counter.IncrVar("MET");
@@ -331,9 +331,9 @@ void ZSelection::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
 
     // no charge matching
     if( (deltaRPos<0.5 || deltaREle<0.5) && etaMatchedRecoEleWom<3) {
-      if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+      if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
       if(strcmp(cut,"identified")==0 && 
-	 (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	 (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	  !isEleID(i)) ) continue;
       etaWom->Fill(etaEle[i]);
       etaMatchedRecoEleWom++;
@@ -342,9 +342,9 @@ void ZSelection::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
     // charge matching
     if(chargeEle[i]<0) {
       if( deltaREle<0.5 && fabs(EoEtrueEle-1) < EoP_bestEle) {
-	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
 	if(strcmp(cut,"identified")==0 && 
-	   (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	   (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	    !isEleID(i)) ) continue;
 	etaRecoBestEle = etaEle[i];
 	etBestEle = pMc[8]*fabs(sin(thetaMc[8]));
@@ -353,9 +353,9 @@ void ZSelection::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
     }
     else {
       if( deltaRPos<0.5 && fabs(EoEtruePos-1) < EoP_bestPos) {
-	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
 	if(strcmp(cut,"identified")==0 && 
-	   (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	   (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	    !isEleID(i)) ) continue;
 	etaRecoBestPos = etaEle[i];
 	etBestPos = pMc[7]*fabs(sin(thetaMc[7]));

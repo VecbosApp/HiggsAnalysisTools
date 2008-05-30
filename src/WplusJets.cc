@@ -220,7 +220,7 @@ void WplusJets::Loop() {
 	_EoverPoutPDF->Fill(eleCorrEoPoutEle[*probeIter]);
       }
 
-      if(_selection->getSwitch("trackerPtSum") && (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[theEle])) ) continue;
+      if(_selection->getSwitch("trackerPtSum") && (!_selection->passCut("trackerPtSum",eleSumPt04Ele[theEle])) ) continue;
       _counter.IncrVar("trackerIsol");
 
       if(_selection->getSwitch("MET") && !_selection->passCut("MET",etMet[0])) continue; 

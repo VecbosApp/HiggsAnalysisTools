@@ -258,9 +258,9 @@ void ElectronID::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
 
     // no charge matching
     if( (deltaRPos<0.5 || deltaREle<0.5) && etaMatchedRecoEleWom<3) {
-      if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+      if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
       if(strcmp(cut,"identified")==0 && 
-	 (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	 (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	  !isEleID(i)) ) continue;
       etaWom->Fill(etaEle[i]);
       etaMatchedRecoEleWom++;
@@ -269,9 +269,9 @@ void ElectronID::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
     // charge matching
     if(chargeEle[i]<0) {
       if( deltaREle<0.5 && fabs(EoEtrueEle-1) < EoP_bestEle) {
-	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
 	if(strcmp(cut,"identified")==0 && 
-	   (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	   (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	    !isEleID(i)) ) continue;
 	etaRecoBestEle = etaEle[i];
 	etBestEle = pMc[8]*fabs(sin(thetaMc[8]));
@@ -280,9 +280,9 @@ void ElectronID::fillEfficiencyNumeratorHistos(TH1F* etaWom, TH1F* etaWcm, TH1F*
     }
     else {
       if( deltaRPos<0.5 && fabs(EoEtruePos-1) < EoP_bestPos) {
-	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i])) continue;
+	if(strcmp(cut,"isolated")==0 && !_selection->passCut("trackerPtSum",eleSumPt04Ele[i])) continue;
 	if(strcmp(cut,"identified")==0 && 
-	   (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[i]) ||
+	   (!_selection->passCut("trackerPtSum",eleSumPt04Ele[i]) ||
 	    !isEleID(i)) ) continue;
 	etaRecoBestPos = etaEle[i];
 	etBestPos = pMc[7]*fabs(sin(thetaMc[7]));

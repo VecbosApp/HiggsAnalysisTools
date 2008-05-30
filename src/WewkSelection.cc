@@ -222,7 +222,7 @@ void WewkSelection::Loop() {
        ) continue;
     _counter.IncrVar("eleCrack",weight);
 
-    float myIso = eleTrackerIso_sumPtEle[theEle];
+    float myIso = eleSumPt04Ele[theEle];
     if(_selection->getSwitch("trackerPtSum") && 
        ( !_selection->passCut("trackerPtSum",myIso) )) continue;
     _counter.IncrVar("eleIso",weight);
@@ -241,7 +241,7 @@ void WewkSelection::Loop() {
     float met =etMet[0];
     float metx=pxMet[0];
     float mety=pyMet[0];
-    myOutTree -> fillEleId(eleTrackerIso_sumPtEle[theEle], eleTipEle[theEle], pzEle[theEle], covEtaEtaEle[theEle], eleDeltaEtaAtVtxEle[theEle], eleDeltaPhiAtVtxEle[theEle], eleCorrEoPEle[theEle], eleHoEEle[theEle], chargeEle[theEle], etEle[theEle], etaEle[theEle], phiEle[theEle]); 
+    myOutTree -> fillEleId(eleSumPt04Ele[theEle], eleTipEle[theEle], pzEle[theEle], covEtaEtaEle[theEle], eleDeltaEtaAtVtxEle[theEle], eleDeltaPhiAtVtxEle[theEle], eleCorrEoPEle[theEle], eleHoEEle[theEle], chargeEle[theEle], etEle[theEle], etaEle[theEle], phiEle[theEle]); 
     myOutTree -> fillAll(1, 1. , met, metx, mety); 
     // myOutTree -> fillAll(1, genWeight, met, metx, mety); 
     myOutTree -> store();

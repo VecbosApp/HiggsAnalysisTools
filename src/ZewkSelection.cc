@@ -213,8 +213,8 @@ void ZewkSelection::Loop() {
        ) continue;
     _counter.IncrVar("eleCrack",weight);
 
-    float myEleIso = eleTrackerIso_sumPtEle[theEle];
-    float myPosIso = eleTrackerIso_sumPtEle[thePos];
+    float myEleIso = eleSumPt04Ele[theEle];
+    float myPosIso = eleSumPt04Ele[thePos];
     if(_selection->getSwitch("trackerPtSum") &&
        ( !_selection->passCut("trackerPtSum",myEleIso) )) continue;
     if(_selection->getSwitch("trackerPtSum") &&

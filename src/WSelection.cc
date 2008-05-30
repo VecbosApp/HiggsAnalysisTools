@@ -220,7 +220,7 @@ void WSelection::Loop() {
       _counter.IncrVar("eleID");
       _monitorEventAfterReco->Fill();
 
-      if(_selection->getSwitch("trackerPtSum") && (!_selection->passCut("trackerPtSum",eleTrackerIso_sumPtEle[theEle])) ) continue;
+      if(_selection->getSwitch("trackerPtSum") && (!_selection->passCut("trackerPtSum",eleSumPt04Ele[theEle])) ) continue;
       _counter.IncrVar("trackerIsol");
 
       if(_selection->getSwitch("ptEle") && !_selection->passCut("ptEle",_elePt)) continue; 

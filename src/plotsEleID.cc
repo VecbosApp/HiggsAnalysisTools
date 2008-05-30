@@ -696,7 +696,7 @@ void plotsEleID::Loop() {
       }
 
       bool looseIsolated = true;
-      if( eleTrackerIso_sumPtEle[iele] > 0.08 ) looseIsolated = false; 
+      if( eleSumPt04Ele[iele] > 0.08 ) looseIsolated = false; 
 
       double theWeight = 1.;
       if (toWeight){ 
@@ -711,8 +711,8 @@ void plotsEleID::Loop() {
       double recPhi = phiEle[iele];
       double recEne = energyEle[iele];
       bool isolated = true;
-      if (eleTrackerIso_sumPtEle[iele]<0.05) { isolated = true; }
-      if (eleTrackerIso_sumPtEle[iele]>=0.05){ isolated = false; }
+      if (eleSumPt04Ele[iele]<0.05) { isolated = true; }
+      if (eleSumPt04Ele[iele]>=0.05){ isolated = false; }
 
       float dr_min_wc       = 10000.;
       float dr_min_woc      = 10000.;
@@ -797,18 +797,18 @@ void plotsEleID::Loop() {
 	}
 
 	// isolation
-	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.5)           { H_ptFrac_tracker         -> Fill(eleTrackerIso_sumPtEle[iele]);}
-	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.05)          { H_ptFrac_tracker_zoom    -> Fill(eleTrackerIso_sumPtEle[iele]);}
-	if(eleTrackerIso_minDR_vetoEle[iele]> 0. && eleTrackerIso_minDR_vetoEle[iele]<0.5){ H_dRmin_tracker_withVeto -> Fill(eleTrackerIso_minDR_vetoEle[iele]);}
-	if(eleTrackerIso_minDR_vetoEle[iele]> 0. && eleTrackerIso_minDR_vetoEle[iele]<0.1){ H_dRmin_tracker_withVeto_zoom -> Fill(eleTrackerIso_minDR_vetoEle[iele]);}
-	if(eleTrackerIso_minDREle[iele]> 0. && eleTrackerIso_minDREle[iele]<0.5)          { H_dRmin_tracker_noVeto   -> Fill(eleTrackerIso_minDREle[iele]);}
-	if(eleTrackerIso_minDREle[iele]> 0. && eleTrackerIso_minDREle[iele]<0.1)          { H_dRmin_tracker_noVeto_zoom -> Fill(eleTrackerIso_minDREle[iele]); }
+	if(eleSumPt04Ele[iele]>0. && eleSumPt04Ele[iele]<0.5)           { H_ptFrac_tracker         -> Fill(eleSumPt04Ele[iele]);}
+	if(eleSumPt04Ele[iele]>0. && eleSumPt04Ele[iele]<0.05)          { H_ptFrac_tracker_zoom    -> Fill(eleSumPt04Ele[iele]);}
+	if(eleMinDRveto03Ele[iele]> 0. && eleMinDRveto03Ele[iele]<0.5){ H_dRmin_tracker_withVeto -> Fill(eleMinDRveto03Ele[iele]);}
+	if(eleMinDRveto03Ele[iele]> 0. && eleMinDRveto03Ele[iele]<0.1){ H_dRmin_tracker_withVeto_zoom -> Fill(eleMinDRveto03Ele[iele]);}
+	if(eleMinDR03Ele[iele]> 0. && eleMinDR03Ele[iele]<0.5)          { H_dRmin_tracker_noVeto   -> Fill(eleMinDR03Ele[iele]);}
+	if(eleMinDR03Ele[iele]> 0. && eleMinDR03Ele[iele]<0.1)          { H_dRmin_tracker_noVeto_zoom -> Fill(eleMinDR03Ele[iele]); }
 	if(eleCaloIso_minDREle[iele]>0 && eleCaloIso_minDREle[iele]<0.5)                  { H_dRmin_calo_noVeto         -> Fill(eleCaloIso_minDREle[iele]);}
-	if(eleCaloIso_sumPtEle[iele]>0 && eleCaloIso_sumPtEle[iele]<0.5)                  { H_ptFrac_calo               -> Fill(eleCaloIso_sumPtEle[iele]);}
+	if(eleSumHadEt04Ele[iele]>0 && eleSumHadEt04Ele[iele]<0.5)                  { H_ptFrac_calo               -> Fill(eleSumHadEt04Ele[iele]);}
 	
 	// computing the efficiency of iso cuts:
-	if (eleTrackerIso_sumPtEle[iele]<0.05){ trackIso++; }
-	if (eleCaloIso_sumPtEle[iele]<0.05)   { caloIso++; }
+	if (eleSumPt04Ele[iele]<0.05){ trackIso++; }
+	if (eleSumHadEt04Ele[iele]<0.05)   { caloIso++; }
 
 	// efficiency: all reco
 	H_Reco_eta_wogm ->Fill(etaEle[iele]);
@@ -825,22 +825,22 @@ void plotsEleID::Loop() {
       else if(strcmp(category,"electrons")==0) {
 	
 	// isolation
-	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.5)           { E_ptFrac_tracker         -> Fill(eleTrackerIso_sumPtEle[iele]);}
-	if(eleTrackerIso_sumPtEle[iele]>0. && eleTrackerIso_sumPtEle[iele]<0.05)          { E_ptFrac_tracker_zoom    -> Fill(eleTrackerIso_sumPtEle[iele]);}
-	if(eleTrackerIso_minDR_vetoEle[iele]> 0. && eleTrackerIso_minDR_vetoEle[iele]<0.5){ E_dRmin_tracker_withVeto -> Fill(eleTrackerIso_minDR_vetoEle[iele]);}
-	if(eleTrackerIso_minDR_vetoEle[iele]> 0. && eleTrackerIso_minDR_vetoEle[iele]<0.1){ E_dRmin_tracker_withVeto_zoom -> Fill(eleTrackerIso_minDR_vetoEle[iele]);}
-	if(eleTrackerIso_minDREle[iele]> 0. && eleTrackerIso_minDREle[iele]<0.5)          { E_dRmin_tracker_noVeto   -> Fill(eleTrackerIso_minDREle[iele]);}
-	if(eleTrackerIso_minDREle[iele]> 0. && eleTrackerIso_minDREle[iele]<0.1)          { E_dRmin_tracker_noVeto_zoom -> Fill(eleTrackerIso_minDREle[iele]); }
+	if(eleSumPt04Ele[iele]>0. && eleSumPt04Ele[iele]<0.5)           { E_ptFrac_tracker         -> Fill(eleSumPt04Ele[iele]);}
+	if(eleSumPt04Ele[iele]>0. && eleSumPt04Ele[iele]<0.05)          { E_ptFrac_tracker_zoom    -> Fill(eleSumPt04Ele[iele]);}
+	if(eleMinDRveto03Ele[iele]> 0. && eleMinDRveto03Ele[iele]<0.5){ E_dRmin_tracker_withVeto -> Fill(eleMinDRveto03Ele[iele]);}
+	if(eleMinDRveto03Ele[iele]> 0. && eleMinDRveto03Ele[iele]<0.1){ E_dRmin_tracker_withVeto_zoom -> Fill(eleMinDRveto03Ele[iele]);}
+	if(eleMinDR03Ele[iele]> 0. && eleMinDR03Ele[iele]<0.5)          { E_dRmin_tracker_noVeto   -> Fill(eleMinDR03Ele[iele]);}
+	if(eleMinDR03Ele[iele]> 0. && eleMinDR03Ele[iele]<0.1)          { E_dRmin_tracker_noVeto_zoom -> Fill(eleMinDR03Ele[iele]); }
 	if(eleCaloIso_minDREle[iele]>0 && eleCaloIso_minDREle[iele]<0.5)                  { E_dRmin_calo_noVeto         -> Fill(eleCaloIso_minDREle[iele]);}
-	if(eleCaloIso_sumPtEle[iele]>0 && eleCaloIso_sumPtEle[iele]<0.5)                  { E_ptFrac_calo               -> Fill(eleCaloIso_sumPtEle[iele]);}
+	if(eleSumHadEt04Ele[iele]>0 && eleSumHadEt04Ele[iele]<0.5)                  { E_ptFrac_calo               -> Fill(eleSumHadEt04Ele[iele]);}
 
 	// computing the efficiency of iso cuts:
-	if (eleTrackerIso_sumPtEle[iele]<0.05){ trackIso++; }
-	if (eleCaloIso_sumPtEle[iele]<0.05)   { caloIso++; }
+	if (eleSumPt04Ele[iele]<0.05){ trackIso++; }
+	if (eleSumHadEt04Ele[iele]<0.05)   { caloIso++; }
 
 	// computing the efficiency of iso cuts:
-	if (eleTrackerIso_sumPtEle[iele]<0.05){ trackIso++; }
-	if (eleCaloIso_sumPtEle[iele]<0.05)   { caloIso++; }
+	if (eleSumPt04Ele[iele]<0.05){ trackIso++; }
+	if (eleSumHadEt04Ele[iele]<0.05)   { caloIso++; }
 	
 	// efficiency: all reco
 	E_Reco_eta_wogm ->Fill(etaEle[iele]);

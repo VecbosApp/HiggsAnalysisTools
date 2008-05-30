@@ -251,14 +251,14 @@ void ZTandProbe::Loop() {
 
 
       // efficiency histos step by step
-      if (_selection->passCut("TagTrackerPtSum",eleTrackerIso_sumPtEle[theTag]) && (!isoFill[mcBin]) ){ 
+      if (_selection->passCut("TagTrackerPtSum",eleSumPt04Ele[theTag]) && (!isoFill[mcBin]) ){ 
 	if (deltaR<0.5){
 	  Hiso_eta -> Fill(mcEta);   
 	  Hiso_pt -> Fill(mcPt);
 	  isoFill[mcBin] = true;
 	}}
       
-      if (_selection->passCut("TagTrackerPtSum",eleTrackerIso_sumPtEle[theTag])){ 
+      if (_selection->passCut("TagTrackerPtSum",eleSumPt04Ele[theTag])){ 
 	if (isTagEleID(theTag) && !eleIDFill[mcBin] ){                                                  
 	  if (deltaR<0.5){
 	    HeleID_eta -> Fill(mcEta);   
@@ -266,7 +266,7 @@ void ZTandProbe::Loop() {
 	    eleIDFill[mcBin] = true;
 	  }}}
       
-      if (_selection->passCut("TagTrackerPtSum",eleTrackerIso_sumPtEle[theTag])){ 
+      if (_selection->passCut("TagTrackerPtSum",eleSumPt04Ele[theTag])){ 
 	if (isTagEleID(theTag)){
 	  if (_selection->passCut("TagPtInf", thisTagPt) && (!ptFill[mcBin])){ 
 	    if (deltaR<0.5){
@@ -377,7 +377,7 @@ bool ZTandProbe::isATag(int theTag) {
   bool isThisOk = true;
   
   double thisPt = sqrt(pxEle[theTag]*pxEle[theTag] + pyEle[theTag]*pyEle[theTag]); 
-  if ( !_selection->passCut("TagTrackerPtSum",eleTrackerIso_sumPtEle[theTag])){ isThisOk = false; } 
+  if ( !_selection->passCut("TagTrackerPtSum",eleSumPt04Ele[theTag])){ isThisOk = false; } 
   if ( !isTagEleID(theTag) )                                                  { isThisOk = false; }  
   if ( (fabs(etaEle[theTag]) > 1.444) && (fabs(etaEle[theTag]) < 1.526) )     { isThisOk = false; } 
   if ( (fabs(etaEle[theTag]) > 2.5) )                                         { isThisOk = false; }   
@@ -404,7 +404,7 @@ bool ZTandProbe::isAProbe(int theProbe, int theTag, float mll) {
   // to be set via cfg file
   //float thisDeltaLip = fabs(vertexZ[theProbe] - vertexZ[theTag]);
   if ( !_selection->passCut("ProbePtInf",       probePt) )                        { isThisOk = false; } 
-  if ( !_selection->passCut("ProbeTrackerPtSum",eleTrackerIso_sumPtEle[theProbe])){ isThisOk = false; } 
+  if ( !_selection->passCut("ProbeTrackerPtSum",eleSumPt04Ele[theProbe])){ isThisOk = false; } 
   //if ( !_selection->passCut("deltaLip", thisDeltaLip) )                           { isThisOk = false; } 
   if ( !_selection->passCut("invMass",  mll) )                                    { isThisOk = false; } 
   

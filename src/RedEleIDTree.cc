@@ -39,7 +39,7 @@ RedEleIDTree::RedEleIDTree(const char * filename) {
   myTree->Branch("eleCorrEoPoutEle",         &myEleCorrEoPoutEle,         "eleCorrEoPEle/F");  
   myTree->Branch("eleDeltaEtaAtVtxEle",      &myEleDeltaEtaAtVtxEle,      "eleDeltaEtaAtVtxEle/F");  
   myTree->Branch("eleDeltaPhiAtVtxEle",      &myEleDeltaPhiAtVtxEle,      "eleDeltaPhiAtVtxEle/F");  
-  myTree->Branch("eleTrackerIso_sumPtEle",   &myEleTrackerIso_SumPtEle,   "eleTrackerIso_sumPtEle/F");  
+  myTree->Branch("eleSumPt04Ele",            &myEleSumPt04Ele,   "eleSumPt04Ele/F");  
   myTree->Branch("eleLikelihoodEle",         &myEleLikelihoodEle,         "eleLikelihoodEle/F");  
   myTree->Branch("eleFisherEle",             &myEleFisherEle,             "eleFisherEle/F");  
 }
@@ -88,7 +88,7 @@ void RedEleIDTree::fillAll(int isok, int seHLT, int serHLT, int deHLT, int derHL
   myEleCorrEoPoutEle        = eopout;
   myEleDeltaEtaAtVtxEle     = deta; 
   myEleDeltaPhiAtVtxEle     = dphi;
-  myEleTrackerIso_SumPtEle  = iso;
+  myEleSumPt04Ele  = iso;
   myEleLikelihoodEle        = like; 
   myEleFisherEle            = fis; 
 }

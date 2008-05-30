@@ -204,7 +204,7 @@ void HiggsEleIdOptimToyMC::Loop() {
     looseId=looseId+theWeight;   
 
     // did we pass loose electron tracker based isolation?
-    if (eleTrackerIso_sumPtEle[theElectron]>0.1 || eleTrackerIso_sumPtEle[thePositron]>0.1) continue;
+    if (eleSumPt04Ele[theElectron]>0.1 || eleSumPt04Ele[thePositron]>0.1) continue;
     passedIsol=passedIsol+theWeight;
 
     // is this electron belonging to the good class?
