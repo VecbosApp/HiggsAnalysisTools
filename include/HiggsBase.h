@@ -122,8 +122,17 @@ public :
    Float_t         eleDeltaPhiAtVtxEle[50];   //[nEle]
    Float_t         eleDeltaEtaAtCaloEle[50];   //[nEle]
    Float_t         eleDeltaPhiAtCaloEle[50];   //[nEle]
-   Float_t         eleTrackerIso_sumPtEle[50];   //[nEle]
-   Float_t         eleCaloIso_sumPtEle[50];   //[nEle]
+   Float_t         eleMinDR03Ele[50];   //[nEle]
+   Float_t         eleMinDRveto03Ele[50];   //[nEle]
+   Float_t         eleSumPt03Ele[50];   //[nEle]
+   Float_t         eleSumPtSquared03Ele[50];   //[nEle]
+   Float_t         eleSumN03Ele[50];   //[nEle]
+   Float_t         eleSumPt04Ele[50];   //[nEle]
+   Float_t         eleSumPt05Ele[50];   //[nEle]
+   Float_t         eleSumHadEt04Ele[50];   //[nEle]
+   Float_t         eleSumEmEt04Ele[50];   //[nEle]
+   Float_t         eleSumHadEt05Ele[50];   //[nEle]
+   Float_t         eleSumEmEt05Ele[50];   //[nEle]
    Bool_t          eleIdCutBasedEle[50];   //[nEle]
    Float_t         eleLikelihoodEle[50];   //[nEle]
    Float_t         eleTipEle[50];   //[nEle]
@@ -349,8 +358,17 @@ public :
    TBranch        *b_eleDeltaPhiAtVtxEle;   //!
    TBranch        *b_eleDeltaEtaAtCaloEle;   //!
    TBranch        *b_eleDeltaPhiAtCaloEle;   //!
-   TBranch        *b_eleTrackerIso_sumPtEle;   //!
-   TBranch        *b_eleCaloIso_sumPtEle;   //!
+   TBranch        *b_eleMinDR03Ele;   //!
+   TBranch        *b_eleMinDRveto03Ele;   //!
+   TBranch        *b_eleSumPt03Ele;   //!
+   TBranch        *b_eleSumPtSquared03Ele;   //!
+   TBranch        *b_eleSumN03Ele;   //!
+   TBranch        *b_eleSumPt04Ele;   //!
+   TBranch        *b_eleSumPt05Ele;   //!
+   TBranch        *b_eleSumHadEt04Ele;   //!
+   TBranch        *b_eleSumEmEt04Ele;   //!
+   TBranch        *b_eleSumHadEt05Ele;   //!
+   TBranch        *b_eleSumEmEt05Ele;   //!
    TBranch        *b_eleIdCutBasedEle;   //!
    TBranch        *b_eleLikelihoodEle;   //!
    TBranch        *b_eleTipEle;   //!
@@ -647,8 +665,17 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("eleDeltaPhiAtVtxEle", eleDeltaPhiAtVtxEle, &b_eleDeltaPhiAtVtxEle);
    fChain->SetBranchAddress("eleDeltaEtaAtCaloEle", eleDeltaEtaAtCaloEle, &b_eleDeltaEtaAtCaloEle);
    fChain->SetBranchAddress("eleDeltaPhiAtCaloEle", eleDeltaPhiAtCaloEle, &b_eleDeltaPhiAtCaloEle);
-   fChain->SetBranchAddress("eleTrackerIso_sumPtEle", eleTrackerIso_sumPtEle, &b_eleTrackerIso_sumPtEle);
-   fChain->SetBranchAddress("eleCaloIso_sumPtEle", eleCaloIso_sumPtEle, &b_eleCaloIso_sumPtEle);
+   fChain->SetBranchAddress("eleMinDR03Ele", eleMinDR03Ele, &b_eleMinDR03Ele);
+   fChain->SetBranchAddress("eleMinDRveto03Ele", eleMinDRveto03Ele, &b_eleMinDRveto03Ele);
+   fChain->SetBranchAddress("eleSumPt03Ele", eleSumPt03Ele, &b_eleSumPt03Ele);
+   fChain->SetBranchAddress("eleSumPtSquared03Ele", eleSumPtSquared03Ele, &b_eleSumPtSquared03Ele);
+   fChain->SetBranchAddress("eleSumN03Ele", eleSumN03Ele, &b_eleSumN03Ele);
+   fChain->SetBranchAddress("eleSumPt04Ele", eleSumPt04Ele, &b_eleSumPt04Ele);
+   fChain->SetBranchAddress("eleSumPt05Ele", eleSumPt05Ele, &b_eleSumPt05Ele);
+   fChain->SetBranchAddress("eleSumHadEt04Ele", eleSumHadEt04Ele, &b_eleSumHadEt04Ele);
+   fChain->SetBranchAddress("eleSumEmEt04Ele", eleSumEmEt04Ele, &b_eleSumEmEt04Ele);
+   fChain->SetBranchAddress("eleSumHadEt05Ele", eleSumHadEt05Ele, &b_eleSumHadEt05Ele);
+   fChain->SetBranchAddress("eleSumEmEt05Ele", eleSumEmEt05Ele, &b_eleSumEmEt05Ele);
    fChain->SetBranchAddress("eleIdCutBasedEle", eleIdCutBasedEle, &b_eleIdCutBasedEle);
    fChain->SetBranchAddress("eleLikelihoodEle", eleLikelihoodEle, &b_eleLikelihoodEle);
    fChain->SetBranchAddress("eleTipEle", eleTipEle, &b_eleTipEle);
