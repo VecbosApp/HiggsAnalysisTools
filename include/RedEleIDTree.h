@@ -23,7 +23,7 @@ private:
   float myLatEle, myA20Ele, myS9s25Ele, myCovEtaEtaEle;         
   float myEleHoEEle, myEleCorrEoPEle;          
   float myEleCorrEoPoutEle, myEleDeltaEtaAtVtxEle, myEleDeltaPhiAtVtxEle;    
-  float myEleTrackerIso_SumPtEle; 
+  float myEleSumPt04Ele; 
   float myEleLikelihoodEle;       
   float myEleFisherEle;       
 
