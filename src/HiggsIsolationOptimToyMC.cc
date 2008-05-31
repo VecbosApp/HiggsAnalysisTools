@@ -147,8 +147,8 @@ void HiggsIsolationOptimToyMC::Loop() {
     allEvents=allEvents+theWeight; 
 
     // look to the MC truth decay tree
-    // bool foundMcTree = findMcTree("HtoWWto2e2nu");
-    bool foundMcTree = findMcTree("Wjets");
+    bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    // bool foundMcTree = findMcTree("Wjets");
     if ( !foundMcTree ) continue;
     passedMc=passedMc+theWeight;    
 
@@ -198,11 +198,11 @@ void HiggsIsolationOptimToyMC::Loop() {
     double toFillE[nVar], toFillP[nVar];
     toFillE[0] = eleSumPtPreselectionEle[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.2);
     toFillE[1] = eleSumHadEt04Ele[theElectron];
-    toFillE[2] = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(thePositron,thePositron,0.4);
+    toFillE[2] = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
 
-    toFillP[0] = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(theElectron,thePositron,0.2);
+    toFillP[0] = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(thePositron,theElectron,0.2);
     toFillP[1] = eleSumHadEt04Ele[thePositron];
-    toFillP[2] = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(theElectron,thePositron,0.4);
+    toFillP[2] = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
 
     if(isHigherEle){  	// electron = high pt lepton
       HH_tracker -> Fill(toFillE[0],theWeight);
