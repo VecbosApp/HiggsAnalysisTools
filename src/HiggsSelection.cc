@@ -384,14 +384,20 @@ void HiggsSelection::Loop() {
     // extra tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
     float thePosTrackerPtSum = 0.;
-    if (theElectron > -1) theEleTrackerPtSum = eleSumPt04Ele[theElectron];
-    if (thePositron > -1) thePosTrackerPtSum = eleSumPt04Ele[thePositron];
+    if (theElectron > -1) theEleTrackerPtSum = eleSumPtPreselectionEle[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.2);
+    if (thePositron > -1) thePosTrackerPtSum = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(thePositron,theElectron,0.2);
 
     // hcal isolation for electrons
-    float theEleCaloPtSum = 0.;
-    float thePosCaloPtSum = 0.;
-    if (theElectron > -1) theEleCaloPtSum = eleSumHadEt04Ele[theElectron];
-    if (thePositron > -1) thePosCaloPtSum = eleSumHadEt04Ele[thePositron];
+    float theEleHcalPtSum = 0.;
+    float thePosHcalPtSum = 0.;
+    if (theElectron > -1) theEleHcalPtSum = eleSumHadEt04Ele[theElectron];
+    if (thePositron > -1) thePosHcalPtSum = eleSumHadEt04Ele[thePositron];
+
+    // ecal isolation for electrons
+    float theEleEcalPtSum = 0.;
+    float thePosEcalPtSum = 0.;
+    if (theElectron > -1) theEleEcalPtSum = eleSumHadEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
+    if (thePositron > -1) thePosEcalPtSum = eleSumHadEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
 
     // jet veto: method gives true if good jet is found
     bool passedJetVeto = !goodJetFound();
@@ -418,8 +424,10 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionEE.SetPositronId(thePositronID);
       CutBasedHiggsSelectionEE.SetEleTrackerPtSum(theEleTrackerPtSum);
       CutBasedHiggsSelectionEE.SetPosTrackerPtSum(thePosTrackerPtSum);
-      CutBasedHiggsSelectionEE.SetEleCaloPtSum(theEleCaloPtSum);
-      CutBasedHiggsSelectionEE.SetPosCaloPtSum(thePosCaloPtSum);
+      CutBasedHiggsSelectionEE.SetEleHcalPtSum(theEleHcalPtSum);
+      CutBasedHiggsSelectionEE.SetPosHcalPtSum(thePosHcalPtSum);
+      CutBasedHiggsSelectionEE.SetEleEcalPtSum(theEleEcalPtSum);
+      CutBasedHiggsSelectionEE.SetPosEcalPtSum(thePosEcalPtSum);
       CutBasedHiggsSelectionEE.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionEE.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
@@ -464,8 +472,10 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionMM.SetPositronId(true);
       CutBasedHiggsSelectionMM.SetEleTrackerPtSum(0);
       CutBasedHiggsSelectionMM.SetPosTrackerPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleCaloPtSum(0);
-      CutBasedHiggsSelectionMM.SetPosCaloPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleHcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetPosHcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleEcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetPosEcalPtSum(0);
       CutBasedHiggsSelectionMM.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionMM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
@@ -500,8 +510,9 @@ void HiggsSelection::Loop() {
       
       // electron ID, isolations for the only electron / positron
       bool theEleIDEM = false;
-      bool theEleTrackerPtSumEM = 0.;
-      bool theEleCaloPtSumEM = 0.;
+      float theEleTrackerPtSumEM = 0.0;
+      float theEleHcalPtSumEM = 0.0;
+      float theEleEcalPtSumEM = 0.0;
 
       theDeltaPhiEM    = m_deltaPhi[em];
       theInvMassEM     = m_mll[em];
@@ -510,13 +521,15 @@ void HiggsSelection::Loop() {
 	theDetaLeptonsEM = etaEle[theElectron]-etaEle[theMuonPlus];
 	theEleIDEM = theElectronID;
 	theEleTrackerPtSumEM = theEleTrackerPtSum;
-	theEleCaloPtSumEM = theEleCaloPtSum;
+	theEleHcalPtSumEM = theEleHcalPtSum;
+	theEleEcalPtSumEM = theEleEcalPtSum;
       }
       if(thePositron>-1 && theMuonMinus>-1 ) {
 	theDetaLeptonsEM = etaEle[thePositron]-etaEle[theMuonMinus];
 	theEleIDEM = thePositronID;
 	theEleTrackerPtSumEM = thePosTrackerPtSum;
-	theEleCaloPtSumEM = thePosCaloPtSum;
+	theEleHcalPtSumEM = thePosHcalPtSum;
+	theEleEcalPtSumEM = thePosEcalPtSum;
       }
 
 
@@ -528,8 +541,10 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionEM.SetPositronId(theEleIDEM);
       CutBasedHiggsSelectionEM.SetEleTrackerPtSum(0);
       CutBasedHiggsSelectionEM.SetPosTrackerPtSum(theEleTrackerPtSumEM);
-      CutBasedHiggsSelectionEM.SetEleCaloPtSum(0);
-      CutBasedHiggsSelectionEM.SetPosCaloPtSum(theEleCaloPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleHcalPtSum(0);
+      CutBasedHiggsSelectionEM.SetPosHcalPtSum(theEleHcalPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleEcalPtSum(0);
+      CutBasedHiggsSelectionEM.SetPosEcalPtSum(theEleEcalPtSumEM);
       CutBasedHiggsSelectionEM.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
@@ -1033,5 +1048,38 @@ void HiggsSelection::resetKinematics() {
   hardestMuonPt = 0;
   slowestElectronPt = 0;
   slowestMuonPt = 0;
+
+}
+
+
+float HiggsSelection::getSecondEleTkPt(int first, int second, float deltaR) {
+
+  TVector3 firstEle(pxEle[first],pyEle[first],pzEle[first]);
+  TVector3 secondEle(pxEle[second],pyEle[second],pzEle[second]);
+
+  float secondEleTrackPt = 0.0;
+  float dr = firstEle.DeltaR(secondEle);
+
+  if( dr < deltaR ) { 
+    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+  }
+
+  return secondEleTrackPt;
+
+}
+
+float HiggsSelection::getSecondEleEmEt(int first, int second, float deltaR) {
+
+  TVector3 firstEle(pxEle[first],pyEle[first],pzEle[first]);
+  TVector3 secondEle(pxEle[second],pyEle[second],pzEle[second]);
+
+  float secondEleEmEt = 0.0;
+  float dr = firstEle.DeltaR(secondEle);
+
+  if( dr < deltaR ) { 
+    secondEleEmEt = eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+  }
+  
+  return secondEleEmEt;
 
 }
