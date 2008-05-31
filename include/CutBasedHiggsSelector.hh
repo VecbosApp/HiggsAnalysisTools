@@ -32,8 +32,10 @@ public:
   void SetPositronId(bool isPosId)            { m_isPositronId  = isPosId; }
   void SetEleTrackerPtSum(float eleTkPtSum)   { m_eleTkPtSum    = eleTkPtSum; }
   void SetPosTrackerPtSum(float posTkPtSum)   { m_posTkPtSum    = posTkPtSum; }
-  void SetEleCaloPtSum(float eleCaloPtSum)    { m_eleCaloPtSum  = eleCaloPtSum; }
-  void SetPosCaloPtSum(float posCaloPtSum)    { m_posCaloPtSum  = posCaloPtSum; }
+  void SetEleHcalPtSum(float eleHcalPtSum)    { m_eleHcalPtSum  = eleHcalPtSum; }
+  void SetPosHcalPtSum(float posHcalPtSum)    { m_posHcalPtSum  = posHcalPtSum; }
+  void SetEleEcalPtSum(float eleEcalPtSum)    { m_eleEcalPtSum  = eleEcalPtSum; }
+  void SetPosEcalPtSum(float posEcalPtSum)    { m_posEcalPtSum  = posEcalPtSum; }
   void SetJetVeto(bool passedCJV)             { m_passedJetVeto = passedCJV; }
   void SetMet(float met)                      { m_met           = met;}
   void SetDeltaPhi(float deltaPhi)            { m_deltaPhi      = deltaPhi;}
@@ -58,8 +60,8 @@ private:
   float m_highPt, m_lowPt;
   bool m_isElectronId, m_isPositronId;
   float m_invMass;
-  float m_eleTkPtSum, m_eleCaloPtSum;
-  float m_posTkPtSum, m_posCaloPtSum;
+  float m_eleTkPtSum, m_eleHcalPtSum, m_eleEcalPtSum;
+  float m_posTkPtSum, m_posHcalPtSum, m_posEcalPtSum;
   bool m_passedJetVeto;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;

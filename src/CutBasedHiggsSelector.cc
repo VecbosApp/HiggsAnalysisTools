@@ -27,6 +27,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("dileptonInvMassMin");  
   _selection->addCut("trackerPtSum");
   _selection->addCut("hcalPtSum");
+  _selection->addCut("ecalPtSum");
   _selection->addCut("MET");
   _selection->addCut("deltaPhi");
   _selection->addCut("maxPtLepton");
@@ -43,7 +44,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   higgsSelCounter.AddVar("dileptonInvMassMin");
   higgsSelCounter.AddVar("classDepEleId");
   higgsSelCounter.AddVar("trackerIso");
-  higgsSelCounter.AddVar("caloIso");
+  higgsSelCounter.AddVar("hcalIso");
+  higgsSelCounter.AddVar("ecalIso");
   higgsSelCounter.AddVar("jetVeto");
   higgsSelCounter.AddVar("MET");
   higgsSelCounter.AddVar("deltaPhi");
@@ -80,8 +82,12 @@ bool CutBasedHiggsSelector::output() {
   higgsSelCounter.IncrVar("trackerIso",m_weight);
 
   if ((_selection->getSwitch("hcalPtSum")) && 
-      (!_selection->passCut("hcalPtSum",m_eleCaloPtSum) || !_selection->passCut("hcalPtSum",m_posCaloPtSum))) return false; 
-  higgsSelCounter.IncrVar("caloIso",m_weight);
+      (!_selection->passCut("hcalPtSum",m_eleHcalPtSum) || !_selection->passCut("hcalPtSum",m_posHcalPtSum))) return false; 
+  higgsSelCounter.IncrVar("hcalIso",m_weight);
+
+  if ((_selection->getSwitch("ecalPtSum")) && 
+      (!_selection->passCut("ecalPtSum",m_eleEcalPtSum) || !_selection->passCut("ecalPtSum",m_posEcalPtSum))) return false; 
+  higgsSelCounter.IncrVar("ecalIso",m_weight);
 
   m_finalLeptons = true;
 
@@ -122,8 +128,9 @@ void CutBasedHiggsSelector::diplayEfficiencies() {
   higgsSelCounter.Draw("dileptonInvMassMin","slowLeptonThreshold");
   higgsSelCounter.Draw("classDepEleId","dileptonInvMassMin");
   higgsSelCounter.Draw("trackerIso","classDepEleId");
-  higgsSelCounter.Draw("caloIso","trackerIso");
-  higgsSelCounter.Draw("jetVeto","caloIso");
+  higgsSelCounter.Draw("hcalIso","trackerIso");
+  higgsSelCounter.Draw("ecalIso","hcalIso");
+  higgsSelCounter.Draw("jetVeto","ecalIso");
   higgsSelCounter.Draw("MET","jetVeto");
   higgsSelCounter.Draw("deltaPhi","MET");
   higgsSelCounter.Draw("maxPtLepton","deltaPhi");
