@@ -179,8 +179,8 @@ void setScanValue(){
 
   // step for the scan
   trackerStep = 0.005;      
-  hcalStep    = 0.005;      
-  ecalStep    = 0.005;      
+  hcalStep    = 0.02;      
+  ecalStep    = 0.02;      
 }
 
 bool isIsolScan(float thisTracker, float thisHcal, float thisEcal, int tracker, int hcal, int ecal){ 
