@@ -122,6 +122,7 @@ public :
    Float_t         eleDeltaPhiAtVtxEle[50];   //[nEle]
    Float_t         eleDeltaEtaAtCaloEle[50];   //[nEle]
    Float_t         eleDeltaPhiAtCaloEle[50];   //[nEle]
+   Float_t         eleSumPtPreselectionEle[50];   //[nEle]
    Float_t         eleMinDR03Ele[50];   //[nEle]
    Float_t         eleMinDRveto03Ele[50];   //[nEle]
    Float_t         eleSumPt03Ele[50];   //[nEle]
@@ -358,6 +359,7 @@ public :
    TBranch        *b_eleDeltaPhiAtVtxEle;   //!
    TBranch        *b_eleDeltaEtaAtCaloEle;   //!
    TBranch        *b_eleDeltaPhiAtCaloEle;   //!
+   TBranch        *b_eleSumPtPreselectionEle;   //!
    TBranch        *b_eleMinDR03Ele;   //!
    TBranch        *b_eleMinDRveto03Ele;   //!
    TBranch        *b_eleSumPt03Ele;   //!
@@ -665,6 +667,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("eleDeltaPhiAtVtxEle", eleDeltaPhiAtVtxEle, &b_eleDeltaPhiAtVtxEle);
    fChain->SetBranchAddress("eleDeltaEtaAtCaloEle", eleDeltaEtaAtCaloEle, &b_eleDeltaEtaAtCaloEle);
    fChain->SetBranchAddress("eleDeltaPhiAtCaloEle", eleDeltaPhiAtCaloEle, &b_eleDeltaPhiAtCaloEle);
+   fChain->SetBranchAddress("eleSumPtPreselectionEle", eleSumPtPreselectionEle, &b_eleSumPtPreselectionEle);
    fChain->SetBranchAddress("eleMinDR03Ele", eleMinDR03Ele, &b_eleMinDR03Ele);
    fChain->SetBranchAddress("eleMinDRveto03Ele", eleMinDRveto03Ele, &b_eleMinDRveto03Ele);
    fChain->SetBranchAddress("eleSumPt03Ele", eleSumPt03Ele, &b_eleSumPt03Ele);
