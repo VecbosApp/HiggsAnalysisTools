@@ -44,12 +44,12 @@ HiggsIsolationOptimToyMC::HiggsIsolationOptimToyMC(TTree *tree)
   fullKine     = 0.;
 
   // 1 dimension histos - high pt electron
-  HH_tracker = new TH1F("HH_tracker", "HH_tracker", 50,  0.0, 0.4);
+  HH_tracker = new TH1F("HH_tracker", "HH_tracker", 50,  0.0, 0.1); // 0.1 is preselection
   HH_hcal    = new TH1F("HH_hcal",    "HH_hcal",    50,  0.0, 0.4);
   HH_ecal    = new TH1F("HH_ecal",    "HH_ecal",    50,  0.0, 0.4);
 
   // 1 dimension histos - low pt electron
-  HL_tracker = new TH1F("HL_tracker", "HL_tracker", 50,  0.0, 0.4);
+  HL_tracker = new TH1F("HL_tracker", "HL_tracker", 50,  0.0, 0.1); // 0.1 is preselection
   HL_hcal    = new TH1F("HL_hcal",    "HL_hcal",    50,  0.0, 0.4);
   HL_ecal    = new TH1F("HL_ecal",    "HL_ecal",    50,  0.0, 0.4);
 
@@ -147,8 +147,8 @@ void HiggsIsolationOptimToyMC::Loop() {
     allEvents=allEvents+theWeight; 
 
     // look to the MC truth decay tree
-    bool foundMcTree = findMcTree("HtoWWto2e2nu");
-    // bool foundMcTree = findMcTree("Wjets");
+    // bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    bool foundMcTree = findMcTree("Wjets");
     if ( !foundMcTree ) continue;
     passedMc=passedMc+theWeight;    
 
@@ -183,7 +183,7 @@ void HiggsIsolationOptimToyMC::Loop() {
     looseId=looseId+theWeight;   
 
     // did we pass loose electron tracker based isolation?
-    if (eleSumPt03Ele[theElectron]>0.1 || eleSumPt03Ele[thePositron]>0.1) continue;
+    if (eleSumPtPreselectionEle[theElectron]>0.1 || eleSumPtPreselectionEle[thePositron]>0.1) continue;
     looseIsol=looseIsol+theWeight;
 
 
@@ -196,11 +196,11 @@ void HiggsIsolationOptimToyMC::Loop() {
     
     // filling histos: 1 dim and N dim histos
     double toFillE[nVar], toFillP[nVar];
-    toFillE[0] = eleSumPt04Ele[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.4);
+    toFillE[0] = eleSumPtPreselectionEle[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.2);
     toFillE[1] = eleSumHadEt04Ele[theElectron];
     toFillE[2] = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(thePositron,thePositron,0.4);
 
-    toFillP[0] = eleSumPt04Ele[thePositron] - getSecondEleTkPt(theElectron,thePositron,0.4);
+    toFillP[0] = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(theElectron,thePositron,0.2);
     toFillP[1] = eleSumHadEt04Ele[thePositron];
     toFillP[2] = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(theElectron,thePositron,0.4);
 
