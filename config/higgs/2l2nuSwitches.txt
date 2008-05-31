@@ -3,6 +3,7 @@ slowLeptonThreshold     1
 dileptonInvMassMin      1
 trackerPtSum		1
 hcalPtSum		1
+ecalPtSum		1
 classDepEleId		1
 jetVeto			1
 MET			1

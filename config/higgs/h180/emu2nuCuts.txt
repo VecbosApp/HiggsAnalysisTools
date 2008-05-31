@@ -1,8 +1,9 @@
 hardLeptonThreshold     20              10000
 slowLeptonThreshold     10              10000
 dileptonInvMassMin      12              10000 
-trackerPtSum		0		0.05
-hcalPtSum		0		0.05
+trackerPtSum		0		0.065
+hcalPtSum		0		0.1
+ecalPtSum		0		0.2
 MET			52		10000
 deltaPhi		0		45
 maxPtLepton		31		55
