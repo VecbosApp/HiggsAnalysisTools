@@ -396,8 +396,8 @@ void HiggsSelection::Loop() {
     // ecal isolation for electrons
     float theEleEcalPtSum = 0.;
     float thePosEcalPtSum = 0.;
-    if (theElectron > -1) theEleEcalPtSum = eleSumHadEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
-    if (thePositron > -1) thePosEcalPtSum = eleSumHadEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
+    if (theElectron > -1) theEleEcalPtSum = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
+    if (thePositron > -1) thePosEcalPtSum = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
 
     // jet veto: method gives true if good jet is found
     bool passedJetVeto = !goodJetFound();
