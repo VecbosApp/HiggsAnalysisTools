@@ -152,6 +152,10 @@ isolationTableToy:  $(INCLUDEDIR)/src/isolationTableToy.cpp
 	$(CXX) $(CXXFLAGS) -o isolationTableToy $(GLIBS) $ $<
 isolationTableToy.clean:
 	rm -f isolationTableToy
+kinematicsTableToy:  $(INCLUDEDIR)/src/kinematicsTableToy.cpp
+	$(CXX) $(CXXFLAGS) -o kinematicsTableToy $(GLIBS) $ $<
+kinematicsTableToy.clean:
+	rm -f kinematicsTableToy
 
 # ==================== reduced trees =============================================
 #ReducedTree_HwwEleId:  $(INCLUDEDIR)ReducedTree_HwwEleId.cpp $(OUTLIB)RedEleIDTree.o 
@@ -167,5 +171,6 @@ clean:
 	rm -f eleIDtableToy
 	rm -f eleIDtableLike
 	rm -f isolationTableToy
+	rm -f kinematicsTableToy
 
 all:  HiggsApp
