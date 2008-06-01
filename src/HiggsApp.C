@@ -60,6 +60,9 @@
 #if Application == 13
 #include "HiggsAnalysisTools/src/HiggsIsolationOptimToyMC.cc"
 #endif
+#if Application == 14
+#include "HiggsAnalysisTools/src/HiggsKinematicsOptimToyMC.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -247,7 +250,22 @@ int main(int argc, char* argv[]) {
 
 #endif
 
+#if Application == 14
 
+  HiggsKinematicsOptimToyMC hkinemtoy(theChain);
+  std::string outFileName(inputFileName);
+  outFileName+=".root";
+  TriggerMask mask(treeCond);
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+  std::vector<int> requiredTriggers = mask.getBits();
+  hkinemtoy.requireTrigger(requiredTriggers);
+  hkinemtoy.Loop();
+
+#endif
+  
   return 0;
 
 }

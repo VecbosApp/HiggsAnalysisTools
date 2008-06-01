@@ -13,5 +13,6 @@
 //  11 = electron ID optimization for Higgs studies    
 //  12 = Z+jets -> ee  'fast version'
 //  13 = isolation optimization for Higgs studies    
+//  14 = kinematics optimization for Higgs studies    
 
 #define Application 1
