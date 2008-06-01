@@ -42,6 +42,7 @@ HiggsKinematicsOptimToyMC::HiggsKinematicsOptimToyMC(TTree *tree)
   looseIsol    = 0.;
   fullId       = 0.; 
   fullIsol     = 0.;
+  jetVeto      = 0.;
 
   // 1 dimension histos
   H_mee    = new TH1F("H_mee",    "H_mee",    40,  0.0, 110.0);
@@ -98,7 +99,8 @@ HiggsKinematicsOptimToyMC::~HiggsKinematicsOptimToyMC(){
   *outTxtFile << "loose isolation: "    << looseIsol    << endl;
   *outTxtFile << "full eleID:   "       << fullId       << endl;
   *outTxtFile << "full isol:    "       << fullIsol     << endl;
-  
+  *outTxtFile << "jetVeto:      "       << jetVeto      << endl;
+
   // saving histos
   outRootFile->Close();
 
@@ -175,9 +177,9 @@ void HiggsKinematicsOptimToyMC::Loop() {
     allEvents=allEvents+theWeight; 
 
     // look to the MC truth decay tree
-    bool foundMcTree = findMcTree("HtoWWto2e2nu");
-    // bool foundMcTree = findMcTree("Wjets");
-    // bool foundMcTree = findMcTree("inclusive");
+    // bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    // bool foundMcTree = findMcTree("ttbar");
+    bool foundMcTree = findMcTree("inclusive");
     if ( !foundMcTree ) continue;
     passedMc=passedMc+theWeight;    
 
@@ -235,7 +237,8 @@ void HiggsKinematicsOptimToyMC::Loop() {
 
     // full kine analysis
     if (goodJetFound())           continue;
-
+    jetVeto=jetVeto+theWeight;
+    
     // ----------------------------------------------------------
     // filling histos to drive the toy MC generation:    
     double toFill[nVar];

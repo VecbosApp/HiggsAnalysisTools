@@ -87,7 +87,7 @@ private:
 
   //! counters
   float allEvents, passedMc, triggered, commonPresel; 
-  float passedReco, elePresel, looseId, looseIsol, fullId, fullIsol;
+  float passedReco, elePresel, looseId, looseIsol, fullId, fullIsol, jetVeto;
 
   //! values to store in the output tree
   float myMll, myMet, myDphi, myPtHigh, myPtLow;
