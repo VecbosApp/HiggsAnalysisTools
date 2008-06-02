@@ -31,13 +31,14 @@ bool isKineScan(float thisMee, float thisMet, float thisDphi, float thisPtHigh, 
 
 int main ( int argc, char **argv)
 {
-  if (argc < 6){ 
+  if (argc < 7){ 
     cout << "Argument missing! Insert: "                                       << std::endl; 
     cout << "1) inputFile - root tree for sgn"                                 << std::endl;
     cout << "2) signal pre kine efficiency"                                    << std::endl;
     cout << "3) inputFile - text file with ALPGEN root file and nevents "      << std::endl;
     cout << "4) inputFile - text file with other bkg root file, eff and xsec " << std::endl;
     cout << "5) discovery (1) or exclusion (0) limits"                         << std::endl;
+    cout << "6) output scan file name"                                         << std::endl;
     return 0;
   }
 
@@ -180,7 +181,7 @@ int main ( int argc, char **argv)
   
 
     // maximization:
-  ofstream *outTxtFile = new ofstream("outputFileScan.txt",ios::app);
+  ofstream *outTxtFile = new ofstream(argv[6],ios::app);
   float signPunziMax = -999.;
   float effMax       = -999.;
   int signBinMax[9];
