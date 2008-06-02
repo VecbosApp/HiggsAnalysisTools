@@ -133,17 +133,17 @@ int main ( int argc, char **argv)
   int discovery = atoi(argv[5]); 
 
   // counters
-  float passedKine[3][3][3][3][4][3][3][3][3][8];
+  float passedKine[1][3][3][3][4][4][4][4][1][8];
   for(int ii=0; ii<8; ii++){
-    for(int iiMeeMin=0; iiMeeMin<3; iiMeeMin++){
+    for(int iiMeeMin=0; iiMeeMin<1; iiMeeMin++){
       for(int iiMeeMax=0; iiMeeMax<3; iiMeeMax++){
 	for(int iiMetMin=0; iiMetMin<3; iiMetMin++){
 	  for(int iiMetMax=0; iiMetMax<3; iiMetMax++){
 	    for(int iiDphiMax=0; iiDphiMax<4; iiDphiMax++){
-	      for(int iiPtHighMin=0; iiPtHighMin<3; iiPtHighMin++){
-		for(int iiPtHighMax=0; iiPtHighMax<3; iiPtHighMax++){
-		  for(int iiPtLowMin=0; iiPtLowMin<3; iiPtLowMin++){
-		    for(int iiPtLowMax=0; iiPtLowMax<3; iiPtLowMax++){
+	      for(int iiPtHighMin=0; iiPtHighMin<4; iiPtHighMin++){
+		for(int iiPtHighMax=0; iiPtHighMax<4; iiPtHighMax++){
+		  for(int iiPtLowMin=0; iiPtLowMin<4; iiPtLowMin++){
+		    for(int iiPtLowMax=0; iiPtLowMax<1; iiPtLowMax++){
 		      passedKine[iiMeeMin][iiMeeMax][iiMetMin][iiMetMax][iiDphiMax][iiPtHighMin][iiPtHighMax][iiPtLowMin][iiPtLowMax][ii]=0;
 		    }}}}}}}}}}
     
@@ -162,15 +162,15 @@ int main ( int argc, char **argv)
       
       // scan to compute the efficiencies for each bin
       bool theScan  = false;
-      for(int iiMeeMin=0; iiMeeMin<3; iiMeeMin++){
+      for(int iiMeeMin=0; iiMeeMin<1; iiMeeMin++){
 	for(int iiMeeMax=0; iiMeeMax<3; iiMeeMax++){
 	  for(int iiMetMin=0; iiMetMin<3; iiMetMin++){
 	    for(int iiMetMax=0; iiMetMax<3; iiMetMax++){
 	      for(int iiDphiMax=0; iiDphiMax<4; iiDphiMax++){
-		for(int iiPtHighMin=0; iiPtHighMin<3; iiPtHighMin++){
-		  for(int iiPtHighMax=0; iiPtHighMax<3; iiPtHighMax++){
-		    for(int iiPtLowMin=0; iiPtLowMin<3; iiPtLowMin++){
-		      for(int iiPtLowMax=0; iiPtLowMax<3; iiPtLowMax++){
+		for(int iiPtHighMin=0; iiPtHighMin<4; iiPtHighMin++){
+		  for(int iiPtHighMax=0; iiPtHighMax<4; iiPtHighMax++){
+		    for(int iiPtLowMin=0; iiPtLowMin<4; iiPtLowMin++){
+		      for(int iiPtLowMax=0; iiPtLowMax<1; iiPtLowMax++){
 			theScan=isKineScan(mee,met,dphi,ptHigh,ptLow,iiMeeMin,iiMeeMax,iiMetMin,iiMetMax,iiDphiMax,iiPtHighMin,iiPtHighMax,iiPtLowMin,iiPtLowMax);
 			if(theScan){ 
 			  passedKine[iiMeeMin][iiMeeMax][iiMetMin][iiMetMax][iiDphiMax][iiPtHighMin][iiPtHighMax][iiPtLowMin][iiPtLowMax][ii]+=1;
@@ -187,15 +187,15 @@ int main ( int argc, char **argv)
   int signBinMax[9];
   for(int yy=0; yy<9; yy++){signBinMax[yy]=-1;}  
   
-  for(int iiMeeMin=0; iiMeeMin<3; iiMeeMin++){
+  for(int iiMeeMin=0; iiMeeMin<1; iiMeeMin++){
     for(int iiMeeMax=0; iiMeeMax<3; iiMeeMax++){
       for(int iiMetMin=0; iiMetMin<3; iiMetMin++){
 	for(int iiMetMax=0; iiMetMax<3; iiMetMax++){
 	  for(int iiDphiMax=0; iiDphiMax<4; iiDphiMax++){
-	    for(int iiPtHighMin=0; iiPtHighMin<3; iiPtHighMin++){
-	      for(int iiPtHighMax=0; iiPtHighMax<3; iiPtHighMax++){
-		for(int iiPtLowMin=0; iiPtLowMin<3; iiPtLowMin++){
-		  for(int iiPtLowMax=0; iiPtLowMax<3; iiPtLowMax++){
+	    for(int iiPtHighMin=0; iiPtHighMin<4; iiPtHighMin++){
+	      for(int iiPtHighMax=0; iiPtHighMax<4; iiPtHighMax++){
+		for(int iiPtLowMin=0; iiPtLowMin<4; iiPtLowMin++){
+		  for(int iiPtLowMax=0; iiPtLowMax<1; iiPtLowMax++){
 		    
 		    float thisBinSgnEff = passedKine[iiMeeMin][iiMeeMax][iiMetMin][iiMetMax][iiDphiMax][iiPtHighMin][iiPtHighMax][iiPtLowMin][iiPtLowMax][0]/((float)T[0]->GetEntries());
 		    float thisBinBkgEff[7];
@@ -280,15 +280,15 @@ int main ( int argc, char **argv)
 void setScanValue(){
 
   // starting point         step  
-  meeMinInit = 12.0;        meeMinStep    =  2.0;
+  meeMinInit = 12.0;        meeMinStep    =  2.0; // fix to pre-selection
   meeMaxInit = 70.0;        meeMaxStep    = -5.0;
   metMinInit = 30.0;        metMinStep    =  5.0;
   metMaxInit = 90.0;        metMaxStep    = -5.0;
   dphiMaxInit = 100.0;      dphiMaxStep   = -20.0;
   ptHighMinInit = 20.0;     ptHighMinStep =  3.0;
-  ptHighMaxInit = 60.0;     ptHighMaxStep = -4.0;
+  ptHighMaxInit = 78.0;     ptHighMaxStep = -4.0;
   ptLowMinInit = 10.0;      ptLowMinStep  =  3.0;
-  ptLowMaxInit = 60.0;      ptLowMaxStep  = -4.0;
+  ptLowMaxInit = 90.0;      ptLowMaxStep  = -4.0;
 
 }
 
