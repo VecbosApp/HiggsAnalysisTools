@@ -268,6 +268,14 @@ void HiggsSelection::Loop() {
     myOutTreeMM->addCSA07Infos();
     myOutTreeEM->addCSA07Infos();
   }
+  
+  if ( _preselection->getSwitch("apply_kFactor") ) {
+
+    myOutTreeEE->addKFactor();
+    myOutTreeMM->addKFactor();
+    myOutTreeEM->addKFactor();
+
+  }
 
   float met, deltaPhi, transvMass; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
@@ -450,7 +458,11 @@ void HiggsSelection::Loop() {
       if ( _preselection->getSwitch("addCSA07Infos") ) {
 	myOutTreeEE->fillCSA07(genWeight,genAlpgenID,1000.);
       }
-      
+
+      if ( _preselection->getSwitch("apply_kFactor") ) {
+	myOutTreeEE->fillKFactor(evtKfactor);
+      }
+
       // dumping final tree
       myOutTreeEE -> store();
       
@@ -500,6 +512,10 @@ void HiggsSelection::Loop() {
 	myOutTreeMM->fillCSA07(genWeight,genAlpgenID,1000.);
       }
       
+      if ( _preselection->getSwitch("apply_kFactor") ) {
+	myOutTreeMM->fillKFactor(evtKfactor);
+      }
+
       // dumping final tree
       myOutTreeMM -> store();
       
@@ -569,6 +585,10 @@ void HiggsSelection::Loop() {
 	myOutTreeEM->fillCSA07(genWeight,genAlpgenID,1000.);
       }
       
+      if ( _preselection->getSwitch("apply_kFactor") ) {
+	myOutTreeEM->fillKFactor(evtKfactor);
+      }
+
       // dumping final tree
       myOutTreeEM -> store();
 
