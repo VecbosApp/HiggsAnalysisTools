@@ -43,6 +43,12 @@ void RedHiggsTree::addCSA07Infos() {
 
 }
 
+void RedHiggsTree::addKFactor() {
+  
+  myTree->Branch("KFactor",  &myKFactor,   "KFactor/F");
+
+}
+
 void RedHiggsTree::store()
 {
   myTree->Fill();
@@ -80,5 +86,11 @@ void RedHiggsTree::fillCSA07(double weight, double processId, float lumi)
   myWeight = weight;
   myProcesId = processId;
   myLumi = lumi;
+
+}
+
+void RedHiggsTree::fillKFactor(double kfactor) {
+
+  myKFactor = kfactor;
 
 }
