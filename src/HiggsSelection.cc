@@ -81,10 +81,10 @@ HiggsSelection::HiggsSelection(TTree *tree)
 
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
+  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/tightEleId/"); 
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/hwwAnEleId/");
-  // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m160/");
+  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m160/");
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_tightOthers_m160/");
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m190/");
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_tightOthers_m190/");
