@@ -912,17 +912,17 @@ bool HiggsSelection::goodJetFound() {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
       if(_selectionEE->getSwitch("jetConeWidth") && 
-	 _selectionEE->passCut("jetConeWidth",deltaR) &&
-	 (m_HoEElectronMinus < 0.2) &&  
-	 (m_CaloEneElectronMinus/energyJet[j] > 0.9)
+	 _selectionEE->passCut("jetConeWidth",deltaR)
+	// && (m_HoEElectronMinus < 0.2)  
+	// && (m_CaloEneElectronMinus/energyJet[j] > 0.9)
 	 ) continue;
     }
     if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
       if(_selectionEE->getSwitch("jetConeWidth") && 
-	 _selectionEE->passCut("jetConeWidth",deltaR) &&
-	 (m_HoEElectronPlus < 0.2) &&  
-	 (m_CaloEneElectronPlus/energyJet[j] > 0.9)
+	 _selectionEE->passCut("jetConeWidth",deltaR)
+	 // && (m_HoEElectronPlus < 0.2)
+	 // && (m_CaloEneElectronPlus/energyJet[j] > 0.9)
 	 ) continue;
     }
 
