@@ -10,7 +10,7 @@ maxPtLepton		25		49
 minPtLepton		11		10000
 dileptonInvMassMax	12		40
 detaLeptons		-1		1
-jetConeWidth		0.0		0.2
+jetConeWidth		0.0		0.3
 etaJetAcc		-2.5		2.5
 etJetHighAcc		15		20
 etJetLowAcc		15		10000
