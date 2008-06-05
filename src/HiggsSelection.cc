@@ -291,10 +291,13 @@ void HiggsSelection::Loop() {
 
     resetKinematics();
 
-    // get the kFactor of the event
-    
+    // get the kFactor of the event (for signal)
+     
     float weight = 1;
     if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("H_gg");
+    
+    // get the alpgen weight to normalize correctly jet bins
+    if ( _preselection->getSwitch("addCSA07Infos") ) weight = genWeight; 
 
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
@@ -425,6 +428,9 @@ void HiggsSelection::Loop() {
       theTransvMassEE  = m_transvMass[ee];
 
       // selections
+      if( _preselection->getSwitch("addCSA07Infos") ) {
+	CutBasedHiggsSelectionEE.SetProcessID((int)genAlpgenID/1000);
+      }
       CutBasedHiggsSelectionEE.SetWeight(weight);
       CutBasedHiggsSelectionEE.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEE.SetLowElePt(slowestElectronPt);
@@ -477,6 +483,9 @@ void HiggsSelection::Loop() {
       theTransvMassMM  = m_transvMass[mm];
       
       // selections
+      if( _preselection->getSwitch("addCSA07Infos") ) {
+	CutBasedHiggsSelectionMM.SetProcessID((int)genAlpgenID/1000);
+      }
       CutBasedHiggsSelectionMM.SetWeight(weight);
       CutBasedHiggsSelectionMM.SetHighElePt(hardestMuonPt);
       CutBasedHiggsSelectionMM.SetLowElePt(slowestMuonPt);
@@ -550,6 +559,9 @@ void HiggsSelection::Loop() {
 
 
       // selections
+      if( _preselection->getSwitch("addCSA07Infos") ) {
+	CutBasedHiggsSelectionEM.SetProcessID((int)genAlpgenID/1000);
+      }
       CutBasedHiggsSelectionEM.SetWeight(weight);
       CutBasedHiggsSelectionEM.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEM.SetLowElePt(slowestMuonPt);
