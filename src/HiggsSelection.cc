@@ -336,6 +336,9 @@ void HiggsSelection::Loop() {
     setPreselKinematics();
     
     // setting preselections
+    if( _preselection->getSwitch("addCSA07Infos") ) {
+      CommonHiggsPreselection.SetProcessID((int)genAlpgenID/1000);
+    }
     CommonHiggsPreselection.SetWeight(weight);
     CommonHiggsPreselection.SetMcTruth(foundMcTree);
     CommonHiggsPreselection.SetHLT(passedHLT);

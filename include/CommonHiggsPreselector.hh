@@ -18,6 +18,7 @@ public:
   void Configure(const char *fileCuts, const char *fileSwitches);
 
   //! set event by event observables
+  void SetProcessID(int processID)    { m_processID     = processID; }
   void SetWeight(float kFactor)       { m_kFactor     = kFactor;     }
   void SetMcTruth(bool foundMcTree)   { m_foundMcTree = foundMcTree; }
   void SetHLT(bool passedHLT)         { m_passedHLT   = passedHLT;   }
@@ -58,12 +59,18 @@ private:
   float m_met;
   float m_mllEE, m_mllEM, m_mllMM;
   bool m_evtPresel;
-  
+  int m_processID;
+
   //! contains the preselection cuts
   Selection* _selection;
 
   //! counters for the efficiencies display, based on electron candidates
-  Counters presCounter;
+  Counters* presCounter;
+
+  //! this is to do an efficiency for each process in the sample 
+  //! (if more than one is present)
+  //! to turn on it, use SetProcessID(int processID) with processID=!-1
+  std::map<int, Counters*> multiProcessCounter;
 
 };
 
