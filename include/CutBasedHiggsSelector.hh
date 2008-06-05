@@ -24,6 +24,7 @@ public:
   Selection* GetSelection() { return _selection; }
 
   //! set event by event observables
+  void SetProcessID(int processID)            { m_processID     = processID; }
   void SetWeight(float weight)                { m_weight        = weight;    }
   void SetHighElePt(float highPt)             { m_highPt        = highPt;    }
   void SetLowElePt(float lowPt)               { m_lowPt         = lowPt;     }
@@ -65,17 +66,23 @@ private:
   bool m_passedJetVeto;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;
+  int m_processID;
 
   //! contains the preselection cuts
   Selection* _selection;
 
   //! counters for the efficiencies display, based on electron candidates
-  Counters higgsSelCounter;
+  Counters* globalCounter;
 
   //! true if the selection arrived to lepton ID and isolation
   bool m_finalLeptons;
   //! true if the selection arrived to jet veto
   bool m_jetVeto;
+
+  //! this is to do an efficiency for each process in the sample 
+  //! (if more than one is present)
+  //! to turn on it, use SetProcessID(int processID) with processID=!-1
+  std::map<int, Counters*> multiProcessCounter;
 
 };
 
