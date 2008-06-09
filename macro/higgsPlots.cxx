@@ -1,5 +1,4 @@
-// macro to get the number of exected events 
-// and to draw normalized distributions
+// macro to draw normalized distributions
 // ----
 // efficiencies are hardcoded for 2 selections:
 //   1) full selection
@@ -26,149 +25,73 @@
 #include <TLegend.h>
 #include <TStyle.h>
 
-std::vector<float> expectedEvents(const char *selection, const char *eleID="tight") {
+std::vector<float> nEventsPresel;
+std::vector<float> nEventsCJV;
+std::vector<float> nEventsFinal;
 
-  // normalization lumi (pb-1)
-  float lumi = 100.0;
+void setExpectedEvents() {
 
-  // for the normal processes, exp ev = L_int * xsec * efficiency
-  vector<float> efficiency; // the final one - tight eleID from egamma
-  vector<float> efficiencyAfterCJV; // after CJV - tight eleID from egamma
-  vector<float> efficiencyLooseID; // the final one - loose eleID from egamma
-  vector<float> efficiencyAfterCJVLooseID; // after CJV - loose eleID from egamma
-  vector<float> xsec;
+  // mH = 160 GeV
+  nEventsPresel.push_back(14.6); // H->WW
+  nEventsPresel.push_back(72.1); // WW
+  nEventsPresel.push_back(112); // WZ
+  nEventsPresel.push_back(19.1);  // ZZ
+  nEventsPresel.push_back(41.1);  // tW
+  nEventsPresel.push_back(2628); // W+j
+  nEventsPresel.push_back(2463); // Z+j
+  nEventsPresel.push_back(1193); // ttbar
 
-  // tight eleID from egamma
-  efficiency.push_back(0.0037); // signal H165 (denominator: all 2l2nu)
-  efficiency.push_back(0.000039); // WW inclusive (lep + had)
-  efficiency.push_back(0.000016); // WZ (incl) -- very poor stat: resubmit CRAB 
-  efficiency.push_back(0.000008);  // ZZ (incl)
-  efficiency.push_back(0.000010); // tW (incl)
+  nEventsCJV.push_back(4.9); // H->WW
+  nEventsCJV.push_back(18.2); // WW
+  nEventsCJV.push_back(3.6); // WZ
+  nEventsCJV.push_back(4.2);  // ZZ
+  nEventsCJV.push_back(7.1);  // tW
+  nEventsCJV.push_back(10.4); // W+j
+  nEventsCJV.push_back(397); // Z+j
+  nEventsCJV.push_back(11.9); // ttbar
 
-  efficiencyAfterCJV.push_back(0.016); // signal H165 (denominator: all 2l2nu)
-  efficiencyAfterCJV.push_back(0.0016); // WW inclusive (lep + had)
-  efficiencyAfterCJV.push_back(0.0050); // WZ (incl) -- very poor stat: resubmit CRAB 
-  efficiencyAfterCJV.push_back(0.0026);  // ZZ (incl)
-  efficiencyAfterCJV.push_back(0.00045); // tW (incl)
-
-  // loose eleID from egamma
-  efficiencyLooseID.push_back(0.0058); // signal H165 (denominator: all 2l2nu) 
-  efficiencyLooseID.push_back(0.000058); // WW inclusive (lep + had)
-  efficiencyLooseID.push_back(0.0000100); // WZ (incl) -- very poor stat: resubmit CRAB
-  efficiencyLooseID.push_back(0.0000080); // ZZ (incl)
-  efficiencyLooseID.push_back(0.000010); // tW (incl)
-
-  efficiencyAfterCJVLooseID.push_back(0.023); // signal H165 (denominator: all 2l2nu) 
-  efficiencyAfterCJVLooseID.push_back(0.0021); // WW inclusive (lep + had)
-  efficiencyAfterCJVLooseID.push_back(0.0028); // WZ (incl) -- very poor stat: resubmit CRAB
-  efficiencyAfterCJVLooseID.push_back(0.0032); // ZZ (incl)
-  efficiencyAfterCJVLooseID.push_back(0.00059); // tW (incl)
-
-  // xsecs in pb
-  // http://ceballos.web.cern.ch/ceballos/hwwlnln/cross-sections_csa07analysis.txt
-  xsec.push_back(2.36); // signal H160 pb-1 -> WW -> 2l2nu
-  xsec.push_back(114.3); // WW inclusive (lep + had)
-  xsec.push_back(49.9); // WZ (incl) 
-  xsec.push_back(15.3); // ZZ (incl)
-  xsec.push_back(62.0); // tW (incl)
-
-  vector<float> expEv;
-  for(int i=0; i< (int) xsec.size(); i++) {
-    if( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 ) {
-      if(strcmp(selection,"finalSelection")==0)
-	expEv.push_back( efficiency[i] * xsec[i] * lumi );
-      if(strcmp(selection,"jetVeto")==0)
-	expEv.push_back( efficiencyAfterCJV[i] * xsec[i] * lumi );
-    }
-    else if( strcmp(eleID,"loose")==0 ) {
-      if(strcmp(selection,"finalSelection")==0)
-	expEv.push_back( efficiencyLooseID[i] * xsec[i] * lumi );
-      if(strcmp(selection,"jetVeto")==0)
-	expEv.push_back( efficiencyAfterCJVLooseID[i] * xsec[i] * lumi );
-    }
-  }
-
-  // now evaluate the expected events from Chowder CSA07
-  TFile *fileChowderPDElectronSkim = 0;
-  if ( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 )
-    fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
-  else if ( strcmp(eleID,"loose")==0 )
-    fileChowderPDElectronSkim = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE-looseegamma.root");
-
-  TTree *treeChowderPDElectronSkim = (TTree*) fileChowderPDElectronSkim->Get("T1");
-
-  // ALPGEN procees id:
-  // 1000 + jet multiplicity for W+jets
-  // 2000 + jet multiplicity for Z+jets
-  // 3000 + jet multiplicity for ttbar
-
-  TH1F *dummyVar = new TH1F("dummyVar","dummyVar",10,0,10000);
-
-  // evaluate W+jets expected events (weights were evaluated for 1000pb-1, the equivalent lumi of CSA07 sample)
-  if(strcmp(selection,"finalSelection")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=1000 && CSA07processId<2000 && finalSelection)*CSA07weight");
-  if(strcmp(selection,"jetVeto")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=1000 && CSA07processId<2000 && jetVeto)*CSA07weight");
-  float expEvWj = float( dummyVar->Integral() ) * lumi / 1000. ;
-  dummyVar->Reset();
-
-  // evaluate Z+jets expected events (weights were evaluated for 1000pb-1, the equivalent lumi of CSA07 sample)
-  if(strcmp(selection,"finalSelection")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=2000 && CSA07processId<3000 && finalSelection)*CSA07weight");
-  if(strcmp(selection,"jetVeto")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=2000 && CSA07processId<3000 && jetVeto)*CSA07weight");
-  float expEvZj = float( dummyVar->Integral() ) * lumi / 1000. ;
-  dummyVar->Reset();
-
-  // evaluate ttbar expected events (weights were evaluated for 1000pb-1, the equivalent lumi of CSA07 sample)
-  if(strcmp(selection,"finalSelection")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=3000 && CSA07processId<4000 && finalSelection)*CSA07weight");
-  if(strcmp(selection,"jetVeto")==0)
-    treeChowderPDElectronSkim->Project("dummyVar","CSA07lumi","(CSA07processId>=3000 && CSA07processId<4000 && jetVeto)*CSA07weight");
-  float expEvttbar = float( dummyVar->Integral() ) * lumi / 1000. ;
-  dummyVar->Reset();
-
-  expEv.push_back(expEvWj);
-  expEv.push_back(expEvZj);
-  expEv.push_back(expEvttbar);
-
-  std::cout << "Summary after the selection: " << selection << std::endl;
-  for (int i=0; i< (int) expEv.size(); i++) {
-    std::cout << "process n. " << i << "\texpected events in " << lumi << " pb-1:\t"
-	      << expEv[i] << std::endl;
-  }
-
-  return expEv;
+  nEventsFinal.push_back(1.90); // H->WW
+  nEventsFinal.push_back(1.39); // WW
+  nEventsFinal.push_back(0.17); // WZ
+  nEventsFinal.push_back(0.0);  // ZZ
+  nEventsFinal.push_back(0.0);  // tW
+  nEventsFinal.push_back(0.20); // W+j
+  nEventsFinal.push_back(0.10); // Z+j
+  nEventsFinal.push_back(0.43); // ttbar
 
 }
 
+void drawKinematics(const char* selection) {
 
-void drawKinematics(const char* selection, const char *eleID="tight") {
-
+  setExpectedEvents();
+  
   // get the expected events for each process considered
-  std::vector<float> expEvents = expectedEvents(selection,eleID);
+  char Selection[500];
+  std::vector<float> expEvents;
+  if (strcmp(selection,"Preselection")==0) {
+    sprintf(Selection, "1==1");
+    expEvents = nEventsPresel;
+  }
+  else if (strcmp(selection,"jetVeto")==0) {
+    sprintf(Selection,"jetVeto");
+    expEvents = nEventsCJV;
+  }
+  else {
+    sprintf(Selection,"finalSelection");
+    expEvents = nEventsFinal;
+  }
 
   std::vector<TFile*> datasets;
 
-  TFile *H165 = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0;
-  if ( strcmp(eleID,"tight")==0 || strcmp(eleID,"")==0 ) {
-    H165    = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE.root");
-    WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE.root");
-    WZ      = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE.root");
-    ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE.root");
-    tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE.root");
-    Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE.root");
-  }
-  else if ( strcmp(eleID,"loose")==0 ) {
-    H165    = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/HiggsH165_CMSSW_1_6_9-datasetEE-looseegamma.root");
-    WW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WW_incl-datasetEE-looseegamma.root");
-    WZ      = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/WZ-datasetEE-looseegamma.root");
-    ZZ_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ZZ_incl-datasetEE-looseegamma.root");
-    tW_incl = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/tW_incl-datasetEE-looseegamma.root");
-    Chowder = TFile::Open("rfio:/castor/cern.ch/user/e/emanuele/Higgs169_new/SelectedDatasets/ChowderPDElectronSkim-datasetEE-looseegamma.root");
-  }
+  TFile *Higgs = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0;
+  Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
+  WW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WW_incl-datasetEE.root");
+  WZ      = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WZ-datasetEE.root");
+  ZZ_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ZZ_incl-datasetEE.root");
+  tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/tW_incl-datasetEE.root");
+  Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ChowderPDElectronSkim-datasetEE.root");
 
-  datasets.push_back(H165);
+  datasets.push_back(Higgs);
   datasets.push_back(WW_incl);
   datasets.push_back(WZ);
   datasets.push_back(ZZ_incl);
@@ -181,19 +104,27 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   std::vector<TH1F*> ptmax;
   std::vector<TH1F*> ptmin;
 
-  TH1F* metH = new TH1F("metH","metH",50,0,200);
-  TH1F* mllH = new TH1F("mllH", "mllH",50,0,200);
-  TH1F* deltaphiH = new TH1F("deltaphiH", "deltaphiH",50,0,180);
-  TH1F* ptmaxH = new TH1F("ptmaxH","ptmaxH",50,0,200);
-  TH1F* ptminH = new TH1F("ptminH", "ptminH",50,0,200);
+  TH1F* metH = new TH1F("metH","metH",25,0,200);
+  TH1F* mllH = new TH1F("mllH", "mllH",25,0,200);
+  TH1F* deltaphiH = new TH1F("deltaphiH", "deltaphiH",25,0,180);
+  TH1F* ptmaxH = new TH1F("ptmaxH","ptmaxH",25,0,200);
+  TH1F* ptminH = new TH1F("ptminH", "ptminH",25,0,200);
+
+  std::cout << "# of samples = " <<  expEvents.size() << std::endl;
 
   for(int i=0; i<(int)expEvents.size(); i++) {
 
+    std::cout << "Expected events for sample " << i 
+	      << " at step " << selection 
+	      << " in 100 pb-1 = " << expEvents[i] << std::endl;
+
     TTree *tree;
-    if(i<5)
+    if(i < 5 )
       tree = (TTree*)datasets[i]->Get("T1");
     else // ALPGEN (Chowder)
       tree = (TTree*)datasets[5]->Get("T1");
+
+    std::cout << "dataset has " << tree->GetEntries() << " entries" << std::endl;
 
     char buf[50];
     sprintf(buf,"met_%d",i);
@@ -201,22 +132,22 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
     metProcessX->Sumw2();
     met.push_back(metProcessX);
 
-    if(i < 5) {
-      tree->Project(buf,"met",selection);
+    if(i < 5 ) {
+      tree->Project(buf,"met",Selection);
     }
     else if(i==5) { // W+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"met",extracut);
     }
     else if(i==6) { // Z+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"met",extracut);
     }
     else if(i==7) { // ttbar
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"met",extracut);
     }
 
@@ -227,22 +158,22 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
     mllProcessX->Sumw2();
     mll.push_back(mllProcessX);
 
-    if(i < 5) {
-      tree->Project(buf,"eleInvMass",selection);
+    if(i < 5 ) {
+      tree->Project(buf,"eleInvMass",Selection);
     }
     else if(i==5) { // W+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"eleInvMass",extracut);
     }
     else if(i==6) { // Z+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"eleInvMass",extracut);
     }
     else if(i==7) { // ttbar
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"eleInvMass",extracut);
     }
     mll[i]->Scale( expEvents[i]/mll[i]->Integral() );
@@ -252,23 +183,22 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
     deltaphiProcessX->Sumw2();
     deltaphi.push_back(deltaphiProcessX);
 
-
-    if(i < 5) {
-      tree->Project(buf,"deltaPhi",selection);
+    if(i < 5 ) {
+      tree->Project(buf,"deltaPhi",Selection);
     }
     else if(i==5) { // W+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"deltaPhi",extracut);
     }
     else if(i==6) { // Z+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"deltaPhi",extracut);
     }
     else if(i==7) { // ttbar
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"deltaPhi",extracut);
     }
     deltaphi[i]->Scale( expEvents[i]/deltaphi[i]->Integral() );
@@ -279,22 +209,22 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
     ptmaxProcessX->Sumw2();
     ptmax.push_back(ptmaxProcessX);
 
-    if(i < 5) {
-      tree->Project(buf,"maxPtEle",selection);
+    if(i < 5 ) {
+      tree->Project(buf,"maxPtEle",Selection);
     }
     else if(i==5) { // W+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"maxPtEle",extracut);
     }
     else if(i==6) { // Z+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"maxPtEle",extracut);
     }
     else if(i==7) { // ttbar
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"maxPtEle",extracut);
     }
     ptmax[i]->Scale( expEvents[i]/ptmax[i]->Integral() );
@@ -304,32 +234,31 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
     ptminProcessX->Sumw2();
     ptmin.push_back(ptminProcessX);
 
-    if(i < 5) {
-      tree->Project(buf,"minPtEle",selection);
+    if(i < 5 ) {
+      tree->Project(buf,"minPtEle",Selection);
     }
     else if(i==5) { // W+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=1000 && CSA07processId<2000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"minPtEle",extracut);
     }
     else if(i==6) { // Z+jets
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=2000 && CSA07processId<3000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"minPtEle",extracut);
     }
     else if(i==7) { // ttbar
       char extracut[200];
-      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",selection);
+      sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"minPtEle",extracut);
     }
     ptmin[i]->Scale( expEvents[i]/ptmin[i]->Integral() );
-
 
   }
   
 
   TLegend *leg = new TLegend(0.11,0.65,0.45,0.89);
-  leg->SetBorderSize(2);
+  leg->SetBorderSize(0);
   leg->SetLineColor(0);
   leg->SetFillColor(0);
   leg->AddEntry(met[0],"Signal, m_{H}=160 GeV","pl");
@@ -344,7 +273,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   gStyle->SetOptStat(0);
 
   // draw met
-  TCanvas cmet;
+  TCanvas cmet("cmet","cmet",600,600);
   cmet.SetLogy();
   met[6]->SetMaximum(1000);
   met[6]->SetMinimum(0.01);
@@ -358,6 +287,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   met[1]->Draw("same hist");
 
   met[7]->SetFillColor(4);
+  met[7]->SetFillStyle(3004);
   met[7]->Draw("same hist");
 
   met[5]->SetFillColor(2);
@@ -382,7 +312,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
 
   // draw mll
-  TCanvas cmll;
+  TCanvas cmll("cmll","cmll",600,600);
   cmll.SetLogy();
   mll[6]->SetMaximum(1000);
   mll[6]->SetMinimum(0.01);
@@ -396,6 +326,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   mll[1]->Draw("same hist");
 
   mll[7]->SetFillColor(4);
+  mll[7]->SetFillStyle(3004);
   mll[7]->Draw("same hist");
 
   mll[5]->SetFillColor(2);
@@ -409,7 +340,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
   mll[3]->SetFillColor(3);
   mll[3]->Draw("same hist");
-  
+
   mll[0]->SetMarkerStyle(8);
   mll[0]->Draw("same pe1");
 
@@ -421,7 +352,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
 
   // draw deltaphi
-  TCanvas cdeltaphi;
+  TCanvas cdeltaphi("cdeltaphi","cdeltaphi",600,600);
   cdeltaphi.SetLogy();
   deltaphi[6]->SetMaximum(1000);
   deltaphi[6]->SetMinimum(0.01);
@@ -435,6 +366,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   deltaphi[1]->Draw("same hist");
 
   deltaphi[7]->SetFillColor(4);
+  deltaphi[7]->SetFillStyle(3004);
   deltaphi[7]->Draw("same hist");
 
   deltaphi[5]->SetFillColor(2);
@@ -460,7 +392,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
 
   // draw ptmax
-  TCanvas cptmax;
+  TCanvas cptmax("cptmax","cptmax",600,600);
   cptmax.SetLogy();
   ptmax[6]->SetMaximum(200);
   ptmax[6]->SetMinimum(0.01);
@@ -474,6 +406,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   ptmax[1]->Draw("same hist");
 
   ptmax[7]->SetFillColor(4);
+  ptmax[7]->SetFillStyle(3004);
   ptmax[7]->Draw("same hist");
 
   ptmax[5]->SetFillColor(2);
@@ -499,7 +432,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
 
   // draw ptmin
-  TCanvas cptmin;
+  TCanvas cptmin("cptmin","cptmin",600,600);
   cptmin.SetLogy();
   ptmin[6]->SetMaximum(200);
   ptmin[6]->SetMinimum(0.01);
@@ -513,6 +446,7 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
   ptmin[1]->Draw("same hist");
 
   ptmin[7]->SetFillColor(4);
+  ptmin[7]->SetFillStyle(3004);
   ptmin[7]->Draw("same hist");
 
   ptmin[5]->SetFillColor(2);
@@ -534,6 +468,5 @@ void drawKinematics(const char* selection, const char *eleID="tight") {
 
   cptmin.SaveAs("ptmin.eps");
   cptmin.SaveAs("ptmin.root");
-
 
 }
