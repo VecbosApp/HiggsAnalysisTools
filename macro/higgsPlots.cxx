@@ -38,17 +38,19 @@ void setExpectedEvents() {
   nEventsPresel.push_back(19.1);  // ZZ
   nEventsPresel.push_back(41.1);  // tW
   nEventsPresel.push_back(2628); // W+j
-  nEventsPresel.push_back(2463); // Z+j
+  nEventsPresel.push_back(2463); // Z+j (> 40 GeV)
   nEventsPresel.push_back(1193); // ttbar
-
+  nEventsPresel.push_back(31.2); // Drell Yan (10-40 GeV)
+ 
   nEventsCJV.push_back(4.9); // H->WW
   nEventsCJV.push_back(18.2); // WW
   nEventsCJV.push_back(3.6); // WZ
   nEventsCJV.push_back(4.2);  // ZZ
   nEventsCJV.push_back(7.1);  // tW
   nEventsCJV.push_back(10.4); // W+j
-  nEventsCJV.push_back(397); // Z+j
+  nEventsCJV.push_back(397); // Z+j (> 40 GeV)
   nEventsCJV.push_back(11.9); // ttbar
+  nEventsCJV.push_back(7.0); // Drell Yan (10-40 GeV)
 
   nEventsFinal.push_back(1.90); // H->WW
   nEventsFinal.push_back(1.39); // WW
@@ -56,8 +58,9 @@ void setExpectedEvents() {
   nEventsFinal.push_back(0.0);  // ZZ
   nEventsFinal.push_back(0.0);  // tW
   nEventsFinal.push_back(0.20); // W+j
-  nEventsFinal.push_back(0.10); // Z+j
+  nEventsFinal.push_back(0.10); // Z+j (> 40 GeV)
   nEventsFinal.push_back(0.43); // ttbar
+  nEventsFinal.push_back(0.0); // Drell Yan (10-40 GeV)
 
 }
 
@@ -83,20 +86,22 @@ void drawKinematics(const char* selection) {
 
   std::vector<TFile*> datasets;
 
-  TFile *Higgs = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0;
+  TFile *Higgs = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0, *DY10to40 = 0;
   Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
   WW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WW_incl-datasetEE.root");
   WZ      = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WZ-datasetEE.root");
   ZZ_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ZZ_incl-datasetEE.root");
   tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/tW_incl-datasetEE.root");
   Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ChowderPDElectronSkim-datasetEE.root");
+  DY10to40 =  TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/DrellYan_ll_10-40-datasetEE.root");
 
-  datasets.push_back(Higgs);
-  datasets.push_back(WW_incl);
-  datasets.push_back(WZ);
-  datasets.push_back(ZZ_incl);
-  datasets.push_back(tW_incl);
-  datasets.push_back(Chowder);
+  datasets.push_back(Higgs); // 0
+  datasets.push_back(WW_incl); // 1
+  datasets.push_back(WZ); // 2 
+  datasets.push_back(ZZ_incl); // 3 
+  datasets.push_back(tW_incl); // 4 
+  datasets.push_back(Chowder); // 5 
+  datasets.push_back(DY10to40); // 6
 
   std::vector<TH1F*> met;
   std::vector<TH1F*> mll;
@@ -121,8 +126,10 @@ void drawKinematics(const char* selection) {
     TTree *tree;
     if(i < 5 )
       tree = (TTree*)datasets[i]->Get("T1");
-    else // ALPGEN (Chowder)
+    else if(i>=5 && i<=7) // ALPGEN (Chowder)
       tree = (TTree*)datasets[5]->Get("T1");
+    else
+      tree = (TTree*)datasets[i-2]->Get("T1");
 
     std::cout << "dataset has " << tree->GetEntries() << " entries" << std::endl;
 
@@ -132,7 +139,7 @@ void drawKinematics(const char* selection) {
     metProcessX->Sumw2();
     met.push_back(metProcessX);
 
-    if(i < 5 ) {
+    if(i < 5 || i > 7) {
       tree->Project(buf,"met",Selection);
     }
     else if(i==5) { // W+jets
@@ -158,7 +165,7 @@ void drawKinematics(const char* selection) {
     mllProcessX->Sumw2();
     mll.push_back(mllProcessX);
 
-    if(i < 5 ) {
+    if( i < 5 || i > 7 ) {
       tree->Project(buf,"eleInvMass",Selection);
     }
     else if(i==5) { // W+jets
@@ -183,7 +190,7 @@ void drawKinematics(const char* selection) {
     deltaphiProcessX->Sumw2();
     deltaphi.push_back(deltaphiProcessX);
 
-    if(i < 5 ) {
+    if( i < 5 || i > 7 ) {
       tree->Project(buf,"deltaPhi",Selection);
     }
     else if(i==5) { // W+jets
@@ -209,7 +216,7 @@ void drawKinematics(const char* selection) {
     ptmaxProcessX->Sumw2();
     ptmax.push_back(ptmaxProcessX);
 
-    if(i < 5 ) {
+    if( i < 5 || i > 7 ) {
       tree->Project(buf,"maxPtEle",Selection);
     }
     else if(i==5) { // W+jets
@@ -234,7 +241,7 @@ void drawKinematics(const char* selection) {
     ptminProcessX->Sumw2();
     ptmin.push_back(ptminProcessX);
 
-    if(i < 5 ) {
+    if( i < 5 || i > 7 ) {
       tree->Project(buf,"minPtEle",Selection);
     }
     else if(i==5) { // W+jets
@@ -264,7 +271,8 @@ void drawKinematics(const char* selection) {
   leg->AddEntry(met[0],"Signal, m_{H}=160 GeV","pl");
   leg->AddEntry(met[1],"WW","f");
   leg->AddEntry(met[7],"tt","f");
-  leg->AddEntry(met[6],"Z+jets","f");
+  leg->AddEntry(met[6],"Z+jets, m(ee)>40 GeV","f");
+  leg->AddEntry(met[8], "Drell Yan, 10<m(ee)<40 GeV","f");
   leg->AddEntry(met[3],"ZZ","f");
   leg->AddEntry(met[2],"WZ","f");
   leg->AddEntry(met[5],"W+jets","f");
@@ -282,6 +290,9 @@ void drawKinematics(const char* selection) {
   met[6]->GetXaxis()->SetTitle("Missing E_{T} [GeV]");
   met[6]->GetYaxis()->SetTitle("normalized Events");
   met[6]->Draw("hist");
+
+  met[8]->SetFillColor(kPink+4);
+  met[8]->Draw("same hist");
 
   met[1]->SetFillColor(5);
   met[1]->Draw("same hist");
@@ -321,6 +332,9 @@ void drawKinematics(const char* selection) {
   mll[6]->GetXaxis()->SetTitle("m_{ll} [GeV]");
   mll[6]->GetYaxis()->SetTitle("normalized Events");
   mll[6]->Draw("hist");
+
+  mll[8]->SetFillColor(kPink+4);
+  mll[8]->Draw("same hist");
 
   mll[1]->SetFillColor(5);
   mll[1]->Draw("same hist");
@@ -362,6 +376,9 @@ void drawKinematics(const char* selection) {
   deltaphi[6]->GetYaxis()->SetTitle("normalized Events");
   deltaphi[6]->Draw("hist");
 
+  deltaphi[8]->SetFillColor(kPink+4);
+  deltaphi[8]->Draw("same hist");
+
   deltaphi[1]->SetFillColor(5);
   deltaphi[1]->Draw("same hist");
 
@@ -402,6 +419,9 @@ void drawKinematics(const char* selection) {
   ptmax[6]->GetYaxis()->SetTitle("normalized Events");
   ptmax[6]->Draw("hist");
 
+  ptmax[8]->SetFillColor(kPink+4);
+  ptmax[8]->Draw("same hist");
+
   ptmax[1]->SetFillColor(5);
   ptmax[1]->Draw("same hist");
 
@@ -441,6 +461,9 @@ void drawKinematics(const char* selection) {
   ptmin[6]->GetXaxis()->SetTitle("P^{e min}_{T} [GeV]");
   ptmin[6]->GetYaxis()->SetTitle("normalized Events");
   ptmin[6]->Draw("hist");
+
+  ptmin[8]->SetFillColor(kPink+4);
+  ptmin[8]->Draw("same hist");
 
   ptmin[1]->SetFillColor(5);
   ptmin[1]->Draw("same hist");
