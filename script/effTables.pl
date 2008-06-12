@@ -10,19 +10,21 @@ print "creating tex table for Higgs mass $HiggsMass GeV/c^2 and lumi = $lumi pb-
 $initial_row=0;
 $final_row=80;
 
-$HiggsLogFile = "logs/ForNoteSummer08/H".$HiggsMass."/H".$HiggsMass.".log";
-$WWLogFile    = "logs/ForNoteSummer08/H".$HiggsMass."/WW_incl.log";
-$tWLogFile    = "logs/ForNoteSummer08/H".$HiggsMass."/tW.log";
-$WZLogFile    = "logs/ForNoteSummer08/H".$HiggsMass."/WZ.log";
-$ZZLogFile    = "logs/ForNoteSummer08/H".$HiggsMass."/ZZ.log";
-$ChowderLogFile = "logs/ForNoteSummer08/H".$HiggsMass."/ChowderPDElectronSkim.log";
+$HiggsLogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/H".$HiggsMass.".log";
+$WWLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/WW_incl.log";
+$tWLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/tW.log";
+$WZLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/WZ.log";
+$ZZLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/ZZ.log";
+$ChowderLogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/ChowderPDElectronSkim.log";
+$DY10to40LogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/DY_10_40.log";
 
 $HiggsXsec = 0; # CHECK ALL THESE!!!!!!!!!!!!!!!!!
 if($HiggsMass==120) { $HiggsXsec=0.56; }
-if($HiggsMass==130) { $HiggsXsec=1.06; }      # pb
+if($HiggsMass==130) { $HiggsXsec=1.06; }   
 if($HiggsMass==140) { $HiggsXsec=1.58; } 
 if($HiggsMass==150) { $HiggsXsec=1.98; } 
 if($HiggsMass==160) { $HiggsXsec=2.34; } 
+if($HiggsMass==165) { $HiggsXsec=2.36; }
 if($HiggsMass==170) { $HiggsXsec=2.26; } 
 if($HiggsMass==180) { $HiggsXsec=1.99; } 
 if($HiggsMass==190) { $HiggsXsec=1.51; } 
@@ -33,6 +35,7 @@ $WWXsec    = 114.3;
 $tWXsec    = 62.0;
 $WZXsec    = 49.9;
 $ZZXsec    = 15.3;
+$DY10to40Xsec = 5951.0;
 
 #init table
 $textable1 = "eff".$HiggsMass."-1.tex";
@@ -59,11 +62,12 @@ $textable2 = "eff".$HiggsMass."-2.tex";
 open(TEXFILE2,">$textable2");
 print TEXFILE2 "\\begin\{sidewaystable\}\n";
 print TEXFILE2 "\\begin\{center\}\n";
-print TEXFILE2 "\\begin\{tabular\}\[t\]\{|l|c|c|c|\}\n";
+print TEXFILE2 "\\begin\{tabular\}\[t\]\{|l|c|c|c|c|\}\n";
 print TEXFILE2 "\\hline\n";
 print TEXFILE2 "\\hline\n";
-print TEXFILE2 "& & & \\\\ \n";
+print TEXFILE2 "& & & & \\\\ \n";
 print TEXFILE2 "& \n";
+print TEXFILE2 "\$DY(10-40\$GeV\$)\$ \&\n";
 print TEXFILE2 "\$WZ\$ \&\n";
 print TEXFILE2 "\$tW\$ \&\n";
 print TEXFILE2 "\$ZZ\$ \n";
@@ -480,6 +484,84 @@ while($row=<ZZLOGFILE>) {
     }
 }
 
+$DY10to40_event = 0;
+$DY10to40_trigger = 0;
+$DY10to40_Preselection = 0;
+$DY10to40_Preselection2e=0;
+$DY10to40_eleID=0;
+$DY10to40_Isol=0;
+$DY10to40_jetVeto=0;
+$DY10to40_MET=0;
+$DY10to40_deltaPhi=0;
+$DY10to40_maxPtLepton=0;
+$DY10to40_minPtLepton=0;
+$DY10to40_eleInvMass=0;
+$DY10to40_final=0;
+
+open(DY10to40LOGFILE,$DY10to40LogFile) or die "cannot open $DY10to40LogFile !\n";
+seek (DY10to40LOGFILE, -7000, 2);
+$irow=1;
+while($row=<DY10to40LOGFILE>) {
+    if($row=~/Full\sMM\sselections/) {
+	last;
+    }
+    chop $row;
+    # normalization
+    if($row=~/\*\s+event\:\s+(\S+)$/) {
+	{$DY10to40_event=$1;}
+    }
+
+    if($row=~/\*\s+trigger\:\s+(\S+)$/) {
+	{$DY10to40_trigger=$1;}
+    }
+
+    if($row=~/\*\s+finalOURPreselection\:\s+(\S+)$/) {
+	{$DY10to40_Preselection=$1;}
+    }
+
+    if($row=~/\*\s+dileptonInvMassMin\:\s+(\S+)$/) {
+	{$DY10to40_Preselection2e=$1;}
+    }
+
+    if($row=~/\*\s+classDepEleId\:\s+(\S+)$/) {
+	{$DY10to40_eleID=$1;}
+    }
+
+    if($row=~/\*\s+ecalIso\:\s+(\S+)$/) {
+	{$DY10to40_Isol=$1;}
+    }
+
+    if($row=~/\*\s+jetVeto\:\s+(\S+)$/) {
+	{$DY10to40_jetVeto=$1;}
+    }
+
+    if($row=~/\*\s+MET\:\s+(\S+)$/) {
+	{$DY10to40_MET=$1;}
+    }
+
+    if($row=~/\*\s+deltaPhi\:\s+(\S+)$/) {
+	{$DY10to40_deltaPhi=$1;}
+    }
+
+    if($row=~/\*\s+maxPtLepton\:\s+(\S+)$/) {
+	{$DY10to40_maxPtLepton=$1;}
+    }
+
+    if($row=~/\*\s+minPtLepton\:\s+(\S+)$/) {
+	{$DY10to40_minPtLepton=$1;}
+    }
+
+
+    if($row=~/\*\s+dileptonInvMassMax\:\s+(\S+)$/) {
+	{$DY10to40_eleInvMass=$1;}
+    }
+
+    if($row=~/\*\s+final\:\s+(\S+)$/) {
+	{$DY10to40_final=$1;}
+    }
+}
+
+
 
 
 
@@ -780,6 +862,9 @@ $eff_WZ_trigger = sprintf("%.0f", 100 * $WZ_trigger/$WZ_event);
 $n_ZZ_trigger= sprintf("%.4g", $ZZ_trigger/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_trigger = sprintf("%.0f", 100 * $ZZ_trigger/$ZZ_event);
 
+$n_DY10to40_trigger= sprintf("%.4g", $DY10to40_trigger/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_trigger = sprintf("%.0f", 100 * $DY10to40_trigger/$DY10to40_event);
+
 $n_Wj_trigger= sprintf("%.4g", $Wj_trigger);
 $eff_Wj_trigger = sprintf("%.0f", 100 * $Wj_trigger/$Wj_event);
 
@@ -789,13 +874,13 @@ $eff_Zj_trigger = sprintf("%.0f", 100 * $Zj_trigger/$Zj_event);
 $n_ttbarj_trigger= sprintf("%.4g", $ttbarj_trigger);
 $eff_ttbarj_trigger = sprintf("%.0f", 100 * $ttbarj_trigger/$ttbarj_event);
 
-
 print TEXFILE1 "$n_Higgs_trigger ($eff_Higgs_trigger \\%)&\n";
 print TEXFILE1 "$n_WW_trigger ($eff_WW_trigger \\%)&\n";
 print TEXFILE1 "$n_ttbarj_trigger ($eff_ttbarj_trigger \\%)&\n";
 print TEXFILE1 "$n_Wj_trigger ($eff_Wj_trigger \\%)&\n";
 print TEXFILE1 "$n_Zj_trigger ($eff_Zj_trigger \\%)\\\\\n";
 
+print TEXFILE2 "$n_DY10to40_trigger ($eff_DY10to40_trigger \\%)&\n";
 print TEXFILE2 "$n_tW_trigger ($eff_tW_trigger \\%)&\n";
 print TEXFILE2 "$n_WZ_trigger ($eff_WZ_trigger \\%)&\n";
 print TEXFILE2 "$n_ZZ_trigger ($eff_ZZ_trigger \\%)\\\\\n";
@@ -822,6 +907,9 @@ $eff_WZ_Preselection = sprintf("%.0f", 100 * $WZ_Preselection/$WZ_trigger);
 $n_ZZ_Preselection= sprintf("%.4g", $ZZ_Preselection/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_Preselection = sprintf("%.0f", 100 * $ZZ_Preselection/$ZZ_trigger);
 
+$n_DY10to40_Preselection= sprintf("%.4g", $DY10to40_Preselection/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_Preselection = sprintf("%.0f", 100 * $DY10to40_Preselection/$DY10to40_trigger);
+
 $n_Wj_Preselection= sprintf("%.4g", $Wj_Preselection);
 $eff_Wj_Preselection = sprintf("%.0f", 100 * $Wj_Preselection/$Wj_trigger);
 
@@ -838,6 +926,7 @@ print TEXFILE1 "$n_ttbarj_Preselection ($eff_ttbarj_Preselection \\%)&\n";
 print TEXFILE1 "$n_Wj_Preselection ($eff_Wj_Preselection \\%)&\n";
 print TEXFILE1 "$n_Zj_Preselection ($eff_Zj_Preselection \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_Preselection ($eff_DY10to40_Preselection \\%)&\n";
 print TEXFILE2 "$n_tW_Preselection ($eff_tW_Preselection \\%)&\n";
 print TEXFILE2 "$n_WZ_Preselection ($eff_WZ_Preselection \\%)&\n";
 print TEXFILE2 "$n_ZZ_Preselection ($eff_ZZ_Preselection \\%) \\\\ \n";
@@ -865,6 +954,9 @@ $eff_WZ_Preselection2e = sprintf("%.0f", 100 * $WZ_Preselection2e/$WZ_Preselecti
 $n_ZZ_Preselection2e= sprintf("%.4g", $ZZ_Preselection2e/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_Preselection2e = sprintf("%.0f", 100 * $ZZ_Preselection2e/$ZZ_Preselection);
 
+$n_DY10to40_Preselection2e= sprintf("%.4g", $DY10to40_Preselection2e/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_Preselection2e = sprintf("%.0f", 100 * $DY10to40_Preselection2e/$DY10to40_Preselection);
+
 $n_Wj_Preselection2e= sprintf("%.4g", $Wj_Preselection2e);
 $eff_Wj_Preselection2e = sprintf("%.0f", 100 * $Wj_Preselection2e/$Wj_Preselection);
 
@@ -881,6 +973,7 @@ print TEXFILE1 "$n_ttbarj_Preselection2e ($eff_ttbarj_Preselection2e \\%)&\n";
 print TEXFILE1 "$n_Wj_Preselection2e ($eff_Wj_Preselection2e \\%)&\n";
 print TEXFILE1 "$n_Zj_Preselection2e ($eff_Zj_Preselection2e \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_Preselection2e ($eff_DY10to40_Preselection2e \\%)&\n";
 print TEXFILE2 "$n_tW_Preselection2e ($eff_tW_Preselection2e \\%)&\n";
 print TEXFILE2 "$n_WZ_Preselection2e ($eff_WZ_Preselection2e \\%)&\n";
 print TEXFILE2 "$n_ZZ_Preselection2e ($eff_ZZ_Preselection2e \\%) \\\\ \n";
@@ -907,6 +1000,12 @@ $eff_WZ_eleID = sprintf("%.0f", 100 * $WZ_eleID/$WZ_Preselection2e);
 $n_ZZ_eleID= sprintf("%.4g", $ZZ_eleID/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_eleID = sprintf("%.0f", 100 * $ZZ_eleID/$ZZ_Preselection2e);
 
+$n_ZZ_eleID= sprintf("%.4g", $ZZ_eleID/$ZZ_event * $ZZXsec * $lumi);
+$eff_ZZ_eleID = sprintf("%.0f", 100 * $ZZ_eleID/$ZZ_Preselection2e);
+
+$n_DY10to40_eleID= sprintf("%.4g", $DY10to40_eleID/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_eleID = sprintf("%.0f", 100 * $DY10to40_eleID/$DY10to40_Preselection2e);
+
 $n_Wj_eleID= sprintf("%.4g", $Wj_eleID);
 $eff_Wj_eleID = sprintf("%.0f", 100 * $Wj_eleID/$Wj_Preselection2e);
 
@@ -923,6 +1022,7 @@ print TEXFILE1 "$n_ttbarj_eleID ($eff_ttbarj_eleID \\%)&\n";
 print TEXFILE1 "$n_Wj_eleID ($eff_Wj_eleID \\%)&\n";
 print TEXFILE1 "$n_Zj_eleID ($eff_Zj_eleID \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_eleID ($eff_DY10to40_eleID \\%)&\n";
 print TEXFILE2 "$n_tW_eleID ($eff_tW_eleID \\%)&\n";
 print TEXFILE2 "$n_WZ_eleID ($eff_WZ_eleID \\%)&\n";
 print TEXFILE2 "$n_ZZ_eleID ($eff_ZZ_eleID \\%) \\\\ \n";
@@ -950,6 +1050,9 @@ $eff_WZ_Isol = sprintf("%.0f", 100 * $WZ_Isol/$WZ_eleID);
 $n_ZZ_Isol= sprintf("%.4g", $ZZ_Isol/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_Isol = sprintf("%.0f", 100 * $ZZ_Isol/$ZZ_eleID);
 
+$n_DY10to40_Isol= sprintf("%.4g", $DY10to40_Isol/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_Isol = sprintf("%.0f", 100 * $DY10to40_Isol/$DY10to40_eleID);
+
 $n_Wj_Isol= sprintf("%.4g", $Wj_Isol);
 $eff_Wj_Isol = sprintf("%.0f", 100 * $Wj_Isol/$Wj_eleID);
 
@@ -966,6 +1069,7 @@ print TEXFILE1 "$n_ttbarj_Isol ($eff_ttbarj_Isol \\%)&\n";
 print TEXFILE1 "$n_Wj_Isol ($eff_Wj_Isol \\%)&\n";
 print TEXFILE1 "$n_Zj_Isol ($eff_Zj_Isol \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_Isol ($eff_DY10to40_Isol \\%)&\n";
 print TEXFILE2 "$n_tW_Isol ($eff_tW_Isol \\%)&\n";
 print TEXFILE2 "$n_WZ_Isol ($eff_WZ_Isol \\%)&\n";
 print TEXFILE2 "$n_ZZ_Isol ($eff_ZZ_Isol \\%) \\\\ \n";
@@ -994,6 +1098,9 @@ $eff_WZ_jetVeto = sprintf("%.0f", 100 * $WZ_jetVeto/$WZ_Isol);
 $n_ZZ_jetVeto= sprintf("%.4g", $ZZ_jetVeto/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_jetVeto = sprintf("%.0f", 100 * $ZZ_jetVeto/$ZZ_Isol);
 
+$n_DY10to40_jetVeto= sprintf("%.4g", $DY10to40_jetVeto/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_jetVeto = sprintf("%.0f", 100 * $DY10to40_jetVeto/$DY10to40_Isol);
+
 $n_Wj_jetVeto= sprintf("%.4g", $Wj_jetVeto);
 $eff_Wj_jetVeto = sprintf("%.0f", 100 * $Wj_jetVeto/$Wj_Isol);
 
@@ -1010,6 +1117,7 @@ print TEXFILE1 "$n_ttbarj_jetVeto ($eff_ttbarj_jetVeto \\%)&\n";
 print TEXFILE1 "$n_Wj_jetVeto ($eff_Wj_jetVeto \\%)&\n";
 print TEXFILE1 "$n_Zj_jetVeto ($eff_Zj_jetVeto \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_jetVeto ($eff_DY10to40_jetVeto \\%)&\n";
 print TEXFILE2 "$n_tW_jetVeto ($eff_tW_jetVeto \\%)&\n";
 print TEXFILE2 "$n_WZ_jetVeto ($eff_WZ_jetVeto \\%)&\n";
 print TEXFILE2 "$n_ZZ_jetVeto ($eff_ZZ_jetVeto \\%) \\\\ \n";
@@ -1038,6 +1146,9 @@ $eff_WZ_MET = sprintf("%.0f", 100 * $WZ_MET/$WZ_jetVeto);
 $n_ZZ_MET= sprintf("%.4g", $ZZ_MET/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_MET = sprintf("%.0f", 100 * $ZZ_MET/$ZZ_jetVeto);
 
+$n_DY10to40_MET= sprintf("%.4g", $DY10to40_MET/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_MET = sprintf("%.0f", 100 * $DY10to40_MET/$DY10to40_jetVeto);
+
 $n_Wj_MET= sprintf("%.4g", $Wj_MET);
 $eff_Wj_MET = sprintf("%.0f", 100 * $Wj_MET/$Wj_jetVeto);
 
@@ -1054,6 +1165,7 @@ print TEXFILE1 "$n_ttbarj_MET ($eff_ttbarj_MET \\%)&\n";
 print TEXFILE1 "$n_Wj_MET ($eff_Wj_MET \\%)&\n";
 print TEXFILE1 "$n_Zj_MET ($eff_Zj_MET \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_MET ($eff_DY10to40_MET \\%)&\n";
 print TEXFILE2 "$n_tW_MET ($eff_tW_MET \\%)&\n";
 print TEXFILE2 "$n_WZ_MET ($eff_WZ_MET \\%)&\n";
 print TEXFILE2 "$n_ZZ_MET ($eff_ZZ_MET \\%) \\\\ \n";
@@ -1081,6 +1193,9 @@ $eff_WZ_deltaPhi = sprintf("%.0f", 100 * $WZ_deltaPhi/$WZ_MET);
 $n_ZZ_deltaPhi= sprintf("%.4g", $ZZ_deltaPhi/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_deltaPhi = sprintf("%.0f", 100 * $ZZ_deltaPhi/$ZZ_MET);
 
+$n_DY10to40_deltaPhi= sprintf("%.4g", $DY10to40_deltaPhi/$DY10to40_event * $DY10to40Xsec * $lumi);
+$eff_DY10to40_deltaPhi = sprintf("%.0f", 100 * $DY10to40_deltaPhi/$DY10to40_MET);
+
 $n_Wj_deltaPhi= sprintf("%.4g", $Wj_deltaPhi);
 $eff_Wj_deltaPhi = sprintf("%.0f", 100 * $Wj_deltaPhi/$Wj_MET);
 
@@ -1097,6 +1212,7 @@ print TEXFILE1 "$n_ttbarj_deltaPhi ($eff_ttbarj_deltaPhi \\%)&\n";
 print TEXFILE1 "$n_Wj_deltaPhi ($eff_Wj_deltaPhi \\%)&\n";
 print TEXFILE1 "$n_Zj_deltaPhi ($eff_Zj_deltaPhi \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_deltaPhi ($eff_DY10to40_deltaPhi \\%)&\n";
 print TEXFILE2 "$n_tW_deltaPhi ($eff_tW_deltaPhi \\%)&\n";
 print TEXFILE2 "$n_WZ_deltaPhi ($eff_WZ_deltaPhi \\%)&\n";
 print TEXFILE2 "$n_ZZ_deltaPhi ($eff_ZZ_deltaPhi \\%) \\\\ \n";
@@ -1126,6 +1242,14 @@ $eff_WZ_maxPtLepton = sprintf("%.0f", 100 * $WZ_maxPtLepton/$WZ_deltaPhi);
 $n_ZZ_maxPtLepton= sprintf("%.4g", $ZZ_maxPtLepton/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_maxPtLepton = sprintf("%.0f", 100 * $ZZ_maxPtLepton/$ZZ_deltaPhi);
 
+$n_DY10to40_maxPtLepton= sprintf("%.4g", $DY10to40_maxPtLepton/$DY10to40_event * $DY10to40Xsec * $lumi);
+if($DY10to40_deltaPhi!=0) {
+    $eff_DY10to40_maxPtLepton = sprintf("%.0f", 100 * $DY10to40_maxPtLepton/$DY10to40_deltaPhi);
+}
+else {
+    $eff_DY10to40_maxPtLepton = 0;
+}
+
 $n_Wj_maxPtLepton= sprintf("%.4g", $Wj_maxPtLepton);
 $eff_Wj_maxPtLepton = sprintf("%.0f", 100 * $Wj_maxPtLepton/$Wj_deltaPhi);
 
@@ -1142,6 +1266,7 @@ print TEXFILE1 "$n_ttbarj_maxPtLepton ($eff_ttbarj_maxPtLepton \\%)&\n";
 print TEXFILE1 "$n_Wj_maxPtLepton ($eff_Wj_maxPtLepton \\%)&\n";
 print TEXFILE1 "$n_Zj_maxPtLepton ($eff_Zj_maxPtLepton \\%) \\\\ \n";
 
+print TEXFILE2 "$n_DY10to40_maxPtLepton ($eff_DY10to40_maxPtLepton \\%)&\n";
 print TEXFILE2 "$n_tW_maxPtLepton ($eff_tW_maxPtLepton \\%)&\n";
 print TEXFILE2 "$n_WZ_maxPtLepton ($eff_WZ_maxPtLepton \\%)&\n";
 print TEXFILE2 "$n_ZZ_maxPtLepton ($eff_ZZ_maxPtLepton \\%) \\\\ \n";
@@ -1170,6 +1295,14 @@ $eff_WZ_minPtLepton = sprintf("%.0f", 100 * $WZ_minPtLepton/$WZ_maxPtLepton);
 $n_ZZ_minPtLepton= sprintf("%.4g", $ZZ_minPtLepton/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_minPtLepton = sprintf("%.0f", 100 * $ZZ_minPtLepton/$ZZ_maxPtLepton);
 
+$n_DY10to40_minPtLepton= sprintf("%.4g", $DY10to40_minPtLepton/$DY10to40_event * $DY10to40Xsec * $lumi);
+if($DY10to40_maxPtLepton!=0) {
+    $eff_DY10to40_minPtLepton = sprintf("%.0f", 100 * $DY10to40_minPtLepton/$DY10to40_maxPtLepton);
+}
+else {
+    $eff_DY10to40_minPtLepton = 0;
+}
+
 $n_Wj_minPtLepton= sprintf("%.4g", $Wj_minPtLepton);
 $eff_Wj_minPtLepton = sprintf("%.0f", 100 * $Wj_minPtLepton/$Wj_maxPtLepton);
 
@@ -1186,6 +1319,7 @@ print TEXFILE1 "$n_ttbarj_minPtLepton ($eff_ttbarj_minPtLepton \\%)&\n";
 print TEXFILE1 "$n_Wj_minPtLepton ($eff_Wj_minPtLepton \\%)&\n";
 print TEXFILE1 "$n_Zj_minPtLepton ($eff_Zj_minPtLepton \\%)\\\\\n";
 
+print TEXFILE2 "$n_DY10to40_minPtLepton ($eff_DY10to40_minPtLepton \\%)&\n";
 print TEXFILE2 "$n_tW_minPtLepton ($eff_tW_minPtLepton \\%)&\n";
 print TEXFILE2 "$n_WZ_minPtLepton ($eff_WZ_minPtLepton \\%)&\n";
 print TEXFILE2 "$n_ZZ_minPtLepton ($eff_ZZ_minPtLepton \\%)\\\\\n";
@@ -1217,6 +1351,14 @@ $eff_WZ_eleInvMass = sprintf("%.0f", 100 * $WZ_eleInvMass/$WZ_minPtLepton);
 $n_ZZ_eleInvMass= sprintf("%.4g", $ZZ_eleInvMass/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_eleInvMass = sprintf("%.0f", 100 * $ZZ_eleInvMass/$ZZ_minPtLepton);
 
+$n_DY10to40_eleInvMass= sprintf("%.4g", $DY10to40_eleInvMass/$DY10to40_event * $DY10to40Xsec * $lumi);
+if($DY10to40_minPtLepton!=0) {
+    $eff_DY10to40_eleInvMass = sprintf("%.0f", 100 * $DY10to40_eleInvMass/$DY10to40_minPtLepton);
+}
+else {
+    $eff_DY10to40_eleInvMass = 0;
+}
+
 $n_Wj_eleInvMass= sprintf("%.4g", $Wj_eleInvMass);
 $eff_Wj_eleInvMass = sprintf("%.0f", 100 * $Wj_eleInvMass/$Wj_minPtLepton);
 
@@ -1233,6 +1375,7 @@ print TEXFILE1 "$n_ttbarj_eleInvMass ($eff_ttbarj_eleInvMass \\%)&\n";
 print TEXFILE1 "$n_Wj_eleInvMass ($eff_Wj_eleInvMass \\%)&\n";
 print TEXFILE1 "$n_Zj_eleInvMass ($eff_Zj_eleInvMass \\%)\\\\\n";
 
+print TEXFILE2 "$n_DY10to40_eleInvMass ($eff_DY10to40_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_tW_eleInvMass ($eff_tW_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_WZ_eleInvMass ($eff_WZ_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_ZZ_eleInvMass ($eff_ZZ_eleInvMass \\%)\\\\\n";
