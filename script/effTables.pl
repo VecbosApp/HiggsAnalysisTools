@@ -1194,8 +1194,12 @@ $n_ZZ_deltaPhi= sprintf("%.4g", $ZZ_deltaPhi/$ZZ_event * $ZZXsec * $lumi);
 $eff_ZZ_deltaPhi = sprintf("%.0f", 100 * $ZZ_deltaPhi/$ZZ_MET);
 
 $n_DY10to40_deltaPhi= sprintf("%.4g", $DY10to40_deltaPhi/$DY10to40_event * $DY10to40Xsec * $lumi);
-$eff_DY10to40_deltaPhi = sprintf("%.0f", 100 * $DY10to40_deltaPhi/$DY10to40_MET);
-
+if($DY10to40_MET!=0) {
+    $eff_DY10to40_deltaPhi = sprintf("%.0f", 100 * $DY10to40_deltaPhi/$DY10to40_MET);
+}
+else{
+    $eff_DY10to40_deltaPhi = 0;
+}
 $n_Wj_deltaPhi= sprintf("%.4g", $Wj_deltaPhi);
 $eff_Wj_deltaPhi = sprintf("%.0f", 100 * $Wj_deltaPhi/$Wj_MET);
 
