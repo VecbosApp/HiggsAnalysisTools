@@ -3,16 +3,11 @@
 // efficiencies are hardcoded for 2 selections:
 //   1) full selection
 //   2) after the CJV (trigger+reco+iso+ID+CJV)
-// ----
-// lumi to normalize is hardcoded (100 pb-1)
-// ----
 // usage: 
 // root -b
 // .L macro/higgsPlots.cxx++
 // drawKinematics("jetVeto"): draws distributions after CJV
 // drawKinematics("finalSelection"): draw distributions after the full selection (but stat is poor)
-// //     this uses the tight egamma electron ID (default)
-// drawKinematics("jetVeto","loose"): draws distributions after CJV with loose egamma electron ID
 // ---
 
 #include <vector>
@@ -21,16 +16,19 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1F.h>
+#include <TGraph.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TStyle.h>
 
 std::vector<float> nEventsPresel;
+std::vector<float> nEventsFinalLeptons;
 std::vector<float> nEventsCJV;
 std::vector<float> nEventsFinal;
 
 void setExpectedEvents() {
 
+  // events expected in 100 pb-1
   // mH = 160 GeV
   nEventsPresel.push_back(14.6); // H->WW
   nEventsPresel.push_back(72.1); // WW
@@ -41,7 +39,17 @@ void setExpectedEvents() {
   nEventsPresel.push_back(2463); // Z+j (> 40 GeV)
   nEventsPresel.push_back(1193); // ttbar
   nEventsPresel.push_back(31.2); // Drell Yan (10-40 GeV)
- 
+  
+  nEventsFinalLeptons.push_back(8.2); // H->WW
+  nEventsFinalLeptons.push_back(26.4); // WW
+  nEventsFinalLeptons.push_back(28.6); // WZ
+  nEventsFinalLeptons.push_back(12.5);  // ZZ
+  nEventsFinalLeptons.push_back(22.0);  // tW
+  nEventsFinalLeptons.push_back(15.5); // W+j
+  nEventsFinalLeptons.push_back(1538); // Z+j (> 40 GeV)
+  nEventsFinalLeptons.push_back(253); // ttbar
+  nEventsFinalLeptons.push_back(15.7); // Drell Yan (10-40 GeV)
+
   nEventsCJV.push_back(4.9); // H->WW
   nEventsCJV.push_back(18.2); // WW
   nEventsCJV.push_back(3.6); // WZ
@@ -64,7 +72,8 @@ void setExpectedEvents() {
 
 }
 
-void drawKinematics(const char* selection) {
+//! lumi in pb-1
+void drawKinematics(const char* selection, float lumi=100) {
 
   setExpectedEvents();
   
@@ -74,6 +83,10 @@ void drawKinematics(const char* selection) {
   if (strcmp(selection,"Preselection")==0) {
     sprintf(Selection, "1==1");
     expEvents = nEventsPresel;
+  }
+  else if (strcmp(selection,"finalLeptons")==0) {
+    sprintf(Selection, "finalLeptons");
+    expEvents = nEventsFinalLeptons;
   }
   else if (strcmp(selection,"jetVeto")==0) {
     sprintf(Selection,"jetVeto");
@@ -158,7 +171,7 @@ void drawKinematics(const char* selection) {
       tree->Project(buf,"met",extracut);
     }
 
-    met[i]->Scale( expEvents[i]/met[i]->Integral() );
+    met[i]->Scale( expEvents[i]/met[i]->Integral() * lumi/100. );
 
     sprintf(buf,"mll_%d",i);
     TH1F* mllProcessX = (TH1F*) mllH->Clone(buf);
@@ -183,7 +196,7 @@ void drawKinematics(const char* selection) {
       sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"eleInvMass",extracut);
     }
-    mll[i]->Scale( expEvents[i]/mll[i]->Integral() );
+    mll[i]->Scale( expEvents[i]/mll[i]->Integral() * lumi/100. );
 
     sprintf(buf,"deltaphi_%d",i);
     TH1F* deltaphiProcessX = (TH1F*) deltaphiH->Clone(buf);
@@ -208,7 +221,7 @@ void drawKinematics(const char* selection) {
       sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"deltaPhi",extracut);
     }
-    deltaphi[i]->Scale( expEvents[i]/deltaphi[i]->Integral() );
+    deltaphi[i]->Scale( expEvents[i]/deltaphi[i]->Integral() * lumi/100. );
 
 
     sprintf(buf,"ptmax_%d",i);
@@ -234,7 +247,7 @@ void drawKinematics(const char* selection) {
       sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"maxPtEle",extracut);
     }
-    ptmax[i]->Scale( expEvents[i]/ptmax[i]->Integral() );
+    ptmax[i]->Scale( expEvents[i]/ptmax[i]->Integral() * lumi/100. );
 
     sprintf(buf,"ptmin_%d",i);
     TH1F* ptminProcessX = (TH1F*) ptminH->Clone(buf);
@@ -259,7 +272,7 @@ void drawKinematics(const char* selection) {
       sprintf(extracut,"(CSA07processId>=3000 && CSA07processId<4000 && %s)*CSA07weight",Selection);
       tree->Project(buf,"minPtEle",extracut);
     }
-    ptmin[i]->Scale( expEvents[i]/ptmin[i]->Integral() );
+    ptmin[i]->Scale( expEvents[i]/ptmin[i]->Integral() * lumi/100. );
 
   }
   
@@ -283,7 +296,7 @@ void drawKinematics(const char* selection) {
   // draw met
   TCanvas cmet("cmet","cmet",600,600);
   cmet.SetLogy();
-  met[6]->SetMaximum(1000);
+  met[6]->SetMaximum(50000);
   met[6]->SetMinimum(0.01);
   met[6]->SetFillColor(6);
   met[6]->SetTitle("");
@@ -325,7 +338,7 @@ void drawKinematics(const char* selection) {
   // draw mll
   TCanvas cmll("cmll","cmll",600,600);
   cmll.SetLogy();
-  mll[6]->SetMaximum(1000);
+  mll[6]->SetMaximum(50000);
   mll[6]->SetMinimum(0.01);
   mll[6]->SetFillColor(6);
   mll[6]->SetTitle("");
@@ -368,8 +381,8 @@ void drawKinematics(const char* selection) {
   // draw deltaphi
   TCanvas cdeltaphi("cdeltaphi","cdeltaphi",600,600);
   cdeltaphi.SetLogy();
-  deltaphi[6]->SetMaximum(1000);
-  deltaphi[6]->SetMinimum(0.01);
+  deltaphi[6]->SetMaximum(100000);
+  deltaphi[6]->SetMinimum(0.1);
   deltaphi[6]->SetFillColor(6);
   deltaphi[6]->SetTitle("");
   deltaphi[6]->GetXaxis()->SetTitle("#Delta #phi");
@@ -411,7 +424,7 @@ void drawKinematics(const char* selection) {
   // draw ptmax
   TCanvas cptmax("cptmax","cptmax",600,600);
   cptmax.SetLogy();
-  ptmax[6]->SetMaximum(200);
+  ptmax[6]->SetMaximum(100000);
   ptmax[6]->SetMinimum(0.01);
   ptmax[6]->SetFillColor(6);
   ptmax[6]->SetTitle("");
@@ -454,7 +467,7 @@ void drawKinematics(const char* selection) {
   // draw ptmin
   TCanvas cptmin("cptmin","cptmin",600,600);
   cptmin.SetLogy();
-  ptmin[6]->SetMaximum(200);
+  ptmin[6]->SetMaximum(100000);
   ptmin[6]->SetMinimum(0.01);
   ptmin[6]->SetFillColor(6);
   ptmin[6]->SetTitle("");
@@ -491,5 +504,214 @@ void drawKinematics(const char* selection) {
 
   cptmin.SaveAs("ptmin.eps");
   cptmin.SaveAs("ptmin.root");
+
+}
+
+
+void drawSignificances() {
+  
+  // events/fb-1
+  std::vector< std::vector<float> > events;
+  std::vector<float> higgsMass;
+
+  // mH=120
+  std::vector<float> eventsH120;
+  eventsH120.resize(9);
+  eventsH120[0] = 3.9;   // H->WW
+  eventsH120[1] = 33.6;  // WW
+  eventsH120[2] = 6.9;   // ttbar
+  eventsH120[3] = 24.6;  // W+jets
+  eventsH120[4] = 10.3;  // Z+jets
+  eventsH120[5] = 9.7;   // DY < 40 GeV
+  eventsH120[6] = 2.5;   // WZ
+  eventsH120[7] = 1.0;   // tW
+  eventsH120[8] = 0.5;   // ZZ
+  events.push_back(eventsH120);
+  higgsMass.push_back(120);
+
+  // mH=130
+  std::vector<float> eventsH130;
+  eventsH130.resize(9);
+  eventsH130[0] = 6.2;   // H->WW
+  eventsH130[1] = 34.3;  // WW
+  eventsH130[2] = 6.9;   // ttbar
+  eventsH130[3] = 24.6;  // W+jets
+  eventsH130[4] = 10.3;  // Z+jets
+  eventsH130[5] = 9.7;   // DY < 40 GeV
+  eventsH130[6] = 2.5;   // WZ
+  eventsH130[7] = 1.0;   // tW
+  eventsH130[8] = 0.7;   // ZZ
+  events.push_back(eventsH130);
+  higgsMass.push_back(130);
+
+  // mH=140
+  std::vector<float> eventsH140;
+  eventsH140.resize(9);
+  eventsH140[0] = 10.4;   // H->WW
+  eventsH140[1] = 22.4;  // WW
+  eventsH140[2] = 6.4;   // ttbar
+  eventsH140[3] = 13.4;  // W+jets
+  eventsH140[4] = 2.0;  // Z+jets
+  eventsH140[5] = 0.0;   // DY < 40 GeV
+  eventsH140[6] = 2.2;   // WZ
+  eventsH140[7] = 0.0;   // tW
+  eventsH140[8] = 0.0;   // ZZ
+  events.push_back(eventsH140);
+  higgsMass.push_back(140);
+
+  // mH=150
+  std::vector<float> eventsH150;
+  eventsH150.resize(9);
+  eventsH150[0] = 10.0;   // H->WW
+  eventsH150[1] = 13.7;  // WW
+  eventsH150[2] = 4.3;   // ttbar
+  eventsH150[3] = 1.0;  // W+jets
+  eventsH150[4] = 1.0;  // Z+jets
+  eventsH150[5] = 0.0;   // DY < 40 GeV
+  eventsH150[6] = 1.7;   // WZ
+  eventsH150[7] = 0.0;   // tW
+  eventsH150[8] = 0.0;   // ZZ
+  events.push_back(eventsH150);
+  higgsMass.push_back(150);
+    
+  // mH=160
+  std::vector<float> eventsH160;
+  eventsH160.resize(9);
+  eventsH160[0] = 19.0;   // H->WW
+  eventsH160[1] = 13.9;  // WW
+  eventsH160[2] = 4.3;   // ttbar
+  eventsH160[3] = 1.0;  // W+jets
+  eventsH160[4] = 1.0;  // Z+jets
+  eventsH160[5] = 0.0;   // DY < 40 GeV
+  eventsH160[6] = 1.7;   // WZ
+  eventsH160[7] = 0.0;   // tW
+  eventsH160[8] = 0.0;   // ZZ
+  events.push_back(eventsH160);
+  higgsMass.push_back(160);
+
+  // mH=165
+  std::vector<float> eventsH165;
+  eventsH165.resize(9);
+  eventsH165[0] = 21.4;   // H->WW
+  eventsH165[1] = 13.0;  // WW
+  eventsH165[2] = 6.0;   // ttbar
+  eventsH165[3] = 1.0;  // W+jets
+  eventsH165[4] = 1.8;  // Z+jets
+  eventsH165[5] = 0.0;   // DY < 40 GeV
+  eventsH165[6] = 1.7;   // WZ
+  eventsH165[7] = 0.0;   // tW
+  eventsH165[8] = 0.2;   // ZZ
+  events.push_back(eventsH165);
+  higgsMass.push_back(165);
+
+  // mH=170
+  std::vector<float> eventsH170;
+  eventsH170.resize(9);
+  eventsH170[0] = 19.8;   // H->WW
+  eventsH170[1] = 14.6;  // WW
+  eventsH170[2] = 7.8;   // ttbar
+  eventsH170[3] = 0.0;  // W+jets
+  eventsH170[4] = 1.8;  // Z+jets
+  eventsH170[5] = 0.0;   // DY < 40 GeV
+  eventsH170[6] = 2.9;   // WZ
+  eventsH170[7] = 0.0;   // tW
+  eventsH170[8] = 0.3;   // ZZ
+  events.push_back(eventsH170);
+  higgsMass.push_back(170);
+
+  // mH=180
+  std::vector<float> eventsH180;
+  eventsH180.resize(9);
+  eventsH180[0] = 14.5;   // H->WW
+  eventsH180[1] = 15.0;  // WW
+  eventsH180[2] = 8.2;   // ttbar
+  eventsH180[3] = 1.0;  // W+jets
+  eventsH180[4] = 2.8;  // Z+jets
+  eventsH180[5] = 0.0;   // DY < 40 GeV
+  eventsH180[6] = 3.2;   // WZ
+  eventsH180[7] = 0.5;   // tW
+  eventsH180[8] = 0.3;   // ZZ
+  events.push_back(eventsH180);
+  higgsMass.push_back(180);
+
+  // mH=190
+  std::vector<float> eventsH190;
+  eventsH190.resize(9);
+  eventsH190[0] = 10.1;   // H->WW
+  eventsH190[1] = 15.2;  // WW
+  eventsH190[2] = 8.6;   // ttbar
+  eventsH190[3] = 1.0;  // W+jets
+  eventsH190[4] = 2.8;  // Z+jets
+  eventsH190[5] = 0.0;   // DY < 40 GeV
+  eventsH190[6] = 3.2;   // WZ
+  eventsH190[7] = 0.5;   // tW
+  eventsH190[8] = 0.3;   // ZZ
+  events.push_back(eventsH190);
+  higgsMass.push_back(190);
+
+  // mH=200
+  std::vector<float> eventsH200;
+  eventsH200.resize(9);
+  eventsH200[0] = 8.4;   // H->WW
+  eventsH200[1] = 22.2;  // WW
+  eventsH200[2] = 9.9;   // ttbar
+  eventsH200[3] = 3.1;  // W+jets
+  eventsH200[4] = 5.0;  // Z+jets
+  eventsH200[5] = 0.0;   // DY < 40 GeV
+  eventsH200[6] = 4.2;   // WZ
+  eventsH200[7] = 0.8;   // tW
+  eventsH200[8] = 0.3;   // ZZ
+  events.push_back(eventsH200);
+  higgsMass.push_back(200);
+
+
+  TGraph *gStatSig = new TGraph( (int)events.size() );
+  TGraph *gSoverB = new TGraph( (int)events.size() );
+
+  for(unsigned int imass=0; imass<events.size(); imass++) {
+    
+    std::vector<float> nEvents = events[imass];
+
+    float nSig = nEvents[0];
+    float nBkg = 0.0;
+
+    for(unsigned int iBkg=1; iBkg<nEvents.size(); iBkg++) {
+      nBkg += nEvents[iBkg];
+    }
+
+    gStatSig->SetPoint(imass, higgsMass[imass], nSig/sqrt(nBkg));
+    gSoverB->SetPoint(imass, higgsMass[imass], nSig/nBkg);
+
+    std::cout << "Higgs mass = " << higgsMass[imass] 
+	      << " has S/sqrt(B) = " <<  nSig/sqrt(nBkg)
+	      << " and S/B = " << nSig/nBkg << std::endl;
+
+  }
+
+  TCanvas csignificance;
+  gStatSig->SetLineColor(34);
+  gStatSig->SetLineWidth(2);
+  gStatSig->SetMarkerColor(34);
+  gStatSig->SetMarkerStyle(8);
+  gStatSig->SetMarkerSize(2);
+  gStatSig->SetMinimum(0);
+  gStatSig->SetTitle("");
+  gStatSig->GetXaxis()->SetTitle("Higgs mass (GeV/c^{2})");
+  gStatSig->GetYaxis()->SetTitle("n_{S} / #sqrt{n_{B}}");
+  gStatSig->Draw("ACP");
+  csignificance.SaveAs("statSign.eps");
+
+  TCanvas csoverb;
+  gSoverB->SetLineColor(34);
+  gSoverB->SetLineWidth(2);
+  gSoverB->SetMarkerColor(34);
+  gSoverB->SetMarkerStyle(8);
+  gSoverB->SetMarkerSize(2);
+  gSoverB->SetMinimum(0);
+  gSoverB->SetTitle("");
+  gSoverB->GetXaxis()->SetTitle("Higgs mass (GeV/c^{2})");
+  gSoverB->GetYaxis()->SetTitle("n_{S} / n_{B}");
+  gSoverB->Draw("ACP");
+  csoverb.SaveAs("sigOverBkg.eps");
 
 }
