@@ -24,6 +24,7 @@
 std::vector<float> nEventsPresel;
 std::vector<float> nEventsFinalLeptons;
 std::vector<float> nEventsCJV;
+std::vector<float> nEventsPreDeltaPhi;
 std::vector<float> nEventsFinal;
 
 void setExpectedEvents() {
@@ -60,6 +61,16 @@ void setExpectedEvents() {
   nEventsCJV.push_back(11.9); // ttbar
   nEventsCJV.push_back(7.0); // Drell Yan (10-40 GeV)
 
+  nEventsPreDeltaPhi.push_back(2.3); // H->WW
+  nEventsPreDeltaPhi.push_back(2.2); // WW
+  nEventsPreDeltaPhi.push_back(0.2); // WZ
+  nEventsPreDeltaPhi.push_back(0.0);  // ZZ
+  nEventsPreDeltaPhi.push_back(0.03);  // tW
+  nEventsPreDeltaPhi.push_back(0.62); // W+j
+  nEventsPreDeltaPhi.push_back(0.11); // Z+j (> 40 GeV)
+  nEventsPreDeltaPhi.push_back(0.56); // ttbar
+  nEventsPreDeltaPhi.push_back(0.0); // Drell Yan (10-40 GeV)
+
   nEventsFinal.push_back(1.90); // H->WW
   nEventsFinal.push_back(1.39); // WW
   nEventsFinal.push_back(0.17); // WZ
@@ -92,6 +103,10 @@ void drawKinematics(const char* selection, float lumi=100) {
     sprintf(Selection,"jetVeto");
     expEvents = nEventsCJV;
   }
+  else if (strcmp(selection,"preDeltaPhi")==0) {
+    sprintf(Selection,"preDeltaPhi");
+    expEvents = nEventsPreDeltaPhi;
+  }
   else {
     sprintf(Selection,"finalSelection");
     expEvents = nEventsFinal;
@@ -107,6 +122,15 @@ void drawKinematics(const char* selection, float lumi=100) {
   tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/tW_incl-datasetEE.root");
   Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ChowderPDElectronSkim-datasetEE.root");
   DY10to40 =  TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/DrellYan_ll_10-40-datasetEE.root");
+
+  // with deltaPhi cut at the end and the variable "beforeDeltaPhi -> all cuts with exception of dPhi"
+//   Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
+//   WW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/WW_incl-datasetEE.root");
+//   WZ      = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/WZ-datasetEE.root");
+//   ZZ_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/ZZ_incl-datasetEE.root");
+//   tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/tW_incl-datasetEE.root");
+//   Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/ChowderPDElectronSkim-datasetEE.root");
+//   DY10to40 =  TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/DrellYan_ll_10-40-datasetEE.root");
 
   datasets.push_back(Higgs); // 0
   datasets.push_back(WW_incl); // 1
@@ -291,6 +315,9 @@ void drawKinematics(const char* selection, float lumi=100) {
   leg->AddEntry(met[5],"W+jets","f");
   leg->AddEntry(met[4],"tW","f");
 
+  TH1F *histo0, *histo1, *histo2, *histo3, *histo4;
+
+
   gStyle->SetOptStat(0);
 
   // draw met
@@ -311,7 +338,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   met[1]->Draw("same hist");
 
   met[7]->SetFillColor(4);
-  met[7]->SetFillStyle(3004);
   met[7]->Draw("same hist");
 
   met[5]->SetFillColor(2);
@@ -331,8 +357,59 @@ void drawKinematics(const char* selection, float lumi=100) {
 
   leg->Draw();
 
-  cmet.SaveAs("met.eps");
-  cmet.SaveAs("met.root");
+  TFile *fmet = new TFile("met.root","recreate");
+  cmet.Write();
+  histo0 = met[0];
+  met[6]->Add(met[8]);
+  histo1 = met[6];
+  histo2 = met[7];
+  histo3 = met[1];
+  met[2]->Add(met[3]);
+  met[2]->Add(met[4]);
+  met[2]->Add(met[5]);
+  histo4 = met[2];
+
+  TCanvas cmet2("cmet2","cmet2",600,600);
+  cmet2.SetLogy();
+
+  histo0->SetName("histo0"); // H->WW
+  histo1->SetName("histo1"); // Z+jets+DY_10_40
+  histo2->SetName("histo2"); // ttbar
+  histo3->SetName("histo3"); // WW
+  histo4->SetName("histo4"); // others
+
+  histo0->SetMarkerStyle(8);
+  histo0->SetMarkerSize(1.5);
+  histo1->SetFillColor(kRed+2);
+  histo2->SetFillColor(kYellow-7);
+  histo3->SetFillColor(kRed-4);
+  histo4->SetFillColor(kBlue+3);
+  histo4->SetFillStyle(3003);
+
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TLegend *leg2 = new TLegend(0.11,0.65,0.45,0.89);
+  leg2->SetBorderSize(0);
+  leg2->SetLineColor(0);
+  leg2->SetFillColor(0);
+  leg2->AddEntry(histo0,"Signal, m_{H}=160 GeV","pl");
+  leg2->AddEntry(histo1,"Z-jets","f");
+  leg2->AddEntry(histo2,"t #bar{t}-jets","f");
+  leg2->AddEntry(histo3,"WW","f");
+  leg2->AddEntry(histo4,"W-jets + ZZ + WZ + tW","f");
+
+  histo1->Draw("hist");
+  histo3->Draw("same hist");
+  histo2->Draw("same hist");
+  histo4->Draw("same hist");
+  histo0->Draw("same pe1");
+  leg2->Draw();
+  cmet2.Write();
+  fmet->Close();
 
 
   // draw mll
@@ -353,7 +430,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   mll[1]->Draw("same hist");
 
   mll[7]->SetFillColor(4);
-  mll[7]->SetFillStyle(3004);
   mll[7]->Draw("same hist");
 
   mll[5]->SetFillColor(2);
@@ -373,8 +449,48 @@ void drawKinematics(const char* selection, float lumi=100) {
 
   leg->Draw();
 
-  cmll.SaveAs("mll.eps");
-  cmll.SaveAs("mll.root");
+  TFile *fmll = new TFile("mll.root","recreate");
+  cmll.Write();
+  histo0 = mll[0];
+  mll[6]->Add(mll[8]);
+  histo1 = mll[6];
+  histo2 = mll[7];
+  histo3 = mll[1];
+  mll[2]->Add(mll[3]);
+  mll[2]->Add(mll[4]);
+  mll[2]->Add(mll[5]);
+  histo4 = mll[2];
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TCanvas cmll2("cmll2","cmll2",600,600);
+
+  histo0->SetName("histo0"); // H->WW
+  histo1->SetName("histo1"); // Z+jets+DY_10_40
+  histo2->SetName("histo2"); // ttbar
+  histo3->SetName("histo3"); // WW
+  histo4->SetName("histo4"); // others
+
+  histo0->SetMarkerStyle(8);
+  histo0->SetMarkerSize(1.5);
+  histo1->SetFillColor(kRed+2);
+  histo2->SetFillColor(kYellow-7);
+  histo3->SetFillColor(kRed-4);
+  histo4->SetFillColor(kBlue+3);
+  histo4->SetFillStyle(3003);
+
+  cmll2.SetLogy();
+  histo1->Draw("hist");
+  histo3->Draw("same hist");
+  histo2->Draw("same hist");
+  histo4->Draw("same hist");
+  histo0->Draw("same pe1");
+  leg2->Draw();
+  cmll2.Write();
+  fmll->Close();
 
 
 
@@ -396,7 +512,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   deltaphi[1]->Draw("same hist");
 
   deltaphi[7]->SetFillColor(4);
-  deltaphi[7]->SetFillStyle(3004);
   deltaphi[7]->Draw("same hist");
 
   deltaphi[5]->SetFillColor(2);
@@ -416,8 +531,48 @@ void drawKinematics(const char* selection, float lumi=100) {
 
   leg->Draw();
 
-  cdeltaphi.SaveAs("deltaphi.eps");
-  cdeltaphi.SaveAs("deltaphi.root");
+  TFile *fdeltaphi = new TFile("deltaphi.root","recreate");
+  cdeltaphi.Write();
+  histo0 = deltaphi[0];
+  deltaphi[6]->Add(deltaphi[8]);
+  histo1 = deltaphi[6];
+  histo2 = deltaphi[7];
+  histo3 = deltaphi[1];
+  deltaphi[2]->Add(deltaphi[3]);
+  deltaphi[2]->Add(deltaphi[4]);
+  deltaphi[2]->Add(deltaphi[5]);
+  histo4 = deltaphi[2];
+
+  histo0->SetName("histo0"); // H->WW
+  histo1->SetName("histo1"); // Z+jets+DY_10_40
+  histo2->SetName("histo2"); // ttbar
+  histo3->SetName("histo3"); // WW
+  histo4->SetName("histo4"); // others
+
+  histo0->SetMarkerStyle(8);
+  histo0->SetMarkerSize(1.5);
+  histo1->SetFillColor(kRed+2);
+  histo2->SetFillColor(kYellow-7);
+  histo3->SetFillColor(kRed-4);
+  histo4->SetFillColor(kBlue+3);
+  histo4->SetFillStyle(3003);
+
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TCanvas cdeltaphi2("cdeltaphi2","cdeltaphi2",600,600);
+  cdeltaphi2.SetLogy();
+  histo1->Draw("hist");
+  histo3->Draw("same hist");
+  histo2->Draw("same hist");
+  histo4->Draw("same hist");
+  histo0->Draw("same pe1");
+  leg2->Draw();
+  cdeltaphi2.Write();
+  fdeltaphi->Close();
 
 
 
@@ -439,7 +594,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   ptmax[1]->Draw("same hist");
 
   ptmax[7]->SetFillColor(4);
-  ptmax[7]->SetFillStyle(3004);
   ptmax[7]->Draw("same hist");
 
   ptmax[5]->SetFillColor(2);
@@ -459,8 +613,48 @@ void drawKinematics(const char* selection, float lumi=100) {
 
   leg->Draw();
 
-  cptmax.SaveAs("ptmax.eps");
-  cptmax.SaveAs("ptmax.root");
+  TFile *fptmax = new TFile("ptmax.root","recreate");
+  cptmax.Write();
+  histo0 = ptmax[0];
+  ptmax[6]->Add(ptmax[8]);
+  histo1 = ptmax[6];
+  histo2 = ptmax[7];
+  histo3 = ptmax[1];
+  ptmax[2]->Add(ptmax[3]);
+  ptmax[2]->Add(ptmax[4]);
+  ptmax[2]->Add(ptmax[5]);
+  histo4 = ptmax[2];
+
+  histo0->SetName("histo0"); // H->WW
+  histo1->SetName("histo1"); // Z+jets+DY_10_40
+  histo2->SetName("histo2"); // ttbar
+  histo3->SetName("histo3"); // WW
+  histo4->SetName("histo4"); // others
+
+  histo0->SetMarkerStyle(8);
+  histo0->SetMarkerSize(1.5);
+  histo1->SetFillColor(kRed+2);
+  histo2->SetFillColor(kYellow-7);
+  histo3->SetFillColor(kRed-4);
+  histo4->SetFillColor(kBlue+3);
+  histo4->SetFillStyle(3003);
+
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TCanvas cptmax2("cptmax2","cptmax2",600,600);
+  cptmax2.SetLogy();
+  histo1->Draw("hist");
+  histo3->Draw("same hist");
+  histo2->Draw("same hist");
+  histo4->Draw("same hist");
+  histo0->Draw("same pe1");
+  leg2->Draw();
+  cptmax2.Write();
+  fptmax->Close();
 
 
 
@@ -482,7 +676,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   ptmin[1]->Draw("same hist");
 
   ptmin[7]->SetFillColor(4);
-  ptmin[7]->SetFillStyle(3004);
   ptmin[7]->Draw("same hist");
 
   ptmin[5]->SetFillColor(2);
@@ -502,8 +695,48 @@ void drawKinematics(const char* selection, float lumi=100) {
 
   leg->Draw();
 
-  cptmin.SaveAs("ptmin.eps");
-  cptmin.SaveAs("ptmin.root");
+  TFile *fptmin = new TFile("ptmin.root","recreate");
+  cptmin.Write();
+  histo0 = ptmin[0];
+  ptmin[6]->Add(ptmin[8]);
+  histo1 = ptmin[6];
+  histo2 = ptmin[7];
+  histo3 = ptmin[1];
+  ptmin[2]->Add(ptmin[3]);
+  ptmin[2]->Add(ptmin[4]);
+  ptmin[2]->Add(ptmin[5]);
+  histo4 = ptmin[2];
+
+  histo0->SetName("histo0"); // H->WW
+  histo1->SetName("histo1"); // Z+jets+DY_10_40
+  histo2->SetName("histo2"); // ttbar
+  histo3->SetName("histo3"); // WW
+  histo4->SetName("histo4"); // others
+
+  histo0->SetMarkerStyle(8);
+  histo0->SetMarkerSize(1.5);
+  histo1->SetFillColor(kRed+2);
+  histo2->SetFillColor(kYellow-7);
+  histo3->SetFillColor(kRed-4);
+  histo4->SetFillColor(kBlue+3);
+  histo4->SetFillStyle(3003);
+
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TCanvas cptmin2("cptmin2","cptmin2",600,600);
+  cptmin2.SetLogy();
+  histo1->Draw("hist");
+  histo3->Draw("same hist");
+  histo2->Draw("same hist");
+  histo4->Draw("same hist");
+  histo0->Draw("same pe1");
+  leg2->Draw();
+  cptmin2.Write();
+  fptmin->Close();
 
 }
 
