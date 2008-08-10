@@ -44,18 +44,18 @@ int main ( int argc, char **argv)
   float lumi = 1000; // pb-1
 
   // reading the input trees --------------------------
-  TChain *T[4];
-  T[0]= new TChain("T1"); // signal: W+jets, W -> e nu
-  T[1]= new TChain("T1"); // W+jets, W -> other
-  T[2]= new TChain("T1"); // ttbar
-  T[3]= new TChain("T1"); // QCD di-jets
+  TChain *T[2];
+  T[0]= new TChain("T1"); // signal: W+jets, W -> e nu + backgrounds W+jets, W -> other + ttbar
+  T[1]= new TChain("T1"); // QCD di-jets
 
-  T[0]->Add(argv[1]);   // signal
-  T[1]->Add(argv[1]);   // background
-  T[2]->Add(argv[1]);   // background
-  T[3]->Add(argv[2]);   // background
+  T[0]->Add(argv[1]);   // signal + W->others + ttbar
+  T[1]->Add(argv[2]);   // QCD
 
   float normalization[4];
+  // 0 = signal W+jets, W->enu
+  // 1 = bkg W+jets, W->others
+  // 2 = ttbar
+  // 3 = QCD
   for(int ii=0; ii<4; ii++)
     normalization[ii]=0;
 
@@ -64,11 +64,11 @@ int main ( int argc, char **argv)
   float QCDbkgKineEff = 0.14;
 
   int WToENuDecay;
-  float trackerIsol, hcalIsol, ecalIsol, dzVtx, dxyVtx;
+  float trackerIsol, hcalIsol, ecalIsol, dzVtx, dxyVtx, dxyErrVtx;
   float CSA07lumi;
   double CSA07weight, CSA07processId;
 
-  for(int ii=0; ii<4; ii++){
+  for(int ii=0; ii<2; ii++){
     T[ii]->SetMakeClass(1);
     T[ii]->SetBranchStatus("*",0);
     T[ii]->SetBranchStatus("trackerIsol,",1);
@@ -76,6 +76,7 @@ int main ( int argc, char **argv)
     T[ii]->SetBranchStatus("ecalIsol",1);
     T[ii]->SetBranchStatus("dzVtx",1);
     T[ii]->SetBranchStatus("dxyVtx",1);
+    T[ii]->SetBranchStatus("dxyErrVtx",1);
     T[ii]->SetBranchStatus("WToENuDecay",1);
     T[ii]->SetBranchStatus("CSA07weight",1);
     T[ii]->SetBranchStatus("CSA07processId",1);
@@ -85,6 +86,7 @@ int main ( int argc, char **argv)
     T[ii]->SetBranchAddress("ecalIsol", &ecalIsol);
     T[ii]->SetBranchAddress("dzVtx", &dzVtx);
     T[ii]->SetBranchAddress("dxyVtx", &dxyVtx);
+    T[ii]->SetBranchAddress("dxyErrVtx", &dxyErrVtx);
     T[ii]->SetBranchAddress("WToENuDecay", &WToENuDecay);
     T[ii]->SetBranchAddress("CSA07weight", &CSA07weight);
     T[ii]->SetBranchAddress("CSA07processId", &CSA07processId);
@@ -109,7 +111,7 @@ int main ( int argc, char **argv)
 	    }}}}}}
   
   // loop: signal / background samples
-  for(int ii=0; ii<4; ii++){
+  for(int ii=0; ii<2; ii++){
 
     // reading the tree
     float nEnt = T[ii]->GetEntries();
@@ -119,23 +121,32 @@ int main ( int argc, char **argv)
       if (entry%1000==0) cout << "sample " << ii << ", entry " << entry << endl;
       T[ii] -> GetEntry(entry);
 
+      int isample=-1;
+
       bool Wj_WToENu_Gt1Part = CSA07processId>1000 && CSA07processId<2000 && WToENuDecay==1;
       bool Wj_WToOther_Gt1Part = CSA07processId>1000 && CSA07processId<2000 && WToENuDecay==0;
       bool ttbar = CSA07processId>=3000;
 
-      if(ii==0) {
-	if(!Wj_WToENu_Gt1Part) continue;
-	else normalization[0] += CSA07weight * lumi/100.;
+      if(ii==0) { // chowder
+	if(Wj_WToENu_Gt1Part) { // signal
+	  isample=0;
+	  normalization[0] += CSA07weight * lumi/100.;
+	}
+	else if(Wj_WToOther_Gt1Part) { // W->other
+	  isample=1;
+	  normalization[1] += CSA07weight * lumi/100.;
+	}
+	else if(ttbar) { // ttbar
+	  isample=2;
+	  normalization[2] += CSA07weight * lumi/100.;
+	}
       }
-      if(ii==1) {
-	if(!Wj_WToOther_Gt1Part) continue;
-	else normalization[1] += CSA07weight * lumi/100.;
+      if(ii==1) { // QCD from ppEleX
+	isample=3;
+        normalization[3]++;
       }
-      if(ii==2) {
-	if(!ttbar) continue;
-	else normalization[2] += CSA07weight * lumi/100.;
-      }
-      if(ii=3) normalization[3]++;
+
+      if(isample<0 || isample>3) continue; // do not consider Z+jets
 
       // scan to compute the efficiencies for each bin
       bool theScan  = false;
@@ -144,12 +155,12 @@ int main ( int argc, char **argv)
 	  for(int iiEcal=0; iiEcal<10; iiEcal++){
 	    for(int iiDz=0; iiDz<10; iiDz++){
 	      for(int iiDxySign=0; iiDxySign<10; iiDxySign++){
-		theScan=isScan(trackerIsol, hcalIsol, ecalIsol, dzVtx, dxyVtx, iiTracker, iiHcal, iiEcal, iiDz, iiDxySign);
+		theScan=isScan(trackerIsol, hcalIsol, ecalIsol, dzVtx, dxyVtx/dxyErrVtx, iiTracker, iiHcal, iiEcal, iiDz, iiDxySign);
 		if(theScan){
-		  if(ii<3)
-		    passedVtx[iiTracker][iiHcal][iiEcal][iiDz][iiDxySign][ii] += CSA07weight * lumi/100.;
+		  if(isample<3)
+		    passedVtx[iiTracker][iiHcal][iiEcal][iiDz][iiDxySign][isample] += CSA07weight * lumi/100.;
 		  else
-		    passedVtx[iiTracker][iiHcal][iiEcal][iiDz][iiDxySign][ii]++;
+		    passedVtx[iiTracker][iiHcal][iiEcal][iiDz][iiDxySign][isample]++;
 		}
 	      }}}}}
     } // loop over entries
@@ -243,14 +254,14 @@ void setScanValue(){
   hcalInit    = 0.02;
   ecalInit    = 0.02;
   dzInit      = 0.02;
-  dxySignInit = 1.0;
+  dxySignInit = 2.0;
 
   // step for the scan
   trackerStep = 0.005;
   hcalStep    = 0.02;
   ecalStep    = 0.02;
   dzStep      = 0.02;
-  dxySignStep = 1.0;
+  dxySignStep = 2.0;
 }
 
 bool isScan(float thisTracker, float thisHcal, float thisEcal, float thisDz, float thisDxySign, int trackerIsol, int hcalIsol, int ecalIsol, int dzVtx, int dxyVtx) {
