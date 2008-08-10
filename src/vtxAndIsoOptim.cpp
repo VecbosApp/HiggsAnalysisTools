@@ -232,9 +232,9 @@ int main ( int argc, char **argv)
   // output
   cout << endl;
   cout << "highest significance (Punzi) = " << signPunziMax << endl;
-  cout << "eff vtx/isol signal = "     << passedVtx[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][0]/((float)T[0]->GetEntries()) << endl;
+  cout << "eff vtx/isol signal = "     << passedVtx[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][0]/((float)normalization[0]) << endl;
   for(int i=0; i<3; i++) {
-    cout << "eff vtx/iso background[" << i << "] = " << passedVtx[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][i+1]/((float)T[i+1]->GetEntries()) << endl;
+    cout << "eff vtx/iso background[" << i << "] = " << passedVtx[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][i+1]/((float)normalization[i+1]) << endl;
   }
   cout << "in the following bin: "   << endl;
   cout << "tracker = " << trackerCut << endl;
