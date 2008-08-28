@@ -16,7 +16,7 @@ public:
   void addKFactor();
   //! event by event final dataset fill
   void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
-	       bool finalLeptons, bool jetVeto, bool finalSelection);
+	       bool finalLeptons, bool jetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -36,6 +36,7 @@ private:
   float myDetaLeptons;
   bool myFinalLeptons;
   bool myJetVeto;
+  bool myPreDeltaPhi;
   bool myFinalSelection;
   double myWeight;
   double myProcesId;

@@ -50,7 +50,8 @@ public:
   bool outputUpToFinalLeptons() { return m_finalLeptons; }
   //! get output of the selector until jet veto
   bool outputUpToJetVeto() {return m_jetVeto; }
-
+  //! get output of the selector previous to deltaPhi cut
+  bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
   //! display the electron efficiency
   void diplayEfficiencies();
@@ -78,6 +79,8 @@ private:
   bool m_finalLeptons;
   //! true if the selection arrived to jet veto
   bool m_jetVeto;
+  //! true if passed all the selections previous to deltaPhi
+  bool m_preDeltaPhi;
 
   //! this is to do an efficiency for each process in the sample 
   //! (if more than one is present)
