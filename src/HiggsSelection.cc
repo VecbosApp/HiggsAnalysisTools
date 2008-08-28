@@ -224,8 +224,9 @@ bool HiggsSelection::findMcTree(const char* processType) {
 float HiggsSelection::getkFactor(std::string process) {
 
   float weight = 1.;
-  if((process.compare("H_VBF")==0) || (process.compare("H_gg")==0)) {
-    weight = evtKfactor;   
+  if((process.compare("Higgs")==0)) {
+    if(evtKfactor==1.) weight = 0.5; // this is to correct the kFactor of VBF. in the ntuple k=1 means VBF, which has ~costant k=0.5
+    else weight = evtKfactor;
   }
   else if(process.compare("WW")==0) {
     weight = evtMcAtNlo;   
@@ -294,7 +295,7 @@ void HiggsSelection::Loop() {
     // get the kFactor of the event (for signal)
      
     float weight = 1;
-    if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("H_gg");
+    if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
     
     // get the alpgen weight to normalize correctly jet bins
     if ( _preselection->getSwitch("addCSA07Infos") ) weight = genWeight; 
@@ -453,6 +454,7 @@ void HiggsSelection::Loop() {
       bool isSelectedEE = CutBasedHiggsSelectionEE.output();    
       bool selUpToFinalLeptonsEE = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
       bool selUpToJetVetoEE = CutBasedHiggsSelectionEE.outputUpToJetVeto();
+      bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
 
       myOutTreeEE -> fillAll(etMet[0], 
 			     theDeltaPhiEE, 
@@ -463,6 +465,7 @@ void HiggsSelection::Loop() {
 			     theDetaLeptonsEE,
 			     selUpToFinalLeptonsEE,
 			     selUpToJetVetoEE,
+			     selPreDeltaPhiEE,
 			     isSelectedEE);
       if ( _preselection->getSwitch("addCSA07Infos") ) {
 	myOutTreeEE->fillCSA07(genWeight,genAlpgenID,1000.);
@@ -508,6 +511,7 @@ void HiggsSelection::Loop() {
       bool isSelectedMM = CutBasedHiggsSelectionMM.output();    
       bool selUpToFinalLeptonsMM = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
       bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
+      bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
       myOutTreeMM -> fillAll(etMet[0], 
 			     theDeltaPhiMM, 
@@ -518,6 +522,7 @@ void HiggsSelection::Loop() {
 			     theDetaLeptonsMM,
 			     selUpToFinalLeptonsMM,
 			     selUpToJetVetoMM,
+			     selPreDeltaPhiMM,
 			     isSelectedMM);
       
       if ( _preselection->getSwitch("addCSA07Infos") ) {
@@ -584,6 +589,7 @@ void HiggsSelection::Loop() {
       bool isSelectedEM = CutBasedHiggsSelectionEM.output();    
       bool selUpToFinalLeptonsEM = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
       bool selUpToJetVetoEM = CutBasedHiggsSelectionEM.outputUpToJetVeto();
+      bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
       myOutTreeEM -> fillAll(etMet[0], 
 			     theDeltaPhiEM, 
@@ -594,6 +600,7 @@ void HiggsSelection::Loop() {
 			     theDetaLeptonsEM,
 			     selUpToFinalLeptonsEM,
 			     selUpToJetVetoEM,
+			     selPreDeltaPhiEM,
 			     isSelectedEM);
       
       if ( _preselection->getSwitch("addCSA07Infos") ) {
