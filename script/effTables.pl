@@ -3,20 +3,20 @@
 use Getopt::Std;
 getopts('m:');
 
-$lumi = 100;
+$lumi = 1000; # in pb-1
 $HiggsMass = $opt_m;
 print "creating tex table for Higgs mass $HiggsMass GeV/c^2 and lumi = $lumi pb-1....... \n";
 
 $initial_row=0;
 $final_row=80;
 
-$HiggsLogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/H".$HiggsMass.".log";
-$WWLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/WW_incl.log";
-$tWLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/tW.log";
-$WZLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/WZ.log";
-$ZZLogFile    = "logs/ForNoteSummer08_new2/H".$HiggsMass."/ZZ.log";
-$ChowderLogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/ChowderPDElectronSkim.log";
-$DY10to40LogFile = "logs/ForNoteSummer08_new2/H".$HiggsMass."/DY_10_40.log";
+$HiggsLogFile = "tmplogs/H".$HiggsMass."/H".$HiggsMass.".log";
+$WWLogFile    = "tmplogs/H".$HiggsMass."/WW_incl.log";
+$tWLogFile    = "tmplogs/H".$HiggsMass."/tW.log";
+$WZLogFile    = "tmplogs/H".$HiggsMass."/WZ.log";
+$ZZLogFile    = "tmplogs/H".$HiggsMass."/ZZ.log";
+$ChowderLogFile = "tmplogs/H".$HiggsMass."/ChowderPDElectronSkim.log";
+$DY10to40LogFile = "tmplogs/H".$HiggsMass."/DY_10_40.log";
 
 $HiggsXsec = 0; # CHECK ALL THESE!!!!!!!!!!!!!!!!!
 if($HiggsMass==120) { $HiggsXsec=0.56; }
@@ -40,9 +40,9 @@ $DY10to40Xsec = 5951.0;
 #init table
 $textable1 = "eff".$HiggsMass."-1.tex";
 open(TEXFILE1,">$textable1");
-print TEXFILE1 "\\begin\{sidewaystable\}\n";
+print TEXFILE1 "\\begin\{sidewaystable\}\[htb\]\n";
 print TEXFILE1 "\\begin\{center\}\n";
-print TEXFILE1 "\\begin\{tabular\}\[t\]\{|l|c|c|c|c|c|\}\n";
+print TEXFILE1 "\\begin\{tabular\}\{|l|c|c|c|c|c|\}\n";
 print TEXFILE1 "\\hline\n";
 print TEXFILE1 "\\hline\n";
 print TEXFILE1 "& & & & & \\\\ \n";
@@ -1174,56 +1174,6 @@ print TEXFILE2 "$n_ZZ_MET ($eff_ZZ_MET \\%) \\\\ \n";
 
 
 
-# --- delta phi ---
-print TEXFILE1 "\$\\Delta \\phi\$ &\n";
-print TEXFILE2 "\$\\Delta \\phi\$ &\n";
-$decimals = 0;
-$n_Higgs_deltaPhi= sprintf("%.4g", $Higgs_deltaPhi/$Higgs_event * $HiggsXsec * $lumi);
-$eff_Higgs_deltaPhi = sprintf("%.0f", 100 * $Higgs_deltaPhi/$Higgs_MET);
-
-$n_WW_deltaPhi= sprintf("%.4g", $WW_deltaPhi/$WW_event * $WWXsec * $lumi);
-$eff_WW_deltaPhi = sprintf("%.0f", 100 * $WW_deltaPhi/$WW_MET);
-
-$n_tW_deltaPhi= sprintf("%.4g", $tW_deltaPhi/$tW_event * $tWXsec * $lumi);
-$eff_tW_deltaPhi = sprintf("%.0f", 100 * $tW_deltaPhi/$tW_MET);
-
-$n_WZ_deltaPhi= sprintf("%.4g", $WZ_deltaPhi/$WZ_event * $WZXsec * $lumi);
-$eff_WZ_deltaPhi = sprintf("%.0f", 100 * $WZ_deltaPhi/$WZ_MET);
-
-$n_ZZ_deltaPhi= sprintf("%.4g", $ZZ_deltaPhi/$ZZ_event * $ZZXsec * $lumi);
-$eff_ZZ_deltaPhi = sprintf("%.0f", 100 * $ZZ_deltaPhi/$ZZ_MET);
-
-$n_DY10to40_deltaPhi= sprintf("%.4g", $DY10to40_deltaPhi/$DY10to40_event * $DY10to40Xsec * $lumi);
-if($DY10to40_MET!=0) {
-    $eff_DY10to40_deltaPhi = sprintf("%.0f", 100 * $DY10to40_deltaPhi/$DY10to40_MET);
-}
-else{
-    $eff_DY10to40_deltaPhi = 0;
-}
-$n_Wj_deltaPhi= sprintf("%.4g", $Wj_deltaPhi);
-$eff_Wj_deltaPhi = sprintf("%.0f", 100 * $Wj_deltaPhi/$Wj_MET);
-
-$n_Zj_deltaPhi= sprintf("%.4g", $Zj_deltaPhi);
-$eff_Zj_deltaPhi = sprintf("%.0f", 100 * $Zj_deltaPhi/$Zj_MET);
-
-$n_ttbarj_deltaPhi= sprintf("%.4g", $ttbarj_deltaPhi);
-$eff_ttbarj_deltaPhi = sprintf("%.0f", 100 * $ttbarj_deltaPhi/$ttbarj_MET);
-
-
-print TEXFILE1 "$n_Higgs_deltaPhi ($eff_Higgs_deltaPhi \\%)&\n";
-print TEXFILE1 "$n_WW_deltaPhi ($eff_WW_deltaPhi \\%)&\n";
-print TEXFILE1 "$n_ttbarj_deltaPhi ($eff_ttbarj_deltaPhi \\%)&\n";
-print TEXFILE1 "$n_Wj_deltaPhi ($eff_Wj_deltaPhi \\%)&\n";
-print TEXFILE1 "$n_Zj_deltaPhi ($eff_Zj_deltaPhi \\%) \\\\ \n";
-
-print TEXFILE2 "$n_DY10to40_deltaPhi ($eff_DY10to40_deltaPhi \\%)&\n";
-print TEXFILE2 "$n_tW_deltaPhi ($eff_tW_deltaPhi \\%)&\n";
-print TEXFILE2 "$n_WZ_deltaPhi ($eff_WZ_deltaPhi \\%)&\n";
-print TEXFILE2 "$n_ZZ_deltaPhi ($eff_ZZ_deltaPhi \\%) \\\\ \n";
-
-
-
-
 
 
 
@@ -1232,36 +1182,36 @@ print TEXFILE1 "\$\\ptlmax \$ &\n";
 print TEXFILE2 "\$\\ptlmax \$ &\n";
 $decimals = 0;
 $n_Higgs_maxPtLepton= sprintf("%.4g", $Higgs_maxPtLepton/$Higgs_event * $HiggsXsec * $lumi);
-$eff_Higgs_maxPtLepton = sprintf("%.0f", 100 * $Higgs_maxPtLepton/$Higgs_deltaPhi);
+$eff_Higgs_maxPtLepton = sprintf("%.0f", 100 * $Higgs_maxPtLepton/$Higgs_MET);
 
 $n_WW_maxPtLepton= sprintf("%.4g", $WW_maxPtLepton/$WW_event * $WWXsec * $lumi);
-$eff_WW_maxPtLepton = sprintf("%.0f", 100 * $WW_maxPtLepton/$WW_deltaPhi);
+$eff_WW_maxPtLepton = sprintf("%.0f", 100 * $WW_maxPtLepton/$WW_MET);
 
 $n_tW_maxPtLepton= sprintf("%.4g", $tW_maxPtLepton/$tW_event * $tWXsec * $lumi);
-$eff_tW_maxPtLepton = sprintf("%.0f", 100 * $tW_maxPtLepton/$tW_deltaPhi);
+$eff_tW_maxPtLepton = sprintf("%.0f", 100 * $tW_maxPtLepton/$tW_MET);
 
 $n_WZ_maxPtLepton= sprintf("%.4g", $WZ_maxPtLepton/$WZ_event * $WZXsec * $lumi);
-$eff_WZ_maxPtLepton = sprintf("%.0f", 100 * $WZ_maxPtLepton/$WZ_deltaPhi);
+$eff_WZ_maxPtLepton = sprintf("%.0f", 100 * $WZ_maxPtLepton/$WZ_MET);
 
 $n_ZZ_maxPtLepton= sprintf("%.4g", $ZZ_maxPtLepton/$ZZ_event * $ZZXsec * $lumi);
-$eff_ZZ_maxPtLepton = sprintf("%.0f", 100 * $ZZ_maxPtLepton/$ZZ_deltaPhi);
+$eff_ZZ_maxPtLepton = sprintf("%.0f", 100 * $ZZ_maxPtLepton/$ZZ_MET);
 
 $n_DY10to40_maxPtLepton= sprintf("%.4g", $DY10to40_maxPtLepton/$DY10to40_event * $DY10to40Xsec * $lumi);
-if($DY10to40_deltaPhi!=0) {
-    $eff_DY10to40_maxPtLepton = sprintf("%.0f", 100 * $DY10to40_maxPtLepton/$DY10to40_deltaPhi);
+if($DY10to40_MET!=0) {
+    $eff_DY10to40_maxPtLepton = sprintf("%.0f", 100 * $DY10to40_maxPtLepton/$DY10to40_MET);
 }
 else {
     $eff_DY10to40_maxPtLepton = 0;
 }
 
 $n_Wj_maxPtLepton= sprintf("%.4g", $Wj_maxPtLepton);
-$eff_Wj_maxPtLepton = sprintf("%.0f", 100 * $Wj_maxPtLepton/$Wj_deltaPhi);
+$eff_Wj_maxPtLepton = sprintf("%.0f", 100 * $Wj_maxPtLepton/$Wj_MET);
 
 $n_Zj_maxPtLepton= sprintf("%.4g", $Zj_maxPtLepton);
-$eff_Zj_maxPtLepton = sprintf("%.0f", 100 * $Zj_maxPtLepton/$Zj_deltaPhi);
+$eff_Zj_maxPtLepton = sprintf("%.0f", 100 * $Zj_maxPtLepton/$Zj_MET);
 
 $n_ttbarj_maxPtLepton= sprintf("%.4g", $ttbarj_maxPtLepton);
-$eff_ttbarj_maxPtLepton = sprintf("%.0f", 100 * $ttbarj_maxPtLepton/$ttbarj_deltaPhi);
+$eff_ttbarj_maxPtLepton = sprintf("%.0f", 100 * $ttbarj_maxPtLepton/$ttbarj_MET);
 
 
 print TEXFILE1 "$n_Higgs_maxPtLepton ($eff_Higgs_maxPtLepton \\%)&\n";
@@ -1383,6 +1333,63 @@ print TEXFILE2 "$n_DY10to40_eleInvMass ($eff_DY10to40_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_tW_eleInvMass ($eff_tW_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_WZ_eleInvMass ($eff_WZ_eleInvMass \\%)&\n";
 print TEXFILE2 "$n_ZZ_eleInvMass ($eff_ZZ_eleInvMass \\%)\\\\\n";
+
+
+
+
+
+
+# --- delta phi ---
+print TEXFILE1 "\$\\Delta \\phi\$ &\n";
+print TEXFILE2 "\$\\Delta \\phi\$ &\n";
+$decimals = 0;
+$n_Higgs_deltaPhi= sprintf("%.4g", $Higgs_deltaPhi/$Higgs_event * $HiggsXsec * $lumi);
+$eff_Higgs_deltaPhi = sprintf("%.0f", 100 * $Higgs_deltaPhi/$Higgs_eleInvMass);
+
+$n_WW_deltaPhi= sprintf("%.4g", $WW_deltaPhi/$WW_event * $WWXsec * $lumi);
+$eff_WW_deltaPhi = sprintf("%.0f", 100 * $WW_deltaPhi/$WW_eleInvMass);
+
+$n_tW_deltaPhi= sprintf("%.4g", $tW_deltaPhi/$tW_event * $tWXsec * $lumi);
+$eff_tW_deltaPhi = sprintf("%.0f", 100 * $tW_deltaPhi/$tW_eleInvMass);
+
+$n_WZ_deltaPhi= sprintf("%.4g", $WZ_deltaPhi/$WZ_event * $WZXsec * $lumi);
+$eff_WZ_deltaPhi = sprintf("%.0f", 100 * $WZ_deltaPhi/$WZ_eleInvMass);
+
+$n_ZZ_deltaPhi= sprintf("%.4g", $ZZ_deltaPhi/$ZZ_event * $ZZXsec * $lumi);
+if($ZZ_eleInvMass!=0) {
+    $eff_ZZ_deltaPhi = sprintf("%.0f", 100 * $ZZ_deltaPhi/$ZZ_eleInvMass);
+}
+else{
+    $eff_ZZ_deltaPhi = 0;
+}
+$n_DY10to40_deltaPhi= sprintf("%.4g", $DY10to40_deltaPhi/$DY10to40_event * $DY10to40Xsec * $lumi);
+if($DY10to40_eleInvMass!=0) {
+    $eff_DY10to40_deltaPhi = sprintf("%.0f", 100 * $DY10to40_deltaPhi/$DY10to40_eleInvMass);
+}
+else{
+    $eff_DY10to40_deltaPhi = 0;
+}
+$n_Wj_deltaPhi= sprintf("%.4g", $Wj_deltaPhi);
+$eff_Wj_deltaPhi = sprintf("%.0f", 100 * $Wj_deltaPhi/$Wj_eleInvMass);
+
+$n_Zj_deltaPhi= sprintf("%.4g", $Zj_deltaPhi);
+$eff_Zj_deltaPhi = sprintf("%.0f", 100 * $Zj_deltaPhi/$Zj_eleInvMass);
+
+$n_ttbarj_deltaPhi= sprintf("%.4g", $ttbarj_deltaPhi);
+$eff_ttbarj_deltaPhi = sprintf("%.0f", 100 * $ttbarj_deltaPhi/$ttbarj_eleInvMass);
+
+
+
+print TEXFILE1 "$n_Higgs_deltaPhi ($eff_Higgs_deltaPhi \\%)&\n";
+print TEXFILE1 "$n_WW_deltaPhi ($eff_WW_deltaPhi \\%)&\n";
+print TEXFILE1 "$n_ttbarj_deltaPhi ($eff_ttbarj_deltaPhi \\%)&\n";
+print TEXFILE1 "$n_Wj_deltaPhi ($eff_Wj_deltaPhi \\%)&\n";
+print TEXFILE1 "$n_Zj_deltaPhi ($eff_Zj_deltaPhi \\%) \\\\ \n";
+
+print TEXFILE2 "$n_DY10to40_deltaPhi ($eff_DY10to40_deltaPhi \\%)&\n";
+print TEXFILE2 "$n_tW_deltaPhi ($eff_tW_deltaPhi \\%)&\n";
+print TEXFILE2 "$n_WZ_deltaPhi ($eff_WZ_deltaPhi \\%)&\n";
+print TEXFILE2 "$n_ZZ_deltaPhi ($eff_ZZ_deltaPhi \\%) \\\\ \n";
 
 
 
