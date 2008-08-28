@@ -114,13 +114,13 @@ int main(int argc, char* argv[]) {
   // require triggers for ee channel
   mask.requireTrigger("HLT1Electron");
   mask.requireTrigger("HLT1ElectronRelaxed");
-  mask.requireTrigger("HLT2Electron");
-  mask.requireTrigger("HLT2ElectronRelaxed");
+//   mask.requireTrigger("HLT2Electron");
+//   mask.requireTrigger("HLT2ElectronRelaxed");
   mask.requireTrigger("HLT1MuonIso");
   mask.requireTrigger("HLT1MuonNonIso");
-  mask.requireTrigger("HLT2MuonNonIso");
-  mask.requireTrigger("HLTXElectronMuon");
-  mask.requireTrigger("HLTXElectronMuonRelaxed");
+//   mask.requireTrigger("HLT2MuonNonIso");
+//   mask.requireTrigger("HLTXElectronMuon");
+//   mask.requireTrigger("HLTXElectronMuonRelaxed");
 
   std::vector<int> requiredTriggers = mask.getBits();
   htoww.requireTrigger(requiredTriggers);
@@ -167,6 +167,15 @@ int main(int argc, char* argv[]) {
 
 #if Application == 8
   ZTandProbe zTaP(theChain);
+  TriggerMask mask(treeCond); // require triggers
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+  mask.requireTrigger("HLT2Electron");
+  mask.requireTrigger("HLT2ElectronRelaxed");
+  mask.requireTrigger("HLTXElectronMuon");
+  mask.requireTrigger("HLTXElectronMuonRelaxed");
+  std::vector<int> requiredTriggers = mask.getBits();
+  zTaP.requireTrigger(requiredTriggers);
   zTaP.Loop();
   zTaP.displayEfficiencies();
   zTaP.writeHistos();
