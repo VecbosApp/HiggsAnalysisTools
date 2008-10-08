@@ -63,6 +63,9 @@
 #if Application == 14
 #include "HiggsAnalysisTools/src/HiggsKinematicsOptimToyMC.cc"
 #endif
+#if Application == 15
+#include "HiggsAnalysisTools/include/LeptonPlusFakeSelection.hh"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -272,6 +275,30 @@ int main(int argc, char* argv[]) {
   std::vector<int> requiredTriggers = mask.getBits();
   hkinemtoy.requireTrigger(requiredTriggers);
   hkinemtoy.Loop();
+
+#endif
+
+#if Application == 15
+
+  LeptonPlusFakeSelection lplusfake(theChain);
+
+  TriggerMask mask(treeCond);
+
+  // require triggers for ee channel
+  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT1ElectronRelaxed");
+//   mask.requireTrigger("HLT2Electron");
+//   mask.requireTrigger("HLT2ElectronRelaxed");
+  mask.requireTrigger("HLT1MuonIso");
+  mask.requireTrigger("HLT1MuonNonIso");
+//   mask.requireTrigger("HLT2MuonNonIso");
+//   mask.requireTrigger("HLTXElectronMuon");
+//   mask.requireTrigger("HLTXElectronMuonRelaxed");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+  lplusfake.requireTrigger(requiredTriggers);
+
+  lplusfake.Loop();
 
 #endif
   

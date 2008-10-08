@@ -66,7 +66,7 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 .PREFIXES: ./lib/
 
 
-$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc 
+$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
 # no more used ------------------------------------
 #$(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc 
 #$(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc 
@@ -90,7 +90,7 @@ $(OUTLIBCOMMON)TriggerMask.o: $(INCLUDEDIRCOMMON)/CommonTools/src/TriggerMask.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)TriggerMask.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)CutBasedEleIDSelector.o $<
-$(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.C
+$(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
 $(OUTLIB)HiggsEleIdOptimToyMC.o: $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsEleIdOptimToyMC.o $<
@@ -114,6 +114,8 @@ $(OUTLIB)CutBasedHiggsSelector.o: $(INCLUDEDIR)/src/CutBasedHiggsSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)CutBasedHiggsSelector.o $<
 $(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ZplusJetsSelection.o $<
+$(OUTLIB)LeptonPlusFakeSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeSelection.o $<
 # no more used ------------------------------------
 #$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
 #	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronID.o $<
@@ -127,7 +129,7 @@ $(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
 #----------------------------------------------------#
 
 # ==================== HiggsApp =============================================
-HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o 
+HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o $(OUTLIB)LeptonPlusFakeSelection.o 
 # no more used ------------------------------------
 #$(OUTLIB)RedEWKTree.o 
 	$(CXX) $(CXXFLAGS) -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $ $<
