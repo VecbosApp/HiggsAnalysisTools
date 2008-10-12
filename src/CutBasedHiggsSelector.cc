@@ -9,6 +9,34 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_processID = -1;
 }
 
+CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selector ) {
+  m_weight = selector.m_weight;
+  m_highPt = selector.m_highPt;
+  m_isElectronId = selector.m_isElectronId;
+  m_isPositronId = selector.m_isPositronId;
+  m_invMass = selector.m_invMass;
+  m_eleTkPtSum = selector.m_eleTkPtSum;
+  m_eleHcalPtSum = selector.m_eleHcalPtSum;
+  m_eleEcalPtSum = selector.m_eleEcalPtSum;
+  m_posTkPtSum = selector.m_posTkPtSum;
+  m_posHcalPtSum = selector.m_posHcalPtSum;
+  m_posEcalPtSum = selector.m_posEcalPtSum;
+  m_passedJetVeto = selector.m_passedJetVeto;
+  m_met = selector.m_met;
+  m_deltaPhi = selector.m_deltaPhi;
+  m_detaLeptons = selector.m_detaLeptons;
+  m_maxPtElectron = selector.m_maxPtElectron;
+  m_minPtElectron = selector.m_minPtElectron;
+  m_processID = selector.m_processID;
+  *_selection = *selector._selection;
+  *globalCounter = *selector.globalCounter;
+  m_finalLeptons = selector.m_finalLeptons;
+  m_jetVeto = selector.m_jetVeto;
+  m_preDeltaPhi = selector.m_preDeltaPhi;
+  multiProcessCounter = selector.multiProcessCounter;
+
+}
+
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
 
 void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwitches) {

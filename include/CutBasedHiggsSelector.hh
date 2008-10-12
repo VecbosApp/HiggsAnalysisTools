@@ -11,6 +11,9 @@ public:
   //! constructor
   CutBasedHiggsSelector();
 
+  //! copy constructor
+  CutBasedHiggsSelector( const CutBasedHiggsSelector& selector );
+
   //! destructor
   virtual ~CutBasedHiggsSelector();   
 
