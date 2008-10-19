@@ -31,37 +31,37 @@ void setExpectedEvents() {
 
   // events expected in 100 pb-1
   // mH = 160 GeV
-  nEventsPresel.push_back(14.6); // H->WW
-  nEventsPresel.push_back(72.1); // WW
-  nEventsPresel.push_back(112); // WZ
-  nEventsPresel.push_back(19.1);  // ZZ
-  nEventsPresel.push_back(41.1);  // tW
-  nEventsPresel.push_back(2628); // W+j
-  nEventsPresel.push_back(2463); // Z+j (> 40 GeV)
-  nEventsPresel.push_back(1193); // ttbar
-  nEventsPresel.push_back(31.2); // Drell Yan (10-40 GeV)
+  nEventsPresel.push_back(13.9); // H->WW
+  nEventsPresel.push_back(69.4); // WW
+  nEventsPresel.push_back(107); // WZ
+  nEventsPresel.push_back(18.5);  // ZZ
+  nEventsPresel.push_back(39.8);  // tW
+  nEventsPresel.push_back(2548); // W+j
+  nEventsPresel.push_back(2380); // Z+j (> 40 GeV)
+  nEventsPresel.push_back(1139); // ttbar
+  nEventsPresel.push_back(29.0); // Drell Yan (10-40 GeV)
   
-  nEventsFinalLeptons.push_back(8.2); // H->WW
-  nEventsFinalLeptons.push_back(26.4); // WW
-  nEventsFinalLeptons.push_back(28.6); // WZ
-  nEventsFinalLeptons.push_back(12.5);  // ZZ
-  nEventsFinalLeptons.push_back(22.0);  // tW
-  nEventsFinalLeptons.push_back(15.5); // W+j
-  nEventsFinalLeptons.push_back(1538); // Z+j (> 40 GeV)
-  nEventsFinalLeptons.push_back(253); // ttbar
-  nEventsFinalLeptons.push_back(15.7); // Drell Yan (10-40 GeV)
+  nEventsFinalLeptons.push_back(8.1); // H->WW
+  nEventsFinalLeptons.push_back(25.8); // WW
+  nEventsFinalLeptons.push_back(27.7); // WZ
+  nEventsFinalLeptons.push_back(12.3);  // ZZ
+  nEventsFinalLeptons.push_back(21.5);  // tW
+  nEventsFinalLeptons.push_back(15.0); // W+j
+  nEventsFinalLeptons.push_back(1509); // Z+j (> 40 GeV)
+  nEventsFinalLeptons.push_back(247); // ttbar
+  nEventsFinalLeptons.push_back(15.0); // Drell Yan (10-40 GeV)
 
-  nEventsCJV.push_back(4.9); // H->WW
-  nEventsCJV.push_back(18.2); // WW
-  nEventsCJV.push_back(3.6); // WZ
-  nEventsCJV.push_back(4.2);  // ZZ
-  nEventsCJV.push_back(7.1);  // tW
-  nEventsCJV.push_back(10.4); // W+j
-  nEventsCJV.push_back(397); // Z+j (> 40 GeV)
-  nEventsCJV.push_back(11.9); // ttbar
-  nEventsCJV.push_back(7.0); // Drell Yan (10-40 GeV)
+  nEventsCJV.push_back(5.1); // H->WW
+  nEventsCJV.push_back(17.8); // WW
+  nEventsCJV.push_back(3.4); // WZ
+  nEventsCJV.push_back(4.1);  // ZZ
+  nEventsCJV.push_back(6.8);  // tW
+  nEventsCJV.push_back(10.0); // W+j
+  nEventsCJV.push_back(391); // Z+j (> 40 GeV)
+  nEventsCJV.push_back(11.7); // ttbar
+  nEventsCJV.push_back(6.5); // Drell Yan (10-40 GeV)
 
-  nEventsPreDeltaPhi.push_back(2.3); // H->WW
+  nEventsPreDeltaPhi.push_back(2.4); // H->WW
   nEventsPreDeltaPhi.push_back(2.2); // WW
   nEventsPreDeltaPhi.push_back(0.2); // WZ
   nEventsPreDeltaPhi.push_back(0.0);  // ZZ
@@ -71,8 +71,8 @@ void setExpectedEvents() {
   nEventsPreDeltaPhi.push_back(0.56); // ttbar
   nEventsPreDeltaPhi.push_back(0.0); // Drell Yan (10-40 GeV)
 
-  nEventsFinal.push_back(1.90); // H->WW
-  nEventsFinal.push_back(1.39); // WW
+  nEventsFinal.push_back(2.0); // H->WW
+  nEventsFinal.push_back(1.37); // WW
   nEventsFinal.push_back(0.17); // WZ
   nEventsFinal.push_back(0.0);  // ZZ
   nEventsFinal.push_back(0.0);  // tW
@@ -115,13 +115,13 @@ void drawKinematics(const char* selection, float lumi=100) {
   std::vector<TFile*> datasets;
 
   TFile *Higgs = 0, *WW_incl = 0, *WZ = 0, *ZZ_incl = 0, *tW_incl = 0, *Chowder = 0, *DY10to40 = 0;
-  Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
-  WW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WW_incl-datasetEE.root");
-  WZ      = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/WZ-datasetEE.root");
-  ZZ_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ZZ_incl-datasetEE.root");
-  tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/tW_incl-datasetEE.root");
-  Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/ChowderPDElectronSkim-datasetEE.root");
-  DY10to40 =  TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_new2/H160/DrellYan_ll_10-40-datasetEE.root");
+  Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
+  WW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/WW_incl-datasetEE.root");
+  WZ      = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/WZ-datasetEE.root");
+  ZZ_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/ZZ_incl-datasetEE.root");
+  tW_incl = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/tW_incl-datasetEE.root");
+  Chowder = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/ChowderPDElectronSkim-datasetEE.root");
+  DY10to40 =  TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/datasets/ForNoteSummer08_dopolabocciatura/H160/DrellYan_ll_10-40-datasetEE.root");
 
   // with deltaPhi cut at the end and the variable "beforeDeltaPhi -> all cuts with exception of dPhi"
 //   Higgs   = TFile::Open("/cmsrm/pc18/emanuele/releases/HIGGS_RELEASES/OfflineAnalysis/HiggsAnalysisTools/tmplogs/H160/HiggsH160_CMSSW_1_6_9-datasetEE.root");
@@ -460,13 +460,6 @@ void drawKinematics(const char* selection, float lumi=100) {
   mll[2]->Add(mll[4]);
   mll[2]->Add(mll[5]);
   histo4 = mll[2];
-  histo0->Write();
-  histo1->Write();
-  histo2->Write();
-  histo3->Write();
-  histo4->Write();
-
-  TCanvas cmll2("cmll2","cmll2",600,600);
 
   histo0->SetName("histo0"); // H->WW
   histo1->SetName("histo1"); // Z+jets+DY_10_40
@@ -482,6 +475,13 @@ void drawKinematics(const char* selection, float lumi=100) {
   histo4->SetFillColor(kBlue+3);
   histo4->SetFillStyle(3003);
 
+  histo0->Write();
+  histo1->Write();
+  histo2->Write();
+  histo3->Write();
+  histo4->Write();
+
+  TCanvas cmll2("cmll2","cmll2",600,600);
   cmll2.SetLogy();
   histo1->Draw("hist");
   histo3->Draw("same hist");
@@ -750,12 +750,12 @@ void drawSignificances() {
   // mH=120
   std::vector<float> eventsH120;
   eventsH120.resize(9);
-  eventsH120[0] = 3.9;   // H->WW
-  eventsH120[1] = 33.6;  // WW
+  eventsH120[0] = 4.2;   // H->WW
+  eventsH120[1] = 33.4;  // WW
   eventsH120[2] = 6.9;   // ttbar
-  eventsH120[3] = 24.6;  // W+jets
+  eventsH120[3] = 20.;   // W+jets - from QCD fake
   eventsH120[4] = 10.3;  // Z+jets
-  eventsH120[5] = 9.7;   // DY < 40 GeV
+  eventsH120[5] = 7.2;   // DY < 40 GeV
   eventsH120[6] = 2.5;   // WZ
   eventsH120[7] = 1.0;   // tW
   eventsH120[8] = 0.5;   // ZZ
@@ -765,12 +765,12 @@ void drawSignificances() {
   // mH=130
   std::vector<float> eventsH130;
   eventsH130.resize(9);
-  eventsH130[0] = 6.2;   // H->WW
-  eventsH130[1] = 34.3;  // WW
+  eventsH130[0] = 6.6;   // H->WW
+  eventsH130[1] = 33.9;  // WW
   eventsH130[2] = 6.9;   // ttbar
-  eventsH130[3] = 24.6;  // W+jets
+  eventsH130[3] = 20.;   // W+jets - from QCD fake
   eventsH130[4] = 10.3;  // Z+jets
-  eventsH130[5] = 9.7;   // DY < 40 GeV
+  eventsH130[5] = 7.3;   // DY < 40 GeV
   eventsH130[6] = 2.5;   // WZ
   eventsH130[7] = 1.0;   // tW
   eventsH130[8] = 0.7;   // ZZ
@@ -780,10 +780,10 @@ void drawSignificances() {
   // mH=140
   std::vector<float> eventsH140;
   eventsH140.resize(9);
-  eventsH140[0] = 10.4;   // H->WW
+  eventsH140[0] = 11.3;   // H->WW
   eventsH140[1] = 22.4;  // WW
   eventsH140[2] = 6.4;   // ttbar
-  eventsH140[3] = 13.4;  // W+jets
+  eventsH140[3] = 5.0;  // W+jets - from QCD fake
   eventsH140[4] = 2.0;  // Z+jets
   eventsH140[5] = 0.0;   // DY < 40 GeV
   eventsH140[6] = 2.2;   // WZ
@@ -795,10 +795,10 @@ void drawSignificances() {
   // mH=150
   std::vector<float> eventsH150;
   eventsH150.resize(9);
-  eventsH150[0] = 10.0;   // H->WW
-  eventsH150[1] = 13.7;  // WW
+  eventsH150[0] = 12.5;   // H->WW
+  eventsH150[1] = 13.5;  // WW
   eventsH150[2] = 4.3;   // ttbar
-  eventsH150[3] = 1.0;  // W+jets
+  eventsH150[3] = 2.9;  // W+jets - from QCD fake
   eventsH150[4] = 1.0;  // Z+jets
   eventsH150[5] = 0.0;   // DY < 40 GeV
   eventsH150[6] = 1.7;   // WZ
@@ -810,10 +810,10 @@ void drawSignificances() {
   // mH=160
   std::vector<float> eventsH160;
   eventsH160.resize(9);
-  eventsH160[0] = 19.0;   // H->WW
-  eventsH160[1] = 13.9;  // WW
+  eventsH160[0] = 20.1;   // H->WW
+  eventsH160[1] = 13.7;  // WW
   eventsH160[2] = 4.3;   // ttbar
-  eventsH160[3] = 1.0;  // W+jets
+  eventsH160[3] = 3.5;  // W+jets - from QCD fake
   eventsH160[4] = 1.0;  // Z+jets
   eventsH160[5] = 0.0;   // DY < 40 GeV
   eventsH160[6] = 1.7;   // WZ
@@ -825,75 +825,75 @@ void drawSignificances() {
   // mH=165
   std::vector<float> eventsH165;
   eventsH165.resize(9);
-  eventsH165[0] = 21.4;   // H->WW
-  eventsH165[1] = 13.0;  // WW
-  eventsH165[2] = 6.0;   // ttbar
-  eventsH165[3] = 1.0;  // W+jets
+  eventsH165[0] = 21.8;   // H->WW
+  eventsH165[1] = 13.7;  // WW
+  eventsH165[2] = 4.3;   // ttbar
+  eventsH165[3] = 3.5;  // W+jets - from QCD fake
   eventsH165[4] = 1.8;  // Z+jets
   eventsH165[5] = 0.0;   // DY < 40 GeV
   eventsH165[6] = 1.7;   // WZ
   eventsH165[7] = 0.0;   // tW
-  eventsH165[8] = 0.2;   // ZZ
+  eventsH165[8] = 0.0;   // ZZ
   events.push_back(eventsH165);
   higgsMass.push_back(165);
 
   // mH=170
   std::vector<float> eventsH170;
   eventsH170.resize(9);
-  eventsH170[0] = 19.8;   // H->WW
-  eventsH170[1] = 14.6;  // WW
+  eventsH170[0] = 21.2;   // H->WW
+  eventsH170[1] = 14.4;  // WW
   eventsH170[2] = 7.8;   // ttbar
-  eventsH170[3] = 0.0;  // W+jets
+  eventsH170[3] = 1.7;  // W+jets - from QCD fake
   eventsH170[4] = 1.8;  // Z+jets
   eventsH170[5] = 0.0;   // DY < 40 GeV
   eventsH170[6] = 2.9;   // WZ
   eventsH170[7] = 0.0;   // tW
-  eventsH170[8] = 0.3;   // ZZ
+  eventsH170[8] = 0.2;   // ZZ
   events.push_back(eventsH170);
   higgsMass.push_back(170);
 
   // mH=180
   std::vector<float> eventsH180;
   eventsH180.resize(9);
-  eventsH180[0] = 14.5;   // H->WW
-  eventsH180[1] = 15.0;  // WW
+  eventsH180[0] = 15.1;   // H->WW
+  eventsH180[1] = 14.8;  // WW
   eventsH180[2] = 8.2;   // ttbar
-  eventsH180[3] = 1.0;  // W+jets
+  eventsH180[3] = 1.7;  // W+jets - from QCD fake
   eventsH180[4] = 2.8;  // Z+jets
   eventsH180[5] = 0.0;   // DY < 40 GeV
   eventsH180[6] = 3.2;   // WZ
   eventsH180[7] = 0.5;   // tW
-  eventsH180[8] = 0.3;   // ZZ
+  eventsH180[8] = 0.2;   // ZZ
   events.push_back(eventsH180);
   higgsMass.push_back(180);
 
   // mH=190
   std::vector<float> eventsH190;
   eventsH190.resize(9);
-  eventsH190[0] = 10.1;   // H->WW
-  eventsH190[1] = 15.2;  // WW
+  eventsH190[0] = 11.;   // H->WW
+  eventsH190[1] = 15.0;  // WW
   eventsH190[2] = 8.6;   // ttbar
-  eventsH190[3] = 1.0;  // W+jets
+  eventsH190[3] = 1.7;  // W+jets - from QCD fake
   eventsH190[4] = 2.8;  // Z+jets
   eventsH190[5] = 0.0;   // DY < 40 GeV
   eventsH190[6] = 3.2;   // WZ
   eventsH190[7] = 0.5;   // tW
-  eventsH190[8] = 0.3;   // ZZ
+  eventsH190[8] = 0.2;   // ZZ
   events.push_back(eventsH190);
   higgsMass.push_back(190);
 
   // mH=200
   std::vector<float> eventsH200;
   eventsH200.resize(9);
-  eventsH200[0] = 8.4;   // H->WW
-  eventsH200[1] = 22.2;  // WW
+  eventsH200[0] = 9.3;   // H->WW
+  eventsH200[1] = 21.8;  // WW
   eventsH200[2] = 9.9;   // ttbar
-  eventsH200[3] = 3.1;  // W+jets
+  eventsH200[3] = 3.2;  // W+jets - from QCD fake
   eventsH200[4] = 5.0;  // Z+jets
   eventsH200[5] = 0.0;   // DY < 40 GeV
   eventsH200[6] = 4.2;   // WZ
   eventsH200[7] = 0.8;   // tW
-  eventsH200[8] = 0.3;   // ZZ
+  eventsH200[8] = 0.2;   // ZZ
   events.push_back(eventsH200);
   higgsMass.push_back(200);
 
