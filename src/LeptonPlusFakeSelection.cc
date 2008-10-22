@@ -94,21 +94,15 @@ void LeptonPlusFakeSelection::initialiseFakeRate() {
   m_minFakePt[3] = 25.;  m_maxFakePt[3] = 30.;
   m_minFakePt[4] = 30.;  m_maxFakePt[4] = 35.;
   m_minFakePt[5] = 35.;  m_maxFakePt[5] = 40.;
-  m_minFakePt[6] = 40.;  m_maxFakePt[6] = 45.;
-  m_minFakePt[7] = 45.;  m_maxFakePt[7] = 50.;
-  m_minFakePt[8] = 50.;  m_maxFakePt[8] = 55.;
-  m_minFakePt[9] = 55.;  m_maxFakePt[9] = 14000.;
+  m_minFakePt[6] = 40.;  m_maxFakePt[6] = 14000.;
 
-  m_fakeRateFromQCD[0] = 0.000164029;  m_fakeRateFromQCD_err[0] = 8.15152e-05;
-  m_fakeRateFromQCD[1] = 0.00135863;   m_fakeRateFromQCD_err[1] = 0.000534836;
-  m_fakeRateFromQCD[2] = 0.00127012;   m_fakeRateFromQCD_err[2] = 0.000973916;
-  m_fakeRateFromQCD[3] = 0.0073088;    m_fakeRateFromQCD_err[3] = 0.00450846;
-  m_fakeRateFromQCD[4] = 0.00112614;   m_fakeRateFromQCD_err[4] = 0.00078514;
-  m_fakeRateFromQCD[5] = 0.000128017;  m_fakeRateFromQCD_err[5] = 0.000110759;
-  m_fakeRateFromQCD[6] = 2.70718e-05;  m_fakeRateFromQCD_err[6] = 1.00499e-05;
-  m_fakeRateFromQCD[7] = 0.00276011;   m_fakeRateFromQCD_err[7] = 0.00270916;
-  m_fakeRateFromQCD[8] = 4.54107e-05;  m_fakeRateFromQCD_err[8] = 1.70461e-05;
-  m_fakeRateFromQCD[9] = 0.00318889;   m_fakeRateFromQCD_err[9] = 0.00314994;
+  m_fakeRateFromQCD[0] = 0.000738841;  m_fakeRateFromQCD_err[0] = 0.00051084;
+  m_fakeRateFromQCD[1] = 0.00362373;   m_fakeRateFromQCD_err[1] = 0.0020247;
+  m_fakeRateFromQCD[2] = 0.0011834;    m_fakeRateFromQCD_err[2] = 0.000642422;
+  m_fakeRateFromQCD[3] = 0.00373419;   m_fakeRateFromQCD_err[3] = 0.00196991;
+  m_fakeRateFromQCD[4] = 0.0044899;    m_fakeRateFromQCD_err[4] = 0.00333266;
+  m_fakeRateFromQCD[5] = 0.000877784;  m_fakeRateFromQCD_err[5] = 0.000515083;
+  m_fakeRateFromQCD[6] = 0.00131569;   m_fakeRateFromQCD_err[6] = 0.00100121;
 
   m_fakeRateFromWjets[0] = 0.000221169; m_fakeRateFromWjets_err[0] = 5.57981e-06;
   m_fakeRateFromWjets[1] = 0.000668425; m_fakeRateFromWjets_err[1] = 1.49002e-05;
@@ -116,10 +110,7 @@ void LeptonPlusFakeSelection::initialiseFakeRate() {
   m_fakeRateFromWjets[3] = 0.00188213;  m_fakeRateFromWjets_err[3] = 3.71708e-05;
   m_fakeRateFromWjets[4] = 0.00198295;  m_fakeRateFromWjets_err[4] = 3.23153e-05;
   m_fakeRateFromWjets[5] = 0.00116383;  m_fakeRateFromWjets_err[5] = 1.19151e-05;
-  m_fakeRateFromWjets[6] = 0.00215977;  m_fakeRateFromWjets_err[6] = 2.57124e-05;
-  m_fakeRateFromWjets[7] = 0.00238572;  m_fakeRateFromWjets_err[7] = 2.57237e-05;
-  m_fakeRateFromWjets[8] = 0.00286415;  m_fakeRateFromWjets_err[8] = 2.95695e-05;
-  m_fakeRateFromWjets[9] = 0.00118476;  m_fakeRateFromWjets_err[9] = 6.9849e-06;
+  m_fakeRateFromWjets[6] = 0.00296834;  m_fakeRateFromWjets_err[6] = 8.59184e-05;
 
 }
 
@@ -531,7 +522,7 @@ float LeptonPlusFakeSelection::getSecondEleEmEt(int first, int second, float del
 
 
 float LeptonPlusFakeSelection::getFakeRate(float fakePt, int source) {
-  for (int i=0; i<10; i++) {
+  for (int i=0; i<7; i++) {
     if( fakePt >= m_minFakePt[i] && fakePt < m_maxFakePt[i] ) {
       if( source == QCD ) {
 	return m_fakeRateFromQCD[i];
@@ -545,7 +536,7 @@ float LeptonPlusFakeSelection::getFakeRate(float fakePt, int source) {
 }
 
 float LeptonPlusFakeSelection::getFakeRateError(float fakePt, int source) {
-  for (int i=0; i<10; i++) {
+  for (int i=0; i<7; i++) {
     if( fakePt >= m_minFakePt[i] && fakePt < m_maxFakePt[i] ) {
       if( source == QCD ) {
 	return m_fakeRateFromQCD_err[i];

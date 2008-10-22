@@ -82,9 +82,9 @@ private:
   float m_deltaPhi, m_mll, m_MET;
 
   //! the fake rate numbers
-  float m_fakeRateFromQCD[10], m_fakeRateFromQCD_err[10];
-  float m_fakeRateFromWjets[10], m_fakeRateFromWjets_err[10];
-  float m_minFakePt[10], m_maxFakePt[10];
+  float m_fakeRateFromQCD[7], m_fakeRateFromQCD_err[7];
+  float m_fakeRateFromWjets[7], m_fakeRateFromWjets_err[7];
+  float m_minFakePt[7], m_maxFakePt[7];
 
   //! comparison of distributions
   TH1F *m_histoLL_mll, *m_histoLD_mll;
