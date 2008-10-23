@@ -14,6 +14,12 @@ public:
   void addCSA07Infos();
   //! add the k-Factor (used for signal only)
   void addKFactor();
+  //! add the MC truth informations
+  void addMcTruthInfos();
+  //! add the HLT electron triggers informations
+  void addHLTElectronsInfos();
+  //! add the HLT muon triggers informations
+  void addHLTMuonsInfos();
   //! event by event final dataset fill
   void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool preDeltaPhi, bool finalSelection);
@@ -21,12 +27,25 @@ public:
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
   void fillKFactor(double kfactor);
+  //! fill the MC truth informations
+  void fillMcTruth(bool prompt);
+  //! fill the HLT electron triggers informations
+  void fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR);
+  //! fill the HLT muons triggers informations
+  void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
   void save();
 
 private:
+  bool myPromptDecay;
+  bool myHLTSingleElectron;
+  bool myHLTSingleElectronRelaxed;
+  bool myHLTSingleElectronOR;
+  bool myHLTSingleMuon;
+  bool myHLTSingleMuonRelaxed;
+  bool myHLTSingleMuonOR;
   float myMet;       
   float myDeltaPhi;  
   float myTransvMass;

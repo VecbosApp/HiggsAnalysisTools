@@ -140,6 +140,7 @@ HiggsSelection::~HiggsSelection(){
   myOutTreeEE -> save();
   myOutTreeMM -> save();
   myOutTreeEM -> save();
+  myTriggerTree -> save();
 
 }
 
@@ -150,12 +151,111 @@ bool HiggsSelection::findMcTree(const char* processType) {
   _theGenPos = -1;
   
   // now we look for ee || mumu || emu
+  // in the acceptance and with a loose pT threshold
+
+  float etaEleAcc_ = 2.5;
+  float ptEleAcc_ = 5.0; // GeV
+  float etaMuonAcc_ = 2.4;
+  float ptMuonAcc_ = 0.0; // GeV
   
   // signal: 2e2nu
   if(strcmp(processType,"HtoWWto2e2nu")==0) {
-    if( idMc[9]  == -11) _theGenEle = 9;
-    if( idMc[11] ==  11) _theGenPos = 11;
-    return (_theGenEle > -1 && _theGenPos > -1 );
+    int indeminus=999, indeplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc] == -11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
+      if( idMc[imc] ==  11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+    }
+    if( indeminus<25 && indeplus<25 ) {
+      _theGenPos = indeplus;
+      _theGenEle = indeminus;
+    }
+    return ( indeplus < 25 && indeminus < 25 );
+  }
+
+  // signal: 2m2nu
+  if(strcmp(processType,"HtoWWto2m2nu")==0) {
+    int indmuminus=999, indmuplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc] ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+    }
+    if( indmuminus<25 && indmuplus<25 ) {
+      _theGenMuPlus = indmuplus;
+      _theGenMuMinus = indmuminus;
+    }
+    return ( indmuplus < 25 && indmuminus < 25 );
+  }
+
+  // signal: em2nu
+  if(strcmp(processType,"HtoWWtoem2nu")==0) {
+    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
+      if( idMc[imc]  == 13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc]  == 11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+    }
+    if( indeplus<25 && indmuminus<25 ) {
+      _theGenPos = indeplus;
+      _theGenMuMinus = indmuminus;
+    } else if( indeminus<25 && indmuplus<25 ) {
+      _theGenEle = indeminus;
+      _theGenMuPlus = indmuplus;
+    }
+    return ( (indeplus<25 && indmuminus<25) || (indeminus<25 && indmuplus<25) );
+  }
+
+  // signal ee excluding taus
+  if(strcmp(processType,"HtoWWto2e2nu_prompt")==0) {
+    int indeminus=999, indeplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
+      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+    }
+    if( indeminus<25 && indeplus<25 ) {
+      _theGenPos = indeplus;
+      _theGenEle = indeminus;
+    }
+    return ( indeplus < 25 && indeminus < 25 );
+  }
+
+  // signal mm excluding taus
+  if(strcmp(processType,"HtoWWto2m2nu_prompt")==0) {
+    int indmuminus=999, indmuplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = 11;
+    }
+    if( indmuminus<25 && indmuplus<25 ) {
+      _theGenMuPlus = indmuplus;
+      _theGenMuMinus = indmuminus;
+    }
+    return ( indmuplus < 25 && indmuminus < 25 );
+  }
+
+  // signal em excluding taus
+  if(strcmp(processType,"HtoWWtoem2nu_prompt")==0) {
+    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
+      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+    }
+    if( indeplus<25 && indmuminus<25 ) {
+      _theGenPos = indeplus;
+      _theGenMuMinus = indmuminus;
+    } else if( indeminus<25 && indmuplus<25 ) {
+      _theGenEle = indeminus;
+      _theGenMuPlus = indmuplus;
+    }
+    return ( (indeplus<25 && indmuminus<25) || (indeminus<25 && indmuplus<25) );
   }
 
   // signal: 2l2nu
@@ -264,6 +364,10 @@ void HiggsSelection::Loop() {
   myOutTreeMM = new RedHiggsTree(reducedTreeNameMM.c_str());
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
 
+  myOutTreeEE->addHLTElectronsInfos();
+  myOutTreeMM->addHLTMuonsInfos();
+  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
+
   if (_preselection->getSwitch("addCSA07Infos")) {
     myOutTreeEE->addCSA07Infos();
     myOutTreeMM->addCSA07Infos();
@@ -277,6 +381,14 @@ void HiggsSelection::Loop() {
     myOutTreeEM->addKFactor();
 
   }
+
+  myOutTreeEE->addMcTruthInfos();
+  myOutTreeMM->addMcTruthInfos();
+  myOutTreeEM->addMcTruthInfos();
+
+  // trigger reduced tree
+  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
+  myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
 
   float met, deltaPhi, transvMass; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
@@ -306,6 +418,23 @@ void HiggsSelection::Loop() {
     // trigger
     Utils anaUtils;
     bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggers, firedTrg);
+
+    bool decayEE = findMcTree("HtoWWto2e2nu");
+    bool decayMM = findMcTree("HtoWWto2m2nu");
+    bool decayEM = findMcTree("HtoWWtoem2nu");
+
+    bool promptEE = findMcTree("HtoWWto2e2nu_prompt");
+    bool promptMM = findMcTree("HtoWWto2m2nu_prompt");
+    bool promptEM = findMcTree("HtoWWtoem2nu_prompt");
+
+    myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
+    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+				     firedTrg[m_requiredTriggers[1]],
+				     (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
+    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
+				 firedTrg[m_requiredTriggers[3]],
+				 (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
+    myTriggerTree->store();
 
     // get the best electrons, best muons  
     std::pair<int,int> theElectrons = getBestElectronPair();
@@ -422,7 +551,6 @@ void HiggsSelection::Loop() {
     float theDeltaPhiMM, theInvMassMM, theTransvMassMM, theDetaLeptonsMM = 0.;
     float theDeltaPhiEM, theInvMassEM, theTransvMassEM, theDetaLeptonsEM = 0.;
 
-
     // ---------------------------------------
     // ee final state
     if (m_channel[ee]){
@@ -455,6 +583,12 @@ void HiggsSelection::Loop() {
       bool selUpToFinalLeptonsEE = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
       bool selUpToJetVetoEE = CutBasedHiggsSelectionEE.outputUpToJetVeto();
       bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
+
+      myOutTreeEE -> fillMcTruth(promptEE);
+      
+      myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+				       firedTrg[m_requiredTriggers[1]],
+				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
 
       myOutTreeEE -> fillAll(etMet[0], 
 			     theDeltaPhiEE, 
@@ -513,6 +647,12 @@ void HiggsSelection::Loop() {
       bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
       bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
+      myOutTreeMM -> fillMcTruth(promptMM);
+      
+      myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
+				   firedTrg[m_requiredTriggers[3]],
+				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
+      
       myOutTreeMM -> fillAll(etMet[0], 
 			     theDeltaPhiMM, 
 			     theTransvMassMM, 
@@ -590,6 +730,16 @@ void HiggsSelection::Loop() {
       bool selUpToFinalLeptonsEM = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
       bool selUpToJetVetoEM = CutBasedHiggsSelectionEM.outputUpToJetVeto();
       bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
+
+      myOutTreeEM -> fillMcTruth(promptEM);
+      
+      myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+				       firedTrg[m_requiredTriggers[1]],
+				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
+
+      myOutTreeEM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
+				   firedTrg[m_requiredTriggers[3]],
+				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
 
       myOutTreeEM -> fillAll(etMet[0], 
 			     theDeltaPhiEM, 

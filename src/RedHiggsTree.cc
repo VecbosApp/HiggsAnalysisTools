@@ -50,6 +50,28 @@ void RedHiggsTree::addKFactor() {
 
 }
 
+void RedHiggsTree::addMcTruthInfos() {
+
+  myTree->Branch("promptDecay",         &myPromptDecay,         "promptDecay/B");
+
+}
+
+void RedHiggsTree::addHLTElectronsInfos() {
+
+  myTree->Branch("HLTSingleElectron",        &myHLTSingleElectron,        "HLTSingleElectron/B");
+  myTree->Branch("HLTSingleElectronRelaxed", &myHLTSingleElectronRelaxed, "HLTSingleElectronRelaxed/B");
+  myTree->Branch("HLTSingleElectronOR",      &myHLTSingleElectronOR,      "HLTSingleElectronOR/B");
+
+}
+
+void RedHiggsTree::addHLTMuonsInfos() {
+
+  myTree->Branch("HLTSingleMuon",        &myHLTSingleMuon,        "HLTSingleMuon/B");
+  myTree->Branch("HLTSingleMuonRelaxed", &myHLTSingleMuonRelaxed, "HLTSingleMuonRelaxed/B");
+  myTree->Branch("HLTSingleMuonOR",      &myHLTSingleMuonOR,      "HLTSingleMuonOR/B");
+
+}
+
 void RedHiggsTree::store()
 {
   myTree->Fill();
@@ -94,5 +116,27 @@ void RedHiggsTree::fillCSA07(double weight, double processId, float lumi)
 void RedHiggsTree::fillKFactor(double kfactor) {
 
   myKFactor = kfactor;
+
+}
+
+void RedHiggsTree::fillMcTruth(bool prompt) {
+
+  myPromptDecay = prompt;
+
+}
+
+void RedHiggsTree::fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR) {
+
+  myHLTSingleElectron = singleEle;
+  myHLTSingleElectronRelaxed = singleEleRelaxed;
+  myHLTSingleElectronOR = singleEleOR;
+
+}
+
+void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR) {
+
+  myHLTSingleMuon = singleMuon;
+  myHLTSingleMuonRelaxed = singleMuonRelaxed;
+  myHLTSingleMuonOR = singleMuonOR;
 
 }

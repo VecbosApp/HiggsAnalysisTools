@@ -16,8 +16,9 @@
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
 #include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
 #include "HiggsAnalysisTools/include/CutBasedHiggsSelector.hh"
-#include "HiggsBase.h"
-#include "RedHiggsTree.h"
+#include "HiggsAnalysisTools/include/HiggsBase.h"
+#include "HiggsAnalysisTools/include/RedHiggsTree.h"
+#include "HiggsAnalysisTools/include/RedTriggerTree.hh"
 
 #include <TVector3.h>
 #include <TLorentzVector.h>
@@ -114,6 +115,7 @@ private:
   float hardestLeptonPt, slowestLeptonPt;
   
   int _theGenEle, _theGenPos;
+  int _theGenMuMinus, _theGenMuPlus;
 
   //! vectors to store indices of best candidates
   std::vector<int> *_bestElectrons;
@@ -134,10 +136,13 @@ private:
   TH1F *RecoJets_pt, *MatchedJets_pt;
   TH1F *etHighestJet;
   
-  //! reduced tree
+  //! reduced tree for event selection (on at least 2leptons events)
   RedHiggsTree *myOutTreeEE;
   RedHiggsTree *myOutTreeMM;
   RedHiggsTree *myOutTreeEM;
+
+  //! reduced tree for trigger studies (on all events)
+  RedTriggerTree *myTriggerTree;
 
   //! new variables
   float m_eOverP[100];
