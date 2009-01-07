@@ -115,15 +115,16 @@ int main(int argc, char* argv[]) {
   TriggerMask mask(treeCond);
 
   // require triggers for ee channel
-  mask.requireTrigger("HLT1Electron");
-  mask.requireTrigger("HLT1ElectronRelaxed");
-//   mask.requireTrigger("HLT2Electron");
-//   mask.requireTrigger("HLT2ElectronRelaxed");
-  mask.requireTrigger("HLT1MuonIso");
-  mask.requireTrigger("HLT1MuonNonIso");
-//   mask.requireTrigger("HLT2MuonNonIso");
-//   mask.requireTrigger("HLTXElectronMuon");
-//   mask.requireTrigger("HLTXElectronMuonRelaxed");
+  //   mask.requireTrigger("HLT1Electron");
+  //   mask.requireTrigger("HLT1ElectronRelaxed");
+  //   mask.requireTrigger("HLT2Electron");
+  //   mask.requireTrigger("HLT2ElectronRelaxed");
+  //   mask.requireTrigger("HLT1MuonIso");
+  //   mask.requireTrigger("HLT1MuonNonIso");
+  //   mask.requireTrigger("HLT2MuonNonIso");
+  //   mask.requireTrigger("HLTXElectronMuon");
+  //   mask.requireTrigger("HLTXElectronMuonRelaxed");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
 
   std::vector<int> requiredTriggers = mask.getBits();
   htoww.requireTrigger(requiredTriggers);

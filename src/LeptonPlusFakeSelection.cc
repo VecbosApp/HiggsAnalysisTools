@@ -135,9 +135,6 @@ void LeptonPlusFakeSelection::Loop() {
 
     float weight = 1;
     
-    // get the alpgen weight to normalize correctly jet bins
-    weight = genWeight; 
-
     // trigger
     Utils anaUtils;
     bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggers, firedTrg);
@@ -167,13 +164,11 @@ void LeptonPlusFakeSelection::Loop() {
 
 	float L1L2deltaphi = fabs( 180./TMath::Pi() * L14Momentum.Vect().DeltaPhi(L24Momentum.Vect()) );
 	
-	if( genAlpgenID<2000 ) { 
-	  m_histoLL_mll->Fill( L1L2mll, weight );
-	  m_histoLL_ptmax->Fill( TMath::Max(L14Momentum.Vect().Mag(),L24Momentum.Vect().Mag()), weight );
-	  m_histoLL_ptmin->Fill( TMath::Min(L14Momentum.Vect().Mag(),L24Momentum.Vect().Mag()), weight );
-	  m_histoLL_met->Fill( etMet[0], weight );
-	  m_histoLL_deltaphi->Fill ( L1L2deltaphi, weight );
-	}
+	m_histoLL_mll->Fill( L1L2mll, weight );
+	m_histoLL_ptmax->Fill( TMath::Max(L14Momentum.Vect().Mag(),L24Momentum.Vect().Mag()), weight );
+	m_histoLL_ptmin->Fill( TMath::Min(L14Momentum.Vect().Mag(),L24Momentum.Vect().Mag()), weight );
+	m_histoLL_met->Fill( etMet[0], weight );
+	m_histoLL_deltaphi->Fill ( L1L2deltaphi, weight );
 
 	continue;
       }
@@ -187,13 +182,11 @@ void LeptonPlusFakeSelection::Loop() {
     // set the kinematic variables for the rest of the selection
     setKinematics();
 
-    if( genAlpgenID<2000 ) {
-      m_histoLD_mll->Fill( m_mll, weight );
-      m_histoLD_ptmax->Fill( TMath::Max(m_theL14Momentum.Vect().Mag(),m_theFake4Momentum.Vect().Mag()), weight );
-      m_histoLD_ptmin->Fill( TMath::Min(m_theL14Momentum.Vect().Mag(),m_theFake4Momentum.Vect().Mag()), weight );
-      m_histoLD_met->Fill( etMet[0], weight );
-      m_histoLD_deltaphi->Fill ( m_deltaPhi, weight );
-    }
+    m_histoLD_mll->Fill( m_mll, weight );
+    m_histoLD_ptmax->Fill( TMath::Max(m_theL14Momentum.Vect().Mag(),m_theFake4Momentum.Vect().Mag()), weight );
+    m_histoLD_ptmin->Fill( TMath::Min(m_theL14Momentum.Vect().Mag(),m_theFake4Momentum.Vect().Mag()), weight );
+    m_histoLD_met->Fill( etMet[0], weight );
+    m_histoLD_deltaphi->Fill ( m_deltaPhi, weight );
 
     // weight with the Fake -> L2 probability
     float fakerateQCD = getFakeRate( m_theFake4Momentum.Pt(), QCD );
@@ -228,7 +221,6 @@ void LeptonPlusFakeSelection::Loop() {
     bool passedJetVeto = !goodJetFound();
 
     // selections: QCD counters
-    LFakeFromQCDSelector.SetProcessID((int)genAlpgenID/1000);
     LFakeFromQCDSelector.SetWeight( weightFromQCD );
     LFakeFromQCDSelector.SetHighElePt( m_theL14Momentum.Pt() );
     LFakeFromQCDSelector.SetLowElePt( m_theFake4Momentum.Pt() );
@@ -247,7 +239,6 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeFromQCDSelector.SetDetaLeptons( 0. );
     bool selOutput = LFakeFromQCDSelector.output();
 
-    LFakeErrorFromQCDSelector.SetProcessID((int)genAlpgenID/1000);
     LFakeErrorFromQCDSelector.SetWeight( weightErrorFromQCD );
     LFakeErrorFromQCDSelector.SetHighElePt( m_theL14Momentum.Pt() );
     LFakeErrorFromQCDSelector.SetLowElePt( m_theFake4Momentum.Pt() );
@@ -267,7 +258,6 @@ void LeptonPlusFakeSelection::Loop() {
     selOutput = LFakeErrorFromQCDSelector.output();
 
     // selections: Wjets counters
-    LFakeFromWjetsSelector.SetProcessID((int)genAlpgenID/1000);
     LFakeFromWjetsSelector.SetWeight( weightFromWjets );
     LFakeFromWjetsSelector.SetHighElePt( m_theL14Momentum.Pt() );
     LFakeFromWjetsSelector.SetLowElePt( m_theFake4Momentum.Pt() );
@@ -286,7 +276,6 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeFromWjetsSelector.SetDetaLeptons( 0. );
     selOutput = LFakeFromWjetsSelector.output();
 
-    LFakeErrorFromWjetsSelector.SetProcessID((int)genAlpgenID/1000);
     LFakeErrorFromWjetsSelector.SetWeight( weightErrorFromWjets );
     LFakeErrorFromWjetsSelector.SetHighElePt( m_theL14Momentum.Pt() );
     LFakeErrorFromWjetsSelector.SetLowElePt( m_theFake4Momentum.Pt() );
@@ -370,11 +359,11 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
     m_theL14Momentum.SetXYZT(0,0,0,0);
   
   float maxPtJet=-1000.;
-  for(int j=0;j<nJet;j++) {
+  for(int j=0;j<nIterativeJet;j++) {
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
+    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -385,17 +374,17 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
 
-    if(etJet[j]>maxPtJet) { maxPtJet=etJet[j]; theFake=j; }
+    if(etIterativeJet[j]>maxPtJet) { maxPtJet=etIterativeJet[j]; theFake=j; }
 
     break;
   }
 
   m_theFake = theFake;
   if ( theFake > -1 )
-    m_theFake4Momentum.SetXYZT(pxJet[theFake],pyJet[theFake],pzJet[theFake],energyJet[theFake]);
+    m_theFake4Momentum.SetXYZT(pxIterativeJet[theFake],pyIterativeJet[theFake],pzIterativeJet[theFake],energyIterativeJet[theFake]);
   else
     m_theFake4Momentum.SetXYZT(0,0,0,0);
   
@@ -446,13 +435,13 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 
   // first check that kinematics has been set
   bool foundJet=false;
-  for(int j=0;j<nJet;j++) {
+  for(int j=0;j<nIterativeJet;j++) {
 
     if ( j == m_theFake ) continue;
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
+    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -463,11 +452,11 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
 
-    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etJet[j])) &&
- 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaJet[j])) 
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etIterativeJet[j])) &&
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaIterativeJet[j])) 
 	) continue;
     foundJet=true;
     break;

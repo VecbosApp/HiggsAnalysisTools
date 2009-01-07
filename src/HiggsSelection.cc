@@ -54,7 +54,6 @@ HiggsSelection::HiggsSelection(TTree *tree)
   // extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   //  _addedPres = new Selection(fileCutsPreselection,fileSwitchesPreselection);
   _preselection->addSwitch("apply_kFactor");
-  _preselection->addSwitch("addCSA07Infos");
   _preselection->addCut("etaElectronAcc");
   _preselection->addCut("ptElectronAcc");
   _preselection->addCut("etaMuonAcc");
@@ -107,10 +106,10 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _monitorMuons = new Monitor(&nMuon,_bestMuons);
   _bestJets = new std::vector<int>;
   _excludedJets = new std::vector<int>;
-  _monitorJets = new Monitor(&nJet,_bestJets);
+  _monitorJets = new Monitor(&nIterativeJet,_bestJets);
   _monitorJets->ExcludeElements(_excludedJets);
   _bestGenJets = new std::vector<int>;
-  _monitorGenJets = new Monitor(&nGenJet,_bestGenJets);
+  _monitorGenJets = new Monitor(&nIterativeGenJet,_bestGenJets);
 }
 
 HiggsSelection::~HiggsSelection(){
@@ -368,12 +367,6 @@ void HiggsSelection::Loop() {
   myOutTreeMM->addHLTMuonsInfos();
   myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
 
-  if (_preselection->getSwitch("addCSA07Infos")) {
-    myOutTreeEE->addCSA07Infos();
-    myOutTreeMM->addCSA07Infos();
-    myOutTreeEM->addCSA07Infos();
-  }
-  
   if ( _preselection->getSwitch("apply_kFactor") ) {
 
     myOutTreeEE->addKFactor();
@@ -405,13 +398,9 @@ void HiggsSelection::Loop() {
     resetKinematics();
 
     // get the kFactor of the event (for signal)
-     
     float weight = 1;
     if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
     
-    // get the alpgen weight to normalize correctly jet bins
-    if ( _preselection->getSwitch("addCSA07Infos") ) weight = genWeight; 
-
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
 
@@ -466,9 +455,6 @@ void HiggsSelection::Loop() {
     setPreselKinematics();
     
     // setting preselections
-    if( _preselection->getSwitch("addCSA07Infos") ) {
-      CommonHiggsPreselection.SetProcessID((int)genAlpgenID/1000);
-    }
     CommonHiggsPreselection.SetWeight(weight);
     CommonHiggsPreselection.SetMcTruth(foundMcTree);
     CommonHiggsPreselection.SetHLT(passedHLT);
@@ -560,9 +546,6 @@ void HiggsSelection::Loop() {
       theTransvMassEE  = m_transvMass[ee];
 
       // selections
-      if( _preselection->getSwitch("addCSA07Infos") ) {
-	CutBasedHiggsSelectionEE.SetProcessID((int)genAlpgenID/1000);
-      }
       CutBasedHiggsSelectionEE.SetWeight(weight);
       CutBasedHiggsSelectionEE.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEE.SetLowElePt(slowestElectronPt);
@@ -601,9 +584,6 @@ void HiggsSelection::Loop() {
 			     selUpToJetVetoEE,
 			     selPreDeltaPhiEE,
 			     isSelectedEE);
-      if ( _preselection->getSwitch("addCSA07Infos") ) {
-	myOutTreeEE->fillCSA07(genWeight,genAlpgenID,1000.);
-      }
 
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEE->fillKFactor(evtKfactor);
@@ -623,9 +603,6 @@ void HiggsSelection::Loop() {
       theTransvMassMM  = m_transvMass[mm];
       
       // selections
-      if( _preselection->getSwitch("addCSA07Infos") ) {
-	CutBasedHiggsSelectionMM.SetProcessID((int)genAlpgenID/1000);
-      }
       CutBasedHiggsSelectionMM.SetWeight(weight);
       CutBasedHiggsSelectionMM.SetHighElePt(hardestMuonPt);
       CutBasedHiggsSelectionMM.SetLowElePt(slowestMuonPt);
@@ -665,10 +642,6 @@ void HiggsSelection::Loop() {
 			     selPreDeltaPhiMM,
 			     isSelectedMM);
       
-      if ( _preselection->getSwitch("addCSA07Infos") ) {
-	myOutTreeMM->fillCSA07(genWeight,genAlpgenID,1000.);
-      }
-      
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeMM->fillKFactor(evtKfactor);
       }
@@ -707,9 +680,6 @@ void HiggsSelection::Loop() {
 
 
       // selections
-      if( _preselection->getSwitch("addCSA07Infos") ) {
-	CutBasedHiggsSelectionEM.SetProcessID((int)genAlpgenID/1000);
-      }
       CutBasedHiggsSelectionEM.SetWeight(weight);
       CutBasedHiggsSelectionEM.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEM.SetLowElePt(slowestMuonPt);
@@ -752,10 +722,6 @@ void HiggsSelection::Loop() {
 			     selUpToJetVetoEM,
 			     selPreDeltaPhiEM,
 			     isSelectedEM);
-      
-      if ( _preselection->getSwitch("addCSA07Infos") ) {
-	myOutTreeEM->fillCSA07(genWeight,genAlpgenID,1000.);
-      }
       
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEM->fillKFactor(evtKfactor);
@@ -1075,11 +1041,11 @@ bool HiggsSelection::goodJetFound() {
   // first check that kinematics has been set
   bool foundJet=false;
   float maxPtJet=0.;
-  for(int j=0;j<nJet;j++) {
+  for(int j=0;j<nIterativeJet;j++) {
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxJet[j],pyJet[j],pzJet[j]);
+    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
     if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -1098,12 +1064,12 @@ bool HiggsSelection::goodJetFound() {
 	 ) continue;
     }
 
-    if(etJet[j]>maxPtJet) maxPtJet=etJet[j];
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etJet[j]) ) continue;
+    if(etIterativeJet[j]>maxPtJet) maxPtJet=etIterativeJet[j];
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
 
-    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etJet[j])) &&
- 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaJet[j])) 
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etIterativeJet[j])) &&
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaIterativeJet[j])) 
 	) continue;
     foundJet=true;
     break;
@@ -1132,7 +1098,7 @@ void HiggsSelection::bookHistos() {
   _monitorGenerator->book1D("genHiggsPt","Higgs p_{T} (GeV/c)",_genHiggsPt,80,0,200);
   _monitorGenerator->book1D("nGenJets","number of generated Jets",_nGenJet,100,0,100);
 
-  _monitorGenJets->book1D("et","generated jet tranverse energy (GeV)",etGenJet,50,0,300,"All+Fake+Best");
+  _monitorGenJets->book1D("et","generated jet tranverse energy (GeV)",etIterativeGenJet,50,0,300,"All+Fake+Best");
 
   // Event quantities - FIXME
 //   _monitorEventAfterReco->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
@@ -1156,11 +1122,11 @@ void HiggsSelection::bookHistos() {
   _monitorMet->book1D("metPhi","Missing trensverse momentum #phi",phiMet,50,-TMath::Pi(),TMath::Pi(),"All");
 
   // Jet quantities
-  _monitorJets->book1D("et","jet tranverse energy (GeV)",etJet,50,0,300,"All+Fake+Best");
-  _monitorJets->book1D("eta","jet #eta",etaJet,50,-2.5,2.5,"All+Fake+Best");
-  _monitorJets->book1D("alphaJet","jet #alpha",alphaJet,50,0.,3.,"All+Fake+Best");
-  _monitorJets->book1D("emFracJet","jet e.m. energy fraction",emFracJet,50,0.,1.,"All+Fake+Best");
-  _monitorJets->book1D("hadFracJet","jet hadronic energy fraction",hadFracJet,50,0.,1.,"All+Fake+Best");
+  _monitorJets->book1D("et","jet tranverse energy (GeV)",etIterativeJet,50,0,300,"All+Fake+Best");
+  _monitorJets->book1D("eta","jet #eta",etaIterativeJet,50,-2.5,2.5,"All+Fake+Best");
+  _monitorJets->book1D("alphaJet","jet #alpha",alphaIterativeJet,50,0.,3.,"All+Fake+Best");
+  _monitorJets->book1D("emFracJet","jet e.m. energy fraction",emFracIterativeJet,50,0.,1.,"All+Fake+Best");
+  _monitorJets->book1D("hadFracJet","jet hadronic energy fraction",hadFracIterativeJet,50,0.,1.,"All+Fake+Best");
 
   // Electron quantities
   _monitorElectrons->book1D("energy","electron energy (GeV)",energyEle,50,0,150,"All+Fake+Best");
@@ -1188,22 +1154,22 @@ void HiggsSelection::estimateJetMatch(float ptmin) {
   _bestJets->clear();
   _excludedJets->clear();
   
-  for(int recojet=0;recojet<nJet;recojet++) {
+  for(int recojet=0;recojet<nIterativeJet;recojet++) {
     // fill the denominator: all reco jets
-    if(etJet[recojet]<20.0) _excludedJets->push_back(recojet);
-    if(etJet[recojet]>ptmin) {
-      RecoJets_pt->Fill(etJet[recojet]);
+    if(etIterativeJet[recojet]<20.0) _excludedJets->push_back(recojet);
+    if(etIterativeJet[recojet]>ptmin) {
+      RecoJets_pt->Fill(etIterativeJet[recojet]);
     }
     else continue;
     
-    TVector3 pRecoJet(pxJet[recojet],pyJet[recojet],pzJet[recojet]);
+    TVector3 pRecoJet(pxIterativeJet[recojet],pyIterativeJet[recojet],pzIterativeJet[recojet]);
 
     // fill the numerator: only the matched jets
     // matching is defined as DeltaR(reco-gen)<0.3
-    for(int genjet=0;genjet<nGenJet;genjet++) {
-      TVector3 pGenJet(pxGenJet[genjet],pyGenJet[genjet],pzGenJet[genjet]);
-      if(etGenJet[genjet]>ptmin && pRecoJet.DeltaR(pGenJet)<0.3) {
-	MatchedJets_pt->Fill(etJet[recojet]);
+    for(int genjet=0;genjet<nIterativeGenJet;genjet++) {
+      TVector3 pGenJet(pxIterativeGenJet[genjet],pyIterativeGenJet[genjet],pzIterativeGenJet[genjet]);
+      if(etIterativeGenJet[genjet]>ptmin && pRecoJet.DeltaR(pGenJet)<0.3) {
+	MatchedJets_pt->Fill(etIterativeJet[recojet]);
 	// the matched jets are best jets, the rest are "fake" 
 	// fake jets include the electron-matched jets   
 	_bestJets->push_back(recojet);
