@@ -77,7 +77,6 @@ HiggsSelection::HiggsSelection(TTree *tree)
   CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str()); 
   CutBasedHiggsSelectionEM.AppendPreselection(_preselection);
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
-
   
   // single electron efficiency
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
@@ -514,8 +513,10 @@ void HiggsSelection::Loop() {
     // extra tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
     float thePosTrackerPtSum = 0.;
-    if (theElectron > -1) theEleTrackerPtSum = eleSumPtPreselectionEle[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.2);
-    if (thePositron > -1) thePosTrackerPtSum = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(thePositron,theElectron,0.2);
+    if (theElectron > -1 && thePositron > -1) theEleTrackerPtSum = eleSumPtPreselectionEle[theElectron] - getSecondEleTkPt(theElectron,thePositron,0.2);
+    if (theElectron > -1 && thePositron < 0)  theEleTrackerPtSum = eleSumPtPreselectionEle[theElectron];
+    if (thePositron > -1 && theElectron > -1) thePosTrackerPtSum = eleSumPtPreselectionEle[thePositron] - getSecondEleTkPt(thePositron,theElectron,0.2);
+    if (thePositron > -1 && theElectron < 0)  thePosTrackerPtSum = eleSumPtPreselectionEle[thePositron];
 
     // hcal isolation for electrons
     float theEleHcalPtSum = 0.;
@@ -526,8 +527,10 @@ void HiggsSelection::Loop() {
     // ecal isolation for electrons
     float theEleEcalPtSum = 0.;
     float thePosEcalPtSum = 0.;
-    if (theElectron > -1) theEleEcalPtSum = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
-    if (thePositron > -1) thePosEcalPtSum = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
+    if (theElectron > -1 && thePositron > -1) theEleEcalPtSum = eleSumEmEt04Ele[theElectron] - getSecondEleEmEt(theElectron,thePositron,0.4);
+    if (theElectron > -1 && thePositron < 0 ) theEleEcalPtSum = eleSumEmEt04Ele[theElectron];
+    if (thePositron > -1 && theElectron > -1) thePosEcalPtSum = eleSumEmEt04Ele[thePositron] - getSecondEleEmEt(thePositron,theElectron,0.4);
+    if (thePositron > -1 && theElectron < 0 ) thePosEcalPtSum = eleSumEmEt04Ele[thePositron];
 
     // jet veto: method gives true if good jet is found
     bool passedJetVeto = !goodJetFound();
@@ -536,6 +539,7 @@ void HiggsSelection::Loop() {
     float theDeltaPhiEE, theInvMassEE, theTransvMassEE, theDetaLeptonsEE = 0.;
     float theDeltaPhiMM, theInvMassMM, theTransvMassMM, theDetaLeptonsMM = 0.;
     float theDeltaPhiEM, theInvMassEM, theTransvMassEM, theDetaLeptonsEM = 0.;
+
 
     // ---------------------------------------
     // ee final state
@@ -593,7 +597,7 @@ void HiggsSelection::Loop() {
       myOutTreeEE -> store();
       
     }
-    
+
     // ---------------------------------------
     // mm final state
     if (m_channel[mm]){
@@ -731,6 +735,7 @@ void HiggsSelection::Loop() {
       myOutTreeEM -> store();
 
     }
+
 
     /*
     // ancora da finire -- sistema --- 
