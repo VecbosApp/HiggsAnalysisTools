@@ -21,6 +21,8 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
                     //    1 = golden, EE
                     //    2 = showering, EB
                     //    3 = showering, EE
+  // E) do you want toy MC?
+  theToy = 1;
 
 
   // kinematics
@@ -87,19 +89,11 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   // 
   HH_NVarDim = new THnSparseF("HH_NVarDim", "HH_NVarDim", nVar, theBins, theMin, theMax);
   HL_NVarDim = new THnSparseF("HL_NVarDim", "HL_NVarDim", nVar, theBins, theMin, theMax);
-
-  // output trees
-  outRootTree = new RedEleIDOptimTree("myOutTree.root");
-  outLikeTree = new RedLikeOptimTree("myLikeTree.root");
-
-  // output root file
-  outRootFile = new TFile("outHistos.root","RECREATE");
 }
 
 HiggsEleIdOptimToyMC::~HiggsEleIdOptimToyMC(){
   
   // output txt file with efficiencies:
-  ofstream *outTxtFile = new ofstream("outputFile.txt",ios::app);
   *outTxtFile << "all events:    "      << allEvents    << endl;
   *outTxtFile << "passedMC:      "      << passedMc     << endl;
   *outTxtFile << "triggered:     "      << triggered    << endl;
@@ -138,8 +132,7 @@ bool HiggsEleIdOptimToyMC::findMcTree(const char* processType) {
   // w+jets: e / mu / tau
   else if(strcmp(processType,"Wjets")==0) {
     _process = "Wjets";
-    theWeight=genWeight; 
-    return ( genAlpgenID>=1000 && genAlpgenID<2000);
+    return 1;
   }
   else {
     std::cout << "This processType: " << processType << "is not expected, you should put MTtruth switch off" << std::endl;
@@ -148,11 +141,23 @@ bool HiggsEleIdOptimToyMC::findMcTree(const char* processType) {
 }
 
 
-void HiggsEleIdOptimToyMC::Loop() {
+void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 
   _verbose=false;
   if(fChain == 0) return;
   
+  // output trees and root file
+  char outfilename[200];
+  sprintf(outfilename,"%s_MyOutTree.root",filename);
+  outRootTree = new RedEleIDOptimTree(outfilename);
+  sprintf(outfilename,"%s_MyLikeTree.root",filename);
+  outLikeTree = new RedLikeOptimTree(outfilename);
+  sprintf(outfilename,"%s_OutHistos.root",filename);
+  outRootFile = new TFile(outfilename,"RECREATE");
+  // output txt file with efficiencies:
+  sprintf(outfilename,"%s_outputFile.txt",filename);
+  outTxtFile = new ofstream(outfilename,ios::app);
+
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
   std::cout << "Number of entries = " << nentries << std::endl;
@@ -166,7 +171,7 @@ void HiggsEleIdOptimToyMC::Loop() {
 
     // before any cut
     allEvents=allEvents+theWeight; 
-
+    
     // look to the MC truth decay tree
     bool foundMcTree = findMcTree("HtoWWto2e2nu");
     // bool foundMcTree = findMcTree("Wjets");
@@ -176,11 +181,14 @@ void HiggsEleIdOptimToyMC::Loop() {
     // trigger
     Utils anaUtils;
     bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggers, firedTrg);
-    if (!passedHLT) continue; 
+    if (!passedHLT) continue;
     triggered=triggered+theWeight;   
 
     // did we pass preselections?
-    if( !evtPresel ) continue;
+    // bool is missing in summer08 ntuples, 
+    // but preselections are anyway applied later on for electrons only... 
+    // we can skip this part
+    // if( !evtPresel ) continue;  
     commonPresel=commonPresel+theWeight;
 
     // did we reconstruct two electrons?
@@ -202,7 +210,7 @@ void HiggsEleIdOptimToyMC::Loop() {
     // did we pass the loose electronId?
     if (!eleIdCutBasedEle[theElectron] || !eleIdCutBasedEle[thePositron]) continue;
     looseId=looseId+theWeight;   
-
+    
     // did we pass loose electron tracker based isolation?
     if (eleSumPt04Ele[theElectron]>0.1 || eleSumPt04Ele[thePositron]>0.1) continue;
     passedIsol=passedIsol+theWeight;
@@ -338,59 +346,64 @@ void HiggsEleIdOptimToyMC::Loop() {
     }
     outLikeTree -> store();
     
+    
+    // in case toy generation is not needed
+    if (!theToy) {
+      if(isHigherEle){
+	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron]);
+      }
+      if(!isHigherEle){
+	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron]);
+      }
+      outRootTree -> store();
+    }
+
+
     // full kine analysis
     if (goodJetFound())           continue;
-    // other kinematic selections depending on the mass
-    if (theHmass==130) {
-      if (etMet[0]<40)            continue;
-      if (etMet[0]>80)            continue;
-      if (_deltaPhi > 90)         continue;
-      if (hardestElectronPt > 49) continue;
-      if (hardestElectronPt < 20) continue;
-      if (slowestElectronPt < 10) continue;
-      if (_mll > 40)              continue;
-    }
+    // other kinematic selections depending on the mass (cuts applied for csa07 note)
     if (theHmass==160) {
-      if (etMet[0] < 51)          continue;
-      if (_deltaPhi > 45)         continue;
-      if (hardestElectronPt < 25) continue;
-      if (hardestElectronPt > 49) continue;
+      if (etMet[0] < 40)          continue;
+      if (etMet[0] > 85)          continue;
+      if (_deltaPhi > 80)         continue;
+      if (hardestElectronPt < 26) continue;
+      if (hardestElectronPt > 66) continue;
       if (slowestElectronPt < 25) continue;
-      if (_mll > 40)              continue;
-    }
-    if (theHmass==190) {
-      if (etMet[0]<48)            continue;
-      if (_deltaPhi > 50)         continue;
-      if (hardestElectronPt > 73) continue;
-      if (hardestElectronPt < 31) continue;
-      if (slowestElectronPt < 25) continue;
-      if (_mll > 40)              continue;
+      if (_mll > 65)              continue;
     }
 
     fullKine=fullKine+theWeight;
 
   } // end loop over entries
+  
+
+
 
   // generating a random distribution according to the sampled one
-  TDatime *now = new TDatime();  
-  for(int scan =0; scan<100000; scan++){
-    if(scan%1000==0) cout << "random: " << scan << endl;
+  if (theToy) {
+    
+    TDatime *now = new TDatime();  
+    for(int scan =0; scan<100000; scan++){
+      if(scan%1000==0) cout << "random: " << scan << endl;
+      
+      // randomly generated electron and positron 
+      int today = now->GetDate();  
+      int clock = now->GetTime();  
+      int seed  = today+clock+scan;
+      gRandom->SetSeed(seed);
+      double theRndHigh[6], theRndLow[6];
+      HH_NVarDim->GetRandom(theRndHigh);
+      HL_NVarDim->GetRandom(theRndLow);
+      
+      // filling the reduced tree with toy MC electrons
+      outRootTree->fillAll(theRndHigh[0],theRndHigh[1],theRndHigh[2],theRndHigh[3],theRndHigh[4],theRndHigh[5],theRndLow[0],theRndLow[1],theRndLow[2],theRndLow[3],theRndLow[4],theRndLow[5]);
+      outRootTree -> store();
+      
+    } // mc generation
+    delete now;
+  }
 
-    // randomly generated electron and positron 
-    int today = now->GetDate();  
-    int clock = now->GetTime();  
-    int seed  = today+clock+scan;
-    gRandom->SetSeed(seed);
-    double theRndHigh[6], theRndLow[6];
-    HH_NVarDim->GetRandom(theRndHigh);
-    HL_NVarDim->GetRandom(theRndLow);
 
-    // filling the reduced tree with toy MC electrons
-    outRootTree->fillAll(theRndHigh[0],theRndHigh[1],theRndHigh[2],theRndHigh[3],theRndHigh[4],theRndHigh[5],theRndLow[0],theRndLow[1],theRndLow[2],theRndLow[3],theRndLow[4],theRndLow[5]);
-  outRootTree -> store();
-
-  } // mc generation
-  delete now;
 
   // saving the histos
   outRootFile->cd();
@@ -464,22 +477,22 @@ void HiggsEleIdOptimToyMC::resetKinematics() {
 bool HiggsEleIdOptimToyMC::goodJetFound() {
 
   bool foundJet=false;
-  for(int jj=0;jj<nJet;jj++) {
+  for(int jj=0;jj<nIterativeJet;jj++) {
     // check if the electron falls into the jet
-    TVector3 p3Jet(pxJet[jj],pyJet[jj],pzJet[jj]);
+    TVector3 p3Jet(pxIterativeJet[jj],pyIterativeJet[jj],pzIterativeJet[jj]);
     if (_p4ElectronMinus->Vect().Mag() != 0) {
       float deltaR = p3Jet.DeltaR(_p4ElectronMinus->Vect());
-      if( (deltaR<0.2) && (_HoEElectronMinus < 0.2) && (_CaloEneElectronMinus/energyJet[jj] > 0.9) ) continue;
+      if( (deltaR<0.2) && (_HoEElectronMinus < 0.2) && (_CaloEneElectronMinus/energyIterativeJet[jj] > 0.9) ) continue;
     }
     // check if the positron falls into the jet
     if (_p4ElectronPlus->Vect().Mag() != 0) {
       float deltaR =  p3Jet.DeltaR(_p4ElectronPlus->Vect());
-      if( (deltaR<0.2) && (_HoEElectronPlus < 0.2) && (_CaloEneElectronPlus/energyJet[jj] > 0.9) ) continue;
+      if( (deltaR<0.2) && (_HoEElectronPlus < 0.2) && (_CaloEneElectronPlus/energyIterativeJet[jj] > 0.9) ) continue;
     }
     // checking the jet kinematics
-    if(fabs(etaJet[jj])>2.5) continue;
-    if(etJet[jj]<15)         continue;
-    if(etJet[jj]>=15 && etJet[jj]<=20 && alphaJet[jj]<0.2) continue; 
+    if(fabs(etaIterativeJet[jj])>2.5) continue;
+    if(etIterativeJet[jj]<15)         continue;
+    if(etIterativeJet[jj]>=15 && etIterativeJet[jj]<=20 && alphaIterativeJet[jj]<0.2) continue; 
 
     // this is a good jet
     foundJet=true;

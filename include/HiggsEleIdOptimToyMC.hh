@@ -33,7 +33,7 @@ public:
   //! destructor
   virtual ~HiggsEleIdOptimToyMC();
   //! loop over events
-  void Loop();
+  void Loop(const char *filename);
   //! set the list of the required triggers
   void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
   
@@ -83,6 +83,9 @@ private:
   int nVar;
   int theClass;
   int theHmass;
+  int theToy;
+
+  ofstream *outTxtFile;
 
   //! counters
   float allEvents, passedMc, triggered, commonPresel; 
