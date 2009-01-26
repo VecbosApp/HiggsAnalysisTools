@@ -22,12 +22,14 @@ RedEleIDOptimTree::RedEleIDOptimTree(const char * filename) {
   myTree->Branch("H_s9s25",    &myH_S9s25,     "H_s9s25/F");  
   myTree->Branch("H_see",      &myH_See,       "H_see/F");  
   myTree->Branch("H_eopOut",   &myH_EopOut,    "H_eopOut/F");  
+  myTree->Branch("H_class",    &myH_Class,     "H_class/I");  
   myTree->Branch("L_deltaEta", &myL_DeltaEta,  "L_deltaEta/F");  
   myTree->Branch("L_deltaPhi", &myL_DeltaPhi,  "L_deltaPhi/F");  
   myTree->Branch("L_hoe",      &myL_Hoe,       "L_hoe/F");  
   myTree->Branch("L_s9s25",    &myL_S9s25,     "L_s9s25/F");  
   myTree->Branch("L_see",      &myL_See,       "L_see/F");  
   myTree->Branch("L_eopOut",   &myL_EopOut,    "L_eopOut/F");  
+  myTree->Branch("L_class",    &myL_Class,     "L_class/I");  
 }
 
 RedEleIDOptimTree::~RedEleIDOptimTree() 
@@ -49,7 +51,7 @@ void RedEleIDOptimTree::save()
 }
 
 
-void RedEleIDOptimTree::fillAll(float fhdeta, float fhdphi, float fhhoe, float fhs9s25, float fhsee, float fheopout, float fldeta, float fldphi, float flhoe, float fls9s25, float flsee, float fleopout)
+void RedEleIDOptimTree::fillAll(float fhdeta, float fhdphi, float fhhoe, float fhs9s25, float fhsee, float fheopout, int fhclass, float fldeta, float fldphi, float flhoe, float fls9s25, float flsee, float fleopout, int flclass)
 {
   myH_DeltaEta = fhdeta;
   myH_DeltaPhi = fhdphi;
@@ -57,11 +59,13 @@ void RedEleIDOptimTree::fillAll(float fhdeta, float fhdphi, float fhhoe, float f
   myH_S9s25    = fhs9s25;
   myH_See      = fhsee;
   myH_EopOut   = fheopout;
+  myH_Class    = fhclass;
   myL_DeltaEta = fldeta;
   myL_DeltaPhi = fldphi;
   myL_Hoe      = flhoe;
   myL_S9s25    = fls9s25;
   myL_See      = flsee;
   myL_EopOut   = fleopout;
+  myL_Class    = flclass;
 }
 

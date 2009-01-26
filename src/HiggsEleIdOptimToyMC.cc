@@ -16,13 +16,8 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   theHmass = 160;   
   // C) number of variables - not used for likelihood studies
   nVar = 6;         
-  // D) electron class - not used for likelihood studies
-  theClass = 0;     //    0 = golden, EB
-                    //    1 = golden, EE
-                    //    2 = showering, EB
-                    //    3 = showering, EE
-  // E) do you want toy MC?
-  theToy = 1;
+  // D) do you want toy MC?
+  theToy = 0;
 
 
   // kinematics
@@ -42,7 +37,6 @@ HiggsEleIdOptimToyMC::HiggsEleIdOptimToyMC(TTree *tree)
   elePresel    = 0.; 
   looseId      = 0.; 
   passedIsol   = 0.;
-  twoGoodClass = 0.;
   fullKine     = 0.;
 
   // 1 dimension histos - high pt electron
@@ -102,7 +96,6 @@ HiggsEleIdOptimToyMC::~HiggsEleIdOptimToyMC(){
   *outTxtFile << "presel x ele:  "      << elePresel    << endl;
   *outTxtFile << "loose eleID:   "      << looseId      << endl;
   *outTxtFile << "isolation:     "      << passedIsol   << endl;
-  *outTxtFile << "ok class for both: "  << twoGoodClass << endl;
   *outTxtFile << "full kinematics ok: " << fullKine     << endl; 
   
   // saving histos and tree
@@ -215,18 +208,9 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
     if (eleSumPt04Ele[theElectron]>0.1 || eleSumPt04Ele[thePositron]>0.1) continue;
     passedIsol=passedIsol+theWeight;
 
-    // is this electron belonging to the good class?
-    bool isEle = false;
-    bool isPos = false;
-    if (theClass==0 && (eleClassEle[theElectron]==0)) isEle = true;
-    if (theClass==0 && (eleClassEle[thePositron]==0)) isPos = true;
-    if (theClass==1 && (eleClassEle[theElectron]==100)) isEle = true;
-    if (theClass==1 && (eleClassEle[thePositron]==100)) isPos = true;
-    if (theClass==2 && (eleClassEle[theElectron]>=30 && eleClassEle[theElectron]<=40)) isEle = true;
-    if (theClass==2 && (eleClassEle[thePositron]>=30 && eleClassEle[thePositron]<=40)) isPos = true;
-    if (theClass==3 && (eleClassEle[theElectron]>=130 && eleClassEle[theElectron]<=140)) isEle = true;
-    if (theClass==3 && (eleClassEle[thePositron]>=130 && eleClassEle[thePositron]<=140)) isPos = true;
-    if (isEle && isPos) { twoGoodClass=twoGoodClass+theWeight; }
+    // is this electron belonging to the good class? // old, now always true
+    bool isEle = true;
+    bool isPos = true;
 
     // ordering in pt
     bool isHigherEle = true; 
@@ -243,8 +227,8 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
       toFill[4] = sqrt(covEtaEtaEle[theElectron]);
       toFill[5] = eleCorrEoPoutEle[theElectron];
 
-      // golden electrons: fill HH and HL together 
-      if(theClass==0 || theClass==1){
+      // separating high and low pt
+      if(isHigherEle){  	// high pt lepton
 	HH_dEta    -> Fill(toFill[0],theWeight);
 	HH_dPhi    -> Fill(toFill[1],theWeight);
 	HH_HoE     -> Fill(toFill[2],theWeight);
@@ -252,6 +236,8 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 	HH_See     -> Fill(toFill[4],theWeight);
 	HH_EoPout  -> Fill(toFill[5],theWeight);
 	HH_NVarDim -> Fill(toFill,theWeight);
+      }
+      if(!isHigherEle){   	// low pt lepton
 	HL_dEta    -> Fill(toFill[0],theWeight);
 	HL_dPhi    -> Fill(toFill[1],theWeight);
 	HL_HoE     -> Fill(toFill[2],theWeight);
@@ -259,28 +245,6 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 	HL_See     -> Fill(toFill[4],theWeight);
 	HL_EoPout  -> Fill(toFill[5],theWeight);
 	HL_NVarDim -> Fill(toFill,theWeight);
-      }
-
-      // showering electrons: separating high and low pt
-      if(theClass==2 || theClass==3){
-	if(isHigherEle){  	// high pt lepton
-	  HH_dEta    -> Fill(toFill[0],theWeight);
-	  HH_dPhi    -> Fill(toFill[1],theWeight);
-	  HH_HoE     -> Fill(toFill[2],theWeight);
-	  HH_S9S25   -> Fill(toFill[3],theWeight);
-	  HH_See     -> Fill(toFill[4],theWeight);
-	  HH_EoPout  -> Fill(toFill[5],theWeight);
-	  HH_NVarDim -> Fill(toFill,theWeight);
-	}
-	if(!isHigherEle){   	// low pt lepton
-	  HL_dEta    -> Fill(toFill[0],theWeight);
-	  HL_dPhi    -> Fill(toFill[1],theWeight);
-	  HL_HoE     -> Fill(toFill[2],theWeight);
-	  HL_S9S25   -> Fill(toFill[3],theWeight);
-	  HL_See     -> Fill(toFill[4],theWeight);
-	  HL_EoPout  -> Fill(toFill[5],theWeight);
-	  HL_NVarDim -> Fill(toFill,theWeight);
-	}
       }
     }
     if(isPos){
@@ -292,8 +256,8 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
       toFill[4] = sqrt(covEtaEtaEle[thePositron]);
       toFill[5] = eleCorrEoPoutEle[thePositron];
 
-      // golden electrons: fill HH and HL together
-      if(theClass==0 || theClass==1){
+      // separating high and low pt
+      if(!isHigherEle){       // high pt lepton
 	HH_dEta    -> Fill(toFill[0],theWeight);
 	HH_dPhi    -> Fill(toFill[1],theWeight);
 	HH_HoE     -> Fill(toFill[2],theWeight);
@@ -301,6 +265,8 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 	HH_See     -> Fill(toFill[4],theWeight);
 	HH_EoPout  -> Fill(toFill[5],theWeight);
 	HH_NVarDim -> Fill(toFill,theWeight);
+      }
+      if(isHigherEle){	// low pt lepton
 	HL_dEta    -> Fill(toFill[0],theWeight);
 	HL_dPhi    -> Fill(toFill[1],theWeight);
 	HL_HoE     -> Fill(toFill[2],theWeight);
@@ -308,28 +274,6 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 	HL_See     -> Fill(toFill[4],theWeight);
 	HL_EoPout  -> Fill(toFill[5],theWeight);
 	HL_NVarDim -> Fill(toFill,theWeight);
-      }
-
-      // showering electrons: separating high and low pt
-      if(theClass==2 || theClass==3){ 	  
-	if(!isHigherEle){       // high pt lepton
-	  HH_dEta    -> Fill(toFill[0],theWeight);
-	  HH_dPhi    -> Fill(toFill[1],theWeight);
-	  HH_HoE     -> Fill(toFill[2],theWeight);
-	  HH_S9S25   -> Fill(toFill[3],theWeight);
-	  HH_See     -> Fill(toFill[4],theWeight);
-	  HH_EoPout  -> Fill(toFill[5],theWeight);
-	  HH_NVarDim -> Fill(toFill,theWeight);
-	}
-	if(isHigherEle){	// low pt lepton
-	  HL_dEta    -> Fill(toFill[0],theWeight);
-	  HL_dPhi    -> Fill(toFill[1],theWeight);
-	  HL_HoE     -> Fill(toFill[2],theWeight);
-	  HL_S9S25   -> Fill(toFill[3],theWeight);
-	  HL_See     -> Fill(toFill[4],theWeight);
-	  HL_EoPout  -> Fill(toFill[5],theWeight);
-	  HL_NVarDim -> Fill(toFill,theWeight);
-	}
       }
     }
 
@@ -350,10 +294,10 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
     // in case toy generation is not needed
     if (!theToy) {
       if(isHigherEle){
-	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron]);
+	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], eleClassEle[theElectron], fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], eleClassEle[thePositron]);
       }
       if(!isHigherEle){
-	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron]);
+	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], eleClassEle[thePositron], fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], eleClassEle[theElectron]);
       }
       outRootTree -> store();
     }
@@ -396,7 +340,7 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
       HL_NVarDim->GetRandom(theRndLow);
       
       // filling the reduced tree with toy MC electrons
-      outRootTree->fillAll(theRndHigh[0],theRndHigh[1],theRndHigh[2],theRndHigh[3],theRndHigh[4],theRndHigh[5],theRndLow[0],theRndLow[1],theRndLow[2],theRndLow[3],theRndLow[4],theRndLow[5]);
+      outRootTree->fillAll(theRndHigh[0],theRndHigh[1],theRndHigh[2],theRndHigh[3],theRndHigh[4],theRndHigh[5],8000, theRndLow[0],theRndLow[1],theRndLow[2],theRndLow[3],theRndLow[4],theRndLow[5], 8000);
       outRootTree -> store();
       
     } // mc generation

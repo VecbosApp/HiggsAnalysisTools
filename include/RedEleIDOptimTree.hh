@@ -11,7 +11,7 @@ public:
   ~RedEleIDOptimTree();
 
   //! event by event final dataset fill
-  void fillAll(float fhdeta, float fhdphi, float fhhoe, float fhs9s25, float fhsee, float fheopout, float fldeta, float fldphi, float flhoe, float fls9s25, float flsee,  float fleopout);
+  void fillAll(float fhdeta, float fhdphi, float fhhoe, float fhs9s25, float fhsee, float fheopout, int fhclass, float fldeta, float fldphi, float flhoe, float fls9s25, float flsee,  float fleopout, int flclass);
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
@@ -30,6 +30,8 @@ private:
   float myL_S9s25;    
   float myL_See;      
   float myL_EopOut;   
+  int myH_Class;
+  int myL_Class;
 
   TFile* myFile;
   TTree* myTree;
