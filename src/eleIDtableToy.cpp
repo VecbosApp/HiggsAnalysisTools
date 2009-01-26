@@ -103,16 +103,16 @@ int main ( int argc, char **argv)
   int discovery = atoi(argv[8]); 
 
   // counters
-  float passedEleID[6][5][5][3][3][3][3][3][2];
+  float passedEleID[5][5][5][3][6][1][4][4][2];
   for(int ii=0; ii<2; ii++){
-    for(int iiDeta=0; iiDeta<6; iiDeta++){
+    for(int iiDeta=0; iiDeta<5; iiDeta++){
       for(int iiDphi=0; iiDphi<5; iiDphi++){
 	for(int iiHoE=0; iiHoE<5; iiHoE++){
 	  for(int iiS9S25=0; iiS9S25<3; iiS9S25++){
-	    for(int iiEoPmin=0; iiEoPmin<3; iiEoPmin++){
-	      for(int iiEoPmax=0; iiEoPmax<3; iiEoPmax++){
-		for(int iiSeemin=0; iiSeemin<3; iiSeemin++){
-		  for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
+	    for(int iiEoPmin=0; iiEoPmin<6; iiEoPmin++){
+	      for(int iiEoPmax=0; iiEoPmax<1; iiEoPmax++){
+		for(int iiSeemin=0; iiSeemin<4; iiSeemin++){
+		  for(int iiSeemax=0; iiSeemax<4; iiSeemax++){
 		    passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]=0.;
 		  }}}}}}}}}
 
@@ -131,14 +131,14 @@ int main ( int argc, char **argv)
       // scan to compute the efficiencies for each bin
       bool theHighScan = false;
       bool theLowScan  = false;
-      for(int iiDeta=0; iiDeta<6; iiDeta++){
+      for(int iiDeta=0; iiDeta<5; iiDeta++){
 	for(int iiDphi=0; iiDphi<5; iiDphi++){
 	  for(int iiHoE=0; iiHoE<5; iiHoE++){
 	    for(int iiS9S25=0; iiS9S25<3; iiS9S25++){
-	      for(int iiEoPmin=0; iiEoPmin<3; iiEoPmin++){
-		for(int iiEoPmax=0; iiEoPmax<3; iiEoPmax++){
-		  for(int iiSeemin=0; iiSeemin<3; iiSeemin++){
-		    for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
+	      for(int iiEoPmin=0; iiEoPmin<6; iiEoPmin++){
+		for(int iiEoPmax=0; iiEoPmax<1; iiEoPmax++){
+		  for(int iiSeemin=0; iiSeemin<4; iiSeemin++){
+		    for(int iiSeemax=0; iiSeemax<4; iiSeemax++){
 		      theHighScan=isEleIDScan(H_deltaEta, H_deltaPhi, H_hoe, H_s9s25, H_eopOut, H_see, iiDeta, iiDphi, iiHoE, iiS9S25, iiEoPmin, iiEoPmax, iiSeemin, iiSeemax);
 		      theLowScan=isEleIDScan(L_deltaEta, L_deltaPhi, L_hoe, L_s9s25, L_eopOut, L_see, iiDeta, iiDphi, iiHoE, iiS9S25, iiEoPmin, iiEoPmax, iiSeemin, iiSeemax);
       		      if(theHighScan && theLowScan){ 
@@ -157,14 +157,14 @@ int main ( int argc, char **argv)
   int signBinMax[8];
   for(int yy=0; yy<8; yy++){signBinMax[yy]=-1;}  
 
-  for(int iiDeta=0; iiDeta<6; iiDeta++){
+  for(int iiDeta=0; iiDeta<5; iiDeta++){
     for(int iiDphi=0; iiDphi<5; iiDphi++){
       for(int iiHoE=0; iiHoE<5; iiHoE++){
 	for(int iiS9S25=0; iiS9S25<3; iiS9S25++){
-	  for(int iiEoPmin=0; iiEoPmin<3; iiEoPmin++){
-	    for(int iiEoPmax=0; iiEoPmax<3; iiEoPmax++){
-	      for(int iiSeemin=0; iiSeemin<3; iiSeemin++){
-		for(int iiSeemax=0; iiSeemax<3; iiSeemax++){
+	  for(int iiEoPmin=0; iiEoPmin<6; iiEoPmin++){
+	    for(int iiEoPmax=0; iiEoPmax<1; iiEoPmax++){
+	      for(int iiSeemin=0; iiSeemin<4; iiSeemin++){
+		for(int iiSeemax=0; iiSeemax<4; iiSeemax++){
 		  float thisBinSgnEff = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][0]/((float)T[0]->GetEntries());
 		  float thisBinBkgEff = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][1]/((float)T[1]->GetEntries());
 		  float effSgn        = sgnPreEleIDEff*thisBinSgnEff*sgnKineEff;
@@ -227,48 +227,48 @@ void setScanValue(int theClass){
     // starting point           // step
     DEtaMaxInit   = 0.002;      DEtaMaxStep   = 0.001;
     DPhiMaxInit   = 0.002;      DPhiMaxStep   = 0.003;   
-    HOverEMaxInit = 0.02;       HOverEMaxStep = 0.01;   
-    S9S25MinInit  = 0.7;        S9S25MinStep  = 0.1; 
-    SeeMaxInit    = 0.01;       SeeMaxStep    = 0.003;   
+    HOverEMaxInit = 0.03;       HOverEMaxStep = 0.01;   
+    S9S25MinInit  = 0.6;        S9S25MinStep  = 0.1; 
+    SeeMaxInit    = 0.007;      SeeMaxStep    = 0.003;   
     SeeMinInit    = 0.0;        SeeMinStep    = 0.003;   
     EoPoutMaxInit = 1.9;        EoPoutMaxStep = 0.03;    
-    EoPoutMinInit = 0.7;        EoPoutMinStep = 0.2;  
+    EoPoutMinInit = 0.4;        EoPoutMinStep = 0.1;  
   }
 
   // golden endcap
   if (theClass==1){     
     DEtaMaxInit   = 0.002;      DEtaMaxStep   = 0.001;
     DPhiMaxInit   = 0.002;      DPhiMaxStep   = 0.003;   
-    HOverEMaxInit = 0.02;       HOverEMaxStep = 0.01;   
-    S9S25MinInit  = 0.7;        S9S25MinStep  = 0.1; 
-    SeeMaxInit    = 0.01;       SeeMaxStep    = 0.003;   
+    HOverEMaxInit = 0.03;       HOverEMaxStep = 0.01;   
+    S9S25MinInit  = 0.6;        S9S25MinStep  = 0.1; 
+    SeeMaxInit    = 0.025;      SeeMaxStep    = 0.003;   
     SeeMinInit    = 0.0;        SeeMinStep    = 0.003;   
     EoPoutMaxInit = 1.9;        EoPoutMaxStep = 0.03;    
-    EoPoutMinInit = 0.7;        EoPoutMinStep = 0.2;  
+    EoPoutMinInit = 0.4;        EoPoutMinStep = 0.1;  
   }
 
   // showering barrel
   if (theClass==2){     
     DEtaMaxInit   = 0.002;      DEtaMaxStep   = 0.001;
     DPhiMaxInit   = 0.025;      DPhiMaxStep   = 0.01;   
-    HOverEMaxInit = 0.02;       HOverEMaxStep = 0.01;   
-    S9S25MinInit  = 0.7;        S9S25MinStep  = 0.1; 
-    SeeMaxInit    = 0.01;       SeeMaxStep    = 0.003;   
+    HOverEMaxInit = 0.03;       HOverEMaxStep = 0.01;   
+    S9S25MinInit  = 0.6;        S9S25MinStep  = 0.1; 
+    SeeMaxInit    = 0.007;      SeeMaxStep    = 0.003;   
     SeeMinInit    = 0.0;        SeeMinStep    = 0.003;   
     EoPoutMaxInit = 999.;       EoPoutMaxStep = 1.0;    
-    EoPoutMinInit = 0.7;        EoPoutMinStep = 0.2;  
+    EoPoutMinInit = 0.4;        EoPoutMinStep = 0.1;  
   }
 
   // showering endcap
   if (theClass==3){     
     DEtaMaxInit   = 0.002;      DEtaMaxStep   = 0.001;
     DPhiMaxInit   = 0.025;      DPhiMaxStep   = 0.01;   
-    HOverEMaxInit = 0.02;       HOverEMaxStep = 0.01;   
-    S9S25MinInit  = 0.7;        S9S25MinStep  = 0.1; 
-    SeeMaxInit    = 0.014;      SeeMaxStep    = 0.003;   
+    HOverEMaxInit = 0.03;       HOverEMaxStep = 0.01;   
+    S9S25MinInit  = 0.6;        S9S25MinStep  = 0.1; 
+    SeeMaxInit    = 0.025;      SeeMaxStep    = 0.003;   
     SeeMinInit    = 0.002;      SeeMinStep    = 0.003;   
     EoPoutMaxInit = 999.;       EoPoutMaxStep = 1.0;    
-    EoPoutMinInit = 0.7;        EoPoutMinStep = 0.2;  
+    EoPoutMinInit = 0.4;        EoPoutMinStep = 0.1;  
   }
 }
 
