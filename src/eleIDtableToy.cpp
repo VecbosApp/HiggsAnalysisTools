@@ -28,83 +28,121 @@ float HOverEMaxInit, S9S25MinInit, DEtaMaxInit, DPhiMaxInit, SeeMaxInit, SeeMinI
 void setScanValue(int theClass);
 bool isEleIDScan(float thisDeta, float thisDphi, float thisHoE, float thisS9s25, float thisEopOut, float thisSee, int deta, int dphi, int hoe, int s9s25, int eopmin, int eopmax, int seemin, int seemax);
 
-int main ( int argc, char **argv)
-{
+// we apply loose electronID on the highest pt electron (since it's alrteady applied, we assume eff = 1)
+// and we optimize eleId on the second one (the possible fake) when it belongs to the class we are analyzing
+
+int main ( int argc, char **argv) {
+
   if (argc < 9){ 
-    cout << "Argument missing! Insert: "        << std::endl; 
-    cout << "1) inputFile - root tree for sgn " << std::endl;
-    cout << "2) inputFile - root tree for bkg " << std::endl;
-    cout << "3) class:"                         << std::endl;
-    cout << "   0 --> golden EB"                << std::endl;
-    cout << "   1 --> golden EE"                << std::endl;
-    cout << "   2 --> showering EB"             << std::endl;
-    cout << "   3 --> showering EE"             << std::endl;
-    cout << "4) signal preEleID efficiency"     << std::endl;
-    cout << "5) signal kine efficiency"         << std::endl;
-    cout << "6) background preEleID # events"   << std::endl;
-    cout << "7) background kine efficiency"     << std::endl;
-    cout << "8) discovery (1) or exclusion (0) limits" << std::endl;
+    cout << "Argument missing! Insert: "                << std::endl; 
+    cout << "1) inputFile - root tree for sgn "         << std::endl;
+    cout << "2) signal preEleID efficiency"             << std::endl;
+    cout << "3) signal kine efficiency"                 << std::endl;
+    cout << "4) inputTextFile with W+jets root file,  pre eleID eff, kine eff, and xsec (pb)" << std::endl;
+    cout << "5) inputTextFile with tt+jets root file, pre eleID eff, kine eff, and xsec (pb)" << std::endl;
+    cout << "6) class to be analyzed:"                  << std::endl;
+    cout << "   0 --> golden EB"                        << std::endl;
+    cout << "   1 --> golden EE"                        << std::endl;
+    cout << "   2 --> showering EB"                     << std::endl;
+    cout << "   3 --> showering EE"                     << std::endl;
+    cout << "7) luminosity per optimization (in pb-1) " << std::endl;
+    cout << "8) discovery (1) or exclusion (0) limits"  << std::endl;
     return 0;
   }
 
 
-  // reading the input trees --------------------------
-  TChain *T[2];
-  T[0]= new TChain("T1");
-  T[1]= new TChain("T1");
-  T[0]->Add(argv[1]);   // signal
-  T[1]->Add(argv[2]);   // background
-  float H_deltaEta, L_deltaEta;
-  float H_deltaPhi, L_deltaPhi;
-  float H_hoe,      L_hoe;
-  float H_s9s25,    L_s9s25;
-  float H_see,      L_see;
-  float H_eopOut,   L_eopOut;  
-  for(int ii=0; ii<2; ii++){
+  // charging infos on backgrounds
+  std::string rootFileBkg[2];
+  float effPreEleIDBkg[2], effKineBkg[2], xsecBkg[2];
+  
+  std::string rootFileWjets;
+  float effPreEleIDWjets,  effKineWjets,  xsecWjets;            
+  ifstream inFileWjets(argv[4]);
+  if( inFileWjets.is_open() ) inFileWjets >> rootFileWjets >> effPreEleIDWjets >> effKineWjets >> xsecWjets;
+  else { cout << "Unable to open file " << inFileWjets << std::endl; }
+  rootFileBkg[0]    = rootFileWjets;
+  effPreEleIDBkg[0] = effPreEleIDWjets;
+  effKineBkg[0]     = effKineWjets;
+  xsecBkg[0]        = xsecWjets;
+
+  std::string rootFileTTjets;
+  float effPreEleIDTTjets, effKineTTjets, xsecTTjets;            
+  ifstream inFileTTjets(argv[5]);
+  if( inFileTTjets.is_open() ) inFileTTjets >> rootFileTTjets >> effPreEleIDTTjets >> effKineTTjets >> xsecTTjets;
+  else { cout << "Unable to open file " << inFileTTjets << std::endl; }
+  rootFileBkg[1]    = rootFileTTjets;
+  effPreEleIDBkg[1] = effPreEleIDTTjets;
+  effKineBkg[1]     = effKineTTjets;
+  xsecBkg[1]        = xsecTTjets;  
+
+  // check
+  for(int ii=0; ii<2; ii++) std::cout << "Sample " << rootFileBkg[ii] << " has eff pre eleID = " << effPreEleIDBkg[ii] << " and x-sec = " << xsecBkg[ii] << " pb" << std::endl;                
+
+
+  // reading the input trees for signal and backgrounds
+  TChain *T[3];
+  T[0]= new TChain("T1");   // signal
+  T[1]= new TChain("T1");   // w+jets
+  T[2]= new TChain("T1");   // ttbar
+  T[0]->Add(argv[1]);      
+  T[1]->Add(rootFileBkg[0].c_str());   
+  T[2]->Add(rootFileBkg[1].c_str());   
+
+  float L_deltaEta, L_deltaPhi;
+  float L_hoe,      L_s9s25;
+  float L_see,      L_eopOut;  
+  int L_class;
+  for(int ii=0; ii<3; ii++){
     T[ii]->SetMakeClass(1);
     T[ii]->SetBranchStatus("*",0);
-    T[ii]->SetBranchStatus("H_deltaEta",1);
-    T[ii]->SetBranchStatus("H_deltaPhi",1);
-    T[ii]->SetBranchStatus("H_hoe",1);
-    T[ii]->SetBranchStatus("H_s9s25",1);
-    T[ii]->SetBranchStatus("H_eopOut",1);
-    T[ii]->SetBranchStatus("H_see",1);
     T[ii]->SetBranchStatus("L_deltaEta",1);
     T[ii]->SetBranchStatus("L_deltaPhi",1);
     T[ii]->SetBranchStatus("L_hoe",1);
     T[ii]->SetBranchStatus("L_s9s25",1);
     T[ii]->SetBranchStatus("L_see",1);
     T[ii]->SetBranchStatus("L_eopOut",1);
-    T[ii]->SetBranchAddress("H_deltaEta",&H_deltaEta);
-    T[ii]->SetBranchAddress("H_deltaPhi",&H_deltaPhi);
-    T[ii]->SetBranchAddress("H_hoe",&H_hoe);
-    T[ii]->SetBranchAddress("H_s9s25",&H_s9s25);
-    T[ii]->SetBranchAddress("H_see",&H_see);
-    T[ii]->SetBranchAddress("H_eopOut",&H_eopOut);
+    T[ii]->SetBranchStatus("L_class",1);
     T[ii]->SetBranchAddress("L_deltaEta",&L_deltaEta);
     T[ii]->SetBranchAddress("L_deltaPhi",&L_deltaPhi);
     T[ii]->SetBranchAddress("L_hoe",&L_hoe);
     T[ii]->SetBranchAddress("L_s9s25",&L_s9s25);
     T[ii]->SetBranchAddress("L_see",&L_see);
     T[ii]->SetBranchAddress("L_eopOut",&L_eopOut);
+    T[ii]->SetBranchAddress("L_class",&L_class);
   }
-  
+
+
+  // taking all other inputs -----------------------------------
+
   // electron class
-  int theClass = atoi(argv[3]);
+  int theClass = atoi(argv[6]);
   setScanValue(theClass);
 
-  // kinematical / preselection efficiencies
-  float sgnPreEleIDEff = atof(argv[4]);    
-  float sgnKineEff     = atof(argv[5]);   
-  float bkgPreEleIDEvt = atof(argv[6]);    
-  float bkgKineEff     = atof(argv[7]);     
+  // wanted luminosity
+  float lumi = atof(argv[7]);   
 
   // discovery or exclusion
   int discovery = atoi(argv[8]); 
 
+  // kinematical / preselection efficiencies on signal
+  float sgnPreEleIDEff = atof(argv[2]);    
+  float sgnKineEff     = atof(argv[3]);   
+  cout << "Signal: pre eleID efficiency = " << sgnPreEleIDEff << ", kine efficiency = " << sgnKineEff << endl;
+  
+  // kinematical / preselection efficiencies on backgrounds 
+  float nBkgPreEleID[2];
+  for(int i=0; i<2; i++) {
+    nBkgPreEleID[i] = effPreEleIDBkg[i] * xsecBkg[i] * lumi;
+    std::cout << "Expected nBkgPreEleID[" << i << "]= " << nBkgPreEleID[i] << std::endl;
+  }
+  
+  // taking all other inputs -----------------------------------
+  
+  
+  
   // counters
-  float passedEleID[5][5][5][3][6][1][4][4][2];
-  for(int ii=0; ii<2; ii++){
+  float passedEleID[5][5][5][3][6][1][4][4][3];
+  for(int ii=0; ii<3; ii++){
     for(int iiDeta=0; iiDeta<5; iiDeta++){
       for(int iiDphi=0; iiDphi<5; iiDphi++){
 	for(int iiHoE=0; iiHoE<5; iiHoE++){
@@ -116,20 +154,31 @@ int main ( int argc, char **argv)
 		    passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]=0.;
 		  }}}}}}}}}
 
+  float passedClass[3];
+  for(int ii=0; ii<3; ii++){ passedClass[ii]=0.; }
   
   // loop: signal / background samples
-  for(int ii=0; ii<2; ii++){
+  for(int ii=0; ii<3; ii++){
     
     // reading the tree
     float nEnt = T[ii]->GetEntries();
     cout << endl;
     cout << "Total number of events in loop for sample " << ii << " is " << nEnt << endl; 
+
     for (int entry=0; entry<nEnt; entry++) { 
       if (entry%1000==0) cout << "sample " << ii << ", entry " << entry << endl;
       T[ii] -> GetEntry(entry);
       
+      // only if the 2nd electron belongs to the wanted class
+      float thisClass = 4;
+      if (L_class==0)   thisClass=0;
+      if (L_class==100) thisClass=1;
+      if (L_class>=30  && L_class<40)  thisClass=2;
+      if (L_class>=130 && L_class<140) thisClass=3;
+      if (thisClass != theClass) continue;
+      passedClass[ii]++;
+
       // scan to compute the efficiencies for each bin
-      bool theHighScan = false;
       bool theLowScan  = false;
       for(int iiDeta=0; iiDeta<5; iiDeta++){
 	for(int iiDphi=0; iiDphi<5; iiDphi++){
@@ -139,19 +188,18 @@ int main ( int argc, char **argv)
 		for(int iiEoPmax=0; iiEoPmax<1; iiEoPmax++){
 		  for(int iiSeemin=0; iiSeemin<4; iiSeemin++){
 		    for(int iiSeemax=0; iiSeemax<4; iiSeemax++){
-		      theHighScan=isEleIDScan(H_deltaEta, H_deltaPhi, H_hoe, H_s9s25, H_eopOut, H_see, iiDeta, iiDphi, iiHoE, iiS9S25, iiEoPmin, iiEoPmax, iiSeemin, iiSeemax);
 		      theLowScan=isEleIDScan(L_deltaEta, L_deltaPhi, L_hoe, L_s9s25, L_eopOut, L_see, iiDeta, iiDphi, iiHoE, iiS9S25, iiEoPmin, iiEoPmax, iiSeemin, iiSeemax);
-      		      if(theHighScan && theLowScan){ 
-			passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]=passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]+1.; 
-		      }
+      		      if(theLowScan) passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]=passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ii]+1.;  
+		      
 		    }}}}}}}}
     } // loop over entries
-  } // loop over signal / background 
+  } // loop over signal / backgrounds 
 
 
+  
   // maximization:
   ofstream *outTxtFile = new ofstream("outputFileScan.txt",ios::app);
-
+  
   float signPunziMax = -999.;
   float effMax       = -999.;
   int signBinMax[8];
@@ -165,19 +213,28 @@ int main ( int argc, char **argv)
 	    for(int iiEoPmax=0; iiEoPmax<1; iiEoPmax++){
 	      for(int iiSeemin=0; iiSeemin<4; iiSeemin++){
 		for(int iiSeemax=0; iiSeemax<4; iiSeemax++){
-		  float thisBinSgnEff = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][0]/((float)T[0]->GetEntries());
-		  float thisBinBkgEff = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][1]/((float)T[1]->GetEntries());
-		  float effSgn        = sgnPreEleIDEff*thisBinSgnEff*sgnKineEff;
-		  float bkgEvents     = bkgPreEleIDEvt*thisBinBkgEff*bkgKineEff;
-		  float sqrtB         = sqrt(bkgEvents);
-		  float signPunzi;
-		  if(discovery==1){  // 5 sigma 
-		    signPunzi = effSgn/(2.5+sqrtB);
+
+		  float thisClassSgnEff = passedClass[0]/((float)T[0]->GetEntries());
+		  float thisBinSgnEff   = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][0]/passedClass[0];
+		  float effSgn          = sgnPreEleIDEff*thisClassSgnEff*thisBinSgnEff*sgnKineEff;
+		                          
+                  float thisClassBkgEff[2];
+		  float thisBinBkgEff[2];
+		  for(int ibkg=0; ibkg<2; ibkg++) {
+		    thisClassBkgEff[ibkg] = passedClass[ibkg+1]/((float)T[ibkg+1]->GetEntries());
+		    thisBinBkgEff[ibkg]   = passedEleID[iiDeta][iiDphi][iiHoE][iiS9S25][iiEoPmin][iiEoPmax][iiSeemin][iiSeemax][ibkg+1]/passedClass[ibkg+1];
 		  }
-		  if(discovery==0){ // 2 sigma
-		    signPunzi = effSgn/(1.+sqrtB);
+		  
+		  float bkgEvents = 0;
+		  for(int ibkg=0; ibkg<2; ibkg++) {
+		    bkgEvents += nBkgPreEleID[ibkg]*thisClassBkgEff[ibkg]*thisBinBkgEff[ibkg]*effKineBkg[ibkg];
 		  }
 
+		  float sqrtB = sqrt(bkgEvents);
+		  float signPunzi;
+		  if(discovery==1){ signPunzi = effSgn/(2.5+sqrtB); } // 5 sigma 
+		  if(discovery==0){ signPunzi = effSgn/(1.+sqrtB); }  // 2 sigma 
+		  
 		  // saving the full output
 		  *outTxtFile << iiDeta << " " << iiDphi << " " << iiHoE << " " << iiS9S25 << " " << iiEoPmin << " " << iiEoPmax << " " << iiSeemin << " " << iiSeemax << " " << thisBinSgnEff << " " << thisBinBkgEff << " " << signPunzi << endl;
 		  
@@ -209,7 +266,16 @@ int main ( int argc, char **argv)
   // output
   cout << endl;
   cout << "highest significance (Punzi) = " << signPunziMax << endl;
-  cout << "eff eleID signal = " << passedEleID[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][signBinMax[5]][signBinMax[6]][signBinMax[7]][0]/((float)T[0]->GetEntries()) << endl;
+  cout << "Class = " << theClass << endl;
+  // 
+  cout << "eff class signal = " << passedClass[0]/((float)T[0]->GetEntries()) << endl;
+  cout << "eff class ttjets = " << passedClass[1]/((float)T[1]->GetEntries()) << endl;
+  cout << "eff class wjets  = " << passedClass[2]/((float)T[2]->GetEntries()) << endl;
+  //
+  cout << "eff eleID signal = " << passedEleID[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][signBinMax[5]][signBinMax[6]][signBinMax[7]][0]/passedClass[0] << endl;
+  cout << "eff eleID ttjets = " << passedEleID[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][signBinMax[5]][signBinMax[6]][signBinMax[7]][1]/passedClass[1] << endl;
+  cout << "eff eleID wjets  = " << passedEleID[signBinMax[0]][signBinMax[1]][signBinMax[2]][signBinMax[3]][signBinMax[4]][signBinMax[5]][signBinMax[6]][signBinMax[7]][2]/passedClass[2] << endl;
+  // 
   cout << "in the following bin: " << endl;
   cout << "|deta| = " << "0 - " << DEtaMaxCut   << endl; 
   cout << "|dphi| = " << "0 - " << DPhiMaxCut   << endl;
