@@ -812,7 +812,7 @@ void HiggsSelection::displayEfficiencies() {
   MatchFracJets_pt->Sumw2();
   MatchFracJets_pt->Divide(MatchedJets_pt, RecoJets_pt, 1, 1);
 
-  TFile jetMatchFile(_datasetName+"-jets.root","RECREATE");
+  TFile jetMatchFile("jets.root","RECREATE");
   RecoJets_pt->Write();
   MatchedJets_pt->Write();
   MatchFracJets_pt->Write();
