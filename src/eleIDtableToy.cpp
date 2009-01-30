@@ -236,7 +236,7 @@ int main ( int argc, char **argv) {
 		  if(discovery==0){ signPunzi = effSgn/(1.+sqrtB); }  // 2 sigma 
 		  
 		  // saving the full output
-		  *outTxtFile << iiDeta << " " << iiDphi << " " << iiHoE << " " << iiS9S25 << " " << iiEoPmin << " " << iiEoPmax << " " << iiSeemin << " " << iiSeemax << " " << thisBinSgnEff << " " << thisBinBkgEff << " " << signPunzi << endl;
+		  *outTxtFile << iiDeta << " " << iiDphi << " " << iiHoE << " " << iiS9S25 << " " << iiEoPmin << " " << iiEoPmax << " " << iiSeemin << " " << iiSeemax << " " << thisBinSgnEff << " " << thisBinBkgEff[0] << " " << thisBinBkgEff[1] << " " << signPunzi << endl;
 		  
 		  // looking for the maximum
 		  if (signPunzi>signPunziMax) { 
