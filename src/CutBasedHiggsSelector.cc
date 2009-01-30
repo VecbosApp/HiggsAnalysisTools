@@ -39,7 +39,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
 
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
 
-void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwitches) {
+void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwitches, const char *theTitle) {
 
   _selection = new Selection(std::string(fileCuts),std::string(fileSwitches));
 
@@ -68,7 +68,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->summary();
 
   globalCounter = new Counters();
-  globalCounter->SetTitle("FULL SELECTION EVENT COUNTER");
+  globalCounter->SetTitle(theTitle);
+  // globalCounter->SetTitle("FULL SELECTION EVENT COUNTER");
   globalCounter->AddVar("preselected");
   globalCounter->AddVar("hardLeptonThreshold");
   globalCounter->AddVar("slowLeptonThreshold");
@@ -198,7 +199,7 @@ bool CutBasedHiggsSelector::output() {
 }
 
 
-void CutBasedHiggsSelector::diplayEfficiencies() {
+void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
 
   if( m_processID > -1 ) {
 
@@ -229,6 +230,9 @@ void CutBasedHiggsSelector::diplayEfficiencies() {
   }
 
   else {
+
+    char namefile[500];
+    sprintf(namefile,"%s-Counters.root",datasetName.c_str());
     
     globalCounter->Draw();
     globalCounter->Draw("hardLeptonThreshold","preselected");
@@ -247,6 +251,7 @@ void CutBasedHiggsSelector::diplayEfficiencies() {
     globalCounter->Draw("deltaPhi","detaLeptons");
     globalCounter->Draw("final","preselected");
     
+    globalCounter->Save(namefile,"update");
   }
 
 }

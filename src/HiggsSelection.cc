@@ -63,19 +63,19 @@ HiggsSelection::HiggsSelection(TTree *tree)
   // selection efficiencies
   std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
   std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
-  CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
+  CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
   CutBasedHiggsSelectionEE.AppendPreselection(_preselection);
   _selectionEE = CutBasedHiggsSelectionEE.GetSelection();  
 
   std::string fileCutsMM     = higgsConfigDirMass + "2mu2nuCuts.txt";
   std::string fileSwitchesMM = higgsConfigDir + "2l2nuSwitches.txt";
-  CutBasedHiggsSelectionMM.Configure(fileCutsMM.c_str(),fileSwitchesMM.c_str()); 
+  CutBasedHiggsSelectionMM.Configure(fileCutsMM.c_str(),fileSwitchesMM.c_str(),"FULL SELECTION EVENT COUNTER MM"); 
   CutBasedHiggsSelectionMM.AppendPreselection(_preselection);
   _selectionMM = CutBasedHiggsSelectionMM.GetSelection();
 
   std::string fileCutsEM     = higgsConfigDirMass + "emu2nuCuts.txt";
   std::string fileSwitchesEM = higgsConfigDir + "2l2nuSwitches.txt";
-  CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str()); 
+  CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str(),"FULL SELECTION EVENT COUNTER EM"); 
   CutBasedHiggsSelectionEM.AppendPreselection(_preselection);
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
@@ -338,7 +338,7 @@ void HiggsSelection::Loop() {
   if( loc != std::string::npos ) {
     _datasetName.erase(loc);
   }
-  std::string recoHistogramName = _datasetName+"Histograms.root";
+  std::string recoHistogramName = _datasetName+"-Histograms.root";
   TFile *file = new TFile(recoHistogramName.c_str(),"RECREATE");
   _monitorGenerator->setPath("Generator");
   _monitorMet->setPath("MET");
@@ -787,26 +787,33 @@ void HiggsSelection::Loop() {
   file->Close();  
 }
 
-void HiggsSelection::displayEfficiencies() {
+void HiggsSelection::displayEfficiencies(std::string datasetName) {
+
+  std::string::size_type loc = datasetName.find_first_of(".",0);
+  if( loc != std::string::npos ) {
+    datasetName.erase(loc);
+  }
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Common preselections: " << std::endl;
-  CommonHiggsPreselection.diplayEfficiencies();
+  CommonHiggsPreselection.diplayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full EE selections: " << std::endl;
-  CutBasedHiggsSelectionEE.diplayEfficiencies();
+  CutBasedHiggsSelectionEE.diplayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full MM selections: " << std::endl;
-  CutBasedHiggsSelectionMM.diplayEfficiencies();
+  CutBasedHiggsSelectionMM.diplayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full EM selections: " << std::endl;
-  CutBasedHiggsSelectionEM.diplayEfficiencies();
+  CutBasedHiggsSelectionEM.diplayEfficiencies(datasetName);
 
   EgammaCutBasedID.diplayEfficiencies();
 
+
+  /*
   // jet match histogram
   TH1F *MatchFracJets_pt = (TH1F*)RecoJets_pt->Clone("MatchFracJets_pt");
   MatchFracJets_pt->Sumw2();
@@ -818,6 +825,7 @@ void HiggsSelection::displayEfficiencies() {
   MatchFracJets_pt->Write();
   etHighestJet->Write();
   jetMatchFile.Close();
+  */
 }
 
 std::pair<int,int> HiggsSelection::getBestElectronPair() {

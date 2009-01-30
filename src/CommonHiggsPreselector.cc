@@ -45,15 +45,14 @@ void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwi
 bool CommonHiggsPreselector::output() {
   
   Counters *theCounter=0;
-
+  
   if( m_processID > -1 ) {
-
+    
     std::map<int, Counters*>::const_iterator iter = multiProcessCounter.find(m_processID);
 
     if ( iter == multiProcessCounter.end() ) {
       
-      std::cout << "First time I get process " << m_processID 
-		<< ": adding a counter" << std::endl;
+      std::cout << "First time I get process " << m_processID << ": adding a counter" << std::endl;
 
       char buffer[200];
       sprintf(buffer,"PRESELECTION EVENT COUNTER for process %d", m_processID);
@@ -73,11 +72,9 @@ bool CommonHiggsPreselector::output() {
       processCounter->AddVar("preselection");
       
       multiProcessCounter.insert( std::make_pair(m_processID,processCounter) );
-      
     }
 
     theCounter = multiProcessCounter[m_processID];
-
   }
   
   else theCounter = presCounter;
@@ -143,7 +140,7 @@ bool CommonHiggsPreselector::output() {
 }
 
 
-void CommonHiggsPreselector::diplayEfficiencies() {
+void CommonHiggsPreselector::diplayEfficiencies(std::string datasetName) {
 
   if( m_processID > -1 ) {
     
@@ -151,7 +148,6 @@ void CommonHiggsPreselector::diplayEfficiencies() {
     for( iter=multiProcessCounter.begin(); iter!=multiProcessCounter.end(); ++iter ) {
       
       Counters *theCounter = iter->second;
-
       theCounter->Draw();
       theCounter->Draw("MCtruth","event");
       theCounter->Draw("trigger","MCtruth");
@@ -163,12 +159,13 @@ void CommonHiggsPreselector::diplayEfficiencies() {
       theCounter->Draw("dileptonInvMassMin","METpreselection");
       theCounter->Draw("finalOURPreselection","MCtruth");
       theCounter->Draw("preselection","MCtruth");
-
     }
-
   }
 
   else {
+    
+    char namefile[500];
+    sprintf(namefile,"%s-Counters.root",datasetName.c_str());
 
     presCounter->Draw();
     presCounter->Draw("MCtruth","event");
@@ -182,6 +179,6 @@ void CommonHiggsPreselector::diplayEfficiencies() {
     presCounter->Draw("finalOURPreselection","MCtruth");
     presCounter->Draw("preselection","MCtruth");
   
+    presCounter->Save(namefile,"recreate");
   }
-
 }

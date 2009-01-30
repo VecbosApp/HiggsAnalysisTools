@@ -47,13 +47,13 @@ LeptonPlusFakeSelection::LeptonPlusFakeSelection(TTree *tree)
   // selection efficiencies
   std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
   std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
-  LFakeFromQCDSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
+  LFakeFromQCDSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
   _selectionEE = LFakeFromQCDSelector.GetSelection();  
 
-  LFakeErrorFromQCDSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
+  LFakeErrorFromQCDSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
 
-  LFakeFromWjetsSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
-  LFakeErrorFromWjetsSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str()); 
+  LFakeFromWjetsSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
+  LFakeErrorFromWjetsSelector.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
 
   // single electron efficiency
   // EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId/"); 
@@ -297,16 +297,16 @@ void LeptonPlusFakeSelection::Loop() {
   }
 
   std::cout << "=== RATE ESTIMATED FROM QCD FAKE RATE ===" << std::endl; 
-  LFakeFromQCDSelector.diplayEfficiencies();
+  LFakeFromQCDSelector.diplayEfficiencies("pippo");
 
   std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM QCD FAKE RATE ===" << std::endl;
-  LFakeErrorFromQCDSelector.diplayEfficiencies();
+  LFakeErrorFromQCDSelector.diplayEfficiencies("pippo");
   
   std::cout << "=== RATE ESTIMATED FROM WJETS FAKE RATE ===" << std::endl; 
-  LFakeFromWjetsSelector.diplayEfficiencies();
+  LFakeFromWjetsSelector.diplayEfficiencies("pippo");
 
   std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM WJETS FAKE RATE ===" << std::endl;
-  LFakeErrorFromWjetsSelector.diplayEfficiencies();
+  LFakeErrorFromWjetsSelector.diplayEfficiencies("pippo");
 
   fileOut.cd();
   m_histoLL_mll->Write();

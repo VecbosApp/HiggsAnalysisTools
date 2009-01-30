@@ -36,7 +36,7 @@ public:
   //! set the name for dataset in output
   void SetDatasetName(std::string filename) {_datasetName=filename;};
   //! display the efficiency table
-  void displayEfficiencies();
+  void displayEfficiencies(std::string filename);
   //! set the list of the required triggers
   void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
   

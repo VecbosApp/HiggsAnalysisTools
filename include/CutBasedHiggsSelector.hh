@@ -18,7 +18,7 @@ public:
   virtual ~CutBasedHiggsSelector();   
 
   //! configure from files
-  void Configure(const char *fileCuts, const char *fileSwitches);
+  void Configure(const char *fileCuts, const char* fileSwitches, const char *theTitle);
 
   //! configure pre-selection (it is not necessarily applied)
   void AppendPreselection(Selection *preselection) { _selection->append(preselection); }
@@ -57,7 +57,7 @@ public:
   bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
   //! display the electron efficiency
-  void diplayEfficiencies();
+  void diplayEfficiencies(std::string datasetName);
 
 private:
   
