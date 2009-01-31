@@ -66,15 +66,21 @@
 #if Application == 15
 #include "HiggsAnalysisTools/include/LeptonPlusFakeSelection.hh"
 #endif
-
+#if Application == 16
+#include "HiggsAnalysisTools/src/HiggsVertexing.cpp"
+#endif
 int main(int argc, char* argv[]) {
 
   char inputFileName[150];
+  char outputFileName[150];
   if ( argc < 2 ){
-    std::cout << "missing argument: insert inputFile with list of root files" << std::endl; 
+    std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
+    std::cout << "HiggsApp inputFile [outputFile]" << std::endl;
     return 1;
   }
   strcpy(inputFileName,argv[1]);
+  if ( argc < 3 ) sprintf(outputFileName,"def.root");
+  else strcpy(outputFileName,argv[2]);
 
   // -------------------------
   // loading file:
@@ -130,7 +136,7 @@ int main(int argc, char* argv[]) {
   htoww.requireTrigger(requiredTriggers);
 
   htoww.Loop();
-  htoww.displayEfficiencies();
+  htoww.displayEfficiencies(outFileName);
 
 #endif
 
@@ -217,15 +223,16 @@ int main(int argc, char* argv[]) {
   TriggerMask mask(treeCond);
 
   // require triggers for ee channel
-  mask.requireTrigger("HLT1Electron");
-  mask.requireTrigger("HLT1ElectronRelaxed");
-  mask.requireTrigger("HLT2Electron");
-  mask.requireTrigger("HLT2ElectronRelaxed");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+  // mask.requireTrigger("HLT1Electron");
+  // mask.requireTrigger("HLT1ElectronRelaxed");
+  // mask.requireTrigger("HLT2Electron");
+  // mask.requireTrigger("HLT2ElectronRelaxed");
 
   std::vector<int> requiredTriggers = mask.getBits();
   heleIdtoy.requireTrigger(requiredTriggers);
 
-  heleIdtoy.Loop();
+  heleIdtoy.Loop(outputFileName);
 
 #endif
 
@@ -302,7 +309,24 @@ int main(int argc, char* argv[]) {
   lplusfake.Loop();
 
 #endif
+
+#if Application == 16
+
+  HiggsVertexing vertex(theChain);
+  std::string outFileName(inputFileName);
+  outFileName+=".root";
   
+  // require triggers for ee channel
+  TriggerMask mask(treeCond);
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+  
+  std::vector<int> requiredTriggers = mask.getBits();
+  vertex.requireTrigger(requiredTriggers);
+
+  vertex.Loop(outputFileName);
+
+#endif  
+
   return 0;
 
 }

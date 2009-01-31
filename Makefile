@@ -66,7 +66,7 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 .PREFIXES: ./lib/
 
 
-$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
+$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc $(INCLUDEDIR)/src/HiggsVertexing.cpp $(INCLUDEDIR)/src/VertexTree.cc
 # no more used ------------------------------------
 #$(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc 
 #$(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc 
@@ -118,6 +118,11 @@ $(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ZplusJetsSelection.o $<
 $(OUTLIB)LeptonPlusFakeSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeSelection.o $<
+$(OUTLIB)HiggsVertexing.o: $(INCLUDEDIR)/src/HiggsVertexing.cpp
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsVertexing.o $<
+$(OUTLIB)VertexTree.o: $(INCLUDEDIR)/src/VertexTree.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)VertexTree.o $<
+
 # no more used ------------------------------------
 #$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
 #	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronID.o $<
@@ -131,7 +136,7 @@ $(OUTLIB)LeptonPlusFakeSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
 #----------------------------------------------------#
 
 # ==================== HiggsApp =============================================
-HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedTriggerTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o $(OUTLIB)LeptonPlusFakeSelection.o 
+HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedTriggerTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o $(OUTLIB)LeptonPlusFakeSelection.o $(OUTLIB)VertexTree.o
 # no more used ------------------------------------
 #$(OUTLIB)RedEWKTree.o 
 	$(CXX) $(CXXFLAGS) -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $ $<
@@ -146,8 +151,12 @@ eleID_Higgs_Studies:  $(INCLUDEDIR)eleID_Higgs_Studies.cpp $(OUTLIB)RedEleIDTree
 
 eleIDtableToy:  $(INCLUDEDIR)/src/eleIDtableToy.cpp
 	$(CXX) $(CXXFLAGS) -o eleIDtableToy $(GLIBS) $ $<
+eleIDtoyPlot_input:  $(INCLUDEDIR)/src/eleIDtoyPlot_input.cpp
+	$(CXX) $(CXXFLAGS) -o eleIDtoyPlot_input $(GLIBS) $ $<
 eleIDtableToy.clean:
 	rm -f eleIDtableToy
+eleIDtoyPlot_input.clean:
+	rm -f eleIDtoyPlot_input
 eleIDtableLike:  $(INCLUDEDIR)/src/eleIDtableLike.cpp
 	$(CXX) $(CXXFLAGS) -o eleIDtableLike $(GLIBS) $ $<
 eleIDtableLike.clean:
@@ -177,6 +186,7 @@ clean:
 # rm -f ReducedTree_HwwEleId
 # rm -f eleID_Higgs_Studies
 	rm -f eleIDtableToy
+	rm -f eleIDtoyPlot_input
 	rm -f eleIDtableLike
 	rm -f isolationTableToy
 	rm -f kinematicsTableToy
