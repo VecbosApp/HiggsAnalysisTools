@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
   BestLeptonSelectorWjets selector(theChain);
 
   TriggerMask mask(treeCond);
-  mask.requireTrigger("HLT1Electron");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
   std::vector<int> requiredTriggers = mask.getBits();
   selector.requireTrigger(requiredTriggers);
   selector.Loop();
