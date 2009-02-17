@@ -16,5 +16,6 @@
 //  14 = kinematics optimization for Higgs studies    
 //  15 = lepton + fake selection for W+jets estimation
 //  16 = vertexing studies
+//  17 = isolation selection for Higgs studies; to produce input histos for performance plots 
 
 #define Application 1
