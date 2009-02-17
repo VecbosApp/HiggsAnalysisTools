@@ -16,9 +16,12 @@ VertexTree::VertexTree(const char * filename) {
   myFile = new TFile(filename,"RECREATE");
   myTree = new TTree("T1","higgs vertexing tree");
 
-  myTree->Branch("deltaZ",  &myDeltaZ,   "deltaZ/F");  
-  myTree->Branch("deltaXY", &myDeltaXY,  "deltaXY/F");  
+  myTree->Branch("deltaZ",   &myDeltaZ,   "deltaZ/F");  
+  myTree->Branch("deltaXY",  &myDeltaXY,  "deltaXY/F");  
   myTree->Branch("deltaXYZ", &myDeltaXYZ, "deltaXYZ/F");  
+  myTree->Branch("fracZ",    &myFracZ,    "fracZ/F");  
+  myTree->Branch("fracXY",   &myFracXY,   "fracXY/F");  
+  myTree->Branch("fracXYZ",  &myFracXYZ,  "fracXYZ/F");  
 }
 
 VertexTree::~VertexTree() { delete myFile; }
@@ -33,10 +36,13 @@ void VertexTree::save() {
 }
 
 
-void VertexTree::fillAll(float dz, float dxy, float dxyz) { 
+void VertexTree::fillAll(float dz, float dxy, float dxyz, float rz, float rxy, float rxyz) { 
   
   myDeltaZ   = dz;
   myDeltaXY  = dxy;
   myDeltaXYZ = dxyz;
+  myFracZ    = rz;
+  myFracXY   = rxy;
+  myFracXYZ  = rxyz;
 }
 

@@ -43,12 +43,12 @@ HiggsVertexing::HiggsVertexing(TTree *tree)
   H_deltaZ    = new TH1F("H_deltaZ",    "H_deltaZ" ,   80, -0.5, 0.5);  
   H_deltaXY   = new TH1F("H_deltaXY",   "H_deltaXY",   80,  0.0, 0.5);  
   H_deltaXYZ  = new TH1F("H_deltaXYZ",  "H_deltaXYZ",  80,  0.0, 0.5);  
-  H_trackDz   = new TH1F("H_trackDz",   "H_trackDz" ,  80, -0.5, 0.5);  
-  H_trackDxy  = new TH1F("H_trackDxy",  "H_trackDxy" , 80, -0.5, 0.5);  
-  H_trackDxyz = new TH1F("H_trackDxyz", "H_trackDxyz", 80, -0.5, 0.5);  
-  H_compZ     = new TH1F("H_compZ",     "H_compZ",    100,  0.,100.);
-  H_compXY    = new TH1F("H_compXY",    "H_compXY",   100,  0.,100.);
-  H_compXYZ   = new TH1F("H_compXYZ",   "H_compXYZ",  100,  0.,100.);
+  H_trackDz   = new TH1F("H_trackDz",   "H_trackDz" ,  80, -0.1, 0.1);  
+  H_trackDxy  = new TH1F("H_trackDxy",  "H_trackDxy" , 80, -0.1, 0.1);  
+  H_trackDxyz = new TH1F("H_trackDxyz", "H_trackDxyz", 80, -0.1, 0.1);  
+  H_compZ     = new TH1F("H_compZ",     "H_compZ",    100,  0.,1.);
+  H_compXY    = new TH1F("H_compXY",    "H_compXY",   100,  0.,1.);
+  H_compXYZ   = new TH1F("H_compXYZ",   "H_compXYZ",  100,  0.,1.);
 
 }
 
@@ -130,8 +130,8 @@ void HiggsVertexing::Loop(const char *filename) {
     allEvents++; 
 
     // look to the MC truth decay tree
-    bool foundMcTree = findMcTree("HtoWWto2e2nu");
-    // bool foundMcTree = findMcTree("Background");
+    // bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    bool foundMcTree = findMcTree("Background");
     if ( !foundMcTree ) continue;
     passedMc++;    
 
@@ -228,14 +228,14 @@ void HiggsVertexing::Loop(const char *filename) {
     
 
     // computing the average track compatibility within a dR cone around the electron
-    float eleTotTrack     = 0;
-    float posTotTrack     = 0;
-    float eleCompTrackXY  = 0;
-    float posCompTrackXY  = 0;
-    float eleCompTrackXYZ = 0;
-    float posCompTrackXYZ = 0;
-    float eleCompTrackZ   = 0;
-    float posCompTrackZ   = 0;
+    float eleTotTrack     = 0.;
+    float posTotTrack     = 0.;
+    float eleCompTrackXY  = 0.;
+    float posCompTrackXY  = 0.;
+    float eleCompTrackXYZ = 0.;
+    float posCompTrackXYZ = 0.;
+    float eleCompTrackZ   = 0.;
+    float posCompTrackZ   = 0.;
     for(int theTrack = 0; theTrack<nTrack; theTrack++){ 
       
       TVector3 trackPAtVtx(pxTrack[theTrack], pyTrack[theTrack], pzTrack[theTrack]);
@@ -259,16 +259,15 @@ void HiggsVertexing::Loop(const char *filename) {
       H_trackDxyz -> Fill(thisDxyz_ele);
 
       // compatible track fraction
-      eleTotTrack++;
-      if (fabs(thisDz_ele) <0.6)  eleCompTrackZ++;
-      if (fabs(thisDxy_ele)<0.35) eleCompTrackXY++;
-      if (fabs(thisDxyz_ele)<0.6) eleCompTrackXYZ++;
+      eleTotTrack=eleTotTrack+1.;
+      if (fabs(thisDz_ele) <0.06)  eleCompTrackZ   = eleCompTrackZ+1.;
+      if (fabs(thisDxy_ele)<0.035) eleCompTrackXY  = eleCompTrackXY+1.;
+      if (fabs(thisDxyz_ele)<0.06) eleCompTrackXYZ = eleCompTrackXYZ+1.;
 
     } //end loop over tracks	
 
 
     // computing the average track compatibility within a dR cone around the electron
-    cout << "nTrack = " << nTrack << endl;
     for(int theTrack = 0; theTrack<nTrack; theTrack++){ 
       
       TVector3 trackPAtVtx(pxTrack[theTrack], pyTrack[theTrack], pzTrack[theTrack]);
@@ -277,12 +276,10 @@ void HiggsVertexing::Loop(const char *filename) {
       // usually low pt tracks are fakes
       float this_pt  = trackPAtVtx.Perp();
       if ( this_pt < 1. ) continue;
-      cout << theTrack << ": ok pt" << endl;
       
       // does the track fall within the cone?
       double this_dr = posPAtVtx.DeltaR(trackPAtVtx);
       if ( fabs(this_dr) > 0.4 || fabs(this_dr) < 0.015 ) continue;
-      cout << theTrack << ": ok dr" << endl;
       
       // computing dz and dxy
       float thisDz_pos   = eleTrackVzEle[thePositron] - vertexZTrack[theTrack];
@@ -294,10 +291,10 @@ void HiggsVertexing::Loop(const char *filename) {
       H_trackDxyz -> Fill(thisDxyz_pos);
 
       // compatible track fraction
-      posTotTrack++;
-      if (fabs(thisDz_pos) <0.6)  posCompTrackZ++;
-      if (fabs(thisDxy_pos)<0.35) posCompTrackXY++;
-      if (fabs(thisDxyz_pos)<0.6) posCompTrackXYZ++;
+      posTotTrack=posTotTrack+1.;
+      if (fabs(thisDz_pos) <0.06)  posCompTrackZ   = posCompTrackZ+1.;
+      if (fabs(thisDxy_pos)<0.035) posCompTrackXY  = posCompTrackXY+1.;
+      if (fabs(thisDxyz_pos)<0.06) posCompTrackXYZ = posCompTrackXYZ+1.;
 
     } //end loop over tracks	
     
@@ -308,13 +305,22 @@ void HiggsVertexing::Loop(const char *filename) {
     float compTrackXYZ = posCompTrackXYZ + eleCompTrackXYZ;
     float totTrack     = posTotTrack     + eleTotTrack;
 
+    float ratioZ   = 0.; 
+    float ratioXY  = 0.;
+    float ratioXYZ = 0.;
+    if (totTrack != 0 ){ 
+      ratioZ   = compTrackZ/totTrack;
+      ratioXY  = compTrackXY/totTrack;
+      ratioXYZ = compTrackXYZ/totTrack;
+    }
+
     H_deltaZ    -> Fill(dz);
     H_deltaXY   -> Fill(dxy);
     H_deltaXYZ  -> Fill(dxyz);
-    H_compZ     -> Fill(compTrackZ/totTrack);
-    H_compXY    -> Fill(compTrackXY/totTrack);
-    H_compXYZ   -> Fill(compTrackXYZ/totTrack);
-    outRootTree -> fillAll(dz, dxy, dxyz);
+    H_compZ     -> Fill(ratioZ);
+    H_compXY    -> Fill(ratioXY);
+    H_compXYZ   -> Fill(ratioXYZ);
+    outRootTree -> fillAll(dz, dxy, dxyz, ratioZ, ratioXY, ratioXYZ);
     outRootTree -> store();
     
   } // end loop over entries

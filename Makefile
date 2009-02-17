@@ -165,6 +165,10 @@ isolationTableToy:  $(INCLUDEDIR)/src/isolationTableToy.cpp
 	$(CXX) $(CXXFLAGS) -o isolationTableToy $(GLIBS) $ $<
 isolationTableToy.clean:
 	rm -f isolationTableToy
+isolationStudies_input:  $(INCLUDEDIR)/src/isolationStudies_input.cpp
+	$(CXX) $(CXXFLAGS) -o isolationStudies_input $(GLIBS) $ $<
+isolationStudies_input.clean:
+	rm -f isolationStudies_input
 kinematicsTableToy:  $(INCLUDEDIR)/src/kinematicsTableToy.cpp
 	$(CXX) $(CXXFLAGS) -o kinematicsTableToy $(GLIBS) $ $<
 kinematicsTableToy.clean:
@@ -187,6 +191,7 @@ clean:
 # rm -f eleID_Higgs_Studies
 	rm -f eleIDtableToy
 	rm -f eleIDtoyPlot_input
+	rm -f isolationStudies_input
 	rm -f eleIDtableLike
 	rm -f isolationTableToy
 	rm -f kinematicsTableToy
