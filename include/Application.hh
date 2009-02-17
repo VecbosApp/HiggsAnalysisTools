@@ -17,4 +17,4 @@
 //  15 = lepton + fake selection for W+jets estimation
 //  16 = vertexing studies
 
-#define Application 16
+#define Application 1

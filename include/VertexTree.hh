@@ -11,7 +11,7 @@ public:
   ~VertexTree();
 
   //! event by event final dataset fill
-  void fillAll(float dz, float dxy, float dxyz, float rz, float rxy, float rxyz); 
+  void fillAll(float dz, float dxy, float dxyz);
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
@@ -21,9 +21,6 @@ private:
   float myDeltaZ; 
   float myDeltaXY; 
   float myDeltaXYZ; 
-  float myFracZ; 
-  float myFracXY; 
-  float myFracXYZ; 
 
   TFile* myFile;
   TTree* myTree;
