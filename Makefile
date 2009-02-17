@@ -122,6 +122,10 @@ $(OUTLIB)HiggsVertexing.o: $(INCLUDEDIR)/src/HiggsVertexing.cpp
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsVertexing.o $<
 $(OUTLIB)VertexTree.o: $(INCLUDEDIR)/src/VertexTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)VertexTree.o $<
+$(OUTLIB)ElectronBestCandidateSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/ElectronBestCandidateSelector.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)ElectronBestCandidateSelector.o $<
+$(OUTLIB)BestLeptonSelectorWjets.o: $(INCLUDEDIR)/src/BestLeptonSelectorWjets.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)BestLeptonSelectorWjets.o $<
 
 # no more used ------------------------------------
 #$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
@@ -173,6 +177,19 @@ vtxAndIsoOptim:  $(INCLUDEDIR)/src/vtxAndIsoOptim.cpp
 	$(CXX) $(CXXFLAGS) -o vtxAndIsoOptim $(GLIBS) $ $<
 vtxAndIsoOptim.clean:
 	rm -f vtxAndIsoOptim
+
+# ================= other ===================
+BestLeptonApp: $(INCLUDEDIR)/src/BestLeptonApp.C \
+	$(OUTLIBCOMMON)Conditions.o \
+	$(OUTLIBCOMMON)TriggerMask.o \
+	$(OUTLIBCOMMON)Utils.o \
+	$(OUTLIB)HiggsBase.o \
+	$(OUTLIB)ElectronBestCandidateSelector.o \
+	$(OUTLIB)BestLeptonSelectorWjets.o
+	$(CXX) $(CXXFLAGS) -o BestLeptonApp $(OUTLIB)/*o $(OUTLIBCOMMON)/*o $(GLIBS) $ $<
+BestLeptonApp.clean:
+	rm -f $(OUTLIB)BestLeptonSelectorWjets.o
+	rm -f BestLeptonApp
 
 # ==================== reduced trees =============================================
 #ReducedTree_HwwEleId:  $(INCLUDEDIR)ReducedTree_HwwEleId.cpp $(OUTLIB)RedEleIDTree.o 
