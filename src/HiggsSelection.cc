@@ -54,6 +54,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   // extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   //  _addedPres = new Selection(fileCutsPreselection,fileSwitchesPreselection);
   _preselection->addSwitch("apply_looseIdBeforePreselection");   
+  _preselection->addSwitch("asymmetricLeptons");
   _preselection->addSwitch("apply_kFactor");   
   _preselection->addCut("etaElectronAcc");
   _preselection->addCut("ptElectronAcc");
@@ -80,7 +81,7 @@ HiggsSelection::HiggsSelection(TTree *tree)
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/newOptimEleId_looseOthers_m160/");
+  EgammaCutBasedID.Configure("config/higgs/");
 
   // kinematics
   m_p4ElectronPlus = new TLorentzVector(0.,0.,0.,0.);
@@ -349,6 +350,9 @@ void HiggsSelection::Loop() {
 
   float met, deltaPhi, transvMass; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
+
+  if ( _preselection->getSwitch("asymmetricLeptons") )
+    cout << "---> Running with asymmetric leptons" << endl;
   
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -458,14 +462,29 @@ void HiggsSelection::Loop() {
     setKinematics();
 
     // ----------------------- selection ----------------------------
+    bool asymmetricLeptons = _preselection->getSwitch("asymmetricLeptons");
     // electron ID (true by default - studied only if ee or emu channel)
     bool theElectronID = true;
     bool thePositronID = true;
-    // custom electron ID
+    // custom electron ID (tight symmetric for ee, tight for emu)
     if (theElectron > -1) theElectronID = isEleID(theElectron);
     if (thePositron > -1) thePositronID = isEleID(thePositron);
 
-    // loose egamma electron ID
+    // custom electron ID (tight + loose)
+    if(asymmetricLeptons) {
+      if ( theElectron > -1 && thePositron > -1 ) {
+        if(etEle[theElectron] > etEle[thePositron]) {
+          theElectronID = eleIdCutBasedEle[theElectron];
+          thePositronID = isEleID(thePositron);
+        }
+        else {
+          theElectronID = isEleID(theElectron);
+          thePositronID = eleIdCutBasedEle[thePositron];
+        }
+      }
+    }
+
+    // loose egamma electron ID (loose symmetric)
     // if (theElectron > -1) theElectronID = eleIdCutBasedEle[theElectron];
     // if (thePositron > -1) thePositronID = eleIdCutBasedEle[thePositron];
 
@@ -486,11 +505,9 @@ void HiggsSelection::Loop() {
     float thePosTrackerPtSum = 0.;
     if (theElectron > -1 && thePositron > -1) { 
       float ptEle = sqrt(pxEle[theElectron]*pxEle[theElectron] + pyEle[theElectron]*pyEle[theElectron]);
-      theEleTrackerPtSum = (eleSumPtPreselectionEle[theElectron]*ptEle - getSecondEleTkPt(theElectron,thePositron,0.2))/ptEle;
-    }
-    if (thePositron > -1 && theElectron > -1) { 
+      theEleTrackerPtSum = (eleSumPt04Ele[theElectron]*ptEle - getSecondEleTkPt(theElectron,thePositron,0.4))/ptEle;
       float ptPos = sqrt(pxEle[thePositron]*pxEle[thePositron] + pyEle[thePositron]*pyEle[thePositron]);
-      thePosTrackerPtSum = (eleSumPtPreselectionEle[thePositron]*ptPos - getSecondEleTkPt(thePositron,theElectron,0.2))/ptPos;      
+      thePosTrackerPtSum = (eleSumPtPreselectionEle[thePositron]*ptPos - getSecondEleTkPt(thePositron,theElectron,0.4))/ptPos;      
     }
     if (theElectron > -1 && thePositron < 0)  theEleTrackerPtSum = eleSumPtPreselectionEle[theElectron];
     if (thePositron > -1 && theElectron < 0)  thePosTrackerPtSum = eleSumPtPreselectionEle[thePositron];
@@ -507,8 +524,6 @@ void HiggsSelection::Loop() {
     if (theElectron > -1 && thePositron > -1) { 
       float ptEle = sqrt(pxEle[theElectron]*pxEle[theElectron] + pyEle[theElectron]*pyEle[theElectron]);
       theEleEcalPtSum = (eleSumEmEt04Ele[theElectron]*ptEle - getSecondEleEmEt(theElectron,thePositron,0.4))/ptEle;      
-    }
-    if (thePositron > -1 && theElectron > -1) { 
       float ptPos = sqrt(pxEle[thePositron]*pxEle[thePositron] + pyEle[thePositron]*pyEle[thePositron]);
       thePosEcalPtSum = (eleSumEmEt04Ele[thePositron]*ptPos - getSecondEleEmEt(thePositron,theElectron,0.4))/ptPos;
     }
@@ -527,6 +542,14 @@ void HiggsSelection::Loop() {
     // ---------------------------------------
     // ee final state
     if (m_channel[ee]){
+
+      float theEleHardTrackerPtSum = (etEle[theElectron] > etEle[thePositron]) ? theEleTrackerPtSum : thePosTrackerPtSum;
+      float theEleSlowTrackerPtSum = (etEle[theElectron] > etEle[thePositron]) ? thePosTrackerPtSum : theEleTrackerPtSum;
+      float theEleHardHcalPtSum = (etEle[theElectron] > etEle[thePositron]) ? theEleHcalPtSum : thePosHcalPtSum;
+      float theEleSlowHcalPtSum = (etEle[theElectron] > etEle[thePositron]) ? thePosHcalPtSum : theEleHcalPtSum;
+      float theEleHardEcalPtSum = (etEle[theElectron] > etEle[thePositron]) ? theEleEcalPtSum : thePosEcalPtSum;
+      float theEleSlowEcalPtSum = (etEle[theElectron] > etEle[thePositron]) ? thePosEcalPtSum : theEleEcalPtSum;
+
       theDeltaPhiEE    = m_deltaPhi[ee];
       theInvMassEE     = m_mll[ee];
       theDetaLeptonsEE = etaEle[theElectron]-etaEle[thePositron];
@@ -536,14 +559,15 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionEE.SetWeight(weight);
       CutBasedHiggsSelectionEE.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEE.SetLowElePt(slowestElectronPt);
+      CutBasedHiggsSelectionEE.SetAsymmetricLeptons(asymmetricLeptons);
       CutBasedHiggsSelectionEE.SetElectronId(theElectronID);
       CutBasedHiggsSelectionEE.SetPositronId(thePositronID);
-      CutBasedHiggsSelectionEE.SetEleTrackerPtSum(theEleTrackerPtSum);
-      CutBasedHiggsSelectionEE.SetPosTrackerPtSum(thePosTrackerPtSum);
-      CutBasedHiggsSelectionEE.SetEleHcalPtSum(theEleHcalPtSum);
-      CutBasedHiggsSelectionEE.SetPosHcalPtSum(thePosHcalPtSum);
-      CutBasedHiggsSelectionEE.SetEleEcalPtSum(theEleEcalPtSum);
-      CutBasedHiggsSelectionEE.SetPosEcalPtSum(thePosEcalPtSum);
+      CutBasedHiggsSelectionEE.SetEleHardTrackerPtSum(theEleHardTrackerPtSum);
+      CutBasedHiggsSelectionEE.SetEleSlowTrackerPtSum(theEleSlowTrackerPtSum);
+      CutBasedHiggsSelectionEE.SetEleHardHcalPtSum(theEleHardHcalPtSum);
+      CutBasedHiggsSelectionEE.SetEleSlowHcalPtSum(theEleSlowHcalPtSum);
+      CutBasedHiggsSelectionEE.SetEleHardEcalPtSum(theEleHardEcalPtSum);
+      CutBasedHiggsSelectionEE.SetEleSlowEcalPtSum(theEleSlowEcalPtSum);
       CutBasedHiggsSelectionEE.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionEE.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
@@ -593,14 +617,15 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionMM.SetWeight(weight);
       CutBasedHiggsSelectionMM.SetHighElePt(hardestMuonPt);
       CutBasedHiggsSelectionMM.SetLowElePt(slowestMuonPt);
+      CutBasedHiggsSelectionEE.SetAsymmetricLeptons(false);
       CutBasedHiggsSelectionMM.SetElectronId(true);
       CutBasedHiggsSelectionMM.SetPositronId(true);
-      CutBasedHiggsSelectionMM.SetEleTrackerPtSum(0);
-      CutBasedHiggsSelectionMM.SetPosTrackerPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleHcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetPosHcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleEcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetPosEcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleHardTrackerPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleSlowTrackerPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleHardHcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleSlowHcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleHardEcalPtSum(0);
+      CutBasedHiggsSelectionMM.SetEleSlowEcalPtSum(0);
       CutBasedHiggsSelectionMM.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionMM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
@@ -670,14 +695,15 @@ void HiggsSelection::Loop() {
       CutBasedHiggsSelectionEM.SetWeight(weight);
       CutBasedHiggsSelectionEM.SetHighElePt(hardestElectronPt);
       CutBasedHiggsSelectionEM.SetLowElePt(slowestMuonPt);
+      CutBasedHiggsSelectionEE.SetAsymmetricLeptons(false);
       CutBasedHiggsSelectionEM.SetElectronId(true);
       CutBasedHiggsSelectionEM.SetPositronId(theEleIDEM);
-      CutBasedHiggsSelectionEM.SetEleTrackerPtSum(0);
-      CutBasedHiggsSelectionEM.SetPosTrackerPtSum(theEleTrackerPtSumEM);
-      CutBasedHiggsSelectionEM.SetEleHcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetPosHcalPtSum(theEleHcalPtSumEM);
-      CutBasedHiggsSelectionEM.SetEleEcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetPosEcalPtSum(theEleEcalPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleHardTrackerPtSum(0);
+      CutBasedHiggsSelectionEM.SetEleSlowTrackerPtSum(theEleTrackerPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleHardHcalPtSum(0);
+      CutBasedHiggsSelectionEM.SetEleSlowHcalPtSum(theEleHcalPtSumEM);
+      CutBasedHiggsSelectionEM.SetEleHardEcalPtSum(0);
+      CutBasedHiggsSelectionEM.SetEleSlowEcalPtSum(theEleEcalPtSumEM);
       CutBasedHiggsSelectionEM.SetJetVeto(passedJetVeto);
       CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
@@ -1105,10 +1131,19 @@ float HiggsSelection::getSecondEleEmEt(int first, int second, float deltaR) {
   float secondEleEmEt = 0.0;
   float dr = firstEle.DeltaR(secondEle);
 
-  if( dr < deltaR ) { 
-    secondEleEmEt = eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+  // remove part of the supercluster energy assuming that dR supercluster ~ 0.1
+  // dR(1cryEB) = 0.0175 => dR(10x10) = 10*0.0175/sqrt(2)
+  float dR10x10 = 10*0.0175/sqrt(2);
+
+  if( dr < deltaR+dR10x10 ) { 
+    // assume that the Sclu is a 10x10 circle. Formula is exact only if
+    // the isolation circle and SC circle are equal (not true: 0.4 vs ~ 0.1)
+    float alpha = acos(dr/(2*deltaR));
+    float overlappingArea = deltaR*deltaR*(4*alpha - sin(2*alpha));
+    float fraction = overlappingArea/(deltaR*deltaR);
+    secondEleEmEt = fraction * eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
   }
-  
+
   return secondEleEmEt;
 
 }

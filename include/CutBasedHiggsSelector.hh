@@ -27,23 +27,24 @@ public:
   Selection* GetSelection() { return _selection; }
 
   //! set event by event observables
-  void SetProcessID(int processID)            { m_processID     = processID; }
-  void SetWeight(float weight)                { m_weight        = weight;    }
-  void SetHighElePt(float highPt)             { m_highPt        = highPt;    }
-  void SetLowElePt(float lowPt)               { m_lowPt         = lowPt;     }
-  void SetInvMass(float mll)                  { m_invMass       = mll;       }
-  void SetElectronId(bool isEleId)            { m_isElectronId  = isEleId; }
-  void SetPositronId(bool isPosId)            { m_isPositronId  = isPosId; }
-  void SetEleTrackerPtSum(float eleTkPtSum)   { m_eleTkPtSum    = eleTkPtSum; }
-  void SetPosTrackerPtSum(float posTkPtSum)   { m_posTkPtSum    = posTkPtSum; }
-  void SetEleHcalPtSum(float eleHcalPtSum)    { m_eleHcalPtSum  = eleHcalPtSum; }
-  void SetPosHcalPtSum(float posHcalPtSum)    { m_posHcalPtSum  = posHcalPtSum; }
-  void SetEleEcalPtSum(float eleEcalPtSum)    { m_eleEcalPtSum  = eleEcalPtSum; }
-  void SetPosEcalPtSum(float posEcalPtSum)    { m_posEcalPtSum  = posEcalPtSum; }
-  void SetJetVeto(bool passedCJV)             { m_passedJetVeto = passedCJV; }
-  void SetMet(float met)                      { m_met           = met;}
-  void SetDeltaPhi(float deltaPhi)            { m_deltaPhi      = deltaPhi;}
-  void SetDetaLeptons(float deltaEta)         { m_detaLeptons   = deltaEta;}
+  void SetProcessID(int processID)       { m_processID     = processID; }
+  void SetWeight(float weight)           { m_weight        = weight;    }
+  void SetHighElePt(float highPt)        { m_highPt        = highPt;    }
+  void SetLowElePt(float lowPt)          { m_lowPt         = lowPt;     }
+  void SetInvMass(float mll)             { m_invMass       = mll;       }
+  void SetAsymmetricLeptons(bool asymm)  { m_asymmetricLeptons = asymm; }
+  void SetElectronId(bool isEleId)       { m_isElectronId  = isEleId; }
+  void SetPositronId(bool isPosId)       { m_isPositronId  = isPosId; }
+  void SetEleHardTrackerPtSum(float sum) { m_eleHardTkPtSum    = sum; }
+  void SetEleSlowTrackerPtSum(float sum) { m_eleSlowTkPtSum    = sum; }
+  void SetEleHardHcalPtSum(float sum)    { m_eleHardHcalPtSum  = sum; }
+  void SetEleSlowHcalPtSum(float sum)    { m_eleSlowHcalPtSum  = sum; }
+  void SetEleHardEcalPtSum(float sum)    { m_eleHardEcalPtSum  = sum; }
+  void SetEleSlowEcalPtSum(float sum)    { m_eleSlowEcalPtSum  = sum; }
+  void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
+  void SetMet(float met)                 { m_met           = met;}
+  void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
+  void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
 
   //! get output of the selector
   bool output();
@@ -63,10 +64,11 @@ private:
   
   float m_weight;
   float m_highPt, m_lowPt;
+  bool m_asymmetricLeptons;
   bool m_isElectronId, m_isPositronId;
   float m_invMass;
-  float m_eleTkPtSum, m_eleHcalPtSum, m_eleEcalPtSum;
-  float m_posTkPtSum, m_posHcalPtSum, m_posEcalPtSum;
+  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum;
+  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum;
   bool m_passedJetVeto;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;

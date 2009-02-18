@@ -7,6 +7,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_jetVeto = false;
   m_preDeltaPhi = false;
   m_processID = -1;
+  m_asymmetricLeptons = false;
 }
 
 CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selector ) {
@@ -15,12 +16,12 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_isElectronId = selector.m_isElectronId;
   m_isPositronId = selector.m_isPositronId;
   m_invMass = selector.m_invMass;
-  m_eleTkPtSum = selector.m_eleTkPtSum;
-  m_eleHcalPtSum = selector.m_eleHcalPtSum;
-  m_eleEcalPtSum = selector.m_eleEcalPtSum;
-  m_posTkPtSum = selector.m_posTkPtSum;
-  m_posHcalPtSum = selector.m_posHcalPtSum;
-  m_posEcalPtSum = selector.m_posEcalPtSum;
+  m_eleHardTkPtSum = selector.m_eleHardTkPtSum;
+  m_eleHardHcalPtSum = selector.m_eleHardHcalPtSum;
+  m_eleHardEcalPtSum = selector.m_eleHardEcalPtSum;
+  m_eleSlowTkPtSum = selector.m_eleSlowTkPtSum;
+  m_eleSlowHcalPtSum = selector.m_eleSlowHcalPtSum;
+  m_eleSlowEcalPtSum = selector.m_eleSlowEcalPtSum;
   m_passedJetVeto = selector.m_passedJetVeto;
   m_met = selector.m_met;
   m_deltaPhi = selector.m_deltaPhi;
@@ -49,15 +50,17 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("etJetLowAcc");
   _selection->addCut("etJetHighAcc");
   _selection->addCut("alphaJet");
-
   _selection->addSwitch("classDepEleId");
   _selection->addSwitch("jetVeto");
   _selection->addCut("hardLeptonThreshold"); 
   _selection->addCut("slowLeptonThreshold"); 
   _selection->addCut("dileptonInvMassMin");  
-  _selection->addCut("trackerPtSum");
-  _selection->addCut("hcalPtSum");
-  _selection->addCut("ecalPtSum");
+  _selection->addCut("trackerPtSumLoose");
+  _selection->addCut("hcalPtSumLoose");
+  _selection->addCut("ecalPtSumLoose");
+  _selection->addCut("trackerPtSumTight");
+  _selection->addCut("hcalPtSumTight");
+  _selection->addCut("ecalPtSumTight");
   _selection->addCut("MET");
   _selection->addCut("maxPtLepton");
   _selection->addCut("minPtLepton");
@@ -153,16 +156,28 @@ bool CutBasedHiggsSelector::output() {
   if ((_selection->getSwitch("classDepEleId")) && (!m_isElectronId || !m_isPositronId)) return false; 
   theCounter->IncrVar("classDepEleId",m_weight);
 
-  if ((_selection->getSwitch("trackerPtSum")) && 
-      (!_selection->passCut("trackerPtSum",m_eleTkPtSum) || !_selection->passCut("trackerPtSum",m_posTkPtSum))) return false; 
+  if ((_selection->getSwitch("trackerPtSum"))) {
+    if (!m_asymmetricLeptons &&
+        (!_selection->passCut("trackerPtSumTight",m_eleHardTkPtSum) || !_selection->passCut("trackerPtSumTight",m_eleSlowTkPtSum)) ) return false; 
+    if (m_asymmetricLeptons && 
+        (!_selection->passCut("trackerPtSumLoose",m_eleHardTkPtSum) || !_selection->passCut("trackerPtSumTight",m_eleSlowTkPtSum)) ) return false;
+  }
   theCounter->IncrVar("trackerIso",m_weight);
 
-  if ((_selection->getSwitch("hcalPtSum")) && 
-      (!_selection->passCut("hcalPtSum",m_eleHcalPtSum) || !_selection->passCut("hcalPtSum",m_posHcalPtSum))) return false; 
+  if ((_selection->getSwitch("hcalPtSum"))) {
+    if (!m_asymmetricLeptons &&
+        (!_selection->passCut("hcalPtSumTight",m_eleHardHcalPtSum) || !_selection->passCut("hcalPtSumTight",m_eleSlowHcalPtSum)) ) return false; 
+    if (m_asymmetricLeptons && 
+        (!_selection->passCut("hcalPtSumLoose",m_eleHardHcalPtSum) || !_selection->passCut("hcalPtSumTight",m_eleSlowHcalPtSum)) ) return false;
+  }
   theCounter->IncrVar("hcalIso",m_weight);
 
-  if ((_selection->getSwitch("ecalPtSum")) && 
-      (!_selection->passCut("ecalPtSum",m_eleEcalPtSum) || !_selection->passCut("ecalPtSum",m_posEcalPtSum))) return false; 
+  if ((_selection->getSwitch("ecalPtSum"))) {
+    if (!m_asymmetricLeptons &&
+        (!_selection->passCut("ecalPtSumTight",m_eleHardEcalPtSum) || !_selection->passCut("ecalPtSumTight",m_eleSlowEcalPtSum)) ) return false; 
+    if (m_asymmetricLeptons && 
+        (!_selection->passCut("ecalPtSumLoose",m_eleHardEcalPtSum) || !_selection->passCut("ecalPtSumTight",m_eleSlowEcalPtSum)) ) return false;
+  }
   theCounter->IncrVar("ecalIso",m_weight);
 
   m_finalLeptons = true;
