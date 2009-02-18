@@ -82,11 +82,15 @@ bool CommonHiggsPreselector::output() {
   float m_weight = m_kFactor;
   theCounter->IncrVar("event",m_weight);
 
+
+  bool mctruth = true;
+  if (_selection->getSwitch("MCtruth")) mctruth = m_foundMcTree;
+
   // common preselection cut: this is not really applied, should be reproduced by hand
-  if( _selection->getSwitch("preselection") && m_evtPresel ) { 
+  if( _selection->getSwitch("preselection") && m_evtPresel && mctruth) { 
     theCounter->IncrVar("preselection",m_weight);
   }
-  
+
   // MC truth
   if(_selection->getSwitch("MCtruth") && !m_foundMcTree ) return false;
   theCounter->IncrVar("MCtruth",m_weight);
