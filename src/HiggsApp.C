@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   strcpy(inputFileName,argv[1]);
-  if ( argc < 3 ) sprintf(outputFileName,"def.root");
+  if (argc < 3 ) strcpy(outputFileName,argv[1]);
   else strcpy(outputFileName,argv[2]);
 
   // -------------------------
@@ -114,13 +114,11 @@ int main(int argc, char* argv[]) {
 #if Application == 1
 
   HiggsSelection htoww(theChain);
-  std::string outFileName(inputFileName);
-  outFileName+=".root";
-  htoww.SetDatasetName(outFileName);
+  htoww.SetDatasetName(outputFileName);
 
   TriggerMask mask(treeCond);
 
-  // require triggers for ee channel
+  // require triggers
   mask.requireTrigger("HLT_Ele15_LW_L1R");
   mask.requireTrigger("HLT_Mu15");
 
@@ -128,7 +126,7 @@ int main(int argc, char* argv[]) {
   htoww.requireTrigger(requiredTriggers);
 
   htoww.Loop();
-  htoww.displayEfficiencies(outFileName);
+  htoww.displayEfficiencies(outputFileName);
 
 #endif
 
