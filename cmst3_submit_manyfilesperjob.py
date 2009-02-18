@@ -1,13 +1,17 @@
 #! /usr/bin/env python
 import os
+import sys
 # set parameters to use cmst3 batch 
 #######################################
-dataset = "ttjetsMadgraph_Fall08"
+if len(sys.argv) != 5:
+    print "usage python cmst3_submit_manyfilesperjob.py dataset njobs applicationName queue"
+    sys.exit(1)
+dataset = sys.argv[1]
+ijobmax = int(sys.argv[2])
+application = sys.argv[3]
 inputlist = "cmst3_21X/"+dataset+".list"
+queue = sys.argv[4] # choose among cmt3 8nm 1nh 8nh 1nd 1nw 
 output = dataset
-# choose among cmt3 8nm 1nh 8nh 1nd 1nw 
-queue = "cmst3"
-ijobmax = 50
 # to write on the cmst3 cluster disks
 ################################################
 #castordir = "/castor/cern.ch/user/m/mpierini/CMST3/Vecbos/output/"
@@ -69,9 +73,10 @@ for ijob in range(ijobmax):
     outputfile.write('#!/bin/bash\n')
     outputfile.write('export STAGE_HOST=castorcms\n')
     outputfile.write('export STAGE_SVCCLASS=cmst3\n')
-    outputfile.write('cd '+pwd)
-    if castordir != "none": outputfile.write('./HiggsApp '+inputfilename+" "+" rfio://"+outputroot+output+"_"+str(ijob)+".root -start=0 -stop=10\n")
-    else:  outputfile.write('./HiggsApp '+inputfilename+" "+outputroot+output+"_"+str(ijob)+".root -start=0 -stop=10\n") 
+    outputfile.write('cd $WORKDIR \n')
+    outputfile.write('cp -r '+pwd[:-1]+'/'+'config $WORKDIR \n')
+    outputfile.write(pwd[:-1]+'/'+application+' '+pwd[:-1]+"/"+inputfilename+" "+output+"_"+str(ijob)+"\n")
+    outputfile.write('ls *.root | xargs -i cp {} '+pwd[:-1]+"/"+outputroot+'\n')
     outputfile.close
     os.system("echo bsub -q "+queue+" -o "+output+"/log/"+output+"_"+str(ijob)+".log source "+pwd[:-1]+"/"+outputname)
     os.system("bsub -q "+queue+" -o "+output+"/log/"+output+"_"+str(ijob)+".log source "+pwd[:-1]+"/"+outputname)
