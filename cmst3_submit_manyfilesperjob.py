@@ -11,7 +11,7 @@ ijobmax = int(sys.argv[2])
 application = sys.argv[3]
 inputlist = "cmst3_21X/"+dataset+".list"
 queue = sys.argv[4] # choose among cmt3 8nm 1nh 8nh 1nd 1nw 
-output = dataset
+output = dataset+"_symm"
 # to write on the cmst3 cluster disks
 ################################################
 #castordir = "/castor/cern.ch/user/m/mpierini/CMST3/Vecbos/output/"
@@ -22,10 +22,18 @@ castordir = "none"
 outputmain = output
 # prepare job to write on the cmst3 cluster disks
 ################################################
+os.system("\\rm -f tmp.log")
+os.system("echo $PWD > tmp.log")
+tmp = open("tmp.log")
+pwd = tmp.readline()
+tmp.close()
+os.system("\\rm -f tmp.log")
+#######################################
 os.system("mkdir "+output)
 os.system("mkdir "+output+"/log/")
 os.system("mkdir "+output+"/input/")
 os.system("mkdir "+output+"/src/")
+os.system("cp -r "+pwd[:-1]+'/'+'config '+output)
 outputroot = outputmain+"/root/"
 if castordir != "none": 
     os.system("rfmkdir "+outputmain)
@@ -34,13 +42,6 @@ if castordir != "none":
     os.system("rfchmod 777 "+outputroot)
 else: os.system("mkdir "+outputroot)
 #look for the current directory
-#######################################
-os.system("\\rm tmp.log")
-os.system("echo $PWD > tmp.log")
-tmp = open("tmp.log")
-pwd = tmp.readline()
-tmp.close()
-os.system("\\rm tmp.log")
 #######################################
 numfiles = reduce(lambda x,y: x+1, file(inputlist).xreadlines(), 0)
 filesperjob = numfiles/ijobmax
@@ -74,7 +75,7 @@ for ijob in range(ijobmax):
     outputfile.write('export STAGE_HOST=castorcms\n')
     outputfile.write('export STAGE_SVCCLASS=cmst3\n')
     outputfile.write('cd $WORKDIR \n')
-    outputfile.write('cp -r '+pwd[:-1]+'/'+'config $WORKDIR \n')
+    outputfile.write('cp -r '+pwd[:-1]+'/'+output+'/config $WORKDIR \n')
     outputfile.write(pwd[:-1]+'/'+application+' '+pwd[:-1]+"/"+inputfilename+" "+output+"_"+str(ijob)+"\n")
     outputfile.write('ls *.root | xargs -i cp {} '+pwd[:-1]+"/"+outputroot+'\n')
     outputfile.close
