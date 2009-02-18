@@ -89,21 +89,11 @@ HiggsSelection::HiggsSelection(TTree *tree)
   m_p4MuonMinus = new TLorentzVector(0.,0.,0.,0.);
   m_p4MET = new TLorentzVector(0.,0.,0.,0.);
 
-  // the Monitoring Histograms
-  _monitorGenerator = new Monitor(0);
-  _monitorEventAfterSelection = new Monitor(0);
-  _monitorEventAfterReco = new Monitor(0);
-  _monitorMet = new Monitor(&nMet);
   _bestElectrons = new std::vector<int>;
   _bestMuons = new std::vector<int>;
-  _monitorElectrons = new Monitor(&nEle,_bestElectrons);
-  _monitorMuons = new Monitor(&nMuon,_bestMuons);
   _bestJets = new std::vector<int>;
   _excludedJets = new std::vector<int>;
-  _monitorJets = new Monitor(&nIterativeJet,_bestJets);
-  _monitorJets->ExcludeElements(_excludedJets);
   _bestGenJets = new std::vector<int>;
-  _monitorGenJets = new Monitor(&nIterativeGenJet,_bestGenJets);
 }
 
 HiggsSelection::~HiggsSelection(){
@@ -113,19 +103,11 @@ HiggsSelection::~HiggsSelection(){
   delete m_p4MuonPlus;
   delete m_p4MuonMinus;
   delete m_p4MET;
-  delete _monitorGenerator;
-  delete _monitorEventAfterSelection;
-  delete _monitorEventAfterReco;
-  delete _monitorMet;
   delete _bestElectrons;
   delete _bestMuons;
-  delete _monitorElectrons;
-  delete _monitorMuons;
   delete _bestJets;
   delete _excludedJets;
   delete _bestGenJets;
-  delete _monitorGenJets;
-  delete _monitorJets;
   delete _preselection;
   delete _selectionEE;
   delete _selectionMM;
@@ -322,7 +304,7 @@ float HiggsSelection::getkFactor(std::string process) {
     else weight = evtKfactor;
   }
   else if(process.compare("WW")==0) {
-    weight = evtMcAtNlo;   
+    weight = 1.0; // we used MC @ NLO weight in 16X   
   }
   return weight;
 }
@@ -333,21 +315,10 @@ void HiggsSelection::Loop() {
   if(fChain == 0) return;
   
   
-  bookHistos();
   std::string::size_type loc = _datasetName.find_first_of(".",0);
   if( loc != std::string::npos ) {
     _datasetName.erase(loc);
   }
-  std::string recoHistogramName = _datasetName+"-Histograms.root";
-  TFile *file = new TFile(recoHistogramName.c_str(),"RECREATE");
-  _monitorGenerator->setPath("Generator");
-  _monitorMet->setPath("MET");
-  _monitorElectrons->setPath("Electrons");
-  _monitorMuons->setPath("Muons");   
-  _monitorJets->setPath("Jets");
-  _monitorGenJets->setPath("GenJets");
-  _monitorEventAfterReco->setPath("EventAfterReco");
-  _monitorEventAfterSelection->setPath("EventAfterSelection");
   
   // kinematics reduced tree
   std::string reducedTreeNameEE = _datasetName+"-datasetEE.root";
@@ -478,12 +449,6 @@ void HiggsSelection::Loop() {
     CommonHiggsPreselection.SetMllMM(m_mll[mm]);
     CommonHiggsPreselection.SetCommonPres(evtPresel);
 
-    // preselection histos
-    _monitorGenerator->Fill(weight);
-    estimateJetMatch(0.0);
-    _monitorJets->Fill(weight);
-    _monitorEventAfterReco->Fill(weight);
-    
     // did we pass preselections?
     bool isPreselections = CommonHiggsPreselection.output();    
     if( !isPreselections ) continue;
@@ -754,37 +719,8 @@ void HiggsSelection::Loop() {
 
     }
 
-
-    /*
-    // ancora da finire -- sistema --- 
-    // monitor element
-    _monitorEventAfterSelection->Fill(weight);
-    _monitorMet->Fill(weight);
-    _monitorElectrons->Fill(weight);
-    _monitorMuons->Fill(weight);   
-    _monitorGenJets->Fill(weight);
-    */
-
   }
 
-
-  _monitorGenerator->WritePs("eventGenerator.ps");
-  _monitorGenerator->WriteRoot(file);
-  _monitorEventAfterReco->WritePs("eventAfterReco.ps");
-  _monitorEventAfterReco->WriteRoot(file);
-  _monitorEventAfterSelection->WritePs("eventAfterSelection.ps");
-  _monitorEventAfterSelection->WriteRoot(file);
-  _monitorMet->WritePs("met.ps");
-  _monitorMet->WriteRoot(file);
-  _monitorElectrons->WritePs("electrons.ps");
-  _monitorElectrons->WriteRoot(file);
-  _monitorMuons->WritePs("muons.ps");
-  _monitorMuons->WriteRoot(file);
-  _monitorJets->WritePs("jets.ps");
-  _monitorJets->WriteRoot(file);
-  _monitorGenJets->WritePs("jets.ps");
-  _monitorGenJets->WriteRoot(file);
-  file->Close();  
 }
 
 void HiggsSelection::displayEfficiencies(std::string datasetName) {
@@ -813,19 +749,6 @@ void HiggsSelection::displayEfficiencies(std::string datasetName) {
   EgammaCutBasedID.diplayEfficiencies();
 
 
-  /*
-  // jet match histogram
-  TH1F *MatchFracJets_pt = (TH1F*)RecoJets_pt->Clone("MatchFracJets_pt");
-  MatchFracJets_pt->Sumw2();
-  MatchFracJets_pt->Divide(MatchedJets_pt, RecoJets_pt, 1, 1);
-
-  TFile jetMatchFile("jets.root","RECREATE");
-  RecoJets_pt->Write();
-  MatchedJets_pt->Write();
-  MatchFracJets_pt->Write();
-  etHighestJet->Write();
-  jetMatchFile.Close();
-  */
 }
 
 std::pair<int,int> HiggsSelection::getBestElectronPair() {
@@ -1113,7 +1036,6 @@ bool HiggsSelection::goodJetFound() {
     break;
   }
 
-  etHighestJet->Fill(maxPtJet);
   return foundJet;
 
 }
@@ -1127,95 +1049,6 @@ float HiggsSelection::Fisher(int eleIndex) {
 //   else
 //     fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];
   return fisher;
-}
-
-void HiggsSelection::bookHistos() {
-  // Generator 
-  _monitorGenerator->book1D("highestPtGenEle","Highest p_{T} generated electron (GeV/c)",_highestPtGen,50,0,165);
-  _monitorGenerator->book1D("lowestPtGenEle","Lowest p_{T} generated electron (GeV/c)",_lowestPtGen,50,0,60);
-  _monitorGenerator->book1D("genHiggsPt","Higgs p_{T} (GeV/c)",_genHiggsPt,80,0,200);
-  _monitorGenerator->book1D("nGenJets","number of generated Jets",_nGenJet,100,0,100);
-
-  _monitorGenJets->book1D("et","generated jet tranverse energy (GeV)",etIterativeGenJet,50,0,300,"All+Fake+Best");
-
-  // Event quantities - FIXME
-//   _monitorEventAfterReco->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
-//   _monitorEventAfterReco->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
-//   _monitorEventAfterReco->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
-//   _monitorEventAfterReco->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,165.);
-//   _monitorEventAfterReco->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
-//   _monitorEventAfterReco->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
-//   _monitorEventAfterReco->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
-
-//   _monitorEventAfterSelection->book1D("nEle","number of reconstructed electrons",_nEle,10,0,10);
-//   _monitorEventAfterSelection->book1D("nJets","number of reconstructed jets",_nJet,100,0,100);
-//   _monitorEventAfterSelection->book1D("deltaPhi","#Delta #phi of e^{+}e^{-} (degrees)",_deltaPhi,50,0.,180);
-//   _monitorEventAfterSelection->book1D("mll","e^{+}e^{-} invariant mass (GeV/c^{2})",_mll,50,0.,50.);
-//   _monitorEventAfterSelection->book1D("WWtrMass","W^{+}W^{-} transverse mass (GeV/c^{2})",_transvMass,50,0,250);
-//   _monitorEventAfterSelection->book1D("highestPtEle","Highest p_{T} electron (GeV/c)",_highestPt,50,0,165);
-//   _monitorEventAfterSelection->book1D("lowestPtEle","Lowest p_{T} electron (GeV/c)",_lowestPt,50,0,60);
-
-  // Met quantities
-  _monitorMet->book1D("metEt","Missing trensverse energy (GeV)",etMet,50,0,150,"All");
-  _monitorMet->book1D("metPhi","Missing trensverse momentum #phi",phiMet,50,-TMath::Pi(),TMath::Pi(),"All");
-
-  // Jet quantities
-  _monitorJets->book1D("et","jet tranverse energy (GeV)",etIterativeJet,50,0,300,"All+Fake+Best");
-  _monitorJets->book1D("eta","jet #eta",etaIterativeJet,50,-2.5,2.5,"All+Fake+Best");
-  _monitorJets->book1D("alphaJet","jet #alpha",alphaIterativeJet,50,0.,3.,"All+Fake+Best");
-  _monitorJets->book1D("emFracJet","jet e.m. energy fraction",emFracIterativeJet,50,0.,1.,"All+Fake+Best");
-  _monitorJets->book1D("hadFracJet","jet hadronic energy fraction",hadFracIterativeJet,50,0.,1.,"All+Fake+Best");
-
-  // Electron quantities
-  _monitorElectrons->book1D("energy","electron energy (GeV)",energyEle,50,0,150,"All+Fake+Best");
-  _monitorElectrons->book1D("et","electron tranverse energy (GeV)",etEle,50,0,150,"All+Fake+Best");
-  _monitorElectrons->book1D("eta","electron #eta",etaEle,50,-6.,6.,"All+Fake+Best");
-  _monitorElectrons->book1D("phi","electron #phi",phiEle,50,-TMath::Pi(),TMath::Pi(),"All+Fake+Best");
-  _monitorElectrons->book1D("s1s9","electron #sum 1/#sum 9",s1s9Ele,50,0.,1.,"All+Fake+Best");
-  _monitorElectrons->book1D("s9s25","electron #sum 9/#sum 25",s9s25Ele,50,0.,1.,"All+Fake+Best");
-
-  // Muon quantities
-  _monitorMuons->book1D("energy","muon energy (GeV)",energyMuon,50,0,150,"All+Fake+Best");
-  _monitorMuons->book1D("et","muon tranverse energy (GeV)",etMuon,50,0,150,"All+Fake+Best");
-  _monitorMuons->book1D("eta","muon #eta",etaMuon,50,-6.,6.,"All+Fake+Best");
-  _monitorMuons->book1D("phi","muon #phi",phiMuon,50,-TMath::Pi(),TMath::Pi(),"All+Fake+Best");
-
-  // Jet match fraction
-  RecoJets_pt = new TH1F("RecoJets_pt","reconstructed jet p_{T}",25,0.0,50.0);
-  MatchedJets_pt = new TH1F("MatchedJets_pt","reconstructed matched jet p_{T}",25,0.0,50.0);
-  etHighestJet = new TH1F("etHighestJet","most energetic jet p_{T} (GeV/c)",100,5.0,200.0);
-}
-
-void HiggsSelection::estimateJetMatch(float ptmin) {
-
-  int jetNotEle=0;
-  _bestJets->clear();
-  _excludedJets->clear();
-  
-  for(int recojet=0;recojet<nIterativeJet;recojet++) {
-    // fill the denominator: all reco jets
-    if(etIterativeJet[recojet]<20.0) _excludedJets->push_back(recojet);
-    if(etIterativeJet[recojet]>ptmin) {
-      RecoJets_pt->Fill(etIterativeJet[recojet]);
-    }
-    else continue;
-    
-    TVector3 pRecoJet(pxIterativeJet[recojet],pyIterativeJet[recojet],pzIterativeJet[recojet]);
-
-    // fill the numerator: only the matched jets
-    // matching is defined as DeltaR(reco-gen)<0.3
-    for(int genjet=0;genjet<nIterativeGenJet;genjet++) {
-      TVector3 pGenJet(pxIterativeGenJet[genjet],pyIterativeGenJet[genjet],pzIterativeGenJet[genjet]);
-      if(etIterativeGenJet[genjet]>ptmin && pRecoJet.DeltaR(pGenJet)<0.3) {
-	MatchedJets_pt->Fill(etIterativeJet[recojet]);
-	// the matched jets are best jets, the rest are "fake" 
-	// fake jets include the electron-matched jets   
-	_bestJets->push_back(recojet);
-	break;
-      }
-    }
-  }
-
 }
 
 void HiggsSelection::resetKinematics() {

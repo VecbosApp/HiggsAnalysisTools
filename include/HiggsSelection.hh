@@ -44,7 +44,6 @@ private:
 
   bool findMcTree(const char* processType);
 
-  void bookHistos();
   //! get the two hardest electrons with opposite charge
   std::pair<int,int> getBestElectronPair();
   //! get the two hardest muons with opposite charge 
@@ -63,8 +62,6 @@ private:
   float getSecondEleEmEt(int first, int second, float deltaR);
   //! evaluate cluster shape Fisher discriminant
   float Fisher(int eleIndex);
-  //! genJet - recoJet matching study
-  void estimateJetMatch(float ptmin=10.0);
   //! get the kFactor of the event
   float getkFactor(std::string process);
   //! reset the kinematic quantities at the beginning of event
@@ -126,16 +123,6 @@ private:
   //! vector to store indices of candidate to exclude
   std::vector<int> *_excludedJets;
 
-  //! monitoring tools
-  Monitor *_monitorEventAfterSelection;
-  Monitor *_monitorMet, *_monitorElectrons, *_monitorMuons, *_monitorJets;
-  Monitor *_monitorEventAfterReco;
-  Monitor *_monitorGenerator, *_monitorGenJets;
-
-  //! simple histograms
-  TH1F *RecoJets_pt, *MatchedJets_pt;
-  TH1F *etHighestJet;
-  
   //! reduced tree for event selection (on at least 2leptons events)
   RedHiggsTree *myOutTreeEE;
   RedHiggsTree *myOutTreeMM;
