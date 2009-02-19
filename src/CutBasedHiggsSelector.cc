@@ -156,7 +156,7 @@ bool CutBasedHiggsSelector::output() {
   if ((_selection->getSwitch("classDepEleId")) && (!m_isElectronId || !m_isPositronId)) return false; 
   theCounter->IncrVar("classDepEleId",m_weight);
 
-  if ((_selection->getSwitch("trackerPtSum"))) {
+  if ((_selection->getSwitch("trackerPtSumTight"))) {
     if (!m_asymmetricLeptons &&
         (!_selection->passCut("trackerPtSumTight",m_eleHardTkPtSum) || !_selection->passCut("trackerPtSumTight",m_eleSlowTkPtSum)) ) return false; 
     if (m_asymmetricLeptons && 
@@ -164,7 +164,7 @@ bool CutBasedHiggsSelector::output() {
   }
   theCounter->IncrVar("trackerIso",m_weight);
 
-  if ((_selection->getSwitch("hcalPtSum"))) {
+  if ((_selection->getSwitch("hcalPtSumTight"))) {
     if (!m_asymmetricLeptons &&
         (!_selection->passCut("hcalPtSumTight",m_eleHardHcalPtSum) || !_selection->passCut("hcalPtSumTight",m_eleSlowHcalPtSum)) ) return false; 
     if (m_asymmetricLeptons && 
@@ -172,7 +172,7 @@ bool CutBasedHiggsSelector::output() {
   }
   theCounter->IncrVar("hcalIso",m_weight);
 
-  if ((_selection->getSwitch("ecalPtSum"))) {
+  if ((_selection->getSwitch("ecalPtSumTight"))) {
     if (!m_asymmetricLeptons &&
         (!_selection->passCut("ecalPtSumTight",m_eleHardEcalPtSum) || !_selection->passCut("ecalPtSumTight",m_eleSlowEcalPtSum)) ) return false; 
     if (m_asymmetricLeptons && 
