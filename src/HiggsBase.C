@@ -1,5 +1,5 @@
 #define HiggsBase_cxx
-#include "HiggsAnalysisTools/include/HiggsBase.h"
+#include "../include/HiggsBase.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>

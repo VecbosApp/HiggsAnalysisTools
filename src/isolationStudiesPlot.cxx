@@ -13,9 +13,9 @@ tesiStyle->SetFrameBorderMode(0);
 tesiStyle->cd();
 
 // files
-TFile fileSgn("../optimizationIsolation/H160_WW_2l/H160_WW_2l_isolationMerged.root");
-TFile fileWj ("../optimizationIsolation/WjetsMadgraph_Fall08/WjetsMadgraph_Fall08_isolationMerged.root");
-TFile filettj("../optimizationIsolation/ttjetsMadgraph_Fall08/ttjetsMadgraph_Fall08_isolationMerged.root");
+TFile fileSgn("../optimizationIsolation/studiesInputs/H160_WW_2l/H160_WW_2l_isOptimHistoMerged.root");
+TFile fileWj ("../optimizationIsolation/studiesInputs/WjetsMadgraph_Fall08/WjetsMadgraph_Fall08_isolationMerged.root");
+TFile filettj("../optimizationIsolation/studiesInputs/ttjetsMadgraph_Fall08/ttjetsMadgraph_Fall08_isolationMerged.root");
 
 // histos
 TH1F *Hass_eleSumPt03[5][3],    *Hass_eleSumPt04[5][3],    *Hass_eleSumPt05[5][3];
@@ -201,7 +201,6 @@ for(int jj=0; jj<3; jj++){
     Hass_eleIsoFromDepsEcal[ii][jj].SetFillColor(theColor);        Hass_eleIsoFromDepsEcal[ii][jj].SetFillStyle(theStyle);             
     Hass_eleIsoFromDepsHcal[ii][jj].SetFillColor(theColor);        Hass_eleIsoFromDepsHcal[ii][jj].SetFillStyle(theStyle);             
 
-    /*
     // rebinning
     Hass_eleSumPt03[ii][jj].Rebin(4);    
     Hass_eleSumPt04[ii][jj].Rebin(4);               
@@ -216,7 +215,7 @@ for(int jj=0; jj<3; jj++){
     Hass_eleScHaloBasedEcalSum05[ii][jj].Rebin(4);        
     Hass_eleIsoFromDepsTk[ii][jj].Rebin(4);                
     Hass_eleIsoFromDepsEcal[ii][jj].Rebin(4);            
-    Hass_eleIsoFromDepsHcal[ii][jj].Rebin(4);             */
+    Hass_eleIsoFromDepsHcal[ii][jj].Rebin(4);             
   }
 }
 
@@ -244,27 +243,36 @@ for(int jj=0; jj<3; jj++){
 // ------------- plots -----------------------------------
 
 TLegend SvsB(0.50,0.6,0.75,0.82);
-SvsB.AddEntry(Hass_eleSumPt03[0][0], "signal","f");
-// SvsB.AddEntry(Hass_eleSumPt03[0][2], "ttjets","f");
-SvsB.AddEntry(Hass_eleSumPt03[0][1], "wjets","f");
+SvsB.AddEntry(Hass_eleSumPt04[0][0], "signal","f");
+//SvsB.AddEntry(Hass_eleSumPt04[0][2], "ttjets","f");
+SvsB.AddEntry(Hass_eleSumPt04[0][1], "wjets","f");
 SvsB.SetFillColor(0);
 SvsB.SetBorderSize(0.4);
 
 TCanvas *c1 = new TCanvas("c1", "",1);  
-Hass_eleSumHadEt04[0][0].Draw();
-Hass_eleSumHadEt04[0][1].Draw("same");
-Hass_eleSumHadEt04[0][2].Draw("same");
+Hass_eleSumHadEt04[2][0].Draw();
+Hass_eleSumHadEt04[2][1].Draw("same");
+//Hass_eleSumHadEt04[2][2].Draw("same");
 SvsB.Draw();
 c1->Print("Hass_eleSumHadEt04.eps");
 c1->Print("Hass_eleSumHadEt04.root");
 
-TCanvas *c3 = new TCanvas("c3", "",1);  
-Hass_eleIsoFromDepsHcal[0][0].Draw();
-Hass_eleIsoFromDepsHcal[0][1].Draw("same");
-Hass_eleIsoFromDepsEcal[0][2].Draw("same");
+TCanvas *c2 = new TCanvas("c2", "",1);  
+Hass_eleSumPt04[2][0].Draw();
+Hass_eleSumPt04[2][1].Draw("same");
+//Hass_eleSumPt04[2][2].Draw("same");
 SvsB.Draw();
-c3->Print("Hass_eleIsoFromDepsHcal.eps");
-c3->Print("Hass_eleIsoFromDepsHcal.root");
+c2->Print("Hass_eleSumPt04.eps");
+c2->Print("Hass_eleSumPt04.root");
+
+
+TCanvas *c3 = new TCanvas("c3", "",1);  
+Hass_eleIsoFromDepsEcal[2][0].Draw();
+Hass_eleIsoFromDepsEcal[2][1].Draw("same");
+//Hass_eleIsoFromDepsEcal[2][2].Draw("same");
+SvsB.Draw();
+c3->Print("Hass_eleIsoFromDepsEcal.eps");
+c3->Print("Hass_eleIsoFromDepsEcal.root");
 
 
 }
