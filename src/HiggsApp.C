@@ -69,6 +69,9 @@
 #if Application == 16
 #include "HiggsAnalysisTools/src/HiggsVertexing.cpp"
 #endif
+#if Application == 17
+#include "HiggsAnalysisTools/src/HiggsIsolationStudiesInput.cc"
+#endif
 int main(int argc, char* argv[]) {
 
   char inputFileName[150];
@@ -250,13 +253,10 @@ int main(int argc, char* argv[]) {
   std::string outFileName(inputFileName);
   outFileName+=".root";
   TriggerMask mask(treeCond);
-  mask.requireTrigger("HLT1Electron");
-  mask.requireTrigger("HLT1ElectronRelaxed");
-  mask.requireTrigger("HLT2Electron");
-  mask.requireTrigger("HLT2ElectronRelaxed");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
   std::vector<int> requiredTriggers = mask.getBits();
   hisoltoy.requireTrigger(requiredTriggers);
-  hisoltoy.Loop();
+  hisoltoy.Loop(outputFileName);
 
 #endif
 
@@ -316,6 +316,24 @@ int main(int argc, char* argv[]) {
   vertex.Loop(outputFileName);
 
 #endif  
+
+#if Application == 17
+
+  HiggsIsolationStudiesInput isolInput(theChain);
+  std::string outFileName(inputFileName);
+  outFileName+=".root";
+
+  TriggerMask mask(treeCond);
+
+  // require triggers for ee channel
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+  isolInput.requireTrigger(requiredTriggers);
+  
+  isolInput.Loop(outputFileName);
+
+#endif
 
   return 0;
 
