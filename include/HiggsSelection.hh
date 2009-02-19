@@ -66,6 +66,8 @@ private:
   float getkFactor(std::string process);
   //! reset the kinematic quantities at the beginning of event
   void resetKinematics();
+  //! offline ambiguity resolution
+  std::vector<int> resolvedElectrons();
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;

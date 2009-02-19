@@ -455,7 +455,7 @@ void HiggsSelection::Loop() {
 
     // did we pass preselections?
     bool isPreselections = CommonHiggsPreselection.output();    
-    if( !isPreselections ) continue;
+    //    if( !isPreselections ) continue;
 
     // kinematics after preselections
     // now we know we have two good reconstructed leptons
@@ -473,14 +473,21 @@ void HiggsSelection::Loop() {
     // custom electron ID (tight + loose)
     if(asymmetricLeptons) {
       if ( theElectron > -1 && thePositron > -1 ) {
+        int theHardest=-1;
+        int theSlowest=-1;
         if(etEle[theElectron] > etEle[thePositron]) {
-          theElectronID = eleIdCutBasedEle[theElectron];
-          thePositronID = isEleID(thePositron);
+          theHardest = theElectron;
+          theSlowest = thePositron;
+        } else {
+          theHardest = thePositron;
+          theSlowest = theElectron;
         }
-        else {
-          theElectronID = isEleID(theElectron);
-          thePositronID = eleIdCutBasedEle[thePositron];
-        }
+        // don't look at names
+        if(fabs(etaEle[theSlowest])<1.475) {
+          // tight x loose
+          theElectronID = eleIdCutBasedEle[theHardest];
+          thePositronID = isEleID(theSlowest);
+        } // else tight x tight: already done
       }
     }
 
@@ -784,8 +791,15 @@ std::pair<int,int> HiggsSelection::getBestElectronPair() {
   float maxPtLep1=-1000.;
   float maxPtLep2=-1000.;
   std::vector<int> goodRecoLeptons;
-  for(int i=0;i<nEle;i++) {
+  //  for(int i=0;i<nEle;i++) {
     
+  // if ambiguity resolution is not applied... @$#%@^@!
+  vector<int> _resolvedElectrons = resolvedElectrons();
+  vector<int>::const_iterator it; 
+
+  for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
+    int i = *it;
+
     // to be in the same situation as for CSA07 analysis   
     if(_preselection->getSwitch("apply_looseIdBeforePreselection")){       
       if (!eleIdCutBasedEle[i]) continue;
@@ -1145,5 +1159,61 @@ float HiggsSelection::getSecondEleEmEt(int first, int second, float deltaR) {
   }
 
   return secondEleEmEt;
+
+}
+
+
+vector<int> HiggsSelection::resolvedElectrons() {
+
+  float drmin=0.1;
+  vector<int> amb_index;
+  vector<int> resolvedEles;
+  vector<std::pair<int, int> > ambEle;
+
+  ambEle.clear();
+
+  if(nEle==1) {
+    resolvedEles.push_back(0);
+    return resolvedEles;
+  }
+
+  // first electron
+  for(int i=0;i<nEle;i++) {
+    TVector3 pEle1(pxEle[i],pyEle[i],pzEle[i]);
+    int no_ambiguity=0;
+    // second electron
+    for(int j=i+1;j<nEle;j++) {
+      TVector3 pEle2(pxEle[j],pyEle[j],pzEle[j]);
+      float dr = pEle1.DeltaR(pEle2);
+      if(dr<drmin) {
+        amb_index.push_back(j);
+        ambEle.push_back(std::make_pair(i,j));
+      } else no_ambiguity++;
+    }
+    bool test=true;
+    for (int t=0; t<amb_index.size(); t++){
+      if (amb_index[t] == i ) test=false;
+    }
+
+    if(no_ambiguity == (nEle-1-i) && test == true) { 
+      resolvedEles.push_back(i);
+    }
+  }
+
+  // resolve ambiguities
+  std::vector< pair<int,int> >::const_iterator it;
+  for(it=ambEle.begin(); it<ambEle.end(); it++) {
+    int bestEleId=(int)it->first;
+    int multiAmbEleId=(int)it->first;
+    while((int)it->first==multiAmbEleId && it<ambEle.end()) {
+      int bestEle = bestEleId;
+      int compEle = it->second;
+      if(fabs(eleCorrEoPEle[compEle]-1) <= fabs(eleCorrEoPEle[bestEle]-1)) bestEleId=it->second;
+      it++;
+    }
+    resolvedEles.push_back(bestEleId);
+  }
+
+  return resolvedEles;
 
 }
