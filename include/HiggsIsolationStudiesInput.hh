@@ -48,6 +48,8 @@ private:
   void resetKinematics();
   //! full electron id
   bool isEleID(int eleIndex);
+  //! offline ambiguity solving
+  vector<int> resolvedElectrons();
   //! be verbose during runtime
   bool _verbose;
   //! the list of required triggers
@@ -63,8 +65,12 @@ private:
   int _theGenEle, _theGenPos;
   //! vectors to store indices of best candidates
   std::vector<int> *_bestElectrons;
+  //! to resolve offline the ambiguity among electrons
+  std::vector<int> _resolvedElectrons;
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
+
+  
 
   //! histos
   ofstream *outTxtFile;

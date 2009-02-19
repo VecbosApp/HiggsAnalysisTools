@@ -187,6 +187,9 @@ void HiggsIsolationStudiesInput::Loop(const char *filename) {
     if (!passedHLT) continue; 
     triggered=triggered+theWeight;   
 
+    // offline ambiguity resolution
+    _resolvedElectrons = resolvedElectrons();
+
     // did we pass preselections?
     // bool is missing in summer08 ntuples, 
     // but preselections are anyway applied later on for electrons only... 
@@ -253,10 +256,16 @@ void HiggsIsolationStudiesInput::Loop(const char *filename) {
     for (int etRange=0; etRange<5; etRange++){
       
       bool continuo = true;                                                // 0 = all; 
+      /*
       if (etRange==1 && etEle[theLowestPt]>25)  continuo = false;          // 1 = pT < 25; 2 = pT > 25
       if (etRange==2 && etEle[theLowestPt]<=25) continuo = false;
       if (etRange==3 && fabs(etaEle[theLowestPt])>1.5)  continuo = false;  // 3 = barrel, 4 = endcap
-      if (etRange==4 && fabs(etaEle[theLowestPt])<=1.5) continuo = false;
+      if (etRange==4 && fabs(etaEle[theLowestPt])<=1.5) continuo = false; */
+      if (etRange==0 && etEle[theLowestPt]<10) continuo = false;          
+      if (etRange==1 && etEle[theLowestPt]<15) continuo = false;          
+      if (etRange==2 && etEle[theLowestPt]<20) continuo = false;          
+      if (etRange==3 && etEle[theLowestPt]<25) continuo = false;          
+      if (etRange==4 && etEle[theLowestPt]<30) continuo = false;          
       if (!continuo) continue;
       
       H_etEle[etRange] -> Fill(etEle[theLowestPt]);
@@ -332,20 +341,27 @@ void HiggsIsolationStudiesInput::Loop(const char *filename) {
 }
 
 std::pair<int,int> HiggsIsolationStudiesInput::getBestElectronPair() {
+
   int theLep1=-1;          
   int theLep2=-1;
   float maxPtLep1=-1000.;  
   float maxPtLep2=-1000.;
+  
+  int resEleSize = _resolvedElectrons.size();
+
   std::vector<int> goodRecoLeptons;
-  for(int i=0;i<nEle;i++) {
-    TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
+
+  for(int i=0;i<resEleSize;i++) {
+    int theEle = _resolvedElectrons[i];
+    TVector3 pLepton(pxEle[theEle],pyEle[theEle],pzEle[theEle]);
     float thisPt=pLepton.Pt();
-    if(fabs(etaEle[i])>2.5) continue;
-    if(thisPt<10)           continue;
-    float thisCharge = chargeEle[i];
-    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
-    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
+    if(fabs(etaEle[theEle])>2.5) continue;
+    if(thisPt<10)               continue;
+    float thisCharge = chargeEle[theEle];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = theEle; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = theEle; }
   }
+  
   _bestElectrons->clear();
   _bestElectrons->push_back(theLep1);  
   _bestElectrons->push_back(theLep2); 
@@ -392,5 +408,59 @@ bool HiggsIsolationStudiesInput::isEleID(int eleIndex) {
   bool isIdentified = EgammaCutBasedID.output();
 
   return isIdentified;
+}
+
+vector<int> HiggsIsolationStudiesInput::resolvedElectrons() {
+
+  float drmin=0.1;
+  vector<int> amb_index;
+  vector<int> resolvedEles;
+  vector<std::pair<int, int> > ambEle;
+  
+  ambEle.clear();
+  
+  if(nEle==1) {
+    resolvedEles.push_back(0);
+    return resolvedEles;
+  }
+  
+  // first electron
+  for(int i=0;i<nEle;i++) {
+    TVector3 pEle1(pxEle[i],pyEle[i],pzEle[i]);
+    int no_ambiguity=0;
+    // second electron
+    for(int j=i+1;j<nEle;j++) {
+      TVector3 pEle2(pxEle[j],pyEle[j],pzEle[j]);
+      float dr = pEle1.DeltaR(pEle2);
+      if(dr<drmin) {
+        amb_index.push_back(j);
+        ambEle.push_back(std::make_pair(i,j));
+      } else no_ambiguity++;
+    }
+    bool test=true;
+    for (int t=0; t<amb_index.size(); t++){
+      if (amb_index[t] == i ) test=false;
+    }
+    
+    if(no_ambiguity == (nEle-1-i) && test == true) {
+      resolvedEles.push_back(i);
+    }
+  }
+  
+  // resolve ambiguities
+  std::vector< pair<int,int> >::const_iterator it;
+  for(it=ambEle.begin(); it<ambEle.end(); it++) {
+    int bestEleId=(int)it->first;
+    int multiAmbEleId=(int)it->first;
+    while((int)it->first==multiAmbEleId && it<ambEle.end()) {
+      int bestEle = bestEleId;
+      int compEle = it->second;
+      if(fabs(eleCorrEoPEle[compEle]-1) <= fabs(eleCorrEoPEle[bestEle]-1)) bestEleId=it->second;
+      it++;
+    }
+    resolvedEles.push_back(bestEleId);
+  }
+  
+  return resolvedEles;
 }
 
