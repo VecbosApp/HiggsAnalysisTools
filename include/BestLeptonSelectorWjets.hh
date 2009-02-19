@@ -46,8 +46,11 @@ private:
   float deltaR_MCmatch(int iMc, int iEle);
   //! get the best electron with different criteria
   void getBestElectronFunny(std::vector<int> goodElectrons);
+  //! offline resolve electrons
+  std::vector<int> resolvedElectrons();
 
   int _bestByPt, _bestBySCenergy, _bestByTrackerIsolation, _bestByHcalIsolation, _bestByElectronIdLH;
+  int _secondbestByPt, _secondbestBySCenergy, _secondbestByTrackerIsolation, _secondbestByHcalIsolation, _secondbestByElectronIdLH;
 
   //! the list of required triggers
   vector<int> m_requiredTriggers;

@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
+#include <map>
 
 using namespace std;
 
@@ -49,9 +51,14 @@ void BestLeptonSelectorWjets::Loop() {
 
     if(!passedHLT) continue;
 
+    // ambiguity resolution offline
+    vector<int> _resolvedElectrons = resolvedElectrons();
+    
     _acceptanceElectrons.clear();
     // now apply acceptance / pt cuts and fill the acceptance electrons
-    for(int iele=0; iele<nEle; iele++) {
+    vector<int>::const_iterator it;
+    for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
+      int iele = *it;
       if(fabs(etaEle[iele])<2.5 && etEle[iele]>10) {
         _acceptanceElectrons.push_back(iele);
       }
@@ -72,6 +79,18 @@ void BestLeptonSelectorWjets::Loop() {
           break;
         }
       }
+
+      TVector3 pMcParticle;
+      pMcParticle.SetMagThetaPhi(pMc[idxGen], thetaMc[idxGen], phiMc[idxGen]);
+      cout << "mc ele: ";
+      pMcParticle.Print();
+      cout << "reco ele1: eta = " << etaEle[_bestByPt] << "  " << " e/p = " << eleCorrEoPEle[_bestByPt] ;
+      TVector3 pReco1(pxEle[_bestByPt],pyEle[_bestByPt],pzEle[_bestByPt]);
+      pReco1.Print();
+      cout << "reco ele2: eta = " << etaEle[_secondbestByPt] << "  " << "e/p = " << eleCorrEoPEle[_secondbestByPt];
+      TVector3 pReco2(pxEle[_secondbestByPt],pyEle[_secondbestByPt],pzEle[_secondbestByPt]);
+      pReco2.Print();
+      cout << "dr1-2 = " << pReco1.DeltaR(pReco2) << endl;
 
       if(deltaR_MCmatch(idxGen,_bestByPt)<0.3) nByPt++;
       if(deltaR_MCmatch(idxGen,_bestBySCenergy)<0.3) nBySCenergy++;
@@ -142,5 +161,66 @@ void BestLeptonSelectorWjets::getBestElectronFunny(std::vector<int> goodElectron
   _bestByTrackerIsolation = selector.bestByTrackerIsolation().first;
   _bestByHcalIsolation = selector.bestByEcalIsolation().first;
   _bestByElectronIdLH = selector.bestByElectronIdLH().first;
+
+  _secondbestByPt = selector.bestByPt().second;
+  _secondbestBySCenergy = selector.bestBySCenergy().second;
+  _secondbestByTrackerIsolation = selector.bestByTrackerIsolation().second;
+  _secondbestByHcalIsolation = selector.bestByEcalIsolation().second;
+  _secondbestByElectronIdLH = selector.bestByElectronIdLH().second;
+
+}
+
+vector<int> BestLeptonSelectorWjets::resolvedElectrons() {
+
+  float drmin=0.1;
+  vector<int> amb_index;
+  vector<int> resolvedEles;
+  vector<std::pair<int, int> > ambEle;
+
+  ambEle.clear();
+
+  if(nEle==1) {
+    resolvedEles.push_back(0);
+    return resolvedEles;
+  }
+
+  // first electron
+  for(int i=0;i<nEle;i++) {
+    TVector3 pEle1(pxEle[i],pyEle[i],pzEle[i]);
+    int no_ambiguity=0;
+    // second electron
+    for(int j=i+1;j<nEle;j++) {
+      TVector3 pEle2(pxEle[j],pyEle[j],pzEle[j]);
+      float dr = pEle1.DeltaR(pEle2);
+      if(dr<drmin) {
+        amb_index.push_back(j);
+        ambEle.push_back(std::make_pair(i,j));
+      } else no_ambiguity++;
+    }
+    bool test=true;
+    for (int t=0; t<amb_index.size(); t++){
+      if (amb_index[t] == i ) test=false;
+    }
+
+    if(no_ambiguity == (nEle-1-i) && test == true) { 
+      resolvedEles.push_back(i);
+    }
+  }
+
+  // resolve ambiguities
+  std::vector< pair<int,int> >::const_iterator it;
+  for(it=ambEle.begin(); it<ambEle.end(); it++) {
+    int bestEleId=(int)it->first;
+    int multiAmbEleId=(int)it->first;
+    while((int)it->first==multiAmbEleId && it<ambEle.end()) {
+      int bestEle = bestEleId;
+      int compEle = it->second;
+      if(fabs(eleCorrEoPEle[compEle]-1) <= fabs(eleCorrEoPEle[bestEle]-1)) bestEleId=it->second;
+      it++;
+    }
+    resolvedEles.push_back(bestEleId);
+  }
+
+  return resolvedEles;
 
 }
