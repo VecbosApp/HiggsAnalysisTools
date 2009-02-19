@@ -12,7 +12,7 @@ tesiStyle->SetPadBorderMode(0);
 tesiStyle->SetFrameBorderMode(0);
 tesiStyle->cd();
 
-int whichStudy = 1;  // 0 = high vs low pt
+int whichStudy = 0;  // 0 = high vs low pt
                      // 1 = signal vs background
 
 // files
@@ -317,105 +317,41 @@ for(int ii=0; ii<12; ii++){
 // high vs low pt study
 if(!whichStudy){
 
-  TLegend HvsLS(0.50,0.6,0.75,0.82);
-  HvsLS.AddEntry(HH_dPhi[0], "high p_{T}, signal","f");
-  HvsLS.AddEntry(HL_dPhi[0], "low p_{T},  signal","f");
-  HvsLS.SetFillColor(0);
-  HvsLS.SetBorderSize(0.4);
-  
-  TLegend HvsLB1(0.50,0.6,0.75,0.82);
-  HvsLB1.AddEntry(HH_dPhi[4], "high p_{T}, ttjets","f");
-  HvsLB1.AddEntry(HL_dPhi[4], "low p_{T},  ttjets","f");
-  HvsLB1.SetFillColor(0);
-  HvsLB1.SetBorderSize(0.4);
-
   TLegend HvsLB2(0.50,0.6,0.75,0.82);
   HvsLB2.AddEntry(HH_dPhi[8], "high p_{T}, Wjets","f");
   HvsLB2.AddEntry(HL_dPhi[8], "low p_{T},  Wjets","f");
   HvsLB2.SetFillColor(0);
   HvsLB2.SetBorderSize(0.4);
   
-  TCanvas *csgEB = new TCanvas("csgEB", "golden, barrel, signal",1);  
-  // csgEB.SetLogy();
-  HH_dPhi[0].Draw();
-  HL_dPhi[0].Draw("same");
-  HvsLS.Draw();
-  csgEB->Print("EBgoldenSignal.eps");
-  
-  TCanvas *csgEE = new TCanvas("csgEE", "golden, endcap, signal",1);  
-  // csgEE.SetLogy();
-  HH_dPhi[1].Draw();
-  HL_dPhi[1].Draw("same");
-  HvsLS.Draw();
-  csgEE->Print("EEgoldenSignal.eps");
-  
-  TCanvas *cssEB = new TCanvas("cssEB", "showering, barrel, signal",1);  
-  // cssEB.SetLogy();
-  HH_dPhi[2].Draw();
-  HL_dPhi[2].Draw("same");
-  HvsLS.Draw();
-  cssEB->Print("EBshoweringSignal.eps");
-  
-  TCanvas *cssEE = new TCanvas("cssEE", "showering, endcap, signal",1);  
-  // cssEE.SetLogy();
-  HH_dPhi[3].Draw();
-  HL_dPhi[3].Draw("same");
-  HvsLS.Draw();
-  cssEE->Print("EEshoweringSignal.eps");
-  
-  TCanvas *cb1gEB = new TCanvas("cb1gEB", "golden, barrel, ttjets",1);  
-  // cb1gEB.SetLogy();
-  HH_dPhi[4].Draw();
-  HL_dPhi[4].Draw("same");
-  HvsLB1.Draw();
-  cb1gEB->Print("EBgoldenTTjets.eps");
-  
-  TCanvas *cb1gEE = new TCanvas("cb1gEE", "golden, endcap, ttjets",1);  
-  // cb1gEE.SetLogy();
-  HH_dPhi[5].Draw();
-  HL_dPhi[5].Draw("same");
-  HvsLB1.Draw();
-  cb1gEE->Print("EEgoldenTTjets.eps");
-  
-  TCanvas *cb1sEB = new TCanvas("cb1sEB", "showering, barrel, ttjets",1);  
-  // cb1sEB.SetLogy();
-  HH_dPhi[6].Draw();
-  HL_dPhi[6].Draw("same");
-  HvsLB1.Draw();
-  cb1sEB->Print("EBshoweringTTjets.eps");
-  
-  TCanvas *cb1sEE = new TCanvas("cb1sEE", "showering, endcap, ttjets",1);  
-  // cb1sEE.SetLogy();
-  HH_dPhi[7].Draw();
-  HL_dPhi[7].Draw("same");
-  HvsLB1.Draw();
-  cb1sEE->Print("EEshoweringTTjets.eps");
-
   TCanvas *cb2gEB = new TCanvas("cb2gEB", "golden, barrel, wjets",1);  
-  // cb2gEB.SetLogy();
-  HH_dPhi[8].Draw();
-  HL_dPhi[8].Draw("same");
+  cb2gEB->SetTitle("golden, barrel");
+  HH_See[8].SetTitle("golden, barrel");
+  HH_See[8].Draw();
+  HL_See[8].Draw("same");
   HvsLB2.Draw();
   cb2gEB->Print("EBgoldenWjets.eps");
   
   TCanvas *cb2gEE = new TCanvas("cb2gEE", "golden, endcap, wjets",1);  
-  // cb2gEE.SetLogy();
-  HH_dPhi[9].Draw();
-  HL_dPhi[9].Draw("same");
+  cb2gEE->SetTitle("golden, endcap");
+  HH_See[9].SetTitle("golden, endcap");
+  HH_See[9].Draw();
+  HL_See[9].Draw("same");
   HvsLB2.Draw();
   cb2gEE->Print("EEgoldenWjets.eps");
   
   TCanvas *cb2sEB = new TCanvas("cb2sEB", "showering, barrel, wjets",1);  
-  // cb2sEB.SetLogy();
-  HH_dPhi[10].Draw();
-  HL_dPhi[10].Draw("same");
+  cb2sEB->SetTitle("showering, barrel");
+  HH_See[10].SetTitle("showering, barrel");
+  HH_See[10].Draw();
+  HL_See[10].Draw("same");
   HvsLB2.Draw();
   cb2sEB->Print("EBshoweringWjets.eps");
   
   TCanvas *cb2sEE = new TCanvas("cb2sEE", "showering, endcap, wjets",1);  
-  // cb2sEE.SetLogy();
-  HH_dPhi[11].Draw();
-  HL_dPhi[11].Draw("same");
+  cb2sEE->SetTitle("showering, endcap");
+  HH_See[11].SetTitle("showering, endcap");
+  HH_See[11].Draw();
+  HL_See[11].Draw("same");
   HvsLB2.Draw();
   cb2sEE->Print("EEshoweringWjets.eps");
 }
@@ -424,49 +360,49 @@ if(!whichStudy){
 if(whichStudy){
 
   TLegend SvsB(0.50,0.6,0.75,0.82);
-  SvsB.AddEntry(HL_HoE[0], "signal","f");
-  SvsB.AddEntry(HL_HoE[4], "ttjets","f");
-  SvsB.AddEntry(HL_HoE[8], "wjets","f");
+  SvsB.AddEntry(HL_EoPout[0], "signal","f");
+  SvsB.AddEntry(HL_EoPout[4], "ttjets","f");
+  SvsB.AddEntry(HL_EoPout[8], "wjets","f");
   SvsB.SetFillColor(0);
   SvsB.SetBorderSize(0.4);
     
   TCanvas *cgEB = new TCanvas("cgEB", "golden, barrel",1);  
   cgEB->SetTitle("golden, barrel");
   // cgEB.SetLogy();
-  HL_HoE[0].SetTitle("golden, barrel");
-  HL_HoE[0].Draw();
-  HL_HoE[4].Draw("same");
-  HL_HoE[8].Draw("same");
+  HL_EoPout[8].SetTitle("golden, barrel");
+  HL_EoPout[8].Draw();
+  HL_EoPout[4].Draw("same");
+  HL_EoPout[0].Draw("same");
   SvsB.Draw();
   cgEB->Print("EBgoldenSignalVsBack.eps");
 
   TCanvas *cgEE = new TCanvas("cgEE", "golden, endcap",1);  
   cgEB->SetTitle("golden, endcap");
   // cgEE.SetLogy();
-  HL_HoE[1].SetTitle("golden, endcap");
-  HL_HoE[1].Draw();
-  HL_HoE[5].Draw("same");
-  HL_HoE[9].Draw("same");
+  HL_EoPout[9].SetTitle("golden, endcap");
+  HL_EoPout[9].Draw();
+  HL_EoPout[5].Draw("same");
+  HL_EoPout[1].Draw("same");
   SvsB.Draw();
   cgEE->Print("EEgoldenSignalVsBack.eps");
 
   TCanvas *csEB = new TCanvas("csEB", "showering, barrel",1);  
   cgEB->SetTitle("showering, barrel");
   // csEB.SetLogy();
-  HL_HoE[2].SetTitle("showering, barrel");
-  HL_HoE[2].Draw();
-  HL_HoE[6].Draw("same");
-  HL_HoE[10].Draw("same");
+  HL_EoPout[10].SetTitle("showering, barrel");
+  HL_EoPout[10].Draw();
+  HL_EoPout[6].Draw("same");
+  HL_EoPout[2].Draw("same");
   SvsB.Draw();
   csEB->Print("EBshoweringSignalVsBack.eps");  
 
   TCanvas *csEE = new TCanvas("csEE", "showering, endcap",1);  
   cgEB->SetTitle("showering, endcap");
   // csEE.SetLogy();
-  HL_HoE[3].SetTitle("showering, endcap");
-  HL_HoE[3].Draw();
-  HL_HoE[7].Draw("same");
-  HL_HoE[11].Draw("same");
+  HL_EoPout[11].SetTitle("showering, endcap");
+  HL_EoPout[11].Draw();
+  HL_EoPout[7].Draw("same");
+  HL_EoPout[3].Draw("same");
   SvsB.Draw();
   csEE->Print("EEshoweringSignalVsBack.eps");
 
