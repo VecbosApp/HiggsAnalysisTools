@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Tue Feb 17 19:42:12 2009 by ROOT version 5.18/00a
+// Fri Mar 27 18:23:42 2009 by ROOT version 5.18/00a
 // from TTree ntp1/ntp1
-// found on file: default_1.root
+// found on file: rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root
 //////////////////////////////////////////////////////////
 
 #ifndef HiggsBase_h
@@ -38,8 +38,8 @@ public :
    Float_t         yMc[101];   //[nMc]
    Float_t         zMc[101];   //[nMc]
    Int_t           nTrg;
-   Bool_t         firedTrg[159];   //[nTrg]
-   Bool_t         evtPresel;
+   UChar_t         firedTrg[159];   //[nTrg]
+   UChar_t         evtPresel;
    Double_t        evtKfactor;
    Int_t           nEle;
    Int_t           chargeEle[50];   //[nEle]
@@ -82,6 +82,9 @@ public :
    Float_t         covEtaEtaEle[50];   //[nEle]
    Float_t         covEtaPhiEle[50];   //[nEle]
    Float_t         covPhiPhiEle[50];   //[nEle]
+   Float_t         covIEtaIEtaEle[50];   //[nEle]
+   Float_t         covIEtaIPhiEle[50];   //[nEle]
+   Float_t         covIPhiIPhiEle[50];   //[nEle]
    Float_t         a20Ele[50];   //[nEle]
    Float_t         a42Ele[50];   //[nEle]
    Float_t         eleTrackNormalizedChi2Ele[50];   //[nEle]
@@ -116,6 +119,7 @@ public :
    Float_t         eleRawEEle[50];   //[nEle]
    Float_t         eleTrackerPEle[50];   //[nEle]
    Int_t           eleClassEle[50];   //[nEle]
+   Int_t           eleStandardClassEle[50];   //[nEle]
    Float_t         eleHoEEle[50];   //[nEle]
    Float_t         eleCorrEoPEle[50];   //[nEle]
    Float_t         eleNotCorrEoPEle[50];   //[nEle]
@@ -144,8 +148,11 @@ public :
    Float_t         eleScBasedEcalSum05Ele[50];   //[nEle]
    Float_t         eleScHaloBasedEcalSum04Ele[50];   //[nEle]
    Float_t         eleScHaloBasedEcalSum05Ele[50];   //[nEle]
-   Bool_t         eleIdCutBasedEle[50];   //[nEle]
+   UChar_t         eleIdCutBasedEle[50];   //[nEle]
    Float_t         eleLikelihoodEle[50];   //[nEle]
+   UChar_t         eleIdStandardCutsRobustEle[50];   //[nEle]
+   UChar_t         eleIdStandardCutsLooseEle[50];   //[nEle]
+   UChar_t         eleIdStandardCutsTightEle[50];   //[nEle]
    Float_t         eleTipEle[50];   //[nEle]
    Int_t           nTrack;
    Int_t           chargeTrack[500];   //[nTrack]
@@ -300,158 +307,136 @@ public :
    Int_t           d2IndexGenMet[1];   //[nGenMet]
    Int_t           d1pdgIdGenMet[1];   //[nGenMet]
    Int_t           d2pdgIdGenMet[1];   //[nGenMet]
-   Int_t           nIterativeJet;
-   Int_t           chargeIterativeJet[200];   //[nIterativeJet]
-   Float_t         energyIterativeJet[200];   //[nIterativeJet]
-   Float_t         etIterativeJet[200];   //[nIterativeJet]
-   Float_t         momentumIterativeJet[200];   //[nIterativeJet]
-   Float_t         thetaIterativeJet[200];   //[nIterativeJet]
-   Float_t         etaIterativeJet[200];   //[nIterativeJet]
-   Float_t         phiIterativeJet[200];   //[nIterativeJet]
-   Float_t         pxIterativeJet[200];   //[nIterativeJet]
-   Float_t         pyIterativeJet[200];   //[nIterativeJet]
-   Float_t         pzIterativeJet[200];   //[nIterativeJet]
-   Float_t         vertexXIterativeJet[200];   //[nIterativeJet]
-   Float_t         vertexYIterativeJet[200];   //[nIterativeJet]
-   Float_t         vertexZIterativeJet[200];   //[nIterativeJet]
-   Float_t         massIterativeJet[200];   //[nIterativeJet]
-   Float_t         mtIterativeJet[200];   //[nIterativeJet]
-   Int_t           pdgIdIterativeJet[200];   //[nIterativeJet]
-   Int_t           nDauIterativeJet[200];   //[nIterativeJet]
-   Int_t           d1IndexIterativeJet[200];   //[nIterativeJet]
-   Int_t           d2IndexIterativeJet[200];   //[nIterativeJet]
-   Int_t           d1pdgIdIterativeJet[200];   //[nIterativeJet]
-   Int_t           d2pdgIdIterativeJet[200];   //[nIterativeJet]
-   Float_t         alphaIterativeJet[200];   //[nIterativeJet]
-   Float_t         emFracIterativeJet[200];   //[nIterativeJet]
-   Float_t         hadFracIterativeJet[200];   //[nIterativeJet]
+   Int_t           nSisConeCorrJet;
+   Int_t           chargeSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         energySisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         etSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         momentumSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         thetaSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         etaSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         phiSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         pxSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         pySisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         pzSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         vertexXSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         vertexYSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         vertexZSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         massSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         mtSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           pdgIdSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           nDauSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           d1IndexSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           d2IndexSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           d1pdgIdSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Int_t           d2pdgIdSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         alphaSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         emFracSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         hadFracSisConeCorrJet[500];   //[nSisConeCorrJet]
    Int_t           nSisConeJet;
-   Int_t           chargeSisConeJet[200];   //[nSisConeJet]
-   Float_t         energySisConeJet[200];   //[nSisConeJet]
-   Float_t         etSisConeJet[200];   //[nSisConeJet]
-   Float_t         momentumSisConeJet[200];   //[nSisConeJet]
-   Float_t         thetaSisConeJet[200];   //[nSisConeJet]
-   Float_t         etaSisConeJet[200];   //[nSisConeJet]
-   Float_t         phiSisConeJet[200];   //[nSisConeJet]
-   Float_t         pxSisConeJet[200];   //[nSisConeJet]
-   Float_t         pySisConeJet[200];   //[nSisConeJet]
-   Float_t         pzSisConeJet[200];   //[nSisConeJet]
-   Float_t         vertexXSisConeJet[200];   //[nSisConeJet]
-   Float_t         vertexYSisConeJet[200];   //[nSisConeJet]
-   Float_t         vertexZSisConeJet[200];   //[nSisConeJet]
-   Float_t         massSisConeJet[200];   //[nSisConeJet]
-   Float_t         mtSisConeJet[200];   //[nSisConeJet]
-   Int_t           pdgIdSisConeJet[200];   //[nSisConeJet]
-   Int_t           nDauSisConeJet[200];   //[nSisConeJet]
-   Int_t           d1IndexSisConeJet[200];   //[nSisConeJet]
-   Int_t           d2IndexSisConeJet[200];   //[nSisConeJet]
-   Int_t           d1pdgIdSisConeJet[200];   //[nSisConeJet]
-   Int_t           d2pdgIdSisConeJet[200];   //[nSisConeJet]
-   Float_t         alphaSisConeJet[200];   //[nSisConeJet]
-   Float_t         emFracSisConeJet[200];   //[nSisConeJet]
-   Float_t         hadFracSisConeJet[200];   //[nSisConeJet]
-   Int_t           nIterativePFJet;
-   Int_t           chargeIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         energyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         etIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         momentumIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         thetaIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         etaIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         phiIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         pxIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         pyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         pzIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         vertexXIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         vertexYIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         vertexZIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         massIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         mtIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           pdgIdIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           nDauIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           d1IndexIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           d2IndexIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           d1pdgIdIterativePFJet[200];   //[nIterativePFJet]
-   Int_t           d2pdgIdIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         chargedHadronEnergyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         neutralHadronEnergyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         chargedEmEnergyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         neutralEmEnergyIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         neutralMultiplicityIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         chargedMultiplicityIterativePFJet[200];   //[nIterativePFJet]
-   Float_t         muonMultiplicityIterativePFJet[200];   //[nIterativePFJet]
+   Int_t           chargeSisConeJet[500];   //[nSisConeJet]
+   Float_t         energySisConeJet[500];   //[nSisConeJet]
+   Float_t         etSisConeJet[500];   //[nSisConeJet]
+   Float_t         momentumSisConeJet[500];   //[nSisConeJet]
+   Float_t         thetaSisConeJet[500];   //[nSisConeJet]
+   Float_t         etaSisConeJet[500];   //[nSisConeJet]
+   Float_t         phiSisConeJet[500];   //[nSisConeJet]
+   Float_t         pxSisConeJet[500];   //[nSisConeJet]
+   Float_t         pySisConeJet[500];   //[nSisConeJet]
+   Float_t         pzSisConeJet[500];   //[nSisConeJet]
+   Float_t         vertexXSisConeJet[500];   //[nSisConeJet]
+   Float_t         vertexYSisConeJet[500];   //[nSisConeJet]
+   Float_t         vertexZSisConeJet[500];   //[nSisConeJet]
+   Float_t         massSisConeJet[500];   //[nSisConeJet]
+   Float_t         mtSisConeJet[500];   //[nSisConeJet]
+   Int_t           pdgIdSisConeJet[500];   //[nSisConeJet]
+   Int_t           nDauSisConeJet[500];   //[nSisConeJet]
+   Int_t           d1IndexSisConeJet[500];   //[nSisConeJet]
+   Int_t           d2IndexSisConeJet[500];   //[nSisConeJet]
+   Int_t           d1pdgIdSisConeJet[500];   //[nSisConeJet]
+   Int_t           d2pdgIdSisConeJet[500];   //[nSisConeJet]
+   Float_t         alphaSisConeJet[500];   //[nSisConeJet]
+   Float_t         emFracSisConeJet[500];   //[nSisConeJet]
+   Float_t         hadFracSisConeJet[500];   //[nSisConeJet]
    Int_t           nSisConePFJet;
-   Int_t           chargeSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         energySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         etSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         momentumSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         thetaSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         etaSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         phiSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         pxSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         pySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         pzSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         vertexXSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         vertexYSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         vertexZSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         massSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         mtSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           pdgIdSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           nDauSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           d1IndexSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           d2IndexSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           d1pdgIdSisConePFJet[200];   //[nSisConePFJet]
-   Int_t           d2pdgIdSisConePFJet[200];   //[nSisConePFJet]
-   Float_t         chargedHadronEnergySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         neutralHadronEnergySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         chargedEmEnergySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         neutralEmEnergySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         neutralMultiplicitySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         chargedMultiplicitySisConePFJet[200];   //[nSisConePFJet]
-   Float_t         muonMultiplicitySisConePFJet[200];   //[nSisConePFJet]
-   Int_t           nIterativeGenJet;
-   Int_t           chargeIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         energyIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         etIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         momentumIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         thetaIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         etaIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         phiIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         pxIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         pyIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         pzIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         vertexXIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         vertexYIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         vertexZIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         massIterativeGenJet[200];   //[nIterativeGenJet]
-   Float_t         mtIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           pdgIdIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           nDauIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           d1IndexIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           d2IndexIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           d1pdgIdIterativeGenJet[200];   //[nIterativeGenJet]
-   Int_t           d2pdgIdIterativeGenJet[200];   //[nIterativeGenJet]
+   Int_t           chargeSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         energySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         etSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         momentumSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         thetaSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         etaSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         phiSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pxSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pzSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexXSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexYSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexZSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         massSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         mtSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           nDauSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d1IndexSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d2IndexSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d1pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d2pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedHadronEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralHadronEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedEmEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralEmEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralMultiplicitySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedMultiplicitySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         muonMultiplicitySisConePFJet[500];   //[nSisConePFJet]
+   Int_t           nSisConePFCorrJet;
+   Int_t           chargeSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         energySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         etSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         momentumSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         thetaSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         etaSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         phiSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         pxSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         pySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         pzSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         vertexXSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         vertexYSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         vertexZSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         massSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         mtSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           pdgIdSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           nDauSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           d1IndexSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           d2IndexSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           d1pdgIdSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           d2pdgIdSisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         chargedHadronEnergySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         neutralHadronEnergySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         chargedEmEnergySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         neutralEmEnergySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         neutralMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         chargedMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Float_t         muonMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
    Int_t           nSisConeGenJet;
-   Int_t           chargeSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         energySisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         etSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         momentumSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         thetaSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         etaSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         phiSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         pxSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         pySisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         pzSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         vertexXSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         vertexYSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         vertexZSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         massSisConeGenJet[200];   //[nSisConeGenJet]
-   Float_t         mtSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           pdgIdSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           nDauSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           d1IndexSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           d2IndexSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           d1pdgIdSisConeGenJet[200];   //[nSisConeGenJet]
-   Int_t           d2pdgIdSisConeGenJet[200];   //[nSisConeGenJet]
+   Int_t           chargeSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         energySisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         etSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         momentumSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         thetaSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         etaSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         phiSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         pxSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         pySisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         pzSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         vertexXSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         vertexYSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         vertexZSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         massSisConeGenJet[500];   //[nSisConeGenJet]
+   Float_t         mtSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           pdgIdSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           nDauSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           d1IndexSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           d2IndexSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           d1pdgIdSisConeGenJet[500];   //[nSisConeGenJet]
+   Int_t           d2pdgIdSisConeGenJet[500];   //[nSisConeGenJet]
 
    // List of branches
    TBranch        *b_runNumber;   //!
@@ -518,6 +503,9 @@ public :
    TBranch        *b_covEtaEtaEle;   //!
    TBranch        *b_covEtaPhiEle;   //!
    TBranch        *b_covPhiPhiEle;   //!
+   TBranch        *b_covIEtaIEtaEle;   //!
+   TBranch        *b_covIEtaIPhiEle;   //!
+   TBranch        *b_covIPhiIPhiEle;   //!
    TBranch        *b_a20Ele;   //!
    TBranch        *b_a42Ele;   //!
    TBranch        *b_eleTrackNormalizedChi2Ele;   //!
@@ -552,6 +540,7 @@ public :
    TBranch        *b_eleRawEEle;   //!
    TBranch        *b_eleTrackerPEle;   //!
    TBranch        *b_eleClassEle;   //!
+   TBranch        *b_eleStandardClassEle;   //!
    TBranch        *b_eleHoEEle;   //!
    TBranch        *b_eleCorrEoPEle;   //!
    TBranch        *b_eleNotCorrEoPEle;   //!
@@ -582,6 +571,9 @@ public :
    TBranch        *b_eleScHaloBasedEcalSum05Ele;   //!
    TBranch        *b_eleIdCutBasedEle;   //!
    TBranch        *b_eleLikelihoodEle;   //!
+   TBranch        *b_eleIdStandardCutsRobustEle;   //!
+   TBranch        *b_eleIdStandardCutsLooseEle;   //!
+   TBranch        *b_eleIdStandardCutsTightEle;   //!
    TBranch        *b_eleTipEle;   //!
    TBranch        *b_nTrack;   //!
    TBranch        *b_chargeTrack;   //!
@@ -736,31 +728,31 @@ public :
    TBranch        *b_d2IndexGenMet;   //!
    TBranch        *b_d1pdgIdGenMet;   //!
    TBranch        *b_d2pdgIdGenMet;   //!
-   TBranch        *b_nIterativeJet;   //!
-   TBranch        *b_chargeIterativeJet;   //!
-   TBranch        *b_energyIterativeJet;   //!
-   TBranch        *b_etIterativeJet;   //!
-   TBranch        *b_momentumIterativeJet;   //!
-   TBranch        *b_thetaIterativeJet;   //!
-   TBranch        *b_etaIterativeJet;   //!
-   TBranch        *b_phiIterativeJet;   //!
-   TBranch        *b_pxIterativeJet;   //!
-   TBranch        *b_pyIterativeJet;   //!
-   TBranch        *b_pzIterativeJet;   //!
-   TBranch        *b_vertexXIterativeJet;   //!
-   TBranch        *b_vertexYIterativeJet;   //!
-   TBranch        *b_vertexZIterativeJet;   //!
-   TBranch        *b_massIterativeJet;   //!
-   TBranch        *b_mtIterativeJet;   //!
-   TBranch        *b_pdgIdIterativeJet;   //!
-   TBranch        *b_nDauIterativeJet;   //!
-   TBranch        *b_d1IndexIterativeJet;   //!
-   TBranch        *b_d2IndexIterativeJet;   //!
-   TBranch        *b_d1pdgIdIterativeJet;   //!
-   TBranch        *b_d2pdgIdIterativeJet;   //!
-   TBranch        *b_alphaIterativeJet;   //!
-   TBranch        *b_emFracIterativeJet;   //!
-   TBranch        *b_hadFracIterativeJet;   //!
+   TBranch        *b_nSisConeCorrJet;   //!
+   TBranch        *b_chargeSisConeCorrJet;   //!
+   TBranch        *b_energySisConeCorrJet;   //!
+   TBranch        *b_etSisConeCorrJet;   //!
+   TBranch        *b_momentumSisConeCorrJet;   //!
+   TBranch        *b_thetaSisConeCorrJet;   //!
+   TBranch        *b_etaSisConeCorrJet;   //!
+   TBranch        *b_phiSisConeCorrJet;   //!
+   TBranch        *b_pxSisConeCorrJet;   //!
+   TBranch        *b_pySisConeCorrJet;   //!
+   TBranch        *b_pzSisConeCorrJet;   //!
+   TBranch        *b_vertexXSisConeCorrJet;   //!
+   TBranch        *b_vertexYSisConeCorrJet;   //!
+   TBranch        *b_vertexZSisConeCorrJet;   //!
+   TBranch        *b_massSisConeCorrJet;   //!
+   TBranch        *b_mtSisConeCorrJet;   //!
+   TBranch        *b_pdgIdSisConeCorrJet;   //!
+   TBranch        *b_nDauSisConeCorrJet;   //!
+   TBranch        *b_d1IndexSisConeCorrJet;   //!
+   TBranch        *b_d2IndexSisConeCorrJet;   //!
+   TBranch        *b_d1pdgIdSisConeCorrJet;   //!
+   TBranch        *b_d2pdgIdSisConeCorrJet;   //!
+   TBranch        *b_alphaSisConeCorrJet;   //!
+   TBranch        *b_emFracSisConeCorrJet;   //!
+   TBranch        *b_hadFracSisConeCorrJet;   //!
    TBranch        *b_nSisConeJet;   //!
    TBranch        *b_chargeSisConeJet;   //!
    TBranch        *b_energySisConeJet;   //!
@@ -786,35 +778,6 @@ public :
    TBranch        *b_alphaSisConeJet;   //!
    TBranch        *b_emFracSisConeJet;   //!
    TBranch        *b_hadFracSisConeJet;   //!
-   TBranch        *b_nIterativePFJet;   //!
-   TBranch        *b_chargeIterativePFJet;   //!
-   TBranch        *b_energyIterativePFJet;   //!
-   TBranch        *b_etIterativePFJet;   //!
-   TBranch        *b_momentumIterativePFJet;   //!
-   TBranch        *b_thetaIterativePFJet;   //!
-   TBranch        *b_etaIterativePFJet;   //!
-   TBranch        *b_phiIterativePFJet;   //!
-   TBranch        *b_pxIterativePFJet;   //!
-   TBranch        *b_pyIterativePFJet;   //!
-   TBranch        *b_pzIterativePFJet;   //!
-   TBranch        *b_vertexXIterativePFJet;   //!
-   TBranch        *b_vertexYIterativePFJet;   //!
-   TBranch        *b_vertexZIterativePFJet;   //!
-   TBranch        *b_massIterativePFJet;   //!
-   TBranch        *b_mtIterativePFJet;   //!
-   TBranch        *b_pdgIdIterativePFJet;   //!
-   TBranch        *b_nDauIterativePFJet;   //!
-   TBranch        *b_d1IndexIterativePFJet;   //!
-   TBranch        *b_d2IndexIterativePFJet;   //!
-   TBranch        *b_d1pdgIdIterativePFJet;   //!
-   TBranch        *b_d2pdgIdIterativePFJet;   //!
-   TBranch        *b_chargedHadronEnergyIterativePFJet;   //!
-   TBranch        *b_neutralHadronEnergyIterativePFJet;   //!
-   TBranch        *b_chargedEmEnergyIterativePFJet;   //!
-   TBranch        *b_neutralEmEnergyIterativePFJet;   //!
-   TBranch        *b_neutralMultiplicityIterativePFJet;   //!
-   TBranch        *b_chargedMultiplicityIterativePFJet;   //!
-   TBranch        *b_muonMultiplicityIterativePFJet;   //!
    TBranch        *b_nSisConePFJet;   //!
    TBranch        *b_chargeSisConePFJet;   //!
    TBranch        *b_energySisConePFJet;   //!
@@ -844,28 +807,35 @@ public :
    TBranch        *b_neutralMultiplicitySisConePFJet;   //!
    TBranch        *b_chargedMultiplicitySisConePFJet;   //!
    TBranch        *b_muonMultiplicitySisConePFJet;   //!
-   TBranch        *b_nIterativeGenJet;   //!
-   TBranch        *b_chargeIterativeGenJet;   //!
-   TBranch        *b_energyIterativeGenJet;   //!
-   TBranch        *b_etIterativeGenJet;   //!
-   TBranch        *b_momentumIterativeGenJet;   //!
-   TBranch        *b_thetaIterativeGenJet;   //!
-   TBranch        *b_etaIterativeGenJet;   //!
-   TBranch        *b_phiIterativeGenJet;   //!
-   TBranch        *b_pxIterativeGenJet;   //!
-   TBranch        *b_pyIterativeGenJet;   //!
-   TBranch        *b_pzIterativeGenJet;   //!
-   TBranch        *b_vertexXIterativeGenJet;   //!
-   TBranch        *b_vertexYIterativeGenJet;   //!
-   TBranch        *b_vertexZIterativeGenJet;   //!
-   TBranch        *b_massIterativeGenJet;   //!
-   TBranch        *b_mtIterativeGenJet;   //!
-   TBranch        *b_pdgIdIterativeGenJet;   //!
-   TBranch        *b_nDauIterativeGenJet;   //!
-   TBranch        *b_d1IndexIterativeGenJet;   //!
-   TBranch        *b_d2IndexIterativeGenJet;   //!
-   TBranch        *b_d1pdgIdIterativeGenJet;   //!
-   TBranch        *b_d2pdgIdIterativeGenJet;   //!
+   TBranch        *b_nSisConePFCorrJet;   //!
+   TBranch        *b_chargeSisConePFCorrJet;   //!
+   TBranch        *b_energySisConePFCorrJet;   //!
+   TBranch        *b_etSisConePFCorrJet;   //!
+   TBranch        *b_momentumSisConePFCorrJet;   //!
+   TBranch        *b_thetaSisConePFCorrJet;   //!
+   TBranch        *b_etaSisConePFCorrJet;   //!
+   TBranch        *b_phiSisConePFCorrJet;   //!
+   TBranch        *b_pxSisConePFCorrJet;   //!
+   TBranch        *b_pySisConePFCorrJet;   //!
+   TBranch        *b_pzSisConePFCorrJet;   //!
+   TBranch        *b_vertexXSisConePFCorrJet;   //!
+   TBranch        *b_vertexYSisConePFCorrJet;   //!
+   TBranch        *b_vertexZSisConePFCorrJet;   //!
+   TBranch        *b_massSisConePFCorrJet;   //!
+   TBranch        *b_mtSisConePFCorrJet;   //!
+   TBranch        *b_pdgIdSisConePFCorrJet;   //!
+   TBranch        *b_nDauSisConePFCorrJet;   //!
+   TBranch        *b_d1IndexSisConePFCorrJet;   //!
+   TBranch        *b_d2IndexSisConePFCorrJet;   //!
+   TBranch        *b_d1pdgIdSisConePFCorrJet;   //!
+   TBranch        *b_d2pdgIdSisConePFCorrJet;   //!
+   TBranch        *b_chargedHadronEnergySisConePFCorrJet;   //!
+   TBranch        *b_neutralHadronEnergySisConePFCorrJet;   //!
+   TBranch        *b_chargedEmEnergySisConePFCorrJet;   //!
+   TBranch        *b_neutralEmEnergySisConePFCorrJet;   //!
+   TBranch        *b_neutralMultiplicitySisConePFCorrJet;   //!
+   TBranch        *b_chargedMultiplicitySisConePFCorrJet;   //!
+   TBranch        *b_muonMultiplicitySisConePFCorrJet;   //!
    TBranch        *b_nSisConeGenJet;   //!
    TBranch        *b_chargeSisConeGenJet;   //!
    TBranch        *b_energySisConeGenJet;   //!
@@ -908,9 +878,9 @@ HiggsBase::HiggsBase(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("default_1.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root");
       if (!f) {
-         f = new TFile("default_1.root");
+         f = new TFile("rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root");
       }
       tree = (TTree*)gDirectory->Get("ntp1");
 
@@ -1025,6 +995,9 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("covEtaEtaEle", covEtaEtaEle, &b_covEtaEtaEle);
    fChain->SetBranchAddress("covEtaPhiEle", covEtaPhiEle, &b_covEtaPhiEle);
    fChain->SetBranchAddress("covPhiPhiEle", covPhiPhiEle, &b_covPhiPhiEle);
+   fChain->SetBranchAddress("covIEtaIEtaEle", covIEtaIEtaEle, &b_covIEtaIEtaEle);
+   fChain->SetBranchAddress("covIEtaIPhiEle", covIEtaIPhiEle, &b_covIEtaIPhiEle);
+   fChain->SetBranchAddress("covIPhiIPhiEle", covIPhiIPhiEle, &b_covIPhiIPhiEle);
    fChain->SetBranchAddress("a20Ele", a20Ele, &b_a20Ele);
    fChain->SetBranchAddress("a42Ele", a42Ele, &b_a42Ele);
    fChain->SetBranchAddress("eleTrackNormalizedChi2Ele", eleTrackNormalizedChi2Ele, &b_eleTrackNormalizedChi2Ele);
@@ -1059,6 +1032,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("eleRawEEle", eleRawEEle, &b_eleRawEEle);
    fChain->SetBranchAddress("eleTrackerPEle", eleTrackerPEle, &b_eleTrackerPEle);
    fChain->SetBranchAddress("eleClassEle", eleClassEle, &b_eleClassEle);
+   fChain->SetBranchAddress("eleStandardClassEle", eleStandardClassEle, &b_eleStandardClassEle);
    fChain->SetBranchAddress("eleHoEEle", eleHoEEle, &b_eleHoEEle);
    fChain->SetBranchAddress("eleCorrEoPEle", eleCorrEoPEle, &b_eleCorrEoPEle);
    fChain->SetBranchAddress("eleNotCorrEoPEle", eleNotCorrEoPEle, &b_eleNotCorrEoPEle);
@@ -1089,6 +1063,9 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("eleScHaloBasedEcalSum05Ele", eleScHaloBasedEcalSum05Ele, &b_eleScHaloBasedEcalSum05Ele);
    fChain->SetBranchAddress("eleIdCutBasedEle", eleIdCutBasedEle, &b_eleIdCutBasedEle);
    fChain->SetBranchAddress("eleLikelihoodEle", eleLikelihoodEle, &b_eleLikelihoodEle);
+   fChain->SetBranchAddress("eleIdStandardCutsRobustEle", eleIdStandardCutsRobustEle, &b_eleIdStandardCutsRobustEle);
+   fChain->SetBranchAddress("eleIdStandardCutsLooseEle", eleIdStandardCutsLooseEle, &b_eleIdStandardCutsLooseEle);
+   fChain->SetBranchAddress("eleIdStandardCutsTightEle", eleIdStandardCutsTightEle, &b_eleIdStandardCutsTightEle);
    fChain->SetBranchAddress("eleTipEle", eleTipEle, &b_eleTipEle);
    fChain->SetBranchAddress("nTrack", &nTrack, &b_nTrack);
    fChain->SetBranchAddress("chargeTrack", chargeTrack, &b_chargeTrack);
@@ -1243,31 +1220,31 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("d2IndexGenMet", d2IndexGenMet, &b_d2IndexGenMet);
    fChain->SetBranchAddress("d1pdgIdGenMet", d1pdgIdGenMet, &b_d1pdgIdGenMet);
    fChain->SetBranchAddress("d2pdgIdGenMet", d2pdgIdGenMet, &b_d2pdgIdGenMet);
-   fChain->SetBranchAddress("nIterativeJet", &nIterativeJet, &b_nIterativeJet);
-   fChain->SetBranchAddress("chargeIterativeJet", chargeIterativeJet, &b_chargeIterativeJet);
-   fChain->SetBranchAddress("energyIterativeJet", energyIterativeJet, &b_energyIterativeJet);
-   fChain->SetBranchAddress("etIterativeJet", etIterativeJet, &b_etIterativeJet);
-   fChain->SetBranchAddress("momentumIterativeJet", momentumIterativeJet, &b_momentumIterativeJet);
-   fChain->SetBranchAddress("thetaIterativeJet", thetaIterativeJet, &b_thetaIterativeJet);
-   fChain->SetBranchAddress("etaIterativeJet", etaIterativeJet, &b_etaIterativeJet);
-   fChain->SetBranchAddress("phiIterativeJet", phiIterativeJet, &b_phiIterativeJet);
-   fChain->SetBranchAddress("pxIterativeJet", pxIterativeJet, &b_pxIterativeJet);
-   fChain->SetBranchAddress("pyIterativeJet", pyIterativeJet, &b_pyIterativeJet);
-   fChain->SetBranchAddress("pzIterativeJet", pzIterativeJet, &b_pzIterativeJet);
-   fChain->SetBranchAddress("vertexXIterativeJet", vertexXIterativeJet, &b_vertexXIterativeJet);
-   fChain->SetBranchAddress("vertexYIterativeJet", vertexYIterativeJet, &b_vertexYIterativeJet);
-   fChain->SetBranchAddress("vertexZIterativeJet", vertexZIterativeJet, &b_vertexZIterativeJet);
-   fChain->SetBranchAddress("massIterativeJet", massIterativeJet, &b_massIterativeJet);
-   fChain->SetBranchAddress("mtIterativeJet", mtIterativeJet, &b_mtIterativeJet);
-   fChain->SetBranchAddress("pdgIdIterativeJet", pdgIdIterativeJet, &b_pdgIdIterativeJet);
-   fChain->SetBranchAddress("nDauIterativeJet", nDauIterativeJet, &b_nDauIterativeJet);
-   fChain->SetBranchAddress("d1IndexIterativeJet", d1IndexIterativeJet, &b_d1IndexIterativeJet);
-   fChain->SetBranchAddress("d2IndexIterativeJet", d2IndexIterativeJet, &b_d2IndexIterativeJet);
-   fChain->SetBranchAddress("d1pdgIdIterativeJet", d1pdgIdIterativeJet, &b_d1pdgIdIterativeJet);
-   fChain->SetBranchAddress("d2pdgIdIterativeJet", d2pdgIdIterativeJet, &b_d2pdgIdIterativeJet);
-   fChain->SetBranchAddress("alphaIterativeJet", alphaIterativeJet, &b_alphaIterativeJet);
-   fChain->SetBranchAddress("emFracIterativeJet", emFracIterativeJet, &b_emFracIterativeJet);
-   fChain->SetBranchAddress("hadFracIterativeJet", hadFracIterativeJet, &b_hadFracIterativeJet);
+   fChain->SetBranchAddress("nSisConeCorrJet", &nSisConeCorrJet, &b_nSisConeCorrJet);
+   fChain->SetBranchAddress("chargeSisConeCorrJet", chargeSisConeCorrJet, &b_chargeSisConeCorrJet);
+   fChain->SetBranchAddress("energySisConeCorrJet", energySisConeCorrJet, &b_energySisConeCorrJet);
+   fChain->SetBranchAddress("etSisConeCorrJet", etSisConeCorrJet, &b_etSisConeCorrJet);
+   fChain->SetBranchAddress("momentumSisConeCorrJet", momentumSisConeCorrJet, &b_momentumSisConeCorrJet);
+   fChain->SetBranchAddress("thetaSisConeCorrJet", thetaSisConeCorrJet, &b_thetaSisConeCorrJet);
+   fChain->SetBranchAddress("etaSisConeCorrJet", etaSisConeCorrJet, &b_etaSisConeCorrJet);
+   fChain->SetBranchAddress("phiSisConeCorrJet", phiSisConeCorrJet, &b_phiSisConeCorrJet);
+   fChain->SetBranchAddress("pxSisConeCorrJet", pxSisConeCorrJet, &b_pxSisConeCorrJet);
+   fChain->SetBranchAddress("pySisConeCorrJet", pySisConeCorrJet, &b_pySisConeCorrJet);
+   fChain->SetBranchAddress("pzSisConeCorrJet", pzSisConeCorrJet, &b_pzSisConeCorrJet);
+   fChain->SetBranchAddress("vertexXSisConeCorrJet", vertexXSisConeCorrJet, &b_vertexXSisConeCorrJet);
+   fChain->SetBranchAddress("vertexYSisConeCorrJet", vertexYSisConeCorrJet, &b_vertexYSisConeCorrJet);
+   fChain->SetBranchAddress("vertexZSisConeCorrJet", vertexZSisConeCorrJet, &b_vertexZSisConeCorrJet);
+   fChain->SetBranchAddress("massSisConeCorrJet", massSisConeCorrJet, &b_massSisConeCorrJet);
+   fChain->SetBranchAddress("mtSisConeCorrJet", mtSisConeCorrJet, &b_mtSisConeCorrJet);
+   fChain->SetBranchAddress("pdgIdSisConeCorrJet", pdgIdSisConeCorrJet, &b_pdgIdSisConeCorrJet);
+   fChain->SetBranchAddress("nDauSisConeCorrJet", nDauSisConeCorrJet, &b_nDauSisConeCorrJet);
+   fChain->SetBranchAddress("d1IndexSisConeCorrJet", d1IndexSisConeCorrJet, &b_d1IndexSisConeCorrJet);
+   fChain->SetBranchAddress("d2IndexSisConeCorrJet", d2IndexSisConeCorrJet, &b_d2IndexSisConeCorrJet);
+   fChain->SetBranchAddress("d1pdgIdSisConeCorrJet", d1pdgIdSisConeCorrJet, &b_d1pdgIdSisConeCorrJet);
+   fChain->SetBranchAddress("d2pdgIdSisConeCorrJet", d2pdgIdSisConeCorrJet, &b_d2pdgIdSisConeCorrJet);
+   fChain->SetBranchAddress("alphaSisConeCorrJet", alphaSisConeCorrJet, &b_alphaSisConeCorrJet);
+   fChain->SetBranchAddress("emFracSisConeCorrJet", emFracSisConeCorrJet, &b_emFracSisConeCorrJet);
+   fChain->SetBranchAddress("hadFracSisConeCorrJet", hadFracSisConeCorrJet, &b_hadFracSisConeCorrJet);
    fChain->SetBranchAddress("nSisConeJet", &nSisConeJet, &b_nSisConeJet);
    fChain->SetBranchAddress("chargeSisConeJet", chargeSisConeJet, &b_chargeSisConeJet);
    fChain->SetBranchAddress("energySisConeJet", energySisConeJet, &b_energySisConeJet);
@@ -1293,35 +1270,6 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("alphaSisConeJet", alphaSisConeJet, &b_alphaSisConeJet);
    fChain->SetBranchAddress("emFracSisConeJet", emFracSisConeJet, &b_emFracSisConeJet);
    fChain->SetBranchAddress("hadFracSisConeJet", hadFracSisConeJet, &b_hadFracSisConeJet);
-   fChain->SetBranchAddress("nIterativePFJet", &nIterativePFJet, &b_nIterativePFJet);
-   fChain->SetBranchAddress("chargeIterativePFJet", chargeIterativePFJet, &b_chargeIterativePFJet);
-   fChain->SetBranchAddress("energyIterativePFJet", energyIterativePFJet, &b_energyIterativePFJet);
-   fChain->SetBranchAddress("etIterativePFJet", etIterativePFJet, &b_etIterativePFJet);
-   fChain->SetBranchAddress("momentumIterativePFJet", momentumIterativePFJet, &b_momentumIterativePFJet);
-   fChain->SetBranchAddress("thetaIterativePFJet", thetaIterativePFJet, &b_thetaIterativePFJet);
-   fChain->SetBranchAddress("etaIterativePFJet", etaIterativePFJet, &b_etaIterativePFJet);
-   fChain->SetBranchAddress("phiIterativePFJet", phiIterativePFJet, &b_phiIterativePFJet);
-   fChain->SetBranchAddress("pxIterativePFJet", pxIterativePFJet, &b_pxIterativePFJet);
-   fChain->SetBranchAddress("pyIterativePFJet", pyIterativePFJet, &b_pyIterativePFJet);
-   fChain->SetBranchAddress("pzIterativePFJet", pzIterativePFJet, &b_pzIterativePFJet);
-   fChain->SetBranchAddress("vertexXIterativePFJet", vertexXIterativePFJet, &b_vertexXIterativePFJet);
-   fChain->SetBranchAddress("vertexYIterativePFJet", vertexYIterativePFJet, &b_vertexYIterativePFJet);
-   fChain->SetBranchAddress("vertexZIterativePFJet", vertexZIterativePFJet, &b_vertexZIterativePFJet);
-   fChain->SetBranchAddress("massIterativePFJet", massIterativePFJet, &b_massIterativePFJet);
-   fChain->SetBranchAddress("mtIterativePFJet", mtIterativePFJet, &b_mtIterativePFJet);
-   fChain->SetBranchAddress("pdgIdIterativePFJet", pdgIdIterativePFJet, &b_pdgIdIterativePFJet);
-   fChain->SetBranchAddress("nDauIterativePFJet", nDauIterativePFJet, &b_nDauIterativePFJet);
-   fChain->SetBranchAddress("d1IndexIterativePFJet", d1IndexIterativePFJet, &b_d1IndexIterativePFJet);
-   fChain->SetBranchAddress("d2IndexIterativePFJet", d2IndexIterativePFJet, &b_d2IndexIterativePFJet);
-   fChain->SetBranchAddress("d1pdgIdIterativePFJet", d1pdgIdIterativePFJet, &b_d1pdgIdIterativePFJet);
-   fChain->SetBranchAddress("d2pdgIdIterativePFJet", d2pdgIdIterativePFJet, &b_d2pdgIdIterativePFJet);
-   fChain->SetBranchAddress("chargedHadronEnergyIterativePFJet", chargedHadronEnergyIterativePFJet, &b_chargedHadronEnergyIterativePFJet);
-   fChain->SetBranchAddress("neutralHadronEnergyIterativePFJet", neutralHadronEnergyIterativePFJet, &b_neutralHadronEnergyIterativePFJet);
-   fChain->SetBranchAddress("chargedEmEnergyIterativePFJet", chargedEmEnergyIterativePFJet, &b_chargedEmEnergyIterativePFJet);
-   fChain->SetBranchAddress("neutralEmEnergyIterativePFJet", neutralEmEnergyIterativePFJet, &b_neutralEmEnergyIterativePFJet);
-   fChain->SetBranchAddress("neutralMultiplicityIterativePFJet", neutralMultiplicityIterativePFJet, &b_neutralMultiplicityIterativePFJet);
-   fChain->SetBranchAddress("chargedMultiplicityIterativePFJet", chargedMultiplicityIterativePFJet, &b_chargedMultiplicityIterativePFJet);
-   fChain->SetBranchAddress("muonMultiplicityIterativePFJet", muonMultiplicityIterativePFJet, &b_muonMultiplicityIterativePFJet);
    fChain->SetBranchAddress("nSisConePFJet", &nSisConePFJet, &b_nSisConePFJet);
    fChain->SetBranchAddress("chargeSisConePFJet", chargeSisConePFJet, &b_chargeSisConePFJet);
    fChain->SetBranchAddress("energySisConePFJet", energySisConePFJet, &b_energySisConePFJet);
@@ -1351,28 +1299,35 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("neutralMultiplicitySisConePFJet", neutralMultiplicitySisConePFJet, &b_neutralMultiplicitySisConePFJet);
    fChain->SetBranchAddress("chargedMultiplicitySisConePFJet", chargedMultiplicitySisConePFJet, &b_chargedMultiplicitySisConePFJet);
    fChain->SetBranchAddress("muonMultiplicitySisConePFJet", muonMultiplicitySisConePFJet, &b_muonMultiplicitySisConePFJet);
-   fChain->SetBranchAddress("nIterativeGenJet", &nIterativeGenJet, &b_nIterativeGenJet);
-   fChain->SetBranchAddress("chargeIterativeGenJet", chargeIterativeGenJet, &b_chargeIterativeGenJet);
-   fChain->SetBranchAddress("energyIterativeGenJet", energyIterativeGenJet, &b_energyIterativeGenJet);
-   fChain->SetBranchAddress("etIterativeGenJet", etIterativeGenJet, &b_etIterativeGenJet);
-   fChain->SetBranchAddress("momentumIterativeGenJet", momentumIterativeGenJet, &b_momentumIterativeGenJet);
-   fChain->SetBranchAddress("thetaIterativeGenJet", thetaIterativeGenJet, &b_thetaIterativeGenJet);
-   fChain->SetBranchAddress("etaIterativeGenJet", etaIterativeGenJet, &b_etaIterativeGenJet);
-   fChain->SetBranchAddress("phiIterativeGenJet", phiIterativeGenJet, &b_phiIterativeGenJet);
-   fChain->SetBranchAddress("pxIterativeGenJet", pxIterativeGenJet, &b_pxIterativeGenJet);
-   fChain->SetBranchAddress("pyIterativeGenJet", pyIterativeGenJet, &b_pyIterativeGenJet);
-   fChain->SetBranchAddress("pzIterativeGenJet", pzIterativeGenJet, &b_pzIterativeGenJet);
-   fChain->SetBranchAddress("vertexXIterativeGenJet", vertexXIterativeGenJet, &b_vertexXIterativeGenJet);
-   fChain->SetBranchAddress("vertexYIterativeGenJet", vertexYIterativeGenJet, &b_vertexYIterativeGenJet);
-   fChain->SetBranchAddress("vertexZIterativeGenJet", vertexZIterativeGenJet, &b_vertexZIterativeGenJet);
-   fChain->SetBranchAddress("massIterativeGenJet", massIterativeGenJet, &b_massIterativeGenJet);
-   fChain->SetBranchAddress("mtIterativeGenJet", mtIterativeGenJet, &b_mtIterativeGenJet);
-   fChain->SetBranchAddress("pdgIdIterativeGenJet", pdgIdIterativeGenJet, &b_pdgIdIterativeGenJet);
-   fChain->SetBranchAddress("nDauIterativeGenJet", nDauIterativeGenJet, &b_nDauIterativeGenJet);
-   fChain->SetBranchAddress("d1IndexIterativeGenJet", d1IndexIterativeGenJet, &b_d1IndexIterativeGenJet);
-   fChain->SetBranchAddress("d2IndexIterativeGenJet", d2IndexIterativeGenJet, &b_d2IndexIterativeGenJet);
-   fChain->SetBranchAddress("d1pdgIdIterativeGenJet", d1pdgIdIterativeGenJet, &b_d1pdgIdIterativeGenJet);
-   fChain->SetBranchAddress("d2pdgIdIterativeGenJet", d2pdgIdIterativeGenJet, &b_d2pdgIdIterativeGenJet);
+   fChain->SetBranchAddress("nSisConePFCorrJet", &nSisConePFCorrJet, &b_nSisConePFCorrJet);
+   fChain->SetBranchAddress("chargeSisConePFCorrJet", chargeSisConePFCorrJet, &b_chargeSisConePFCorrJet);
+   fChain->SetBranchAddress("energySisConePFCorrJet", energySisConePFCorrJet, &b_energySisConePFCorrJet);
+   fChain->SetBranchAddress("etSisConePFCorrJet", etSisConePFCorrJet, &b_etSisConePFCorrJet);
+   fChain->SetBranchAddress("momentumSisConePFCorrJet", momentumSisConePFCorrJet, &b_momentumSisConePFCorrJet);
+   fChain->SetBranchAddress("thetaSisConePFCorrJet", thetaSisConePFCorrJet, &b_thetaSisConePFCorrJet);
+   fChain->SetBranchAddress("etaSisConePFCorrJet", etaSisConePFCorrJet, &b_etaSisConePFCorrJet);
+   fChain->SetBranchAddress("phiSisConePFCorrJet", phiSisConePFCorrJet, &b_phiSisConePFCorrJet);
+   fChain->SetBranchAddress("pxSisConePFCorrJet", pxSisConePFCorrJet, &b_pxSisConePFCorrJet);
+   fChain->SetBranchAddress("pySisConePFCorrJet", pySisConePFCorrJet, &b_pySisConePFCorrJet);
+   fChain->SetBranchAddress("pzSisConePFCorrJet", pzSisConePFCorrJet, &b_pzSisConePFCorrJet);
+   fChain->SetBranchAddress("vertexXSisConePFCorrJet", vertexXSisConePFCorrJet, &b_vertexXSisConePFCorrJet);
+   fChain->SetBranchAddress("vertexYSisConePFCorrJet", vertexYSisConePFCorrJet, &b_vertexYSisConePFCorrJet);
+   fChain->SetBranchAddress("vertexZSisConePFCorrJet", vertexZSisConePFCorrJet, &b_vertexZSisConePFCorrJet);
+   fChain->SetBranchAddress("massSisConePFCorrJet", massSisConePFCorrJet, &b_massSisConePFCorrJet);
+   fChain->SetBranchAddress("mtSisConePFCorrJet", mtSisConePFCorrJet, &b_mtSisConePFCorrJet);
+   fChain->SetBranchAddress("pdgIdSisConePFCorrJet", pdgIdSisConePFCorrJet, &b_pdgIdSisConePFCorrJet);
+   fChain->SetBranchAddress("nDauSisConePFCorrJet", nDauSisConePFCorrJet, &b_nDauSisConePFCorrJet);
+   fChain->SetBranchAddress("d1IndexSisConePFCorrJet", d1IndexSisConePFCorrJet, &b_d1IndexSisConePFCorrJet);
+   fChain->SetBranchAddress("d2IndexSisConePFCorrJet", d2IndexSisConePFCorrJet, &b_d2IndexSisConePFCorrJet);
+   fChain->SetBranchAddress("d1pdgIdSisConePFCorrJet", d1pdgIdSisConePFCorrJet, &b_d1pdgIdSisConePFCorrJet);
+   fChain->SetBranchAddress("d2pdgIdSisConePFCorrJet", d2pdgIdSisConePFCorrJet, &b_d2pdgIdSisConePFCorrJet);
+   fChain->SetBranchAddress("chargedHadronEnergySisConePFCorrJet", chargedHadronEnergySisConePFCorrJet, &b_chargedHadronEnergySisConePFCorrJet);
+   fChain->SetBranchAddress("neutralHadronEnergySisConePFCorrJet", neutralHadronEnergySisConePFCorrJet, &b_neutralHadronEnergySisConePFCorrJet);
+   fChain->SetBranchAddress("chargedEmEnergySisConePFCorrJet", chargedEmEnergySisConePFCorrJet, &b_chargedEmEnergySisConePFCorrJet);
+   fChain->SetBranchAddress("neutralEmEnergySisConePFCorrJet", neutralEmEnergySisConePFCorrJet, &b_neutralEmEnergySisConePFCorrJet);
+   fChain->SetBranchAddress("neutralMultiplicitySisConePFCorrJet", neutralMultiplicitySisConePFCorrJet, &b_neutralMultiplicitySisConePFCorrJet);
+   fChain->SetBranchAddress("chargedMultiplicitySisConePFCorrJet", chargedMultiplicitySisConePFCorrJet, &b_chargedMultiplicitySisConePFCorrJet);
+   fChain->SetBranchAddress("muonMultiplicitySisConePFCorrJet", muonMultiplicitySisConePFCorrJet, &b_muonMultiplicitySisConePFCorrJet);
    fChain->SetBranchAddress("nSisConeGenJet", &nSisConeGenJet, &b_nSisConeGenJet);
    fChain->SetBranchAddress("chargeSisConeGenJet", chargeSisConeGenJet, &b_chargeSisConeGenJet);
    fChain->SetBranchAddress("energySisConeGenJet", energySisConeGenJet, &b_energySisConeGenJet);
