@@ -1042,11 +1042,11 @@ bool HiggsSelection::goodJetFound() {
   // first check that kinematics has been set
   bool foundJet=false;
   float maxPtJet=0.;
-  for(int j=0;j<nIterativeJet;j++) {
+  for(int j=0;j<nSisConeJet;j++) {
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
+    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
     if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -1065,12 +1065,12 @@ bool HiggsSelection::goodJetFound() {
 	 ) continue;
     }
 
-    if(etIterativeJet[j]>maxPtJet) maxPtJet=etIterativeJet[j];
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
+    if(etSisConeJet[j]>maxPtJet) maxPtJet=etSisConeJet[j];
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaSisConeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etSisConeJet[j]) ) continue;
 
-    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etIterativeJet[j])) &&
- 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaIterativeJet[j])) 
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etSisConeJet[j])) &&
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaSisConeJet[j])) 
 	) continue;
     foundJet=true;
     break;
