@@ -38,8 +38,8 @@ public :
    Float_t         yMc[101];   //[nMc]
    Float_t         zMc[101];   //[nMc]
    Int_t           nTrg;
-   UChar_t         firedTrg[159];   //[nTrg]
-   UChar_t         evtPresel;
+   Bool_t          firedTrg[159];   //[nTrg]
+   Bool_t          evtPresel;
    Double_t        evtKfactor;
    Int_t           nEle;
    Int_t           chargeEle[50];   //[nEle]
@@ -148,11 +148,11 @@ public :
    Float_t         eleScBasedEcalSum05Ele[50];   //[nEle]
    Float_t         eleScHaloBasedEcalSum04Ele[50];   //[nEle]
    Float_t         eleScHaloBasedEcalSum05Ele[50];   //[nEle]
-   UChar_t         eleIdCutBasedEle[50];   //[nEle]
+   Bool_t          eleIdCutBasedEle[50];   //[nEle]
    Float_t         eleLikelihoodEle[50];   //[nEle]
-   UChar_t         eleIdStandardCutsRobustEle[50];   //[nEle]
-   UChar_t         eleIdStandardCutsLooseEle[50];   //[nEle]
-   UChar_t         eleIdStandardCutsTightEle[50];   //[nEle]
+   Bool_t          eleIdStandardCutsRobustEle[50];   //[nEle]
+   Bool_t          eleIdStandardCutsLooseEle[50];   //[nEle]
+   Bool_t          eleIdStandardCutsTightEle[50];   //[nEle]
    Float_t         eleTipEle[50];   //[nEle]
    Int_t           nTrack;
    Int_t           chargeTrack[500];   //[nTrack]
