@@ -791,14 +791,14 @@ std::pair<int,int> HiggsSelection::getBestElectronPair() {
   float maxPtLep1=-1000.;
   float maxPtLep2=-1000.;
   std::vector<int> goodRecoLeptons;
-  //  for(int i=0;i<nEle;i++) {
+  for(int i=0;i<nEle;i++) {
     
   // if ambiguity resolution is not applied... @$#%@^@!
-  vector<int> _resolvedElectrons = resolvedElectrons();
-  vector<int>::const_iterator it; 
+//   vector<int> _resolvedElectrons = resolvedElectrons();
+//   vector<int>::const_iterator it; 
 
-  for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
-    int i = *it;
+//   for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
+//     int i = *it;
 
     // to be in the same situation as for CSA07 analysis   
     if(_preselection->getSwitch("apply_looseIdBeforePreselection")){       
