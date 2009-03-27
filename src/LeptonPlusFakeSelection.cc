@@ -226,12 +226,12 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeFromQCDSelector.SetLowElePt( m_theFake4Momentum.Pt() );
     LFakeFromQCDSelector.SetElectronId(theElectronID);
     LFakeFromQCDSelector.SetPositronId( true );
-    LFakeFromQCDSelector.SetEleTrackerPtSum( theEleTrackerPtSum );
-    LFakeFromQCDSelector.SetPosTrackerPtSum( 0. );
-    LFakeFromQCDSelector.SetEleHcalPtSum( theEleHcalPtSum );
-    LFakeFromQCDSelector.SetPosHcalPtSum( 0. );
-    LFakeFromQCDSelector.SetEleEcalPtSum( theEleEcalPtSum );
-    LFakeFromQCDSelector.SetPosEcalPtSum( 0. );
+    LFakeFromQCDSelector.SetEleHardTrackerPtSum( theEleTrackerPtSum );
+    LFakeFromQCDSelector.SetEleSlowTrackerPtSum( 0. );
+    LFakeFromQCDSelector.SetEleHardHcalPtSum( theEleHcalPtSum );
+    LFakeFromQCDSelector.SetEleSlowHcalPtSum( 0. );
+    LFakeFromQCDSelector.SetEleHardEcalPtSum( theEleEcalPtSum );
+    LFakeFromQCDSelector.SetEleSlowEcalPtSum( 0. );
     LFakeFromQCDSelector.SetJetVeto(passedJetVeto);
     LFakeFromQCDSelector.SetMet( etMet[0] );					
     LFakeFromQCDSelector.SetDeltaPhi( m_deltaPhi );
@@ -244,12 +244,12 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeErrorFromQCDSelector.SetLowElePt( m_theFake4Momentum.Pt() );
     LFakeErrorFromQCDSelector.SetElectronId(theElectronID);
     LFakeErrorFromQCDSelector.SetPositronId( true );
-    LFakeErrorFromQCDSelector.SetEleTrackerPtSum( theEleTrackerPtSum );
-    LFakeErrorFromQCDSelector.SetPosTrackerPtSum( 0. );
-    LFakeErrorFromQCDSelector.SetEleHcalPtSum( theEleHcalPtSum );
-    LFakeErrorFromQCDSelector.SetPosHcalPtSum( 0. );
-    LFakeErrorFromQCDSelector.SetEleEcalPtSum( theEleEcalPtSum );
-    LFakeErrorFromQCDSelector.SetPosEcalPtSum( 0. );
+    LFakeErrorFromQCDSelector.SetEleHardTrackerPtSum( theEleTrackerPtSum );
+    LFakeErrorFromQCDSelector.SetEleSlowTrackerPtSum( 0. );
+    LFakeErrorFromQCDSelector.SetEleHardHcalPtSum( theEleHcalPtSum );
+    LFakeErrorFromQCDSelector.SetEleSlowHcalPtSum( 0. );
+    LFakeErrorFromQCDSelector.SetEleHardEcalPtSum( theEleEcalPtSum );
+    LFakeErrorFromQCDSelector.SetEleSlowEcalPtSum( 0. );
     LFakeErrorFromQCDSelector.SetJetVeto(passedJetVeto);
     LFakeErrorFromQCDSelector.SetMet( etMet[0] );
     LFakeErrorFromQCDSelector.SetDeltaPhi( m_deltaPhi );
@@ -263,12 +263,12 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeFromWjetsSelector.SetLowElePt( m_theFake4Momentum.Pt() );
     LFakeFromWjetsSelector.SetElectronId(theElectronID);
     LFakeFromWjetsSelector.SetPositronId( true );
-    LFakeFromWjetsSelector.SetEleTrackerPtSum( theEleTrackerPtSum );
-    LFakeFromWjetsSelector.SetPosTrackerPtSum( 0. );
-    LFakeFromWjetsSelector.SetEleHcalPtSum( theEleHcalPtSum );
-    LFakeFromWjetsSelector.SetPosHcalPtSum( 0. );
-    LFakeFromWjetsSelector.SetEleEcalPtSum( theEleEcalPtSum );
-    LFakeFromWjetsSelector.SetPosEcalPtSum( 0. );
+    LFakeFromWjetsSelector.SetEleHardTrackerPtSum( theEleTrackerPtSum );
+    LFakeFromWjetsSelector.SetEleSlowTrackerPtSum( 0. );
+    LFakeFromWjetsSelector.SetEleHardHcalPtSum( theEleHcalPtSum );
+    LFakeFromWjetsSelector.SetEleSlowHcalPtSum( 0. );
+    LFakeFromWjetsSelector.SetEleHardEcalPtSum( theEleEcalPtSum );
+    LFakeFromWjetsSelector.SetEleSlowEcalPtSum( 0. );
     LFakeFromWjetsSelector.SetJetVeto(passedJetVeto);
     LFakeFromWjetsSelector.SetMet( etMet[0] );					
     LFakeFromWjetsSelector.SetDeltaPhi( m_deltaPhi );
@@ -281,12 +281,12 @@ void LeptonPlusFakeSelection::Loop() {
     LFakeErrorFromWjetsSelector.SetLowElePt( m_theFake4Momentum.Pt() );
     LFakeErrorFromWjetsSelector.SetElectronId(theElectronID);
     LFakeErrorFromWjetsSelector.SetPositronId( true );
-    LFakeErrorFromWjetsSelector.SetEleTrackerPtSum( theEleTrackerPtSum );
-    LFakeErrorFromWjetsSelector.SetPosTrackerPtSum( 0. );
-    LFakeErrorFromWjetsSelector.SetEleHcalPtSum( theEleHcalPtSum );
-    LFakeErrorFromWjetsSelector.SetPosHcalPtSum( 0. );
-    LFakeErrorFromWjetsSelector.SetEleEcalPtSum( theEleEcalPtSum );
-    LFakeErrorFromWjetsSelector.SetPosEcalPtSum( 0. );
+    LFakeErrorFromWjetsSelector.SetEleHardTrackerPtSum( theEleTrackerPtSum );
+    LFakeErrorFromWjetsSelector.SetEleSlowTrackerPtSum( 0. );
+    LFakeErrorFromWjetsSelector.SetEleHardHcalPtSum( theEleHcalPtSum );
+    LFakeErrorFromWjetsSelector.SetEleSlowHcalPtSum( 0. );
+    LFakeErrorFromWjetsSelector.SetEleHardEcalPtSum( theEleEcalPtSum );
+    LFakeErrorFromWjetsSelector.SetEleSlowEcalPtSum( 0. );
     LFakeErrorFromWjetsSelector.SetJetVeto(passedJetVeto);
     LFakeErrorFromWjetsSelector.SetMet( etMet[0] );
     LFakeErrorFromWjetsSelector.SetDeltaPhi( m_deltaPhi );
@@ -359,11 +359,11 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
     m_theL14Momentum.SetXYZT(0,0,0,0);
   
   float maxPtJet=-1000.;
-  for(int j=0;j<nIterativeJet;j++) {
+  for(int j=0;j<nSisConeJet;j++) {
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
+    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -374,17 +374,17 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaSisConeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etSisConeJet[j]) ) continue;
 
-    if(etIterativeJet[j]>maxPtJet) { maxPtJet=etIterativeJet[j]; theFake=j; }
+    if(etSisConeJet[j]>maxPtJet) { maxPtJet=etSisConeJet[j]; theFake=j; }
 
     break;
   }
 
   m_theFake = theFake;
   if ( theFake > -1 )
-    m_theFake4Momentum.SetXYZT(pxIterativeJet[theFake],pyIterativeJet[theFake],pzIterativeJet[theFake],energyIterativeJet[theFake]);
+    m_theFake4Momentum.SetXYZT(pxSisConeJet[theFake],pySisConeJet[theFake],pzSisConeJet[theFake],energySisConeJet[theFake]);
   else
     m_theFake4Momentum.SetXYZT(0,0,0,0);
   
@@ -435,13 +435,13 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 
   // first check that kinematics has been set
   bool foundJet=false;
-  for(int j=0;j<nIterativeJet;j++) {
+  for(int j=0;j<nSisConeJet;j++) {
 
     if ( j == m_theFake ) continue;
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxIterativeJet[j],pyIterativeJet[j],pzIterativeJet[j]);
+    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -452,11 +452,11 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaIterativeJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etIterativeJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaSisConeJet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etSisConeJet[j]) ) continue;
 
-    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etIterativeJet[j])) &&
- 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaIterativeJet[j])) 
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etSisConeJet[j])) &&
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaSisConeJet[j])) 
 	) continue;
     foundJet=true;
     break;
