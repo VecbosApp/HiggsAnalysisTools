@@ -1,6 +1,6 @@
 // Set the application you want:
 // 
-//   1 = Higgs -> WW -> 2e2nu
+//   1 = Higgs -> WW -> 2e2nu (cut and count)
 //   2 = Electron ID
 //   3 = Plots for Electron ID
 //   4 = Z -> e+e-
@@ -17,5 +17,6 @@
 //  15 = lepton + fake selection for W+jets estimation
 //  16 = vertexing studies
 //  17 = isolation selection for Higgs studies; to produce input histos for performance plots 
+//  18 = Higgs -> WW -> 2e2nu NOT cut and count
 
 #define Application 1
