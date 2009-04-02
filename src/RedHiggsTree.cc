@@ -36,6 +36,14 @@ RedHiggsTree::~RedHiggsTree()
   delete myFile;
 }
 
+void RedHiggsTree::addMLVars() {
+  myTree->Branch("maxPtLh",             &myMaxPtLh,             "maxPtLh/F");
+  myTree->Branch("minPtLh",             &myMinPtLh,             "minPtLh/F");
+  myTree->Branch("njets",               &myNjets,               "njets/I");
+  myTree->Branch("dxyEVT",              &myDxyEVT,              "dxyEVT/F");
+  myTree->Branch("dszEVT",              &myDszEVT,              "dszEVT/F");
+}
+
 void RedHiggsTree::addCSA07Infos() {
 
   myTree->Branch("CSA07weight",              &myWeight,              "CSA07weight/D");
@@ -101,6 +109,16 @@ void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float m
   myJetVeto = jetVeto;
   myPreDeltaPhi = preDeltaPhi;
   myFinalSelection = finalSelection;
+
+}
+
+void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, float dxyEVT, float dszEVT) {
+
+  myMaxPtLh = maxlh;
+  myMinPtLh = minlh;
+  myNjets = njets;
+  myDxyEVT = dxyEVT;
+  myDszEVT = dszEVT;
 
 }
 

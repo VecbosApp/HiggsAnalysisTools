@@ -10,6 +10,8 @@ public:
    RedHiggsTree(const char * filename = "eleID.root");
   ~RedHiggsTree();
 
+  //! add more informations for analysis not cut based
+  void addMLVars();
   //! add the CSA07 processID and weight block
   void addCSA07Infos();
   //! add the k-Factor (used for signal only)
@@ -23,6 +25,8 @@ public:
   //! event by event final dataset fill
   void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool preDeltaPhi, bool finalSelection);
+  //! fill more informations for analysis not cut based
+  void fillMLVars(float maxlh, float minlh, int njets, float dxyEVT, float dszEVT);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -53,6 +57,11 @@ private:
   float maxPtEle;  
   float minPtEle;  
   float myDetaLeptons;
+  float myMaxPtLh;
+  float myMinPtLh;
+  int myNjets;
+  float myDxyEVT;
+  float myDszEVT;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myPreDeltaPhi;
