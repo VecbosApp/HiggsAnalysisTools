@@ -72,6 +72,10 @@
 #if Application == 17
 #include "HiggsAnalysisTools/src/HiggsIsolationStudiesInput.cc"
 #endif
+#if Application == 18
+#include "HiggsAnalysisTools/src/HiggsMLSelection.cc"
+#endif
+
 int main(int argc, char* argv[]) {
 
   char inputFileName[150];
@@ -332,6 +336,25 @@ int main(int argc, char* argv[]) {
   isolInput.requireTrigger(requiredTriggers);
   
   isolInput.Loop(outputFileName);
+
+#endif
+
+#if Application == 18
+
+  HiggsMLSelection htoww(theChain);
+  htoww.SetDatasetName(outputFileName);
+
+  TriggerMask mask(treeCond);
+
+  // require triggers
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+  mask.requireTrigger("HLT_Mu15");
+
+  std::vector<int> requiredTriggers = mask.getBits();
+  htoww.requireTrigger(requiredTriggers);
+
+  htoww.Loop();
+  htoww.displayEfficiencies(outputFileName);
 
 #endif
 
