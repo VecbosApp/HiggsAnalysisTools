@@ -1,7 +1,3 @@
-#ROOTCFLAGS    = $(shell $(ROOTSYS)/bin/root-config --cflags)
-#ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --libs)
-#ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
-
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs)
 ROOTGLIBS     = $(shell root-config --glibs)
@@ -16,45 +12,22 @@ SOFLAGS       = -shared
 ARCH         := $(shell root-config --arch)
 PLATFORM     := $(shell root-config --platform)
 
-ifeq ($(ARCH),macosx)
-# MacOS X with cc (GNU cc 2.95.2 and gcc 3.3)
-MACOSX_MINOR := $(shell sw_vers | sed -n 's/ProductVersion://p' | cut -d . -f 2)
-CXX           = c++ -lm
-#CXXFLAGS      = -O2 -pipe -Wall -W -Woverloaded-virtual $(ROOTCFLAGS) $(CLHEPCFLAGS)
-CXXFLAGS      = -O2 -pipe -Wall -W -Woverloaded-virtual -fPIC -Wno-deprecated -O -ansi -D_GNU_SOURCE  
-LD           = c++
-LDFLAGS       = -O2 -g
-# The SOFLAGS will be used to create the .dylib,
-# the .so will be created separately
-DllSuf        = dylib
-ifeq ($(MACOSX_MINOR),4)
-UNDEFOPT      = dynamic_lookup
-LD            = MACOSX_DEPLOYMENT_TARGET=10.4 c++
-else
-ifeq ($(MACOSX_MINOR),3)
-UNDEFOPT      = dynamic_lookup
-LD            = MACOSX_DEPLOYMENT_TARGET=10.3 c++
-else
-UNDEFOPT      = suppress
-LD            = c++
-endif
-endif
-
-endif
-
-
-
-NGLIBS         = $(ROOTGLIBS) 
-NGLIBS        += -lMinuit
-gGLIBS          = $(filter-out -lNew, $(NGLIBS))
 
 CXXFLAGS      += $(ROOTCFLAGS)
 #CXX           += -I./
 LIBS           = $(ROOTLIBS) 
 
 NGLIBS         = $(ROOTGLIBS) 
-NGLIBS        += -lMinuit
+NGLIBS        += -lMinuit -lMinuit2
 GLIBS          = $(filter-out -lNew, $(NGLIBS))
+
+# For MT2:
+# MT2LIB_INC_DIR := mT2
+# MT2LIB_LIB_DIR := mT2/src
+# MT2LIB_CPPFLAGS := -I $(MT2LIB_INC_DIR)
+# MT2LIB_LDFLAGS  := $(MT2LIB_LIB_DIR)/libMt2.so
+# CXXFLAGS += $(MT2LIB_CPPFLAGS)
+# LDFLAGS  += $(MT2LIB_LDFLAGS)
 
 INCLUDEDIR       = ./
 INCLUDEDIRCOMMON = ../
@@ -66,11 +39,18 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 .PREFIXES: ./lib/
 
 
-$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C $(INCLUDEDIR)/src/HiggsSelection.cc $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc $(INCLUDEDIR)/src/RedEleIDOptimTree.cc $(INCLUDEDIR)/src/RedLikeOptimTree.cc $(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc $(INCLUDEDIR)/src/RedIsolationOptimTree.cc $(INCLUDEDIR)/src/ZplusJetsSelection.cc $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc $(INCLUDEDIR)/src/HiggsVertexing.cpp $(INCLUDEDIR)/src/VertexTree.cc
-# no more used ------------------------------------
-#$(INCLUDEDIR)/src/ZSelection.cc $(INCLUDEDIR)/src/WSelection.cc 
-#$(INCLUDEDIR)/src/ElectronID.cc $(INCLUDEDIR)/src/plotsEleID.cc 
-#$(INCLUDEDIR)/src/ClassEfficiencyStudy.cc $(INCLUDEDIR)/src/WplusJets.cc 
+$(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
+	$(INCLUDEDIR)/src/HiggsSelection.cc \
+	$(INCLUDEDIR)/src/HiggsMLSelection.cc \
+	$(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc \
+	$(INCLUDEDIR)/src/RedEleIDOptimTree.cc \
+	$(INCLUDEDIR)/src/RedLikeOptimTree.cc \
+	$(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc \
+	$(INCLUDEDIR)/src/RedIsolationOptimTree.cc \
+	$(INCLUDEDIR)/src/ZplusJetsSelection.cc \
+	$(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc \
+	$(INCLUDEDIR)/src/HiggsVertexing.cpp \
+	$(INCLUDEDIR)/src/VertexTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsBase.o $<
 $(OUTLIBCOMMON)Conditions.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Conditions.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)Conditions.o $<
@@ -92,6 +72,8 @@ $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/Cu
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CutBasedEleIDSelector.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
+$(OUTLIB)HiggsMLSelection.o: $(INCLUDEDIR)/src/HiggsMLSelection.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsMLSelection.o $<
 $(OUTLIB)HiggsEleIdOptimToyMC.o: $(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsEleIdOptimToyMC.o $<
 $(OUTLIB)RedEleIDOptimTree.o: $(INCLUDEDIR)/src/RedEleIDOptimTree.cc
@@ -140,10 +122,28 @@ $(OUTLIB)BestLeptonSelectorWjets.o: $(INCLUDEDIR)/src/BestLeptonSelectorWjets.cc
 #----------------------------------------------------#
 
 # ==================== HiggsApp =============================================
-HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C $(OUTLIB)HiggsBase.o $(OUTLIBCOMMON)Conditions.o $(OUTLIBCOMMON)Selection.o $(OUTLIBCOMMON)EfficiencyEvaluator.o $(OUTLIBCOMMON)Counters.o $(OUTLIBCOMMON)Monitor.o $(OUTLIBCOMMON)SprDataFiller.o $(OUTLIBCOMMON)TriggerMask.o $(OUTLIBCOMMON)Utils.o $(OUTLIB)kFactorEvaluator.o $(OUTLIB)RedHiggsTree.o $(OUTLIB)RedTriggerTree.o $(OUTLIB)RedEleIDOptimTree.o $(OUTLIB)RedLikeOptimTree.o $(OUTLIB)RedIsolationOptimTree.o $(OUTLIB)CutBasedEleIDSelector.o $(OUTLIB)CommonHiggsPreselector.o $(OUTLIB)CutBasedHiggsSelector.o $(OUTLIB)LeptonPlusFakeSelection.o $(OUTLIB)VertexTree.o
-# no more used ------------------------------------
-#$(OUTLIB)RedEWKTree.o 
-	$(CXX) $(CXXFLAGS) -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $ $<
+HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
+	$(OUTLIB)HiggsBase.o \
+	$(OUTLIBCOMMON)Conditions.o \
+	$(OUTLIBCOMMON)Selection.o \
+	$(OUTLIBCOMMON)EfficiencyEvaluator.o \
+	$(OUTLIBCOMMON)Counters.o \
+	$(OUTLIBCOMMON)Monitor.o \
+	$(OUTLIBCOMMON)SprDataFiller.o \
+	$(OUTLIBCOMMON)TriggerMask.o \
+	$(OUTLIBCOMMON)Utils.o \
+	$(OUTLIB)kFactorEvaluator.o \
+	$(OUTLIB)RedHiggsTree.o \
+	$(OUTLIB)RedTriggerTree.o \
+	$(OUTLIB)RedEleIDOptimTree.o \
+	$(OUTLIB)RedLikeOptimTree.o \
+	$(OUTLIB)RedIsolationOptimTree.o \
+	$(OUTLIB)CutBasedEleIDSelector.o \
+	$(OUTLIB)CommonHiggsPreselector.o \
+	$(OUTLIB)CutBasedHiggsSelector.o \
+	$(OUTLIB)LeptonPlusFakeSelection.o \
+	$(OUTLIB)VertexTree.o
+	$(CXX) $(CXXFLAGS) -ldl -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $(LDFLAGS) $ $<
 HiggsApp.clean:
 	rm -f HiggsApp
 
