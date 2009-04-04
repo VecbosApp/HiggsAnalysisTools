@@ -1,6 +1,5 @@
 MCtruth				0
 apply_kFactor			0
-apply_looseIdBeforePreselection 0
 asymmetricLeptons               0
 addCSA07Infos			0
 trigger				1

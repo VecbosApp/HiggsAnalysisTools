@@ -54,7 +54,6 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   //  _addedPres = new Selection(fileCutsPreselection,fileSwitchesPreselection);
-  _preselection->addSwitch("apply_looseIdBeforePreselection");   
   _preselection->addSwitch("asymmetricLeptons");
   _preselection->addSwitch("apply_kFactor");   
   _preselection->addCut("etaElectronAcc");
@@ -408,14 +407,6 @@ void HiggsMLSelection::Loop() {
     // how many electrons after preselection eleID and isolation   
     // (in case we want to reproduce CSA07 conditions)
     int nPreselEle = nEle;
-    if(_preselection->getSwitch("apply_looseIdBeforePreselection")){       
-      nPreselEle = 0;
-      for(int i=0;i<nEle;i++) {
-	if (!eleIdCutBasedEle[i]) continue;
-	if (eleSumPtPreselectionEle[i]>0.05) continue;  
-	nPreselEle++;
-      }
-    }
     
     // reconstructed channel
     m_channel[ee] = false;     
@@ -798,18 +789,12 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair() {
   for(int i=0;i<nEle;i++) {
     
   // if ambiguity resolution is not applied... @$#%@^@!
-//   vector<int> _resolvedElectrons = resolvedElectrons();
-//   vector<int>::const_iterator it; 
-
-//   for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
-//     int i = *it;
-
-    // to be in the same situation as for CSA07 analysis   
-    if(_preselection->getSwitch("apply_looseIdBeforePreselection")){       
-      if (!eleIdCutBasedEle[i]) continue;
-      if (eleSumPtPreselectionEle[i]>0.05) continue;  
-    }
-
+    //   vector<int> _resolvedElectrons = resolvedElectrons();
+    //   vector<int>::const_iterator it; 
+    
+    //   for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
+    //     int i = *it;
+    
     if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
