@@ -11,7 +11,7 @@ public:
   ~RedLikeOptimTree();
 
   //! event by event final dataset fill
-  void fillAll(float fhlike, float fllike);
+  void fillAll(float fhlike, float fllike, int hclass, int lclass);
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
@@ -20,6 +20,8 @@ public:
 private:
   float myH_Likelihood;
   float myL_Likelihood;
+  int myH_EleClass;
+  int myL_EleClass;
 
   TFile* myFile;
   TTree* myTree;
