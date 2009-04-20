@@ -12,24 +12,24 @@ tesiStyle->SetPadBorderMode(0);
 tesiStyle->SetFrameBorderMode(0);
 tesiStyle->cd();
 
-int whichStudy = 0;  // 0 = high vs low pt
+int whichStudy = 1;  // 0 = high vs low pt
                      // 1 = signal vs background
 
 // files
-TFile fileSgnEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/signal/outHistos_sgn_showeringEB.root");
-TFile fileSgnEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/signal/outHistos_sgn_showeringEE.root");
-TFile fileSgnEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/signal/outHistos_sgn_goldenEB.root");
-TFile fileSgnEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/signal/outHistos_sgn_goldenEE.root");
+TFile fileSgnEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_sgn_showeringEB.root");
+TFile fileSgnEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_sgn_showeringEE.root");
+TFile fileSgnEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_sgn_goldenEB.root");
+TFile fileSgnEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_sgn_goldenEE.root");
 //
-TFile fileTTjetsEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/ttjetsMADGRAPH/outHistos_ttjets_showeringEB.root");
-TFile fileTTjetsEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/ttjetsMADGRAPH/outHistos_ttjets_showeringEE.root");
-TFile fileTTjetsEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/ttjetsMADGRAPH/outHistos_ttjets_goldenEB.root");
-TFile fileTTjetsEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/ttjetsMADGRAPH/outHistos_ttjets_goldenEE.root");
+TFile fileTTjetsEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_ttjets_showeringEB.root");
+TFile fileTTjetsEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_ttjets_showeringEE.root");
+TFile fileTTjetsEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_ttjets_goldenEB.root");
+TFile fileTTjetsEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_ttjets_goldenEE.root");
 //
-TFile fileWjetsEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/WjetsMADGRAPH/outHistos_Wjets_showeringEB.root");
-TFile fileWjetsEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/WjetsMADGRAPH/outHistos_Wjets_showeringEE.root");
-TFile fileWjetsEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/WjetsMADGRAPH/outHistos_Wjets_goldenEB.root");
-TFile fileWjetsEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/optimizEleID/2versione/WjetsMADGRAPH/outHistos_Wjets_goldenEE.root");
+TFile fileWjetsEBshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_Wjets_showeringEB.root");
+TFile fileWjetsEEshow  ("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_Wjets_showeringEE.root");
+TFile fileWjetsEBgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_Wjets_goldenEB.root");
+TFile fileWjetsEEgolden("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/outHistos_Wjets_goldenEE.root");
 
 TH1F *HH_dEta[12], *HH_dPhi[12], *HH_HoE[12], *HH_S9S25[12], *HH_See[12], *HH_EoPout[12];
 TH1F *HL_dEta[12], *HL_dPhi[12], *HL_HoE[12], *HL_S9S25[12], *HL_See[12], *HL_EoPout[12];
@@ -220,18 +220,18 @@ double scale_HL_EoPout[12];
 
 for(int ii=0; ii<12; ii++){
 
-  scale_HH_dEta[ii]   = 1./HH_dEta[ii].Integral();
-  scale_HH_dPhi[ii]   = 1./HH_dPhi[ii].Integral();
-  scale_HH_HoE[ii]    = 1./HH_HoE[ii].Integral();
-  scale_HH_S9S25[ii]  = 1./HH_S9S25[ii].Integral();
-  scale_HH_See[ii]    = 1./HH_See[ii].Integral();
-  scale_HH_EoPout[ii] = 1./HH_EoPout[ii].Integral();
-  scale_HL_dEta[ii]   = 1./HL_dEta[ii].Integral();
-  scale_HL_dPhi[ii]   = 1./HL_dPhi[ii].Integral();
-  scale_HL_HoE[ii]    = 1./HL_HoE[ii].Integral();
-  scale_HL_S9S25[ii]  = 1./HL_S9S25[ii].Integral();
-  scale_HL_See[ii]    = 1./HL_See[ii].Integral();
-  scale_HL_EoPout[ii] = 1./HL_EoPout[ii].Integral();
+  scale_HH_dEta[ii]   = 1./HH_dEta[ii].GetSum();
+  scale_HH_dPhi[ii]   = 1./HH_dPhi[ii].GetSum();
+  scale_HH_HoE[ii]    = 1./HH_HoE[ii].GetSum();
+  scale_HH_S9S25[ii]  = 1./HH_S9S25[ii].GetSum();
+  scale_HH_See[ii]    = 1./HH_See[ii].GetSum();
+  scale_HH_EoPout[ii] = 1./HH_EoPout[ii].GetSum();
+  scale_HL_dEta[ii]   = 1./HL_dEta[ii].GetSum();
+  scale_HL_dPhi[ii]   = 1./HL_dPhi[ii].GetSum();
+  scale_HL_HoE[ii]    = 1./HL_HoE[ii].GetSum();
+  scale_HL_S9S25[ii]  = 1./HL_S9S25[ii].GetSum();
+  scale_HL_See[ii]    = 1./HL_See[ii].GetSum();
+  scale_HL_EoPout[ii] = 1./HL_EoPout[ii].GetSum();
 }
 
 for(int ii=0; ii<12; ii++){
@@ -268,29 +268,39 @@ if(!whichStudy){
 }
 
 if(whichStudy){
+
+  for(int ii=0; ii<12; ii++){
+    HL_dEta[ii].  SetLineWidth(2);    
+    HL_dPhi[ii].  SetLineWidth(2);    
+    HL_HoE[ii].   SetLineWidth(2);    
+    HL_S9S25[ii]. SetLineWidth(2);    
+    HL_See[ii].   SetLineWidth(2);    
+    HL_EoPout[ii].SetLineWidth(2);    
+  }
+
   for(int ii=0; ii<4; ii++){
-    HL_dEta[ii].  SetFillColor(1);    HL_dEta[ii].  SetFillStyle(3004);
-    HL_dPhi[ii].  SetFillColor(1);    HL_dPhi[ii].  SetFillStyle(3004);
-    HL_HoE[ii].   SetFillColor(1);    HL_HoE[ii].   SetFillStyle(3004);
-    HL_S9S25[ii]. SetFillColor(1);    HL_S9S25[ii]. SetFillStyle(3004);
-    HL_See[ii].   SetFillColor(1);    HL_See[ii].   SetFillStyle(3004);
-    HL_EoPout[ii].SetFillColor(1);    HL_EoPout[ii].SetFillStyle(3004);
+    HL_dEta[ii].  SetLineColor(2);    
+    HL_dPhi[ii].  SetLineColor(2);    
+    HL_HoE[ii].   SetLineColor(2);    
+    HL_S9S25[ii]. SetLineColor(2);    
+    HL_See[ii].   SetLineColor(2);    
+    HL_EoPout[ii].SetLineColor(2);    
   }
   for(int ii=4; ii<8; ii++){
-    HL_dEta[ii].  SetFillColor(3);    HL_dEta[ii].  SetFillStyle(3005);
-    HL_dPhi[ii].  SetFillColor(3);    HL_dPhi[ii].  SetFillStyle(3005);
-    HL_HoE[ii].   SetFillColor(3);    HL_HoE[ii].   SetFillStyle(3005);
-    HL_S9S25[ii]. SetFillColor(3);    HL_S9S25[ii]. SetFillStyle(3005);
-    HL_See[ii].   SetFillColor(3);    HL_See[ii].   SetFillStyle(3005);
-    HL_EoPout[ii].SetFillColor(3);    HL_EoPout[ii].SetFillStyle(3005);
+    HL_dEta[ii].  SetLineColor(3);    
+    HL_dPhi[ii].  SetLineColor(3);    
+    HL_HoE[ii].   SetLineColor(3);    
+    HL_S9S25[ii]. SetLineColor(3);    
+    HL_See[ii].   SetLineColor(3);    
+    HL_EoPout[ii].SetLineColor(3);    
   }
   for(int ii=8; ii<12; ii++){
-    HL_dEta[ii].  SetFillColor(2);    HL_dEta[ii].  SetFillStyle(3006);
-    HL_dPhi[ii].  SetFillColor(2);    HL_dPhi[ii].  SetFillStyle(3006);
-    HL_HoE[ii].   SetFillColor(2);    HL_HoE[ii].   SetFillStyle(3006);
-    HL_S9S25[ii]. SetFillColor(2);    HL_S9S25[ii]. SetFillStyle(3006);
-    HL_See[ii].   SetFillColor(2);    HL_See[ii].   SetFillStyle(3006);
-    HL_EoPout[ii].SetFillColor(2);    HL_EoPout[ii].SetFillStyle(3006);
+    HL_dEta[ii].  SetLineColor(4);    
+    HL_dPhi[ii].  SetLineColor(4);    
+    HL_HoE[ii].   SetLineColor(4);    
+    HL_S9S25[ii]. SetLineColor(4);    
+    HL_See[ii].   SetLineColor(4);    
+    HL_EoPout[ii].SetLineColor(4);    
   }
 }
 
@@ -360,49 +370,49 @@ if(!whichStudy){
 if(whichStudy){
 
   TLegend SvsB(0.50,0.6,0.75,0.82);
-  SvsB.AddEntry(HL_EoPout[0], "signal","f");
-  SvsB.AddEntry(HL_EoPout[4], "ttjets","f");
-  SvsB.AddEntry(HL_EoPout[8], "wjets","f");
+  SvsB.AddEntry(HL_dPhi[0], "signal","f");
+  SvsB.AddEntry(HL_dPhi[4], "ttjets","f");
+  SvsB.AddEntry(HL_dPhi[8], "wjets","f");
   SvsB.SetFillColor(0);
   SvsB.SetBorderSize(0.4);
     
   TCanvas *cgEB = new TCanvas("cgEB", "golden, barrel",1);  
   cgEB->SetTitle("golden, barrel");
   // cgEB.SetLogy();
-  HL_EoPout[8].SetTitle("golden, barrel");
-  HL_EoPout[8].Draw();
-  HL_EoPout[4].Draw("same");
-  HL_EoPout[0].Draw("same");
+  HL_dPhi[8].SetTitle("golden, barrel");
+  HL_dPhi[8].Draw();
+  HL_dPhi[4].Draw("same");
+  HL_dPhi[0].Draw("same");
   SvsB.Draw();
   cgEB->Print("EBgoldenSignalVsBack.eps");
 
   TCanvas *cgEE = new TCanvas("cgEE", "golden, endcap",1);  
   cgEB->SetTitle("golden, endcap");
   // cgEE.SetLogy();
-  HL_EoPout[9].SetTitle("golden, endcap");
-  HL_EoPout[9].Draw();
-  HL_EoPout[5].Draw("same");
-  HL_EoPout[1].Draw("same");
+  HL_dPhi[9].SetTitle("golden, endcap");
+  HL_dPhi[9].Draw();
+  HL_dPhi[5].Draw("same");
+  HL_dPhi[1].Draw("same");
   SvsB.Draw();
   cgEE->Print("EEgoldenSignalVsBack.eps");
 
   TCanvas *csEB = new TCanvas("csEB", "showering, barrel",1);  
   cgEB->SetTitle("showering, barrel");
   // csEB.SetLogy();
-  HL_EoPout[10].SetTitle("showering, barrel");
-  HL_EoPout[10].Draw();
-  HL_EoPout[6].Draw("same");
-  HL_EoPout[2].Draw("same");
+  HL_dPhi[2].SetTitle("showering, barrel");
+  HL_dPhi[2].Draw();
+  HL_dPhi[6].Draw("same");
+  HL_dPhi[10].Draw("same");
   SvsB.Draw();
   csEB->Print("EBshoweringSignalVsBack.eps");  
 
   TCanvas *csEE = new TCanvas("csEE", "showering, endcap",1);  
   cgEB->SetTitle("showering, endcap");
   // csEE.SetLogy();
-  HL_EoPout[11].SetTitle("showering, endcap");
-  HL_EoPout[11].Draw();
-  HL_EoPout[7].Draw("same");
-  HL_EoPout[3].Draw("same");
+  HL_dPhi[3].SetTitle("showering, endcap");
+  HL_dPhi[3].Draw();
+  HL_dPhi[7].Draw("same");
+  HL_dPhi[11].Draw("same");
   SvsB.Draw();
   csEE->Print("EEshoweringSignalVsBack.eps");
 
