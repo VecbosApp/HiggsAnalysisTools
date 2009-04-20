@@ -211,15 +211,15 @@ int main ( int argc, char **argv)
   //
   cout << "Class = " << theClass << endl;
   cout << "eff class signal = " << passedLClass[0]/((float)T[0]->GetEntries()) << endl;
-  cout << "eff class ttjets = " << passedLClass[1]/((float)T[1]->GetEntries()) << endl;
-  cout << "eff class wjets  = " << passedLClass[2]/((float)T[2]->GetEntries()) << endl;
+  cout << "eff class wjets  = " << passedLClass[1]/((float)T[1]->GetEntries()) << endl;
+  cout << "eff class ttjets = " << passedLClass[2]/((float)T[2]->GetEntries()) << endl;
   //
   cout << "highest significance (Punzi) = " << signPunziMax << endl;
   cout << "in the following bin: low Pt electron cut = "  << lowCut  << endl; 
   //
   cout << "eff eleID signal = " << passedEleID[signBinMax][0]/passedLClass[0] << endl;
-  cout << "eff eleID ttjets = " << passedEleID[signBinMax][1]/passedLClass[1] << endl;
-  cout << "eff eleID wjets  = " << passedEleID[signBinMax][2]/passedLClass[2] << endl;
+  cout << "eff eleID wjets  = " << passedEleID[signBinMax][1]/passedLClass[1] << endl;
+  cout << "eff eleID ttjets = " << passedEleID[signBinMax][2]/passedLClass[2] << endl;
   
 }
 
