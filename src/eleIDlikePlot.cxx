@@ -12,95 +12,140 @@ tesiStyle->SetPadBorderMode(0);
 tesiStyle->SetFrameBorderMode(0);
 tesiStyle->cd();
 
-// which study : 0 = 1 like; 1 = divided by pt
-int whichStudy = 1;
 
 // files
-TFile fileSgn("../../Results/likelihood/outHistosSgnm160.root");
-TFile fileBkg("../../Results/likelihood/outHistosBkgm160.root");
+TFile fileSgn_show   ("../outHistos_showering_signal.root");
+TFile fileSgn_notShow("../outHistos_notShowering_signal.root");
+TFile fileSgn_all    ("../outHistos_allClasses_signal.root");
+//
+TFile filettjets_show   ("../outHistos_showering_ttjets.root");
+TFile filettjets_notShow("../outHistos_notShowering_ttjets.root");
+TFile filettjets_all    ("../outHistos_allClasses_ttjets.root");
+//
+TFile fileWjets_show   ("../outHistos_showering_wjets.root");
+TFile fileWjets_notShow("../outHistos_notShowering_wjets.root");
+TFile fileWjets_all    ("../outHistos_allClasses_wjets.root");
 
-TH1F *HH_like[2], *HL_like[2];
-HH_like[0] = (TH1F*)fileSgn -> Get("HH_like");
-HL_like[0] = (TH1F*)fileSgn -> Get("HL_like");
-HH_like[1] = (TH1F*)fileBkg -> Get("HH_like");
-HL_like[1] = (TH1F*)fileBkg -> Get("HL_like");
 
-// adding HL+HH if needed 
-if(!whichStudy){
-  for(int ii=0; ii<2; ii++){ HH_like[ii].Add(HL_like[ii]); }
-}
+// charging histos
+TH1F *HH_like[9], *HL_like[9];
+HH_like[0] = (TH1F*)fileSgn_show       -> Get("HH_Likelihood");
+HH_like[1] = (TH1F*)fileSgn_notShow    -> Get("HH_Likelihood");
+HH_like[2] = (TH1F*)fileSgn_all        -> Get("HH_Likelihood");
+HH_like[3] = (TH1F*)filettjets_show    -> Get("HH_Likelihood");
+HH_like[4] = (TH1F*)filettjets_notShow -> Get("HH_Likelihood");
+HH_like[5] = (TH1F*)filettjets_all     -> Get("HH_Likelihood");
+HH_like[6] = (TH1F*)fileWjets_show     -> Get("HH_Likelihood");
+HH_like[7] = (TH1F*)fileWjets_notShow  -> Get("HH_Likelihood");
+HH_like[8] = (TH1F*)fileWjets_all      -> Get("HH_Likelihood");
+// 
+HL_like[0] = (TH1F*)fileSgn_show        -> Get("HL_Likelihood");
+HL_like[1] = (TH1F*)fileSgn_notShow     -> Get("HL_Likelihood");
+HL_like[2] = (TH1F*)fileSgn_all         -> Get("HL_Likelihood");
+HL_like[3] = (TH1F*)filettjets_show     -> Get("HL_Likelihood");
+HL_like[4] = (TH1F*)filettjets_notShow  -> Get("HL_Likelihood");
+HL_like[5] = (TH1F*)filettjets_all      -> Get("HL_Likelihood");
+HL_like[6] = (TH1F*)fileWjets_show      -> Get("HL_Likelihood");
+HL_like[7] = (TH1F*)fileWjets_notShow   -> Get("HL_Likelihood");
+HL_like[8] = (TH1F*)fileWjets_all       -> Get("HL_Likelihood");
+
 
 // rescaling
-double scale_HH[2];
-double scale_HL[2];
-for(int ii=0; ii<2; ii++){
-  scale_HH[ii] = 1./HH_like[ii].Integral();
-  scale_HL[ii] = 1./HL_like[ii].Integral();
+double scale_HH[9];
+double scale_HL[9];
+for(int ii=0; ii<9; ii++){
+  HH_like[ii].Scale(1./(HH_like[ii].Integral()));
+  HL_like[ii].Scale(1./(HL_like[ii].Integral()));
 }
 
-for(int ii=0; ii<2; ii++){
-  HH_like[ii].Scale(scale_HH[ii]);
-  HL_like[ii].Scale(scale_HL[ii]);
-}
 
 // cosmetics
-HH_like[0].SetFillColor(1);    HH_like[0].SetFillStyle(3004);
-HL_like[0].SetFillColor(1);    HL_like[0].SetFillStyle(3004);
-HH_like[1].SetFillColor(3);    HH_like[1].SetFillStyle(3005);
-HL_like[1].SetFillColor(3);    HL_like[1].SetFillStyle(3005);
+for(int ii=0; ii<9; ii++){
+  HH_like[ii].SetLineWidth(2);    
+  HL_like[ii].SetLineWidth(2);    
+}
+for(int ii=0; ii<3; ii++){
+  HH_like[ii].SetLineColor(2);    
+  HL_like[ii].SetLineColor(2);    
+}
+for(int ii=3; ii<6; ii++){
+  HH_like[ii].SetLineColor(3);    
+  HL_like[ii].SetLineColor(3);    
+}
+for(int ii=6; ii<9; ii++){
+  HH_like[ii].SetLineColor(4);    
+  HL_like[ii].SetLineColor(4);    
+}
 
 // axes titles
-for(int ii=0; ii<2; ii++){
-  HH_like[ii].GetXaxis()->SetTitle("likelihood");
-  HL_like[ii].GetXaxis()->SetTitle("likelihood");
+for(int ii=0; ii<9; ii++){
+  HH_like[ii].GetXaxis()->SetTitle("eleID likelihood");
+  HL_like[ii].GetXaxis()->SetTitle("eleID likelihood");
 }
+
 
 
 // ------------- plots -----------------------------------
 
-// high vs low pt study
-if(whichStudy){
-  TLegend Hleg(0.50,0.6,0.75,0.82);
-  Hleg.AddEntry(HH_like[0], "high p_{T}, signal","f");
-  Hleg.AddEntry(HH_like[1], "high p_{T}, background","f");
-  Hleg.SetFillColor(0);
-  Hleg.SetBorderSize(0.4);
+TLegend Leg(0.50,0.6,0.75,0.82);
+Leg.AddEntry(HL_like[0], "signal", "f");
+Leg.AddEntry(HL_like[3], "tt+jets","f");
+Leg.AddEntry(HL_like[6], "W+jets", "f");
+Leg.SetFillColor(0);
+Leg.SetBorderSize(0.4);
 
-  TLegend Lleg(0.50,0.6,0.75,0.82);
-  Lleg.AddEntry(HL_like[0], "low p_{T}, signal","f");
-  Lleg.AddEntry(HL_like[1], "low p_{T}, background","f");
-  Lleg.SetFillColor(0);
-  Lleg.SetBorderSize(0.4);
+/*
+TCanvas *c1 = new TCanvas("c1", "high p_{T}, showering",1);  
+c1.SetLogy();
+HH_like[0].Draw();
+HH_like[3].Draw("same");
+HH_like[6].Draw("same");
+Leg.Draw();
+c1->Print("HighPt_showering.png");
 
-  TCanvas *ch = new TCanvas("ch", "high p_{T}",1);  
-  ch.SetLogy();
-  HH_like[0].Draw();
-  HH_like[1].Draw("same");
-  Hleg.Draw();
-  ch->Print("HighPt.png");
+TCanvas *c2 = new TCanvas("c2", "high p_{T}, not showering",1);  
+c2.SetLogy();
+HH_like[1].Draw();
+HH_like[4].Draw("same");
+HH_like[7].Draw("same");
+Leg.Draw();
+c2->Print("HighPt_notShowering.png");
+*/
 
-  TCanvas *cl = new TCanvas("cl", "low p_{T}",1);  
-  cl.SetLogy();
-  HL_like[0].Draw();
-  HL_like[1].Draw("same");
-  Lleg.Draw();
-  cl->Print("LowPt.png");
-}
+TCanvas *c3 = new TCanvas("c3", "high p_{T}, all classes",1);  
+c3.SetLogy();
+HH_like[2].Draw();
+HH_like[5].Draw("same");
+HH_like[8].Draw("same");
+Leg.Draw();
+c3->Print("HighPt_allClasses.png");
 
-// high and low pt together study
-if(!whichStudy){
-  TLegend Hleg(0.50,0.6,0.75,0.82);
-  Hleg.AddEntry(HH_like[0], "signal","f");
-  Hleg.AddEntry(HH_like[1], "background","f");
-  Hleg.SetFillColor(0);
-  Hleg.SetBorderSize(0.4);
-  
-  TCanvas *c = new TCanvas("c", "",1);  
-  c.SetLogy();
-  HH_like[0].Draw();
-  HH_like[1].Draw("same");
-  Hleg.Draw();
-  c->Print("Like.png");
-}
+/*
+TCanvas *c11 = new TCanvas("c11", "low p_{T}, showering",1);  
+c11.SetLogy();
+HL_like[0].Draw();
+HL_like[3].Draw("same");
+HL_like[6].Draw("same");
+Leg.Draw();
+c11->Print("LowPt_showering.png");
+
+TCanvas *c12 = new TCanvas("c12", "low p_{T}, not showering",1);  
+c12.SetLogy();
+HL_like[1].Draw();
+HL_like[4].Draw("same");
+HL_like[7].Draw("same");
+Leg.Draw();
+c12->Print("LowPt_notShowering.png");
+*/
+
+TCanvas *c13 = new TCanvas("c13", "low p_{T}, all classes",1);  
+c13.SetLogy();
+HL_like[2].Draw();
+HL_like[5].Draw("same");
+HL_like[8].Draw("same");
+Leg.Draw();
+c13->Print("LowPt_allClasses.png");
+
+
 
 }
