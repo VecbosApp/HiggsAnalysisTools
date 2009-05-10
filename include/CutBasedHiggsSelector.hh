@@ -32,7 +32,6 @@ public:
   void SetHighElePt(float highPt)        { m_highPt        = highPt;    }
   void SetLowElePt(float lowPt)          { m_lowPt         = lowPt;     }
   void SetInvMass(float mll)             { m_invMass       = mll;       }
-  void SetAsymmetricLeptons(bool asymm)  { m_asymmetricLeptons = asymm; }
   void SetElectronId(bool isEleId)       { m_isElectronId  = isEleId; }
   void SetPositronId(bool isPosId)       { m_isPositronId  = isPosId; }
   void SetEleHardTrackerPtSum(float sum) { m_eleHardTkPtSum    = sum; }
@@ -41,6 +40,8 @@ public:
   void SetEleSlowHcalPtSum(float sum)    { m_eleSlowHcalPtSum  = sum; }
   void SetEleHardEcalPtSum(float sum)    { m_eleHardEcalPtSum  = sum; }
   void SetEleSlowEcalPtSum(float sum)    { m_eleSlowEcalPtSum  = sum; }
+  void SetEleHardGlobalSum(float sum)    { m_eleHardGlobalSum  = sum; }
+  void SetEleSlowGlobalSum(float sum)    { m_eleSlowGlobalSum  = sum; }
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
   void SetMet(float met)                 { m_met           = met;}
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
@@ -64,11 +65,10 @@ private:
   
   float m_weight;
   float m_highPt, m_lowPt;
-  bool m_asymmetricLeptons;
   bool m_isElectronId, m_isPositronId;
   float m_invMass;
-  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum;
-  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum;
+  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
+  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;
   bool m_passedJetVeto;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;

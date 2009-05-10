@@ -19,4 +19,4 @@
 //  17 = isolation selection for Higgs studies; to produce input histos for performance plots 
 //  18 = Higgs -> WW -> 2e2nu NOT cut and count
 
-#define Application 1
+#define Application 18

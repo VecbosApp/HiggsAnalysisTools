@@ -155,7 +155,7 @@ private:
   float _highestPtGen[1], _lowestPtGen[1];
   float _genHiggsPt[1];
   float _nGenJet[1];
-  float _alphaEle[50], _emFracEle[50], _hadFracEle[50];
+  float _emFracEle[50], _hadFracEle[50];
 
   //! name of rootfile with dataset
   std::string _datasetName;

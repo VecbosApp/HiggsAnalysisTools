@@ -1,12 +1,13 @@
 hardLeptonThreshold     1
 slowLeptonThreshold     1
 dileptonInvMassMin      1
-trackerPtSumLoose	1
-hcalPtSumLoose		1
-ecalPtSumLoose		1
-trackerPtSumTight	1
-hcalPtSumTight		1
-ecalPtSumTight		1
+trackerPtSumAss		0
+trackerPtSumRel		0
+hcalPtSumAss		0
+hcalPtSumRel		0
+ecalPtSumAss		0
+ecalPtSumRel		0
+globalSum               1
 classDepEleId		1
 jetVeto			1
 MET			1
@@ -19,4 +20,3 @@ jetConeWidth		1
 etaJetAcc		1
 etJetHighAcc		1
 etJetLowAcc		1
-alphaJet		1

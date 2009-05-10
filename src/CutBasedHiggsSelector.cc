@@ -7,7 +7,6 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_jetVeto = false;
   m_preDeltaPhi = false;
   m_processID = -1;
-  m_asymmetricLeptons = false;
 }
 
 CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selector ) {
@@ -16,12 +15,14 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_isElectronId = selector.m_isElectronId;
   m_isPositronId = selector.m_isPositronId;
   m_invMass = selector.m_invMass;
-  m_eleHardTkPtSum = selector.m_eleHardTkPtSum;
+  m_eleHardTkPtSum   = selector.m_eleHardTkPtSum;
   m_eleHardHcalPtSum = selector.m_eleHardHcalPtSum;
   m_eleHardEcalPtSum = selector.m_eleHardEcalPtSum;
-  m_eleSlowTkPtSum = selector.m_eleSlowTkPtSum;
+  m_eleHardGlobalSum = selector.m_eleHardGlobalSum;
+  m_eleSlowTkPtSum   = selector.m_eleSlowTkPtSum;
   m_eleSlowHcalPtSum = selector.m_eleSlowHcalPtSum;
   m_eleSlowEcalPtSum = selector.m_eleSlowEcalPtSum;
+  m_eleSlowGlobalSum = selector.m_eleSlowGlobalSum;
   m_passedJetVeto = selector.m_passedJetVeto;
   m_met = selector.m_met;
   m_deltaPhi = selector.m_deltaPhi;
@@ -45,22 +46,22 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection = new Selection(std::string(fileCuts),std::string(fileSwitches));
 
   // tehse cuts are applied in the HiggsSelection class, but are configured here
+  _selection->addSwitch("classDepEleId");
+  _selection->addSwitch("jetVeto");
   _selection->addCut("jetConeWidth");
   _selection->addCut("etaJetAcc");
   _selection->addCut("etJetLowAcc");
   _selection->addCut("etJetHighAcc");
-  _selection->addCut("alphaJet");
-  _selection->addSwitch("classDepEleId");
-  _selection->addSwitch("jetVeto");
   _selection->addCut("hardLeptonThreshold"); 
   _selection->addCut("slowLeptonThreshold"); 
   _selection->addCut("dileptonInvMassMin");  
-  _selection->addCut("trackerPtSumLoose");
-  _selection->addCut("hcalPtSumLoose");
-  _selection->addCut("ecalPtSumLoose");
-  _selection->addCut("trackerPtSumTight");
-  _selection->addCut("hcalPtSumTight");
-  _selection->addCut("ecalPtSumTight");
+  _selection->addCut("trackerPtSumAss");
+  _selection->addCut("trackerPtSumRel");
+  _selection->addCut("hcalPtSumAss");
+  _selection->addCut("hcalPtSumRel");
+  _selection->addCut("ecalPtSumAss");
+  _selection->addCut("ecalPtSumRel");
+  _selection->addCut("globalSum");
   _selection->addCut("MET");
   _selection->addCut("maxPtLepton");
   _selection->addCut("minPtLepton");
@@ -72,7 +73,6 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
 
   globalCounter = new Counters();
   globalCounter->SetTitle(theTitle);
-  // globalCounter->SetTitle("FULL SELECTION EVENT COUNTER");
   globalCounter->AddVar("preselected");
   globalCounter->AddVar("hardLeptonThreshold");
   globalCounter->AddVar("slowLeptonThreshold");
@@ -81,6 +81,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("trackerIso");
   globalCounter->AddVar("hcalIso");
   globalCounter->AddVar("ecalIso");
+  globalCounter->AddVar("globalIso");
   globalCounter->AddVar("jetVeto");
   globalCounter->AddVar("MET");
   globalCounter->AddVar("maxPtLepton");
@@ -117,6 +118,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("trackerIso");
       processCounter->AddVar("hcalIso");
       processCounter->AddVar("ecalIso");
+      processCounter->AddVar("globalIso");
       processCounter->AddVar("jetVeto");
       processCounter->AddVar("MET");
       processCounter->AddVar("maxPtLepton");
@@ -155,30 +157,44 @@ bool CutBasedHiggsSelector::output() {
   // real selections (after preselection step)
   if ((_selection->getSwitch("classDepEleId")) && (!m_isElectronId || !m_isPositronId)) return false; 
   theCounter->IncrVar("classDepEleId",m_weight);
-
-  if ((_selection->getSwitch("trackerPtSumTight"))) {
-    if (!m_asymmetricLeptons &&
-        (!_selection->passCut("trackerPtSumTight",m_eleHardTkPtSum) || !_selection->passCut("trackerPtSumTight",m_eleSlowTkPtSum)) ) return false; 
-    if (m_asymmetricLeptons && 
-        (!_selection->passCut("trackerPtSumLoose",m_eleHardTkPtSum) || !_selection->passCut("trackerPtSumTight",m_eleSlowTkPtSum)) ) return false;
+  
+  if ((_selection->getSwitch("trackerPtSumAss"))) {
+    if (m_highPt>=25 && !_selection->passCut("trackerPtSumAss",m_eleHardTkPtSum)) return false; 
+    if (m_lowPt>=25  && !_selection->passCut("trackerPtSumAss",m_eleSlowTkPtSum)) return false; 
+  }
+  if ((_selection->getSwitch("trackerPtSumRel"))) {
+    if (m_highPt<25  && !_selection->passCut("trackerPtSumRel",m_eleHardTkPtSum)) return false; 
+    if (m_lowPt<25   && !_selection->passCut("trackerPtSumRel",m_eleSlowTkPtSum)) return false; 
   }
   theCounter->IncrVar("trackerIso",m_weight);
 
-  if ((_selection->getSwitch("hcalPtSumTight"))) {
-    if (!m_asymmetricLeptons &&
-        (!_selection->passCut("hcalPtSumTight",m_eleHardHcalPtSum) || !_selection->passCut("hcalPtSumTight",m_eleSlowHcalPtSum)) ) return false; 
-    if (m_asymmetricLeptons && 
-        (!_selection->passCut("hcalPtSumLoose",m_eleHardHcalPtSum) || !_selection->passCut("hcalPtSumTight",m_eleSlowHcalPtSum)) ) return false;
+  if ((_selection->getSwitch("hcalPtSumAss"))) {
+    if (m_highPt>=25 && !_selection->passCut("hcalPtSumAss",m_eleHardHcalPtSum)) return false;
+    if (m_lowPt>=25  && !_selection->passCut("hcalPtSumAss",m_eleSlowHcalPtSum)) return false; 
+  }
+  if ((_selection->getSwitch("hcalPtSumRel"))) {
+    if (m_highPt<25  && !_selection->passCut("hcalPtSumRel",m_eleHardHcalPtSum)) return false;
+    if (m_lowPt<25   && !_selection->passCut("hcalPtSumRel",m_eleSlowHcalPtSum)) return false; 
   }
   theCounter->IncrVar("hcalIso",m_weight);
 
-  if ((_selection->getSwitch("ecalPtSumTight"))) {
-    if (!m_asymmetricLeptons &&
-        (!_selection->passCut("ecalPtSumTight",m_eleHardEcalPtSum) || !_selection->passCut("ecalPtSumTight",m_eleSlowEcalPtSum)) ) return false; 
-    if (m_asymmetricLeptons && 
-        (!_selection->passCut("ecalPtSumLoose",m_eleHardEcalPtSum) || !_selection->passCut("ecalPtSumTight",m_eleSlowEcalPtSum)) ) return false;
+  if ((_selection->getSwitch("ecalPtSumAss"))) {
+    if (m_highPt>=25 && !_selection->passCut("ecalPtSumAss",m_eleHardEcalPtSum)) return false; 
+    if (m_lowPt>=25  && !_selection->passCut("ecalPtSumAss",m_eleSlowEcalPtSum)) return false; 
+  }
+  if ((_selection->getSwitch("ecalPtSumRel"))) {
+    if (m_highPt<25  && !_selection->passCut("ecalPtSumRel",m_eleHardEcalPtSum)) return false; 
+    if (m_lowPt<25   && !_selection->passCut("ecalPtSumRel",m_eleSlowEcalPtSum)) return false; 
   }
   theCounter->IncrVar("ecalIso",m_weight);
+
+  if ((_selection->getSwitch("globalSum"))) {
+    if (m_highPt>=25 && !_selection->passCut("globalSum",m_eleHardGlobalSum)) return false; 
+    if (m_lowPt>=25  && !_selection->passCut("globalSum",m_eleSlowGlobalSum)) return false; 
+    if (m_highPt<25  && (m_eleHardGlobalSum > ((m_highPt-10.)/3.) ))          return false; 
+    if (m_lowPt<25   && (m_eleSlowGlobalSum > ((m_lowPt-10.)/3.) ))           return false; 
+  }
+  theCounter->IncrVar("globalIso",m_weight);
 
   m_finalLeptons = true;
 
@@ -231,7 +247,8 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
       theCounter->Draw("trackerIso","classDepEleId");
       theCounter->Draw("hcalIso","trackerIso");
       theCounter->Draw("ecalIso","hcalIso");
-      theCounter->Draw("jetVeto","ecalIso");
+      theCounter->Draw("globalIso","ecalIso");
+      theCounter->Draw("jetVeto","globalIso");
       theCounter->Draw("MET","jetVeto");
       theCounter->Draw("maxPtLepton","MET");   
       theCounter->Draw("minPtLepton","maxPtLepton");
@@ -257,7 +274,8 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
     globalCounter->Draw("trackerIso","classDepEleId");
     globalCounter->Draw("hcalIso","trackerIso");
     globalCounter->Draw("ecalIso","hcalIso");
-    globalCounter->Draw("jetVeto","ecalIso");
+    globalCounter->Draw("globalIso","ecalIso");
+    globalCounter->Draw("jetVeto","globalIso");
     globalCounter->Draw("MET","jetVeto");
     globalCounter->Draw("maxPtLepton","MET");
     globalCounter->Draw("minPtLepton","maxPtLepton");
