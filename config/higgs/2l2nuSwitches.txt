@@ -9,7 +9,6 @@ ecalPtSumAss		0
 ecalPtSumRel		0
 globalSum               1
 classDepEleId		1
-jetVeto			1
 MET			1
 deltaPhi		1
 maxPtLepton		1
@@ -18,5 +17,5 @@ dileptonInvMassMax	1
 detaLeptons		0
 jetConeWidth		1
 etaJetAcc		1
-etJetHighAcc		1
-etJetLowAcc		1
+etJetAcc		1
+
