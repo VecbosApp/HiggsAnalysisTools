@@ -8,24 +8,24 @@
 
 using namespace std;
 
-string preSelCuts[9];
-string fullSelCuts[16];
+string preSelCuts[11];
+string fullSelCuts[17];
 
-float H_preSel[9];
-float Wj_preSel[9];
-float ttj_preSel[9];
+float H_preSel[11];
+float Wj_preSel[11];
+float ttj_preSel[11];
 
-float H_fullSel[16];
-float Wj_fullSel[16];
-float ttj_fullSel[16];
+float H_fullSel[17];
+float Wj_fullSel[17];
+float ttj_fullSel[17];
 
-float H_eff_preSel[9];
-float Wj_eff_preSel[9];
-float ttj_eff_preSel[9];
+float H_eff_preSel[11];
+float Wj_eff_preSel[11];
+float ttj_eff_preSel[11];
 
-float H_eff_fullSel[16];
-float Wj_eff_fullSel[16];
-float ttj_eff_fullSel[16];
+float H_eff_fullSel[17];
+float Wj_eff_fullSel[17];
+float ttj_eff_fullSel[17];
 
 float H_finaleff_preSel;    
 float Wj_finaleff_preSel;
@@ -41,7 +41,7 @@ float ttj_finaleff;
 
 
 // lumi of CMST3 ntuples in pb-1    
-float Wj_MADGRAPH_lumi  = 206.;   // 250 * 41 / 50.;  // this is because I have run over 41 / 50 jobs (Fall08 only)
+float Wj_MADGRAPH_lumi  = 250.;   // 250 * 50 / 50.;  // this is because I have run over 50 / 50 jobs (Fall08 only)
 float ttj_MADGRAPH_lumi = 3010.;
 
 // here xsec = x-sec * filter_eff (pb)
@@ -56,21 +56,20 @@ void computeYields(float lumi=100.) {
     chains_fullSel[isample] = new TChain("FULL_SELECTION_EVENT_COUNTER_EE");
   }
 
-  chains_preSel[0]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/signal/*Counters.root");       
-  chains_preSel[1]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/WjetsMADGRAPH_Fall08/*Counters.root");   
-  chains_preSel[2]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/ttjetsMADGRAPH_Fall08/*Counters.root");    
+  chains_preSel[0]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/H160_WW_2l/*Counters.root");       
+  chains_preSel[1]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/WjetsMADGRAPH_Fall08/*Counters.root");       
+  chains_preSel[2]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/ttjetsMadgraph_Fall08/*Counters.root");       
+			
+  chains_fullSel[0]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/H160_WW_2l/*Counters.root");       
+  chains_fullSel[1]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/WjetsMADGRAPH_Fall08/*Counters.root");       
+  chains_fullSel[2]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_sDiegoTight/ttjetsMadgraph_Fall08/*Counters.root");       
 
-  chains_fullSel[0]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/signal/*Counters.root");  
-  chains_fullSel[1]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/WjetsMADGRAPH_Fall08/*Counters.root");  
-  chains_fullSel[2]->Add("/afs/cern.ch/user/c/crovelli/scratch0/HWW_2009_2X/HiggsAnalysisTools/analysisResults/newOptim_SiPreselId/ttjetsMADGRAPH_Fall08/*Counters.root");    
-
-
-  float nPreSelTot[9][3];
-  float nFullSelTot[16][3];
+  float nPreSelTot[11][3];
+  float nFullSelTot[17][3];
 
   for(int isample=0; isample<3; isample++) {
-    for(int icut=0; icut<9; icut++)  { nPreSelTot[icut][isample]  = 0.0; }
-    for(int icut=0; icut<16; icut++) { nFullSelTot[icut][isample] = 0.0; }
+    for(int icut=0; icut<11; icut++)  { nPreSelTot[icut][isample]  = 0.0; }
+    for(int icut=0; icut<17; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
 
   // preselections
@@ -82,14 +81,14 @@ void computeYields(float lumi=100.) {
     
     // List of branches    
     Int_t           nCutsPre;
-    Float_t         nSelPre[9];   //[nCuts]
+    Float_t         nSelPre[11];   //[nCuts]
     TBranch        *b_nCutsPre;   //!
     TBranch        *b_nSelPre;    //!
     chains_preSel[isample]->SetBranchAddress("nCuts", &nCutsPre, &b_nCutsPre);
     chains_preSel[isample]->SetBranchAddress("nSel",  nSelPre,   &b_nSelPre);
-
+    
     Int_t           nCutsFull;
-    Float_t         nSelFull[16];   //[nCuts]
+    Float_t         nSelFull[17];   //[nCuts]
     TBranch        *b_nCutsFull;   //!
     TBranch        *b_nSelFull;    //!
     chains_fullSel[isample]->SetBranchAddress("nCuts", &nCutsFull, &b_nCutsFull);
@@ -107,7 +106,7 @@ void computeYields(float lumi=100.) {
     
     // full selection
     for (Long64_t jentry=0; jentry<nentriesFull;jentry++) {
-      Long64_t nb = chains_fullSel[isample]->GetEntry(jentry);   
+      Long64_t nb2 = chains_fullSel[isample]->GetEntry(jentry);   
       nCutsAnaFull = nCutsFull;      
       for(int icut=0; icut<nCutsFull; icut++) nFullSelTot[icut][isample] += nSelFull[icut];
     }
@@ -194,6 +193,8 @@ void setupCuts() {
   preSelCuts[6]="slowLeptonThreshold";
   preSelCuts[7]="METpreselection";
   preSelCuts[8]="dileptonInvMassMin";
+  preSelCuts[9]="finalOURPreselection";
+  preSelCuts[10]="preselection";
 
   fullSelCuts[0]="this channel preselected";
   fullSelCuts[1]="hardLeptonThreshold";
@@ -203,13 +204,16 @@ void setupCuts() {
   fullSelCuts[5]="trackerIso";
   fullSelCuts[6]="hcalIso";
   fullSelCuts[7]="ecalIso";
-  fullSelCuts[8]="jetVeto";
-  fullSelCuts[9]="MET";
-  fullSelCuts[10]="maxPtLepton";
-  fullSelCuts[11]="minPtLepton";
-  fullSelCuts[12]="dileptonInvMassMax";
-  fullSelCuts[13]="detaLeptons";
-  fullSelCuts[14]="deltaPhi";
+  fullSelCuts[8]="globalIso";
+  fullSelCuts[9]="jetVeto";
+  fullSelCuts[10]="MET";
+  fullSelCuts[11]="maxPtLepton";
+  fullSelCuts[12]="minPtLepton";
+  fullSelCuts[13]="dileptonInvMassMax";
+  fullSelCuts[14]="detaLeptons";
+  fullSelCuts[15]="deltaPhi";
+  fullSelCuts[16]="final";
+
 }
 
 
@@ -262,7 +266,7 @@ void printLatex(float lumi) {
 
   textfile << "\\hline" << endl;
 
-  for(int icut=0; icut<16; icut++) {
+  for(int icut=0; icut<17; icut++) {
     textfile << fullSelCuts[icut] << "\t&\t";
     
     textfile << fixed
@@ -275,17 +279,17 @@ void printLatex(float lumi) {
   textfile << "\\hline" << endl;
 
   textfile << "total fullselection " << "\t&\t"
-	   << H_fullSel[14]   << " (" << 100. * H_finaleff_fullSel  << "\\%)" << "\t&\t"
-	   << Wj_fullSel[14]  << " (" << 100. * Wj_finaleff_fullSel << "\\%)" << "\t&\t"
-	   << ttj_fullSel[14] << " (" << 100. * ttj_finaleff_fullSel << "\\%)" 
+	   << H_fullSel[15]   << " (" << 100. * H_finaleff_fullSel  << "\\%)" << "\t&\t"
+	   << Wj_fullSel[15]  << " (" << 100. * Wj_finaleff_fullSel << "\\%)" << "\t&\t"
+	   << ttj_fullSel[15] << " (" << 100. * ttj_finaleff_fullSel << "\\%)" 
 	   << "\t\\\\" << endl;
 
   textfile << "\\hline" << endl;
 
   textfile << "total " << "\t&\t"
-	   << H_fullSel[14]   << " (" << 100. * H_finaleff   << "\\%)" << "\t&\t"
-	   << Wj_fullSel[14]  << " (" << 100. * Wj_finaleff  << "\\%)" << "\t&\t"
-	   << ttj_fullSel[14] << " (" << 100. * ttj_finaleff << "\\%)" 
+	   << H_fullSel[15]   << " (" << 100. * H_finaleff   << "\\%)" << "\t&\t"
+	   << Wj_fullSel[15]  << " (" << 100. * Wj_finaleff  << "\\%)" << "\t&\t"
+	   << ttj_fullSel[15] << " (" << 100. * ttj_finaleff << "\\%)" 
 	   << "\t\\\\" << endl;
   
   textfile << "\\hline" << endl
