@@ -43,6 +43,7 @@ public:
   void SetEleHardGlobalSum(float sum)    { m_eleHardGlobalSum  = sum; }
   void SetEleSlowGlobalSum(float sum)    { m_eleSlowGlobalSum  = sum; }
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
+  void SetNJets(int njets)               { m_nJets         = njets; }
   void SetMet(float met)                 { m_met           = met;}
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
@@ -70,6 +71,7 @@ private:
   float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
   float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;
   bool m_passedJetVeto;
+  int m_nJets;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;
   int m_processID;

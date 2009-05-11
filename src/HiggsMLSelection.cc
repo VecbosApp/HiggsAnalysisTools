@@ -603,7 +603,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEE.SetEleSlowEcalPtSum(theEleSlowEcalPtSum);
       CutBasedHiggsSelectionEE.SetEleHardGlobalSum(theEleHardGlobalSum);
       CutBasedHiggsSelectionEE.SetEleSlowGlobalSum(theEleSlowGlobalSum);
-      CutBasedHiggsSelectionEE.SetJetVeto(true);
+      CutBasedHiggsSelectionEE.SetNJets(njets);
       CutBasedHiggsSelectionEE.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
       CutBasedHiggsSelectionEE.SetInvMass(theInvMassEE);
@@ -668,7 +668,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionMM.SetEleSlowEcalPtSum(0);
       CutBasedHiggsSelectionMM.SetEleHardGlobalSum(0);
       CutBasedHiggsSelectionMM.SetEleSlowGlobalSum(0);
-      CutBasedHiggsSelectionMM.SetJetVeto(true);
+      CutBasedHiggsSelectionMM.SetNJets(njets);
       CutBasedHiggsSelectionMM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionMM.SetInvMass(theInvMassMM);
@@ -760,7 +760,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleSlowEcalPtSum(theEleEcalPtSumEM);
       CutBasedHiggsSelectionEM.SetEleHardGlobalSum(0);
       CutBasedHiggsSelectionEM.SetEleSlowGlobalSum(theEleGlobalSumEM);
-      CutBasedHiggsSelectionEM.SetJetVeto(true);
+      CutBasedHiggsSelectionEM.SetNJets(njets);
       CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionEM.SetInvMass(theInvMassMM);
@@ -1124,8 +1124,9 @@ int HiggsMLSelection::numJets() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && fabs(etaSisConeCorrJet[j])>3.0 ) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && etSisConeCorrJet[j]<35 ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaSisConeCorrJet[j]))) continue;
+
+    if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", etSisConeCorrJet[j])) continue;
 
     m_goodJets.push_back(j);
     num++;
