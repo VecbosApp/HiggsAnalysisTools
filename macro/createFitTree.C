@@ -40,14 +40,14 @@ void createFitTree::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
 
 
-  int myNJets;
+  int myJetCat;
   float myMET, myDeltaPhi, myMaxPt, myMinPt, myInvMass;
   float myDxyEVT, myDszEVT;
   float myWeight;
 
   TTree *myTree = new TTree("data","higgs fit dataset");
 
-  myTree->Branch("nJets",               &myNJets,               "nJets/I");
+  myTree->Branch("jetCat",              &myJetCat,              "jetCat/I");
   myTree->Branch("MET",                 &myMET,                 "MET/F");
   myTree->Branch("deltaPhi",            &myDeltaPhi,            "deltaPhi/F");
   myTree->Branch("maxPt",               &myMaxPt,               "maxPt/F");
@@ -70,24 +70,36 @@ void createFitTree::Loop()
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    myNJets = njets;
+    // myNJets = njets;
+    if(njets==0) {
+      myJetCat = 1;
+      myDxyEVT = 0;
+      myDszEVT = 0;
+    }
+    else {
+      myJetCat = -1;
+      myDxyEVT = 10000.0 * dxyEVT; // cm -> mum
+      myDszEVT = 10000.0 * dszEVT; // cm -> mum
+    }
+    myDeltaPhi = deltaPhi;
     myMET = met;
     myMaxPt = maxPtEle;
     myMinPt = minPtEle;
     myInvMass = eleInvMass;
-    myDxyEVT = dxyEVT;
-    myDszEVT = dszEVT;
+
+    // A CUT HERE!!! PUT IN THE SELECTION
+    if(myDxyEVT > 5000 || myDszEVT > 5000 ) continue;
 
     // weight is given as ratio N_sampleX / N_signal
     // at last selection cut
-    float n_H = 52.0;
-    float n_Wj = 33.0;
-    float n_Zj = 284.0; // estimate
-    float n_ttj = 548.0;
-    float n_WW_2l = 181.0;
-    float n_ZZ_4l = 5;
-    float n_WZ_3l = 4.; // estimate
-    float n_WZ_incl = 6.; // estimate
+    float n_H = 42.0;
+    float n_Wj = 8.0;
+    float n_Zj = 91.0;
+    float n_ttj = 127.0;
+    float n_WW_2l = 53.0;
+    float n_ZZ_4l = 0.0;
+    float n_WZ_3l = 4.0;
+    float n_WZ_incl = 5.0;
 
     if(strcmp(_datasetname,"Higgs")==0)           myWeight = 1.0;
     if(strcmp(_datasetname,"WjetsMADGRAPH")==0)   myWeight = n_Wj/n_H;
@@ -102,14 +114,14 @@ void createFitTree::Loop()
 
   }
 
-  RooRealVar *nJetsVar = new RooRealVar("nJets","nJets",0);
+  RooRealVar *nJetsVar = new RooRealVar("jetCat","jetCat",-2,2);
   RooRealVar *METVar = new RooRealVar("MET","MET",0,200,"GeV");
   RooRealVar *deltaPhiVar = new RooRealVar("deltaPhi","deltaPhi",0,180,"#deg");
   RooRealVar *maxPtVar = new RooRealVar("MaxPt","maxPt",0,200,"GeV");
   RooRealVar *minPtVar = new RooRealVar("minPt","minPt",0,200,"GeV");
   RooRealVar *invMassVar = new RooRealVar("invMass","invMass",0,200,"GeV");
-  RooRealVar *dxyEVTVar = new RooRealVar("dxyEVT","dxyEVT",0,1000,"#mum");
-  RooRealVar *dszEVTVar = new RooRealVar("dszEVT","dszEVT",0,1000,"#mum");
+  RooRealVar *dxyEVTVar = new RooRealVar("dxyEVT","dxyEVT",0,5000,"#mum");
+  RooRealVar *dszEVTVar = new RooRealVar("dszEVT","dszEVT",0,5000,"#mum");
   RooRealVar *weightVar = new RooRealVar("weight","weight",0,20);
    
   RooArgSet setWenu(*nJetsVar,*METVar,*deltaPhiVar,*maxPtVar,*minPtVar,*invMassVar);

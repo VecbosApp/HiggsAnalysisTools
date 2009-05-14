@@ -8,15 +8,15 @@ using namespace std;
 
 void createDatasetsEE() {
 
-  RooRealVar *nJetsVar = new RooRealVar("nJets","nJets",0);
+  RooRealVar *nJetsVar = new RooRealVar("jetCat","jetCat",-2,2);
   RooRealVar *METVar = new RooRealVar("MET","MET",0,200,"GeV");
   RooRealVar *deltaPhiVar = new RooRealVar("deltaPhi","deltaPhi",0,180,"#deg");
   RooRealVar *maxPtVar = new RooRealVar("MaxPt","maxPt",0,200,"GeV");
   RooRealVar *minPtVar = new RooRealVar("minPt","minPt",0,200,"GeV");
   RooRealVar *invMassVar = new RooRealVar("invMass","invMass",0,200,"GeV");
-  RooRealVar *dxyEVTVar = new RooRealVar("dxyEVT","dxyEVT",0,1000,"#mum");
-  RooRealVar *dszEVTVar = new RooRealVar("dszEVT","dszEVT",0,1000,"#mum");
-  RooRealVar *weightVar = new RooRealVar("weight","weight",0,20);
+  RooRealVar *dxyEVTVar = new RooRealVar("dxyEVT","dxyEVT",0,5000,"#mum");
+  RooRealVar *dszEVTVar = new RooRealVar("dszEVT","dszEVT",0,5000,"#mum");
+  RooRealVar *weightVar = new RooRealVar("weight","weight",0,100);
    
   RooArgSet setHiggs(*nJetsVar,*METVar,*deltaPhiVar,*maxPtVar,*minPtVar,*invMassVar);
   setHiggs.add(*dxyEVTVar);
