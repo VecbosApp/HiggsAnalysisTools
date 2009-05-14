@@ -1,12 +1,13 @@
 hardLeptonThreshold     20              10000
 slowLeptonThreshold     10              10000
 dileptonInvMassMin      12              10000 
-trackerPtSumLoose       -1000           0.1
-hcalPtSumLoose          -1000           0.5
-ecalPtSumLoose          -1000           0.5
-trackerPtSumTight       -1000           0.065
-hcalPtSumTight          -1000           0.1
-ecalPtSumTight          -1000           0.2
+trackerPtSumAss         -1000           10.
+hcalPtSumAss	        -1000           4.
+ecalPtSumAss		-1000           10.
+trackerPtSumRel         -1000           0.065
+hcalPtSumRel	        -1000           0.16
+ecalPtSumRel		-1000           0.2
+globalSum               -1000           5.
 MET			35		85
 deltaPhi		0		100
 maxPtLepton		20		56
@@ -15,6 +16,5 @@ dileptonInvMassMax	12		60
 detaLeptons		-1		1
 jetConeWidth		0.0		0.3
 etaJetAcc		-2.5		2.5
-etJetHighAcc		15		20
-etJetLowAcc		15		10000
-alphaJet		0.2		10000
+etJetAcc		35		10000
+
