@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri Mar 27 18:23:42 2009 by ROOT version 5.18/00a
+// Wed May 20 12:02:56 2009 by ROOT version 5.18/00a
 // from TTree ntp1/ntp1
-// found on file: rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root
+// found on file: rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root
 //////////////////////////////////////////////////////////
 
 #ifndef HiggsBase_h
@@ -241,6 +241,56 @@ public :
    Int_t           d2IndexMuon[50];   //[nMuon]
    Int_t           d1pdgIdMuon[50];   //[nMuon]
    Int_t           d2pdgIdMuon[50];   //[nMuon]
+   Float_t         muTrackNormalizedChi2Muon[50];   //[nMuon]
+   Float_t         muTrackDxyMuon[50];   //[nMuon]
+   Float_t         muTrackD0Muon[50];   //[nMuon]
+   Float_t         muTrackDszMuon[50];   //[nMuon]
+   Float_t         muTrackDzMuon[50];   //[nMuon]
+   Float_t         muTrackDxyErrorMuon[50];   //[nMuon]
+   Float_t         muTrackD0ErrorMuon[50];   //[nMuon]
+   Float_t         muTrackDszErrorMuon[50];   //[nMuon]
+   Float_t         muTrackDzErrorMuon[50];   //[nMuon]
+   Float_t         muTrackValidHitsMuon[50];   //[nMuon]
+   Float_t         muTrackLostHitsMuon[50];   //[nMuon]
+   Float_t         muTrackVxMuon[50];   //[nMuon]
+   Float_t         muTrackVyMuon[50];   //[nMuon]
+   Float_t         muTrackVzMuon[50];   //[nMuon]
+   Float_t         pxAtOuterMuon[50];   //[nMuon]
+   Float_t         pyAtOuterMuon[50];   //[nMuon]
+   Float_t         pzAtOuterMuon[50];   //[nMuon]
+   Float_t         xAtOuterMuon[50];   //[nMuon]
+   Float_t         yAtOuterMuon[50];   //[nMuon]
+   Float_t         zAtOuterMuon[50];   //[nMuon]
+   Float_t         pxAtInnerMuon[50];   //[nMuon]
+   Float_t         pyAtInnerMuon[50];   //[nMuon]
+   Float_t         pzAtInnerMuon[50];   //[nMuon]
+   Float_t         xAtInnerMuon[50];   //[nMuon]
+   Float_t         yAtInnerMuon[50];   //[nMuon]
+   Float_t         zAtInnerMuon[50];   //[nMuon]
+   Int_t           isGlobalMuon[50];   //[nMuon]
+   Int_t           isTrackerMuon[50];   //[nMuon]
+   Int_t           isStandAloneMuon[50];   //[nMuon]
+   Int_t           isCaloMuon[50];   //[nMuon]
+   Int_t           muonIdMuon[50];   //[nMuon]
+   Float_t         sumPt03Muon[50];   //[nMuon]
+   Float_t         emEt03Muon[50];   //[nMuon]
+   Float_t         hadEt03Muon[50];   //[nMuon]
+   Float_t         hoEt03Muon[50];   //[nMuon]
+   Float_t         nTrk03Muon[50];   //[nMuon]
+   Float_t         nJets03Muon[50];   //[nMuon]
+   Float_t         sumPt05Muon[50];   //[nMuon]
+   Float_t         emEt05Muon[50];   //[nMuon]
+   Float_t         hadEt05Muon[50];   //[nMuon]
+   Float_t         hoEt05Muon[50];   //[nMuon]
+   Float_t         nTrk05Muon[50];   //[nMuon]
+   Float_t         nJets05Muon[50];   //[nMuon]
+   Float_t         EcalExpDepoMuon[50];   //[nMuon]
+   Float_t         HcalExpDepoMuon[50];   //[nMuon]
+   Float_t         HoExpDepoMuon[50];   //[nMuon]
+   Float_t         emS9Muon[50];   //[nMuon]
+   Float_t         hadS9Muon[50];   //[nMuon]
+   Float_t         hoS9Muon[50];   //[nMuon]
+   Float_t         CaloCompMuon[50];   //[nMuon]
    Int_t           nMet;
    Int_t           chargeMet[1];   //[nMet]
    Float_t         energyMet[1];   //[nMet]
@@ -662,6 +712,56 @@ public :
    TBranch        *b_d2IndexMuon;   //!
    TBranch        *b_d1pdgIdMuon;   //!
    TBranch        *b_d2pdgIdMuon;   //!
+   TBranch        *b_muTrackNormalizedChi2Muon;   //!
+   TBranch        *b_muTrackDxyMuon;   //!
+   TBranch        *b_muTrackD0Muon;   //!
+   TBranch        *b_muTrackDszMuon;   //!
+   TBranch        *b_muTrackDzMuon;   //!
+   TBranch        *b_muTrackDxyErrorMuon;   //!
+   TBranch        *b_muTrackD0ErrorMuon;   //!
+   TBranch        *b_muTrackDszErrorMuon;   //!
+   TBranch        *b_muTrackDzErrorMuon;   //!
+   TBranch        *b_muTrackValidHitsMuon;   //!
+   TBranch        *b_muTrackLostHitsMuon;   //!
+   TBranch        *b_muTrackVxMuon;   //!
+   TBranch        *b_muTrackVyMuon;   //!
+   TBranch        *b_muTrackVzMuon;   //!
+   TBranch        *b_pxAtOuterMuon;   //!
+   TBranch        *b_pyAtOuterMuon;   //!
+   TBranch        *b_pzAtOuterMuon;   //!
+   TBranch        *b_xAtOuterMuon;   //!
+   TBranch        *b_yAtOuterMuon;   //!
+   TBranch        *b_zAtOuterMuon;   //!
+   TBranch        *b_pxAtInnerMuon;   //!
+   TBranch        *b_pyAtInnerMuon;   //!
+   TBranch        *b_pzAtInnerMuon;   //!
+   TBranch        *b_xAtInnerMuon;   //!
+   TBranch        *b_yAtInnerMuon;   //!
+   TBranch        *b_zAtInnerMuon;   //!
+   TBranch        *b_isGlobalMuon;   //!
+   TBranch        *b_isTrackerMuon;   //!
+   TBranch        *b_isStandAloneMuon;   //!
+   TBranch        *b_isCaloMuon;   //!
+   TBranch        *b_muonIdMuon;   //!
+   TBranch        *b_sumPt03Muon;   //!
+   TBranch        *b_emEt03Muon;   //!
+   TBranch        *b_hadEt03Muon;   //!
+   TBranch        *b_hoEt03Muon;   //!
+   TBranch        *b_nTrk03Muon;   //!
+   TBranch        *b_nJets03Muon;   //!
+   TBranch        *b_sumPt05Muon;   //!
+   TBranch        *b_emEt05Muon;   //!
+   TBranch        *b_hadEt05Muon;   //!
+   TBranch        *b_hoEt05Muon;   //!
+   TBranch        *b_nTrk05Muon;   //!
+   TBranch        *b_nJets05Muon;   //!
+   TBranch        *b_EcalExpDepoMuon;   //!
+   TBranch        *b_HcalExpDepoMuon;   //!
+   TBranch        *b_HoExpDepoMuon;   //!
+   TBranch        *b_emS9Muon;   //!
+   TBranch        *b_hadS9Muon;   //!
+   TBranch        *b_hoS9Muon;   //!
+   TBranch        *b_CaloCompMuon;   //!
    TBranch        *b_nMet;   //!
    TBranch        *b_chargeMet;   //!
    TBranch        *b_energyMet;   //!
@@ -878,9 +978,9 @@ HiggsBase::HiggsBase(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root");
       if (!f) {
-         f = new TFile("rfio:///castor/cern.ch/user/e/emanuele/Higgs21X/H160_WW_2l/default_1.root");
+         f = new TFile("rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root");
       }
       tree = (TTree*)gDirectory->Get("ntp1");
 
@@ -1154,6 +1254,56 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("d2IndexMuon", d2IndexMuon, &b_d2IndexMuon);
    fChain->SetBranchAddress("d1pdgIdMuon", d1pdgIdMuon, &b_d1pdgIdMuon);
    fChain->SetBranchAddress("d2pdgIdMuon", d2pdgIdMuon, &b_d2pdgIdMuon);
+   fChain->SetBranchAddress("muTrackNormalizedChi2Muon", muTrackNormalizedChi2Muon, &b_muTrackNormalizedChi2Muon);
+   fChain->SetBranchAddress("muTrackDxyMuon", muTrackDxyMuon, &b_muTrackDxyMuon);
+   fChain->SetBranchAddress("muTrackD0Muon", muTrackD0Muon, &b_muTrackD0Muon);
+   fChain->SetBranchAddress("muTrackDszMuon", muTrackDszMuon, &b_muTrackDszMuon);
+   fChain->SetBranchAddress("muTrackDzMuon", muTrackDzMuon, &b_muTrackDzMuon);
+   fChain->SetBranchAddress("muTrackDxyErrorMuon", muTrackDxyErrorMuon, &b_muTrackDxyErrorMuon);
+   fChain->SetBranchAddress("muTrackD0ErrorMuon", muTrackD0ErrorMuon, &b_muTrackD0ErrorMuon);
+   fChain->SetBranchAddress("muTrackDszErrorMuon", muTrackDszErrorMuon, &b_muTrackDszErrorMuon);
+   fChain->SetBranchAddress("muTrackDzErrorMuon", muTrackDzErrorMuon, &b_muTrackDzErrorMuon);
+   fChain->SetBranchAddress("muTrackValidHitsMuon", muTrackValidHitsMuon, &b_muTrackValidHitsMuon);
+   fChain->SetBranchAddress("muTrackLostHitsMuon", muTrackLostHitsMuon, &b_muTrackLostHitsMuon);
+   fChain->SetBranchAddress("muTrackVxMuon", muTrackVxMuon, &b_muTrackVxMuon);
+   fChain->SetBranchAddress("muTrackVyMuon", muTrackVyMuon, &b_muTrackVyMuon);
+   fChain->SetBranchAddress("muTrackVzMuon", muTrackVzMuon, &b_muTrackVzMuon);
+   fChain->SetBranchAddress("pxAtOuterMuon", pxAtOuterMuon, &b_pxAtOuterMuon);
+   fChain->SetBranchAddress("pyAtOuterMuon", pyAtOuterMuon, &b_pyAtOuterMuon);
+   fChain->SetBranchAddress("pzAtOuterMuon", pzAtOuterMuon, &b_pzAtOuterMuon);
+   fChain->SetBranchAddress("xAtOuterMuon", xAtOuterMuon, &b_xAtOuterMuon);
+   fChain->SetBranchAddress("yAtOuterMuon", yAtOuterMuon, &b_yAtOuterMuon);
+   fChain->SetBranchAddress("zAtOuterMuon", zAtOuterMuon, &b_zAtOuterMuon);
+   fChain->SetBranchAddress("pxAtInnerMuon", pxAtInnerMuon, &b_pxAtInnerMuon);
+   fChain->SetBranchAddress("pyAtInnerMuon", pyAtInnerMuon, &b_pyAtInnerMuon);
+   fChain->SetBranchAddress("pzAtInnerMuon", pzAtInnerMuon, &b_pzAtInnerMuon);
+   fChain->SetBranchAddress("xAtInnerMuon", xAtInnerMuon, &b_xAtInnerMuon);
+   fChain->SetBranchAddress("yAtInnerMuon", yAtInnerMuon, &b_yAtInnerMuon);
+   fChain->SetBranchAddress("zAtInnerMuon", zAtInnerMuon, &b_zAtInnerMuon);
+   fChain->SetBranchAddress("isGlobalMuon", isGlobalMuon, &b_isGlobalMuon);
+   fChain->SetBranchAddress("isTrackerMuon", isTrackerMuon, &b_isTrackerMuon);
+   fChain->SetBranchAddress("isStandAloneMuon", isStandAloneMuon, &b_isStandAloneMuon);
+   fChain->SetBranchAddress("isCaloMuon", isCaloMuon, &b_isCaloMuon);
+   fChain->SetBranchAddress("muonIdMuon", muonIdMuon, &b_muonIdMuon);
+   fChain->SetBranchAddress("sumPt03Muon", sumPt03Muon, &b_sumPt03Muon);
+   fChain->SetBranchAddress("emEt03Muon", emEt03Muon, &b_emEt03Muon);
+   fChain->SetBranchAddress("hadEt03Muon", hadEt03Muon, &b_hadEt03Muon);
+   fChain->SetBranchAddress("hoEt03Muon", hoEt03Muon, &b_hoEt03Muon);
+   fChain->SetBranchAddress("nTrk03Muon", nTrk03Muon, &b_nTrk03Muon);
+   fChain->SetBranchAddress("nJets03Muon", nJets03Muon, &b_nJets03Muon);
+   fChain->SetBranchAddress("sumPt05Muon", sumPt05Muon, &b_sumPt05Muon);
+   fChain->SetBranchAddress("emEt05Muon", emEt05Muon, &b_emEt05Muon);
+   fChain->SetBranchAddress("hadEt05Muon", hadEt05Muon, &b_hadEt05Muon);
+   fChain->SetBranchAddress("hoEt05Muon", hoEt05Muon, &b_hoEt05Muon);
+   fChain->SetBranchAddress("nTrk05Muon", nTrk05Muon, &b_nTrk05Muon);
+   fChain->SetBranchAddress("nJets05Muon", nJets05Muon, &b_nJets05Muon);
+   fChain->SetBranchAddress("EcalExpDepoMuon", EcalExpDepoMuon, &b_EcalExpDepoMuon);
+   fChain->SetBranchAddress("HcalExpDepoMuon", HcalExpDepoMuon, &b_HcalExpDepoMuon);
+   fChain->SetBranchAddress("HoExpDepoMuon", HoExpDepoMuon, &b_HoExpDepoMuon);
+   fChain->SetBranchAddress("emS9Muon", emS9Muon, &b_emS9Muon);
+   fChain->SetBranchAddress("hadS9Muon", hadS9Muon, &b_hadS9Muon);
+   fChain->SetBranchAddress("hoS9Muon", hoS9Muon, &b_hoS9Muon);
+   fChain->SetBranchAddress("CaloCompMuon", CaloCompMuon, &b_CaloCompMuon);
    fChain->SetBranchAddress("nMet", &nMet, &b_nMet);
    fChain->SetBranchAddress("chargeMet", chargeMet, &b_chargeMet);
    fChain->SetBranchAddress("energyMet", energyMet, &b_energyMet);
