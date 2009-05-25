@@ -12,7 +12,7 @@ MET			55		10000
 deltaPhi		0		65
 maxPtLepton		30		65
 minPtLepton		20		10000
-dileptonInvMassMax	12		40
+dileptonInvMassMax      0		80
 detaLeptons		-1		1
 jetConeWidth		0.0		0.3
 etaJetAcc		-2.5		2.5
