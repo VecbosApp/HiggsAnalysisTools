@@ -8,9 +8,9 @@ trackerPtSumRel         -1000           0.065
 hcalPtSumRel            -1000           0.16
 ecalPtSumRel            -1000           0.2
 globalSum               -1000           5.
-MET			51		10000
-deltaPhi		0		45
-maxPtLepton		25		49
+MET			45		10000
+deltaPhi		0		70
+maxPtLepton		25		50
 minPtLepton		25		10000
 dileptonInvMassMax	12		40
 detaLeptons		-1		1

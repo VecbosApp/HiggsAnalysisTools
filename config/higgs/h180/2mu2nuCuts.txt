@@ -8,10 +8,10 @@ trackerPtSumRel         -1000           0.065
 hcalPtSumRel            -1000           0.16
 ecalPtSumRel            -1000           0.2
 globalSum               -1000           5.
-MET			52		10000
-deltaPhi		0		45
-maxPtLepton		31		55
-minPtLepton		26		10000
+MET			48		10000
+deltaPhi		0		57
+maxPtLepton		28		50
+minPtLepton		25		10000
 dileptonInvMassMax	12		40
 detaLeptons		-1		1
 jetConeWidth		0.0		0.3
