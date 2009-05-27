@@ -87,32 +87,34 @@ float ZZ2l2nu_xsec = 10.5*0.10*0.20*2;
 float WZ3l_xsec    = 32.4*0.10*0.1055*3;
 float WZincl_xsec  = 32.4*1.000;
 
-void computeYields(float lumi=100.) {
+void computeYields(float lumi, const char* finalstate) {
 
   TChain *chains_preSel[8];
   TChain *chains_fullSel[8];
   for(int isample=0; isample<8; isample++) {
     chains_preSel[isample]  = new TChain("PRESELECTION_EVENT_COUNTER");
-    chains_fullSel[isample] = new TChain("FULL_SELECTION_EVENT_COUNTER_EE");
+    char fullsel_treename[200];
+    sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_%s",finalstate);
+    chains_fullSel[isample] = new TChain(fullsel_treename);
   }
   
-  chains_preSel[0]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/H160_WW_2l/*Counters.root");       
-  chains_preSel[1]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WjetsMADGRAPH_Fall08/*Counters.root");       
-  chains_preSel[2]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ttjetsMadgraph_Fall08/*Counters.root");       
-  chains_preSel[3]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ZjetsMadgraph_Fall08/*Counters.root");       
-  chains_preSel[4]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WW_2l/*Counters.root");       
-  chains_preSel[5]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ZZ_4l/*Counters.root");       
-  chains_preSel[6]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WZ_3l/*Counters.root");       
-  chains_preSel[7]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WZ_incl/*Counters.root");       
+  chains_preSel[0]->Add("results/H160_WW_2l/*Counters.root");       
+  chains_preSel[1]->Add("results/WjetsMADGRAPH_Fall08/*Counters.root");       
+  chains_preSel[2]->Add("results/ttjetsMadgraph_Fall08/*Counters.root");       
+  chains_preSel[3]->Add("results/ZjetsMadgraph_Fall08/*Counters.root");       
+  chains_preSel[4]->Add("results/WW_2l/*Counters.root");       
+  chains_preSel[5]->Add("results/ZZ_4l/*Counters.root");       
+  chains_preSel[6]->Add("results/WZ_3l/*Counters.root");       
+  chains_preSel[7]->Add("results/WZ_incl/*Counters.root");       
 			
-  chains_fullSel[0]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/H160_WW_2l/*Counters.root");       
-  chains_fullSel[1]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WjetsMADGRAPH_Fall08/*Counters.root");       
-  chains_fullSel[2]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ttjetsMadgraph_Fall08/*Counters.root");       
-  chains_fullSel[3]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ZjetsMadgraph_Fall08/*Counters.root");       
-  chains_fullSel[4]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WW_2l/*Counters.root");       
-  chains_fullSel[5]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/ZZ_4l/*Counters.root");       
-  chains_fullSel[6]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WZ_3l/*Counters.root");       
-  chains_fullSel[7]->Add("/cmsrm/pc17/crovelli/data/Higgs2.1.X/fullAnalysis_nostraEleId/WZ_incl/*Counters.root");       
+  chains_fullSel[0]->Add("results/H160_WW_2l/*Counters.root");       
+  chains_fullSel[1]->Add("results/WjetsMADGRAPH_Fall08/*Counters.root");       
+  chains_fullSel[2]->Add("results/ttjetsMadgraph_Fall08/*Counters.root");       
+  chains_fullSel[3]->Add("results/ZjetsMadgraph_Fall08/*Counters.root");       
+  chains_fullSel[4]->Add("results/WW_2l/*Counters.root");       
+  chains_fullSel[5]->Add("results/ZZ_4l/*Counters.root");       
+  chains_fullSel[6]->Add("results/WZ_3l/*Counters.root");       
+  chains_fullSel[7]->Add("results/WZ_incl/*Counters.root");       
 
   float nPreSelTot[11][8];
   float nFullSelTot[19][8];
@@ -336,22 +338,24 @@ void setupCuts() {
 }
 
 
-void printLatex(float lumi) {
+void printLatex(float lumi, const char* finalstate) {
 
   setupCuts();
 
-  computeYields(lumi);
+  if(strcmp(finalstate,"EE") && strcmp(finalstate,"EM") && strcmp(finalstate,"MM")) {
+    cout << "ERROR! finalstate must be one among EE/EM/MM. Exiting..." << endl;
+    return;
+  } else {
+    cout << " === NOW COMPUTING YIELDS FOR FINAL STATE: " << finalstate << " ===" << endl;
+  }
+
+  computeYields(lumi,finalstate);
   
   char namefile[200];
   sprintf(namefile,"yields_byCut.tex");
   ofstream textfile;
-  textfile.open(namefile, ios_base::trunc);
-  textfile.precision(0);
-
-  textfile << "\\documentclass{article}" << endl;
-  textfile << "\\usepackage{rotating}" << endl;
-  textfile << "\\begin{document}" << endl;
-
+  textfile.open(namefile, ios_base::app);
+  textfile.precision(1);
 
   // W+jets events
   textfile << "\\begin{sidewaystable}[p]" << endl
@@ -471,8 +475,33 @@ void printLatex(float lumi) {
 	   << "\\end{tabular}" << endl
 	   << "\\end{center}" << endl
 	   << "\\end{small}" << endl
+           << "\\caption{Breakdown of signal and backgrounds events in "
+           << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
 	   << "\\end{sidewaystable}" << endl;
 
+}
+
+void printLatex(float lumi) {
+  
+  char namefile[200];
+  sprintf(namefile,"yields_byCut.tex");
+  ofstream textfile;
+  textfile.open(namefile, ios_base::trunc);
+  textfile.precision(1);
+
+  textfile << "\\documentclass{article}" << endl;
+  textfile << "\\usepackage{rotating}" << endl;
+  textfile << "\\begin{document}" << endl;
+
+  textfile.close();
+
+  printLatex(lumi, "EE");
+  printLatex(lumi, "MM");
+  printLatex(lumi, "EM");
+
+  textfile.open(namefile, ios_base::app);
   textfile << "\\end{document}" << endl;
+  textfile.close();
 
 }
+

@@ -55,9 +55,13 @@ private:
   //! returns the output of the custom cut electron ID
   bool isEleID(int eleIndex);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
-  float getSecondEleTkPt(int first, int second, float deltaR);
+  float getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR);
+  //! if the 2nd muon falls in deltaR from first, get its Pt in tracker
+  float getSecondMuonTkPt(TVector3 firstLepton, int second, float deltaR);
   //! get ECAL isolation sum
   float getEcalPtSum(int index);
+  //! get global isolation sum for muons
+  float muonIsoGlobalSum(int theMuon, int otherMuon, int otherElectron);
   //! get the kFactor of the event
   float getkFactor(std::string process);
   //! reset the kinematic quantities at the beginning of event
