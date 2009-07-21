@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed May 20 12:02:56 2009 by ROOT version 5.18/00a
+// Tue Jul 21 11:25:49 2009 by ROOT version 5.18/00a
 // from TTree ntp1/ntp1
-// found on file: rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root
+// found on file: /u1/crovelli/default_1_higgs22X.root
 //////////////////////////////////////////////////////////
 
 #ifndef HiggsBase_h
@@ -382,6 +382,17 @@ public :
    Float_t         alphaSisConeCorrJet[500];   //[nSisConeCorrJet]
    Float_t         emFracSisConeCorrJet[500];   //[nSisConeCorrJet]
    Float_t         hadFracSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         combinedSecondaryVertexBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         combinedSecondaryVertexMVABJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         impactParameterMVABJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         jetBProbabilityBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         jetProbabilityBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         simpleSecondaryVertexBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         softElectronBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         softMuonBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         softMuonNoIPBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         trackCountingHighPurBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
+   Float_t         trackCountingHighEffBJetTagsSisConeCorrJet[500];   //[nSisConeCorrJet]
    Int_t           nSisConeJet;
    Int_t           chargeSisConeJet[500];   //[nSisConeJet]
    Float_t         energySisConeJet[500];   //[nSisConeJet]
@@ -407,35 +418,6 @@ public :
    Float_t         alphaSisConeJet[500];   //[nSisConeJet]
    Float_t         emFracSisConeJet[500];   //[nSisConeJet]
    Float_t         hadFracSisConeJet[500];   //[nSisConeJet]
-   Int_t           nSisConePFJet;
-   Int_t           chargeSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         energySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         etSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         momentumSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         thetaSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         etaSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         phiSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         pxSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         pySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         pzSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         vertexXSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         vertexYSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         vertexZSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         massSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         mtSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           pdgIdSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           nDauSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           d1IndexSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           d2IndexSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           d1pdgIdSisConePFJet[500];   //[nSisConePFJet]
-   Int_t           d2pdgIdSisConePFJet[500];   //[nSisConePFJet]
-   Float_t         chargedHadronEnergySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         neutralHadronEnergySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         chargedEmEnergySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         neutralEmEnergySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         neutralMultiplicitySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         chargedMultiplicitySisConePFJet[500];   //[nSisConePFJet]
-   Float_t         muonMultiplicitySisConePFJet[500];   //[nSisConePFJet]
    Int_t           nSisConePFCorrJet;
    Int_t           chargeSisConePFCorrJet[500];   //[nSisConePFCorrJet]
    Float_t         energySisConePFCorrJet[500];   //[nSisConePFCorrJet]
@@ -465,6 +447,35 @@ public :
    Float_t         neutralMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
    Float_t         chargedMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
    Float_t         muonMultiplicitySisConePFCorrJet[500];   //[nSisConePFCorrJet]
+   Int_t           nSisConePFJet;
+   Int_t           chargeSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         energySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         etSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         momentumSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         thetaSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         etaSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         phiSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pxSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         pzSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexXSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexYSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         vertexZSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         massSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         mtSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           nDauSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d1IndexSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d2IndexSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d1pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Int_t           d2pdgIdSisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedHadronEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralHadronEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedEmEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralEmEnergySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         neutralMultiplicitySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         chargedMultiplicitySisConePFJet[500];   //[nSisConePFJet]
+   Float_t         muonMultiplicitySisConePFJet[500];   //[nSisConePFJet]
    Int_t           nSisConeGenJet;
    Int_t           chargeSisConeGenJet[500];   //[nSisConeGenJet]
    Float_t         energySisConeGenJet[500];   //[nSisConeGenJet]
@@ -487,6 +498,8 @@ public :
    Int_t           d2IndexSisConeGenJet[500];   //[nSisConeGenJet]
    Int_t           d1pdgIdSisConeGenJet[500];   //[nSisConeGenJet]
    Int_t           d2pdgIdSisConeGenJet[500];   //[nSisConeGenJet]
+   Double_t        genPtHat;
+   Double_t        genWeight;
 
    // List of branches
    TBranch        *b_runNumber;   //!
@@ -853,6 +866,17 @@ public :
    TBranch        *b_alphaSisConeCorrJet;   //!
    TBranch        *b_emFracSisConeCorrJet;   //!
    TBranch        *b_hadFracSisConeCorrJet;   //!
+   TBranch        *b_combinedSecondaryVertexBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_combinedSecondaryVertexMVABJetTagsSisConeCorrJet;   //!
+   TBranch        *b_impactParameterMVABJetTagsSisConeCorrJet;   //!
+   TBranch        *b_jetBProbabilityBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_jetProbabilityBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_simpleSecondaryVertexBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_softElectronBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_softMuonBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_softMuonNoIPBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_trackCountingHighPurBJetTagsSisConeCorrJet;   //!
+   TBranch        *b_trackCountingHighEffBJetTagsSisConeCorrJet;   //!
    TBranch        *b_nSisConeJet;   //!
    TBranch        *b_chargeSisConeJet;   //!
    TBranch        *b_energySisConeJet;   //!
@@ -878,35 +902,6 @@ public :
    TBranch        *b_alphaSisConeJet;   //!
    TBranch        *b_emFracSisConeJet;   //!
    TBranch        *b_hadFracSisConeJet;   //!
-   TBranch        *b_nSisConePFJet;   //!
-   TBranch        *b_chargeSisConePFJet;   //!
-   TBranch        *b_energySisConePFJet;   //!
-   TBranch        *b_etSisConePFJet;   //!
-   TBranch        *b_momentumSisConePFJet;   //!
-   TBranch        *b_thetaSisConePFJet;   //!
-   TBranch        *b_etaSisConePFJet;   //!
-   TBranch        *b_phiSisConePFJet;   //!
-   TBranch        *b_pxSisConePFJet;   //!
-   TBranch        *b_pySisConePFJet;   //!
-   TBranch        *b_pzSisConePFJet;   //!
-   TBranch        *b_vertexXSisConePFJet;   //!
-   TBranch        *b_vertexYSisConePFJet;   //!
-   TBranch        *b_vertexZSisConePFJet;   //!
-   TBranch        *b_massSisConePFJet;   //!
-   TBranch        *b_mtSisConePFJet;   //!
-   TBranch        *b_pdgIdSisConePFJet;   //!
-   TBranch        *b_nDauSisConePFJet;   //!
-   TBranch        *b_d1IndexSisConePFJet;   //!
-   TBranch        *b_d2IndexSisConePFJet;   //!
-   TBranch        *b_d1pdgIdSisConePFJet;   //!
-   TBranch        *b_d2pdgIdSisConePFJet;   //!
-   TBranch        *b_chargedHadronEnergySisConePFJet;   //!
-   TBranch        *b_neutralHadronEnergySisConePFJet;   //!
-   TBranch        *b_chargedEmEnergySisConePFJet;   //!
-   TBranch        *b_neutralEmEnergySisConePFJet;   //!
-   TBranch        *b_neutralMultiplicitySisConePFJet;   //!
-   TBranch        *b_chargedMultiplicitySisConePFJet;   //!
-   TBranch        *b_muonMultiplicitySisConePFJet;   //!
    TBranch        *b_nSisConePFCorrJet;   //!
    TBranch        *b_chargeSisConePFCorrJet;   //!
    TBranch        *b_energySisConePFCorrJet;   //!
@@ -936,6 +931,35 @@ public :
    TBranch        *b_neutralMultiplicitySisConePFCorrJet;   //!
    TBranch        *b_chargedMultiplicitySisConePFCorrJet;   //!
    TBranch        *b_muonMultiplicitySisConePFCorrJet;   //!
+   TBranch        *b_nSisConePFJet;   //!
+   TBranch        *b_chargeSisConePFJet;   //!
+   TBranch        *b_energySisConePFJet;   //!
+   TBranch        *b_etSisConePFJet;   //!
+   TBranch        *b_momentumSisConePFJet;   //!
+   TBranch        *b_thetaSisConePFJet;   //!
+   TBranch        *b_etaSisConePFJet;   //!
+   TBranch        *b_phiSisConePFJet;   //!
+   TBranch        *b_pxSisConePFJet;   //!
+   TBranch        *b_pySisConePFJet;   //!
+   TBranch        *b_pzSisConePFJet;   //!
+   TBranch        *b_vertexXSisConePFJet;   //!
+   TBranch        *b_vertexYSisConePFJet;   //!
+   TBranch        *b_vertexZSisConePFJet;   //!
+   TBranch        *b_massSisConePFJet;   //!
+   TBranch        *b_mtSisConePFJet;   //!
+   TBranch        *b_pdgIdSisConePFJet;   //!
+   TBranch        *b_nDauSisConePFJet;   //!
+   TBranch        *b_d1IndexSisConePFJet;   //!
+   TBranch        *b_d2IndexSisConePFJet;   //!
+   TBranch        *b_d1pdgIdSisConePFJet;   //!
+   TBranch        *b_d2pdgIdSisConePFJet;   //!
+   TBranch        *b_chargedHadronEnergySisConePFJet;   //!
+   TBranch        *b_neutralHadronEnergySisConePFJet;   //!
+   TBranch        *b_chargedEmEnergySisConePFJet;   //!
+   TBranch        *b_neutralEmEnergySisConePFJet;   //!
+   TBranch        *b_neutralMultiplicitySisConePFJet;   //!
+   TBranch        *b_chargedMultiplicitySisConePFJet;   //!
+   TBranch        *b_muonMultiplicitySisConePFJet;   //!
    TBranch        *b_nSisConeGenJet;   //!
    TBranch        *b_chargeSisConeGenJet;   //!
    TBranch        *b_energySisConeGenJet;   //!
@@ -958,6 +982,8 @@ public :
    TBranch        *b_d2IndexSisConeGenJet;   //!
    TBranch        *b_d1pdgIdSisConeGenJet;   //!
    TBranch        *b_d2pdgIdSisConeGenJet;   //!
+   TBranch        *b_genPtHat;   //!
+   TBranch        *b_genWeight;   //!
 
    HiggsBase(TTree *tree=0);
    virtual ~HiggsBase();
@@ -978,9 +1004,9 @@ HiggsBase::HiggsBase(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/u1/crovelli/default_1_higgs22X.root");
       if (!f) {
-         f = new TFile("rfio:///castor/cern.ch/user/e/emanuele/CMST3/Higgs2.1.X_v2/H130_WW_2l/default_1.root");
+         f = new TFile("/u1/crovelli/default_1_higgs22X.root");
       }
       tree = (TTree*)gDirectory->Get("ntp1");
 
@@ -1395,6 +1421,17 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("alphaSisConeCorrJet", alphaSisConeCorrJet, &b_alphaSisConeCorrJet);
    fChain->SetBranchAddress("emFracSisConeCorrJet", emFracSisConeCorrJet, &b_emFracSisConeCorrJet);
    fChain->SetBranchAddress("hadFracSisConeCorrJet", hadFracSisConeCorrJet, &b_hadFracSisConeCorrJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsSisConeCorrJet", combinedSecondaryVertexBJetTagsSisConeCorrJet, &b_combinedSecondaryVertexBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexMVABJetTagsSisConeCorrJet", combinedSecondaryVertexMVABJetTagsSisConeCorrJet, &b_combinedSecondaryVertexMVABJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("impactParameterMVABJetTagsSisConeCorrJet", impactParameterMVABJetTagsSisConeCorrJet, &b_impactParameterMVABJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("jetBProbabilityBJetTagsSisConeCorrJet", jetBProbabilityBJetTagsSisConeCorrJet, &b_jetBProbabilityBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("jetProbabilityBJetTagsSisConeCorrJet", jetProbabilityBJetTagsSisConeCorrJet, &b_jetProbabilityBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("simpleSecondaryVertexBJetTagsSisConeCorrJet", simpleSecondaryVertexBJetTagsSisConeCorrJet, &b_simpleSecondaryVertexBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("softElectronBJetTagsSisConeCorrJet", softElectronBJetTagsSisConeCorrJet, &b_softElectronBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("softMuonBJetTagsSisConeCorrJet", softMuonBJetTagsSisConeCorrJet, &b_softMuonBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("softMuonNoIPBJetTagsSisConeCorrJet", softMuonNoIPBJetTagsSisConeCorrJet, &b_softMuonNoIPBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("trackCountingHighPurBJetTagsSisConeCorrJet", trackCountingHighPurBJetTagsSisConeCorrJet, &b_trackCountingHighPurBJetTagsSisConeCorrJet);
+   fChain->SetBranchAddress("trackCountingHighEffBJetTagsSisConeCorrJet", trackCountingHighEffBJetTagsSisConeCorrJet, &b_trackCountingHighEffBJetTagsSisConeCorrJet);
    fChain->SetBranchAddress("nSisConeJet", &nSisConeJet, &b_nSisConeJet);
    fChain->SetBranchAddress("chargeSisConeJet", chargeSisConeJet, &b_chargeSisConeJet);
    fChain->SetBranchAddress("energySisConeJet", energySisConeJet, &b_energySisConeJet);
@@ -1420,35 +1457,6 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("alphaSisConeJet", alphaSisConeJet, &b_alphaSisConeJet);
    fChain->SetBranchAddress("emFracSisConeJet", emFracSisConeJet, &b_emFracSisConeJet);
    fChain->SetBranchAddress("hadFracSisConeJet", hadFracSisConeJet, &b_hadFracSisConeJet);
-   fChain->SetBranchAddress("nSisConePFJet", &nSisConePFJet, &b_nSisConePFJet);
-   fChain->SetBranchAddress("chargeSisConePFJet", chargeSisConePFJet, &b_chargeSisConePFJet);
-   fChain->SetBranchAddress("energySisConePFJet", energySisConePFJet, &b_energySisConePFJet);
-   fChain->SetBranchAddress("etSisConePFJet", etSisConePFJet, &b_etSisConePFJet);
-   fChain->SetBranchAddress("momentumSisConePFJet", momentumSisConePFJet, &b_momentumSisConePFJet);
-   fChain->SetBranchAddress("thetaSisConePFJet", thetaSisConePFJet, &b_thetaSisConePFJet);
-   fChain->SetBranchAddress("etaSisConePFJet", etaSisConePFJet, &b_etaSisConePFJet);
-   fChain->SetBranchAddress("phiSisConePFJet", phiSisConePFJet, &b_phiSisConePFJet);
-   fChain->SetBranchAddress("pxSisConePFJet", pxSisConePFJet, &b_pxSisConePFJet);
-   fChain->SetBranchAddress("pySisConePFJet", pySisConePFJet, &b_pySisConePFJet);
-   fChain->SetBranchAddress("pzSisConePFJet", pzSisConePFJet, &b_pzSisConePFJet);
-   fChain->SetBranchAddress("vertexXSisConePFJet", vertexXSisConePFJet, &b_vertexXSisConePFJet);
-   fChain->SetBranchAddress("vertexYSisConePFJet", vertexYSisConePFJet, &b_vertexYSisConePFJet);
-   fChain->SetBranchAddress("vertexZSisConePFJet", vertexZSisConePFJet, &b_vertexZSisConePFJet);
-   fChain->SetBranchAddress("massSisConePFJet", massSisConePFJet, &b_massSisConePFJet);
-   fChain->SetBranchAddress("mtSisConePFJet", mtSisConePFJet, &b_mtSisConePFJet);
-   fChain->SetBranchAddress("pdgIdSisConePFJet", pdgIdSisConePFJet, &b_pdgIdSisConePFJet);
-   fChain->SetBranchAddress("nDauSisConePFJet", nDauSisConePFJet, &b_nDauSisConePFJet);
-   fChain->SetBranchAddress("d1IndexSisConePFJet", d1IndexSisConePFJet, &b_d1IndexSisConePFJet);
-   fChain->SetBranchAddress("d2IndexSisConePFJet", d2IndexSisConePFJet, &b_d2IndexSisConePFJet);
-   fChain->SetBranchAddress("d1pdgIdSisConePFJet", d1pdgIdSisConePFJet, &b_d1pdgIdSisConePFJet);
-   fChain->SetBranchAddress("d2pdgIdSisConePFJet", d2pdgIdSisConePFJet, &b_d2pdgIdSisConePFJet);
-   fChain->SetBranchAddress("chargedHadronEnergySisConePFJet", chargedHadronEnergySisConePFJet, &b_chargedHadronEnergySisConePFJet);
-   fChain->SetBranchAddress("neutralHadronEnergySisConePFJet", neutralHadronEnergySisConePFJet, &b_neutralHadronEnergySisConePFJet);
-   fChain->SetBranchAddress("chargedEmEnergySisConePFJet", chargedEmEnergySisConePFJet, &b_chargedEmEnergySisConePFJet);
-   fChain->SetBranchAddress("neutralEmEnergySisConePFJet", neutralEmEnergySisConePFJet, &b_neutralEmEnergySisConePFJet);
-   fChain->SetBranchAddress("neutralMultiplicitySisConePFJet", neutralMultiplicitySisConePFJet, &b_neutralMultiplicitySisConePFJet);
-   fChain->SetBranchAddress("chargedMultiplicitySisConePFJet", chargedMultiplicitySisConePFJet, &b_chargedMultiplicitySisConePFJet);
-   fChain->SetBranchAddress("muonMultiplicitySisConePFJet", muonMultiplicitySisConePFJet, &b_muonMultiplicitySisConePFJet);
    fChain->SetBranchAddress("nSisConePFCorrJet", &nSisConePFCorrJet, &b_nSisConePFCorrJet);
    fChain->SetBranchAddress("chargeSisConePFCorrJet", chargeSisConePFCorrJet, &b_chargeSisConePFCorrJet);
    fChain->SetBranchAddress("energySisConePFCorrJet", energySisConePFCorrJet, &b_energySisConePFCorrJet);
@@ -1478,6 +1486,35 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("neutralMultiplicitySisConePFCorrJet", neutralMultiplicitySisConePFCorrJet, &b_neutralMultiplicitySisConePFCorrJet);
    fChain->SetBranchAddress("chargedMultiplicitySisConePFCorrJet", chargedMultiplicitySisConePFCorrJet, &b_chargedMultiplicitySisConePFCorrJet);
    fChain->SetBranchAddress("muonMultiplicitySisConePFCorrJet", muonMultiplicitySisConePFCorrJet, &b_muonMultiplicitySisConePFCorrJet);
+   fChain->SetBranchAddress("nSisConePFJet", &nSisConePFJet, &b_nSisConePFJet);
+   fChain->SetBranchAddress("chargeSisConePFJet", chargeSisConePFJet, &b_chargeSisConePFJet);
+   fChain->SetBranchAddress("energySisConePFJet", energySisConePFJet, &b_energySisConePFJet);
+   fChain->SetBranchAddress("etSisConePFJet", etSisConePFJet, &b_etSisConePFJet);
+   fChain->SetBranchAddress("momentumSisConePFJet", momentumSisConePFJet, &b_momentumSisConePFJet);
+   fChain->SetBranchAddress("thetaSisConePFJet", thetaSisConePFJet, &b_thetaSisConePFJet);
+   fChain->SetBranchAddress("etaSisConePFJet", etaSisConePFJet, &b_etaSisConePFJet);
+   fChain->SetBranchAddress("phiSisConePFJet", phiSisConePFJet, &b_phiSisConePFJet);
+   fChain->SetBranchAddress("pxSisConePFJet", pxSisConePFJet, &b_pxSisConePFJet);
+   fChain->SetBranchAddress("pySisConePFJet", pySisConePFJet, &b_pySisConePFJet);
+   fChain->SetBranchAddress("pzSisConePFJet", pzSisConePFJet, &b_pzSisConePFJet);
+   fChain->SetBranchAddress("vertexXSisConePFJet", vertexXSisConePFJet, &b_vertexXSisConePFJet);
+   fChain->SetBranchAddress("vertexYSisConePFJet", vertexYSisConePFJet, &b_vertexYSisConePFJet);
+   fChain->SetBranchAddress("vertexZSisConePFJet", vertexZSisConePFJet, &b_vertexZSisConePFJet);
+   fChain->SetBranchAddress("massSisConePFJet", massSisConePFJet, &b_massSisConePFJet);
+   fChain->SetBranchAddress("mtSisConePFJet", mtSisConePFJet, &b_mtSisConePFJet);
+   fChain->SetBranchAddress("pdgIdSisConePFJet", pdgIdSisConePFJet, &b_pdgIdSisConePFJet);
+   fChain->SetBranchAddress("nDauSisConePFJet", nDauSisConePFJet, &b_nDauSisConePFJet);
+   fChain->SetBranchAddress("d1IndexSisConePFJet", d1IndexSisConePFJet, &b_d1IndexSisConePFJet);
+   fChain->SetBranchAddress("d2IndexSisConePFJet", d2IndexSisConePFJet, &b_d2IndexSisConePFJet);
+   fChain->SetBranchAddress("d1pdgIdSisConePFJet", d1pdgIdSisConePFJet, &b_d1pdgIdSisConePFJet);
+   fChain->SetBranchAddress("d2pdgIdSisConePFJet", d2pdgIdSisConePFJet, &b_d2pdgIdSisConePFJet);
+   fChain->SetBranchAddress("chargedHadronEnergySisConePFJet", chargedHadronEnergySisConePFJet, &b_chargedHadronEnergySisConePFJet);
+   fChain->SetBranchAddress("neutralHadronEnergySisConePFJet", neutralHadronEnergySisConePFJet, &b_neutralHadronEnergySisConePFJet);
+   fChain->SetBranchAddress("chargedEmEnergySisConePFJet", chargedEmEnergySisConePFJet, &b_chargedEmEnergySisConePFJet);
+   fChain->SetBranchAddress("neutralEmEnergySisConePFJet", neutralEmEnergySisConePFJet, &b_neutralEmEnergySisConePFJet);
+   fChain->SetBranchAddress("neutralMultiplicitySisConePFJet", neutralMultiplicitySisConePFJet, &b_neutralMultiplicitySisConePFJet);
+   fChain->SetBranchAddress("chargedMultiplicitySisConePFJet", chargedMultiplicitySisConePFJet, &b_chargedMultiplicitySisConePFJet);
+   fChain->SetBranchAddress("muonMultiplicitySisConePFJet", muonMultiplicitySisConePFJet, &b_muonMultiplicitySisConePFJet);
    fChain->SetBranchAddress("nSisConeGenJet", &nSisConeGenJet, &b_nSisConeGenJet);
    fChain->SetBranchAddress("chargeSisConeGenJet", chargeSisConeGenJet, &b_chargeSisConeGenJet);
    fChain->SetBranchAddress("energySisConeGenJet", energySisConeGenJet, &b_energySisConeGenJet);
@@ -1500,6 +1537,8 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("d2IndexSisConeGenJet", d2IndexSisConeGenJet, &b_d2IndexSisConeGenJet);
    fChain->SetBranchAddress("d1pdgIdSisConeGenJet", d1pdgIdSisConeGenJet, &b_d1pdgIdSisConeGenJet);
    fChain->SetBranchAddress("d2pdgIdSisConeGenJet", d2pdgIdSisConeGenJet, &b_d2pdgIdSisConeGenJet);
+   fChain->SetBranchAddress("genPtHat", &genPtHat, &b_genPtHat);
+   fChain->SetBranchAddress("genWeight", &genWeight, &b_genWeight);
    Notify();
 }
 
