@@ -26,7 +26,8 @@ public:
   void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
-  void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT);
+  void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT,
+                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -63,6 +64,9 @@ private:
   int myNuncorrjets;
   float myDxyEVT;
   float myDszEVT;
+  float myBTagTrackCount;
+  float myBTagImpPar;
+  float myBTagSecVertex;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myUncorrJetVeto;

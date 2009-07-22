@@ -44,6 +44,9 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("nuncorrjets",         &myNuncorrjets,         "nuncorrjets/I");
   myTree->Branch("dxyEVT",              &myDxyEVT,              "dxyEVT/F");
   myTree->Branch("dszEVT",              &myDszEVT,              "dszEVT/F");
+  myTree->Branch("bTagTrackCount",      &myBTagTrackCount,      "bTagTrackCount/F");
+  myTree->Branch("bTagImpPar",          &myBTagImpPar,          "bTagImpPar/F");
+  myTree->Branch("bTagSecVertex",       &myBTagSecVertex,       "bTagSecVertex/F");
 }
 
 void RedHiggsTree::addCSA07Infos() {
@@ -115,7 +118,8 @@ void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float m
 
 }
 
-void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT) {
+void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
+                              float bTagTrackCount, float bTagImpPar, float bTagSecVertex) {
 
   myMaxPtLh = maxlh;
   myMinPtLh = minlh;
@@ -123,6 +127,9 @@ void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrje
   myNuncorrjets = nuncorrjets;
   myDxyEVT = dxyEVT;
   myDszEVT = dszEVT;
+  myBTagTrackCount = bTagTrackCount;
+  myBTagImpPar = bTagImpPar;
+  myBTagSecVertex = bTagSecVertex;
 
 }
 

@@ -131,6 +131,7 @@ private:
   
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
+  float m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags; 
   int m_closestPV;
   
   int _theGenEle, _theGenPos;

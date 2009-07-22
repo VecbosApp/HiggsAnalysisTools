@@ -653,7 +653,10 @@ void HiggsMLSelection::Loop() {
                                 njets,
                                 nuncorrjets,
                                 m_maxDxyEvt,
-                                m_maxDszEvt);
+                                m_maxDszEvt,
+                                m_maxTrackCountingHighEffBJetTags,
+                                m_maxImpactParameterMVABJetTags,
+                                m_maxCombinedSecondaryVertexMVABJetTags);
 
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEE->fillKFactor(evtKfactor);
@@ -724,7 +727,10 @@ void HiggsMLSelection::Loop() {
                                 njets,
                                 nuncorrjets,
                                 m_maxDxyEvt,
-                                m_maxDszEvt);
+                                m_maxDszEvt,
+                                m_maxTrackCountingHighEffBJetTags,
+                                m_maxImpactParameterMVABJetTags,
+                                m_maxCombinedSecondaryVertexMVABJetTags);
       
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeMM->fillKFactor(evtKfactor);
@@ -829,7 +835,10 @@ void HiggsMLSelection::Loop() {
                                 njets,
                                 nuncorrjets,
                                 m_maxDszEvt,
-                                m_maxDszEvt);
+                                m_maxDszEvt,
+                                m_maxTrackCountingHighEffBJetTags,
+                                m_maxImpactParameterMVABJetTags,
+                                m_maxCombinedSecondaryVertexMVABJetTags);
       
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEM->fillKFactor(evtKfactor);
@@ -1405,6 +1414,9 @@ std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
   variables.clear();
   variables.push_back(DxyAverage);
   variables.push_back(DszAverage);
+  variables.push_back(trackCountingHighEffBJetTagsSisConeCorrJet[jetIndex]);
+  variables.push_back(impactParameterMVABJetTagsSisConeCorrJet[jetIndex]);
+  variables.push_back(combinedSecondaryVertexMVABJetTagsSisConeCorrJet[jetIndex]);
   variables.push_back(jetMass);
   variables.push_back(nTracks);
 
@@ -1414,16 +1426,25 @@ std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
 
 void HiggsMLSelection::calcEventBVetoVariables(std::vector<int> jets) {
   
-  m_maxDxyEvt=-1; 
-  m_maxDszEvt=-1;
-  
+  m_maxDxyEvt=-1000; 
+  m_maxDszEvt=-1000;
+  m_maxTrackCountingHighEffBJetTags=-1000;
+  m_maxImpactParameterMVABJetTags=-1000;
+  m_maxCombinedSecondaryVertexMVABJetTags=-1000;
+
   for (unsigned int iJet=0; iJet<jets.size(); iJet++){     
     int thisJet = jets[iJet];
     std::vector<float> variables = jetBTagVariables(thisJet);    
     float dxy = variables[0];
     float dsz = variables[1];
+    float trackCounting = variables[2];
+    float impactParameter = variables[3];
+    float combinedSV = variables[4];
     if (dxy > m_maxDxyEvt) m_maxDxyEvt=dxy;
     if (dsz > m_maxDszEvt) m_maxDszEvt=dsz;
+    if (trackCounting > m_maxTrackCountingHighEffBJetTags ) m_maxTrackCountingHighEffBJetTags = trackCounting;
+    if (impactParameter > m_maxImpactParameterMVABJetTags ) m_maxImpactParameterMVABJetTags = impactParameter;
+    if (combinedSV > m_maxCombinedSecondaryVertexMVABJetTags ) m_maxCombinedSecondaryVertexMVABJetTags = combinedSV;
   }
 
 }
