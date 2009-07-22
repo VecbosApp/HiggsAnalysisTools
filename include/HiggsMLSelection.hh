@@ -52,6 +52,7 @@ private:
   void setPreselKinematics();  
   //! count jet multiplicity
   int numJets();
+  int numUncorrJets();
   //! returns the output of the custom cut electron ID
   bool isEleID(int eleIndex);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
@@ -138,12 +139,9 @@ private:
   //! vectors to store indices of best candidates
   std::vector<int> *_bestElectrons;
   std::vector<int> *_bestMuons;
-  std::vector<int> *_bestJets;
-  std::vector<int> *_bestGenJets;
 
   //! vector to store indices of candidate to include / exclude
   std::vector<int> m_goodJets;
-  std::vector<int> *_excludedJets;
 
   //! reduced tree for event selection (on at least 2leptons events)
   RedHiggsTree *myOutTreeEE;
@@ -163,5 +161,10 @@ private:
 
   //! name of rootfile with dataset
   std::string _datasetName;
+
+  //! to check the electron/jet matching
+  TFile *fMatch;
+  TH1F *H_deltaRcorr;
+  TH1F *H_deltaRuncorr;
 };
 #endif

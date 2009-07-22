@@ -24,6 +24,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_eleSlowEcalPtSum = selector.m_eleSlowEcalPtSum;
   m_eleSlowGlobalSum = selector.m_eleSlowGlobalSum;
   m_nJets            = selector.m_nJets;
+  m_nUncorrJets      = selector.m_nUncorrJets;
   m_met = selector.m_met;
   m_deltaPhi = selector.m_deltaPhi;
   m_detaLeptons = selector.m_detaLeptons;
@@ -90,6 +91,9 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("zeroJets");
   globalCounter->AddVar("oneJet");
   globalCounter->AddVar("gt1Jets");
+  globalCounter->AddVar("zeroUncorrJets");
+  globalCounter->AddVar("oneUncorrJet");
+  globalCounter->AddVar("gt1UncorrJets");
 }
 
 bool CutBasedHiggsSelector::output() {
@@ -129,6 +133,9 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("zeroJets");
       processCounter->AddVar("oneJet");
       processCounter->AddVar("gt1Jets");
+      processCounter->AddVar("zeroUncorrJets");
+      processCounter->AddVar("oneUncorrJet");
+      processCounter->AddVar("gt1UncorrJets");
       
       multiProcessCounter.insert( std::make_pair(m_processID,processCounter) );      
     }
@@ -200,6 +207,7 @@ bool CutBasedHiggsSelector::output() {
   m_finalLeptons = true;
 
   if (m_nJets==0) m_jetVeto = true;
+  if (m_nUncorrJets==0) m_uncorrJetVeto = true;
 
   if(_selection->getSwitch("MET") && !_selection->passCut("MET",m_met)) return false; 
   theCounter->IncrVar("MET",m_weight);
@@ -227,6 +235,10 @@ bool CutBasedHiggsSelector::output() {
   if (m_nJets==0) theCounter->IncrVar("zeroJets",m_weight);
   if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
   if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
+
+  if (m_nUncorrJets==0) theCounter->IncrVar("zeroUncorrJets",m_weight);
+  if (m_nUncorrJets==1) theCounter->IncrVar("oneUncorrJet",  m_weight);
+  if (m_nUncorrJets>1)  theCounter->IncrVar("gt1UncorrJets", m_weight);
 
   return true;
 }
@@ -260,6 +272,9 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
       theCounter->Draw("zeroJets", "final");
       theCounter->Draw("oneJet",   "final");
       theCounter->Draw("gt1Jets",  "final");
+      theCounter->Draw("zeroUncorrJets", "final");
+      theCounter->Draw("oneUncorrJet",   "final");
+      theCounter->Draw("gt1UncorrJets",  "final");
     }
   }
 
@@ -287,6 +302,9 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
     globalCounter->Draw("zeroJets", "final");
     globalCounter->Draw("oneJet",   "final");
     globalCounter->Draw("gt1Jets",  "final");
+    globalCounter->Draw("zeroUncorrJets", "final");
+    globalCounter->Draw("oneUncorrJet",   "final");
+    globalCounter->Draw("gt1UncorrJets",  "final");
 
     globalCounter->Save(namefile,"update");
   }

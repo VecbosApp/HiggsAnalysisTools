@@ -24,9 +24,9 @@ public:
   void addHLTMuonsInfos();
   //! event by event final dataset fill
   void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
-	       bool finalLeptons, bool jetVeto, bool preDeltaPhi, bool finalSelection);
+	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
-  void fillMLVars(float maxlh, float minlh, int njets, float dxyEVT, float dszEVT);
+  void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -60,10 +60,12 @@ private:
   float myMaxPtLh;
   float myMinPtLh;
   int myNjets;
+  int myNuncorrjets;
   float myDxyEVT;
   float myDszEVT;
   bool myFinalLeptons;
   bool myJetVeto;
+  bool myUncorrJetVeto;
   bool myPreDeltaPhi;
   bool myFinalSelection;
   double myWeight;

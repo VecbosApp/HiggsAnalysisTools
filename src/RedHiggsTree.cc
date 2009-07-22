@@ -26,6 +26,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("detaLeptons",         &myDetaLeptons,         "detaLeptons/F");  
   myTree->Branch("finalLeptons",        &myFinalLeptons,        "finalLeptons/B");
   myTree->Branch("jetVeto",             &myJetVeto,             "jetVeto/B");
+  myTree->Branch("uncorrJetVeto",       &myUncorrJetVeto,       "uncorrJetVeto/B");
   myTree->Branch("preDeltaPhi",         &myPreDeltaPhi,         "preDeltaPhi/B");
   myTree->Branch("finalSelection",      &myFinalSelection,      "finalSelection/B");
 
@@ -40,6 +41,7 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("maxPtLh",             &myMaxPtLh,             "maxPtLh/F");
   myTree->Branch("minPtLh",             &myMinPtLh,             "minPtLh/F");
   myTree->Branch("njets",               &myNjets,               "njets/I");
+  myTree->Branch("nuncorrjets",         &myNuncorrjets,         "nuncorrjets/I");
   myTree->Branch("dxyEVT",              &myDxyEVT,              "dxyEVT/F");
   myTree->Branch("dszEVT",              &myDszEVT,              "dszEVT/F");
 }
@@ -95,7 +97,7 @@ void RedHiggsTree::save()
 
 
 void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta,
-			   bool finalLeptons, bool jetVeto, bool preDeltaPhi, bool finalSelection)
+			   bool finalLeptons, bool jetVeto, bool uncorrjetVeto, bool preDeltaPhi, bool finalSelection)
 {
 
   myMet         = mt;
@@ -106,17 +108,19 @@ void RedHiggsTree::fillAll(float mt, float dphi, float tmass, float mee, float m
   minPtEle      = min;
   myDetaLeptons = deta;
   myFinalLeptons = finalLeptons;
-  myJetVeto = jetVeto;
+  myJetVeto       = jetVeto;
+  myUncorrJetVeto = uncorrjetVeto;
   myPreDeltaPhi = preDeltaPhi;
   myFinalSelection = finalSelection;
 
 }
 
-void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, float dxyEVT, float dszEVT) {
+void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT) {
 
   myMaxPtLh = maxlh;
   myMinPtLh = minlh;
-  myNjets = njets;
+  myNjets   = njets;
+  myNuncorrjets = nuncorrjets;
   myDxyEVT = dxyEVT;
   myDszEVT = dszEVT;
 

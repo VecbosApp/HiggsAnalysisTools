@@ -43,7 +43,9 @@ public:
   void SetEleHardGlobalSum(float sum)    { m_eleHardGlobalSum  = sum; }
   void SetEleSlowGlobalSum(float sum)    { m_eleSlowGlobalSum  = sum; }
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
+  void SetUncorrJetVeto(bool passedUncorrCJV) { m_passedUncorrJetVeto = passedUncorrCJV; }
   void SetNJets(int njets)               { m_nJets         = njets; }
+  void SetNUncorrJets(int nuncorrjets)   { m_nUncorrJets   = nuncorrjets; }
   void SetMet(float met)                 { m_met           = met;}
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
@@ -56,6 +58,7 @@ public:
   bool outputUpToFinalLeptons() { return m_finalLeptons; }
   //! get output of the selector until jet veto
   bool outputUpToJetVeto() {return m_jetVeto; }
+  bool outputUpToUncorrJetVeto() {return m_uncorrJetVeto; }
   //! get output of the selector previous to deltaPhi cut
   bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
@@ -71,7 +74,9 @@ private:
   float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
   float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;
   bool m_passedJetVeto;
+  bool m_passedUncorrJetVeto;
   int m_nJets;
+  int m_nUncorrJets;
   float m_met, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;
   int m_processID;
@@ -86,6 +91,8 @@ private:
   bool m_finalLeptons;
   //! true if the selection arrived to jet veto
   bool m_jetVeto;
+  //! true if the selection arrived to jet veto with uncorrected jets
+  bool m_uncorrJetVeto;
   //! true if passed all the selections previous to deltaPhi
   bool m_preDeltaPhi;
 

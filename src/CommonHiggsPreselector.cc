@@ -23,8 +23,6 @@ void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwi
   _selection->addCut("METpreselection");
   _selection->addCut("dileptonInvMassMin");
 
-  _selection->summary();
-  
   presCounter = new Counters();
   presCounter->SetTitle("PRESELECTION EVENT COUNTER");
   presCounter->AddVar("event");

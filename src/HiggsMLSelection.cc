@@ -44,8 +44,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
       }
     }
   }
-
-
+  
   std::string fileCutsPreselection     = higgsConfigDir + "2l2nuCutsPreselection.txt";
   std::string fileSwitchesPreselection = higgsConfigDir + "2l2nuSwitchesPreselection.txt";
 
@@ -53,13 +52,14 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   CommonHiggsPreselection.Configure(fileCutsPreselection.c_str(), fileSwitchesPreselection.c_str()); 
   _preselection = CommonHiggsPreselection.GetSelection();
 
-  // extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
-  //  _addedPres = new Selection(fileCutsPreselection,fileSwitchesPreselection);
+  //  extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   _preselection->addSwitch("apply_kFactor");   
   _preselection->addCut("etaElectronAcc");
   _preselection->addCut("ptElectronAcc");
   _preselection->addCut("etaMuonAcc");
   _preselection->addCut("ptMuonAcc");
+  _preselection->addCut("etUncorrJetAcc");
+  _preselection->summary();
 
   // selection efficiencies
   std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
@@ -84,21 +84,22 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   EgammaCutBasedID.Configure("config/higgs/");
 
   // kinematics
-  m_p4ElectronPlus = new TLorentzVector(0.,0.,0.,0.);
+  m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
   m_p4ElectronMinus = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MuonPlus = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MuonMinus = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MET = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MuonPlus      = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MuonMinus     = new TLorentzVector(0.,0.,0.,0.);
+  m_p4MET           = new TLorentzVector(0.,0.,0.,0.);
 
   // b-veto event variables
   m_maxDxyEvt = 0.0;
   m_maxDszEvt = 0.0;
 
   _bestElectrons = new std::vector<int>;
-  _bestMuons = new std::vector<int>;
-  _bestJets = new std::vector<int>;
-  _excludedJets = new std::vector<int>;
-  _bestGenJets = new std::vector<int>;
+  _bestMuons     = new std::vector<int>;
+
+  // histo to study jet/electron match
+  H_deltaRuncorr = new TH1F("H_deltaRuncorr","uncorrected jets",100, 0.,0.8);
+  H_deltaRcorr   = new TH1F("H_deltaRcorr",  "corrected jets",  100, 0.,0.8);
 }
 
 HiggsMLSelection::~HiggsMLSelection(){
@@ -110,9 +111,6 @@ HiggsMLSelection::~HiggsMLSelection(){
   delete m_p4MET;
   delete _bestElectrons;
   delete _bestMuons;
-  delete _bestJets;
-  delete _excludedJets;
-  delete _bestGenJets;
   delete _preselection;
   delete _selectionEE;
   delete _selectionMM;
@@ -121,7 +119,6 @@ HiggsMLSelection::~HiggsMLSelection(){
   myOutTreeMM   -> save();
   myOutTreeEM   -> save();
   myTriggerTree -> save();
-
 }
 
 bool HiggsMLSelection::findMcTree(const char* processType) {
@@ -132,7 +129,6 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
   
   // now we look for ee || mumu || emu
   // in the acceptance and with a loose pT threshold
-
   float etaEleAcc_  = 2.5;
   float ptEleAcc_   = 5.0; // GeV
   float etaMuonAcc_ = 2.4;
@@ -158,11 +154,11 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
     int indmuminus=999, indmuplus=999;
     for(int imc=6;imc<25;imc++) {
       float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc] == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
       if( idMc[imc] ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
     }
     if( indmuminus<25 && indmuplus<25 ) {
-      _theGenMuPlus = indmuplus;
+      _theGenMuPlus  = indmuplus;
       _theGenMuMinus = indmuminus;
     }
     return ( indmuplus < 25 && indmuminus < 25 );
@@ -173,10 +169,10 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
     int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
     for(int imc=6;imc<25;imc++) {
       float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
-      if( idMc[imc]  == 13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeplus = imc;
+      if( idMc[imc]  ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
       if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  == 11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+      if( idMc[imc]  ==  11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeminus = imc;
     }
     if( indeplus<25 && indmuminus<25 ) {
       _theGenPos = indeplus;
@@ -456,10 +452,10 @@ void HiggsMLSelection::Loop() {
     bool theElectronID = true;
     bool thePositronID = true;
     // custom electron ID cuts (tight symmetric for ee, tight for emu)
-    if (theElectron > -1) theElectronID = isEleID(theElectron);
-    if (thePositron > -1) thePositronID = isEleID(thePositron);
-    // if (theElectron > -1) theElectronID = eleIdStandardCutsTightEle[theElectron];
-    // if (thePositron > -1) thePositronID = eleIdStandardCutsTightEle[thePositron];
+    // if (theElectron > -1) theElectronID = isEleID(theElectron);
+    // if (thePositron > -1) thePositronID = isEleID(thePositron);
+    if (theElectron > -1) theElectronID = eleIdStandardCutsTightEle[theElectron];
+    if (thePositron > -1) thePositronID = eleIdStandardCutsTightEle[thePositron];
 
     float theHardEleLhID = 1.0;
     float theSlowEleLhID = 1.0;
@@ -576,6 +572,7 @@ void HiggsMLSelection::Loop() {
     
     // jet counter
     int njets = numJets();
+    int nuncorrjets = numUncorrJets();
 
     // look for PV in the event (there is always at least 1 PV)
     m_closestPV = getPV();
@@ -621,6 +618,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEE.SetEleHardGlobalSum(theEleHardGlobalSum);
       CutBasedHiggsSelectionEE.SetEleSlowGlobalSum(theEleSlowGlobalSum);
       CutBasedHiggsSelectionEE.SetNJets(njets);
+      CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionEE.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
       CutBasedHiggsSelectionEE.SetInvMass(theInvMassEE);
@@ -628,6 +626,7 @@ void HiggsMLSelection::Loop() {
       bool isSelectedEE = CutBasedHiggsSelectionEE.output();    
       bool selUpToFinalLeptonsEE = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
       bool selUpToJetVetoEE = CutBasedHiggsSelectionEE.outputUpToJetVeto();
+      bool selUpToUncorrJetVetoEE = CutBasedHiggsSelectionEE.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
 
       myOutTreeEE -> fillMcTruth(promptEE);
@@ -645,12 +644,14 @@ void HiggsMLSelection::Loop() {
 			     theDetaLeptonsEE,
 			     selUpToFinalLeptonsEE,
 			     selUpToJetVetoEE,
+			     selUpToUncorrJetVetoEE,
 			     selPreDeltaPhiEE,
 			     isSelectedEE);
 
       myOutTreeEE -> fillMLVars(theHardEleLhID,
                                 theSlowEleLhID,
                                 njets,
+                                nuncorrjets,
                                 m_maxDxyEvt,
                                 m_maxDszEvt);
 
@@ -660,7 +661,6 @@ void HiggsMLSelection::Loop() {
 
       // dumping final tree
       myOutTreeEE -> store();
-      
     }
 
     // ---------------------------------------
@@ -689,6 +689,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionMM.SetEleHardGlobalSum(theMuonHardGlobalSum);
       CutBasedHiggsSelectionMM.SetEleSlowGlobalSum(theMuonSlowGlobalSum);
       CutBasedHiggsSelectionMM.SetNJets(njets);
+      CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionMM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionMM.SetInvMass(theInvMassMM);
@@ -696,6 +697,7 @@ void HiggsMLSelection::Loop() {
       bool isSelectedMM = CutBasedHiggsSelectionMM.output();    
       bool selUpToFinalLeptonsMM = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
       bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
+      bool selUpToUncorrJetVetoMM = CutBasedHiggsSelectionMM.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
       myOutTreeMM -> fillMcTruth(promptMM);
@@ -713,12 +715,14 @@ void HiggsMLSelection::Loop() {
 			     theDetaLeptonsMM,
 			     selUpToFinalLeptonsMM,
 			     selUpToJetVetoMM,
+			     selUpToUncorrJetVetoMM,
 			     selPreDeltaPhiMM,
 			     isSelectedMM);
 
       myOutTreeMM -> fillMLVars(1.0,
                                 1.0,
                                 njets,
+                                nuncorrjets,
                                 m_maxDxyEvt,
                                 m_maxDszEvt);
       
@@ -786,6 +790,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleHardGlobalSum(theMuonGlobalSumEM); //order in pt unimportant
       CutBasedHiggsSelectionEM.SetEleSlowGlobalSum(theEleGlobalSumEM);
       CutBasedHiggsSelectionEM.SetNJets(njets);
+      CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
       CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionEM.SetInvMass(theInvMassMM);
@@ -793,6 +798,7 @@ void HiggsMLSelection::Loop() {
       bool isSelectedEM = CutBasedHiggsSelectionEM.output();    
       bool selUpToFinalLeptonsEM = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
       bool selUpToJetVetoEM = CutBasedHiggsSelectionEM.outputUpToJetVeto();
+      bool selUpToUncorrJetVetoEM = CutBasedHiggsSelectionEM.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
       myOutTreeEM -> fillMcTruth(promptEM);
@@ -814,12 +820,14 @@ void HiggsMLSelection::Loop() {
 			     theDetaLeptonsEM,
 			     selUpToFinalLeptonsEM,
 			     selUpToJetVetoEM,
+			     selUpToUncorrJetVetoEM,
 			     selPreDeltaPhiEM,
 			     isSelectedEM);
 
       myOutTreeEM -> fillMLVars(theEleLikelihoodEM,
                                 1.0,
                                 njets,
+                                nuncorrjets,
                                 m_maxDszEvt,
                                 m_maxDszEvt);
       
@@ -834,6 +842,11 @@ void HiggsMLSelection::Loop() {
 
   }
 
+  fMatch = new TFile("matching.root","RECREATE");
+  fMatch->cd();
+  H_deltaRuncorr->Write();
+  H_deltaRcorr->Write();
+  fMatch->Close();
 }
 
 void HiggsMLSelection::displayEfficiencies(std::string datasetName) {
@@ -1137,16 +1150,14 @@ int HiggsMLSelection::numJets() {
     TVector3 p3Jet(pxSisConeCorrJet[j],pySisConeCorrJet[j],pzSisConeCorrJet[j]);
     if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
+      H_deltaRcorr -> Fill(deltaR);
       // taking from ee config file, but jets veto is the same for all the channels
-      if(_selectionEE->getSwitch("jetConeWidth") && 
-	 _selectionEE->passCut("jetConeWidth",deltaR)
-	 ) continue;
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
     }
     if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
-      if(_selectionEE->getSwitch("jetConeWidth") && 
-	 _selectionEE->passCut("jetConeWidth",deltaR)
-	 ) continue;
+      H_deltaRcorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
     }
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaSisConeCorrJet[j]))) continue;
@@ -1160,9 +1171,37 @@ int HiggsMLSelection::numJets() {
   }
 
   return num;
-
 }
 
+
+int HiggsMLSelection::numUncorrJets() {
+
+  int num=0;
+
+  for(int j=0;j<nSisConeJet;j++) {
+
+    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
+    
+    if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
+      float deltaR = p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
+      H_deltaRuncorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
+    }
+    if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
+      float deltaR = p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
+      H_deltaRuncorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
+    }
+
+    if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaSisConeJet[j]))) continue;    
+    if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", etSisConeJet[j]))   continue;
+    
+    num++;
+    break;
+  }
+  
+  return num;
+}
 
 
 void HiggsMLSelection::resetKinematics() {
