@@ -217,7 +217,7 @@ void WplusJets::Loop() {
 
       std::vector<int>::iterator probeIter;
       for(probeIter=theProbes.begin(); probeIter!=theProbes.end(); probeIter++) {
-	_EoverPoutPDF->Fill(eleCorrEoPoutEle[*probeIter]);
+	_EoverPoutPDF->Fill(eSeedOverPoutEle[*probeIter]);
       }
 
       if(_selection->getSwitch("trackerPtSum") && (!_selection->passCut("trackerPtSum",eleSumPt04Ele[theEle])) ) continue;
@@ -360,7 +360,7 @@ int WplusJets::getBestJet() {
 
 bool WplusJets::isEleID(int eleIndex) {
 
-  int GsfClass = eleClassEle[eleIndex];
+  int GsfClass = classificationEle[eleIndex];
   int offset=0;
   if(GsfClass>=100) {
     GsfClass-=100;
@@ -382,17 +382,17 @@ bool WplusJets::isEleID(int eleIndex) {
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
   _eleCounter.IncrVar("electrons");
-  if(selection->getSwitch("hOverE")     && !selection->passCut("hOverE",eleHoEEle[eleIndex]))             return false; _eleCounter.IncrVar("hOverE");
+  if(selection->getSwitch("hOverE")     && !selection->passCut("hOverE",hOverEEle[eleIndex]))             return false; _eleCounter.IncrVar("hOverE");
   if(selection->getSwitch("s9s25")      && !selection->passCut("s9s25",s9s25Ele[eleIndex]))               return false; _eleCounter.IncrVar("s9s25");
-  if(selection->getSwitch("deta")       && !selection->passCut("deta",eleDeltaEtaAtVtxEle[eleIndex]))     return false; _eleCounter.IncrVar("deta");
-  if(selection->getSwitch("dphiIn")     && !selection->passCut("dphiIn",eleDeltaPhiAtVtxEle[eleIndex]))   return false; _eleCounter.IncrVar("dphiIn");
-  if(selection->getSwitch("dphiOut")    && !selection->passCut("dphiOut",eleDeltaPhiAtCaloEle[eleIndex])) return false; _eleCounter.IncrVar("dphiOut");
-  if(selection->getSwitch("invEMinusInvP") && !selection->passCut("invEMinusInvP",1./eleCaloCorrEEle[eleIndex]-1./pTrkAtInner.Mag())) return false; _eleCounter.IncrVar("invEMinusInvP");
+  if(selection->getSwitch("deta")       && !selection->passCut("deta",deltaEtaAtVtxEle[eleIndex]))     return false; _eleCounter.IncrVar("deta");
+  if(selection->getSwitch("dphiIn")     && !selection->passCut("dphiIn",deltaPhiAtVtxEle[eleIndex]))   return false; _eleCounter.IncrVar("dphiIn");
+  if(selection->getSwitch("dphiOut")    && !selection->passCut("dphiOut",deltaPhiAtCaloEle[eleIndex])) return false; _eleCounter.IncrVar("dphiOut");
+  if(selection->getSwitch("invEMinusInvP") && !selection->passCut("invEMinusInvP",1./ecalEle[eleIndex]-1./pTrkAtInner.Mag())) return false; _eleCounter.IncrVar("invEMinusInvP");
   if(selection->getSwitch("covEtaEta")  && !selection->passCut("covEtaEta",covEtaEtaEle[eleIndex]))       return false; _eleCounter.IncrVar("covEtaEta");
-  if(selection->getSwitch("eOverPout")  && !selection->passCut("eOverPout",eleCorrEoPoutEle[eleIndex]))   return false; _eleCounter.IncrVar("eOverPout");
-  if(selection->getSwitch("eOverPin")   && !selection->passCut("eOverPin", eleCorrEoPEle[eleIndex]))      return false; _eleCounter.IncrVar("eOverPin");
+  if(selection->getSwitch("eOverPout")  && !selection->passCut("eOverPout",eSeedOverPoutEle[eleIndex]))   return false; _eleCounter.IncrVar("eOverPout");
+  if(selection->getSwitch("eOverPin")   && !selection->passCut("eOverPin", eSuperClusterOverPEle[eleIndex]))      return false; _eleCounter.IncrVar("eOverPin");
   if(selection->getSwitch("Fisher")     && !selection->passCut("Fisher",Fisher(eleIndex)))                return false; _eleCounter.IncrVar("Fisher");
-  if(selection->getSwitch("Likelihood") && !selection->passCut("Likelihood",eleLikelihoodEle[eleIndex]))  return false; _eleCounter.IncrVar("Likelihood");
+  if(selection->getSwitch("Likelihood") && !selection->passCut("Likelihood",eleIdLikelihoodEle[eleIndex]))  return false; _eleCounter.IncrVar("Likelihood");
   _eleCounter.IncrVar("finalEleID");
 
   return true;
@@ -443,7 +443,7 @@ bool WplusJets::jetVeto() {
 
 float WplusJets::Fisher(int eleIndex) {
   float fisher;
-  if(eleClassEle[eleIndex]<100)
+  if(classificationEle[eleIndex]<100)
     fisher = 42.0238-3.38943*s9s25Ele[eleIndex]-794.092*sqrt(covEtaEtaEle[eleIndex])-15.3449*latEle[eleIndex]-31.1032*a20Ele[eleIndex];
   else
     fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];

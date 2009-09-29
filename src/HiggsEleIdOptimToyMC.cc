@@ -217,12 +217,12 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
     // filling histos: 1 dim and N dim histos
     if(isEle){
       double toFill[6];
-      toFill[0] = fabs(eleDeltaEtaAtVtxEle[theElectron]);
-      toFill[1] = fabs(eleDeltaPhiAtVtxEle[theElectron]);
-      toFill[2] = eleHoEEle[theElectron];
+      toFill[0] = fabs(deltaEtaAtVtxEle[theElectron]);
+      toFill[1] = fabs(deltaPhiAtVtxEle[theElectron]);
+      toFill[2] = hOverEEle[theElectron];
       toFill[3] = s9s25Ele[theElectron];
       toFill[4] = sqrt(covEtaEtaEle[theElectron]);
-      toFill[5] = eleCorrEoPoutEle[theElectron];
+      toFill[5] = eSeedOverPoutEle[theElectron];
 
       // separating high and low pt
       if(isHigherEle){  	// high pt lepton
@@ -246,12 +246,12 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
     }
     if(isPos){
       double toFill[6];
-      toFill[0] = fabs(eleDeltaEtaAtVtxEle[thePositron]);
-      toFill[1] = fabs(eleDeltaPhiAtVtxEle[thePositron]);
-      toFill[2] = eleHoEEle[thePositron];
+      toFill[0] = fabs(deltaEtaAtVtxEle[thePositron]);
+      toFill[1] = fabs(deltaPhiAtVtxEle[thePositron]);
+      toFill[2] = hOverEEle[thePositron];
       toFill[3] = s9s25Ele[thePositron];
       toFill[4] = sqrt(covEtaEtaEle[thePositron]);
-      toFill[5] = eleCorrEoPoutEle[thePositron];
+      toFill[5] = eSeedOverPoutEle[thePositron];
 
       // separating high and low pt
       if(!isHigherEle){       // high pt lepton
@@ -276,14 +276,14 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
 
     // likelihood studies: filling the histos according the Pt
     if(isHigherEle){
-      HH_like -> Fill(eleLikelihoodEle[theElectron],theWeight);
-      HL_like -> Fill(eleLikelihoodEle[thePositron],theWeight);
-      outLikeTree->fillAll(eleLikelihoodEle[theElectron], eleLikelihoodEle[thePositron], eleClassEle[theElectron], eleClassEle[thePositron]); 
+      HH_like -> Fill(eleIdLikelihoodEle[theElectron],theWeight);
+      HL_like -> Fill(eleIdLikelihoodEle[thePositron],theWeight);
+      outLikeTree->fillAll(eleIdLikelihoodEle[theElectron], eleIdLikelihoodEle[thePositron], classificationEle[theElectron], classificationEle[thePositron]); 
     }
     if(!isHigherEle){
-      HH_like -> Fill(eleLikelihoodEle[thePositron],theWeight);
-      HL_like -> Fill(eleLikelihoodEle[theElectron],theWeight);
-      outLikeTree->fillAll(eleLikelihoodEle[thePositron], eleLikelihoodEle[theElectron], eleClassEle[thePositron], eleClassEle[theElectron]); 
+      HH_like -> Fill(eleIdLikelihoodEle[thePositron],theWeight);
+      HL_like -> Fill(eleIdLikelihoodEle[theElectron],theWeight);
+      outLikeTree->fillAll(eleIdLikelihoodEle[thePositron], eleIdLikelihoodEle[theElectron], classificationEle[thePositron], classificationEle[theElectron]); 
     }
     outLikeTree -> store();
     
@@ -291,10 +291,10 @@ void HiggsEleIdOptimToyMC::Loop(const char *filename) {
     // in case toy generation is not needed
     if (!theToy) {
       if(isHigherEle){
-	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], eleClassEle[theElectron], fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], eleClassEle[thePositron]);
+	outRootTree->fillAll(fabs(deltaEtaAtVtxEle[theElectron]), fabs(deltaPhiAtVtxEle[theElectron]), hOverEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eSeedOverPoutEle[theElectron], classificationEle[theElectron], fabs(deltaEtaAtVtxEle[thePositron]), fabs(deltaPhiAtVtxEle[thePositron]), hOverEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eSeedOverPoutEle[thePositron], classificationEle[thePositron]);
       }
       if(!isHigherEle){
-	outRootTree->fillAll(fabs(eleDeltaEtaAtVtxEle[thePositron]), fabs(eleDeltaPhiAtVtxEle[thePositron]), eleHoEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eleCorrEoPoutEle[thePositron], eleClassEle[thePositron], fabs(eleDeltaEtaAtVtxEle[theElectron]), fabs(eleDeltaPhiAtVtxEle[theElectron]), eleHoEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eleCorrEoPoutEle[theElectron], eleClassEle[theElectron]);
+	outRootTree->fillAll(fabs(deltaEtaAtVtxEle[thePositron]), fabs(deltaPhiAtVtxEle[thePositron]), hOverEEle[thePositron], s9s25Ele[thePositron], sqrt(covEtaEtaEle[thePositron]), eSeedOverPoutEle[thePositron], classificationEle[thePositron], fabs(deltaEtaAtVtxEle[theElectron]), fabs(deltaPhiAtVtxEle[theElectron]), hOverEEle[theElectron], s9s25Ele[theElectron], sqrt(covEtaEtaEle[theElectron]), eSeedOverPoutEle[theElectron], classificationEle[theElectron]);
       }
       outRootTree -> store();
     }

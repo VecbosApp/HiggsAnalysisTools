@@ -84,10 +84,10 @@ void BestLeptonSelectorWjets::Loop() {
       pMcParticle.SetMagThetaPhi(pMc[idxGen], thetaMc[idxGen], phiMc[idxGen]);
       cout << "mc ele: ";
       pMcParticle.Print();
-      cout << "reco ele1: eta = " << etaEle[_bestByPt] << "  " << " e/p = " << eleCorrEoPEle[_bestByPt] ;
+      cout << "reco ele1: eta = " << etaEle[_bestByPt] << "  " << " e/p = " << eSuperClusterOverPEle[_bestByPt] ;
       TVector3 pReco1(pxEle[_bestByPt],pyEle[_bestByPt],pzEle[_bestByPt]);
       pReco1.Print();
-      cout << "reco ele2: eta = " << etaEle[_secondbestByPt] << "  " << "e/p = " << eleCorrEoPEle[_secondbestByPt];
+      cout << "reco ele2: eta = " << etaEle[_secondbestByPt] << "  " << "e/p = " << eSuperClusterOverPEle[_secondbestByPt];
       TVector3 pReco2(pxEle[_secondbestByPt],pyEle[_secondbestByPt],pzEle[_secondbestByPt]);
       pReco2.Print();
       cout << "dr1-2 = " << pReco1.DeltaR(pReco2) << endl;
@@ -151,7 +151,7 @@ void BestLeptonSelectorWjets::getBestElectronFunny(std::vector<int> goodElectron
     quality.SCenergy = ecalEle[eleIndex];
     quality.trackerSumPt = eleSumPt04Ele[eleIndex];
     quality.hcalSumEt = eleSumHadEt04Ele[eleIndex];
-    quality.electronIdLH = eleLikelihoodEle[eleIndex];
+    quality.electronIdLH = eleIdLikelihoodEle[eleIndex];
     electronQual.push_back(quality);
   }
   ElectronBestCandidateSelector selector(electronQual);
@@ -215,7 +215,7 @@ vector<int> BestLeptonSelectorWjets::resolvedElectrons() {
     while((int)it->first==multiAmbEleId && it<ambEle.end()) {
       int bestEle = bestEleId;
       int compEle = it->second;
-      if(fabs(eleCorrEoPEle[compEle]-1) <= fabs(eleCorrEoPEle[bestEle]-1)) bestEleId=it->second;
+      if(fabs(eSuperClusterOverPEle[compEle]-1) <= fabs(eSuperClusterOverPEle[bestEle]-1)) bestEleId=it->second;
       it++;
     }
     resolvedEles.push_back(bestEleId);

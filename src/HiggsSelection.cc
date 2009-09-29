@@ -498,12 +498,12 @@ void HiggsSelection::Loop() {
     // likelihood electron ID: asymmetric on two electrons
     // if ( theElectron > -1 && thePositron > -1 ) {
     //   if(etEle[theElectron] > etEle[thePositron]) {
-    // 	theElectronID = eleLikelihoodEle[theElectron] > 0.75;
-    // 	thePositronID = eleLikelihoodEle[thePositron] > 0.40;
+    // 	theElectronID = eleIdLikelihoodEle[theElectron] > 0.75;
+    // 	thePositronID = eleIdLikelihoodEle[thePositron] > 0.40;
     //   }
     //  else {
-    // 	theElectronID = eleLikelihoodEle[theElectron] > 0.40;
-    // 	thePositronID = eleLikelihoodEle[thePositron] > 0.75;
+    // 	theElectronID = eleIdLikelihoodEle[theElectron] > 0.40;
+    // 	thePositronID = eleIdLikelihoodEle[thePositron] > 0.75;
     //  }
     // }
 
@@ -845,20 +845,20 @@ bool HiggsSelection::isEleID(int eleIndex) {
 
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
-  EgammaCutBasedID.SetHOverE( eleHoEEle[eleIndex] );
+  EgammaCutBasedID.SetHOverE( hOverEEle[eleIndex] );
   EgammaCutBasedID.SetS9S25( s9s25Ele[eleIndex] );
-  EgammaCutBasedID.SetDEta( eleDeltaEtaAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiIn( eleDeltaPhiAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiOut( eleDeltaPhiAtCaloEle[eleIndex] );
-  EgammaCutBasedID.SetInvEminusInvP( 1./eleCaloCorrEEle[eleIndex]-1./eleTrackerPEle[eleIndex] );
-  EgammaCutBasedID.SetBremFraction( fabs(eleTrackerPEle[eleIndex]-pTrkAtOuter.Mag())/eleTrackerPEle[eleIndex] );
+  EgammaCutBasedID.SetDEta( deltaEtaAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiIn( deltaPhiAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiOut( deltaPhiAtCaloEle[eleIndex] );
+  EgammaCutBasedID.SetInvEminusInvP( 1./ecalEle[eleIndex]-1./momentumEle[eleIndex] );
+  EgammaCutBasedID.SetBremFraction( fabs(momentumEle[eleIndex]-pTrkAtOuter.Mag())/momentumEle[eleIndex] );
   EgammaCutBasedID.SetSigmaEtaEta( sqrt(covEtaEtaEle[eleIndex]) );
   EgammaCutBasedID.SetSigmaPhiPhi( sqrt(covPhiPhiEle[eleIndex]) );
-  EgammaCutBasedID.SetEOverPout( eleCorrEoPoutEle[eleIndex] );
-  EgammaCutBasedID.SetEOverPin( eleCorrEoPEle[eleIndex] );
-  EgammaCutBasedID.SetElectronClass ( eleClassEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPout( eSeedOverPoutEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPin( eSuperClusterOverPEle[eleIndex] );
+  EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
   EgammaCutBasedID.SetEgammaCutBasedID ( eleIdCutBasedEle[eleIndex] );
-  EgammaCutBasedID.SetLikelihood( eleLikelihoodEle[eleIndex] );
+  EgammaCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
 
   bool isIdentified = EgammaCutBasedID.output();
 
@@ -935,10 +935,10 @@ void HiggsSelection::setPreselKinematics() {
 void HiggsSelection::setKinematics( ) {
 
   // electron variables used for ele quality in jet veto 
-  m_HoEElectronMinus     = eleHoEEle[theElectron];
-  m_HoEElectronPlus      = eleHoEEle[thePositron];
-  m_CaloEneElectronMinus = eleCaloCorrEEle[theElectron];
-  m_CaloEneElectronPlus  = eleCaloCorrEEle[thePositron];
+  m_HoEElectronMinus     = hOverEEle[theElectron];
+  m_HoEElectronPlus      = hOverEEle[thePositron];
+  m_CaloEneElectronMinus = ecalEle[theElectron];
+  m_CaloEneElectronPlus  = ecalEle[thePositron];
 
   // compute delta Phi in degrees, di-lepton invariant mass, transverse mass
   TVector3 dilepPt;
@@ -1084,7 +1084,7 @@ bool HiggsSelection::goodJetFound() {
 float HiggsSelection::Fisher(int eleIndex) {
   float fisher=0;
   // CMSSW_1_3_1 coefficients, obsolete!
-//   if(eleClassEle[eleIndex]<100)
+//   if(classificationEle[eleIndex]<100)
 //     fisher = 42.0238-3.38943*s9s25Ele[eleIndex]-794.092*sqrt(covEtaEtaEle[eleIndex])-15.3449*latEle[eleIndex]-31.1032*a20Ele[eleIndex];
 //   else
 //     fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];
@@ -1130,7 +1130,7 @@ float HiggsSelection::getSecondEleTkPt(int first, int second, float deltaR) {
   float dr = firstEle.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleTrackPt = momentumEle[second] * fabs( sin(thetaEle[second]) );
   }
 
   return secondEleTrackPt;
@@ -1155,7 +1155,7 @@ float HiggsSelection::getSecondEleEmEt(int first, int second, float deltaR) {
     float alpha = acos(dr/(2*deltaR));
     float overlappingArea = deltaR*deltaR*(4*alpha - sin(2*alpha));
     float fraction = overlappingArea/(deltaR*deltaR);
-    secondEleEmEt = fraction * eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleEmEt = fraction * energyEle[second] * fabs( sin(thetaEle[second]) );
   }
 
   return secondEleEmEt;
@@ -1208,7 +1208,7 @@ vector<int> HiggsSelection::resolvedElectrons() {
     while((int)it->first==multiAmbEleId && it<ambEle.end()) {
       int bestEle = bestEleId;
       int compEle = it->second;
-      if(fabs(eleCorrEoPEle[compEle]-1) <= fabs(eleCorrEoPEle[bestEle]-1)) bestEleId=it->second;
+      if(fabs(eSuperClusterOverPEle[compEle]-1) <= fabs(eSuperClusterOverPEle[bestEle]-1)) bestEleId=it->second;
       it++;
     }
     resolvedEles.push_back(bestEleId);

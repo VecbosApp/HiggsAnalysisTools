@@ -33,14 +33,14 @@ RedEleIDTree::RedEleIDTree(const char * filename) {
   myTree->Branch("a20Ele",                   &myA20Ele,                   "a20Ele/F");  
   myTree->Branch("s9s25Ele",                 &myS9s25Ele,                 "s9s25Ele/F");
   myTree->Branch("covEtaEtaEle",             &myCovEtaEtaEle,             "covEtaEtaEle/F");  
-  myTree->Branch("eleClassEle",              &myEleClassEle,              "eleClassEle/I");  
-  myTree->Branch("eleHoEEle",                &myEleHoEEle,                "eleHoEEle/F");  
-  myTree->Branch("eleCorrEoPEle",            &myEleCorrEoPEle,            "eleCorrEoPEle/F");  
-  myTree->Branch("eleCorrEoPoutEle",         &myEleCorrEoPoutEle,         "eleCorrEoPEle/F");  
-  myTree->Branch("eleDeltaEtaAtVtxEle",      &myEleDeltaEtaAtVtxEle,      "eleDeltaEtaAtVtxEle/F");  
-  myTree->Branch("eleDeltaPhiAtVtxEle",      &myEleDeltaPhiAtVtxEle,      "eleDeltaPhiAtVtxEle/F");  
+  myTree->Branch("classificationEle",              &myEleClassEle,              "classificationEle/I");  
+  myTree->Branch("hOverEEle",                &myEleHoEEle,                "hOverEEle/F");  
+  myTree->Branch("eSuperClusterOverPEle",            &myEleCorrEoPEle,            "eSuperClusterOverPEle/F");  
+  myTree->Branch("eSeedOverPoutEle",         &myEleCorrEoPoutEle,         "eSuperClusterOverPEle/F");  
+  myTree->Branch("deltaEtaAtVtxEle",      &myEleDeltaEtaAtVtxEle,      "deltaEtaAtVtxEle/F");  
+  myTree->Branch("deltaPhiAtVtxEle",      &myEleDeltaPhiAtVtxEle,      "deltaPhiAtVtxEle/F");  
   myTree->Branch("eleSumPt04Ele",            &myEleSumPt04Ele,   "eleSumPt04Ele/F");  
-  myTree->Branch("eleLikelihoodEle",         &myEleLikelihoodEle,         "eleLikelihoodEle/F");  
+  myTree->Branch("eleIdLikelihoodEle",         &myEleLikelihoodEle,         "eleIdLikelihoodEle/F");  
   myTree->Branch("eleFisherEle",             &myEleFisherEle,             "eleFisherEle/F");  
 }
 

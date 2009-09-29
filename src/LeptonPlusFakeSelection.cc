@@ -15,6 +15,8 @@
 
 #include <TTree.h>
 
+using namespace bits;
+
 LeptonPlusFakeSelection::LeptonPlusFakeSelection(TTree *tree) 
   : HiggsBase(tree) {
 
@@ -146,12 +148,12 @@ void LeptonPlusFakeSelection::Loop() {
       int L2 = Leptons.second;
       bool eleID1 = isEleID(L1);
       bool eleID2 = isEleID(L2);
-      float TrackerPtSum1 = eleSumPtPreselectionEle[L1] - getSecondEleTkPt(L1,L2,0.2);
-      float TrackerPtSum2 = eleSumPtPreselectionEle[L2] - getSecondEleTkPt(L2,L1,0.2);
-      float HcalPtSum1 = eleSumHadEt04Ele[L1];
-      float HcalPtSum2 = eleSumHadEt04Ele[L2];
-      float EcalPtSum1 = eleSumEmEt04Ele[L1] - getSecondEleEmEt(L1,L2,0.4);
-      float EcalPtSum2 = eleSumEmEt04Ele[L2] - getSecondEleEmEt(L2,L1,0.4);
+      float TrackerPtSum1 = dr04TkSumPtEle[L1] - getSecondEleTkPt(L1,L2,0.2);
+      float TrackerPtSum2 = dr04TkSumPtEle[L2] - getSecondEleTkPt(L2,L1,0.2);
+      float HcalPtSum1 = dr04HcalTowerSumEtEle[L1];
+      float HcalPtSum2 = dr04HcalTowerSumEtEle[L2];
+      float EcalPtSum1 = dr04EcalRecHitSumEtEle[L1] - getSecondEleEmEt(L1,L2,0.4);
+      float EcalPtSum2 = dr04EcalRecHitSumEtEle[L2] - getSecondEleEmEt(L2,L1,0.4);
       if ( eleID1 && eleID2 && 
 	   TrackerPtSum1 < 0.065 && TrackerPtSum2 < 0.065 &&
 	   HcalPtSum1 < 0.1 && HcalPtSum2 < 0.1 &&
@@ -207,15 +209,15 @@ void LeptonPlusFakeSelection::Loop() {
 
     // tracker isolation for electrons
     float theEleTrackerPtSum = 0.;
-    if ( m_theL1 > -1 ) theEleTrackerPtSum = eleSumPtPreselectionEle[m_theL1];
+    if ( m_theL1 > -1 ) theEleTrackerPtSum = dr04TkSumPtEle[m_theL1];
 
     // hcal isolation for electrons
     float theEleHcalPtSum = 0.;
-    if ( m_theL1 > -1 ) theEleHcalPtSum = eleSumHadEt04Ele[m_theL1];
+    if ( m_theL1 > -1 ) theEleHcalPtSum = dr04HcalTowerSumEtEle[m_theL1];
 
     // ecal isolation for electrons
     float theEleEcalPtSum = 0.;
-    if ( m_theL1 > -1 ) theEleEcalPtSum = eleSumEmEt04Ele[m_theL1];
+    if ( m_theL1 > -1 ) theEleEcalPtSum = dr04EcalRecHitSumEtEle[m_theL1];
 
     // jet veto: method gives true if good jet is found (L1 and Fake are excluded)
     bool passedJetVeto = !goodJetFound();
@@ -393,22 +395,24 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
 
 bool LeptonPlusFakeSelection::isEleID(int eleIndex) {
 
+  Utils anaUtils;
+
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
-  EgammaCutBasedID.SetHOverE( eleHoEEle[eleIndex] );
+  EgammaCutBasedID.SetHOverE( hOverEEle[eleIndex] );
   EgammaCutBasedID.SetS9S25( s9s25Ele[eleIndex] );
-  EgammaCutBasedID.SetDEta( eleDeltaEtaAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiIn( eleDeltaPhiAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiOut( eleDeltaPhiAtCaloEle[eleIndex] );
-  EgammaCutBasedID.SetInvEminusInvP( 1./eleCaloCorrEEle[eleIndex]-1./eleTrackerPEle[eleIndex] );
-  EgammaCutBasedID.SetBremFraction( fabs(eleTrackerPEle[eleIndex]-pTrkAtOuter.Mag())/eleTrackerPEle[eleIndex] );
+  EgammaCutBasedID.SetDEta( deltaEtaAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiIn( deltaPhiAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiOut( deltaPhiAtCaloEle[eleIndex] );
+  EgammaCutBasedID.SetInvEminusInvP( 1./ecalEle[eleIndex]-1./momentumEle[eleIndex] );
+  EgammaCutBasedID.SetBremFraction( fabs(momentumEle[eleIndex]-pTrkAtOuter.Mag())/momentumEle[eleIndex] );
   EgammaCutBasedID.SetSigmaEtaEta( sqrt(covEtaEtaEle[eleIndex]) );
   EgammaCutBasedID.SetSigmaPhiPhi( sqrt(covPhiPhiEle[eleIndex]) );
-  EgammaCutBasedID.SetEOverPout( eleCorrEoPoutEle[eleIndex] );
-  EgammaCutBasedID.SetEOverPin( eleCorrEoPEle[eleIndex] );
-  EgammaCutBasedID.SetElectronClass ( eleClassEle[eleIndex] );
-  EgammaCutBasedID.SetEgammaCutBasedID ( eleIdCutBasedEle[eleIndex] );
-  EgammaCutBasedID.SetLikelihood( eleLikelihoodEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPout( eSeedOverPoutEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPin( eSuperClusterOverPEle[eleIndex] );
+  EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
+  EgammaCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
+  EgammaCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
 
   bool isIdentified = EgammaCutBasedID.output();
 
@@ -486,7 +490,7 @@ float LeptonPlusFakeSelection::getSecondEleTkPt(int first, int second, float del
   float dr = firstEle.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleTrackPt = momentumEle[second] * fabs( sin(thetaEle[second]) );
   }
 
   return secondEleTrackPt;
@@ -502,7 +506,7 @@ float LeptonPlusFakeSelection::getSecondEleEmEt(int first, int second, float del
   float dr = firstEle.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleEmEt = eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleEmEt = energyEle[second] * fabs( sin(thetaEle[second]) );
   }
   
   return secondEleEmEt;

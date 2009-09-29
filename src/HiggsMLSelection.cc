@@ -16,6 +16,8 @@
 
 #include <TTree.h>
 
+using namespace bits;
+
 HiggsMLSelection::HiggsMLSelection(TTree *tree) 
   : HiggsBase(tree) {
 
@@ -437,7 +439,6 @@ void HiggsMLSelection::Loop() {
     CommonHiggsPreselection.SetMllEE(m_mll[ee]);
     CommonHiggsPreselection.SetMllEM(m_mll[em]);
     CommonHiggsPreselection.SetMllMM(m_mll[mm]);
-    CommonHiggsPreselection.SetCommonPres(evtPresel);
 
     // did we pass preselections?
     bool isPreselections = CommonHiggsPreselection.output();    
@@ -454,8 +455,8 @@ void HiggsMLSelection::Loop() {
     // custom electron ID cuts (tight symmetric for ee, tight for emu)
     // if (theElectron > -1) theElectronID = isEleID(theElectron);
     // if (thePositron > -1) thePositronID = isEleID(thePositron);
-    if (theElectron > -1) theElectronID = eleIdStandardCutsTightEle[theElectron];
-    if (thePositron > -1) thePositronID = eleIdStandardCutsTightEle[thePositron];
+    if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
+    if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
 
     float theHardEleLhID = 1.0;
     float theSlowEleLhID = 1.0;
@@ -472,13 +473,13 @@ void HiggsMLSelection::Loop() {
         theSlowest = theElectron;
       }
       // don't look at names
-      theHardEleLhID = eleLikelihoodEle[theHardest];
-      theSlowEleLhID = eleLikelihoodEle[theSlowest];
+      theHardEleLhID = eleIdLikelihoodEle[theHardest];
+      theSlowEleLhID = eleIdLikelihoodEle[theSlowest];
 
       // ----------------------
       /*
       // to apply likelihood eleID
-      if ( eleLikelihoodEle[theHardest] > 0.18 && eleLikelihoodEle[theSlowest]> 0.18 ) {
+      if ( eleIdLikelihoodEle[theHardest] > 0.18 && eleIdLikelihoodEle[theSlowest]> 0.18 ) {
       theElectronID = true; 
       thePositronID = true; 
       }
@@ -510,63 +511,63 @@ void HiggsMLSelection::Loop() {
     float theEleTrackerPtSum = 0.;
     float thePosTrackerPtSum = 0.;
     if (theElectron > -1 && thePositron > -1) { 
-      if (etEle[theElectron]<25)  theEleTrackerPtSum = (eleSumPt04Ele[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4))/etEle[theElectron];
-      if (etEle[thePositron]<25)  thePosTrackerPtSum = (eleSumPt04Ele[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4))/etEle[thePositron];
-      if (etEle[theElectron]>=25) theEleTrackerPtSum =  eleSumPt04Ele[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4);
-      if (etEle[thePositron]>=25) thePosTrackerPtSum =  eleSumPt04Ele[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4);      
+      if (etEle[theElectron]<25)  theEleTrackerPtSum = (dr04TkSumPtEle[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4))/etEle[theElectron];
+      if (etEle[thePositron]<25)  thePosTrackerPtSum = (dr04TkSumPtEle[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4))/etEle[thePositron];
+      if (etEle[theElectron]>=25) theEleTrackerPtSum =  dr04TkSumPtEle[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4);
+      if (etEle[thePositron]>=25) thePosTrackerPtSum =  dr04TkSumPtEle[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4);      
     }
     if (theElectron > -1 && thePositron < 0) {
-      if (etEle[theElectron]<25)  theEleTrackerPtSum = eleSumPt04Ele[theElectron];
-      if (etEle[theElectron]>=25) theEleTrackerPtSum = eleSumPt04Ele[theElectron]*etEle[theElectron];      
+      if (etEle[theElectron]<25)  theEleTrackerPtSum = dr04TkSumPtEle[theElectron];
+      if (etEle[theElectron]>=25) theEleTrackerPtSum = dr04TkSumPtEle[theElectron]*etEle[theElectron];      
     }
     if (thePositron > -1 && theElectron < 0) {
-      if (etEle[thePositron]<25)  thePosTrackerPtSum = eleSumPt04Ele[thePositron];
-      if (etEle[thePositron]>=25) thePosTrackerPtSum = eleSumPt04Ele[thePositron]*etEle[thePositron];
+      if (etEle[thePositron]<25)  thePosTrackerPtSum = dr04TkSumPtEle[thePositron];
+      if (etEle[thePositron]>=25) thePosTrackerPtSum = dr04TkSumPtEle[thePositron]*etEle[thePositron];
     }
 
     // hcal isolation for electrons
     float theEleHcalPtSum = 0.;
     float thePosHcalPtSum = 0.;
     if (theElectron > -1) { 
-      if (etEle[theElectron]<25)  theEleHcalPtSum = eleSumHadEt04Ele[theElectron];
-      if (etEle[theElectron]>=25) theEleHcalPtSum = eleSumHadEt04Ele[theElectron]*etEle[theElectron];
+      if (etEle[theElectron]<25)  theEleHcalPtSum = dr04HcalTowerSumEtEle[theElectron];
+      if (etEle[theElectron]>=25) theEleHcalPtSum = dr04HcalTowerSumEtEle[theElectron]*etEle[theElectron];
     }
     if (thePositron > -1) {
-      if (etEle[thePositron]<25)  thePosHcalPtSum = eleSumHadEt04Ele[thePositron];
-      if (etEle[thePositron]>=25) thePosHcalPtSum = eleSumHadEt04Ele[thePositron]*etEle[thePositron];
+      if (etEle[thePositron]<25)  thePosHcalPtSum = dr04HcalTowerSumEtEle[thePositron];
+      if (etEle[thePositron]>=25) thePosHcalPtSum = dr04HcalTowerSumEtEle[thePositron]*etEle[thePositron];
     }
 
     // ecal isolation for electrons
     float theEleEcalPtSum = 0.;
     float thePosEcalPtSum = 0.;
     if (theElectron > -1) {
-      if(etEle[theElectron]<25)  theEleEcalPtSum = eleIsoFromDepsEcalEle[theElectron]/etEle[theElectron]; 
-      if(etEle[theElectron]>=25) theEleEcalPtSum = eleIsoFromDepsEcalEle[theElectron]; 
+      if(etEle[theElectron]<25)  theEleEcalPtSum = dr04EcalRecHitSumEtEle[theElectron]/etEle[theElectron]; 
+      if(etEle[theElectron]>=25) theEleEcalPtSum = dr04EcalRecHitSumEtEle[theElectron]; 
     }
     if (thePositron > -1) {
-      if(etEle[thePositron]<25)  theEleEcalPtSum = eleIsoFromDepsEcalEle[thePositron]/etEle[thePositron];
-      if(etEle[thePositron]>=25) theEleEcalPtSum = eleIsoFromDepsEcalEle[thePositron]; 
+      if(etEle[thePositron]<25)  theEleEcalPtSum = dr04EcalRecHitSumEtEle[thePositron]/etEle[thePositron];
+      if(etEle[thePositron]>=25) theEleEcalPtSum = dr04EcalRecHitSumEtEle[thePositron]; 
     }
 
     // global isolation
     float theEleGlobalSum = 0.;
     float thePosGlobalSum = 0.;
     if (theElectron > -1 && thePositron > -1) { 
-      float eleTrackerForGlobal = eleSumPt04Ele[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4);
-      float posTrackerForGlobal = eleSumPt04Ele[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4);      
-      float eleEcalForGlobal    = eleIsoFromDepsEcalEle[theElectron]; 
-      float posEcalForGlobal    = eleIsoFromDepsEcalEle[thePositron]; 
+      float eleTrackerForGlobal = dr04TkSumPtEle[theElectron]*etEle[theElectron] - getSecondEleTkPt(m_p4ElectronMinus->Vect(),thePositron,0.4);
+      float posTrackerForGlobal = dr04TkSumPtEle[thePositron]*etEle[thePositron] - getSecondEleTkPt(m_p4ElectronPlus->Vect(),theElectron,0.4);      
+      float eleEcalForGlobal    = dr04EcalRecHitSumEtEle[theElectron]; 
+      float posEcalForGlobal    = dr04EcalRecHitSumEtEle[thePositron]; 
       theEleGlobalSum = eleTrackerForGlobal + eleEcalForGlobal;
       thePosGlobalSum = posTrackerForGlobal + posEcalForGlobal;
     }
     if (theElectron > -1 && thePositron < 0) {
-      float eleTrackerForGlobal = eleSumPt04Ele[theElectron]*etEle[theElectron];      
-      float eleEcalForGlobal    = eleIsoFromDepsEcalEle[theElectron]; 
+      float eleTrackerForGlobal = dr04TkSumPtEle[theElectron]*etEle[theElectron];      
+      float eleEcalForGlobal    = dr04EcalRecHitSumEtEle[theElectron]; 
       theEleGlobalSum = eleTrackerForGlobal + eleEcalForGlobal;
     }
     if (thePositron > -1 && theElectron < 0) {
-      float posTrackerForGlobal = eleSumPt04Ele[thePositron]*etEle[thePositron];
-      float posEcalForGlobal    = eleIsoFromDepsEcalEle[thePositron]; 
+      float posTrackerForGlobal = dr04TkSumPtEle[thePositron]*etEle[thePositron];
+      float posEcalForGlobal    = dr04EcalRecHitSumEtEle[thePositron]; 
       thePosGlobalSum = posTrackerForGlobal + posEcalForGlobal;
     }
     
@@ -764,7 +765,7 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = theEleHcalPtSum;
 	theEleEcalPtSumEM = theEleEcalPtSum;
 	theEleGlobalSumEM = theEleGlobalSum;
-        theEleLikelihoodEM = eleLikelihoodEle[theElectron];
+        theEleLikelihoodEM = eleIdLikelihoodEle[theElectron];
         theMuonGlobalSumEM = theMuonPlusGlobalSum;
       }
       if(thePositron>-1 && theMuonMinus>-1 ) {
@@ -775,7 +776,7 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = thePosHcalPtSum;
 	theEleEcalPtSumEM = thePosEcalPtSum;
 	theEleGlobalSumEM = thePosGlobalSum;
-        theEleLikelihoodEM = eleLikelihoodEle[thePositron];
+        theEleLikelihoodEM = eleIdLikelihoodEle[thePositron];
         theMuonGlobalSumEM = theMuonMinusGlobalSum;
       }
 
@@ -939,22 +940,24 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair() {
 
 bool HiggsMLSelection::isEleID(int eleIndex) {
 
+  Utils anaUtils;
+
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
-  EgammaCutBasedID.SetHOverE( eleHoEEle[eleIndex] );
+  EgammaCutBasedID.SetHOverE( hOverEEle[eleIndex] );
   EgammaCutBasedID.SetS9S25( s9s25Ele[eleIndex] );
-  EgammaCutBasedID.SetDEta( eleDeltaEtaAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiIn( eleDeltaPhiAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiOut( eleDeltaPhiAtCaloEle[eleIndex] );
-  EgammaCutBasedID.SetInvEminusInvP( 1./eleCaloCorrEEle[eleIndex]-1./eleTrackerPEle[eleIndex] );
-  EgammaCutBasedID.SetBremFraction( fabs(eleTrackerPEle[eleIndex]-pTrkAtOuter.Mag())/eleTrackerPEle[eleIndex] );
+  EgammaCutBasedID.SetDEta( deltaEtaAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiIn( deltaPhiAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiOut( deltaPhiAtCaloEle[eleIndex] );
+  EgammaCutBasedID.SetInvEminusInvP( 1./ecalEle[eleIndex]-1./momentumEle[eleIndex] );
+  EgammaCutBasedID.SetBremFraction( fabs(momentumEle[eleIndex]-pTrkAtOuter.Mag())/momentumEle[eleIndex] );
   EgammaCutBasedID.SetSigmaEtaEta( sqrt(covEtaEtaEle[eleIndex]) );
   EgammaCutBasedID.SetSigmaPhiPhi( sqrt(covPhiPhiEle[eleIndex]) );
-  EgammaCutBasedID.SetEOverPout( eleCorrEoPoutEle[eleIndex] );
-  EgammaCutBasedID.SetEOverPin( eleCorrEoPEle[eleIndex] );
-  EgammaCutBasedID.SetElectronClass ( eleClassEle[eleIndex] );
-  EgammaCutBasedID.SetEgammaCutBasedID ( eleIdCutBasedEle[eleIndex] );
-  EgammaCutBasedID.SetLikelihood( eleLikelihoodEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPout( eSeedOverPoutEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPin( eSuperClusterOverPEle[eleIndex] );
+  EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
+  EgammaCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdLoose) );
+  EgammaCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
 
   bool isIdentified = EgammaCutBasedID.output();
 
@@ -1031,10 +1034,10 @@ void HiggsMLSelection::setPreselKinematics() {
 void HiggsMLSelection::setKinematics( ) {
 
   // electron variables used for ele quality in jet veto 
-  m_HoEElectronMinus     = eleHoEEle[theElectron];
-  m_HoEElectronPlus      = eleHoEEle[thePositron];
-  m_CaloEneElectronMinus = eleCaloCorrEEle[theElectron];
-  m_CaloEneElectronPlus  = eleCaloCorrEEle[thePositron];
+  m_HoEElectronMinus     = hOverEEle[theElectron];
+  m_HoEElectronPlus      = hOverEEle[thePositron];
+  m_CaloEneElectronMinus = ecalEle[theElectron];
+  m_CaloEneElectronPlus  = ecalEle[thePositron];
 
   // compute delta Phi in degrees, di-lepton invariant mass, transverse mass
   TVector3 dilepPt;
@@ -1251,7 +1254,7 @@ float HiggsMLSelection::getSecondEleTkPt(TVector3 firstLepton, int second, float
   float dr = firstLepton.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleTrackPt = momentumEle[second] * fabs( sin(thetaEle[second]) );
   }
 
   return secondEleTrackPt;
@@ -1278,9 +1281,9 @@ float HiggsMLSelection::getEcalPtSum(int index) {
   float ptsum = 0.0;
 
   // in barrel, use isolation by SC footprint removal
-  if( eleClassEle[index] < 100 ) ptsum = eleScBasedEcalSum04Ele[index];
+  if( classificationEle[index] < 100 ) ptsum = scBasedEcalSum04Ele[index];
   // in endcaps, use jurassic isolation
-  else ptsum = eleIsoFromDepsEcalEle[index];
+  else ptsum = dr04EcalRecHitSumEtEle[index];
 
   return ptsum;
 
@@ -1415,7 +1418,7 @@ std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
   variables.push_back(DxyAverage);
   variables.push_back(DszAverage);
   variables.push_back(trackCountingHighEffBJetTagsSisConeCorrJet[jetIndex]);
-  variables.push_back(impactParameterMVABJetTagsSisConeCorrJet[jetIndex]);
+  variables.push_back(jetProbabilityBJetTagsSisConeCorrJet[jetIndex]);
   variables.push_back(combinedSecondaryVertexMVABJetTagsSisConeCorrJet[jetIndex]);
   variables.push_back(jetMass);
   variables.push_back(nTracks);

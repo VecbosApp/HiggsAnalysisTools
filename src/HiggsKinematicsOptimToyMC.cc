@@ -320,10 +320,10 @@ void HiggsKinematicsOptimToyMC::setKinematics() {
   _p4ElectronPlus  -> SetXYZT(pxEle[thePositron],pyEle[thePositron],pzEle[thePositron],energyEle[thePositron]);      
   _mll = (*_p4ElectronMinus + *_p4ElectronPlus).M();
   _deltaPhi = fabs(180./TMath::Pi() * _p4ElectronMinus->Vect().DeltaPhi(_p4ElectronPlus->Vect()));
-  _HoEElectronMinus     = eleHoEEle[theElectron];
-  _HoEElectronPlus      = eleHoEEle[thePositron];
-  _CaloEneElectronMinus = eleCaloCorrEEle[theElectron];
-  _CaloEneElectronPlus  = eleCaloCorrEEle[thePositron];
+  _HoEElectronMinus     = hOverEEle[theElectron];
+  _HoEElectronPlus      = hOverEEle[thePositron];
+  _CaloEneElectronMinus = ecalEle[theElectron];
+  _CaloEneElectronPlus  = ecalEle[thePositron];
 }
 
 void HiggsKinematicsOptimToyMC::resetKinematics() {
@@ -372,20 +372,20 @@ bool HiggsKinematicsOptimToyMC::isEleID(int eleIndex) {
 
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
-  EgammaCutBasedID.SetHOverE( eleHoEEle[eleIndex] );
+  EgammaCutBasedID.SetHOverE( hOverEEle[eleIndex] );
   EgammaCutBasedID.SetS9S25( s9s25Ele[eleIndex] );
-  EgammaCutBasedID.SetDEta( eleDeltaEtaAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiIn( eleDeltaPhiAtVtxEle[eleIndex] );
-  EgammaCutBasedID.SetDPhiOut( eleDeltaPhiAtCaloEle[eleIndex] );
-  EgammaCutBasedID.SetInvEminusInvP( 1./eleCaloCorrEEle[eleIndex]-1./eleTrackerPEle[eleIndex] );
-  EgammaCutBasedID.SetBremFraction( fabs(eleTrackerPEle[eleIndex]-pTrkAtOuter.Mag())/eleTrackerPEle[eleIndex] );
+  EgammaCutBasedID.SetDEta( deltaEtaAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiIn( deltaPhiAtVtxEle[eleIndex] );
+  EgammaCutBasedID.SetDPhiOut( deltaPhiAtCaloEle[eleIndex] );
+  EgammaCutBasedID.SetInvEminusInvP( 1./ecalEle[eleIndex]-1./momentumEle[eleIndex] );
+  EgammaCutBasedID.SetBremFraction( fabs(momentumEle[eleIndex]-pTrkAtOuter.Mag())/momentumEle[eleIndex] );
   EgammaCutBasedID.SetSigmaEtaEta( sqrt(covEtaEtaEle[eleIndex]) );
   EgammaCutBasedID.SetSigmaPhiPhi( sqrt(covPhiPhiEle[eleIndex]) );
-  EgammaCutBasedID.SetEOverPout( eleCorrEoPoutEle[eleIndex] );
-  EgammaCutBasedID.SetEOverPin( eleCorrEoPEle[eleIndex] );
-  EgammaCutBasedID.SetElectronClass ( eleClassEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPout( eSeedOverPoutEle[eleIndex] );
+  EgammaCutBasedID.SetEOverPin( eSuperClusterOverPEle[eleIndex] );
+  EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
   EgammaCutBasedID.SetEgammaCutBasedID ( eleIdCutBasedEle[eleIndex] );
-  EgammaCutBasedID.SetLikelihood( eleLikelihoodEle[eleIndex] );
+  EgammaCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
 
   bool isIdentified = EgammaCutBasedID.output();
 
@@ -401,7 +401,7 @@ float HiggsKinematicsOptimToyMC::getSecondEleTkPt(int first, int second, float d
   float dr = firstEle.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleTrackPt = eleTrackerPEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleTrackPt = momentumEle[second] * fabs( sin(thetaEle[second]) );
   }
 
   return secondEleTrackPt;
@@ -417,7 +417,7 @@ float HiggsKinematicsOptimToyMC::getSecondEleEmEt(int first, int second, float d
   float dr = firstEle.DeltaR(secondEle);
 
   if( dr < deltaR ) { 
-    secondEleEmEt = eleFullCorrEEle[second] * fabs( sin(thetaEle[second]) );
+    secondEleEmEt = energyEle[second] * fabs( sin(thetaEle[second]) );
   }
   
   return secondEleEmEt;

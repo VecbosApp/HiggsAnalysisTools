@@ -311,46 +311,46 @@ void ZTandProbe::Loop() {
 	// to determine pdfs for eleID
 	bool isEndcap = true;
 	if (fabs(etaEle[bestProbe]) < 1.476)  { isEndcap = false; }
-	int probeClass = eleClassEle[bestProbe];
+	int probeClass = classificationEle[bestProbe];
 	
 	// all probe candidates without eleID requirements
 	if(probeClass == 0 || probeClass == 100) {
-	  dPhiVtx0[isEndcap]  -> Fill(eleDeltaPhiAtVtxEle[bestProbe]);
+	  dPhiVtx0[isEndcap]  -> Fill(deltaPhiAtVtxEle[bestProbe]);
 	  dEtaCalo0[isEndcap] -> Fill(eleDeltaEtaAtCaloEle[bestProbe]);
-	  dEtaVtx0[isEndcap] -> Fill(eleDeltaEtaAtVtxEle[bestProbe]);
-	  EoPout0[isEndcap]   -> Fill(eleCorrEoPoutEle[bestProbe]);
-	  HoE0[isEndcap]      -> Fill(eleHoEEle[bestProbe]);
+	  dEtaVtx0[isEndcap] -> Fill(deltaEtaAtVtxEle[bestProbe]);
+	  EoPout0[isEndcap]   -> Fill(eSeedOverPoutEle[bestProbe]);
+	  HoE0[isEndcap]      -> Fill(hOverEEle[bestProbe]);
 	  if(isEndcap==0)
 	    shapeFisher0[isEndcap]->Fill(42.0238-3.38943*s9s25Ele[bestProbe]-794.092*sqrt(covEtaEtaEle[bestProbe])-15.3449*latEle[bestProbe]-31.1032*a20Ele[bestProbe]);
 	  if(isEndcap==1)
 	    shapeFisher0[isEndcap]->Fill(27.2967+2.97453*s9s25Ele[bestProbe]-169.219*sqrt(covEtaEtaEle[bestProbe])-17.0445*latEle[bestProbe]-24.8542*a20Ele[bestProbe]);
 	}
 	else if(probeClass == 10 || probeClass == 110) {
-	  dPhiVtx1[isEndcap]  -> Fill(eleDeltaPhiAtVtxEle[bestProbe]);
+	  dPhiVtx1[isEndcap]  -> Fill(deltaPhiAtVtxEle[bestProbe]);
 	  dEtaCalo1[isEndcap] -> Fill(eleDeltaEtaAtCaloEle[bestProbe]);
-	  dEtaVtx1[isEndcap] -> Fill(eleDeltaEtaAtVtxEle[bestProbe]);
-	  EoPout1[isEndcap]   -> Fill(eleCorrEoPoutEle[bestProbe]);
+	  dEtaVtx1[isEndcap] -> Fill(deltaEtaAtVtxEle[bestProbe]);
+	  EoPout1[isEndcap]   -> Fill(eSeedOverPoutEle[bestProbe]);
 	  if(isEndcap==0)
 	    shapeFisher1[isEndcap]->Fill(42.0238-3.38943*s9s25Ele[bestProbe]-794.092*sqrt(covEtaEtaEle[bestProbe])-15.3449*latEle[bestProbe]-31.1032*a20Ele[bestProbe]);
 	  if(isEndcap==1)
 	    shapeFisher1[isEndcap]->Fill(27.2967+2.97453*s9s25Ele[bestProbe]-169.219*sqrt(covEtaEtaEle[bestProbe])-17.0445*latEle[bestProbe]-24.8542*a20Ele[bestProbe]);
 	}
 	else if(probeClass == 20 || probeClass == 120) {
-	  dPhiVtx2[isEndcap]  -> Fill(eleDeltaPhiAtVtxEle[bestProbe]);
+	  dPhiVtx2[isEndcap]  -> Fill(deltaPhiAtVtxEle[bestProbe]);
 	  dEtaCalo2[isEndcap] -> Fill(eleDeltaEtaAtCaloEle[bestProbe]);
-	  dEtaVtx2[isEndcap] -> Fill(eleDeltaEtaAtVtxEle[bestProbe]);
-  	  EoPout2[isEndcap]   -> Fill(eleCorrEoPoutEle[bestProbe]);
+	  dEtaVtx2[isEndcap] -> Fill(deltaEtaAtVtxEle[bestProbe]);
+  	  EoPout2[isEndcap]   -> Fill(eSeedOverPoutEle[bestProbe]);
 	  if(isEndcap==0)
 	    shapeFisher2[isEndcap]->Fill(42.0238-3.38943*s9s25Ele[bestProbe]-794.092*sqrt(covEtaEtaEle[bestProbe])-15.3449*latEle[bestProbe]-31.1032*a20Ele[bestProbe]);
 	  if(isEndcap==1)
 	    shapeFisher2[isEndcap]->Fill(27.2967+2.97453*s9s25Ele[bestProbe]-169.219*sqrt(covEtaEtaEle[bestProbe])-17.0445*latEle[bestProbe]-24.8542*a20Ele[bestProbe]);
 	}
 	else if(probeClass == 30 || probeClass == 31 || probeClass == 32 || probeClass == 33 || probeClass == 34 || probeClass == 130 || probeClass == 131 || probeClass == 132 || probeClass == 133 || probeClass == 134) { 
-	  dPhiVtx3[isEndcap]  -> Fill(eleDeltaPhiAtVtxEle[bestProbe]);
+	  dPhiVtx3[isEndcap]  -> Fill(deltaPhiAtVtxEle[bestProbe]);
 	  dEtaCalo3[isEndcap] -> Fill(eleDeltaEtaAtCaloEle[bestProbe]);
-	  dEtaVtx3[isEndcap] -> Fill(eleDeltaEtaAtVtxEle[bestProbe]);
-	  EoPout3[isEndcap]   -> Fill(eleCorrEoPoutEle[bestProbe]);
-	  HoE3[isEndcap]      -> Fill(eleHoEEle[bestProbe]);
+	  dEtaVtx3[isEndcap] -> Fill(deltaEtaAtVtxEle[bestProbe]);
+	  EoPout3[isEndcap]   -> Fill(eSeedOverPoutEle[bestProbe]);
+	  HoE3[isEndcap]      -> Fill(hOverEEle[bestProbe]);
 	  if(isEndcap==0)
 	    shapeFisher3[isEndcap]->Fill(42.0238-3.38943*s9s25Ele[bestProbe]-794.092*sqrt(covEtaEtaEle[bestProbe])-15.3449*latEle[bestProbe]-31.1032*a20Ele[bestProbe]);
 	  if(isEndcap==1)
@@ -555,7 +555,7 @@ void ZTandProbe::writeHistos() {
 
 bool ZTandProbe::isProbeEleID(int eleIndex) {
 
-  int GsfClass = eleClassEle[eleIndex];
+  int GsfClass = classificationEle[eleIndex];
   int offset=0;
   if(GsfClass>=100) { GsfClass-=100; offset=4; }
 
@@ -595,7 +595,7 @@ bool ZTandProbe::isProbeEleID(int eleIndex) {
 
   _eleCounter.IncrVar("Probe_electrons");
 
-  if(selection->getSwitch("Probe_hOverE")        && !selection->passCut("Probe_hOverE",eleHoEEle[eleIndex]))             return false;  
+  if(selection->getSwitch("Probe_hOverE")        && !selection->passCut("Probe_hOverE",hOverEEle[eleIndex]))             return false;  
   _eleCounter.IncrVar("Probe_hOverE");
   H_probeHoEOkEta->Fill(etaEle[eleIndex]);
   H_probeHoEOkPt->Fill(etEle[eleIndex]);
@@ -605,20 +605,20 @@ bool ZTandProbe::isProbeEleID(int eleIndex) {
   H_probeS9S25OkEta->Fill(etaEle[eleIndex]);
   H_probeS9S25OkPt->Fill(etEle[eleIndex]);
 
-  if(selection->getSwitch("Probe_deta")          && !selection->passCut("Probe_deta",eleDeltaEtaAtVtxEle[eleIndex]))     return false; 
+  if(selection->getSwitch("Probe_deta")          && !selection->passCut("Probe_deta",deltaEtaAtVtxEle[eleIndex]))     return false; 
   _eleCounter.IncrVar("Probe_deta");
   H_probedEtaOkEta->Fill(etaEle[eleIndex]);
   H_probedEtaOkPt->Fill(etEle[eleIndex]);
 
-  if(selection->getSwitch("Probe_dphiIn")        && !selection->passCut("Probe_dphiIn",eleDeltaPhiAtVtxEle[eleIndex]))   return false; 
+  if(selection->getSwitch("Probe_dphiIn")        && !selection->passCut("Probe_dphiIn",deltaPhiAtVtxEle[eleIndex]))   return false; 
   _eleCounter.IncrVar("Probe_dphiIn");
   H_probedPhiOkEta->Fill(etaEle[eleIndex]);
   H_probedPhiOkPt->Fill(etEle[eleIndex]);
 
-  if(selection->getSwitch("Probe_dphiOut")        && !selection->passCut("Probe_dphiOut",eleDeltaPhiAtCaloEle[eleIndex])) return false; 
+  if(selection->getSwitch("Probe_dphiOut")        && !selection->passCut("Probe_dphiOut",deltaPhiAtCaloEle[eleIndex])) return false; 
   _eleCounter.IncrVar("Probe_dphiOut");
 
-  if(selection->getSwitch("Probe_invEMinusInvP") && !selection->passCut("Probe_invEMinusInvP",1./eleCaloCorrEEle[eleIndex]-1./pTrkAtInner.Mag()))          return false; 
+  if(selection->getSwitch("Probe_invEMinusInvP") && !selection->passCut("Probe_invEMinusInvP",1./ecalEle[eleIndex]-1./pTrkAtInner.Mag()))          return false; 
   _eleCounter.IncrVar("Probe_invEMinusInvP");
 
   if(selection->getSwitch("Probe_bremFraction")  && !selection->passCut("Probe_bremFraction",fabs(pTrkAtInner.Mag()-pTrkAtOuter.Mag())/pTrkAtInner.Mag())) return false; 
@@ -629,19 +629,19 @@ bool ZTandProbe::isProbeEleID(int eleIndex) {
   H_probeCovEtaEtaOkEta->Fill(etaEle[eleIndex]);
   H_probeCovEtaEtaOkPt->Fill(etEle[eleIndex]);
 
-  if(selection->getSwitch("Probe_eOverPout")     && !selection->passCut("Probe_eOverPout",eleCorrEoPoutEle[eleIndex]))  return false; 
+  if(selection->getSwitch("Probe_eOverPout")     && !selection->passCut("Probe_eOverPout",eSeedOverPoutEle[eleIndex]))  return false; 
   _eleCounter.IncrVar("Probe_eOverPout");
   H_probeEoPoutOkEta->Fill(etaEle[eleIndex]);
   H_probeEoPoutOkPt->Fill(etEle[eleIndex]);
 
-  if(selection->getSwitch("Probe_eOverPin")      && !selection->passCut("Probe_eOverPin",eleCorrEoPEle[eleIndex]))      return false; 
+  if(selection->getSwitch("Probe_eOverPin")      && !selection->passCut("Probe_eOverPin",eSuperClusterOverPEle[eleIndex]))      return false; 
   _eleCounter.IncrVar("Probe_eOverPin");
 
   if(selection->getSwitch("Probe_Fisher")        && !selection->passCut("Probe_Fisher",Fisher(eleIndex)))               return false; 
   _eleCounter.IncrVar("Probe_Fisher");
 
 
-  if(selection->getSwitch("Probe_Likelihood")    && !selection->passCut("Probe_Likelihood",eleLikelihoodEle[eleIndex])) return false; 
+  if(selection->getSwitch("Probe_Likelihood")    && !selection->passCut("Probe_Likelihood",eleIdLikelihoodEle[eleIndex])) return false; 
   _eleCounter.IncrVar("Probe_Likelihood");
 
   _eleCounter.IncrVar("Probe_finalEleID");
@@ -652,7 +652,7 @@ bool ZTandProbe::isProbeEleID(int eleIndex) {
 
 bool ZTandProbe::isTagEleID(int eleIndex) {
 
-  int GsfClass = eleClassEle[eleIndex];
+  int GsfClass = classificationEle[eleIndex];
   int offset=0;
   if(GsfClass>=100) { GsfClass-=100; offset=4; }
 
@@ -672,29 +672,29 @@ bool ZTandProbe::isTagEleID(int eleIndex) {
 
   _eleCounter.IncrVar("Tag_electrons");
 
-  if(selection->getSwitch("Tag_hOverE")        && !selection->passCut("Tag_hOverE",eleHoEEle[eleIndex]))             return false;  
+  if(selection->getSwitch("Tag_hOverE")        && !selection->passCut("Tag_hOverE",hOverEEle[eleIndex]))             return false;  
   _eleCounter.IncrVar("Tag_hOverE");
   if(selection->getSwitch("Tag_s9s25")         && !selection->passCut("Tag_s9s25",s9s25Ele[eleIndex]))               return false; 
   _eleCounter.IncrVar("Tag_s9s25");
-  if(selection->getSwitch("Tag_deta")          && !selection->passCut("Tag_deta",eleDeltaEtaAtVtxEle[eleIndex]))     return false; 
+  if(selection->getSwitch("Tag_deta")          && !selection->passCut("Tag_deta",deltaEtaAtVtxEle[eleIndex]))     return false; 
   _eleCounter.IncrVar("Tag_deta");
-  if(selection->getSwitch("Tag_dphiIn")        && !selection->passCut("Tag_dphiIn",eleDeltaPhiAtVtxEle[eleIndex]))   return false; 
+  if(selection->getSwitch("Tag_dphiIn")        && !selection->passCut("Tag_dphiIn",deltaPhiAtVtxEle[eleIndex]))   return false; 
   _eleCounter.IncrVar("Tag_dphiIn");
-  if(selection->getSwitch("Tag_dphiOut")       && !selection->passCut("Tag_dphiOut",eleDeltaPhiAtCaloEle[eleIndex])) return false; 
+  if(selection->getSwitch("Tag_dphiOut")       && !selection->passCut("Tag_dphiOut",deltaPhiAtCaloEle[eleIndex])) return false; 
   _eleCounter.IncrVar("Tag_dphiOut");
-  if(selection->getSwitch("Tag_invEMinusInvP") && !selection->passCut("Tag_invEMinusInvP",1./eleCaloCorrEEle[eleIndex]-1./pTrkAtInner.Mag()))          return false; 
+  if(selection->getSwitch("Tag_invEMinusInvP") && !selection->passCut("Tag_invEMinusInvP",1./ecalEle[eleIndex]-1./pTrkAtInner.Mag()))          return false; 
   _eleCounter.IncrVar("Tag_invEMinusInvP");
   if(selection->getSwitch("Tag_bremFraction")  && !selection->passCut("Tag_bremFraction",fabs(pTrkAtInner.Mag()-pTrkAtOuter.Mag())/pTrkAtInner.Mag())) return false; 
   _eleCounter.IncrVar("Tag_bremFraction");
   if(selection->getSwitch("Tag_covEtaEta")     && !selection->passCut("Tag_covEtaEta",covEtaEtaEle[eleIndex]))      return false; 
   _eleCounter.IncrVar("Tag_covEtaEta");
-  if(selection->getSwitch("Tag_eOverPout")     && !selection->passCut("Tag_eOverPout",eleCorrEoPoutEle[eleIndex]))  return false; 
+  if(selection->getSwitch("Tag_eOverPout")     && !selection->passCut("Tag_eOverPout",eSeedOverPoutEle[eleIndex]))  return false; 
   _eleCounter.IncrVar("Tag_eOverPout");
-  if(selection->getSwitch("Tag_eOverPin")      && !selection->passCut("Tag_eOverPin",eleCorrEoPEle[eleIndex]))      return false; 
+  if(selection->getSwitch("Tag_eOverPin")      && !selection->passCut("Tag_eOverPin",eSuperClusterOverPEle[eleIndex]))      return false; 
   _eleCounter.IncrVar("Tag_eOverPin");
   if(selection->getSwitch("Tag_Fisher")        && !selection->passCut("Tag_Fisher",Fisher(eleIndex)))               return false; 
   _eleCounter.IncrVar("Tag_Fisher");
-  if(selection->getSwitch("Tag_Likelihood")    && !selection->passCut("Tag_Likelihood",eleLikelihoodEle[eleIndex])) return false; 
+  if(selection->getSwitch("Tag_Likelihood")    && !selection->passCut("Tag_Likelihood",eleIdLikelihoodEle[eleIndex])) return false; 
   _eleCounter.IncrVar("Tag_Likelihood");
 
   _eleCounter.IncrVar("Tag_finalEleID");
@@ -714,7 +714,7 @@ void ZTandProbe::setKinematics(int theTag, int theProbe) {
 
 float ZTandProbe::Fisher(int eleIndex) {
   float fisher;
-  if(eleClassEle[eleIndex]<100)
+  if(classificationEle[eleIndex]<100)
     fisher = 42.0238-3.38943*s9s25Ele[eleIndex]-794.092*sqrt(covEtaEtaEle[eleIndex])-15.3449*latEle[eleIndex]-31.1032*a20Ele[eleIndex];
   else
     fisher = 27.2967+2.97453*s9s25Ele[eleIndex]-169.219*sqrt(covEtaEtaEle[eleIndex])-17.0445*latEle[eleIndex]-24.8542*a20Ele[eleIndex];

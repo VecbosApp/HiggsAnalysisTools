@@ -228,7 +228,7 @@ void WewkSelection::Loop() {
     _counter.IncrVar("eleIso",weight);
 
     bool isGolden = false;
-    if((eleClassEle[theEle]==0) || (eleClassEle[theEle]==100)) isGolden = true; 
+    if((classificationEle[theEle]==0) || (classificationEle[theEle]==100)) isGolden = true; 
     if(_selection->getSwitch("golden") && !isGolden) continue;   
     _counter.IncrVar("eleGolden",weight);
 
@@ -241,7 +241,7 @@ void WewkSelection::Loop() {
     float met =etMet[0];
     float metx=pxMet[0];
     float mety=pyMet[0];
-    myOutTree -> fillEleId(eleSumPt04Ele[theEle], eleTipEle[theEle], pzEle[theEle], covEtaEtaEle[theEle], eleDeltaEtaAtVtxEle[theEle], eleDeltaPhiAtVtxEle[theEle], eleCorrEoPEle[theEle], eleHoEEle[theEle], chargeEle[theEle], etEle[theEle], etaEle[theEle], phiEle[theEle]); 
+    myOutTree -> fillEleId(eleSumPt04Ele[theEle], eleTipEle[theEle], pzEle[theEle], covEtaEtaEle[theEle], deltaEtaAtVtxEle[theEle], deltaPhiAtVtxEle[theEle], eSuperClusterOverPEle[theEle], hOverEEle[theEle], chargeEle[theEle], etEle[theEle], etaEle[theEle], phiEle[theEle]); 
     myOutTree -> fillAll(1, 1. , met, metx, mety); 
     // myOutTree -> fillAll(1, genWeight, met, metx, mety); 
     myOutTree -> store();
@@ -305,29 +305,29 @@ bool WewkSelection::isGoldenID(int eleIndex) {
   TVector3 pTrkAtInner(pxAtInnerEle[eleIndex],pyAtInnerEle[eleIndex],pzAtInnerEle[eleIndex]);
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
-  int GsfClass = eleClassEle[eleIndex];
+  int GsfClass = classificationEle[eleIndex];
   Selection *selection;
   if(GsfClass<100)       selection=_eleGoldenSelection[0];
   else if(GsfClass>=100) selection=_eleGoldenSelection[1];
   
   _eleCounter.IncrVar("electrons");
 
-  if(selection->getSwitch("hOverE")  && !selection->passCut("hOverE",eleHoEEle[eleIndex])) return false;  
+  if(selection->getSwitch("hOverE")  && !selection->passCut("hOverE",hOverEEle[eleIndex])) return false;  
  _eleCounter.IncrVar("hOverE");
 
   if(selection->getSwitch("s9s25")   && !selection->passCut("s9s25",s9s25Ele[eleIndex])) return false; 
   _eleCounter.IncrVar("s9s25"); 
 
-  if(selection->getSwitch("deta")    && !selection->passCut("deta",eleDeltaEtaAtVtxEle[eleIndex])) return false; 
+  if(selection->getSwitch("deta")    && !selection->passCut("deta",deltaEtaAtVtxEle[eleIndex])) return false; 
   _eleCounter.IncrVar("deta");
 
-  if(selection->getSwitch("dphiIn")  && !selection->passCut("dphiIn",eleDeltaPhiAtVtxEle[eleIndex])) return false; 
+  if(selection->getSwitch("dphiIn")  && !selection->passCut("dphiIn",deltaPhiAtVtxEle[eleIndex])) return false; 
   _eleCounter.IncrVar("dphiIn");
 
-  if(selection->getSwitch("dphiOut") && !selection->passCut("dphiOut",eleDeltaPhiAtCaloEle[eleIndex])) return false; 
+  if(selection->getSwitch("dphiOut") && !selection->passCut("dphiOut",deltaPhiAtCaloEle[eleIndex])) return false; 
   _eleCounter.IncrVar("dphiOut");
 
-  if(selection->getSwitch("invEMinusInvP") && !selection->passCut("invEMinusInvP",1./fabs(eleCaloCorrEEle[eleIndex]-1./pTrkAtInner.Mag()))) return false; 
+  if(selection->getSwitch("invEMinusInvP") && !selection->passCut("invEMinusInvP",1./fabs(ecalEle[eleIndex]-1./pTrkAtInner.Mag()))) return false; 
   _eleCounter.IncrVar("invEMinusInvP");
 
   if(selection->getSwitch("bremFraction") && 
@@ -340,10 +340,10 @@ bool WewkSelection::isGoldenID(int eleIndex) {
   if(selection->getSwitch("covPhiPhi") && !selection->passCut("covPhiPhi",covPhiPhiEle[eleIndex])) return false; 
   _eleCounter.IncrVar("covPhiPhi");
 
-  if(selection->getSwitch("eOverPout") && !selection->passCut("eOverPout",eleCorrEoPoutEle[eleIndex])) return false; 
+  if(selection->getSwitch("eOverPout") && !selection->passCut("eOverPout",eSeedOverPoutEle[eleIndex])) return false; 
   _eleCounter.IncrVar("eOverPout");
 
-  if(selection->getSwitch("eOverPin")  && !selection->passCut("eOverPin",eleCorrEoPEle[eleIndex])) return false; 
+  if(selection->getSwitch("eOverPin")  && !selection->passCut("eOverPin",eSuperClusterOverPEle[eleIndex])) return false; 
   _eleCounter.IncrVar("eOverPin");
 
   _eleCounter.IncrVar("finalEleID");
@@ -352,20 +352,20 @@ bool WewkSelection::isGoldenID(int eleIndex) {
 
 bool WewkSelection::isRobustID(int eleIndex) {
   
-  int GsfClass = eleClassEle[eleIndex];
+  int GsfClass = classificationEle[eleIndex];
   Selection *selection;
   if(GsfClass <100)      selection=_eleRobustSelection[0];
   else if(GsfClass>=100) selection=_eleRobustSelection[1];
   
   _eleCounter.IncrVar("electrons");
 
-  if(selection->getSwitch("hOverE")    && !selection->passCut("hOverE",eleHoEEle[eleIndex])) return false;  
+  if(selection->getSwitch("hOverE")    && !selection->passCut("hOverE",hOverEEle[eleIndex])) return false;  
   _eleCounter.IncrVar("hOverE");
 
-  if(selection->getSwitch("deta")      && !selection->passCut("deta",eleDeltaEtaAtVtxEle[eleIndex])) return false; 
+  if(selection->getSwitch("deta")      && !selection->passCut("deta",deltaEtaAtVtxEle[eleIndex])) return false; 
   _eleCounter.IncrVar("deta");
 
-  if(selection->getSwitch("dphiIn")    && !selection->passCut("dphiIn",eleDeltaPhiAtVtxEle[eleIndex])) return false; 
+  if(selection->getSwitch("dphiIn")    && !selection->passCut("dphiIn",deltaPhiAtVtxEle[eleIndex])) return false; 
   _eleCounter.IncrVar("dphiIn");
 
   if(selection->getSwitch("covEtaEta") && !selection->passCut("covEtaEta",covEtaEtaEle[eleIndex])) return false; 

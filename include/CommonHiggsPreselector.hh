@@ -35,7 +35,6 @@ public:
   void SetMllEE(float mllEE)          { m_mllEE       = mllEE;       }
   void SetMllEM(float mllEM)          { m_mllEM       = mllEM;       }
   void SetMllMM(float mllMM)          { m_mllMM       = mllMM;       }
-  void SetCommonPres(bool evtPresel)  { m_evtPresel   = evtPresel;   }
 
   //! get output of the selector
   bool output();

@@ -159,55 +159,55 @@ void ClassEfficiencyStudy::Loop() {
       for(int iele=0; iele < nEle; iele++) {
 	if(isClass(iele,"golden")) { 
 	  _goldenCounter->IncrVar("nRecoEle"); _globalCounter->IncrVar("nRecoEle");
-	  if(_goldenSelection->getSwitch("hOverE") && !_goldenSelection->passCut("hOverE",eleHoEEle[iele])) continue; _goldenCounter->IncrVar("hOverE");
+	  if(_goldenSelection->getSwitch("hOverE") && !_goldenSelection->passCut("hOverE",hOverEEle[iele])) continue; _goldenCounter->IncrVar("hOverE");
 	  if(_goldenSelection->getSwitch("s9s25") && !_goldenSelection->passCut("s9s25",s9s25Ele[iele])) continue; _goldenCounter->IncrVar("s9s25");
-	  if(_goldenSelection->getSwitch("deta") && !_goldenSelection->passCut("deta",eleDeltaEtaAtVtxEle[iele])) continue; _goldenCounter->IncrVar("deta");
-	  if(_goldenSelection->getSwitch("dphiIn") && !_goldenSelection->passCut("dphiIn",eleDeltaPhiAtVtxEle[iele])) continue; _goldenCounter->IncrVar("dphiIn");
-	  if(_goldenSelection->getSwitch("dphiOut") && !_goldenSelection->passCut("dphiOut",eleDeltaPhiAtCaloEle[iele])) continue; _goldenCounter->IncrVar("dphiOut");
+	  if(_goldenSelection->getSwitch("deta") && !_goldenSelection->passCut("deta",deltaEtaAtVtxEle[iele])) continue; _goldenCounter->IncrVar("deta");
+	  if(_goldenSelection->getSwitch("dphiIn") && !_goldenSelection->passCut("dphiIn",deltaPhiAtVtxEle[iele])) continue; _goldenCounter->IncrVar("dphiIn");
+	  if(_goldenSelection->getSwitch("dphiOut") && !_goldenSelection->passCut("dphiOut",deltaPhiAtCaloEle[iele])) continue; _goldenCounter->IncrVar("dphiOut");
 	  if(_goldenSelection->getSwitch("covEtaEta") && !_goldenSelection->passCut("covEtaEta",covEtaEtaEle[iele])) continue; _goldenCounter->IncrVar("covEtaEta");
 	  if(_goldenSelection->getSwitch("eOverPout") && !_goldenSelection->passCut("eOverPout",eleNotCorrEoPoutEle[iele])) continue; _goldenCounter->IncrVar("eOverPout");
 	  if(_goldenSelection->getSwitch("Fisher") && !_goldenSelection->passCut("Fisher",Fisher(iele))) continue; _goldenCounter->IncrVar("Fisher");
-	  if(_goldenSelection->getSwitch("Likelihood") && !_goldenSelection->passCut("Likelihood",eleLikelihoodEle[iele])) continue; _goldenCounter->IncrVar("Likelihood");
+	  if(_goldenSelection->getSwitch("Likelihood") && !_goldenSelection->passCut("Likelihood",eleIdLikelihoodEle[iele])) continue; _goldenCounter->IncrVar("Likelihood");
 	  _goldenCounter->IncrVar("final"); _globalCounter->IncrVar("final");
 	}
 	else if(isClass(iele,"bigbrem")) {
 	  _bigbremCounter->IncrVar("nRecoEle"); _globalCounter->IncrVar("nRecoEle");
-	  if(_bigbremSelection->getSwitch("hOverE") && !_bigbremSelection->passCut("hOverE",eleHoEEle[iele])) continue; _bigbremCounter->IncrVar("hOverE");
+	  if(_bigbremSelection->getSwitch("hOverE") && !_bigbremSelection->passCut("hOverE",hOverEEle[iele])) continue; _bigbremCounter->IncrVar("hOverE");
 	  if(_bigbremSelection->getSwitch("s9s25") && !_bigbremSelection->passCut("s9s25",s9s25Ele[iele])) continue; _bigbremCounter->IncrVar("s9s25");
-	  if(_bigbremSelection->getSwitch("deta") && !_bigbremSelection->passCut("deta",eleDeltaEtaAtVtxEle[iele])) continue; _bigbremCounter->IncrVar("deta");
-	  if(_bigbremSelection->getSwitch("dphiIn") && !_bigbremSelection->passCut("dphiIn",eleDeltaPhiAtVtxEle[iele])) continue; _bigbremCounter->IncrVar("dphiIn");
-	  if(_bigbremSelection->getSwitch("dphiOut") && !_bigbremSelection->passCut("dphiOut",eleDeltaPhiAtCaloEle[iele])) continue; _bigbremCounter->IncrVar("dphiOut");
+	  if(_bigbremSelection->getSwitch("deta") && !_bigbremSelection->passCut("deta",deltaEtaAtVtxEle[iele])) continue; _bigbremCounter->IncrVar("deta");
+	  if(_bigbremSelection->getSwitch("dphiIn") && !_bigbremSelection->passCut("dphiIn",deltaPhiAtVtxEle[iele])) continue; _bigbremCounter->IncrVar("dphiIn");
+	  if(_bigbremSelection->getSwitch("dphiOut") && !_bigbremSelection->passCut("dphiOut",deltaPhiAtCaloEle[iele])) continue; _bigbremCounter->IncrVar("dphiOut");
 	  if(_bigbremSelection->getSwitch("covEtaEta") && !_bigbremSelection->passCut("covEtaEta",covEtaEtaEle[iele])) continue; _bigbremCounter->IncrVar("covEtaEta");
 	  if(_bigbremSelection->getSwitch("eOverPout") && !_bigbremSelection->passCut("eOverPout",eleNotCorrEoPoutEle[iele])) continue; _bigbremCounter->IncrVar("eOverPout");
 	  if(_bigbremSelection->getSwitch("Fisher") && !_bigbremSelection->passCut("Fisher",Fisher(iele))) continue; _bigbremCounter->IncrVar("Fisher");
-	  if(_bigbremSelection->getSwitch("Likelihood") && !_bigbremSelection->passCut("Likelihood",eleLikelihoodEle[iele])) continue; _bigbremCounter->IncrVar("Likelihood");
+	  if(_bigbremSelection->getSwitch("Likelihood") && !_bigbremSelection->passCut("Likelihood",eleIdLikelihoodEle[iele])) continue; _bigbremCounter->IncrVar("Likelihood");
 	  _bigbremCounter->IncrVar("final"); _globalCounter->IncrVar("final");
 
 	}
 	else if(isClass(iele,"narrow")) {
 	  _narrowCounter->IncrVar("nRecoEle"); _globalCounter->IncrVar("nRecoEle");
-	  if(_narrowSelection->getSwitch("hOverE") && !_narrowSelection->passCut("hOverE",eleHoEEle[iele])) continue; _narrowCounter->IncrVar("hOverE");
+	  if(_narrowSelection->getSwitch("hOverE") && !_narrowSelection->passCut("hOverE",hOverEEle[iele])) continue; _narrowCounter->IncrVar("hOverE");
 	  if(_narrowSelection->getSwitch("s9s25") && !_narrowSelection->passCut("s9s25",s9s25Ele[iele])) continue; _narrowCounter->IncrVar("s9s25");
-	  if(_narrowSelection->getSwitch("deta") && !_narrowSelection->passCut("deta",eleDeltaEtaAtVtxEle[iele])) continue; _narrowCounter->IncrVar("deta");
-	  if(_narrowSelection->getSwitch("dphiIn") && !_narrowSelection->passCut("dphiIn",eleDeltaPhiAtVtxEle[iele])) continue; _narrowCounter->IncrVar("dphiIn");
-	  if(_narrowSelection->getSwitch("dphiOut") && !_narrowSelection->passCut("dphiOut",eleDeltaPhiAtCaloEle[iele])) continue; _narrowCounter->IncrVar("dphiOut");
+	  if(_narrowSelection->getSwitch("deta") && !_narrowSelection->passCut("deta",deltaEtaAtVtxEle[iele])) continue; _narrowCounter->IncrVar("deta");
+	  if(_narrowSelection->getSwitch("dphiIn") && !_narrowSelection->passCut("dphiIn",deltaPhiAtVtxEle[iele])) continue; _narrowCounter->IncrVar("dphiIn");
+	  if(_narrowSelection->getSwitch("dphiOut") && !_narrowSelection->passCut("dphiOut",deltaPhiAtCaloEle[iele])) continue; _narrowCounter->IncrVar("dphiOut");
 	  if(_narrowSelection->getSwitch("covEtaEta") && !_narrowSelection->passCut("covEtaEta",covEtaEtaEle[iele])) continue; _narrowCounter->IncrVar("covEtaEta");
 	  if(_narrowSelection->getSwitch("eOverPout") && !_narrowSelection->passCut("eOverPout",eleNotCorrEoPoutEle[iele])) continue; _narrowCounter->IncrVar("eOverPout");
 	  if(_narrowSelection->getSwitch("Fisher") && !_narrowSelection->passCut("Fisher",Fisher(iele))) continue; _narrowCounter->IncrVar("Fisher");
-	  if(_narrowSelection->getSwitch("Likelihood") && !_narrowSelection->passCut("Likelihood",eleLikelihoodEle[iele])) continue; _narrowCounter->IncrVar("Likelihood");
+	  if(_narrowSelection->getSwitch("Likelihood") && !_narrowSelection->passCut("Likelihood",eleIdLikelihoodEle[iele])) continue; _narrowCounter->IncrVar("Likelihood");
 	  _narrowCounter->IncrVar("final"); _globalCounter->IncrVar("final");
 	}
 	else if(isClass(iele,"showering")) {
 	  _showeringCounter->IncrVar("nRecoEle"); _globalCounter->IncrVar("nRecoEle");
-	  if(_showeringSelection->getSwitch("hOverE") && !_showeringSelection->passCut("hOverE",eleHoEEle[iele])) continue; _showeringCounter->IncrVar("hOverE");
+	  if(_showeringSelection->getSwitch("hOverE") && !_showeringSelection->passCut("hOverE",hOverEEle[iele])) continue; _showeringCounter->IncrVar("hOverE");
 	  if(_showeringSelection->getSwitch("s9s25") && !_showeringSelection->passCut("s9s25",s9s25Ele[iele])) continue; _showeringCounter->IncrVar("s9s25");
-	  if(_showeringSelection->getSwitch("deta") && !_showeringSelection->passCut("deta",eleDeltaEtaAtVtxEle[iele])) continue; _showeringCounter->IncrVar("deta");
-	  if(_showeringSelection->getSwitch("dphiIn") && !_showeringSelection->passCut("dphiIn",eleDeltaPhiAtVtxEle[iele])) continue; _showeringCounter->IncrVar("dphiIn");
-	  if(_showeringSelection->getSwitch("dphiOut") && !_showeringSelection->passCut("dphiOut",eleDeltaPhiAtCaloEle[iele])) continue; _showeringCounter->IncrVar("dphiOut");
+	  if(_showeringSelection->getSwitch("deta") && !_showeringSelection->passCut("deta",deltaEtaAtVtxEle[iele])) continue; _showeringCounter->IncrVar("deta");
+	  if(_showeringSelection->getSwitch("dphiIn") && !_showeringSelection->passCut("dphiIn",deltaPhiAtVtxEle[iele])) continue; _showeringCounter->IncrVar("dphiIn");
+	  if(_showeringSelection->getSwitch("dphiOut") && !_showeringSelection->passCut("dphiOut",deltaPhiAtCaloEle[iele])) continue; _showeringCounter->IncrVar("dphiOut");
 	  if(_showeringSelection->getSwitch("covEtaEta") && !_showeringSelection->passCut("covEtaEta",covEtaEtaEle[iele])) continue; _showeringCounter->IncrVar("covEtaEta");
 	  if(_showeringSelection->getSwitch("eOverPout") && !_showeringSelection->passCut("eOverPout",eleNotCorrEoPoutEle[iele])) continue; _showeringCounter->IncrVar("eOverPout");
 	  if(_showeringSelection->getSwitch("Fisher") && !_showeringSelection->passCut("Fisher",Fisher(iele))) continue; _showeringCounter->IncrVar("Fisher");
-	  if(_showeringSelection->getSwitch("Likelihood") && !_showeringSelection->passCut("Likelihood",eleLikelihoodEle[iele])) continue; _showeringCounter->IncrVar("Likelihood");
+	  if(_showeringSelection->getSwitch("Likelihood") && !_showeringSelection->passCut("Likelihood",eleIdLikelihoodEle[iele])) continue; _showeringCounter->IncrVar("Likelihood");
 	  _showeringCounter->IncrVar("final"); _globalCounter->IncrVar("final");
 	}
       }
@@ -218,10 +218,10 @@ void ClassEfficiencyStudy::Loop() {
 bool ClassEfficiencyStudy::isClass(int eleInd, const char* gsfclass) {
   int offset=0;
   if(strcmp(_ECALSection,"EE")==0) offset=100;
-  if(strcmp(gsfclass,"golden")==0) return (eleClassEle[eleInd]==offset);
-  else if(strcmp(gsfclass,"bigbrem")==0) return (eleClassEle[eleInd]==offset+10);
-  else if(strcmp(gsfclass,"narrow")==0) return (eleClassEle[eleInd]==offset+20);
-  else if(strcmp(gsfclass,"showering")==0) return (eleClassEle[eleInd]>=offset+30 && eleClassEle[eleInd]<=offset+34);
+  if(strcmp(gsfclass,"golden")==0) return (classificationEle[eleInd]==offset);
+  else if(strcmp(gsfclass,"bigbrem")==0) return (classificationEle[eleInd]==offset+10);
+  else if(strcmp(gsfclass,"narrow")==0) return (classificationEle[eleInd]==offset+20);
+  else if(strcmp(gsfclass,"showering")==0) return (classificationEle[eleInd]>=offset+30 && classificationEle[eleInd]<=offset+34);
   else {
     std::cout << "Class : " << gsfclass << " not defined ! " << std::endl;
     return false;

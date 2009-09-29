@@ -35,7 +35,6 @@ void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwi
   presCounter->AddVar("METpreselection");
   presCounter->AddVar("dileptonInvMassMin");
   presCounter->AddVar("finalOURPreselection");
-  presCounter->AddVar("preselection");
 }
 
 
@@ -67,7 +66,6 @@ bool CommonHiggsPreselector::output() {
       processCounter->AddVar("METpreselection");
       processCounter->AddVar("dileptonInvMassMin");
       processCounter->AddVar("finalOURPreselection");
-      processCounter->AddVar("preselection");
       
       multiProcessCounter.insert( std::make_pair(m_processID,processCounter) );
     }
@@ -83,11 +81,6 @@ bool CommonHiggsPreselector::output() {
 
   bool mctruth = true;
   if (_selection->getSwitch("MCtruth")) mctruth = m_foundMcTree;
-
-  // common preselection cut: this is not really applied, should be reproduced by hand
-  if( _selection->getSwitch("preselection") && m_evtPresel && mctruth) { 
-    theCounter->IncrVar("preselection",m_weight);
-  }
 
   // MC truth
   if(_selection->getSwitch("MCtruth") && !m_foundMcTree ) return false;
@@ -160,7 +153,6 @@ void CommonHiggsPreselector::diplayEfficiencies(std::string datasetName) {
       theCounter->Draw("METpreselection","slowLeptonThreshold");
       theCounter->Draw("dileptonInvMassMin","METpreselection");
       theCounter->Draw("finalOURPreselection","MCtruth");
-      theCounter->Draw("preselection","MCtruth");
     }
   }
 
@@ -179,7 +171,6 @@ void CommonHiggsPreselector::diplayEfficiencies(std::string datasetName) {
     presCounter->Draw("METpreselection","slowLeptonThreshold");
     presCounter->Draw("dileptonInvMassMin","METpreselection");
     presCounter->Draw("finalOURPreselection","MCtruth");
-    presCounter->Draw("preselection","MCtruth");
   
     presCounter->Save(namefile,"recreate");
   }

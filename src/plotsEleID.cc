@@ -677,20 +677,20 @@ void plotsEleID::Loop() {
 
       int iclass = -1;
       int ifullclass = -1;
-      if ( eleClassEle[iele] == 0 || eleClassEle[iele] == 100 ) { // golden
+      if ( classificationEle[iele] == 0 || classificationEle[iele] == 100 ) { // golden
 	iclass = 0;
 	ifullclass = 0;
       }
-      else if ( eleClassEle[iele] == 10 || eleClassEle[iele] == 110 ) { // bigbrem
+      else if ( classificationEle[iele] == 10 || classificationEle[iele] == 110 ) { // bigbrem
 	iclass = 0;
 	ifullclass = 1;
       }
-      else if ( eleClassEle[iele] == 20 || eleClassEle[iele] == 120 ) { // narrow
+      else if ( classificationEle[iele] == 20 || classificationEle[iele] == 120 ) { // narrow
 	iclass = 0;
 	ifullclass = 2;
       }
-      else if ( (eleClassEle[iele] >= 30 && eleClassEle[iele] <= 40) ||
-		(eleClassEle[iele] >= 130 && eleClassEle[iele] <= 140) ) { // showering + cracks
+      else if ( (classificationEle[iele] >= 30 && classificationEle[iele] <= 40) ||
+		(classificationEle[iele] >= 130 && classificationEle[iele] <= 140) ) { // showering + cracks
 	iclass = 1;
 	ifullclass = 3;
       }
@@ -778,11 +778,11 @@ void plotsEleID::Loop() {
 
 	// eleID 
 	if( looseIsolated ) {
-	  dPhiCaloHad    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele] );
-	  dPhiVtxHad     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele] );
+	  dPhiCaloHad    [iecal][iptbin] -> Fill ( deltaPhiAtCaloEle[iele] );
+	  dPhiVtxHad     [iecal][iptbin] -> Fill ( deltaPhiAtVtxEle[iele] );
 	  dEtaHad        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele] );
-	  EoPoutHad      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele] );
-	  HoEHad         [iecal][iptbin] -> Fill ( eleHoEEle[iele] );	  
+	  EoPoutHad      [iecal][iptbin] -> Fill ( eSeedOverPoutEle[iele] );
+	  HoEHad         [iecal][iptbin] -> Fill ( hOverEEle[iele] );	  
 	  shapeFisherHad [iecal][iptbin] -> Fill ( fisher );
 	  sigmaEtaEtaHad [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]) );
 	  sigmaEtaPhiHad [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])) );
@@ -853,7 +853,7 @@ void plotsEleID::Loop() {
 	if (dr_min_wc  < 0.05){ E_Reco_eta_wcm -> Fill(recEta); }
 	if (dr_min_woc < 0.05){ E_Reco_eta_wgm -> Fill(recEta); }
 
-	if(eleClassEle[iele]<99) ntotEB++;
+	if(classificationEle[iele]<99) ntotEB++;
 	else ntotEE++;
 
 	int GsfClass0[2], GsfClass1[2], GsfClass2[2];
@@ -865,11 +865,11 @@ void plotsEleID::Loop() {
 
 	if( looseIsolated ) { 
 	  eneUnsplitEle         [iecal]         -> Fill ( energyEle[iele], theWeight );	
-	  dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( eleDeltaPhiAtCaloEle[iele], theWeight );
-	  dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( eleDeltaPhiAtVtxEle[iele], theWeight );
+	  dPhiCaloUnsplitEle    [iecal][iptbin] -> Fill ( deltaPhiAtCaloEle[iele], theWeight );
+	  dPhiVtxUnsplitEle     [iecal][iptbin] -> Fill ( deltaPhiAtVtxEle[iele], theWeight );
 	  dEtaUnsplitEle        [iecal][iptbin] -> Fill ( eleDeltaEtaAtCaloEle[iele], theWeight );
-	  EoPoutUnsplitEle      [iecal][iptbin] -> Fill ( eleCorrEoPoutEle[iele], theWeight );
-	  HoEUnsplitEle         [iecal][iptbin] -> Fill ( eleHoEEle[iele], theWeight );
+	  EoPoutUnsplitEle      [iecal][iptbin] -> Fill ( eSeedOverPoutEle[iele], theWeight );
+	  HoEUnsplitEle         [iecal][iptbin] -> Fill ( hOverEEle[iele], theWeight );
 	  shapeFisherUnsplitEle [iecal][iptbin] -> Fill ( fisher, theWeight ); 
 	  sigmaEtaEtaUnsplitEle [iecal][iptbin] -> Fill ( sqrt(covEtaEtaEle[iele]), theWeight );
 	  sigmaEtaPhiUnsplitEle [iecal][iptbin] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])), theWeight );
@@ -882,11 +882,11 @@ void plotsEleID::Loop() {
 	  a20UnsplitEle         [iecal][iptbin] -> Fill ( a20Ele[iele], theWeight );
 	  a42UnsplitEle         [iecal][iptbin] -> Fill ( a42Ele[iele], theWeight );
 
-	  dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtCaloEle[iele], theWeight );
-	  dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( eleDeltaPhiAtVtxEle[iele], theWeight );
+	  dPhiCaloClassEle    [iecal][iptbin][iclass] -> Fill ( deltaPhiAtCaloEle[iele], theWeight );
+	  dPhiVtxClassEle     [iecal][iptbin][iclass] -> Fill ( deltaPhiAtVtxEle[iele], theWeight );
 	  dEtaClassEle        [iecal][iptbin][iclass] -> Fill ( eleDeltaEtaAtCaloEle[iele], theWeight );
-	  EoPoutClassEle      [iecal][iptbin][iclass] -> Fill ( eleCorrEoPoutEle[iele], theWeight );
-	  HoEClassEle         [iecal][iptbin][iclass] -> Fill ( eleHoEEle[iele], theWeight );
+	  EoPoutClassEle      [iecal][iptbin][iclass] -> Fill ( eSeedOverPoutEle[iele], theWeight );
+	  HoEClassEle         [iecal][iptbin][iclass] -> Fill ( hOverEEle[iele], theWeight );
 	  shapeFisherClassEle [iecal][iptbin][iclass] -> Fill ( fisher, theWeight ); 
 	  sigmaEtaEtaClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(covEtaEtaEle[iele]), theWeight );
 	  sigmaEtaPhiClassEle [iecal][iptbin][iclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])), theWeight );
@@ -899,11 +899,11 @@ void plotsEleID::Loop() {
 	  a20ClassEle         [iecal][iptbin][iclass] -> Fill ( a20Ele[iele], theWeight );
 	  a42ClassEle         [iecal][iptbin][iclass] -> Fill ( a42Ele[iele], theWeight );
 
-	  dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtCaloEle[iele], theWeight );
-	  dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( eleDeltaPhiAtVtxEle[iele], theWeight );
+	  dPhiCaloFullclassEle    [iecal][iptbin][ifullclass] -> Fill ( deltaPhiAtCaloEle[iele], theWeight );
+	  dPhiVtxFullclassEle     [iecal][iptbin][ifullclass] -> Fill ( deltaPhiAtVtxEle[iele], theWeight );
 	  dEtaFullclassEle        [iecal][iptbin][ifullclass] -> Fill ( eleDeltaEtaAtCaloEle[iele], theWeight );
-	  EoPoutFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( eleCorrEoPoutEle[iele], theWeight );
-	  HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( eleHoEEle[iele], theWeight );
+	  EoPoutFullclassEle      [iecal][iptbin][ifullclass] -> Fill ( eSeedOverPoutEle[iele], theWeight );
+	  HoEFullclassEle         [iecal][iptbin][ifullclass] -> Fill ( hOverEEle[iele], theWeight );
 	  shapeFisherFullclassEle [iecal][iptbin][ifullclass] -> Fill ( fisher, theWeight ); 
 	  sigmaEtaEtaFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(covEtaEtaEle[iele]), theWeight );
 	  sigmaEtaPhiFullclassEle [iecal][iptbin][ifullclass] -> Fill ( sqrt(fabs(covEtaPhiEle[iele])), theWeight );
