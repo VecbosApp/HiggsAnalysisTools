@@ -42,6 +42,8 @@ public:
   void SetEleSlowEcalPtSum(float sum)    { m_eleSlowEcalPtSum  = sum; }
   void SetEleHardGlobalSum(float sum)    { m_eleHardGlobalSum  = sum; }
   void SetEleSlowGlobalSum(float sum)    { m_eleSlowGlobalSum  = sum; }
+  void SetEleSlowD0(float d0)            { m_eleSlowD0 = d0;}
+  void SetEleHardD0(float d0)            { m_eleHardD0 = d0;}
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
   void SetUncorrJetVeto(bool passedUncorrCJV) { m_passedUncorrJetVeto = passedUncorrCJV; }
   void SetNJets(int njets)               { m_nJets         = njets; }
@@ -73,6 +75,7 @@ private:
   float m_invMass;
   float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
   float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;
+  float m_eleSlowD0, m_eleHardD0;
   bool m_passedJetVeto;
   bool m_passedUncorrJetVeto;
   int m_nJets;
