@@ -62,7 +62,9 @@ private:
   //! get ECAL isolation sum
   float getEcalPtSum(int index);
   //! get global isolation sum for muons
-  float muonIsoGlobalSum(int theMuon, int otherMuon, int otherElectron);
+  float muonIsoGlobalSum(int theMuon);
+  //! get global isolation sum for electrons
+  float electronIsoGlobalSum(int theElectron);
   //! get the kFactor of the event
   float getkFactor(std::string process);
   //! reset the kinematic quantities at the beginning of event
