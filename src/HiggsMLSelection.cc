@@ -1123,6 +1123,7 @@ int HiggsMLSelection::numJets() {
       // taking from ee config file, but jets veto is the same for all the channels
       if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
     }
+
     if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
       float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronPlus->Vect() ) );
       H_deltaRcorr -> Fill(deltaR);
@@ -1136,7 +1137,6 @@ int HiggsMLSelection::numJets() {
     m_goodJets.push_back(j);
     num++;
     
-    break;
   }
 
   return num;
