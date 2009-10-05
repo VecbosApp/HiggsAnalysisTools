@@ -83,7 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("config/higgs/");
+  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId");
 
   // kinematics
   m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
@@ -453,10 +453,10 @@ void HiggsMLSelection::Loop() {
     bool theElectronID = true;
     bool thePositronID = true;
     // custom electron ID cuts (tight symmetric for ee, tight for emu)
-    // if (theElectron > -1) theElectronID = isEleID(theElectron);
-    // if (thePositron > -1) thePositronID = isEleID(thePositron);
-    if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
-    if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
+    if (theElectron > -1) theElectronID = isEleID(theElectron);
+    if (thePositron > -1) thePositronID = isEleID(thePositron);
+    // if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
+    // if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
 
     float theHardEleLhID = 1.0;
     float theSlowEleLhID = 1.0;
@@ -901,6 +901,7 @@ bool HiggsMLSelection::isEleID(int eleIndex) {
 
   TVector3 pTrkAtOuter(pxAtOuterEle[eleIndex],pyAtOuterEle[eleIndex],pzAtOuterEle[eleIndex]);
 
+  EgammaCutBasedID.SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
   EgammaCutBasedID.SetHOverE( hOverEEle[eleIndex] );
   EgammaCutBasedID.SetS9S25( s9s25Ele[eleIndex] );
   EgammaCutBasedID.SetDEta( deltaEtaAtVtxEle[eleIndex] );
