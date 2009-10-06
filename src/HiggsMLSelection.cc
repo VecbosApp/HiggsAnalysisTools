@@ -83,7 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("../EgammaAnalysisTools/config/looseEleId");
+  EgammaCutBasedID.Configure("config/looseEleId");
 
   // kinematics
   m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
@@ -1167,7 +1167,6 @@ int HiggsMLSelection::numUncorrJets() {
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", etSisConeJet[j]))   continue;
     
     num++;
-    break;
   }
   
   return num;
