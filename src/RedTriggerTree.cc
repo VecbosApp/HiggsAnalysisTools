@@ -19,11 +19,11 @@ RedTriggerTree::RedTriggerTree(const char * filename) {
   myTree->Branch("promptDecayMM",   &myPromptDecayMM,   "promptDecayMM/B");
   myTree->Branch("promptDecayEM",   &myPromptDecayEM,   "promptDecayEM/B");
   myTree->Branch("HLTSingleElectron",         &myHLTSingleElectron,         "HLTSingleElectron/B");
-  myTree->Branch("HLTSingleElectronRelaxed",  &myHLTSingleElectronRelaxed,  "HLTSingleElectronRelaxed/B");
-  myTree->Branch("HLTSingleElectronOR",       &myHLTSingleElectronOR,  "HLTSingleElectronOR/B");
+  //  myTree->Branch("HLTSingleElectronRelaxed",  &myHLTSingleElectronRelaxed,  "HLTSingleElectronRelaxed/B");
+  //  myTree->Branch("HLTSingleElectronOR",       &myHLTSingleElectronOR,  "HLTSingleElectronOR/B");
   myTree->Branch("HLTSingleMuon",             &myHLTSingleMuon,         "HLTSingleMuon/B");
-  myTree->Branch("HLTSingleMuonRelaxed",      &myHLTSingleMuonRelaxed,  "HLTSingleMuonRelaxed/B");
-  myTree->Branch("HLTSingleMuonOR",           &myHLTSingleMuonOR,  "HLTSingleMuonOR/B");
+  //  myTree->Branch("HLTSingleMuonRelaxed",      &myHLTSingleMuonRelaxed,  "HLTSingleMuonRelaxed/B");
+  //  myTree->Branch("HLTSingleMuonOR",           &myHLTSingleMuonOR,  "HLTSingleMuonOR/B");
 
 }
 
@@ -45,16 +45,16 @@ void RedTriggerTree::fillMcTruth(bool decayEE, bool decayMM, bool decayEM, bool 
 void RedTriggerTree::fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR) {
 
   myHLTSingleElectron = singleEle;
-  myHLTSingleElectronRelaxed = singleEleRelaxed;
-  myHLTSingleElectronOR = singleEleOR;
+  //  myHLTSingleElectronRelaxed = singleEleRelaxed;
+  //  myHLTSingleElectronOR = singleEleOR;
 
 }
 
 void RedTriggerTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR) {
 
   myHLTSingleMuon = singleMuon;
-  myHLTSingleMuonRelaxed = singleMuonRelaxed;
-  myHLTSingleMuonOR = singleMuonOR;
+  //  myHLTSingleMuonRelaxed = singleMuonRelaxed;
+  //  myHLTSingleMuonOR = singleMuonOR;
 
 }
 

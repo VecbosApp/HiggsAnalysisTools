@@ -12,9 +12,9 @@ public:
   //! fill the MC truth informations
   void fillMcTruth(bool decayEE, bool decayMM, bool decayEM, bool promptEE, bool promptMM, bool promptEM);
   //! fill the HLT electron triggers informations
-  void fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR);
+  void fillHLTElectrons(bool singleEle, bool singleEleRelaxed=false, bool singleEleOR=false);
   //! fill the HLT muons triggers informations
-  void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
+  void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed=false, bool singleMuonOR=false);
 
   //! effectively store the events in the tree
   void store();
@@ -29,11 +29,11 @@ private:
   bool myPromptDecayMM;
   bool myPromptDecayEM;
   bool myHLTSingleElectron;
-  bool myHLTSingleElectronRelaxed;
-  bool myHLTSingleElectronOR;
+  //  bool myHLTSingleElectronRelaxed;
+  //  bool myHLTSingleElectronOR;
   bool myHLTSingleMuon;
-  bool myHLTSingleMuonRelaxed;
-  bool myHLTSingleMuonOR;
+  //  bool myHLTSingleMuonRelaxed;
+  //  bool myHLTSingleMuonOR;
 
   TFile* myFile;
   TTree* myTree;
