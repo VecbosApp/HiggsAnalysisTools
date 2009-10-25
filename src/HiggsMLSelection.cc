@@ -303,8 +303,7 @@ float HiggsMLSelection::getkFactor(std::string process) {
 
   float weight = 1.;
   if((process.compare("Higgs")==0)) {
-    if(evtKfactor==1.) weight = 0.5; // this is to correct the kFactor of VBF. in the ntuple k=1 means VBF, which has ~costant k=0.5
-    else weight = evtKfactor;
+    weight = evtKfactor;
   }
   else if(process.compare("WW")==0) {
     weight = 1.0; // we used MC @ NLO weight in 16X   
@@ -381,12 +380,8 @@ void HiggsMLSelection::Loop() {
     bool promptEM = findMcTree("HtoWWtoem2nu_prompt");
 
     myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
-    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-				     firedTrg[m_requiredTriggers[1]],
-				     (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
-    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
-				 firedTrg[m_requiredTriggers[3]],
-				 (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
+    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
+    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
     myTriggerTree->store();
 
     // get the best electrons, best muons  
@@ -435,7 +430,7 @@ void HiggsMLSelection::Loop() {
     CommonHiggsPreselection.SetLowElePt(slowestElectronPt);
     CommonHiggsPreselection.SetHighMuonPt(hardestMuonPt);
     CommonHiggsPreselection.SetLowMuonPt(slowestMuonPt);
-    CommonHiggsPreselection.SetMet(etMet[0]);
+    CommonHiggsPreselection.SetMet(etTCMet[0]);
     CommonHiggsPreselection.SetMllEE(m_mll[ee]);
     CommonHiggsPreselection.SetMllEM(m_mll[em]);
     CommonHiggsPreselection.SetMllMM(m_mll[mm]);
@@ -505,9 +500,8 @@ void HiggsMLSelection::Loop() {
     // --- muon ID / isolation ---
     bool theMuonPlusID = true;
     bool theMuonMinusID = true;
-    // put back after the bug correction in ntuple dumper
-//     if ( theMuonMinus > -1 ) theMuonMinusID = anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TM2DCompatibilityLoose);
-//     if ( theMuonPlus > -1 ) theMuonPlusID = anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TM2DCompatibilityLoose);
+    if ( theMuonMinus > -1 ) theMuonMinusID = anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TM2DCompatibilityLoose);
+    if ( theMuonPlus > -1 ) theMuonPlusID = anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TM2DCompatibilityLoose);
     
     float theMuonMinusGlobalSum = ( theMuonMinus > -1 ) ? muonIsoGlobalSum(theMuonMinus) : 0.0;
     float theMuonPlusGlobalSum = ( theMuonPlus > -1 ) ? muonIsoGlobalSum(theMuonPlus) : 0.0;
@@ -565,7 +559,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEE.SetEleSlowD0(theEleSlowD0);
       CutBasedHiggsSelectionEE.SetNJets(njets);
       CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionEE.SetMet(etMet[0]);					
+      CutBasedHiggsSelectionEE.SetMet(etTCMet[0]);					
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
       CutBasedHiggsSelectionEE.SetInvMass(theInvMassEE);
       CutBasedHiggsSelectionEE.SetDetaLeptons(theDetaLeptonsEE);
@@ -581,7 +575,7 @@ void HiggsMLSelection::Loop() {
 				       firedTrg[m_requiredTriggers[1]],
 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
 
-      myOutTreeEE -> fillAll(etMet[0], 
+      myOutTreeEE -> fillAll(etTCMet[0], 
 			     theDeltaPhiEE, 
 			     theSTransvMassEE, 
 			     theInvMassEE, 
@@ -643,7 +637,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionMM.SetEleSlowD0(theMuonSlowD0);
       CutBasedHiggsSelectionMM.SetNJets(njets);
       CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionMM.SetMet(etMet[0]);					
+      CutBasedHiggsSelectionMM.SetMet(etTCMet[0]);					
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionMM.SetInvMass(theInvMassMM);
       CutBasedHiggsSelectionMM.SetDetaLeptons(theDetaLeptonsMM);
@@ -659,7 +653,7 @@ void HiggsMLSelection::Loop() {
 				   firedTrg[m_requiredTriggers[3]],
 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
       
-      myOutTreeMM -> fillAll(etMet[0], 
+      myOutTreeMM -> fillAll(etTCMet[0], 
 			     theDeltaPhiMM, 
 			     theSTransvMassMM, 
 			     theInvMassMM, 
@@ -755,7 +749,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleSlowD0(theMuonD0);
       CutBasedHiggsSelectionEM.SetNJets(njets);
       CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionEM.SetMet(etMet[0]);					
+      CutBasedHiggsSelectionEM.SetMet(etTCMet[0]);					
       CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiMM);
       CutBasedHiggsSelectionEM.SetInvMass(theInvMassMM);
       CutBasedHiggsSelectionEM.SetDetaLeptons(theDetaLeptonsMM);
@@ -775,7 +769,7 @@ void HiggsMLSelection::Loop() {
 				   firedTrg[m_requiredTriggers[3]],
 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
 
-      myOutTreeEM -> fillAll(etMet[0], 
+      myOutTreeEM -> fillAll(etTCMet[0], 
 			     theDeltaPhiEM, 
 			     theSTransvMassEM, 
 			     theInvMassEM, 
@@ -984,7 +978,7 @@ void HiggsMLSelection::setPreselKinematics() {
   m_mll[em]       = 50.;
   
   // MET
-  m_p4MET->SetXYZT(pxMet[0],pyMet[0],pzMet[0],energyMet[0]); 
+  m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]); 
 }
 
 
