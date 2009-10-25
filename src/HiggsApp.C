@@ -348,10 +348,6 @@ int main(int argc, char* argv[]) {
 
   // require triggers
   mask.requireTrigger("HLT_Ele15_SW_L1R");
-  mask.requireTrigger("HLT_Ele15_SW_EleId_L1R");
-  mask.requireTrigger("HLT_Ele15_SW_LooseTrackIso_L1R");
-  mask.requireTrigger("HLT_Ele15_SiStrip_L1R");
-  mask.requireTrigger("HLT_IsoMu9");
   mask.requireTrigger("HLT_Mu15");
 
   std::vector<int> requiredTriggers = mask.getBits();
