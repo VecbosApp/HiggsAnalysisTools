@@ -20,7 +20,7 @@ using namespace bits;
 
 HiggsMLSelection::HiggsMLSelection(TTree *tree) 
   : HiggsBase(tree) {
-
+  
   // choose the Higgs Mass
   std::string higgsConfigDir;
   std::string higgsConfigDirMass;
@@ -83,7 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("config/looseEleId");
+  EgammaCutBasedID.Configure("config/higgs/rompTightEleId");
 
   // kinematics
   m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
@@ -121,6 +121,7 @@ HiggsMLSelection::~HiggsMLSelection(){
   myOutTreeMM   -> save();
   myOutTreeEM   -> save();
   myTriggerTree -> save();
+  myEleIdTree   -> save();
 }
 
 bool HiggsMLSelection::findMcTree(const char* processType) {
@@ -346,7 +347,11 @@ void HiggsMLSelection::Loop() {
   std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
   myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
 
-  float met, deltaPhi, transvMass; 
+  // eleId reduced tree
+  std::string reducedEleIdTreeName = _datasetName+"-eleId.root";
+  myEleIdTree = new RedEleIDTree(reducedEleIdTreeName.c_str());
+
+  float met, deltaPhi, transvMass, deltaErre; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
 
   Long64_t nbytes = 0, nb = 0;
@@ -453,6 +458,13 @@ void HiggsMLSelection::Loop() {
     // if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
     // if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
 
+
+    // filling the three to compare the distribution before the cut
+    if (theElectron > -1) myEleIdTree -> fillAll(classificationEle[theElectron], hOverEEle[theElectron], eSuperClusterOverPEle[theElectron], eSeedOverPoutEle[theElectron], deltaEtaAtVtxEle[theElectron], deltaPhiAtVtxEle[theElectron], sqrt(covIEtaIEtaEle[theElectron]));
+    if (thePositron > -1) myEleIdTree -> fillAll(classificationEle[thePositron], hOverEEle[thePositron], eSuperClusterOverPEle[thePositron], eSeedOverPoutEle[thePositron], deltaEtaAtVtxEle[thePositron], deltaPhiAtVtxEle[thePositron], sqrt(covIEtaIEtaEle[thePositron]));
+    myEleIdTree->store();
+
+
     float theHardEleLhID = 1.0;
     float theSlowEleLhID = 1.0;
 
@@ -517,9 +529,9 @@ void HiggsMLSelection::Loop() {
     calcEventBVetoVariables(m_goodJets);
 
     // kine variables
-    float theDeltaPhiEE, theInvMassEE, theSTransvMassEE, theDetaLeptonsEE = 0.;
-    float theDeltaPhiMM, theInvMassMM, theSTransvMassMM, theDetaLeptonsMM = 0.;
-    float theDeltaPhiEM, theInvMassEM, theSTransvMassEM, theDetaLeptonsEM = 0.;
+    float theDeltaPhiEE, theDeltaErreEE, theInvMassEE, theSTransvMassEE, theDetaLeptonsEE = 0.;
+    float theDeltaPhiMM, theDeltaErreMM, theInvMassMM, theSTransvMassMM, theDetaLeptonsMM = 0.;
+    float theDeltaPhiEM, theDeltaErreEM, theInvMassEM, theSTransvMassEM, theDetaLeptonsEM = 0.;
 
 
     // ---------------------------------------
@@ -537,6 +549,7 @@ void HiggsMLSelection::Loop() {
       float theEleHardD0 = (etEle[theElectron] > etEle[thePositron]) ? eleTrackD0Ele[theElectron] : eleTrackD0Ele[thePositron];
       float theEleSlowD0 = (etEle[theElectron] > etEle[thePositron]) ? eleTrackD0Ele[thePositron] : eleTrackD0Ele[theElectron];
       theDeltaPhiEE    = m_deltaPhi[ee];
+      theDeltaErreEE   = m_deltaErre[ee];
       theInvMassEE     = m_mll[ee];
       theDetaLeptonsEE = etaEle[theElectron]-etaEle[thePositron];
       theSTransvMassEE  = m_mT2[ee];
@@ -576,7 +589,10 @@ void HiggsMLSelection::Loop() {
 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
 
       myOutTreeEE -> fillAll(etTCMet[0], 
+			     etPFMet[0], 
+			     etMet[0], 
 			     theDeltaPhiEE, 
+			     theDeltaErreEE, 
 			     theSTransvMassEE, 
 			     theInvMassEE, 
 			     hardestElectronPt, 
@@ -610,6 +626,7 @@ void HiggsMLSelection::Loop() {
     // mm final state
     if (m_channel[mm]){
       theDeltaPhiMM    = m_deltaPhi[mm];
+      theDeltaErreMM   = m_deltaErre[mm];
       theInvMassMM     = m_mll[mm];
       theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
       theSTransvMassMM  = m_mT2[mm];
@@ -654,7 +671,10 @@ void HiggsMLSelection::Loop() {
 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
       
       myOutTreeMM -> fillAll(etTCMet[0], 
+			     etPFMet[0], 
+			     etMet[0], 
 			     theDeltaPhiMM, 
+			     theDeltaErreMM, 
 			     theSTransvMassMM, 
 			     theInvMassMM, 
 			     hardestMuonPt, 
@@ -700,6 +720,7 @@ void HiggsMLSelection::Loop() {
       float theMuonD0 = 0.0;
 
       theDeltaPhiEM    = m_deltaPhi[em];
+      theDeltaErreEM   = m_deltaErre[em];
       theInvMassEM     = m_mll[em];
       theSTransvMassEM  = m_mT2[em];
       if(theElectron>-1 && theMuonPlus>-1) {
@@ -770,7 +791,10 @@ void HiggsMLSelection::Loop() {
 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
 
       myOutTreeEM -> fillAll(etTCMet[0], 
+			     etPFMet[0], 
+			     etMet[0], 
 			     theDeltaPhiEM, 
+			     theDeltaErreEM, 
 			     theSTransvMassEM, 
 			     theInvMassEM, 
 			     hardestMuonPt, 
@@ -905,6 +929,8 @@ bool HiggsMLSelection::isEleID(int eleIndex) {
   EgammaCutBasedID.SetBremFraction( fabs(momentumEle[eleIndex]-pTrkAtOuter.Mag())/momentumEle[eleIndex] );
   EgammaCutBasedID.SetSigmaEtaEta( sqrt(covEtaEtaEle[eleIndex]) );
   EgammaCutBasedID.SetSigmaPhiPhi( sqrt(covPhiPhiEle[eleIndex]) );
+  EgammaCutBasedID.SetSigmaIEtaIEta( sqrt(covIEtaIEtaEle[eleIndex]) );
+  EgammaCutBasedID.SetSigmaIPhiIPhi( sqrt(covIPhiIPhiEle[eleIndex]) );
   EgammaCutBasedID.SetEOverPout( eSeedOverPoutEle[eleIndex] );
   EgammaCutBasedID.SetEOverPin( eSuperClusterOverPEle[eleIndex] );
   EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
@@ -994,7 +1020,8 @@ void HiggsMLSelection::setKinematics( ) {
   // compute delta Phi in degrees, di-lepton invariant mass, transverse mass
   TVector3 dilepPt;
   if ( m_channel[ee] ) {
-    m_deltaPhi[ee] = fabs(180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4ElectronPlus->Vect()));
+    m_deltaPhi[ee]  = fabs(180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4ElectronPlus->Vect()));
+    m_deltaErre[ee] = m_p4ElectronMinus->Vect().DeltaR(m_p4ElectronPlus->Vect());
     dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4ElectronPlus->Vect().X(),
 		    m_p4ElectronMinus->Vect().Y()+m_p4ElectronPlus->Vect().Y(),
 		    0.0 );
@@ -1004,12 +1031,14 @@ void HiggsMLSelection::setKinematics( ) {
   }
   else {    
     m_deltaPhi[ee]   = -1.;
+    m_deltaErre[ee]  = -1.;
     m_transvMass[ee] = -1.;
     m_mT2[ee] = -1.;
   }
 
   if ( m_channel[mm] ) {    
-    m_deltaPhi[mm] = fabs(180./TMath::Pi() * m_p4MuonMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
+    m_deltaPhi[mm]  = fabs(180./TMath::Pi() * m_p4MuonMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
+    m_deltaErre[mm] = m_p4MuonMinus->Vect().DeltaR(m_p4MuonPlus->Vect());
     dilepPt.SetXYZ( m_p4MuonMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
 		    m_p4MuonMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 		    0.0 );
@@ -1019,19 +1048,24 @@ void HiggsMLSelection::setKinematics( ) {
   }
   else { 
     m_deltaPhi[mm]   = -1.;
+    m_deltaErre[mm]  = -1.;
     m_transvMass[mm] = -1.;
     m_mT2[mm] = -1.;
   }
   
   if ( m_channel[em] ) {
-    float deltaPhiEPlusMuMinus = -1.0;
-    float deltaPhiEMinusMuPlus = -1.0;
-    float dilepPtEPlusMuMinus  = -1.0;
-    float dilepPtEMinusMuPlus  = -1.0;
+    float deltaPhiEPlusMuMinus  = -1.0;
+    float deltaPhiEMinusMuPlus  = -1.0;
+    float deltaErreEPlusMuMinus = -1.0;
+    float deltaErreEMinusMuPlus = -1.0;
+    float dilepPtEPlusMuMinus   = -1.0;
+    float dilepPtEMinusMuPlus   = -1.0;
 
     if ( thePositron > -1 && theMuonMinus > -1 ) {
-      deltaPhiEPlusMuMinus = fabs(180./TMath::Pi() * m_p4ElectronPlus->Vect().DeltaPhi(m_p4MuonMinus->Vect()));
-      m_deltaPhi[em] = deltaPhiEPlusMuMinus;
+      deltaPhiEPlusMuMinus  = fabs(180./TMath::Pi() * m_p4ElectronPlus->Vect().DeltaPhi(m_p4MuonMinus->Vect()));
+      deltaErreEPlusMuMinus = m_p4ElectronPlus->Vect().DeltaR(m_p4MuonMinus->Vect());
+      m_deltaPhi[em]  = deltaPhiEPlusMuMinus;
+      m_deltaErre[em] = deltaErreEPlusMuMinus;
       dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
 		      m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
 		      0.0 );
@@ -1043,8 +1077,10 @@ void HiggsMLSelection::setKinematics( ) {
       m_mT2[em] = 0.;
     }
     if ( theElectron > -1 && theMuonPlus > -1 ) {
-      deltaPhiEMinusMuPlus = fabs( 180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
-      m_deltaPhi[em] = deltaPhiEMinusMuPlus;
+      deltaPhiEMinusMuPlus  = fabs( 180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
+      deltaErreEMinusMuPlus = m_p4ElectronMinus->Vect().DeltaR(m_p4MuonPlus->Vect());
+      m_deltaPhi[em]  = deltaPhiEMinusMuPlus;
+      m_deltaErre[em] = deltaErreEMinusMuPlus;
       dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
 		      m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 		      0.0 );
@@ -1060,7 +1096,8 @@ void HiggsMLSelection::setKinematics( ) {
       
       // if two pairs are built we choose the one with highest di-lepton pt
       if ( dilepPtEPlusMuMinus > dilepPtEMinusMuPlus ) {
-	m_deltaPhi[em] = deltaPhiEPlusMuMinus;
+	m_deltaPhi[em]  = deltaPhiEPlusMuMinus;
+	m_deltaErre[em] = deltaErreEPlusMuMinus;
 	dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
 			m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
 			0.0 );
@@ -1071,7 +1108,8 @@ void HiggsMLSelection::setKinematics( ) {
         m_mT2[em] = 0.;
       }
       else {
-	m_deltaPhi[em] = deltaPhiEMinusMuPlus;
+	m_deltaPhi[em]  = deltaPhiEMinusMuPlus;
+	m_deltaErre[em] = deltaErreEMinusMuPlus;
 	dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
 			m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 			0.0 );
@@ -1084,7 +1122,8 @@ void HiggsMLSelection::setKinematics( ) {
     }
   }
   else {
-    m_deltaPhi[em] = -1.;
+    m_deltaPhi[em]  = -1.;
+    m_deltaErre[em] = -1.;
     m_transvMass[em] = -1.;
     m_mT2[em] = -1.;
   }
@@ -1185,6 +1224,7 @@ void HiggsMLSelection::resetKinematics() {
 
   for(int ichan=0;ichan<3;ichan++) {
     m_deltaPhi[ichan] = 0;
+    m_deltaErre[ichan] = 0;
     m_mll[ichan] = 0;
     m_transvMass[ichan] = 0;
   }

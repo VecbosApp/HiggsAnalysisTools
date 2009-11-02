@@ -17,7 +17,7 @@
 #include "HiggsAnalysisTools/include/HiggsBase.h"
 #include "HiggsAnalysisTools/include/RedHiggsTree.h"
 #include "HiggsAnalysisTools/include/RedTriggerTree.hh"
-
+#include "HiggsAnalysisTools/include/RedEleIDTree.h"
 #include <TVector3.h>
 #include <TLorentzVector.h>
 
@@ -121,6 +121,7 @@ private:
   float m_HoEElectronMinus, m_HoEElectronPlus;
   float m_CaloEneElectronMinus, m_CaloEneElectronPlus;
   float m_deltaPhi[3];
+  float m_deltaErre[3];
   float m_mll[3];
   float m_transvMass[3];
   float m_mT2[3];
@@ -153,6 +154,9 @@ private:
 
   //! reduced tree for trigger studies (on all events)
   RedTriggerTree *myTriggerTree;
+
+  //! reduced tree for eleId studies
+  RedEleIDTree *myEleIdTree;
 
   //! new variables
   float m_eOverP[100];

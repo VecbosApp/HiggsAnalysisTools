@@ -23,7 +23,8 @@ public:
   //! add the HLT muon triggers informations
   void addHLTMuonsInfos();
   //! event by event final dataset fill
-  void fillAll(float mt, float dphi, float tmass, float mee, float max, float min, float deta, 
+  void fillAll(float mt, float pfmt, float cmt, 
+	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
   void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT,
@@ -52,7 +53,10 @@ private:
   bool myHLTSingleMuonRelaxed;
   bool myHLTSingleMuonOR;
   float myMet;       
+  float myPFMet;       
+  float myCaloMet;       
   float myDeltaPhi;  
+  float myDeltaR;  
   float myTransvMass;
   float myEleInvMass;
   float maxPtEle;  

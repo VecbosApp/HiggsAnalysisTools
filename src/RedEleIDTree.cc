@@ -1,4 +1,4 @@
-#include "./RedEleIDTree.h"
+#include "../include/RedEleIDTree.h"
 
 // C++
 #include <iostream>
@@ -17,31 +17,13 @@ RedEleIDTree::RedEleIDTree(const char * filename) {
   myTree = new TTree("T1","eleID tree");
 
   // GENERAL block
-  myTree->Branch("sampleOk",                 &mySampleOk,                 "sampleOk/I");  
-  myTree->Branch("singleElePassedTrg",       &mySingleElePassedTrg,       "singleElePassedTrg/I");  
-  myTree->Branch("singleEleRelaxPassedTrg",  &mySingleEleRelaxPassedTrg,  "singleEleRelaxPassedTrg/I");  
-  myTree->Branch("doubleElePassedTrg",       &myDoubleElePassedTrg,       "doubleElePassedTrg/I");  
-  myTree->Branch("doubleEleRelaxPassedTrg",  &myDoubleEleRelaxPassedTrg,  "doubleEleRelaxPassedTrg/I");  
-  myTree->Branch("chargeEle",                &myChargeEle,                "chargeEle/I");  
-  myTree->Branch("energyEle",                &myEnergyEle,                "energyEle/F");  
-  myTree->Branch("etEle",                    &myEtEle,                    "etEle/F");  
-  myTree->Branch("momentumEle",              &myMomentumEle,              "momentumEle/F");
-  myTree->Branch("thetaEle",                 &myThetaEle,                 "thetaEle/F");  
-  myTree->Branch("etaEle",                   &myEtaEle,                   "etaEle/F");  
-  myTree->Branch("phiEle",                   &myPhiEle,                   "phiEle/F");  
-  myTree->Branch("latEle",                   &myLatEle,                   "latEle/F");  
-  myTree->Branch("a20Ele",                   &myA20Ele,                   "a20Ele/F");  
-  myTree->Branch("s9s25Ele",                 &myS9s25Ele,                 "s9s25Ele/F");
-  myTree->Branch("covEtaEtaEle",             &myCovEtaEtaEle,             "covEtaEtaEle/F");  
-  myTree->Branch("classificationEle",              &myEleClassEle,              "classificationEle/I");  
-  myTree->Branch("hOverEEle",                &myEleHoEEle,                "hOverEEle/F");  
-  myTree->Branch("eSuperClusterOverPEle",            &myEleCorrEoPEle,            "eSuperClusterOverPEle/F");  
-  myTree->Branch("eSeedOverPoutEle",         &myEleCorrEoPoutEle,         "eSuperClusterOverPEle/F");  
-  myTree->Branch("deltaEtaAtVtxEle",      &myEleDeltaEtaAtVtxEle,      "deltaEtaAtVtxEle/F");  
-  myTree->Branch("deltaPhiAtVtxEle",      &myEleDeltaPhiAtVtxEle,      "deltaPhiAtVtxEle/F");  
-  myTree->Branch("eleSumPt04Ele",            &myEleSumPt04Ele,   "eleSumPt04Ele/F");  
-  myTree->Branch("eleIdLikelihoodEle",         &myEleLikelihoodEle,         "eleIdLikelihoodEle/F");  
-  myTree->Branch("eleFisherEle",             &myEleFisherEle,             "eleFisherEle/F");  
+  myTree->Branch("class",          &myClass,          "class/I");  
+  myTree->Branch("hOverE",         &myHOverE,         "hOverE/F");  
+  myTree->Branch("eOverP",         &myEOverP,         "eOverP/F");  
+  myTree->Branch("eOverPout",      &myEOverPout,      "eOverPout/F");  
+  myTree->Branch("deltaEtaAtVtx",  &myDeltaEtaAtVtx,  "deltaEtaAtVtx/F");  
+  myTree->Branch("deltaPhiAtVtx",  &myDeltaPhiAtVtx,  "deltaPhiAtVtx/F");  
+  myTree->Branch("sigmaIEtaIEta",  &mySigmaIEtaIEta,  "sigmaIEtaIEta/F");  
 }
 
 
@@ -64,31 +46,13 @@ void RedEleIDTree::save()
 }
 
 
-void RedEleIDTree::fillAll(int isok, int seHLT, int serHLT, int deHLT, int derHLT, int charge, float ene, float et, float mom, float theta, float eta, float phi, float lat, float a20, float s9s25, float covEE, int theclass, float hoe, float eop, float eopout, float deta, float dphi, float iso, float like, float fis)
+void RedEleIDTree::fillAll(int cl, float hoe, float eop, float eopo, float deta, float dphi, float see)
 {
-  mySampleOk                = isok;
-  mySingleElePassedTrg      = seHLT;
-  mySingleEleRelaxPassedTrg = serHLT; 
-  myDoubleElePassedTrg      = deHLT;       
-  myDoubleEleRelaxPassedTrg = derHLT;   
-  myChargeEle               = charge;
-  myEnergyEle               = ene; 
-  myEtEle                   = et;
-  myMomentumEle             = mom;
-  myThetaEle                = theta; 
-  myEtaEle                  = eta; 
-  myPhiEle                  = phi; 
-  myLatEle                  = lat; 
-  myA20Ele                  = a20;
-  myS9s25Ele                = s9s25; 
-  myCovEtaEtaEle            = covEE; 
-  myEleClassEle             = theclass;
-  myEleHoEEle               = hoe; 
-  myEleCorrEoPEle           = eop; 
-  myEleCorrEoPoutEle        = eopout;
-  myEleDeltaEtaAtVtxEle     = deta; 
-  myEleDeltaPhiAtVtxEle     = dphi;
-  myEleSumPt04Ele  = iso;
-  myEleLikelihoodEle        = like; 
-  myEleFisherEle            = fis; 
+  myClass         = cl;
+  myHOverE        = hoe;
+  myEOverP        = eop;
+  myEOverPout     = eopo;
+  myDeltaEtaAtVtx = deta;
+  myDeltaPhiAtVtx = dphi;
+  mySigmaIEtaIEta = see;
 }
