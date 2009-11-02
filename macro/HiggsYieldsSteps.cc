@@ -137,7 +137,8 @@ float H550_xsec = 0.082537;
 float H600_xsec = 0.054517;
 float Wgamma_xsec = 11960;
 float Wjets_xsec = 46050; // NLO estimate
-float Zjets_xsec = 7164; // NLO estimate
+//float Zjets_xsec = 7164; // NLO estimate (InvMass = 20-inf GeV)
+float Zjets_xsec = 3700 * 1.2; // LO (madgraph) * 1.2 (k-factor: check) [madgraph sample = 50-Inf GeV]
 float TTjets_xsec = 415; // NLO estimate
 float WW_xsec = 44.8;
 float WZ_xsec = 17.4;
@@ -163,6 +164,8 @@ float InclusiveMu15_xsec = 0.5091*0.0002881*1.0E+09;
 
 float Higgs_xsec = H165_xsec;
 
+string sampleNames[26];
+
 void computeYields(float lumi, const char* finalstate) {
 
   TChain *chains_preSel[26];
@@ -173,6 +176,36 @@ void computeYields(float lumi, const char* finalstate) {
     sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_%s",finalstate);
     chains_fullSel[isample] = new TChain(fullsel_treename);
   }
+
+  // signal
+  sampleNames[0] = "H165";
+  // backgrounds
+  sampleNames[1] = "WjetsMadgraph";
+  sampleNames[2] = "TTbarJetsMadgraph";
+  sampleNames[3] = "ZjetsMadgraph";
+  sampleNames[4] = "WW";
+  sampleNames[5] = "ZZ";
+  sampleNames[6] = "WZ";
+  sampleNames[7] = "Wgamma";
+  sampleNames[8] = "QCD_EMEnriched_Pt20to30Ele10";
+  sampleNames[9] = "QCD_EMEnriched_Pt30to80Ele10";
+  sampleNames[10] = "QCD_EMEnriched_Pt80to170Ele10";
+  sampleNames[11] = "QCD_BCtoE_Pt20to30Ele10";
+  sampleNames[12] = "QCD_BCtoE_Pt30to80Ele10";
+  sampleNames[13] = "QCD_BCtoE_Pt80to170Ele10";
+  sampleNames[14] = "PhotonJet_Pt0to15";
+  sampleNames[15] = "PhotonJet_Pt15to20";
+  sampleNames[16] = "PhotonJet_Pt20to30";
+  sampleNames[17] = "PhotonJet_Pt30to50";
+  sampleNames[18] = "PhotonJet_Pt50to80";
+  sampleNames[19] = "PhotonJet_Pt80to120";
+  sampleNames[20] = "PhotonJet_Pt120to170";
+  sampleNames[21] = "PhotonJet_Pt170to300";
+  sampleNames[22] = "PhotonJet_Pt300to500";
+  sampleNames[23] = "PhotonJet_Pt500toInf";
+  sampleNames[24] = "InclusiveMu15";
+  // backgrounds (alternative to some of the above ones)
+  sampleNames[25] = "TTbar";
 
   // signal
   chains_preSel[0]->Add("results/H165/*Counters.root");       
@@ -531,6 +564,12 @@ void computeYields(float lumi, const char* finalstate) {
   else QCDmu_finaleff = 0.0;
   if(nPreSelTot[0][25]>0) ttbar_finaleff = nFullSelTot[nCutsAnaFull-4][25]/nPreSelTot[0][25];
   else ttbar_finaleff = 0.0;
+
+  cout << "\n\nPROCESSED EVENTS:" << endl;
+  for(int i=0; i<26; i++) {
+    cout << sampleNames[i] << "\t" << nPreSelTot[0][i] << endl;
+  }
+
 }
 
 void setupCuts() {
