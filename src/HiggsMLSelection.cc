@@ -505,18 +505,11 @@ void HiggsMLSelection::Loop() {
     float theEleHcalPtSum = ( theElectron > -1 ) ? dr03HcalTowerSumEtEle[theElectron] : 0.0;
     float thePosHcalPtSum = ( thePositron > -1 ) ? dr03HcalTowerSumEtEle[thePositron] : 0.0;
 
-    // gloabal isolation
-    float theEleGlobalSum = ( theElectron > -1 ) ? electronIsoGlobalSum(theElectron) : 0.0;
-    float thePosGlobalSum = ( thePositron > -1 ) ? electronIsoGlobalSum(thePositron) : 0.0;
-
     // --- muon ID / isolation ---
     bool theMuonPlusID = true;
     bool theMuonMinusID = true;
     if ( theMuonMinus > -1 ) theMuonMinusID = anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonMinus],TM2DCompatibilityLoose);
     if ( theMuonPlus > -1 ) theMuonPlusID = anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TMOneStationLoose) && anaUtils.muonIdVal(muonIdMuon[theMuonPlus],TM2DCompatibilityLoose);
-    
-    float theMuonMinusGlobalSum = ( theMuonMinus > -1 ) ? muonIsoGlobalSum(theMuonMinus) : 0.0;
-    float theMuonPlusGlobalSum = ( theMuonPlus > -1 ) ? muonIsoGlobalSum(theMuonPlus) : 0.0;
 
     // jet counter
     int njets = numJets();
@@ -538,6 +531,8 @@ void HiggsMLSelection::Loop() {
     // ee final state
     if (m_channel[ee]) {
 
+      float theEleGlobalSum = electronIsoGlobalSum(theElectron, thePositron);
+      float thePosGlobalSum = electronIsoGlobalSum(thePositron, theElectron);
       float theEleHardTrackerPtSum = (etEle[theElectron] > etEle[thePositron]) ? theEleTrackerPtSum : thePosTrackerPtSum;
       float theEleSlowTrackerPtSum = (etEle[theElectron] > etEle[thePositron]) ? thePosTrackerPtSum : theEleTrackerPtSum;
       float theEleHardHcalPtSum = (etEle[theElectron] > etEle[thePositron]) ? theEleHcalPtSum : thePosHcalPtSum;
@@ -631,8 +626,10 @@ void HiggsMLSelection::Loop() {
       theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
       theSTransvMassMM  = m_mT2[mm];
 
-      float theMuonHardGlobalSum = (etMuon[theMuonMinus] > etMuon[theMuonPlus]) ? theMuonMinusGlobalSum : theMuonPlusGlobalSum;
-      float theMuonSlowGlobalSum = (etMuon[theMuonMinus] > etMuon[theMuonPlus]) ? theMuonPlusGlobalSum : theMuonMinusGlobalSum;
+      float theMuonMinusGlobalSum = muonIsoGlobalSum(theMuonMinus, theMuonPlus);
+      float theMuonPlusGlobalSum  = muonIsoGlobalSum(theMuonPlus, theMuonMinus);
+      float theMuonHardGlobalSum  = (etMuon[theMuonMinus] > etMuon[theMuonPlus]) ? theMuonMinusGlobalSum : theMuonPlusGlobalSum;
+      float theMuonSlowGlobalSum  = (etMuon[theMuonMinus] > etMuon[theMuonPlus]) ? theMuonPlusGlobalSum : theMuonMinusGlobalSum;
       float theMuonHardD0 = (etEle[theMuonMinus] > etEle[theMuonPlus]) ? muTrackD0Muon[theMuonMinus] : muTrackD0Muon[theMuonPlus];
       float theMuonSlowD0 = (etEle[theMuonMinus] > etEle[theMuonPlus]) ? muTrackD0Muon[theMuonPlus] : muTrackD0Muon[theMuonMinus];
 
@@ -730,9 +727,9 @@ void HiggsMLSelection::Loop() {
 	theEleTrackerPtSumEM = theEleTrackerPtSum;
 	theEleHcalPtSumEM = theEleHcalPtSum;
 	theEleEcalPtSumEM = theEleEcalPtSum;
-	theEleGlobalSumEM = theEleGlobalSum;
+	theEleGlobalSumEM  = elemuIsoGlobalSum(theElectron, theMuonPlus);
+        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron);
         theEleLikelihoodEM = eleIdLikelihoodEle[theElectron];
-        theMuonGlobalSumEM = theMuonPlusGlobalSum;
         theEleD0 = eleTrackD0Ele[theElectron];
         theMuonD0 = muTrackD0Muon[theMuonPlus];
       }
@@ -743,9 +740,9 @@ void HiggsMLSelection::Loop() {
 	theEleTrackerPtSumEM = thePosTrackerPtSum;
 	theEleHcalPtSumEM = thePosHcalPtSum;
 	theEleEcalPtSumEM = thePosEcalPtSum;
-	theEleGlobalSumEM = thePosGlobalSum;
+	theEleGlobalSumEM  = elemuIsoGlobalSum(thePositron, theMuonMinus);
+        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron);
         theEleLikelihoodEM = eleIdLikelihoodEle[thePositron];
-        theMuonGlobalSumEM = theMuonMinusGlobalSum;
         theEleD0 = eleTrackD0Ele[thePositron];
         theMuonD0 = muTrackD0Muon[theMuonMinus];
       }
@@ -1280,35 +1277,117 @@ float HiggsMLSelection::getEcalPtSum(int index) {
 
 }
 
-float HiggsMLSelection::muonIsoGlobalSum(int theMuon) {
+float HiggsMLSelection::muonIsoGlobalSum(int theMuon, int theOther) {
 
   TVector3 muonP3(pxMuon[theMuon],pyMuon[theMuon],pzMuon[theMuon]);
+  TVector3 otherP3(pxMuon[theOther],pyMuon[theOther],pzMuon[theOther]);
 
   // global isolation
   float theMuonGlobalSum = 0.;
   float muonTrackerForGlobal = sumPt03Muon[theMuon];
   float muonEcalForGlobal    = emEt03Muon[theMuon]; 
   float muonHcalForGlobal    = hadEt03Muon[theMuon];
+
+  // if the second muon falls into the cone, remove it from tracker only
+  float theDr = muonP3.DeltaR(otherP3);
+  if (theDr<0.3) muonTrackerForGlobal = muonTrackerForGlobal-otherP3.Pt(); 
+
   theMuonGlobalSum = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal;
 
   return theMuonGlobalSum;
 
 }
 
-float HiggsMLSelection::electronIsoGlobalSum(int theElectron) {
+float HiggsMLSelection::electronIsoGlobalSum(int theElectron, int theOther) {
 
   TVector3 electronP3(pxEle[theElectron],pyEle[theElectron],pzEle[theElectron]);
+  TVector3 otherP3(pxEle[theOther],pyEle[theOther],pzEle[theOther]);
 
   // global isolation
   float theElectronGlobalSum = 0.;
-  float eleTrackerForGlobal = dr03TkSumPtEle[theElectron];
-  float eleEcalForGlobal    = dr03EcalRecHitSumEtEle[theElectron]; 
-  float eleHcalForGlobal    = dr03HcalTowerSumEtEle[theElectron];
+  float eleTrackerForGlobal  = dr03TkSumPtEle[theElectron];
+  float eleEcalForGlobal     = dr03EcalRecHitSumEtEle[theElectron]; 
+  float eleHcalForGlobal     = dr03HcalTowerSumEtEle[theElectron];
+  
+  // if the second electron falls into the cone, remove it
+  float theDr = electronP3.DeltaR(otherP3);
+  if (theDr<0.3) { 
+    
+    // from tracker: use the KF track closer to the GSF track
+    float drMin=9999.;
+    float drMinPt=-9999.;
+    for (int theTrack=0; theTrack<nTrack; theTrack++){ 
+      TVector3 trackP3(pxTrack[theTrack],pyTrack[theTrack],pzTrack[theTrack]);      
+      float trackDr = otherP3.DeltaR(trackP3);
+      if (trackDr<0.3 && trackDr<drMin) { drMin=trackDr; drMinPt = trackP3.Pt(); }
+    }
+    if (drMinPt>-1) eleTrackerForGlobal = eleTrackerForGlobal-drMinPt;
+
+    // from ECAL: use the supercluster energy
+    eleEcalForGlobal = eleEcalForGlobal-erawEle[theOther]; 
+  }
+
   theElectronGlobalSum = eleTrackerForGlobal + eleEcalForGlobal + eleHcalForGlobal;
 
   return theElectronGlobalSum;
 
 }
+
+float HiggsMLSelection::elemuIsoGlobalSum(int theElectron, int theOtherMu) {
+
+  TVector3 electronP3(pxEle[theElectron],pyEle[theElectron],pzEle[theElectron]);
+  TVector3 otherMuP3(pxMuon[theOtherMu],pyMuon[theOtherMu],pzMuon[theOtherMu]);
+
+  // global isolation
+  float theElectronGlobalSum = 0.;
+  float eleTrackerForGlobal  = dr03TkSumPtEle[theElectron];
+  float eleEcalForGlobal     = dr03EcalRecHitSumEtEle[theElectron]; 
+  float eleHcalForGlobal     = dr03HcalTowerSumEtEle[theElectron];
+  
+  // if the muon falls into the cone, remove it from tracker only
+  float theDr = electronP3.DeltaR(otherMuP3);
+  if (theDr<0.3) eleTrackerForGlobal = eleTrackerForGlobal-otherMuP3.Pt();
+
+  theElectronGlobalSum = eleTrackerForGlobal + eleEcalForGlobal + eleHcalForGlobal;
+
+  return theElectronGlobalSum;
+}
+
+float HiggsMLSelection::mueleIsoGlobalSum(int theMuon, int theOtherEle) {
+
+  TVector3 muonP3(pxMuon[theMuon],pyMuon[theMuon],pzMuon[theMuon]);
+  TVector3 otherEleP3(pxEle[theOtherEle],pyEle[theOtherEle],pzEle[theOtherEle]);
+
+  // global isolation
+  float theMuonGlobalSum = 0.;
+  float muonTrackerForGlobal = sumPt03Muon[theMuon];
+  float muonEcalForGlobal    = emEt03Muon[theMuon]; 
+  float muonHcalForGlobal    = hadEt03Muon[theMuon];
+
+  // if the electron falls into the cone, remove it
+  float theDr = muonP3.DeltaR(otherEleP3);
+  if (theDr<0.3) { 
+    
+    // from tracker: use the KF track closer to the GSF track
+    float drMin=9999.;
+    float drMinPt=-9999.;
+    for (int theTrack=0; theTrack<nTrack; theTrack++){ 
+      TVector3 trackP3(pxTrack[theTrack],pyTrack[theTrack],pzTrack[theTrack]);      
+      float trackDr = otherEleP3.DeltaR(trackP3);
+      if (trackDr<0.3 && trackDr<drMin) { drMin=trackDr; drMinPt = trackP3.Pt(); }
+    }
+    if (drMinPt>-1) muonTrackerForGlobal = muonTrackerForGlobal-drMinPt;
+
+    // from ECAL: use the supercluster energy
+    muonEcalForGlobal = muonEcalForGlobal-erawEle[theOtherEle]; 
+  }
+  
+  theMuonGlobalSum = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal;
+  
+  return theMuonGlobalSum;
+
+}
+
 
 int HiggsMLSelection::getPV() {
 
