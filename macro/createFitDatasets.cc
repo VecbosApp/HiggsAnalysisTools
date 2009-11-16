@@ -116,12 +116,13 @@ void createSingleDataset(const char *treefile, const char *roofitfile) {
   RooRealVar *jetcat = new RooRealVar("jetcat","jetcat",-1,1); // cut the -2 ( >1 jet )
   RooRealVar *met    = new RooRealVar("met","E_{T}^{miss}",0,200,"GeV");
   RooRealVar *deltaPhi = new RooRealVar("deltaPhi","#Delta#phi",0,180,"#deg");
-  RooRealVar *minPtEle = new RooRealVar("minPtEle","p_{T}^{min}",0,200,"GeV");
-  RooRealVar *eleInvMass = new RooRealVar("eleInvMass","m(l^{+}l^{-})",0,150,"GeV");
+  RooRealVar *maxPtEle = new RooRealVar("maxPtEle","p_{T}^{max}",20,200,"GeV");
+  RooRealVar *eleInvMass = new RooRealVar("eleInvMass","m(l^{+}l^{-})",12,150,"GeV");
   RooRealVar *bTagImpPar = new RooRealVar("bTagImpPar","b-tag",-1001.,2.0);
   RooRealVar *weight = new RooRealVar("weight","weight",0,10000);
+  RooRealVar *event = new RooRealVar("event","progressive event number",0,1e+07);
 
-  RooArgSet setHiggs(*jetcat,*met,*deltaPhi,*minPtEle,*eleInvMass,*bTagImpPar,*weight);
+  RooArgSet setHiggs(*jetcat,*met,*deltaPhi,*maxPtEle,*eleInvMass,*bTagImpPar,*weight,*event);
 
   TFile *file = TFile::Open(treefile);
   TTree *tree = (TTree*)file->Get("T1");
