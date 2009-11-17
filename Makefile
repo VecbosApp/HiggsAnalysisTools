@@ -47,6 +47,7 @@ $(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
 	$(INCLUDEDIR)/src/RedLikeOptimTree.cc \
 	$(INCLUDEDIR)/src/HiggsIsolationOptimToyMC.cc \
 	$(INCLUDEDIR)/src/RedIsolationOptimTree.cc \
+	$(INCLUDEDIR)/src/RedEleIDTree.cc \
 	$(INCLUDEDIR)/src/ZplusJetsSelection.cc \
 	$(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc \
 	$(INCLUDEDIR)/src/HiggsVertexing.cpp \
@@ -86,6 +87,8 @@ $(OUTLIB)HiggsKinematicsOptimToyMC.o: $(INCLUDEDIR)/src/HiggsKinematicsOptimToyM
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsKinematicsOptimToyMC.o $<
 $(OUTLIB)RedIsolationOptimTree.o: $(INCLUDEDIR)/src/RedIsolationOptimTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedIsolationOptimTree.o $<
+$(OUTLIB)RedEleIDTree.o: $(INCLUDEDIR)/src/RedEleIDTree.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEleIDTree.o $<
 $(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
 $(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)/src/RedHiggsTree.cc
@@ -138,6 +141,7 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)RedEleIDOptimTree.o \
 	$(OUTLIB)RedLikeOptimTree.o \
 	$(OUTLIB)RedIsolationOptimTree.o \
+	$(OUTLIB)RedEleIDTree.o \
 	$(OUTLIB)CutBasedEleIDSelector.o \
 	$(OUTLIB)CommonHiggsPreselector.o \
 	$(OUTLIB)CutBasedHiggsSelector.o \
