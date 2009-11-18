@@ -83,7 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
   
   // single electron efficiency
-  EgammaCutBasedID.Configure("config/higgs/rompTightEleId");
+  EgammaCutBasedID.Configure("config/higgs/looseEleId");
 
   // kinematics
   m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
