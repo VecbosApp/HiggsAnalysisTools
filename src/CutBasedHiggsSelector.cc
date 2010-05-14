@@ -14,6 +14,10 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_highPt = selector.m_highPt;
   m_isElectronId = selector.m_isElectronId;
   m_isPositronId = selector.m_isPositronId;
+  m_isElectronIsol = selector.m_isElectronIsol;
+  m_isPositronIsol = selector.m_isPositronIsol;
+  m_isElectronConvRej = selector.m_isElectronConvRej;
+  m_isPositronConvRej = selector.m_isPositronConvRej;
   m_invMass = selector.m_invMass;
   m_eleHardTkPtSum   = selector.m_eleHardTkPtSum;
   m_eleHardHcalPtSum = selector.m_eleHardHcalPtSum;
@@ -50,6 +54,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
 
   // tehse cuts are applied in the HiggsSelection class, but are configured here
   _selection->addSwitch("classDepEleId");
+  _selection->addSwitch("isolation");
   _selection->addCut("jetConeWidth");
   _selection->addCut("etaJetAcc");
   _selection->addCut("etJetAcc");
@@ -80,10 +85,12 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("slowLeptonThreshold");
   globalCounter->AddVar("dileptonInvMassMin");
   globalCounter->AddVar("classDepEleId");
+  globalCounter->AddVar("isolation");
   globalCounter->AddVar("trackerIso");
   globalCounter->AddVar("hcalIso");
   globalCounter->AddVar("ecalIso");
   globalCounter->AddVar("globalIso");
+  globalCounter->AddVar("convRej");
   globalCounter->AddVar("leptonD0");
   globalCounter->AddVar("MET");
   globalCounter->AddVar("maxPtLepton");
@@ -123,10 +130,12 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("slowLeptonThreshold");
       processCounter->AddVar("dileptonInvMassMin");
       processCounter->AddVar("classDepEleId");
+      processCounter->AddVar("isolation");
       processCounter->AddVar("trackerIso");
       processCounter->AddVar("hcalIso");
       processCounter->AddVar("ecalIso");
       processCounter->AddVar("globalIso");
+      processCounter->AddVar("convRej");
       processCounter->AddVar("leptonD0");
       processCounter->AddVar("MET");
       processCounter->AddVar("maxPtLepton");
@@ -170,6 +179,9 @@ bool CutBasedHiggsSelector::output() {
   // real selections (after preselection step)
   if ((_selection->getSwitch("classDepEleId")) && (!m_isElectronId || !m_isPositronId)) return false; 
   theCounter->IncrVar("classDepEleId",m_weight);
+
+  if ((_selection->getSwitch("isolation")) && (!m_isElectronIsol || !m_isPositronIsol)) return false; 
+  theCounter->IncrVar("isolation",m_weight);
   
   if ((_selection->getSwitch("trackerPtSumAss"))) {
     if (m_highPt>=25 && !_selection->passCut("trackerPtSumAss",m_eleHardTkPtSum)) return false; 
@@ -208,6 +220,9 @@ bool CutBasedHiggsSelector::output() {
     if (m_lowPt<25   && (m_eleSlowGlobalSum > ((m_lowPt-10.)/3.) ))           return false; 
   }
   theCounter->IncrVar("globalIso",m_weight);
+
+  if ((_selection->getSwitch("convRej")) && (!m_isElectronConvRej || !m_isPositronConvRej)) return false; 
+  theCounter->IncrVar("convRej",m_weight);
 
   if ((_selection->getSwitch("leptonD0")) && (!_selection->passCut("leptonD0",m_eleSlowD0) || !_selection->passCut("leptonD0",m_eleHardD0)) ) return false;
   theCounter->IncrVar("leptonD0",m_weight);
@@ -266,11 +281,13 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
       theCounter->Draw("slowLeptonThreshold","hardLeptonThreshold");
       theCounter->Draw("dileptonInvMassMin","slowLeptonThreshold");
       theCounter->Draw("classDepEleId","dileptonInvMassMin");
-      theCounter->Draw("trackerIso","classDepEleId");
+      theCounter->Draw("isolation","classDepEleId");
+      theCounter->Draw("trackerIso","isolation");
       theCounter->Draw("hcalIso","trackerIso");
       theCounter->Draw("ecalIso","hcalIso");
       theCounter->Draw("globalIso","ecalIso");
-      theCounter->Draw("leptonD0","globalIso");
+      theCounter->Draw("convRej","globalIso");
+      theCounter->Draw("leptonD0","convRej");
       theCounter->Draw("MET","leptonD0");
       theCounter->Draw("maxPtLepton","MET");   
       theCounter->Draw("minPtLepton","maxPtLepton");
@@ -297,11 +314,13 @@ void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
     globalCounter->Draw("slowLeptonThreshold","hardLeptonThreshold");
     globalCounter->Draw("dileptonInvMassMin","slowLeptonThreshold");
     globalCounter->Draw("classDepEleId","dileptonInvMassMin");
-    globalCounter->Draw("trackerIso","classDepEleId");
+    globalCounter->Draw("isolation","classDepEleId");
+    globalCounter->Draw("trackerIso","isolation");
     globalCounter->Draw("hcalIso","trackerIso");
     globalCounter->Draw("ecalIso","hcalIso");
     globalCounter->Draw("globalIso","ecalIso");
-    globalCounter->Draw("leptonD0","globalIso");
+    globalCounter->Draw("convRej","globalIso");
+    globalCounter->Draw("leptonD0","convRej");
     globalCounter->Draw("MET","leptonD0");
     globalCounter->Draw("maxPtLepton","MET");
     globalCounter->Draw("minPtLepton","maxPtLepton");

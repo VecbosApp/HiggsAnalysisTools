@@ -34,6 +34,10 @@ public:
   void SetInvMass(float mll)             { m_invMass       = mll;       }
   void SetElectronId(bool isEleId)       { m_isElectronId  = isEleId; }
   void SetPositronId(bool isPosId)       { m_isPositronId  = isPosId; }
+  void SetElectronIsolation(bool isEleIsol)   { m_isElectronIsol  = isEleIsol; }
+  void SetPositronIsolation(bool isPosIsol)   { m_isPositronIsol  = isPosIsol; }
+  void SetElectronConvRejection(bool isEleConvRej)   { m_isElectronConvRej  = isEleConvRej; }
+  void SetPositronConvRejection(bool isPosConvRej)   { m_isPositronConvRej  = isPosConvRej; }
   void SetEleHardTrackerPtSum(float sum) { m_eleHardTkPtSum    = sum; }
   void SetEleSlowTrackerPtSum(float sum) { m_eleSlowTkPtSum    = sum; }
   void SetEleHardHcalPtSum(float sum)    { m_eleHardHcalPtSum  = sum; }
@@ -71,7 +75,7 @@ private:
   
   float m_weight;
   float m_highPt, m_lowPt;
-  bool m_isElectronId, m_isPositronId;
+  bool m_isElectronId, m_isPositronId, m_isElectronIsol, m_isPositronIsol, m_isElectronConvRej, m_isPositronConvRej;
   float m_invMass;
   float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
   float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;

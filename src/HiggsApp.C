@@ -126,8 +126,8 @@ int main(int argc, char* argv[]) {
   TriggerMask mask(treeCond);
 
   // require triggers
-  mask.requireTrigger("HLT_Ele15_SW_L1R");
-  mask.requireTrigger("HLT_Mu15");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+  mask.requireTrigger("HLT_Mu9");
 
   std::vector<int> requiredTriggers = mask.getBits();
   htoww.requireTrigger(requiredTriggers);
@@ -347,8 +347,8 @@ int main(int argc, char* argv[]) {
   TriggerMask mask(treeCond);
 
   // require triggers
-  mask.requireTrigger("HLT_Ele15_SW_L1R");
-  mask.requireTrigger("HLT_Mu15");
+  mask.requireTrigger("HLT_Ele15_LW_L1R");
+  mask.requireTrigger("HLT_Mu9");
 
   std::vector<int> requiredTriggers = mask.getBits();
   htoww.requireTrigger(requiredTriggers);

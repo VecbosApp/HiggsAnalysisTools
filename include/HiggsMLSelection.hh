@@ -54,7 +54,7 @@ private:
   int numJets();
   int numUncorrJets();
   //! returns the output of the custom cut electron ID
-  bool isEleID(int eleIndex);
+  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
   float getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR);
   //! if the 2nd muon falls in deltaR from first, get its Pt in tracker
@@ -89,6 +89,8 @@ private:
   double mT(TVector3 plep, TVector3 pneu);
   //! method to evaluate Mt2 from the 2 leptons pT's and pTmiss
   double mT2(TVector3 plep1, TVector3 plep2, TVector3 ptmiss);
+  //! Get pt given x/y coordinates
+  float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
