@@ -10,6 +10,7 @@ ecalPtSumRel		0
 globalSum               1
 leptonD0                1
 classDepEleId		1
+isolation               1
 MET			0
 deltaPhi		0
 maxPtLepton		0
