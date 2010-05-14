@@ -145,7 +145,6 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)CutBasedEleIDSelector.o \
 	$(OUTLIB)CommonHiggsPreselector.o \
 	$(OUTLIB)CutBasedHiggsSelector.o \
-	$(OUTLIB)LeptonPlusFakeSelection.o \
 	$(OUTLIB)VertexTree.o
 	$(CXX) $(CXXFLAGS) -ldl -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $(LDFLAGS) $ $<
 HiggsApp.clean:
