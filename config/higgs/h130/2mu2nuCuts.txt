@@ -17,5 +17,5 @@ dileptonInvMassMax	12		60
 detaLeptons		-1		1
 jetConeWidth		0.0		0.3
 etaJetAcc		-2.5		2.5
-etJetAcc                30              10000
+etJetAcc                35              10000
 
