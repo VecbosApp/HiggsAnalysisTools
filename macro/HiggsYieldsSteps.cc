@@ -8,12 +8,17 @@
 
 using namespace std;
 
+enum { ee=0, mm=1, em=2 };
+
 string preSelCuts[10];
-string fullSelCuts[20];
+string fullSelCuts[22];
+
+int UseCuts[3][22];
 
 float H_preSel[11];
 float Wj_preSel[11];
 float ttj_preSel[11];
+float SingleTop_preSel[11];
 float Zj_preSel[11];
 float WW_preSel[11];
 float ZZ_preSel[11];
@@ -25,23 +30,25 @@ float Photj_preSel[11];
 float QCDmu_preSel[11];
 float ttbar_preSel[11];
 
-float H_fullSel[19];
-float Wj_fullSel[19];
-float ttj_fullSel[19];
-float Zj_fullSel[19];
-float WW_fullSel[19];
-float ZZ_fullSel[19];
-float WZ_fullSel[19];
-float Wgamma_fullSel[19];
-float QCDem_fullSel[19];
-float QCDbc_fullSel[19];
-float Photj_fullSel[19];
-float QCDmu_fullSel[19];
-float ttbar_fullSel[19];
+float H_fullSel[22];
+float Wj_fullSel[22];
+float ttj_fullSel[22];
+float SingleTop_fullSel[22];
+float Zj_fullSel[22];
+float WW_fullSel[22];
+float ZZ_fullSel[22];
+float WZ_fullSel[22];
+float Wgamma_fullSel[22];
+float QCDem_fullSel[22];
+float QCDbc_fullSel[22];
+float Photj_fullSel[22];
+float QCDmu_fullSel[22];
+float ttbar_fullSel[22];
 
 float H_eff_preSel[11];
 float Wj_eff_preSel[11];
 float ttj_eff_preSel[11];
+float SingleTop_eff_preSel[11];
 float Zj_eff_preSel[11];
 float WW_eff_preSel[11];
 float ZZ_eff_preSel[11];
@@ -53,23 +60,25 @@ float Photj_eff_preSel[11];
 float QCDmu_eff_preSel[11];
 float ttbar_eff_preSel[11];
 
-float H_eff_fullSel[19];
-float Wj_eff_fullSel[19];
-float ttj_eff_fullSel[19];
-float Zj_eff_fullSel[19];
-float WW_eff_fullSel[19];
-float ZZ_eff_fullSel[19];
-float WZ_eff_fullSel[19];
-float Wgamma_eff_fullSel[19];
-float QCDem_eff_fullSel[19];
-float QCDbc_eff_fullSel[19];
-float Photj_eff_fullSel[19];
-float QCDmu_eff_fullSel[19];
-float ttbar_eff_fullSel[19];
+float H_eff_fullSel[22];
+float Wj_eff_fullSel[22];
+float ttj_eff_fullSel[22];
+float SingleTop_eff_fullSel[22];
+float Zj_eff_fullSel[22];
+float WW_eff_fullSel[22];
+float ZZ_eff_fullSel[22];
+float WZ_eff_fullSel[22];
+float Wgamma_eff_fullSel[22];
+float QCDem_eff_fullSel[22];
+float QCDbc_eff_fullSel[22];
+float Photj_eff_fullSel[22];
+float QCDmu_eff_fullSel[22];
+float ttbar_eff_fullSel[22];
 
 float H_finaleff_preSel;    
 float Wj_finaleff_preSel;
 float ttj_finaleff_preSel;
+float SingleTop_finaleff_preSel;
 float Zj_finaleff_preSel;
 float WW_finaleff_preSel;
 float ZZ_finaleff_preSel;
@@ -84,6 +93,7 @@ float ttbar_finaleff_preSel;
 float H_finaleff_fullSel;    
 float Wj_finaleff_fullSel;
 float ttj_finaleff_fullSel;
+float SingleTop_finaleff_fullSel;
 float Zj_finaleff_fullSel;
 float WW_finaleff_fullSel;
 float ZZ_finaleff_fullSel;
@@ -98,6 +108,7 @@ float ttbar_finaleff_fullSel;
 float H_finaleff;    
 float Wj_finaleff;
 float ttj_finaleff;
+float SingleTop_finaleff;
 float Zj_finaleff;
 float WW_finaleff;
 float ZZ_finaleff;
@@ -110,67 +121,76 @@ float QCDmu_finaleff;
 float ttbar_finaleff;
 
 // xsections
-float H120_xsec = 0.429291;
-float H130_xsec = 0.798372;
-float H140_xsec = 1.16031;
-float H150_xsec = 1.42712;
-float H155_xsec = 1.53503;
-float H160_xsec = 1.64532;
-float H165_xsec = 1.60112;
-float H170_xsec = 1.50192;
-float H175_xsec = 1.40384;
-float H180_xsec = 1.28808;
-float H190_xsec = 0.956866;
-float H200_xsec = 0.811859;
-float H210_xsec = 0.720998;
-float H220_xsec = 0.652178;
-float H230_xsec = 0.596385;
-float H240_xsec = 0.549726;
-float H250_xsec = 0.510142;
-float H275_xsec = 0.434763;
-float H300_xsec = 0.385833;
-float H350_xsec = 0.382384;
-float H400_xsec = 0.294458;
-float H450_xsec = 0.194491;
-float H500_xsec = 0.126372;
-float H550_xsec = 0.082537;
-float H600_xsec = 0.054517;
-float Wgamma_xsec = 11960;
-float Wjets_xsec = 46050; // NLO estimate
-//float Zjets_xsec = 7164; // NLO estimate (InvMass = 20-inf GeV)
-float Zjets_xsec = 3700 * 1.2; // LO (madgraph) * 1.2 (k-factor: check) [madgraph sample = 50-Inf GeV]
-float TTjets_xsec = 415; // NLO estimate
-float WW_xsec = 44.8;
-float WZ_xsec = 17.4;
-float ZZ_xsec = 7.1;
-float TTbar_xsec = 375.0;
-float QCD_EMenriched_Pt20to30_xsec = 0.4000*0.00800*1.0E+09;
-float QCD_EMenriched_Pt30to80_xsec = 0.1000*0.04700*1.0E+09;
-float QCD_EMenriched_Pt80to170_xsec = 0.0019*0.15000*1.0E+09;
-float QCD_BCtoE_Pt20to30_xsec = 0.4000*0.00048*1.0E+09;
-float QCD_BCtoE_Pt30to80_xsec = 0.1000*0.00240*1.0E+09;
-float QCD_BCtoE_Pt80to170_xsec = 0.0019*0.01200*1.0E+09;
-float PhotonJet_Pt0to15_xsec = 100.5*1.0E+06;
-float PhotonJet_Pt15to20_xsec = 168.0*1.0E+03;
-float PhotonJet_Pt20to30_xsec = 84.87*1.0E+03;
-float PhotonJet_Pt30to50_xsec = 26.32*1.0E+03;
-float PhotonJet_Pt50to80_xsec = 4.589*1.0E+03;
-float PhotonJet_Pt80to120_xsec = 0.7864*1.0E+03;
-float PhotonJet_Pt120to170_xsec = 0.1648*1.0E+03;
-float PhotonJet_Pt170to300_xsec = 0.04596*1.0E+03;
-float PhotonJet_Pt300to500_xsec = 3.708;
-float PhotonJet_Pt500toInf_xsec = 0.3285;
-float InclusiveMu15_xsec = 0.5091*0.0002881*1.0E+09;
+float H120_xsec = 0.247143;
+float H130_xsec = 0.452859;
+float H140_xsec = 0.64926;
+float H150_xsec = 0.787871;
+float H155_xsec = 0.842093;
+float H160_xsec = 0.897043;
+float H165_xsec = 0.867591;
+float H170_xsec = 0.808914;
+float H175_xsec = 0.751628;
+float H180_xsec = 0.685617;
+float H190_xsec = 0.503611;
+float H200_xsec = 0; // samples not yet produced
+float H210_xsec = 0;
+float H220_xsec = 0;
+float H230_xsec = 0;
+float H240_xsec = 0;
+float H250_xsec = 0;
+float H275_xsec = 0;
+float H300_xsec = 0;
+float H350_xsec = 0;
+float H400_xsec = 0;
+float H450_xsec = 0;
+float H500_xsec = 0;
+float H550_xsec = 0;
+float H600_xsec = 0;
+float Wgamma_xsec = 41.76;
+float Wjets_xsec = 29040;
+float Zjets_xsec = 4820;
+float TTjets_xsec = 165;
+float WW_xsec = 4.50347; // WW_2l2nu
+float WZ_xsec = 0.599442; // WZ_3l
+float ZZ_xsec = 0.25252; // ZZ_2l2nu
+float TTbar_xsec = 165;
 
-float Higgs_xsec = H165_xsec;
+// here xsec = x-sec * filter_eff (pb)
+float QCD_EMenriched_Pt20to30_xsec = 235.5E+06 * 0.0073;
+float QCD_EMenriched_Pt30to80_xsec = 59.3E+06 * 0.059;
+float QCD_EMenriched_Pt80to170_xsec = 0.906E+06 * 0.148;
+float QCD_BCtoE_Pt20to30_xsec = 235.5E+06 * 0.00046;
+float QCD_BCtoE_Pt30to80_xsec = 59.3E+06 * 0.00234;
+float QCD_BCtoE_Pt80to170_xsec = 0.906E+06 * 0.0104;
 
-string sampleNames[26];
+// xsec (pb)
+float SingleTopS_xsec = 4.6;
+float SingleTopT_xsec = 63.0;
+float SingleTopTW_xsec = 10.6;
+
+// xsec (pb)
+float PhotonJet_Pt0to15_xsec = 84.46E+06;
+float PhotonJet_Pt15to20_xsec = 114700;
+float PhotonJet_Pt20to30_xsec = 57180;
+float PhotonJet_Pt30to50_xsec = 16520;
+float PhotonJet_Pt50to80_xsec = 2723;
+float PhotonJet_Pt80to120_xsec = 446.2;
+float PhotonJet_Pt120to170_xsec = 84.43;
+float PhotonJet_Pt170to300_xsec = 22.55;
+float PhotonJet_Pt300to500_xsec = 1.545;
+float PhotonJet_Pt500toInf_xsec = 0.0923;
+
+float InclusiveMu15_xsec = 48.44*0.00176*1.0E+09; // ppMuX
+
+float Higgs_xsec = H160_xsec;
+
+string sampleNames[29];
 
 void computeYields(float lumi, const char* finalstate) {
 
-  TChain *chains_preSel[26];
-  TChain *chains_fullSel[26];
-  for(int isample=0; isample<26; isample++) {
+  TChain *chains_preSel[29];
+  TChain *chains_fullSel[29];
+  for(int isample=0; isample<29; isample++) {
     chains_preSel[isample]  = new TChain("PRESELECTION_EVENT_COUNTER");
     char fullsel_treename[200];
     sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_%s",finalstate);
@@ -178,107 +198,117 @@ void computeYields(float lumi, const char* finalstate) {
   }
 
   // signal
-  sampleNames[0] = "H165";
+  sampleNames[0] = "Higgs";
   // backgrounds
-  sampleNames[1] = "WjetsMadgraph";
-  sampleNames[2] = "TTbarJetsMadgraph";
-  sampleNames[3] = "ZjetsMadgraph";
+  sampleNames[1] = "W+jets";
+  sampleNames[2] = "TTbar+jets";
+  sampleNames[3] = "Z+jets";
   sampleNames[4] = "WW";
   sampleNames[5] = "ZZ";
   sampleNames[6] = "WZ";
   sampleNames[7] = "Wgamma";
-  sampleNames[8] = "QCD_EMEnriched_Pt20to30Ele10";
-  sampleNames[9] = "QCD_EMEnriched_Pt30to80Ele10";
-  sampleNames[10] = "QCD_EMEnriched_Pt80to170Ele10";
-  sampleNames[11] = "QCD_BCtoE_Pt20to30Ele10";
-  sampleNames[12] = "QCD_BCtoE_Pt30to80Ele10";
-  sampleNames[13] = "QCD_BCtoE_Pt80to170Ele10";
-  sampleNames[14] = "PhotonJet_Pt0to15";
-  sampleNames[15] = "PhotonJet_Pt15to20";
-  sampleNames[16] = "PhotonJet_Pt20to30";
-  sampleNames[17] = "PhotonJet_Pt30to50";
-  sampleNames[18] = "PhotonJet_Pt50to80";
-  sampleNames[19] = "PhotonJet_Pt80to120";
-  sampleNames[20] = "PhotonJet_Pt120to170";
-  sampleNames[21] = "PhotonJet_Pt170to300";
-  sampleNames[22] = "PhotonJet_Pt300to500";
-  sampleNames[23] = "PhotonJet_Pt500toInf";
-  sampleNames[24] = "InclusiveMu15";
+  sampleNames[8] = "SingleTop_sChannel";
+  sampleNames[9] = "SingleTop_tChannel";
+  sampleNames[10] = "SingleTop_tWChannel";
+  sampleNames[11] = "QCD_EMEnriched_Pt20to30";
+  sampleNames[12] = "QCD_EMEnriched_Pt30to80";
+  sampleNames[13] = "QCD_EMEnriched_Pt80to170";
+  sampleNames[14] = "QCD_BCtoE_Pt20to30";
+  sampleNames[15] = "QCD_BCtoE_Pt30to80";
+  sampleNames[16] = "QCD_BCtoE_Pt80to170";
+  sampleNames[17] = "PhotonJet_Pt0to15";
+  sampleNames[18] = "PhotonJet_Pt15to20";
+  sampleNames[19] = "PhotonJet_Pt20to30";
+  sampleNames[20] = "PhotonJet_Pt30to50";
+  sampleNames[21] = "PhotonJet_Pt50to80";
+  sampleNames[22] = "PhotonJet_Pt80to120";
+  sampleNames[23] = "PhotonJet_Pt120to170";
+  sampleNames[24] = "PhotonJet_Pt170to300";
+  sampleNames[25] = "PhotonJet_Pt300to500";
+  sampleNames[26] = "PhotonJet_Pt500toInf";
+  sampleNames[27] = "InclusiveMu15";
   // backgrounds (alternative to some of the above ones)
-  sampleNames[25] = "TTbar";
+  sampleNames[28] = "TTbar";
 
   // signal
-  chains_preSel[0]->Add("results/H165/*Counters.root");       
+  chains_preSel[0]->Add("results/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
   // backgrounds
-  chains_preSel[1]->Add("results/WjetsMadgraph/*Counters.root");       
-  chains_preSel[2]->Add("results/TTbarJetsMadgraph/*Counters.root");       
-  chains_preSel[3]->Add("results/ZjetsMadgraph/*Counters.root");       
-  chains_preSel[4]->Add("results/WW/*Counters.root");   
-  chains_preSel[5]->Add("results/ZZ/*Counters.root");   
-  chains_preSel[6]->Add("results/WZ/*Counters.root");
+  chains_preSel[1]->Add("results/WJets-madgraph/*Counters.root");       
+  chains_preSel[2]->Add("results/TTbarJets-madgraph/*Counters.root");       
+  chains_preSel[3]->Add("results/ZJets-madgraph/*Counters.root");       
+  chains_preSel[4]->Add("results/WW_2l_7TeV/*Counters.root");   
+  chains_preSel[5]->Add("results/ZZ_2l2nu/*Counters.root");   
+  chains_preSel[6]->Add("results/WZ_3l_7TeV/*Counters.root");
   chains_preSel[7]->Add("results/Wgamma/*Counters.root");
-  chains_preSel[8]->Add("results/QCD_EMEnriched_Pt20to30Ele10/*Counters.root");
-  chains_preSel[9]->Add("results/QCD_EMEnriched_Pt30to80Ele10/*Counters.root");
-  chains_preSel[10]->Add("results/QCD_EMEnriched_Pt80to170Ele10/*Counters.root");
-  chains_preSel[11]->Add("results/QCD_BCtoE_Pt20to30Ele10/*Counters.root");
-  chains_preSel[12]->Add("results/QCD_BCtoE_Pt30to80Ele10/*Counters.root");
-  chains_preSel[13]->Add("results/QCD_BCtoE_Pt80to170Ele10/*Counters.root");
-  chains_preSel[14]->Add("results/PhotonJet_Pt0to15/*Counters.root");
-  chains_preSel[15]->Add("results/PhotonJet_Pt15to20/*Counters.root");
-  chains_preSel[16]->Add("results/PhotonJet_Pt20to30/*Counters.root");
-  chains_preSel[17]->Add("results/PhotonJet_Pt30to50/*Counters.root");
-  chains_preSel[18]->Add("results/PhotonJet_Pt50to80/*Counters.root");
-  chains_preSel[19]->Add("results/PhotonJet_Pt80to120/*Counters.root");
-  chains_preSel[20]->Add("results/PhotonJet_Pt120to170/*Counters.root");
-  chains_preSel[21]->Add("results/PhotonJet_Pt170to300/*Counters.root");
-  chains_preSel[22]->Add("results/PhotonJet_Pt300to500/*Counters.root");
-  chains_preSel[23]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
-  chains_preSel[24]->Add("results/InclusiveMu15/*Counters.root");
+  chains_preSel[8]->Add("results/SingleTop_sChannel-madgraph/*Counters.root");
+  chains_preSel[9]->Add("results/SingleTop_tChannel-madgraph/*Counters.root");
+  chains_preSel[10]->Add("results/SingleTop_tWChannel-madgraph/*Counters.root");
+  chains_preSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
+  chains_preSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
+  chains_preSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
+  chains_preSel[14]->Add("results/QCD_BCtoE_Pt20to30/*Counters.root");
+  chains_preSel[15]->Add("results/QCD_BCtoE_Pt30to80/*Counters.root");
+  chains_preSel[16]->Add("results/QCD_BCtoE_Pt80to170/*Counters.root");
+  chains_preSel[17]->Add("results/PhotonJet_Pt0to15/*Counters.root");
+  chains_preSel[18]->Add("results/PhotonJet_Pt15to20/*Counters.root");
+  chains_preSel[19]->Add("results/PhotonJet_Pt20to30/*Counters.root");
+  chains_preSel[20]->Add("results/PhotonJet_Pt30to50/*Counters.root");
+  chains_preSel[21]->Add("results/PhotonJet_Pt50to80/*Counters.root");
+  chains_preSel[22]->Add("results/PhotonJet_Pt80to120/*Counters.root");
+  chains_preSel[23]->Add("results/PhotonJet_Pt120to170/*Counters.root");
+  chains_preSel[24]->Add("results/PhotonJet_Pt170to300/*Counters.root");
+  chains_preSel[25]->Add("results/PhotonJet_Pt300to500/*Counters.root");
+  chains_preSel[26]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
+  chains_preSel[27]->Add("results/InclusiveMu15/*Counters.root");
   // backgrounds (alternative to some of the above ones)
-  chains_preSel[25]->Add("results/TTbar/*Counters.root");       
+  chains_preSel[28]->Add("results/TTbar/*Counters.root");       
 
   // signal
-  chains_fullSel[0]->Add("results/H165/*Counters.root");       
+  chains_fullSel[0]->Add("results/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
   // backgrounds
-  chains_fullSel[1]->Add("results/WjetsMadgraph/*Counters.root");       
-  chains_fullSel[2]->Add("results/TTbarJetsMadgraph/*Counters.root");       
-  chains_fullSel[3]->Add("results/ZjetsMadgraph/*Counters.root");       
-  chains_fullSel[4]->Add("results/WW/*Counters.root");   
-  chains_fullSel[5]->Add("results/ZZ/*Counters.root");   
-  chains_fullSel[6]->Add("results/WZ/*Counters.root");
+  chains_fullSel[1]->Add("results/WJets-madgraph/*Counters.root");       
+  chains_fullSel[2]->Add("results/TTbarJets-madgraph/*Counters.root");       
+  chains_fullSel[3]->Add("results/ZJets-madgraph/*Counters.root");       
+  chains_fullSel[4]->Add("results/WW_2l_7TeV/*Counters.root");   
+  chains_fullSel[5]->Add("results/ZZ_2l2nu/*Counters.root");   
+  chains_fullSel[6]->Add("results/WZ_3l_7TeV/*Counters.root");
   chains_fullSel[7]->Add("results/Wgamma/*Counters.root");
-  chains_fullSel[8]->Add("results/QCD_EMEnriched_Pt20to30Ele10/*Counters.root");
-  chains_fullSel[9]->Add("results/QCD_EMEnriched_Pt30to80Ele10/*Counters.root");
-  chains_fullSel[10]->Add("results/QCD_EMEnriched_Pt80to170Ele10/*Counters.root");
-  chains_fullSel[11]->Add("results/QCD_BCtoE_Pt20to30Ele10/*Counters.root");
-  chains_fullSel[12]->Add("results/QCD_BCtoE_Pt30to80Ele10/*Counters.root");
-  chains_fullSel[13]->Add("results/QCD_BCtoE_Pt80to170Ele10/*Counters.root");
-  chains_fullSel[14]->Add("results/PhotonJet_Pt0to15/*Counters.root");
-  chains_fullSel[15]->Add("results/PhotonJet_Pt15to20/*Counters.root");
-  chains_fullSel[16]->Add("results/PhotonJet_Pt20to30/*Counters.root");
-  chains_fullSel[17]->Add("results/PhotonJet_Pt30to50/*Counters.root");
-  chains_fullSel[18]->Add("results/PhotonJet_Pt50to80/*Counters.root");
-  chains_fullSel[19]->Add("results/PhotonJet_Pt80to120/*Counters.root");
-  chains_fullSel[20]->Add("results/PhotonJet_Pt120to170/*Counters.root");
-  chains_fullSel[21]->Add("results/PhotonJet_Pt170to300/*Counters.root");
-  chains_fullSel[22]->Add("results/PhotonJet_Pt300to500/*Counters.root");
-  chains_fullSel[23]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
-  chains_fullSel[24]->Add("results/InclusiveMu15/*Counters.root");
+  chains_fullSel[8]->Add("results/SingleTop_sChannel-madgraph/*Counters.root");
+  chains_fullSel[9]->Add("results/SingleTop_tChannel-madgraph/*Counters.root");
+  chains_fullSel[10]->Add("results/SingleTop_tWChannel-madgraph/*Counters.root");
+  chains_fullSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
+  chains_fullSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
+  chains_fullSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
+  chains_fullSel[14]->Add("results/QCD_BCtoE_Pt20to30/*Counters.root");
+  chains_fullSel[15]->Add("results/QCD_BCtoE_Pt30to80/*Counters.root");
+  chains_fullSel[16]->Add("results/QCD_BCtoE_Pt80to170/*Counters.root");
+  chains_fullSel[17]->Add("results/PhotonJet_Pt0to15/*Counters.root");
+  chains_fullSel[18]->Add("results/PhotonJet_Pt15to20/*Counters.root");
+  chains_fullSel[19]->Add("results/PhotonJet_Pt20to30/*Counters.root");
+  chains_fullSel[20]->Add("results/PhotonJet_Pt30to50/*Counters.root");
+  chains_fullSel[21]->Add("results/PhotonJet_Pt50to80/*Counters.root");
+  chains_fullSel[22]->Add("results/PhotonJet_Pt80to120/*Counters.root");
+  chains_fullSel[23]->Add("results/PhotonJet_Pt120to170/*Counters.root");
+  chains_fullSel[24]->Add("results/PhotonJet_Pt170to300/*Counters.root");
+  chains_fullSel[25]->Add("results/PhotonJet_Pt300to500/*Counters.root");
+  chains_fullSel[26]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
+  chains_fullSel[27]->Add("results/InclusiveMu15/*Counters.root");
   // backgrounds (alternative to some of the above ones)
-  chains_fullSel[25]->Add("results/TTbar/*Counters.root");       
+  chains_fullSel[28]->Add("results/TTbar/*Counters.root");       
 
-  float nPreSelTot[10][26];
-  float nFullSelTot[20][26];
 
-  for(int isample=0; isample<26; isample++) {
+  float nPreSelTot[10][29];
+  float nFullSelTot[22][29];
+
+  for(int isample=0; isample<29; isample++) {
     for(int icut=0; icut<10; icut++) { nPreSelTot[icut][isample]  = 0.0; }
-    for(int icut=0; icut<20; icut++) { nFullSelTot[icut][isample] = 0.0; }
+    for(int icut=0; icut<22; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
 
   // preselections
   int nCutsAnaPre  = 10;
-  int nCutsAnaFull = 20;
-  for(int isample=0; isample<26; isample++) {
+  int nCutsAnaFull = 22;
+  for(int isample=0; isample<29; isample++) {
 
     cout << "Processing sample # " << isample << endl;
     
@@ -329,35 +359,41 @@ void computeYields(float lumi, const char* finalstate) {
       ZZ_preSel[icut]     = lumi * ZZ_xsec     * nPreSelTot[icut][5]/nPreSelTot[0][5];
       WZ_preSel[icut]     = lumi * WZ_xsec     * nPreSelTot[icut][6]/nPreSelTot[0][6];
       Wgamma_preSel[icut] = lumi * Wgamma_xsec * nPreSelTot[icut][7]/nPreSelTot[0][7];
+      
+      float singletop_tmp=0.;
+      singletop_tmp += lumi * SingleTopS_xsec * nPreSelTot[icut][8]/nPreSelTot[0][8];
+      singletop_tmp += lumi * SingleTopT_xsec * nPreSelTot[icut][9]/nPreSelTot[0][9];
+      singletop_tmp += lumi * SingleTopTW_xsec * nPreSelTot[icut][10]/nPreSelTot[0][10];
+      SingleTop_preSel[icut] = singletop_tmp;
 
       float qcd_em_tmp=0.;
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nPreSelTot[icut][8]/nPreSelTot[0][8];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nPreSelTot[icut][9]/nPreSelTot[0][9];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nPreSelTot[icut][10]/nPreSelTot[0][10];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nPreSelTot[icut][11]/nPreSelTot[0][11];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nPreSelTot[icut][12]/nPreSelTot[0][12];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nPreSelTot[icut][13]/nPreSelTot[0][13];
       QCDem_preSel[icut] = qcd_em_tmp;
       
       float qcd_bc_tmp=0.;
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nPreSelTot[icut][11]/nPreSelTot[0][11];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nPreSelTot[icut][12]/nPreSelTot[0][12];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nPreSelTot[icut][13]/nPreSelTot[0][13];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nPreSelTot[icut][14]/nPreSelTot[0][14];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nPreSelTot[icut][15]/nPreSelTot[0][15];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nPreSelTot[icut][16]/nPreSelTot[0][16];
       QCDbc_preSel[icut] = qcd_bc_tmp;
 
       float photj_tmp=0.;
-      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nPreSelTot[icut][14]/nPreSelTot[0][14];
-      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nPreSelTot[icut][15]/nPreSelTot[0][15];
-      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nPreSelTot[icut][16]/nPreSelTot[0][16];
-      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nPreSelTot[icut][17]/nPreSelTot[0][17];
-      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nPreSelTot[icut][18]/nPreSelTot[0][18];
-      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nPreSelTot[icut][19]/nPreSelTot[0][19];
-      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nPreSelTot[icut][20]/nPreSelTot[0][20];
-      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nPreSelTot[icut][21]/nPreSelTot[0][21];
-      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nPreSelTot[icut][22]/nPreSelTot[0][22];
-      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nPreSelTot[icut][23]/nPreSelTot[0][23];
+      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nPreSelTot[icut][17]/nPreSelTot[0][17];
+      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nPreSelTot[icut][18]/nPreSelTot[0][18];
+      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nPreSelTot[icut][19]/nPreSelTot[0][19];
+      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nPreSelTot[icut][20]/nPreSelTot[0][20];
+      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nPreSelTot[icut][21]/nPreSelTot[0][21];
+      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nPreSelTot[icut][22]/nPreSelTot[0][22];
+      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nPreSelTot[icut][23]/nPreSelTot[0][23];
+      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nPreSelTot[icut][24]/nPreSelTot[0][24];
+      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nPreSelTot[icut][25]/nPreSelTot[0][25];
+      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nPreSelTot[icut][26]/nPreSelTot[0][26];
       Photj_preSel[icut] = photj_tmp;
 
-      QCDmu_preSel[icut] = lumi * InclusiveMu15_xsec * nPreSelTot[icut][24]/nPreSelTot[0][24];
+      QCDmu_preSel[icut] = lumi * InclusiveMu15_xsec * nPreSelTot[icut][27]/nPreSelTot[0][27];
 
-      ttbar_preSel[icut] = lumi * TTbar_xsec * nPreSelTot[icut][25]/nPreSelTot[0][25];
+      ttbar_preSel[icut] = lumi * TTbar_xsec * nPreSelTot[icut][28]/nPreSelTot[0][28];
 
     }
 
@@ -379,15 +415,17 @@ void computeYields(float lumi, const char* finalstate) {
     else WZ_eff_preSel[icut] = 0.0;
     if(icut>0 && nPreSelTot[icut-1][7]>0) Wgamma_eff_preSel[icut] = nPreSelTot[icut][7]/nPreSelTot[icut-1][7];
     else Wgamma_eff_preSel[icut] = 0.0;
+    if(icut>0 && SingleTop_preSel[icut-1]>0) SingleTop_eff_preSel[icut] = SingleTop_preSel[icut]/SingleTop_preSel[icut-1];
+    else SingleTop_eff_preSel[icut] = 0.0;
     if(icut>0 && QCDem_preSel[icut-1]>0) QCDem_eff_preSel[icut] = QCDem_preSel[icut]/QCDem_preSel[icut-1];
     else QCDem_eff_preSel[icut] = 0.0;
     if(icut>0 && QCDbc_preSel[icut-1]>0) QCDbc_eff_preSel[icut] = QCDbc_preSel[icut]/QCDbc_preSel[icut-1];
     else QCDbc_eff_preSel[icut] = 0.0;
     if(icut>0 && Photj_preSel[icut-1]>0) Photj_eff_preSel[icut] = Photj_preSel[icut]/Photj_preSel[icut-1];
     else Photj_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][24]>0) QCDmu_eff_preSel[icut] = nPreSelTot[icut][24]/nPreSelTot[icut-1][24];
+    if(icut>0 && nPreSelTot[icut-1][24]>0) QCDmu_eff_preSel[icut] = nPreSelTot[icut][27]/nPreSelTot[icut-1][27];
     else QCDmu_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][25]>0) ttbar_eff_preSel[icut] = nPreSelTot[icut][25]/nPreSelTot[icut-1][25];
+    if(icut>0 && nPreSelTot[icut-1][25]>0) ttbar_eff_preSel[icut] = nPreSelTot[icut][28]/nPreSelTot[icut-1][28];
     else ttbar_eff_preSel[icut] = 0.0;
 
   }
@@ -409,15 +447,17 @@ void computeYields(float lumi, const char* finalstate) {
   else WZ_finaleff_preSel = 0.0;
   if(nPreSelTot[0][7]>0) Wgamma_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][7]/nPreSelTot[0][7];
   else Wgamma_finaleff_preSel = 0.0;
+  if(SingleTop_preSel[0]>0) SingleTop_finaleff_preSel = SingleTop_preSel[nCutsAnaPre-2]/SingleTop_preSel[0];
+  else SingleTop_finaleff_preSel = 0.0;
   if(QCDem_preSel[0]>0) QCDem_finaleff_preSel = QCDem_preSel[nCutsAnaPre-2]/QCDem_preSel[0];
   else QCDem_finaleff_preSel = 0.0;
   if(QCDbc_preSel[0]>0) QCDbc_finaleff_preSel = QCDbc_preSel[nCutsAnaPre-2]/QCDbc_preSel[0];
   else QCDbc_finaleff_preSel = 0.0;
   if(Photj_preSel[0]>0) Photj_finaleff_preSel = Photj_preSel[nCutsAnaPre-2]/Photj_preSel[0];
   else Photj_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][24]>0) QCDmu_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][24]/nPreSelTot[0][24];
+  if(nPreSelTot[0][24]>0) QCDmu_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][27]/nPreSelTot[0][27];
   else QCDmu_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][25]>0) ttbar_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][25]/nPreSelTot[0][25];
+  if(nPreSelTot[0][25]>0) ttbar_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][28]/nPreSelTot[0][28];
   else ttbar_finaleff_preSel = 0.0;
 
   // eff at full selection level
@@ -434,34 +474,40 @@ void computeYields(float lumi, const char* finalstate) {
       WZ_fullSel[icut]     = lumi * WZ_xsec     * nFullSelTot[icut][6]/nPreSelTot[0][6];
       Wgamma_fullSel[icut] = lumi * Wgamma_xsec * nFullSelTot[icut][7]/nPreSelTot[0][7];
 
+      float singletop_tmp=0.;
+      singletop_tmp += lumi * SingleTopS_xsec * nFullSelTot[icut][8]/nPreSelTot[0][8];
+      singletop_tmp += lumi * SingleTopT_xsec * nFullSelTot[icut][9]/nPreSelTot[0][9];
+      singletop_tmp += lumi * SingleTopTW_xsec * nFullSelTot[icut][10]/nPreSelTot[0][10];
+      SingleTop_fullSel[icut] = singletop_tmp;
+
       float qcd_em_tmp=0.;
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nFullSelTot[icut][8]/nPreSelTot[0][8];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nFullSelTot[icut][9]/nPreSelTot[0][9];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nFullSelTot[icut][10]/nPreSelTot[0][10];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nFullSelTot[icut][11]/nPreSelTot[0][11];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nFullSelTot[icut][12]/nPreSelTot[0][12];
+      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nFullSelTot[icut][13]/nPreSelTot[0][13];
       QCDem_fullSel[icut] = qcd_em_tmp;
       
       float qcd_bc_tmp=0.;
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nFullSelTot[icut][11]/nPreSelTot[0][11];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nFullSelTot[icut][12]/nPreSelTot[0][12];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nFullSelTot[icut][13]/nPreSelTot[0][13];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nFullSelTot[icut][14]/nPreSelTot[0][14];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nFullSelTot[icut][15]/nPreSelTot[0][15];
+      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nFullSelTot[icut][16]/nPreSelTot[0][16];
       QCDbc_fullSel[icut] = qcd_bc_tmp;
 
       float photj_tmp=0.;
-      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nFullSelTot[icut][14]/nPreSelTot[0][14];
-      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nFullSelTot[icut][15]/nPreSelTot[0][15];
-      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nFullSelTot[icut][16]/nPreSelTot[0][16];
-      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nFullSelTot[icut][17]/nPreSelTot[0][17];
-      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nFullSelTot[icut][18]/nPreSelTot[0][18];
-      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nFullSelTot[icut][19]/nPreSelTot[0][19];
-      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nFullSelTot[icut][20]/nPreSelTot[0][20];
-      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nFullSelTot[icut][21]/nPreSelTot[0][21];
-      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nFullSelTot[icut][22]/nPreSelTot[0][22];
-      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nFullSelTot[icut][23]/nPreSelTot[0][23];
+      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nFullSelTot[icut][17]/nPreSelTot[0][17];
+      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nFullSelTot[icut][18]/nPreSelTot[0][18];
+      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nFullSelTot[icut][19]/nPreSelTot[0][19];
+      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nFullSelTot[icut][20]/nPreSelTot[0][20];
+      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nFullSelTot[icut][21]/nPreSelTot[0][21];
+      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nFullSelTot[icut][22]/nPreSelTot[0][22];
+      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nFullSelTot[icut][23]/nPreSelTot[0][23];
+      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nFullSelTot[icut][24]/nPreSelTot[0][24];
+      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nFullSelTot[icut][25]/nPreSelTot[0][25];
+      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nFullSelTot[icut][26]/nPreSelTot[0][26];
       Photj_fullSel[icut] = photj_tmp;
 
-      QCDmu_fullSel[icut] = lumi * InclusiveMu15_xsec * nFullSelTot[icut][24]/nPreSelTot[0][24];
+      QCDmu_fullSel[icut] = lumi * InclusiveMu15_xsec * nFullSelTot[icut][27]/nPreSelTot[0][27];
 
-      ttbar_fullSel[icut] = lumi * TTbar_xsec * nFullSelTot[icut][25]/nPreSelTot[0][25];
+      ttbar_fullSel[icut] = lumi * TTbar_xsec * nFullSelTot[icut][28]/nPreSelTot[0][28];
     }
 
     // efficiencies
@@ -481,6 +527,8 @@ void computeYields(float lumi, const char* finalstate) {
     else WZ_eff_fullSel[icut] = 0.0;
     if(icut>0 && nFullSelTot[icut-1][7]>0) Wgamma_eff_fullSel[icut] = nFullSelTot[icut][7]/nFullSelTot[icut-1][7];
     else Wgamma_eff_fullSel[icut] = 0.0;
+    if(icut>0 && SingleTop_fullSel[icut-1]>0) SingleTop_eff_fullSel[icut] = SingleTop_fullSel[icut]/SingleTop_fullSel[icut-1];
+    else SingleTop_eff_fullSel[icut] = 0.0;
     if(icut>0 && QCDem_fullSel[icut-1]>0) QCDem_eff_fullSel[icut] = QCDem_fullSel[icut]/QCDem_fullSel[icut-1];
     else QCDem_eff_fullSel[icut] = 0.0;
     if(icut>0 && QCDbc_fullSel[icut-1]>0) QCDbc_eff_fullSel[icut] = QCDbc_fullSel[icut]/QCDbc_fullSel[icut-1];
@@ -501,6 +549,7 @@ void computeYields(float lumi, const char* finalstate) {
       ZZ_eff_fullSel[icut]     = nFullSelTot[icut][5]/nPreSelTot[nCutsAnaPre-2][5];
       WZ_eff_fullSel[icut]     = nFullSelTot[icut][6]/nPreSelTot[nCutsAnaPre-2][6];
       Wgamma_eff_fullSel[icut] = nFullSelTot[icut][7]/nPreSelTot[nCutsAnaPre-2][7];
+      SingleTop_eff_fullSel[icut] = SingleTop_fullSel[icut]/SingleTop_preSel[nCutsAnaPre-2];
       QCDem_eff_fullSel[icut] = QCDem_fullSel[icut]/QCDem_preSel[nCutsAnaPre-2];
       QCDbc_eff_fullSel[icut] = QCDbc_fullSel[icut]/QCDbc_preSel[nCutsAnaPre-2];
       Photj_eff_fullSel[icut] = Photj_fullSel[icut]/Photj_preSel[nCutsAnaPre-2];
@@ -526,6 +575,8 @@ void computeYields(float lumi, const char* finalstate) {
   else WZ_finaleff_fullSel = 0.0;
   if(nFullSelTot[0][7]>0) Wgamma_finaleff_fullSel = nFullSelTot[nCutsAnaFull-4][7]/nFullSelTot[0][7];
   else Wgamma_finaleff_fullSel = 0.0;
+  if(SingleTop_fullSel[0]>0) SingleTop_finaleff_fullSel = SingleTop_fullSel[nCutsAnaFull-4]/SingleTop_fullSel[0];
+  else SingleTop_finaleff_fullSel = 0.0;
   if(QCDem_fullSel[0]>0) QCDem_finaleff_fullSel = QCDem_fullSel[nCutsAnaFull-4]/QCDem_fullSel[0];
   else QCDem_finaleff_fullSel = 0.0;
   if(QCDbc_fullSel[0]>0) QCDbc_finaleff_fullSel = QCDbc_fullSel[nCutsAnaFull-4]/QCDbc_fullSel[0];
@@ -554,6 +605,8 @@ void computeYields(float lumi, const char* finalstate) {
   else WZ_finaleff = 0.0;
   if(nPreSelTot[0][7]>0) Wgamma_finaleff = nFullSelTot[nCutsAnaFull-4][7]/nPreSelTot[0][7];
   else Wgamma_finaleff = 0.0;
+  if(SingleTop_preSel[0]>0) SingleTop_finaleff = SingleTop_fullSel[nCutsAnaFull-4]/SingleTop_preSel[0];
+  else SingleTop_finaleff = 0.0;
   if(QCDem_preSel[0]>0) QCDem_finaleff = QCDem_fullSel[nCutsAnaFull-4]/QCDem_preSel[0];
   else QCDem_finaleff = 0.0;
   if(QCDbc_preSel[0]>0) QCDbc_finaleff = QCDbc_fullSel[nCutsAnaFull-4]/QCDbc_preSel[0];
@@ -566,7 +619,7 @@ void computeYields(float lumi, const char* finalstate) {
   else ttbar_finaleff = 0.0;
 
   cout << "\n\nPROCESSED EVENTS:" << endl;
-  for(int i=0; i<26; i++) {
+  for(int i=0; i<29; i++) {
     cout << sampleNames[i] << "\t" << nPreSelTot[0][i] << endl;
   }
 
@@ -574,6 +627,25 @@ void computeYields(float lumi, const char* finalstate) {
 
 void setupCuts() {
   
+  for(int ichan=0; ichan<3; ichan++) {
+    for(int i=0; i<22; i++) {
+      UseCuts[ichan][i] = 1;
+    }
+  }
+
+  // unusued ee cuts
+  UseCuts[ee][12] = UseCuts[ee][16] = UseCuts[ee][17] = UseCuts[ee][18] = 0; // kine
+  UseCuts[ee][6] = UseCuts[ee][7] = UseCuts[ee][8] = UseCuts[ee][9] = 0; // lepton
+
+  // unusued mm cuts
+  UseCuts[mm][12] = UseCuts[mm][16] = UseCuts[mm][17] = UseCuts[mm][18] = 0; // kine
+  UseCuts[mm][5] = UseCuts[mm][6] = UseCuts[mm][7] = UseCuts[mm][8] = UseCuts[mm][10] = 0; // lepton
+
+  // unusued em cuts
+  UseCuts[em][12] = UseCuts[em][16] = UseCuts[em][17] = UseCuts[em][18] = 0; // kine
+  UseCuts[em][6] = UseCuts[em][7] = UseCuts[em][8] = 0; // lepton
+
+
   preSelCuts[0]="event";
   preSelCuts[1]="MCtruth";
   preSelCuts[2]="trigger";
@@ -589,22 +661,24 @@ void setupCuts() {
   fullSelCuts[1]="hardLeptonThreshold";
   fullSelCuts[2]="slowLeptonThreshold";
   fullSelCuts[3]="dileptonInvMassMin";
-  fullSelCuts[4]="classDepEleId";
-  fullSelCuts[5]="trackerIso";
-  fullSelCuts[6]="hcalIso";
-  fullSelCuts[7]="ecalIso";
-  fullSelCuts[8]="globalIso";
-  fullSelCuts[9]="lepton d0";
-  fullSelCuts[10]="MET";
-  fullSelCuts[11]="maxPtLepton";
-  fullSelCuts[12]="minPtLepton";
-  fullSelCuts[13]="dileptonInvMassMax";
-  fullSelCuts[14]="detaLeptons";
-  fullSelCuts[15]="deltaPhi";
-  fullSelCuts[16]="final";
-  fullSelCuts[17]="0 jets";
-  fullSelCuts[18]="1 jets";
-  fullSelCuts[19]=">1 jets";
+  fullSelCuts[4]="lepton ID";
+  fullSelCuts[5]="lepton isolation";
+  fullSelCuts[6]="trackerIso";
+  fullSelCuts[7]="hcalIso";
+  fullSelCuts[8]="ecalIso";
+  fullSelCuts[9]="globalIso";
+  fullSelCuts[10]="conv. rej.";
+  fullSelCuts[11]="lepton d0";
+  fullSelCuts[12]="MET";
+  fullSelCuts[13]="maxPtLepton";
+  fullSelCuts[14]="minPtLepton";
+  fullSelCuts[15]="dileptonInvMassMax";
+  fullSelCuts[16]="detaLeptons";
+  fullSelCuts[17]="deltaPhi";
+  fullSelCuts[18]="final";
+  fullSelCuts[19]="0 jets";
+  fullSelCuts[20]="1 jets";
+  fullSelCuts[21]=">1 jets";
 }
 
 
@@ -630,13 +704,13 @@ void printLatex(float lumi, const char* finalstate) {
   textfile << "\\begin{sidewaystable}[p]" << endl
            << "\\begin{tiny}" << endl
            << "\\begin{center}" << endl;
-  if(!strcmp(finalstate,"EE")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  if(!strcmp(finalstate,"EM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  if(!strcmp(finalstate,"MM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
+  if(!strcmp(finalstate,"EE")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
+  if(!strcmp(finalstate,"EM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
+  if(!strcmp(finalstate,"MM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
   textfile << "\\hline" << endl;
-  if(!strcmp(finalstate,"EE")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
-  if(!strcmp(finalstate,"EM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
-  if(!strcmp(finalstate,"MM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) \t\\\\" << endl;
+  if(!strcmp(finalstate,"EE")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
+  if(!strcmp(finalstate,"EM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
+  if(!strcmp(finalstate,"MM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) \t\\\\" << endl;
   textfile << "\\hline" << endl; 
     
   textfile << "\\hline"        << endl;
@@ -649,6 +723,7 @@ void printLatex(float lumi, const char* finalstate) {
              << H_preSel[icut]       << " (" << 100. * H_eff_preSel[icut]      << "\\%)" << "\t&\t"
              << Wj_preSel[icut]      << " (" << 100. * Wj_eff_preSel[icut]     << "\\%)" << "\t&\t"
              << ttj_preSel[icut]     << " (" << 100. * ttj_eff_preSel[icut]    << "\\%)" << "\t&\t"
+             << SingleTop_preSel[icut]  << " (" << 100. * SingleTop_eff_preSel[icut]    << "\\%)" << "\t&\t"
              << Zj_preSel[icut]      << " (" << 100. * Zj_eff_preSel[icut]     << "\\%)" << "\t&\t"
              << WW_preSel[icut]      << " (" << 100. * WW_eff_preSel[icut]     << "\\%)" << "\t&\t"
              << ZZ_preSel[icut]      << " (" << 100. * ZZ_eff_preSel[icut]     << "\\%)" << "\t&\t"
@@ -670,6 +745,7 @@ void printLatex(float lumi, const char* finalstate) {
            << H_preSel[8]      << " (" << 100. * H_finaleff_preSel  << "\\%)"  << "\t&\t"
            << Wj_preSel[8]     << " (" << 100. * Wj_finaleff_preSel << "\\%)"  << "\t&\t"
            << ttj_preSel[8]    << " (" << 100. * ttj_finaleff_preSel << "\\%)" << "\t&\t"
+           << SingleTop_preSel[8]    << " (" << 100. * SingleTop_finaleff_preSel << "\\%)" << "\t&\t"
            << Zj_preSel[8]     << " (" << 100. * Zj_finaleff_preSel << "\\%)"  << "\t&\t"
            << WW_preSel[8]     << " (" << 100. * WW_finaleff_preSel << "\\%)"  << "\t&\t"
            << ZZ_preSel[8]     << " (" << 100. * ZZ_finaleff_preSel << "\\%)"  << "\t&\t"
@@ -686,13 +762,25 @@ void printLatex(float lumi, const char* finalstate) {
     
   textfile << "\\hline" << endl;
     
-  for(int icut=0; icut<17; icut++) {
+  for(int icut=0; icut<22; icut++) {
+
+    if(!strcmp(finalstate,"EE")) {
+      if(!UseCuts[ee][icut]) continue;
+    }
+    if(!strcmp(finalstate,"MM")) {
+      if(!UseCuts[mm][icut]) continue;
+    }
+    if(!strcmp(finalstate,"EM")) {
+      if(!UseCuts[em][icut]) continue;
+    }
+
     textfile << fullSelCuts[icut] << "\t&\t";
       
     textfile << fixed
              << H_fullSel[icut]      << " (" << 100. * H_eff_fullSel[icut]   << "\\%)" << "\t&\t"
              << Wj_fullSel[icut]     << " (" << 100. * Wj_eff_fullSel[icut]  << "\\%)" << "\t&\t"
              << ttj_fullSel[icut]    << " (" << 100. * ttj_eff_fullSel[icut] << "\\%)" << "\t&\t"
+             << SingleTop_fullSel[icut]    << " (" << 100. * SingleTop_eff_fullSel[icut] << "\\%)" << "\t&\t"
              << Zj_fullSel[icut]     << " (" << 100. * Zj_eff_fullSel[icut]  << "\\%)" << "\t&\t"
              << WW_fullSel[icut]     << " (" << 100. * WW_eff_fullSel[icut]  << "\\%)" << "\t&\t"
              << ZZ_fullSel[icut]     << " (" << 100. * ZZ_eff_fullSel[icut]     << "\\%)" << "\t&\t"
@@ -711,87 +799,54 @@ void printLatex(float lumi, const char* finalstate) {
   textfile << "\\hline" << endl;
 
   textfile << "total fullselection " << "\t&\t"
-           << H_fullSel[16]      << " (" << 100. * H_finaleff_fullSel  << "\\%)"     << "\t&\t"
-           << Wj_fullSel[16]     << " (" << 100. * Wj_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << ttj_fullSel[16]    << " (" << 100. * ttj_finaleff_fullSel << "\\%)"    << "\t&\t"
-           << Zj_fullSel[16]     << " (" << 100. * Zj_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << WW_fullSel[16]     << " (" << 100. * WW_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << ZZ_fullSel[16]     << " (" << 100. * ZZ_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << WZ_fullSel[16]     << " (" << 100. * WZ_finaleff_fullSel << "\\%)"   << "\t&\t"
-           << Wgamma_fullSel[16] << " (" << 100. * Wgamma_finaleff_fullSel << "\\%)" << "\t&\t";
+           << H_fullSel[18]      << " (" << 100. * H_finaleff_fullSel  << "\\%)"     << "\t&\t"
+           << Wj_fullSel[18]     << " (" << 100. * Wj_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << ttj_fullSel[18]    << " (" << 100. * ttj_finaleff_fullSel << "\\%)"    << "\t&\t"
+           << SingleTop_fullSel[18]    << " (" << 100. * SingleTop_finaleff_fullSel << "\\%)"    << "\t&\t"
+           << Zj_fullSel[18]     << " (" << 100. * Zj_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << WW_fullSel[18]     << " (" << 100. * WW_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << ZZ_fullSel[18]     << " (" << 100. * ZZ_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << WZ_fullSel[18]     << " (" << 100. * WZ_finaleff_fullSel << "\\%)"   << "\t&\t"
+           << Wgamma_fullSel[18] << " (" << 100. * Wgamma_finaleff_fullSel << "\\%)" << "\t&\t";
   if(!strcmp(finalstate,"MM")) textfile << " ( " << 100 * QCDmu_finaleff_fullSel << "\\%)";
   if(!strcmp(finalstate,"EM")) textfile << " ( " << 100 * QCDmu_finaleff_fullSel << "\\%)" << "\t&\t";
   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-    textfile << QCDem_fullSel[16]  << " (" << 100. * QCDem_finaleff_fullSel << "\\%)" << "\t&\t"
-             << QCDbc_fullSel[16]  << " (" << 100. * QCDbc_finaleff_fullSel << "\\%)" << "\t&\t"
-             << Photj_fullSel[16]  << " (" << 100. * Photj_finaleff_fullSel << "\\%)";
+    textfile << QCDem_fullSel[18]  << " (" << 100. * QCDem_finaleff_fullSel << "\\%)" << "\t&\t"
+             << QCDbc_fullSel[18]  << " (" << 100. * QCDbc_finaleff_fullSel << "\\%)" << "\t&\t"
+             << Photj_fullSel[18]  << " (" << 100. * Photj_finaleff_fullSel << "\\%)";
   }
   textfile << "\t\\\\" << endl;
     
   textfile << "\\hline" << endl;
     
   textfile << "total " << "\t&\t"
-           << H_fullSel[16]      << " (" << 100. * H_finaleff   << "\\%)"    << "\t&\t"
-           << Wj_fullSel[16]     << " (" << 100. * Wj_finaleff  << "\\%)"    << "\t&\t"
-           << ttj_fullSel[16]    << " (" << 100. * ttj_finaleff << "\\%)"    << "\t&\t"
-           << Zj_fullSel[16]     << " (" << 100. * Zj_finaleff << "\\%)"     << "\t&\t"
-           << WW_fullSel[16]     << " (" << 100. * WW_finaleff << "\\%)"     << "\t&\t"
-           << ZZ_fullSel[16]     << " (" << 100. * ZZ_finaleff << "\\%)"     << "\t&\t"
-           << WZ_fullSel[16]     << " (" << 100. * WZ_finaleff << "\\%)"     << "\t&\t"
-           << Wgamma_fullSel[16] << " (" << 100. * Wgamma_finaleff << "\\%)" << "\t&\t";
-  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[16] << " (" << 100. * QCDmu_finaleff << "\\%)";
-  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[16] << " (" << 100. * QCDmu_finaleff << "\\%)" << "\t&\t";
+           << H_fullSel[18]      << " (" << 100. * H_finaleff   << "\\%)"    << "\t&\t"
+           << Wj_fullSel[18]     << " (" << 100. * Wj_finaleff  << "\\%)"    << "\t&\t"
+           << ttj_fullSel[18]    << " (" << 100. * ttj_finaleff << "\\%)"    << "\t&\t"
+           << SingleTop_fullSel[18]    << " (" << 100. * SingleTop_finaleff << "\\%)"    << "\t&\t"
+           << Zj_fullSel[18]     << " (" << 100. * Zj_finaleff << "\\%)"     << "\t&\t"
+           << WW_fullSel[18]     << " (" << 100. * WW_finaleff << "\\%)"     << "\t&\t"
+           << ZZ_fullSel[18]     << " (" << 100. * ZZ_finaleff << "\\%)"     << "\t&\t"
+           << WZ_fullSel[18]     << " (" << 100. * WZ_finaleff << "\\%)"     << "\t&\t"
+           << Wgamma_fullSel[18] << " (" << 100. * Wgamma_finaleff << "\\%)" << "\t&\t";
+  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[18] << " (" << 100. * QCDmu_finaleff << "\\%)";
+  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[18] << " (" << 100. * QCDmu_finaleff << "\\%)" << "\t&\t";
   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-    textfile << QCDem_fullSel[16]  << " (" << 100. * QCDem_finaleff << "\\%)" << "\t&\t"
-             << QCDbc_fullSel[16]  << " (" << 100. * QCDbc_finaleff << "\\%)" << "\t&\t"
-             << Photj_fullSel[16]  << " (" << 100. * Photj_finaleff << "\\%)";
+    textfile << QCDem_fullSel[18]  << " (" << 100. * QCDem_finaleff << "\\%)" << "\t&\t"
+             << QCDbc_fullSel[18]  << " (" << 100. * QCDbc_finaleff << "\\%)" << "\t&\t"
+             << Photj_fullSel[18]  << " (" << 100. * Photj_finaleff << "\\%)";
   }
   textfile << "\t\\\\" << endl;
     
   textfile << "0 jets bin " << "\t&\t"
-           << H_fullSel[17]      << "\t&\t"
-           << Wj_fullSel[17]     << "\t&\t"
-           << ttj_fullSel[17]    << "\t&\t"
-           << Zj_fullSel[17]     << "\t&\t"
-           << WW_fullSel[17]     << "\t&\t"
-           << ZZ_fullSel[17]     << "\t&\t"
-           << WZ_fullSel[17]     << "\t&\t"
-           << Wgamma_fullSel[17] << "\t&\t";
-  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[17];
-  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[17] << "\t&\t";
-  if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-    textfile << QCDem_fullSel[17]  << "\t&\t"
-             << QCDbc_fullSel[17]  << "\t&\t"
-             << Photj_fullSel[17];
-  }
-  textfile << "\t\\\\" << endl;
-
-  textfile << "1 jets bin " << "\t&\t"
-           << H_fullSel[18]      << "\t&\t"
-           << Wj_fullSel[18]     << "\t&\t"
-           << ttj_fullSel[18]    << "\t&\t"
-           << Zj_fullSel[18]     << "\t&\t"
-           << WW_fullSel[18]     << "\t&\t"
-           << ZZ_fullSel[18]   << "\t&\t"
-           << WZ_fullSel[18]   << "\t&\t"
-           << Wgamma_fullSel[18] << "\t&\t";
-  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[18];
-  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[18] << "\t&\t";
-  if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-    textfile << QCDem_fullSel[18]  << "\t&\t"
-             << QCDbc_fullSel[18]  << "\t&\t"
-             << Photj_fullSel[18];
-  }
-  textfile << "\t\\\\" << endl;
-    
-  textfile << "$>1$ jets bin " << "\t&\t"
            << H_fullSel[19]      << "\t&\t"
            << Wj_fullSel[19]     << "\t&\t"
            << ttj_fullSel[19]    << "\t&\t"
+           << SingleTop_fullSel[19]    << "\t&\t"
            << Zj_fullSel[19]     << "\t&\t"
            << WW_fullSel[19]     << "\t&\t"
-           << ZZ_fullSel[19]   << "\t&\t"
-           << WZ_fullSel[19]   << "\t&\t"
+           << ZZ_fullSel[19]     << "\t&\t"
+           << WZ_fullSel[19]     << "\t&\t"
            << Wgamma_fullSel[19] << "\t&\t";
   if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[19];
   if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[19] << "\t&\t";
@@ -799,6 +854,44 @@ void printLatex(float lumi, const char* finalstate) {
     textfile << QCDem_fullSel[19]  << "\t&\t"
              << QCDbc_fullSel[19]  << "\t&\t"
              << Photj_fullSel[19];
+  }
+  textfile << "\t\\\\" << endl;
+
+  textfile << "1 jets bin " << "\t&\t"
+           << H_fullSel[20]      << "\t&\t"
+           << Wj_fullSel[20]     << "\t&\t"
+           << ttj_fullSel[20]    << "\t&\t"
+           << SingleTop_fullSel[20]    << "\t&\t"
+           << Zj_fullSel[20]     << "\t&\t"
+           << WW_fullSel[20]     << "\t&\t"
+           << ZZ_fullSel[20]   << "\t&\t"
+           << WZ_fullSel[20]   << "\t&\t"
+           << Wgamma_fullSel[20] << "\t&\t";
+  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[20];
+  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[20] << "\t&\t";
+  if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
+    textfile << QCDem_fullSel[20]  << "\t&\t"
+             << QCDbc_fullSel[20]  << "\t&\t"
+             << Photj_fullSel[20];
+  }
+  textfile << "\t\\\\" << endl;
+    
+  textfile << "$>1$ jets bin " << "\t&\t"
+           << H_fullSel[20]      << "\t&\t"
+           << Wj_fullSel[20]     << "\t&\t"
+           << ttj_fullSel[20]    << "\t&\t"
+           << SingleTop_fullSel[20]    << "\t&\t"
+           << Zj_fullSel[20]     << "\t&\t"
+           << WW_fullSel[20]     << "\t&\t"
+           << ZZ_fullSel[20]   << "\t&\t"
+           << WZ_fullSel[20]   << "\t&\t"
+           << Wgamma_fullSel[20] << "\t&\t";
+  if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[20];
+  if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[20] << "\t&\t";
+  if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
+    textfile << QCDem_fullSel[20]  << "\t&\t"
+             << QCDbc_fullSel[20]  << "\t&\t"
+             << Photj_fullSel[20];
   }
   textfile << "\t\\\\" << endl;
     
