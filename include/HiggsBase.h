@@ -1,8 +1,8 @@
-//////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu May 13 17:58:30 2010 by ROOT version 5.22/00d
+// Mon May  3 10:19:15 2010 by ROOT version 5.22/00d
 // from TTree ntp1/ntp1
-// found on file: /cmsrm/pc21_2/emanuele/data/Higgs3.5.X/default_MC_HiggsWW165.root
+// found on file: /tmp/crovelli/default_MC_9_1.root
 //////////////////////////////////////////////////////////
 
 #ifndef HiggsBase_h
@@ -11,6 +11,8 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <vector>
+#include <string>
 
 class HiggsBase {
 public :
@@ -37,7 +39,10 @@ public :
    Int_t           mothMc[101];   //[nMc]
    Int_t           statusMc[101];   //[nMc]
    Int_t           nTrg;
-   Int_t           firedTrg[5];   //[nTrg]
+   Int_t           firedTrg[4];   //[nTrg]
+   Int_t           nHLT;
+   std::vector<std::string>  *nameHLT;
+   Int_t           indexHLT[143];   //[nHLT]
    Int_t           nEle;
    Int_t           chargeEle[100];   //[nEle]
    Float_t         energyEle[100];   //[nEle]
@@ -120,6 +125,12 @@ public :
    Float_t         chIso03noVetoPFEle[100];   //[nPFEle]
    Float_t         chIso04noVetoPFEle[100];   //[nPFEle]
    Float_t         chIso05noVetoPFEle[100];   //[nPFEle]
+   Float_t         chIso03vetoNVCPFEle[100];   //[nPFEle]
+   Float_t         chIso04vetoNVCPFEle[100];   //[nPFEle]
+   Float_t         chIso05vetoNVCPFEle[100];   //[nPFEle]
+   Float_t         chIso03noVetoNVCPFEle[100];   //[nPFEle]
+   Float_t         chIso04noVetoNVCPFEle[100];   //[nPFEle]
+   Float_t         chIso05noVetoNVCPFEle[100];   //[nPFEle]
    Float_t         nhIso03vetoPFEle[100];   //[nPFEle]
    Float_t         nhIso04vetoPFEle[100];   //[nPFEle]
    Float_t         nhIso05vetoPFEle[100];   //[nPFEle]
@@ -203,121 +214,121 @@ public :
    Float_t         scBasedEcalSum03PFSC[100];   //[nPFSC]
    Float_t         scBasedEcalSum04PFSC[100];   //[nPFSC]
    Int_t           nBC;
-   Int_t           nCrystalsBC[100];   //[nBC]
-   Float_t         energyBC[100];   //[nBC]
-   Float_t         etaBC[100];   //[nBC]
-   Float_t         thetaBC[100];   //[nBC]
-   Float_t         phiBC[100];   //[nBC]
-   Float_t         e3x3BC[100];   //[nBC]
-   Float_t         e5x5BC[100];   //[nBC]
-   Float_t         eMaxBC[100];   //[nBC]
-   Float_t         e2x2BC[100];   //[nBC]
-   Float_t         e2ndBC[100];   //[nBC]
-   Float_t         covIEtaIEtaBC[100];   //[nBC]
-   Float_t         covIEtaIPhiBC[100];   //[nBC]
-   Float_t         covIPhiIPhiBC[100];   //[nBC]
-   Int_t           recoFlagBC[100];   //[nBC]
-   Float_t         timeBC[100];   //[nBC]
-   Float_t         chi2BC[100];   //[nBC]
-   Float_t         seedEnergyBC[100];   //[nBC]
-   Int_t           idClosProblBC[100];   //[nBC]
-   Int_t           sevClosProblBC[100];   //[nBC]
-   Float_t         fracClosProblBC[100];   //[nBC]
-   Int_t           indexSCBC[100];   //[nBC]
+   Int_t           nCrystalsBC[200];   //[nBC]
+   Float_t         energyBC[200];   //[nBC]
+   Float_t         etaBC[200];   //[nBC]
+   Float_t         thetaBC[200];   //[nBC]
+   Float_t         phiBC[200];   //[nBC]
+   Float_t         e3x3BC[200];   //[nBC]
+   Float_t         e5x5BC[200];   //[nBC]
+   Float_t         eMaxBC[200];   //[nBC]
+   Float_t         e2x2BC[200];   //[nBC]
+   Float_t         e2ndBC[200];   //[nBC]
+   Float_t         covIEtaIEtaBC[200];   //[nBC]
+   Float_t         covIEtaIPhiBC[200];   //[nBC]
+   Float_t         covIPhiIPhiBC[200];   //[nBC]
+   Int_t           recoFlagBC[200];   //[nBC]
+   Float_t         timeBC[200];   //[nBC]
+   Float_t         chi2BC[200];   //[nBC]
+   Float_t         seedEnergyBC[200];   //[nBC]
+   Int_t           idClosProblBC[200];   //[nBC]
+   Int_t           sevClosProblBC[200];   //[nBC]
+   Float_t         fracClosProblBC[200];   //[nBC]
+   Int_t           indexSCBC[200];   //[nBC]
    Int_t           nTrack;
-   Float_t         pxTrack[1000];   //[nTrack]
-   Float_t         pyTrack[1000];   //[nTrack]
-   Float_t         pzTrack[1000];   //[nTrack]
-   Int_t           vtxIndexTrack[1000];   //[nTrack]
-   Float_t         vtxWeightTrack[1000];   //[nTrack]
-   Float_t         chargeTrack[1000];   //[nTrack]
-   Float_t         ptErrorTrack[1000];   //[nTrack]
-   Float_t         trackValidHitsTrack[1000];   //[nTrack]
-   Float_t         trackLostHitsTrack[1000];   //[nTrack]
-   Float_t         trackNormalizedChi2Track[1000];   //[nTrack]
-   Int_t           qualityMaskTrack[1000];   //[nTrack]
-   Float_t         impactPar3DTrack[1000];   //[nTrack]
-   Float_t         impactPar3DErrorTrack[1000];   //[nTrack]
-   Float_t         transvImpactParTrack[1000];   //[nTrack]
-   Float_t         transvImpactParErrorTrack[1000];   //[nTrack]
-   Float_t         trackVxTrack[1000];   //[nTrack]
-   Float_t         trackVyTrack[1000];   //[nTrack]
-   Float_t         trackVzTrack[1000];   //[nTrack]
-   Float_t         pxAtOuterTrack[1000];   //[nTrack]
-   Float_t         pyAtOuterTrack[1000];   //[nTrack]
-   Float_t         pzAtOuterTrack[1000];   //[nTrack]
-   Float_t         xAtOuterTrack[1000];   //[nTrack]
-   Float_t         yAtOuterTrack[1000];   //[nTrack]
-   Float_t         zAtOuterTrack[1000];   //[nTrack]
-   Float_t         pxAtInnerTrack[1000];   //[nTrack]
-   Float_t         pyAtInnerTrack[1000];   //[nTrack]
-   Float_t         pzAtInnerTrack[1000];   //[nTrack]
-   Float_t         xAtInnerTrack[1000];   //[nTrack]
-   Float_t         yAtInnerTrack[1000];   //[nTrack]
-   Float_t         zAtInnerTrack[1000];   //[nTrack]
-   Float_t         recHitsSizeTrack[1000];   //[nTrack]
-   Int_t           pixelHitsTrack[1000];   //[nTrack]
-   Int_t           expInnerLayersTrack[1000];   //[nTrack]
-   Int_t           numberOfValidPixelBarrelHitsTrack[1000];   //[nTrack]
-   Int_t           numberOfValidPixelEndcapHitsTrack[1000];   //[nTrack]
-   Int_t           numberOfValidStripTIBHitsTrack[1000];   //[nTrack]
-   Int_t           numberOfValidStripTIDHitsTrack[1000];   //[nTrack]
-   Int_t           numberOfValidStripTOBHitsTrack[1000];   //[nTrack]
-   Int_t           numberOfValidStripTECHitsTrack[1000];   //[nTrack]
-   Float_t         truncatedDeDxTrack[1000];   //[nTrack]
-   Float_t         truncatedDeDxErrorTrack[1000];   //[nTrack]
-   Float_t         truncatedDeDxNoMTrack[1000];   //[nTrack]
-   Float_t         medianDeDxTrack[1000];   //[nTrack]
-   Float_t         medianDeDxErrorTrack[1000];   //[nTrack]
-   Float_t         medianDeDxNoMTrack[1000];   //[nTrack]
-   Float_t         harmonic2DeDxTrack[1000];   //[nTrack]
-   Float_t         harmonic2DeDxErrorTrack[1000];   //[nTrack]
-   Float_t         harmonic2DeDxNoMTrack[1000];   //[nTrack]
+   Float_t         pxTrack[500];   //[nTrack]
+   Float_t         pyTrack[500];   //[nTrack]
+   Float_t         pzTrack[500];   //[nTrack]
+   Int_t           vtxIndexTrack[500];   //[nTrack]
+   Float_t         vtxWeightTrack[500];   //[nTrack]
+   Float_t         chargeTrack[500];   //[nTrack]
+   Float_t         ptErrorTrack[500];   //[nTrack]
+   Float_t         trackValidHitsTrack[500];   //[nTrack]
+   Float_t         trackLostHitsTrack[500];   //[nTrack]
+   Float_t         trackNormalizedChi2Track[500];   //[nTrack]
+   Int_t           qualityMaskTrack[500];   //[nTrack]
+   Float_t         impactPar3DTrack[500];   //[nTrack]
+   Float_t         impactPar3DErrorTrack[500];   //[nTrack]
+   Float_t         transvImpactParTrack[500];   //[nTrack]
+   Float_t         transvImpactParErrorTrack[500];   //[nTrack]
+   Float_t         trackVxTrack[500];   //[nTrack]
+   Float_t         trackVyTrack[500];   //[nTrack]
+   Float_t         trackVzTrack[500];   //[nTrack]
+   Float_t         pxAtOuterTrack[500];   //[nTrack]
+   Float_t         pyAtOuterTrack[500];   //[nTrack]
+   Float_t         pzAtOuterTrack[500];   //[nTrack]
+   Float_t         xAtOuterTrack[500];   //[nTrack]
+   Float_t         yAtOuterTrack[500];   //[nTrack]
+   Float_t         zAtOuterTrack[500];   //[nTrack]
+   Float_t         pxAtInnerTrack[500];   //[nTrack]
+   Float_t         pyAtInnerTrack[500];   //[nTrack]
+   Float_t         pzAtInnerTrack[500];   //[nTrack]
+   Float_t         xAtInnerTrack[500];   //[nTrack]
+   Float_t         yAtInnerTrack[500];   //[nTrack]
+   Float_t         zAtInnerTrack[500];   //[nTrack]
+   Float_t         recHitsSizeTrack[500];   //[nTrack]
+   Int_t           pixelHitsTrack[500];   //[nTrack]
+   Int_t           expInnerLayersTrack[500];   //[nTrack]
+   Int_t           numberOfValidPixelBarrelHitsTrack[500];   //[nTrack]
+   Int_t           numberOfValidPixelEndcapHitsTrack[500];   //[nTrack]
+   Int_t           numberOfValidStripTIBHitsTrack[500];   //[nTrack]
+   Int_t           numberOfValidStripTIDHitsTrack[500];   //[nTrack]
+   Int_t           numberOfValidStripTOBHitsTrack[500];   //[nTrack]
+   Int_t           numberOfValidStripTECHitsTrack[500];   //[nTrack]
+   Float_t         truncatedDeDxTrack[500];   //[nTrack]
+   Float_t         truncatedDeDxErrorTrack[500];   //[nTrack]
+   Float_t         truncatedDeDxNoMTrack[500];   //[nTrack]
+   Float_t         medianDeDxTrack[500];   //[nTrack]
+   Float_t         medianDeDxErrorTrack[500];   //[nTrack]
+   Float_t         medianDeDxNoMTrack[500];   //[nTrack]
+   Float_t         harmonic2DeDxTrack[500];   //[nTrack]
+   Float_t         harmonic2DeDxErrorTrack[500];   //[nTrack]
+   Float_t         harmonic2DeDxNoMTrack[500];   //[nTrack]
    Int_t           nGsfTrack;
-   Float_t         pxGsfTrack[100];   //[nGsfTrack]
-   Float_t         pyGsfTrack[100];   //[nGsfTrack]
-   Float_t         pzGsfTrack[100];   //[nGsfTrack]
-   Int_t           vtxIndexGsfTrack[100];   //[nGsfTrack]
-   Float_t         vtxWeightGsfTrack[100];   //[nGsfTrack]
-   Float_t         chargeGsfTrack[100];   //[nGsfTrack]
-   Float_t         ptErrorGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackValidHitsGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackLostHitsGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackNormalizedChi2GsfTrack[100];   //[nGsfTrack]
-   Int_t           qualityMaskGsfTrack[100];   //[nGsfTrack]
-   Float_t         impactPar3DGsfTrack[100];   //[nGsfTrack]
-   Float_t         impactPar3DErrorGsfTrack[100];   //[nGsfTrack]
-   Float_t         transvImpactParGsfTrack[100];   //[nGsfTrack]
-   Float_t         transvImpactParErrorGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackVxGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackVyGsfTrack[100];   //[nGsfTrack]
-   Float_t         trackVzGsfTrack[100];   //[nGsfTrack]
-   Float_t         pxAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         pyAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         pzAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         xAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         yAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         zAtOuterGsfTrack[100];   //[nGsfTrack]
-   Float_t         pxAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         pyAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         pzAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         xAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         yAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         zAtInnerGsfTrack[100];   //[nGsfTrack]
-   Float_t         recHitsSizeGsfTrack[100];   //[nGsfTrack]
-   Int_t           pixelHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           expInnerLayersGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidPixelBarrelHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidPixelEndcapHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidStripTIBHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidStripTIDHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidStripTOBHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           numberOfValidStripTECHitsGsfTrack[100];   //[nGsfTrack]
-   Int_t           chargeModeGsfTrack[100];   //[nGsfTrack]
-   Float_t         pxModeGsfTrack[100];   //[nGsfTrack]
-   Float_t         pyModeGsfTrack[100];   //[nGsfTrack]
-   Float_t         pzModeGsfTrack[100];   //[nGsfTrack]
-   Int_t           recoFlagsGsfTrack[100];   //[nGsfTrack]
+   Float_t         pxGsfTrack[300];   //[nGsfTrack]
+   Float_t         pyGsfTrack[300];   //[nGsfTrack]
+   Float_t         pzGsfTrack[300];   //[nGsfTrack]
+   Int_t           vtxIndexGsfTrack[300];   //[nGsfTrack]
+   Float_t         vtxWeightGsfTrack[300];   //[nGsfTrack]
+   Float_t         chargeGsfTrack[300];   //[nGsfTrack]
+   Float_t         ptErrorGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackValidHitsGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackLostHitsGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackNormalizedChi2GsfTrack[300];   //[nGsfTrack]
+   Int_t           qualityMaskGsfTrack[300];   //[nGsfTrack]
+   Float_t         impactPar3DGsfTrack[300];   //[nGsfTrack]
+   Float_t         impactPar3DErrorGsfTrack[300];   //[nGsfTrack]
+   Float_t         transvImpactParGsfTrack[300];   //[nGsfTrack]
+   Float_t         transvImpactParErrorGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackVxGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackVyGsfTrack[300];   //[nGsfTrack]
+   Float_t         trackVzGsfTrack[300];   //[nGsfTrack]
+   Float_t         pxAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         pyAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         pzAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         xAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         yAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         zAtOuterGsfTrack[300];   //[nGsfTrack]
+   Float_t         pxAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         pyAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         pzAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         xAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         yAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         zAtInnerGsfTrack[300];   //[nGsfTrack]
+   Float_t         recHitsSizeGsfTrack[300];   //[nGsfTrack]
+   Int_t           pixelHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           expInnerLayersGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidPixelBarrelHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidPixelEndcapHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidStripTIBHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidStripTIDHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidStripTOBHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           numberOfValidStripTECHitsGsfTrack[300];   //[nGsfTrack]
+   Int_t           chargeModeGsfTrack[300];   //[nGsfTrack]
+   Float_t         pxModeGsfTrack[300];   //[nGsfTrack]
+   Float_t         pyModeGsfTrack[300];   //[nGsfTrack]
+   Float_t         pzModeGsfTrack[300];   //[nGsfTrack]
+   Int_t           recoFlagsGsfTrack[300];   //[nGsfTrack]
    Int_t           nGlobalMuonTrack;
    Float_t         pxGlobalMuonTrack[100];   //[nGlobalMuonTrack]
    Float_t         pyGlobalMuonTrack[100];   //[nGlobalMuonTrack]
@@ -399,15 +410,15 @@ public :
    Int_t           numberOfValidStripTOBHitsSTAMuonTrack[100];   //[nSTAMuonTrack]
    Int_t           numberOfValidStripTECHitsSTAMuonTrack[100];   //[nSTAMuonTrack]
    Int_t           nPV;
-   Float_t         PVxPV[10];   //[nPV]
-   Float_t         PVyPV[10];   //[nPV]
-   Float_t         PVzPV[10];   //[nPV]
-   Float_t         PVErrxPV[10];   //[nPV]
-   Float_t         PVErryPV[10];   //[nPV]
-   Float_t         PVErrzPV[10];   //[nPV]
-   Float_t         SumPtPV[10];   //[nPV]
-   Float_t         ndofPV[10];   //[nPV]
-   Float_t         chi2PV[10];   //[nPV]
+   Float_t         PVxPV[20];   //[nPV]
+   Float_t         PVyPV[20];   //[nPV]
+   Float_t         PVzPV[20];   //[nPV]
+   Float_t         PVErrxPV[20];   //[nPV]
+   Float_t         PVErryPV[20];   //[nPV]
+   Float_t         PVErrzPV[20];   //[nPV]
+   Float_t         SumPtPV[20];   //[nPV]
+   Float_t         ndofPV[20];   //[nPV]
+   Float_t         chi2PV[20];   //[nPV]
    Int_t           nMuon;
    Int_t           chargeMuon[100];   //[nMuon]
    Float_t         energyMuon[100];   //[nMuon]
@@ -492,61 +503,74 @@ public :
    Float_t         vertexYGenMet[1];   //[nGenMet]
    Float_t         vertexZGenMet[1];   //[nGenMet]
    Int_t           nAK5Jet;
-   Int_t           chargeAK5Jet[500];   //[nAK5Jet]
-   Float_t         energyAK5Jet[500];   //[nAK5Jet]
-   Float_t         thetaAK5Jet[500];   //[nAK5Jet]
-   Float_t         etaAK5Jet[500];   //[nAK5Jet]
-   Float_t         phiAK5Jet[500];   //[nAK5Jet]
-   Float_t         pxAK5Jet[500];   //[nAK5Jet]
-   Float_t         pyAK5Jet[500];   //[nAK5Jet]
-   Float_t         pzAK5Jet[500];   //[nAK5Jet]
-   Float_t         vertexXAK5Jet[500];   //[nAK5Jet]
-   Float_t         vertexYAK5Jet[500];   //[nAK5Jet]
-   Float_t         vertexZAK5Jet[500];   //[nAK5Jet]
-   Float_t         alphaAK5Jet[500];   //[nAK5Jet]
-   Float_t         emFracAK5Jet[500];   //[nAK5Jet]
-   Float_t         hadFracAK5Jet[500];   //[nAK5Jet]
-   Float_t         combinedSecondaryVertexBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         combinedSecondaryVertexMVABJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         jetBProbabilityBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         jetProbabilityBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         simpleSecondaryVertexBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         softMuonBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         trackCountingHighPurBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         trackCountingHighEffBJetTagsAK5Jet[500];   //[nAK5Jet]
-   Float_t         uncorrEnergyAK5Jet[500];   //[nAK5Jet]
+   Int_t           chargeAK5Jet[200];   //[nAK5Jet]
+   Float_t         energyAK5Jet[200];   //[nAK5Jet]
+   Float_t         thetaAK5Jet[200];   //[nAK5Jet]
+   Float_t         etaAK5Jet[200];   //[nAK5Jet]
+   Float_t         phiAK5Jet[200];   //[nAK5Jet]
+   Float_t         pxAK5Jet[200];   //[nAK5Jet]
+   Float_t         pyAK5Jet[200];   //[nAK5Jet]
+   Float_t         pzAK5Jet[200];   //[nAK5Jet]
+   Float_t         vertexXAK5Jet[200];   //[nAK5Jet]
+   Float_t         vertexYAK5Jet[200];   //[nAK5Jet]
+   Float_t         vertexZAK5Jet[200];   //[nAK5Jet]
+   Float_t         alphaAK5Jet[200];   //[nAK5Jet]
+   Float_t         emFracAK5Jet[200];   //[nAK5Jet]
+   Float_t         hadFracAK5Jet[200];   //[nAK5Jet]
+   Int_t           IdAK5Jet[200];   //[nAK5Jet]
+   Int_t           nHitAK5Jet[200];   //[nAK5Jet]
+   Int_t           nHit90AK5Jet[200];   //[nAK5Jet]
+   Float_t         fHPDAK5Jet[200];   //[nAK5Jet]
+   Float_t         covEtaEtaAK5Jet[200];   //[nAK5Jet]
+   Float_t         covPhiPhiAK5Jet[200];   //[nAK5Jet]
+   Float_t         fLSAK5Jet[200];   //[nAK5Jet]
+   Float_t         fOOTAK5Jet[200];   //[nAK5Jet]
+   Float_t         combinedSecondaryVertexBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         combinedSecondaryVertexMVABJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         jetBProbabilityBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         jetProbabilityBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         simpleSecondaryVertexBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softMuonBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softMuonByIP3dBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softMuonByPtBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softElectronBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softElectronByIP3dBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         softElectronByPtBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         trackCountingHighPurBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         trackCountingHighEffBJetTagsAK5Jet[200];   //[nAK5Jet]
+   Float_t         uncorrEnergyAK5Jet[200];   //[nAK5Jet]
    Int_t           nAK5PFJet;
-   Int_t           chargeAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         energyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         thetaAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         etaAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         phiAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         pxAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         pyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         pzAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         vertexXAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         vertexYAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         vertexZAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         chargedHadronEnergyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         neutralHadronEnergyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         chargedEmEnergyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         neutralEmEnergyAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         neutralMultiplicityAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         chargedMultiplicityAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         muonMultiplicityAK5PFJet[500];   //[nAK5PFJet]
-   Float_t         uncorrEnergyAK5PFJet[500];   //[nAK5PFJet]
+   Int_t           chargeAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         energyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         thetaAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         etaAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         phiAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         pxAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         pyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         pzAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         vertexXAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         vertexYAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         vertexZAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         chargedHadronEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         neutralHadronEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         chargedEmEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         neutralEmEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         neutralMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         chargedMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         muonMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         uncorrEnergyAK5PFJet[200];   //[nAK5PFJet]
    Int_t           nAK5GenJet;
-   Int_t           chargeAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         energyAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         thetaAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         etaAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         phiAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         pxAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         pyAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         pzAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         vertexXAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         vertexYAK5GenJet[500];   //[nAK5GenJet]
-   Float_t         vertexZAK5GenJet[500];   //[nAK5GenJet]
+   Int_t           chargeAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         energyAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         thetaAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         etaAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         phiAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         pxAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         pyAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         pzAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         vertexXAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         vertexYAK5GenJet[200];   //[nAK5GenJet]
+   Float_t         vertexZAK5GenJet[200];   //[nAK5GenJet]
    Double_t        genPtHat;
    Double_t        genProcessId;
    Double_t        genWeight;
@@ -574,6 +598,9 @@ public :
    TBranch        *b_statusMc;   //!
    TBranch        *b_nTrg;   //!
    TBranch        *b_firedTrg;   //!
+   TBranch        *b_nHLT;   //!
+   TBranch        *b_nameHLT;   //!
+   TBranch        *b_indexHLT;   //!
    TBranch        *b_nEle;   //!
    TBranch        *b_chargeEle;   //!
    TBranch        *b_energyEle;   //!
@@ -656,6 +683,12 @@ public :
    TBranch        *b_chIso03noVetoPFEle;   //!
    TBranch        *b_chIso04noVetoPFEle;   //!
    TBranch        *b_chIso05noVetoPFEle;   //!
+   TBranch        *b_chIso03vetoNVCPFEle;   //!
+   TBranch        *b_chIso04vetoNVCPFEle;   //!
+   TBranch        *b_chIso05vetoNVCPFEle;   //!
+   TBranch        *b_chIso03noVetoNVCPFEle;   //!
+   TBranch        *b_chIso04noVetoNVCPFEle;   //!
+   TBranch        *b_chIso05noVetoNVCPFEle;   //!
    TBranch        *b_nhIso03vetoPFEle;   //!
    TBranch        *b_nhIso04vetoPFEle;   //!
    TBranch        *b_nhIso05vetoPFEle;   //!
@@ -1042,12 +1075,25 @@ public :
    TBranch        *b_alphaAK5Jet;   //!
    TBranch        *b_emFracAK5Jet;   //!
    TBranch        *b_hadFracAK5Jet;   //!
+   TBranch        *b_IdAK5Jet;   //!
+   TBranch        *b_nHitAK5Jet;   //!
+   TBranch        *b_nHit90AK5Jet;   //!
+   TBranch        *b_fHPDAK5Jet;   //!
+   TBranch        *b_covEtaEtaAK5Jet;   //!
+   TBranch        *b_covPhiPhiAK5Jet;   //!
+   TBranch        *b_fLSAK5Jet;   //!
+   TBranch        *b_fOOTAK5Jet;   //!
    TBranch        *b_combinedSecondaryVertexBJetTagsAK5Jet;   //!
    TBranch        *b_combinedSecondaryVertexMVABJetTagsAK5Jet;   //!
    TBranch        *b_jetBProbabilityBJetTagsAK5Jet;   //!
    TBranch        *b_jetProbabilityBJetTagsAK5Jet;   //!
    TBranch        *b_simpleSecondaryVertexBJetTagsAK5Jet;   //!
    TBranch        *b_softMuonBJetTagsAK5Jet;   //!
+   TBranch        *b_softMuonByIP3dBJetTagsAK5Jet;   //!
+   TBranch        *b_softMuonByPtBJetTagsAK5Jet;   //!
+   TBranch        *b_softElectronBJetTagsAK5Jet;   //!
+   TBranch        *b_softElectronByIP3dBJetTagsAK5Jet;   //!
+   TBranch        *b_softElectronByPtBJetTagsAK5Jet;   //!
    TBranch        *b_trackCountingHighPurBJetTagsAK5Jet;   //!
    TBranch        *b_trackCountingHighEffBJetTagsAK5Jet;   //!
    TBranch        *b_uncorrEnergyAK5Jet;   //!
@@ -1108,9 +1154,9 @@ HiggsBase::HiggsBase(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/cmsrm/pc21_2/emanuele/data/Higgs3.5.X/default_MC_HiggsWW165.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/tmp/crovelli/default_MC_9_1.root");
       if (!f) {
-         f = new TFile("/cmsrm/pc21_2/emanuele/data/Higgs3.5.X/default_MC_HiggsWW165.root");
+         f = new TFile("/tmp/crovelli/default_MC_9_1.root");
       }
       tree = (TTree*)gDirectory->Get("ntp1");
 
@@ -1155,6 +1201,8 @@ void HiggsBase::Init(TTree *tree)
    // Init() will be called many times when running on PROOF
    // (once per file to be processed).
 
+   // Set object pointer
+   nameHLT = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1181,6 +1229,9 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("statusMc", statusMc, &b_statusMc);
    fChain->SetBranchAddress("nTrg", &nTrg, &b_nTrg);
    fChain->SetBranchAddress("firedTrg", firedTrg, &b_firedTrg);
+   fChain->SetBranchAddress("nHLT", &nHLT, &b_nHLT);
+   fChain->SetBranchAddress("nameHLT", &nameHLT, &b_nameHLT);
+   fChain->SetBranchAddress("indexHLT", indexHLT, &b_indexHLT);
    fChain->SetBranchAddress("nEle", &nEle, &b_nEle);
    fChain->SetBranchAddress("chargeEle", chargeEle, &b_chargeEle);
    fChain->SetBranchAddress("energyEle", energyEle, &b_energyEle);
@@ -1263,6 +1314,12 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("chIso03noVetoPFEle", chIso03noVetoPFEle, &b_chIso03noVetoPFEle);
    fChain->SetBranchAddress("chIso04noVetoPFEle", chIso04noVetoPFEle, &b_chIso04noVetoPFEle);
    fChain->SetBranchAddress("chIso05noVetoPFEle", chIso05noVetoPFEle, &b_chIso05noVetoPFEle);
+   fChain->SetBranchAddress("chIso03vetoNVCPFEle", chIso03vetoNVCPFEle, &b_chIso03vetoNVCPFEle);
+   fChain->SetBranchAddress("chIso04vetoNVCPFEle", chIso04vetoNVCPFEle, &b_chIso04vetoNVCPFEle);
+   fChain->SetBranchAddress("chIso05vetoNVCPFEle", chIso05vetoNVCPFEle, &b_chIso05vetoNVCPFEle);
+   fChain->SetBranchAddress("chIso03noVetoNVCPFEle", chIso03noVetoNVCPFEle, &b_chIso03noVetoNVCPFEle);
+   fChain->SetBranchAddress("chIso04noVetoNVCPFEle", chIso04noVetoNVCPFEle, &b_chIso04noVetoNVCPFEle);
+   fChain->SetBranchAddress("chIso05noVetoNVCPFEle", chIso05noVetoNVCPFEle, &b_chIso05noVetoNVCPFEle);
    fChain->SetBranchAddress("nhIso03vetoPFEle", nhIso03vetoPFEle, &b_nhIso03vetoPFEle);
    fChain->SetBranchAddress("nhIso04vetoPFEle", nhIso04vetoPFEle, &b_nhIso04vetoPFEle);
    fChain->SetBranchAddress("nhIso05vetoPFEle", nhIso05vetoPFEle, &b_nhIso05vetoPFEle);
@@ -1649,6 +1706,27 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("alphaAK5Jet", alphaAK5Jet, &b_alphaAK5Jet);
    fChain->SetBranchAddress("emFracAK5Jet", emFracAK5Jet, &b_emFracAK5Jet);
    fChain->SetBranchAddress("hadFracAK5Jet", hadFracAK5Jet, &b_hadFracAK5Jet);
+   fChain->SetBranchAddress("IdAK5Jet", IdAK5Jet, &b_IdAK5Jet);
+   fChain->SetBranchAddress("nHitAK5Jet", nHitAK5Jet, &b_nHitAK5Jet);
+   fChain->SetBranchAddress("nHit90AK5Jet", nHit90AK5Jet, &b_nHit90AK5Jet);
+   fChain->SetBranchAddress("fHPDAK5Jet", fHPDAK5Jet, &b_fHPDAK5Jet);
+   fChain->SetBranchAddress("covEtaEtaAK5Jet", covEtaEtaAK5Jet, &b_covEtaEtaAK5Jet);
+   fChain->SetBranchAddress("covPhiPhiAK5Jet", covPhiPhiAK5Jet, &b_covPhiPhiAK5Jet);
+   fChain->SetBranchAddress("fLSAK5Jet", fLSAK5Jet, &b_fLSAK5Jet);
+   fChain->SetBranchAddress("fOOTAK5Jet", fOOTAK5Jet, &b_fOOTAK5Jet);
+   fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsAK5Jet", combinedSecondaryVertexBJetTagsAK5Jet, &b_combinedSecondaryVertexBJetTagsAK5Jet);
+   fChain->SetBranchAddress("combinedSecondaryVertexMVABJetTagsAK5Jet", combinedSecondaryVertexMVABJetTagsAK5Jet, &b_combinedSecondaryVertexMVABJetTagsAK5Jet);
+   fChain->SetBranchAddress("jetBProbabilityBJetTagsAK5Jet", jetBProbabilityBJetTagsAK5Jet, &b_jetBProbabilityBJetTagsAK5Jet);
+   fChain->SetBranchAddress("jetProbabilityBJetTagsAK5Jet", jetProbabilityBJetTagsAK5Jet, &b_jetProbabilityBJetTagsAK5Jet);
+   fChain->SetBranchAddress("simpleSecondaryVertexBJetTagsAK5Jet", simpleSecondaryVertexBJetTagsAK5Jet, &b_simpleSecondaryVertexBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softMuonBJetTagsAK5Jet", softMuonBJetTagsAK5Jet, &b_softMuonBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softMuonByIP3dBJetTagsAK5Jet", softMuonByIP3dBJetTagsAK5Jet, &b_softMuonByIP3dBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softMuonByPtBJetTagsAK5Jet", softMuonByPtBJetTagsAK5Jet, &b_softMuonByPtBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softElectronBJetTagsAK5Jet", softElectronBJetTagsAK5Jet, &b_softElectronBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softElectronByIP3dBJetTagsAK5Jet", softElectronByIP3dBJetTagsAK5Jet, &b_softElectronByIP3dBJetTagsAK5Jet);
+   fChain->SetBranchAddress("softElectronByPtBJetTagsAK5Jet", softElectronByPtBJetTagsAK5Jet, &b_softElectronByPtBJetTagsAK5Jet);
+   fChain->SetBranchAddress("trackCountingHighPurBJetTagsAK5Jet", trackCountingHighPurBJetTagsAK5Jet, &b_trackCountingHighPurBJetTagsAK5Jet);
+   fChain->SetBranchAddress("trackCountingHighEffBJetTagsAK5Jet", trackCountingHighEffBJetTagsAK5Jet, &b_trackCountingHighEffBJetTagsAK5Jet);
    fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsAK5Jet", combinedSecondaryVertexBJetTagsAK5Jet, &b_combinedSecondaryVertexBJetTagsAK5Jet);
    fChain->SetBranchAddress("combinedSecondaryVertexMVABJetTagsAK5Jet", combinedSecondaryVertexMVABJetTagsAK5Jet, &b_combinedSecondaryVertexMVABJetTagsAK5Jet);
    fChain->SetBranchAddress("jetBProbabilityBJetTagsAK5Jet", jetBProbabilityBJetTagsAK5Jet, &b_jetBProbabilityBJetTagsAK5Jet);
