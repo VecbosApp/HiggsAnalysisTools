@@ -40,7 +40,7 @@ public:
   bool output();
 
   //! display the electron efficiency
-  void diplayEfficiencies(std::string filename);
+  void displayEfficiencies(std::string filename);
 
   //! get the slection
   Selection* GetSelection() { return _selection; }

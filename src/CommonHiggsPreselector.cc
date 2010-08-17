@@ -135,7 +135,7 @@ bool CommonHiggsPreselector::output() {
 }
 
 
-void CommonHiggsPreselector::diplayEfficiencies(std::string datasetName) {
+void CommonHiggsPreselector::displayEfficiencies(std::string datasetName) {
 
   if( m_processID > -1 ) {
     

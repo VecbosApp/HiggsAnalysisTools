@@ -69,6 +69,8 @@ $(OUTLIBCOMMON)SprDataFiller.o: $(INCLUDEDIRCOMMON)/CommonTools/src/SprDataFille
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)SprDataFiller.o $<
 $(OUTLIBCOMMON)TriggerMask.o: $(INCLUDEDIRCOMMON)/CommonTools/src/TriggerMask.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)TriggerMask.o $<
+$(OUTLIB)EcalCleaner.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/EcalCleaner.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)EcalCleaner.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CutBasedEleIDSelector.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
@@ -143,6 +145,7 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)RedIsolationOptimTree.o \
 	$(OUTLIB)RedEleIDTree.o \
 	$(OUTLIB)CutBasedEleIDSelector.o \
+	$(OUTLIB)EcalCleaner.o \
 	$(OUTLIB)CommonHiggsPreselector.o \
 	$(OUTLIB)CutBasedHiggsSelector.o \
 	$(OUTLIB)VertexTree.o

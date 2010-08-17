@@ -267,7 +267,7 @@ bool CutBasedHiggsSelector::output() {
 }
 
 
-void CutBasedHiggsSelector::diplayEfficiencies(std::string datasetName) {
+void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
 
   if( m_processID > -1 ) {
 

@@ -97,6 +97,12 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   } else if ( _preselection->getStringParameter("electronIDType")==std::string("Vecbos80x80") ) {
     std::cout << "=== CONFIGURING Vecbos80 symmetric TIGHT ELECTRON ID ===" << std::endl;
     EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/Vecbos80");
+  } else if ( _preselection->getStringParameter("electronIDType")==std::string("WP80x80") ) {
+    std::cout << "=== CONFIGURING WP80 symmetric TIGHT ELECTRON ID ===" << std::endl;
+    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/WP80");
+  } else if ( _preselection->getStringParameter("electronIDType")==std::string("WP70x70") ) {
+    std::cout << "=== CONFIGURING WP70 symmetric TIGHT ELECTRON ID ===" << std::endl;
+    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/WP70");
   } else {
     cout << "UNKNOWN ELECTRON IDENTIFICATION WORKING POINT" << endl;
     exit(1);
@@ -342,9 +348,9 @@ void HiggsMLSelection::Loop() {
   myOutTreeMM = new RedHiggsTree(reducedTreeNameMM.c_str());
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
 
-  myOutTreeEE->addHLTElectronsInfos();
-  myOutTreeMM->addHLTMuonsInfos();
-  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
+  //  myOutTreeEE->addHLTElectronsInfos();
+  //  myOutTreeMM->addHLTMuonsInfos();
+  //  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
 
   if ( _preselection->getSwitch("apply_kFactor") ) {
     myOutTreeEE->addKFactor();
@@ -402,8 +408,8 @@ void HiggsMLSelection::Loop() {
     bool promptEM = findMcTree("HtoWWtoem2nu_prompt");
 
     myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
-    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
-    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
+    //    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
+    //    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
     myTriggerTree->store();
 
     // get the best electrons, best muons  
@@ -622,9 +628,9 @@ void HiggsMLSelection::Loop() {
 
       myOutTreeEE -> fillMcTruth(promptEE);
       
-      myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-				       firedTrg[m_requiredTriggers[1]],
-				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
+//       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+// 				       firedTrg[m_requiredTriggers[1]],
+// 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
 
       myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
 			     GetPt(pxPFMet[0],pyPFMet[0]), 
@@ -721,9 +727,9 @@ void HiggsMLSelection::Loop() {
 
       myOutTreeMM -> fillMcTruth(promptMM);
       
-      myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
-				   firedTrg[m_requiredTriggers[3]],
-				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
+//       myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
+// 				   firedTrg[m_requiredTriggers[3]],
+// 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
       
       myOutTreeMM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
 			     GetPt(pxPFMet[0],pyPFMet[0]), 
@@ -865,13 +871,13 @@ void HiggsMLSelection::Loop() {
 
       myOutTreeEM -> fillMcTruth(promptEM);
       
-      myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-				       firedTrg[m_requiredTriggers[1]],
-				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
+//       myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+// 				       firedTrg[m_requiredTriggers[1]],
+// 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
 
-      myOutTreeEM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
-				   firedTrg[m_requiredTriggers[3]],
-				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
+//       myOutTreeEM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
+// 				   firedTrg[m_requiredTriggers[3]],
+// 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
 
       myOutTreeEM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
 			     GetPt(pxPFMet[0],pyPFMet[0]), 
@@ -926,21 +932,21 @@ void HiggsMLSelection::displayEfficiencies(std::string datasetName) {
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Common preselections: " << std::endl;
-  CommonHiggsPreselection.diplayEfficiencies(datasetName);
+  CommonHiggsPreselection.displayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full EE selections: " << std::endl;
-  CutBasedHiggsSelectionEE.diplayEfficiencies(datasetName);
+  CutBasedHiggsSelectionEE.displayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full MM selections: " << std::endl;
-  CutBasedHiggsSelectionMM.diplayEfficiencies(datasetName);
+  CutBasedHiggsSelectionMM.displayEfficiencies(datasetName);
 
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full EM selections: " << std::endl;
-  CutBasedHiggsSelectionEM.diplayEfficiencies(datasetName);
+  CutBasedHiggsSelectionEM.displayEfficiencies(datasetName);
 
-  EgammaCutBasedID.diplayEfficiencies();
+  EgammaCutBasedID.displayEfficiencies();
 
 
 }

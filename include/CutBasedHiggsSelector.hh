@@ -69,7 +69,7 @@ public:
   bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
   //! display the electron efficiency
-  void diplayEfficiencies(std::string datasetName);
+  void displayEfficiencies(std::string datasetName);
 
 private:
   
