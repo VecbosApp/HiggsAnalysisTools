@@ -23,7 +23,7 @@ public:
   //! add the HLT muon triggers informations
   void addHLTMuonsInfos();
   //! event by event final dataset fill
-  void fillAll(float mt, float pfmt, float cmt, 
+  void fillAll(float met, float pfmet, float cmet, float projmet, 
 	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
@@ -54,7 +54,8 @@ private:
   bool myHLTSingleMuonOR;
   float myMet;       
   float myPFMet;       
-  float myCaloMet;       
+  float myCaloMet;
+  float myProjectedMet;
   float myDeltaPhi;  
   float myDeltaR;  
   float myTransvMass;

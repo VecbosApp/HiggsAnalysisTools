@@ -91,6 +91,8 @@ private:
   double mT2(TVector3 plep1, TVector3 plep2, TVector3 ptmiss);
   //! Get pt given x/y coordinates
   float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
+  //! for the two leptons, find the closest one to MET in phi. if(deltaPhi(lepton-MET)<pi/2) projectedMET = MET * sin(deltaPhi(lepton-MET)); else projectedMET = MET
+  float GetProjectedMet(TVector3 p1, TVector3 p2);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -124,6 +126,7 @@ private:
   TLorentzVector *m_p4ElectronPlus, *m_p4ElectronMinus;
   TLorentzVector *m_p4MuonPlus, *m_p4MuonMinus;
   TLorentzVector *m_p4MET;
+  TVector3 *m_p3ProjectedMET;
   float m_HoEElectronMinus, m_HoEElectronPlus;
   float m_CaloEneElectronMinus, m_CaloEneElectronPlus;
   float m_deltaPhi[3];
@@ -131,6 +134,7 @@ private:
   float m_mll[3];
   float m_transvMass[3];
   float m_mT2[3];
+  float m_projectedMet[3];
   //! used for ee final state
   float hardestElectronPt, hardestMuonPt;
   //! used for mm final state

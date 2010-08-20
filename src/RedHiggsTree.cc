@@ -20,6 +20,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("met",                 &myMet,                 "met/F");  
   myTree->Branch("pfMet",               &myPFMet,               "pfMet/F");  
   myTree->Branch("caloMet",             &myCaloMet,             "caloMet/F");  
+  myTree->Branch("projMet",             &myProjectedMet,        "projMet/F");
   myTree->Branch("deltaPhi",            &myDeltaPhi,            "deltaPhi/F");  
   myTree->Branch("deltaR",              &myDeltaR,              "deltaR/F");  
   myTree->Branch("transvMass",          &myTransvMass,          "transvMass/F");  
@@ -102,14 +103,15 @@ void RedHiggsTree::save()
 }
 
 
-void RedHiggsTree::fillAll(float mt, float pfmt, float cmt, 
+void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet, 
 			   float dphi, float derre, float tmass, float mee, float max, float min, float deta,
 			   bool finalLeptons, bool jetVeto, bool uncorrjetVeto, bool preDeltaPhi, bool finalSelection)
 {
 
-  myMet         = mt;
-  myPFMet       = pfmt;
-  myCaloMet     = cmt;
+  myMet         = met;
+  myPFMet       = pfmet;
+  myCaloMet     = cmet;
+  myProjectedMet = projmet;
   myDeltaPhi    = dphi;
   myDeltaR      = derre;
   myTransvMass  = tmass;
