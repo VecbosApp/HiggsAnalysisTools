@@ -12,7 +12,7 @@ ptMuonAcc			1
 leptonAcceptance		1
 hardLeptonThreshold		1
 slowLeptonThreshold		1
-METpreselection			1
+METpreselection			0
 dileptonInvMassMin		1
 etUncorrJetAcc                  1 
-electronIDType                  Vecbos75x75
+electronIDType                  WP80x80
