@@ -1,0 +1,24 @@
+hardLeptonThreshold     1
+slowLeptonThreshold     1
+dileptonInvMassMin      1
+trackerPtSumAss		0
+trackerPtSumRel		0
+hcalPtSumAss		0
+hcalPtSumRel		0
+ecalPtSumAss		0
+ecalPtSumRel		0
+globalSum               1
+leptonD0                1
+classDepEleId		1
+isolation               1
+MET			0
+projectedMET            0
+deltaPhi		0
+maxPtLepton		0
+minPtLepton		1
+dileptonInvMassMax	1
+detaLeptons		0
+jetConeWidth		1
+etaJetAcc		1
+etJetAcc		1
+
