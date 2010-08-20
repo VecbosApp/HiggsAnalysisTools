@@ -53,6 +53,8 @@ private:
   //! count jet multiplicity
   int numJets();
   int numUncorrJets();
+  //! count the soft muons
+  int numSoftMuons();
   //! returns the output of the custom cut electron ID
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker

@@ -13,6 +13,7 @@ classDepEleId		1
 isolation               1
 MET			1
 projectedMET            1
+nSoftMuons              1
 deltaPhi		0
 maxPtLepton		1
 minPtLepton		1

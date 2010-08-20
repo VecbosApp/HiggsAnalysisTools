@@ -31,6 +31,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_eleHardD0 = selector.m_eleHardD0;
   m_nJets            = selector.m_nJets;
   m_nUncorrJets      = selector.m_nUncorrJets;
+  m_nSoftMuons       = selector.m_nSoftMuons;
   m_met = selector.m_met;
   m_projectedMet = selector.m_projectedMet;
   m_deltaPhi = selector.m_deltaPhi;
@@ -75,6 +76,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("minPtLepton");
   _selection->addCut("dileptonInvMassMax");
   _selection->addCut("projectedMET");
+  _selection->addCut("nSoftMuons");
   _selection->addCut("detaLeptons");
   _selection->addCut("deltaPhi");
 
@@ -99,6 +101,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("minPtLepton");
   globalCounter->AddVar("dileptonInvMassMax");
   globalCounter->AddVar("projectedMET");
+  globalCounter->AddVar("nSoftMuons");
   globalCounter->AddVar("detaLeptons");
   globalCounter->AddVar("deltaPhi");
   globalCounter->AddVar("final");
@@ -145,6 +148,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("minPtLepton");
       processCounter->AddVar("dileptonInvMassMax");
       processCounter->AddVar("projectedMET");
+      processCounter->AddVar("nSoftMuons");
       processCounter->AddVar("detaLeptons");
       processCounter->AddVar("deltaPhi");
       processCounter->AddVar("final");
@@ -251,6 +255,9 @@ bool CutBasedHiggsSelector::output() {
   if(_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
   theCounter->IncrVar("projectedMET",m_weight);
 
+  if(_selection->getSwitch("nSoftMuons") && !_selection->passCut("nSoftMuons",m_nSoftMuons)) return false; 
+  theCounter->IncrVar("nSoftMuons",m_weight);
+
   if (_selection->getSwitch("detaLeptons") && !_selection->passCut("detaLeptons", m_detaLeptons)) return false;
   theCounter->IncrVar("detaLeptons",m_weight);
 
@@ -300,7 +307,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("minPtLepton","maxPtLepton");
       theCounter->Draw("dileptonInvMassMax","minPtLepton");
       theCounter->Draw("projectedMET","dileptonInvMassMax");
-      theCounter->Draw("detaLeptons","projectedMET");
+      theCounter->Draw("nSoftMuons","projectedMET");
+      theCounter->Draw("detaLeptons","nSoftMuons");
       theCounter->Draw("deltaPhi","detaLeptons");
       theCounter->Draw("final","preselected");
       theCounter->Draw("zeroJets", "final");
@@ -334,7 +342,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("minPtLepton","maxPtLepton");
     globalCounter->Draw("dileptonInvMassMax","minPtLepton");
     globalCounter->Draw("projectedMET","dileptonInvMassMax");
-    globalCounter->Draw("detaLeptons","projectedMET");
+    globalCounter->Draw("nSoftMuons","projectedMET");
+    globalCounter->Draw("detaLeptons","nSoftMuons");
     globalCounter->Draw("deltaPhi","detaLeptons");
     globalCounter->Draw("final","preselected");
     globalCounter->Draw("zeroJets", "final");

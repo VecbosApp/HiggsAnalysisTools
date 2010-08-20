@@ -539,6 +539,9 @@ void HiggsMLSelection::Loop() {
     int njets = numJets();
     int nuncorrjets = numUncorrJets();
 
+    // soft muon counter
+    int nsoftmu = numSoftMuons();
+
     // look for PV in the event (there is always at least 1 PV)
     m_closestPV = getPV();
     
@@ -616,6 +619,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEE.SetEleSlowD0(theEleSlowDxy);
       CutBasedHiggsSelectionEE.SetNJets(njets);
       CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets);
+      CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu);
       CutBasedHiggsSelectionEE.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
@@ -717,6 +721,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionMM.SetEleSlowD0(theMuonSlowDxy);
       CutBasedHiggsSelectionMM.SetNJets(njets);
       CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets);
+      CutBasedHiggsSelectionMM.SetNSoftMuons(nsoftmu);
       CutBasedHiggsSelectionMM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
@@ -862,6 +867,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleHardD0(theEleDxy);
       CutBasedHiggsSelectionEM.SetEleSlowD0(theMuonDxy);
       CutBasedHiggsSelectionEM.SetNJets(njets);
+      CutBasedHiggsSelectionEM.SetNSoftMuons(nsoftmu);
       CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionEM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
@@ -1354,6 +1360,24 @@ int HiggsMLSelection::numUncorrJets() {
   return num;
 }
 
+int HiggsMLSelection::numSoftMuons() {
+  int num = 0;
+  for(int i=0; i<nMuon; ++i) {
+    if(i==theMuonMinus || i==theMuonPlus) continue;
+    if(GetPt(pxMuon[i],pyMuon[i]) < 3.0) continue;
+    Utils anaUtils;
+    if(!anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons) ||
+       !anaUtils.muonIdVal(muonIdMuon[i],TMLastStationTight)) continue;
+    int track = trackIndexMuon[i];
+    if(trackValidHitsTrack[track]<=10) continue;
+    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
+                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
+                                pxTrack[track], pyTrack[track], pzTrack[track]));
+    if(dxy > 0.200) continue;
+    num++;
+  }
+  return num;
+}
 
 void HiggsMLSelection::resetKinematics() {
 
