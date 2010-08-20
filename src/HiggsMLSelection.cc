@@ -471,6 +471,9 @@ void HiggsMLSelection::Loop() {
     // now we know we have two good reconstructed leptons
     setKinematics();
 
+    // look for PV in the event (there is always at least 1 PV)
+    m_closestPV = getPV();
+
     // ----------------------- selection ----------------------------
     // electron ID (true by default - studied only if ee or emu channel)
     bool theElectronID, thePositronID, theElectronIsol, thePositronIsol, theElectronConvRej, thePositronConvRej;
@@ -532,8 +535,8 @@ void HiggsMLSelection::Loop() {
     // --- muon ID / isolation ---
     bool theMuonPlusID = true;
     bool theMuonMinusID = true;
-    if ( theMuonMinus > -1 ) theMuonMinusID = anaUtils.muonIdVal(muonIdMuon[theMuonMinus],AllGlobalMuons) && anaUtils.muonIdVal(muonIdMuon[theMuonMinus],AllTrackerMuons);
-    if ( theMuonPlus > -1 ) theMuonPlusID = anaUtils.muonIdVal(muonIdMuon[theMuonPlus],AllGlobalMuons) && anaUtils.muonIdVal(muonIdMuon[theMuonPlus],AllTrackerMuons);
+    if ( theMuonMinus > -1 ) isMuonID(theMuonMinus, &theMuonMinusID);
+    if ( theMuonPlus > -1 ) isMuonID(theMuonPlus, &theMuonPlusID);
 
     // jet counter
     int njets = numJets();
@@ -541,9 +544,6 @@ void HiggsMLSelection::Loop() {
 
     // soft muon counter
     int nsoftmu = numSoftMuons();
-
-    // look for PV in the event (there is always at least 1 PV)
-    m_closestPV = getPV();
     
     // and calculate the track impact parameters and the event b-veto variables
     calcEventBVetoVariables(m_goodJets);
@@ -972,13 +972,6 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair() {
   std::vector<int> goodRecoLeptons;
   for(int i=0;i<nEle;i++) {
     
-    // if ambiguity resolution is not applied... @$#%@^@!
-    //   vector<int> _resolvedElectrons = resolvedElectrons();
-    //   vector<int>::const_iterator it; 
-    
-    //   for(it=_resolvedElectrons.begin(); it!=_resolvedElectrons.end(); it++) {
-    //     int i = *it;
-    
     if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
@@ -1083,7 +1076,29 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
 
 }
 
+void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
 
+  *muonIdOutput = true;
+  
+  Utils anaUtils; 
+  bool flag = anaUtils.muonIdVal(muonIdMuon[theMuonMinus],AllGlobalMuons) && 
+    anaUtils.muonIdVal(muonIdMuon[theMuonMinus],AllTrackerMuons);
+  // the following cuts are based on KF and global muon track. So if the cut above has failed, return here
+  if(!flag) {
+    *muonIdOutput = false;
+    return;
+  }
+  int track = trackIndexMuon[muonIndex];
+  if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
+  int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
+  if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] >= 10) *muonIdOutput = false;
+  if(trackValidHitsGlobalMuonTrack[globalMuonTrack] == 0) *muonIdOutput = false;
+  float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
+                              trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
+                              pxTrack[track], pyTrack[track], pzTrack[track]));
+  if(dxy > 0.020) *muonIdOutput = false;
+
+}
 
 void HiggsMLSelection::setPreselKinematics() {
 

@@ -57,6 +57,8 @@ private:
   int numSoftMuons();
   //! returns the output of the custom cut electron ID
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
+  //! returns the output of the custom muon ID
+  void isMuonID(int muonIndex, bool *muonIdOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
   float getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR);
   //! if the 2nd muon falls in deltaR from first, get its Pt in tracker
