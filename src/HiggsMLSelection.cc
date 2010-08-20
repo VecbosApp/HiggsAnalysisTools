@@ -681,8 +681,8 @@ void HiggsMLSelection::Loop() {
       theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
       theSTransvMassMM  = m_mT2[mm];
 
-      float theMuonMinusGlobalSum = muonIsoGlobalSum(theMuonMinus, theMuonPlus);
-      float theMuonPlusGlobalSum  = muonIsoGlobalSum(theMuonPlus, theMuonMinus);
+      float theMuonMinusGlobalSum = muonIsoGlobalSum(theMuonMinus, theMuonPlus) / m_p4MuonMinus->Pt();
+      float theMuonPlusGlobalSum  = muonIsoGlobalSum(theMuonPlus, theMuonMinus) / m_p4MuonPlus->Pt();
       float theMuonHardGlobalSum  = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? theMuonMinusGlobalSum : theMuonPlusGlobalSum;
       float theMuonSlowGlobalSum  = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? theMuonPlusGlobalSum : theMuonMinusGlobalSum;
 
