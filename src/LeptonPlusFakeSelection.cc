@@ -361,11 +361,11 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
     m_theL14Momentum.SetXYZT(0,0,0,0);
   
   float maxPtJet=-1000.;
-  for(int j=0;j<nSisConeJet;j++) {
+  for(int j=0;j<nAK5Jet;j++) {
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
+    TVector3 p3Jet(pxAK5Jet[j],pyAK5Jet[j],pzAK5Jet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -376,17 +376,17 @@ void LeptonPlusFakeSelection::getBestLplusFakePair() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaSisConeJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etSisConeJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaAK5Jet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etAK5Jet[j]) ) continue;
 
-    if(etSisConeJet[j]>maxPtJet) { maxPtJet=etSisConeJet[j]; theFake=j; }
+    if(etAK5Jet[j]>maxPtJet) { maxPtJet=etAK5Jet[j]; theFake=j; }
 
     break;
   }
 
   m_theFake = theFake;
   if ( theFake > -1 )
-    m_theFake4Momentum.SetXYZT(pxSisConeJet[theFake],pySisConeJet[theFake],pzSisConeJet[theFake],energySisConeJet[theFake]);
+    m_theFake4Momentum.SetXYZT(pxAK5Jet[theFake],pyAK5Jet[theFake],pzAK5Jet[theFake],energyAK5Jet[theFake]);
   else
     m_theFake4Momentum.SetXYZT(0,0,0,0);
   
@@ -439,13 +439,13 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 
   // first check that kinematics has been set
   bool foundJet=false;
-  for(int j=0;j<nSisConeJet;j++) {
+  for(int j=0;j<nAK5Jet;j++) {
 
     if ( j == m_theFake ) continue;
 
     // check if the electron or the positron falls into the jet
     // common cleaning class
-    TVector3 p3Jet(pxSisConeJet[j],pySisConeJet[j],pzSisConeJet[j]);
+    TVector3 p3Jet(pxAK5Jet[j],pyAK5Jet[j],pzAK5Jet[j]);
     if ( m_theL14Momentum.Vect().Mag() != 0 ) {
       float deltaR =  p3Jet.DeltaR( m_theL14Momentum.Vect() );
       // taking from ee config file, but jets veto is the same for all the channels
@@ -456,11 +456,11 @@ bool LeptonPlusFakeSelection::goodJetFound() {
 	 ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaSisConeJet[j])) continue;
-    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etSisConeJet[j]) ) continue;
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc",etaAK5Jet[j])) continue;
+    if(_selectionEE->getSwitch("etJetLowAcc") && !_selectionEE->passCut("etJetLowAcc",etAK5Jet[j]) ) continue;
 
-    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etSisConeJet[j])) &&
- 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaSisConeJet[j])) 
+    if( (_selectionEE->getSwitch("etJetHighAcc") && _selectionEE->passCut("etJetHighAcc",etAK5Jet[j])) &&
+ 	(_selectionEE->getSwitch("alphaJet") && !_selectionEE->passCut("alphaJet",alphaAK5Jet[j])) 
 	) continue;
     foundJet=true;
     break;
