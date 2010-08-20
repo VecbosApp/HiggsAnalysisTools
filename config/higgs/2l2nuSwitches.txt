@@ -11,9 +11,10 @@ globalSum               1
 leptonD0                1
 classDepEleId		1
 isolation               1
-MET			0
+MET			1
+projectedMET            1
 deltaPhi		0
-maxPtLepton		0
+maxPtLepton		1
 minPtLepton		1
 dileptonInvMassMax	1
 detaLeptons		0
