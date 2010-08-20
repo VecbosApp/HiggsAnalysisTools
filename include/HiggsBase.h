@@ -553,12 +553,66 @@ public :
    Float_t         vertexZAK5PFJet[200];   //[nAK5PFJet]
    Float_t         chargedHadronEnergyAK5PFJet[200];   //[nAK5PFJet]
    Float_t         neutralHadronEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         photonEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         electronEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         muonEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           chargedHadronMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           neutralHadronMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           photonMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           electronMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           muonMultiplicityAK5PFJet[200];   //[nAK5PFJet]
    Float_t         chargedEmEnergyAK5PFJet[200];   //[nAK5PFJet]
    Float_t         neutralEmEnergyAK5PFJet[200];   //[nAK5PFJet]
-   Float_t         neutralMultiplicityAK5PFJet[200];   //[nAK5PFJet]
-   Float_t         chargedMultiplicityAK5PFJet[200];   //[nAK5PFJet]
-   Float_t         muonMultiplicityAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         combinedSecondaryVertexBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         combinedSecondaryVertexMVABJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         jetBProbabilityBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         jetProbabilityBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         simpleSecondaryVertexBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softMuonBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softMuonByIP3dBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softMuonByPtBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softElectronBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softElectronByIP3dBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         softElectronByPtBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         trackCountingHighPurBJetTagsAK5PFJet[200];   //[nAK5PFJet]
+   Float_t         trackCountingHighEffBJetTagsAK5PFJet[200];   //[nAK5PFJet]
    Float_t         uncorrEnergyAK5PFJet[200];   //[nAK5PFJet]
+   Int_t           nAK5JPTJet;
+   Int_t           chargeAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         energyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         thetaAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         etaAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         phiAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         pxAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         pyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         pzAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         vertexXAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         vertexYAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         vertexZAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         chargedHadronEnergyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         neutralHadronEnergyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         chargedEmEnergyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         neutralEmEnergyAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         chargedMultiplicityAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         muonMultiplicityAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         elecMultiplicityAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         ZSPCorAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         Eta2momtrAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         Phi2momtrAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         combinedSecondaryVertexBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         combinedSecondaryVertexMVABJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         jetBProbabilityBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         jetProbabilityBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         simpleSecondaryVertexBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softMuonBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softMuonByIP3dBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softMuonByPtBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softElectronBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softElectronByIP3dBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         softElectronByPtBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         trackCountingHighPurBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         trackCountingHighEffBJetTagsAK5JPTJet[200];   //[nAK5JPTJet]
+   Float_t         uncorrEnergyAK5JPTJet[200];   //[nAK5JPTJet]
    Int_t           nAK5GenJet;
    Int_t           chargeAK5GenJet[200];   //[nAK5GenJet]
    Float_t         energyAK5GenJet[200];   //[nAK5GenJet]
@@ -1111,12 +1165,66 @@ public :
    TBranch        *b_vertexZAK5PFJet;   //!
    TBranch        *b_chargedHadronEnergyAK5PFJet;   //!
    TBranch        *b_neutralHadronEnergyAK5PFJet;   //!
+   TBranch        *b_photonEnergyAK5PFJet;   //!
+   TBranch        *b_electronEnergyAK5PFJet;   //!
+   TBranch        *b_muonEnergyAK5PFJet;   //!
+   TBranch        *b_chargedHadronMultiplicityAK5PFJet;   //!
+   TBranch        *b_neutralHadronMultiplicityAK5PFJet;   //!
+   TBranch        *b_photonMultiplicityAK5PFJet;   //!
+   TBranch        *b_electronMultiplicityAK5PFJet;   //!
+   TBranch        *b_muonMultiplicityAK5PFJet;   //!
    TBranch        *b_chargedEmEnergyAK5PFJet;   //!
    TBranch        *b_neutralEmEnergyAK5PFJet;   //!
-   TBranch        *b_neutralMultiplicityAK5PFJet;   //!
-   TBranch        *b_chargedMultiplicityAK5PFJet;   //!
-   TBranch        *b_muonMultiplicityAK5PFJet;   //!
+   TBranch        *b_combinedSecondaryVertexBJetTagsAK5PFJet;   //!
+   TBranch        *b_combinedSecondaryVertexMVABJetTagsAK5PFJet;   //!
+   TBranch        *b_jetBProbabilityBJetTagsAK5PFJet;   //!
+   TBranch        *b_jetProbabilityBJetTagsAK5PFJet;   //!
+   TBranch        *b_simpleSecondaryVertexBJetTagsAK5PFJet;   //!
+   TBranch        *b_softMuonBJetTagsAK5PFJet;   //!
+   TBranch        *b_softMuonByIP3dBJetTagsAK5PFJet;   //!
+   TBranch        *b_softMuonByPtBJetTagsAK5PFJet;   //!
+   TBranch        *b_softElectronBJetTagsAK5PFJet;   //!
+   TBranch        *b_softElectronByIP3dBJetTagsAK5PFJet;   //!
+   TBranch        *b_softElectronByPtBJetTagsAK5PFJet;   //!
+   TBranch        *b_trackCountingHighPurBJetTagsAK5PFJet;   //!
+   TBranch        *b_trackCountingHighEffBJetTagsAK5PFJet;   //!
    TBranch        *b_uncorrEnergyAK5PFJet;   //!
+   TBranch        *b_nAK5JPTJet;   //!
+   TBranch        *b_chargeAK5JPTJet;   //!
+   TBranch        *b_energyAK5JPTJet;   //!
+   TBranch        *b_thetaAK5JPTJet;   //!
+   TBranch        *b_etaAK5JPTJet;   //!
+   TBranch        *b_phiAK5JPTJet;   //!
+   TBranch        *b_pxAK5JPTJet;   //!
+   TBranch        *b_pyAK5JPTJet;   //!
+   TBranch        *b_pzAK5JPTJet;   //!
+   TBranch        *b_vertexXAK5JPTJet;   //!
+   TBranch        *b_vertexYAK5JPTJet;   //!
+   TBranch        *b_vertexZAK5JPTJet;   //!
+   TBranch        *b_chargedHadronEnergyAK5JPTJet;   //!
+   TBranch        *b_neutralHadronEnergyAK5JPTJet;   //!
+   TBranch        *b_chargedEmEnergyAK5JPTJet;   //!
+   TBranch        *b_neutralEmEnergyAK5JPTJet;   //!
+   TBranch        *b_chargedMultiplicityAK5JPTJet;   //!
+   TBranch        *b_muonMultiplicityAK5JPTJet;   //!
+   TBranch        *b_elecMultiplicityAK5JPTJet;   //!
+   TBranch        *b_ZSPCorAK5JPTJet;   //!
+   TBranch        *b_Eta2momtrAK5JPTJet;   //!
+   TBranch        *b_Phi2momtrAK5JPTJet;   //!
+   TBranch        *b_combinedSecondaryVertexBJetTagsAK5JPTJet;   //!
+   TBranch        *b_combinedSecondaryVertexMVABJetTagsAK5JPTJet;   //!
+   TBranch        *b_jetBProbabilityBJetTagsAK5JPTJet;   //!
+   TBranch        *b_jetProbabilityBJetTagsAK5JPTJet;   //!
+   TBranch        *b_simpleSecondaryVertexBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softMuonBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softMuonByIP3dBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softMuonByPtBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softElectronBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softElectronByIP3dBJetTagsAK5JPTJet;   //!
+   TBranch        *b_softElectronByPtBJetTagsAK5JPTJet;   //!
+   TBranch        *b_trackCountingHighPurBJetTagsAK5JPTJet;   //!
+   TBranch        *b_trackCountingHighEffBJetTagsAK5JPTJet;   //!
+   TBranch        *b_uncorrEnergyAK5JPTJet;   //!
    TBranch        *b_nAK5GenJet;   //!
    TBranch        *b_chargeAK5GenJet;   //!
    TBranch        *b_energyAK5GenJet;   //!
@@ -1750,12 +1858,66 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("vertexZAK5PFJet", vertexZAK5PFJet, &b_vertexZAK5PFJet);
    fChain->SetBranchAddress("chargedHadronEnergyAK5PFJet", chargedHadronEnergyAK5PFJet, &b_chargedHadronEnergyAK5PFJet);
    fChain->SetBranchAddress("neutralHadronEnergyAK5PFJet", neutralHadronEnergyAK5PFJet, &b_neutralHadronEnergyAK5PFJet);
+   fChain->SetBranchAddress("photonEnergyAK5PFJet", photonEnergyAK5PFJet, &b_photonEnergyAK5PFJet);
+   fChain->SetBranchAddress("electronEnergyAK5PFJet", electronEnergyAK5PFJet, &b_electronEnergyAK5PFJet);
+   fChain->SetBranchAddress("muonEnergyAK5PFJet", muonEnergyAK5PFJet, &b_muonEnergyAK5PFJet);
+   fChain->SetBranchAddress("chargedHadronMultiplicityAK5PFJet", chargedHadronMultiplicityAK5PFJet, &b_chargedHadronMultiplicityAK5PFJet);
+   fChain->SetBranchAddress("neutralHadronMultiplicityAK5PFJet", neutralHadronMultiplicityAK5PFJet, &b_neutralHadronMultiplicityAK5PFJet);
+   fChain->SetBranchAddress("photonMultiplicityAK5PFJet", photonMultiplicityAK5PFJet, &b_photonMultiplicityAK5PFJet);
+   fChain->SetBranchAddress("electronMultiplicityAK5PFJet", electronMultiplicityAK5PFJet, &b_electronMultiplicityAK5PFJet);
+   fChain->SetBranchAddress("muonMultiplicityAK5PFJet", muonMultiplicityAK5PFJet, &b_muonMultiplicityAK5PFJet);
    fChain->SetBranchAddress("chargedEmEnergyAK5PFJet", chargedEmEnergyAK5PFJet, &b_chargedEmEnergyAK5PFJet);
    fChain->SetBranchAddress("neutralEmEnergyAK5PFJet", neutralEmEnergyAK5PFJet, &b_neutralEmEnergyAK5PFJet);
-   fChain->SetBranchAddress("neutralMultiplicityAK5PFJet", neutralMultiplicityAK5PFJet, &b_neutralMultiplicityAK5PFJet);
-   fChain->SetBranchAddress("chargedMultiplicityAK5PFJet", chargedMultiplicityAK5PFJet, &b_chargedMultiplicityAK5PFJet);
-   fChain->SetBranchAddress("muonMultiplicityAK5PFJet", muonMultiplicityAK5PFJet, &b_muonMultiplicityAK5PFJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsAK5PFJet", combinedSecondaryVertexBJetTagsAK5PFJet, &b_combinedSecondaryVertexBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexMVABJetTagsAK5PFJet", combinedSecondaryVertexMVABJetTagsAK5PFJet, &b_combinedSecondaryVertexMVABJetTagsAK5PFJet);
+   fChain->SetBranchAddress("jetBProbabilityBJetTagsAK5PFJet", jetBProbabilityBJetTagsAK5PFJet, &b_jetBProbabilityBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("jetProbabilityBJetTagsAK5PFJet", jetProbabilityBJetTagsAK5PFJet, &b_jetProbabilityBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("simpleSecondaryVertexBJetTagsAK5PFJet", simpleSecondaryVertexBJetTagsAK5PFJet, &b_simpleSecondaryVertexBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softMuonBJetTagsAK5PFJet", softMuonBJetTagsAK5PFJet, &b_softMuonBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softMuonByIP3dBJetTagsAK5PFJet", softMuonByIP3dBJetTagsAK5PFJet, &b_softMuonByIP3dBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softMuonByPtBJetTagsAK5PFJet", softMuonByPtBJetTagsAK5PFJet, &b_softMuonByPtBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softElectronBJetTagsAK5PFJet", softElectronBJetTagsAK5PFJet, &b_softElectronBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softElectronByIP3dBJetTagsAK5PFJet", softElectronByIP3dBJetTagsAK5PFJet, &b_softElectronByIP3dBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("softElectronByPtBJetTagsAK5PFJet", softElectronByPtBJetTagsAK5PFJet, &b_softElectronByPtBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("trackCountingHighPurBJetTagsAK5PFJet", trackCountingHighPurBJetTagsAK5PFJet, &b_trackCountingHighPurBJetTagsAK5PFJet);
+   fChain->SetBranchAddress("trackCountingHighEffBJetTagsAK5PFJet", trackCountingHighEffBJetTagsAK5PFJet, &b_trackCountingHighEffBJetTagsAK5PFJet);
    fChain->SetBranchAddress("uncorrEnergyAK5PFJet", uncorrEnergyAK5PFJet, &b_uncorrEnergyAK5PFJet);
+   fChain->SetBranchAddress("nAK5JPTJet", &nAK5JPTJet, &b_nAK5JPTJet);
+   fChain->SetBranchAddress("chargeAK5JPTJet", chargeAK5JPTJet, &b_chargeAK5JPTJet);
+   fChain->SetBranchAddress("energyAK5JPTJet", energyAK5JPTJet, &b_energyAK5JPTJet);
+   fChain->SetBranchAddress("thetaAK5JPTJet", thetaAK5JPTJet, &b_thetaAK5JPTJet);
+   fChain->SetBranchAddress("etaAK5JPTJet", etaAK5JPTJet, &b_etaAK5JPTJet);
+   fChain->SetBranchAddress("phiAK5JPTJet", phiAK5JPTJet, &b_phiAK5JPTJet);
+   fChain->SetBranchAddress("pxAK5JPTJet", pxAK5JPTJet, &b_pxAK5JPTJet);
+   fChain->SetBranchAddress("pyAK5JPTJet", pyAK5JPTJet, &b_pyAK5JPTJet);
+   fChain->SetBranchAddress("pzAK5JPTJet", pzAK5JPTJet, &b_pzAK5JPTJet);
+   fChain->SetBranchAddress("vertexXAK5JPTJet", vertexXAK5JPTJet, &b_vertexXAK5JPTJet);
+   fChain->SetBranchAddress("vertexYAK5JPTJet", vertexYAK5JPTJet, &b_vertexYAK5JPTJet);
+   fChain->SetBranchAddress("vertexZAK5JPTJet", vertexZAK5JPTJet, &b_vertexZAK5JPTJet);
+   fChain->SetBranchAddress("chargedHadronEnergyAK5JPTJet", chargedHadronEnergyAK5JPTJet, &b_chargedHadronEnergyAK5JPTJet);
+   fChain->SetBranchAddress("neutralHadronEnergyAK5JPTJet", neutralHadronEnergyAK5JPTJet, &b_neutralHadronEnergyAK5JPTJet);
+   fChain->SetBranchAddress("chargedEmEnergyAK5JPTJet", chargedEmEnergyAK5JPTJet, &b_chargedEmEnergyAK5JPTJet);
+   fChain->SetBranchAddress("neutralEmEnergyAK5JPTJet", neutralEmEnergyAK5JPTJet, &b_neutralEmEnergyAK5JPTJet);
+   fChain->SetBranchAddress("chargedMultiplicityAK5JPTJet", chargedMultiplicityAK5JPTJet, &b_chargedMultiplicityAK5JPTJet);
+   fChain->SetBranchAddress("muonMultiplicityAK5JPTJet", muonMultiplicityAK5JPTJet, &b_muonMultiplicityAK5JPTJet);
+   fChain->SetBranchAddress("elecMultiplicityAK5JPTJet", elecMultiplicityAK5JPTJet, &b_elecMultiplicityAK5JPTJet);
+   fChain->SetBranchAddress("ZSPCorAK5JPTJet", ZSPCorAK5JPTJet, &b_ZSPCorAK5JPTJet);
+   fChain->SetBranchAddress("Eta2momtrAK5JPTJet", Eta2momtrAK5JPTJet, &b_Eta2momtrAK5JPTJet);
+   fChain->SetBranchAddress("Phi2momtrAK5JPTJet", Phi2momtrAK5JPTJet, &b_Phi2momtrAK5JPTJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsAK5JPTJet", combinedSecondaryVertexBJetTagsAK5JPTJet, &b_combinedSecondaryVertexBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("combinedSecondaryVertexMVABJetTagsAK5JPTJet", combinedSecondaryVertexMVABJetTagsAK5JPTJet, &b_combinedSecondaryVertexMVABJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("jetBProbabilityBJetTagsAK5JPTJet", jetBProbabilityBJetTagsAK5JPTJet, &b_jetBProbabilityBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("jetProbabilityBJetTagsAK5JPTJet", jetProbabilityBJetTagsAK5JPTJet, &b_jetProbabilityBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("simpleSecondaryVertexBJetTagsAK5JPTJet", simpleSecondaryVertexBJetTagsAK5JPTJet, &b_simpleSecondaryVertexBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softMuonBJetTagsAK5JPTJet", softMuonBJetTagsAK5JPTJet, &b_softMuonBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softMuonByIP3dBJetTagsAK5JPTJet", softMuonByIP3dBJetTagsAK5JPTJet, &b_softMuonByIP3dBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softMuonByPtBJetTagsAK5JPTJet", softMuonByPtBJetTagsAK5JPTJet, &b_softMuonByPtBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softElectronBJetTagsAK5JPTJet", softElectronBJetTagsAK5JPTJet, &b_softElectronBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softElectronByIP3dBJetTagsAK5JPTJet", softElectronByIP3dBJetTagsAK5JPTJet, &b_softElectronByIP3dBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("softElectronByPtBJetTagsAK5JPTJet", softElectronByPtBJetTagsAK5JPTJet, &b_softElectronByPtBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("trackCountingHighPurBJetTagsAK5JPTJet", trackCountingHighPurBJetTagsAK5JPTJet, &b_trackCountingHighPurBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("trackCountingHighEffBJetTagsAK5JPTJet", trackCountingHighEffBJetTagsAK5JPTJet, &b_trackCountingHighEffBJetTagsAK5JPTJet);
+   fChain->SetBranchAddress("uncorrEnergyAK5JPTJet", uncorrEnergyAK5JPTJet, &b_uncorrEnergyAK5JPTJet);
    fChain->SetBranchAddress("nAK5GenJet", &nAK5GenJet, &b_nAK5GenJet);
    fChain->SetBranchAddress("chargeAK5GenJet", chargeAK5GenJet, &b_chargeAK5GenJet);
    fChain->SetBranchAddress("energyAK5GenJet", energyAK5GenJet, &b_energyAK5GenJet);
