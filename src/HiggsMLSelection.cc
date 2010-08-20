@@ -804,8 +804,8 @@ void HiggsMLSelection::Loop() {
 	theEleTrackerPtSumEM = theEleTrackerPtSum;
 	theEleHcalPtSumEM = theEleHcalPtSum;
 	theEleEcalPtSumEM = theEleEcalPtSum;
-	theEleGlobalSumEM  = elemuIsoGlobalSum(theElectron, theMuonPlus);
-        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron);
+	theEleGlobalSumEM  = elemuIsoGlobalSum(theElectron, theMuonPlus); // not used 
+        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron) / m_p4MuonPlus->Pt();
         theEleLikelihoodEM = eleIdLikelihoodEle[theElectron];
 
         int gsfEle = gsfTrackIndexEle[theElectron]; 
@@ -829,8 +829,8 @@ void HiggsMLSelection::Loop() {
 	theEleTrackerPtSumEM = thePosTrackerPtSum;
 	theEleHcalPtSumEM = thePosHcalPtSum;
 	theEleEcalPtSumEM = thePosEcalPtSum;
-	theEleGlobalSumEM  = elemuIsoGlobalSum(thePositron, theMuonMinus);
-        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron);
+	theEleGlobalSumEM  = elemuIsoGlobalSum(thePositron, theMuonMinus); // not used
+        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron) / m_p4MuonMinus->Pt();
         theEleLikelihoodEM = eleIdLikelihoodEle[thePositron];
 
         int gsfPos = gsfTrackIndexEle[thePositron]; 
@@ -863,7 +863,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleHardEcalPtSum(0);
       CutBasedHiggsSelectionEM.SetEleSlowEcalPtSum(0);
       CutBasedHiggsSelectionEM.SetEleHardGlobalSum(theMuonGlobalSumEM); //order in pt unimportant
-      CutBasedHiggsSelectionEM.SetEleSlowGlobalSum(theEleGlobalSumEM);
+      CutBasedHiggsSelectionEM.SetEleSlowGlobalSum(0); // for electron, already applied the bit
       CutBasedHiggsSelectionEM.SetEleHardD0(theEleDxy);
       CutBasedHiggsSelectionEM.SetEleSlowD0(theMuonDxy);
       CutBasedHiggsSelectionEM.SetNJets(njets);
