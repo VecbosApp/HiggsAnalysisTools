@@ -344,15 +344,10 @@ int main(int argc, char* argv[]) {
   HiggsMLSelection htoww(theChain);
   htoww.SetDatasetName(outputFileName);
 
-  TriggerMask mask(treeCond);
-
-  // require triggers
-  mask.requireTrigger("HLT_Ele15_LW_L1R");
-  mask.requireTrigger("HLT_Mu9");
-
-  std::vector<int> requiredTriggers = mask.getBits();
-  htoww.requireTrigger(requiredTriggers);
-
+  std::vector<std::string> mask;
+  mask.push_back("HLT_Ele15_LW_L1R");
+  mask.push_back("HLT_Mu9");
+  htoww.setRequiredTriggers(mask);
   htoww.Loop();
   htoww.displayEfficiencies(outputFileName);
 
