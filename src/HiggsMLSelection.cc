@@ -1319,27 +1319,38 @@ int HiggsMLSelection::numJets() {
 
   int num=0;
   m_goodJets.clear();
-  for(int j=0;j<nAK5Jet;j++) {
+  for(int j=0;j<nAK5PFJet;j++) {
 
-    // check if the electron or the positron falls into the jet
-    // common cleaning class
-    TVector3 p3Jet(pxAK5Jet[j],pyAK5Jet[j],pzAK5Jet[j]);
-    if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
+    // check if the electron/muon falls into the jet
+    TVector3 p3Jet(pxAK5PFJet[j],pyAK5PFJet[j],pzAK5PFJet[j]);
+    if ( theElectron > -1 ) {
       float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronMinus->Vect() ) );
       H_deltaRcorr -> Fill(deltaR);
       // taking from ee config file, but jets veto is the same for all the channels
       if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
     }
 
-    if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
+    if ( thePositron > -1 ) {
       float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronPlus->Vect() ) );
       H_deltaRcorr -> Fill(deltaR);
       if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5Jet[j]))) continue;
+    if ( theMuonMinus > -1 ) {
+      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonMinus->Vect() ) );
+      H_deltaRcorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
+    }
 
-    if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", GetPt(pxAK5Jet[j],pyAK5Jet[j]))) continue;
+    if ( theMuonPlus > -1 ) {
+      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonPlus->Vect() ) );
+      H_deltaRcorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
+    }
+
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFJet[j]))) continue;
+
+    if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", GetPt(pxAK5PFJet[j],pyAK5PFJet[j]))) continue;
 
     m_goodJets.push_back(j);
     num++;
@@ -1354,25 +1365,37 @@ int HiggsMLSelection::numUncorrJets() {
 
   int num=0;
 
-  for(int j=0;j<nAK5Jet;j++) {
+  for(int j=0;j<nAK5PFJet;j++) {
 
-    float uncorrEt = uncorrEnergyAK5Jet[j]*fabs(sin(thetaAK5Jet[j]));
+    float uncorrEt = uncorrEnergyAK5PFJet[j]*fabs(sin(thetaAK5PFJet[j]));
     TLorentzVector p4Jet;
-    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5Jet[j],phiAK5Jet[j],uncorrEnergyAK5Jet[j]);
+    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFJet[j],phiAK5PFJet[j],uncorrEnergyAK5PFJet[j]);
     TVector3 p3Jet = p4Jet.Vect();
     
-    if ( m_p4ElectronMinus->Vect().Mag() != 0 ) {
+    if ( theElectron > -1 ) {
       float deltaR = p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
       H_deltaRuncorr -> Fill(deltaR);
       if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
     }
-    if ( m_p4ElectronPlus->Vect().Mag() != 0 ) {
+    if ( thePositron > -1 ) {
       float deltaR = p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
       H_deltaRuncorr -> Fill(deltaR);
       if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
     }
 
-    if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5Jet[j]))) continue;    
+    if ( theMuonMinus > -1 ) {
+      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonMinus->Vect() ) );
+      H_deltaRcorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
+    }
+
+    if ( theMuonPlus > -1 ) {
+      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonPlus->Vect() ) );
+      H_deltaRcorr -> Fill(deltaR);
+      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
+    }
+
+    if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFJet[j]))) continue;    
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
     
     num++;
@@ -1701,7 +1724,7 @@ std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
   float sumNumDsz = 0;
   float sumDen    = 0.;
 
-  TVector3 p3Jet(pxAK5Jet[jetIndex],pyAK5Jet[jetIndex],pzAK5Jet[jetIndex]);
+  TVector3 p3Jet(pxAK5PFJet[jetIndex],pyAK5PFJet[jetIndex],pzAK5PFJet[jetIndex]);
   TLorentzVector p4TracksInJet(0.,0.,0.,0.);
 
   for(int iTrack=0; iTrack<nTrack; iTrack++) {
@@ -1747,9 +1770,9 @@ std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
   variables.clear();
   variables.push_back(DxyAverage);
   variables.push_back(DszAverage);
-  variables.push_back(trackCountingHighEffBJetTagsAK5Jet[jetIndex]);
-  variables.push_back(jetProbabilityBJetTagsAK5Jet[jetIndex]);
-  variables.push_back(combinedSecondaryVertexMVABJetTagsAK5Jet[jetIndex]);
+  variables.push_back(trackCountingHighEffBJetTagsAK5PFJet[jetIndex]);
+  variables.push_back(jetProbabilityBJetTagsAK5PFJet[jetIndex]);
+  variables.push_back(combinedSecondaryVertexMVABJetTagsAK5PFJet[jetIndex]);
   variables.push_back(jetMass);
   variables.push_back(nTracks);
 
