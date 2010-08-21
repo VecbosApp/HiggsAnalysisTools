@@ -158,8 +158,7 @@ void computeYields(float lumi, const char* finalstate) {
     qcd_tmp += lumi / lumiWeight * QCD_bctoe30to80_weight  * nPreSelTot[icut][7];
     qcd_tmp += lumi / lumiWeight * QCD_bctoe80to170_weight * nPreSelTot[icut][8];
     QCD_preSel[icut] = qcd_tmp;
-    
-    
+
     // efficiencies
     if(icut>0 && nPreSelTot[icut-1][0]>0) Wenu_eff_preSel[icut]   = nPreSelTot[icut][0]/nPreSelTot[icut-1][0];
     else Wenu_eff_preSel[icut] = 0.0;
@@ -197,6 +196,15 @@ void computeYields(float lumi, const char* finalstate) {
     qcd_tmp += lumi / lumiWeight * QCD_bctoe30to80_weight  * nFullSelTot[icut][7];
     qcd_tmp += lumi / lumiWeight * QCD_bctoe80to170_weight * nFullSelTot[icut][8];
     QCD_fullSel[icut] = qcd_tmp;
+
+    if(icut == 0) {
+    cout << lumi / lumiWeight * QCD_em20to30_weight     * nFullSelTot[icut][3] << endl;
+    cout << lumi / lumiWeight * QCD_em30to80_weight     * nFullSelTot[icut][4] << endl;
+    cout << lumi / lumiWeight * QCD_em80to170_weight    * nFullSelTot[icut][5] << endl;
+    cout << lumi / lumiWeight * QCD_bctoe20to30_weight  * nFullSelTot[icut][6] << endl;
+    cout << lumi / lumiWeight * QCD_bctoe30to80_weight  * nFullSelTot[icut][7] << endl;
+    cout << lumi / lumiWeight * QCD_bctoe80to170_weight * nFullSelTot[icut][8] << endl;
+    }
 
     // efficiencies
     if(icut>0 && nFullSelTot[icut-1][0]>0) Wenu_eff_fullSel[icut]  = nFullSelTot[icut][0]/nFullSelTot[icut-1][0];
