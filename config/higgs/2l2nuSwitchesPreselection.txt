@@ -1,3 +1,5 @@
+isData                          0
+goodRunLS                       0
 MCtruth				0   
 apply_kFactor			1   
 addCSA07Infos			0  
