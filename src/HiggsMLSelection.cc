@@ -545,6 +545,9 @@ void HiggsMLSelection::Loop() {
     // soft muon counter
     int nsoftmu = numSoftMuons();
     
+    // extra lepton counter
+    int nextraleptons = numExtraLeptons();
+
     // and calculate the track impact parameters and the event b-veto variables
     calcEventBVetoVariables(m_goodJets);
 
@@ -620,6 +623,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEE.SetNJets(njets);
       CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu);
+      CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons);
       CutBasedHiggsSelectionEE.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
       CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
@@ -722,6 +726,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionMM.SetNJets(njets);
       CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionMM.SetNSoftMuons(nsoftmu);
+      CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons);
       CutBasedHiggsSelectionMM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
       CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
@@ -868,6 +873,7 @@ void HiggsMLSelection::Loop() {
       CutBasedHiggsSelectionEM.SetEleSlowD0(theMuonDxy);
       CutBasedHiggsSelectionEM.SetNJets(njets);
       CutBasedHiggsSelectionEM.SetNSoftMuons(nsoftmu);
+      CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons);
       CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets);
       CutBasedHiggsSelectionEM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
       CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
@@ -1392,6 +1398,47 @@ int HiggsMLSelection::numSoftMuons() {
     num++;
   }
   return num;
+}
+
+int HiggsMLSelection::numExtraLeptons() {
+
+  int numEle = 0;
+  for(int i=0; i<nEle; ++i) {
+    if(i==theElectron || i==thePositron) continue;
+    if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
+    if(_preselection->getSwitch("ptElectronAcc") && !_preselection->passCut("ptElectronAcc",GetPt(pxEle[i],pyEle[i])) ) continue;
+    bool theId, theIso, theConvRej;
+    theId = theIso = theConvRej = true;
+    isEleID(i,&theId,&theIso,&theConvRej);
+    if(!theId || !theIso || !theConvRej) continue;
+    int track = gsfTrackIndexEle[i];
+    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
+                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
+                                pxTrack[track], pyTrack[track], pzTrack[track]));
+    if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
+    numEle++;
+  }
+
+  int numMu = 0;
+  for(int i=0; i<nMuon; ++i) {
+    if(i==theMuonMinus || i==theMuonPlus) continue;
+    if(_preselection->getSwitch("etaMuonAcc") && !_preselection->passCut("etaMuonAcc",etaMuon[i]) ) continue;
+    if(_preselection->getSwitch("ptMuonAcc") && !_preselection->passCut("ptMuonAcc",GetPt(pxMuon[i],pyMuon[i])) ) continue;
+    bool theId = true;
+    isMuonID(i,&theId);
+    if(!theId) continue;
+    float isoSum = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i];
+    if(_selectionMM->getSwitch("globalSum") && !_selectionMM->passCut("globalSum",isoSum)) continue;
+    int track = trackIndexMuon[i];
+    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
+                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
+                                pxTrack[track], pyTrack[track], pzTrack[track]));
+    if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
+    numMu++;
+  }
+
+  return numEle + numMu;
+
 }
 
 void HiggsMLSelection::resetKinematics() {

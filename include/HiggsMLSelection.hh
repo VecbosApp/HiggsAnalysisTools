@@ -55,6 +55,8 @@ private:
   int numUncorrJets();
   //! count the soft muons
   int numSoftMuons();
+  //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
+  int numExtraLeptons();
   //! returns the output of the custom cut electron ID
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
   //! returns the output of the custom muon ID

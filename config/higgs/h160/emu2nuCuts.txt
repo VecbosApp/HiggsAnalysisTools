@@ -12,6 +12,7 @@ leptonD0                -0.020          0.020
 MET			0		900
 projectedMET            20              900
 nSoftMuons              0               0
+nExtraLeptons           0               0
 deltaPhi		0		10000
 maxPtLepton		20		10000
 minPtLepton		20		10000

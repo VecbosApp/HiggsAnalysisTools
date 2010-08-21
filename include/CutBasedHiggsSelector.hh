@@ -53,6 +53,7 @@ public:
   void SetNJets(int njets)               { m_nJets         = njets; }
   void SetNUncorrJets(int nuncorrjets)   { m_nUncorrJets   = nuncorrjets; }
   void SetNSoftMuons(int nsoftmu)        { m_nSoftMuons    = nsoftmu; }
+  void SetNExtraLeptons(int nextralep)   { m_nExtraLeptons = nextralep; }
   void SetMet(float met)                 { m_met           = met;}
   void SetProjectedMet(float projmet)    { m_projectedMet  = projmet;}
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
@@ -84,9 +85,7 @@ private:
   float m_eleSlowD0, m_eleHardD0;
   bool m_passedJetVeto;
   bool m_passedUncorrJetVeto;
-  int m_nJets;
-  int m_nUncorrJets;
-  int m_nSoftMuons;
+  int m_nJets, m_nUncorrJets, m_nSoftMuons, m_nExtraLeptons;
   float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;
   int m_processID;
