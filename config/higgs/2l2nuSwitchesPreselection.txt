@@ -13,6 +13,6 @@ leptonAcceptance		1
 hardLeptonThreshold		1
 slowLeptonThreshold		1
 METpreselection			0
-dileptonInvMassMin		1
+dileptonInvMassMin		0
 etUncorrJetAcc                  1 
 electronIDType                  WP80x80
