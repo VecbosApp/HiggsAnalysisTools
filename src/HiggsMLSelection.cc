@@ -22,7 +22,7 @@ using namespace bits;
 float evtKfactor = 1.0;
 
 HiggsMLSelection::HiggsMLSelection(TTree *tree) 
-  : HiggsBase(tree) {
+  : Higgs(tree) {
   
   // choose the Higgs Mass
   std::string higgsConfigDir;
@@ -59,6 +59,8 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   //  extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   _preselection->addSwitch("apply_kFactor");   
+  _preselection->addSwitch("isData");
+  _preselection->addSwitch("goodRunLS");
   _preselection->addCut("etaElectronAcc");
   _preselection->addCut("ptElectronAcc");
   _preselection->addCut("etaMuonAcc");
@@ -143,7 +145,7 @@ HiggsMLSelection::~HiggsMLSelection(){
   myOutTreeEE   -> save();
   myOutTreeMM   -> save();
   myOutTreeEM   -> save();
-  myTriggerTree -> save();
+  //  myTriggerTree -> save();
   myEleIdTree   -> save();
 }
 
@@ -352,23 +354,25 @@ void HiggsMLSelection::Loop() {
   //  myOutTreeMM->addHLTMuonsInfos();
   //  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
 
-  if ( _preselection->getSwitch("apply_kFactor") ) {
+  if ( !_preselection->getSwitch("isData") && _preselection->getSwitch("apply_kFactor") ) {
     myOutTreeEE->addKFactor();
     myOutTreeMM->addKFactor();
     myOutTreeEM->addKFactor();
   }
 
-  myOutTreeEE->addMcTruthInfos();
-  myOutTreeMM->addMcTruthInfos();
-  myOutTreeEM->addMcTruthInfos();
+  if(!_preselection->getSwitch("isData")) {
+    myOutTreeEE->addMcTruthInfos();
+    myOutTreeMM->addMcTruthInfos();
+    myOutTreeEM->addMcTruthInfos();
+  }
 
   myOutTreeEE->addMLVars();
   myOutTreeMM->addMLVars();
   myOutTreeEM->addMLVars();
 
   // trigger reduced tree
-  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
-  myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
+  //  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
+  //  myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
 
   // eleId reduced tree
   std::string reducedEleIdTreeName = _datasetName+"-eleId.root";
@@ -376,6 +380,9 @@ void HiggsMLSelection::Loop() {
 
   float met, deltaPhi, transvMass, deltaErre; 
   float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
+
+  unsigned int lastLumi=0;
+  unsigned int lastRun=0;
 
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -390,27 +397,49 @@ void HiggsMLSelection::Loop() {
 
     // get the kFactor of the event (for signal)
     float weight = 1;
-    if (_preselection->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
+    if (!_preselection->getSwitch("isData") && _preselection->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
     
     // look to the MC truth decay tree
-    bool foundMcTree = findMcTree("HtoWWto2e2nu");
+    bool foundMcTree = false;
+    if( !_preselection->getSwitch("isData") ) foundMcTree = findMcTree("HtoWWto2e2nu");
 
+    //    bool decayEE = findMcTree("HtoWWto2e2nu");
+    //    bool decayMM = findMcTree("HtoWWto2m2nu");
+    //    bool decayEM = findMcTree("HtoWWtoem2nu");
+
+    bool promptEE, promptMM, promptEM;
+    promptEE = promptMM = promptEM = false;
+    if( !_preselection->getSwitch("isData") ) {
+      promptEE = findMcTree("HtoWWto2e2nu_prompt");
+      promptMM = findMcTree("HtoWWto2m2nu_prompt");
+      promptEM = findMcTree("HtoWWtoem2nu_prompt");
+    }
+
+    //IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
+    reloadTriggerMask();
+    //Good Run selection
+    if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && !isGoodRunLS()) {
+      if ( lastRun!= runNumber || lastLumi != lumiBlock) {
+        lastRun = runNumber;
+        lastLumi = lumiBlock;
+        std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is rejected" << std::endl;
+      }
+      continue;
+    }
+    
+    if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && ( lastRun!= runNumber || lastLumi != lumiBlock) ) {
+      lastRun = runNumber;
+      lastLumi = lumiBlock;
+      std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is OK" << std::endl;
+    }
+    
     // trigger
-    Utils anaUtils;
-    bool passedHLT = anaUtils.getTriggersOR(m_requiredTriggers, firedTrg);
+    bool passedHLT = hasPassedHLT();
 
-    bool decayEE = findMcTree("HtoWWto2e2nu");
-    bool decayMM = findMcTree("HtoWWto2m2nu");
-    bool decayEM = findMcTree("HtoWWtoem2nu");
-
-    bool promptEE = findMcTree("HtoWWto2e2nu_prompt");
-    bool promptMM = findMcTree("HtoWWto2m2nu_prompt");
-    bool promptEM = findMcTree("HtoWWtoem2nu_prompt");
-
-    myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
+    //    myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
     //    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
     //    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
-    myTriggerTree->store();
+    //    myTriggerTree->store();
 
     // get the best electrons, best muons  
     std::pair<int,int> theElectrons = getBestElectronPair();
@@ -635,7 +664,7 @@ void HiggsMLSelection::Loop() {
       bool selUpToUncorrJetVetoEE = CutBasedHiggsSelectionEE.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
 
-      myOutTreeEE -> fillMcTruth(promptEE);
+      if(!_preselection->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
       
 //       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
 // 				       firedTrg[m_requiredTriggers[1]],
@@ -738,7 +767,7 @@ void HiggsMLSelection::Loop() {
       bool selUpToUncorrJetVetoMM = CutBasedHiggsSelectionMM.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
-      myOutTreeMM -> fillMcTruth(promptMM);
+      if(!_preselection->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
       
 //       myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
 // 				   firedTrg[m_requiredTriggers[3]],
@@ -886,7 +915,7 @@ void HiggsMLSelection::Loop() {
       bool selUpToUncorrJetVetoEM = CutBasedHiggsSelectionEM.outputUpToUncorrJetVeto();
       bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
-      myOutTreeEM -> fillMcTruth(promptEM);
+      if(!_preselection->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
       
 //       myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
 // 				       firedTrg[m_requiredTriggers[1]],
@@ -1301,15 +1330,17 @@ void HiggsMLSelection::setKinematics( ) {
     m_projectedMet[em] = -1;
   }
   
-  // --- Higgs and electron generator level ---
-  if(_theGenEle>0 && _theGenPos>0) {
-    if(pMc[_theGenEle]>=pMc[_theGenPos]) {
-      _highestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
-      _lowestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
-    }
-    else {
-      _highestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
-      _lowestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
+  if( !_preselection->getSwitch("isData") ) {
+    // --- Higgs and electron generator level ---
+    if(_theGenEle>0 && _theGenPos>0) {
+      if(pMc[_theGenEle]>=pMc[_theGenPos]) {
+        _highestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
+        _lowestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
+      }
+      else {
+        _highestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
+        _lowestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
+      }
     }
   }
 }

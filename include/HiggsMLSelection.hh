@@ -12,9 +12,9 @@
 #include <vector>
 #include "CommonTools/include/Monitor.hh"
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
+#include "HiggsAnalysisTools/include/Higgs.hh"
 #include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
 #include "HiggsAnalysisTools/include/CutBasedHiggsSelector.hh"
-#include "HiggsAnalysisTools/include/HiggsBase.h"
 #include "HiggsAnalysisTools/include/RedHiggsTree.h"
 #include "HiggsAnalysisTools/include/RedTriggerTree.hh"
 #include "HiggsAnalysisTools/include/RedEleIDTree.h"
@@ -22,7 +22,7 @@
 #include <TLorentzVector.h>
 
 
-class HiggsMLSelection : public HiggsBase{
+class HiggsMLSelection : public Higgs{
 public:
   
   //! constructor
@@ -112,8 +112,6 @@ private:
   CutBasedHiggsSelector CutBasedHiggsSelectionEM;
   //! be verbose during runtime
   bool _verbose;
-  //! the list of required triggers
-  vector<int> m_requiredTriggers;
 
   //! process variables to initialize kFactors
   int _massVal;
