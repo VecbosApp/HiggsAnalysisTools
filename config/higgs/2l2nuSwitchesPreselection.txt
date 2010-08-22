@@ -17,4 +17,4 @@ slowLeptonThreshold		1
 METpreselection			0
 dileptonInvMassMin		0
 etUncorrJetAcc                  1 
-electronIDType                  WP80x80
+electronIDType                  WP80
