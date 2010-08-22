@@ -90,24 +90,19 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   
   // single electron efficiency
   //  EgammaCutBasedID.Configure("config/higgs"); // this is the class dependent e-ID
-  if ( _preselection->getStringParameter("electronIDType")==std::string("Vecbos70x70") ) {
-    std::cout << "=== CONFIGURING Vecbos70 symmetric TIGHT ELECTRON ID ===" << std::endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/Vecbos70");
-  } else if ( _preselection->getStringParameter("electronIDType")==std::string("Vecbos75x75") ) {
-    std::cout << "=== CONFIGURING Vecbos75 symmetric TIGHT ELECTRON ID ===" << std::endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/Vecbos75");
-  } else if ( _preselection->getStringParameter("electronIDType")==std::string("Vecbos80x80") ) {
-    std::cout << "=== CONFIGURING Vecbos80 symmetric TIGHT ELECTRON ID ===" << std::endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/Vecbos80");
-  } else if ( _preselection->getStringParameter("electronIDType")==std::string("WP80x80") ) {
-    std::cout << "=== CONFIGURING WP80 symmetric TIGHT ELECTRON ID ===" << std::endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/WP80");
-  } else if ( _preselection->getStringParameter("electronIDType")==std::string("WP70x70") ) {
-    std::cout << "=== CONFIGURING WP70 symmetric TIGHT ELECTRON ID ===" << std::endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/WP70");
-  } else {
-    cout << "UNKNOWN ELECTRON IDENTIFICATION WORKING POINT" << endl;
-    exit(1);
+  TString selectionString(_preselection->getStringParameter("electronIDType"));
+  cout << "=== CONFIGURING " << selectionString << " SYMMETRIC ELECTRON ID ===" << endl;
+  EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/"+selectionString);
+  EgammaCutBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
+
+  //Reading GoodRUN LS
+  std::cout << "[GoodRunLS]::goodRunLS is " << _preselection->getSwitch("goodRunLS") << " isData is " <<  _preselection->getSwitch("isData") << std::endl;
+
+  //To read good run list!
+  if (_preselection->getSwitch("goodRunLS") && _preselection->getSwitch("isData")) {
+    std::string goodRunJsonFile       = "config/json/goodRunLS.json";
+    setJsonGoodRunList(goodRunJsonFile);
+    fillRunLSMap();
   }
 
   // kinematics
@@ -1054,6 +1049,7 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   // if is ECAL driven, take the electron ID variables from the standard electron
   // above all, take the ECAL supercluster instead of PF super cluster
   float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
+  float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
   bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
   HoE = hOverEEle[eleIndex];
   deta = deltaEtaAtVtxEle[eleIndex];
@@ -1067,12 +1063,24 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
     s9s25 = e3x3SC[sc]/e5x5SC[sc];
     see = sqrt(covIEtaIEtaSC[sc]);
     spp = sqrt(covIPhiIPhiSC[sc]);
+    e1 = eMaxSC[sc];
+    e4SwissCross = e4SwissCrossSC[sc];
+    fidFlagSC = fiducialFlagsEle[eleIndex];
+    seedRecHitFlag = recoFlagSC[sc];
+    seedTime = timeSC[sc];
+    seedChi2 = chi2SC[sc];
   } else {
     int sc = PFsuperClusterIndexEle[eleIndex];
     if(sc>-1) {
       s9s25 = e3x3PFSC[sc]/e5x5PFSC[sc];
       see = sqrt(covIEtaIEtaPFSC[sc]);
       spp = sqrt(covIPhiIPhiPFSC[sc]);
+      e1 = eMaxSC[sc];
+      e4SwissCross = e4SwissCrossSC[sc];
+      fidFlagSC = fiducialFlagsEle[eleIndex];
+      seedRecHitFlag = recoFlagSC[sc];
+      seedTime = timeSC[sc];
+      seedChi2 = chi2SC[sc];
     } else {
       s9s25 = 999.;
       see = 999.;
@@ -1103,8 +1111,18 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
                                           TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + 
                                           dr03HcalTowerSumEtEle[eleIndex]) / pt );
   EgammaCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  
-  //  return selector->output(); // class dependent result
+  EgammaCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
+  EgammaCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
+
+  // ECAL cleaning variables
+  EgammaCutBasedID.m_cleaner->SetE1(e1);
+  EgammaCutBasedID.m_cleaner->SetE4SwissCross(e4SwissCross);
+  EgammaCutBasedID.m_cleaner->SetFiducialFlag(fidFlagSC);
+  EgammaCutBasedID.m_cleaner->SetSeedFlag(seedRecHitFlag);
+  EgammaCutBasedID.m_cleaner->SetSeedTime(seedTime);
+  EgammaCutBasedID.m_cleaner->SetSeedChi2(seedChi2);
+
+  //  return EgammaCutBasedID.output(); // class dependent result
   *eleIdOutput = EgammaCutBasedID.outputNoClassEleId();
   *isolOutput = EgammaCutBasedID.outputNoClassIso();
   *convRejOutput = EgammaCutBasedID.outputNoClassConv();
