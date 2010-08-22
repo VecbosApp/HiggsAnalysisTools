@@ -611,7 +611,7 @@ void HiggsMLSelection::Loop() {
       theDeltaErreEE   = m_deltaErre[ee];
       theInvMassEE     = m_mll[ee];
       theDetaLeptonsEE = etaEle[theElectron]-etaEle[thePositron];
-      theSTransvMassEE  = m_mT2[ee];
+      theSTransvMassEE  = m_transvMass[ee];
 
       // selections
       CutBasedHiggsSelectionEE.SetWeight(weight);
@@ -707,7 +707,7 @@ void HiggsMLSelection::Loop() {
       theDeltaErreMM   = m_deltaErre[mm];
       theInvMassMM     = m_mll[mm];
       theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
-      theSTransvMassMM  = m_mT2[mm];
+      theSTransvMassMM  = m_transvMass[mm];
 
       float theMuonMinusGlobalSum = muonIsoGlobalSum(theMuonMinus, theMuonPlus) / m_p4MuonMinus->Pt();
       float theMuonPlusGlobalSum  = muonIsoGlobalSum(theMuonPlus, theMuonMinus) / m_p4MuonPlus->Pt();
@@ -823,7 +823,7 @@ void HiggsMLSelection::Loop() {
       theDeltaPhiEM    = m_deltaPhi[em];
       theDeltaErreEM   = m_deltaErre[em];
       theInvMassEM     = m_mll[em];
-      theSTransvMassEM  = m_mT2[em];
+      theSTransvMassEM  = m_transvMass[em];
       if(theElectron>-1 && theMuonPlus>-1) {
 	theDetaLeptonsEM = etaEle[theElectron]-etaEle[theMuonPlus];
         theEleIDEM = theElectronID;
@@ -1236,7 +1236,9 @@ void HiggsMLSelection::setKinematics( ) {
     dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4ElectronPlus->Vect().X(),
 		    m_p4ElectronMinus->Vect().Y()+m_p4ElectronPlus->Vect().Y(),
 		    0.0 );
-    m_transvMass[ee]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+    // m_transvMass[ee]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+    // def. 3 of http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213
+    m_transvMass[ee]=mT3(*m_p4ElectronMinus,*m_p4ElectronPlus,m_p4MET->Vect());
     // m_mT2[ee] = mT2(m_p4ElectronMinus->Vect(),m_p4ElectronPlus->Vect(),m_p4MET->Vect());
     m_mT2[ee] = 0.;
     m_projectedMet[ee] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4ElectronPlus->Vect()); 
@@ -1255,7 +1257,8 @@ void HiggsMLSelection::setKinematics( ) {
     dilepPt.SetXYZ( m_p4MuonMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
 		    m_p4MuonMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 		    0.0 );
-    m_transvMass[mm]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect()))));
+    // m_transvMass[mm]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect()))));
+    m_transvMass[mm]=mT3(*m_p4MuonMinus,*m_p4MuonPlus,m_p4MET->Vect());
     m_projectedMet[mm] = GetProjectedMet(m_p4MuonMinus->Vect(),m_p4MuonPlus->Vect()); 
     // m_mT2[mm] = mT2(m_p4MuonMinus->Vect(),m_p4MuonPlus->Vect(),m_p4MET->Vect());
     m_mT2[mm] = 0.;
@@ -1285,7 +1288,8 @@ void HiggsMLSelection::setKinematics( ) {
 		      m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
 		      0.0 );
       dilepPtEPlusMuMinus = dilepPt.Mag();
-      m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect()))));
+      //m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect()))));
+      m_transvMass[em]=mT3(*m_p4ElectronPlus,*m_p4MuonMinus,m_p4MET->Vect());
       hardestLeptonPt = TMath::Max(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
       slowestLeptonPt = TMath::Min(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
       m_projectedMet[em] = GetProjectedMet(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect()); 
@@ -1301,7 +1305,8 @@ void HiggsMLSelection::setKinematics( ) {
 		      m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 		      0.0 );
       dilepPtEMinusMuPlus = dilepPt.Mag();
-      m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+      // m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+      m_transvMass[em]=mT3(*m_p4ElectronMinus,*m_p4MuonPlus,m_p4MET->Vect());
       hardestLeptonPt = TMath::Max(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
       slowestLeptonPt = TMath::Min(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
       m_projectedMet[em] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect()); 
@@ -1318,7 +1323,8 @@ void HiggsMLSelection::setKinematics( ) {
 	dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
 			m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
 			0.0 );
-	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+	// m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+        m_transvMass[em]=mT3(*m_p4ElectronPlus,*m_p4MuonMinus,m_p4MET->Vect()); 
 	hardestLeptonPt = TMath::Max(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
 	slowestLeptonPt = TMath::Min(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
         m_projectedMet[em] = GetProjectedMet(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect()); 
@@ -1331,7 +1337,8 @@ void HiggsMLSelection::setKinematics( ) {
 	dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
 			m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
 			0.0 );
-	m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+	//m_transvMass[em]=sqrt(2*dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(dilepPt.Angle(m_p4MET->Vect())) ) );
+        m_transvMass[em]=mT3(*m_p4ElectronMinus,*m_p4MuonPlus,m_p4MET->Vect());
 	hardestLeptonPt = TMath::Max(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
 	slowestLeptonPt = TMath::Min(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
         m_projectedMet[em] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect()); 

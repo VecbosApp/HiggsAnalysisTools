@@ -155,3 +155,16 @@ bool Higgs::reloadTriggerMask(bool newVersion)
       }
   }
 }
+
+float Higgs::mT3(TLorentzVector pl1, TLorentzVector pl2, TVector3 met) {
+  float pTll = (pl1.Vect() + pl2.Vect()).Pt();
+  float mll = (pl1 + pl2).M();
+  float El = sqrt(pTll*pTll + mll*mll);
+  float pTnu = met.Pt();
+  float Enu = sqrt(pTnu*pTnu + mll*mll);
+  float Ex = (pl1+pl2).X() + met.X();
+  float Ey = (pl1+pl2).Y() + met.Y();
+  float mnu = mll;
+
+  return sqrt(mll*mll + mnu*mnu + 2*(El*Enu-Ex*Ex-Ey*Ey));
+}

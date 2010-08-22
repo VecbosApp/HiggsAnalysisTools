@@ -6,6 +6,9 @@
 #define Higgs_h
 
 #include "HiggsAnalysisTools/include/HiggsBase.h"
+// ROOT includes
+#include <TLorentzVector.h>
+#include <TVector3.h>
 // std includes
 #include <string>
 #include <vector>
@@ -52,6 +55,9 @@ protected:
   //! the list of required triggers
   std::vector<int> m_requiredTriggers;
 
+  /// calculate transverse mass
+  /// definitions in http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213
+  float mT3(TLorentzVector pl1, TLorentzVector pl2, TVector3 met);
 
 };
 
