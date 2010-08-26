@@ -231,18 +231,18 @@ void computeYields(float lumi, const char* finalstate) {
   sampleNames[28] = "TTbar";
 
   // signal
-  chains_preSel[0]->Add("results/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
+  chains_preSel[0]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
   // backgrounds
-  chains_preSel[1]->Add("results/WJets-madgraph/*Counters.root");       
-  chains_preSel[2]->Add("results/TTbarJets-madgraph/*Counters.root");       
-  chains_preSel[3]->Add("results/ZJets-madgraph/*Counters.root");       
-  chains_preSel[4]->Add("results/WW_2l_7TeV/*Counters.root");   
-  chains_preSel[5]->Add("results/ZZ_2l2nu/*Counters.root");   
-  chains_preSel[6]->Add("results/WZ_3l_7TeV/*Counters.root");
-  chains_preSel[7]->Add("results/Wgamma/*Counters.root");
-  chains_preSel[8]->Add("results/SingleTop_sChannel-madgraph/*Counters.root");
-  chains_preSel[9]->Add("results/SingleTop_tChannel-madgraph/*Counters.root");
-  chains_preSel[10]->Add("results/SingleTop_tWChannel-madgraph/*Counters.root");
+  chains_preSel[1]->Add("results/WJetsMADGRAPH/WJets-madgraph/*Counters.root");       
+  chains_preSel[2]->Add("results/TTbar/TTbarJets-madgraph/*Counters.root");       
+  chains_preSel[3]->Add("results/ZJetsMADGRAPH/ZJets-madgraph/*Counters.root");       
+  chains_preSel[4]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");   
+  chains_preSel[5]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");   
+  chains_preSel[6]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
+  chains_preSel[7]->Add("results/DiBosons/Wgamma/*Counters.root");
+  chains_preSel[8]->Add("results/SingleTop/SingleTop_sChannel-madgraph/*Counters.root");
+  chains_preSel[9]->Add("results/SingleTop/SingleTop_tChannel-madgraph/*Counters.root");
+  chains_preSel[10]->Add("results/SingleTop/SingleTop_tWChannel-madgraph/*Counters.root");
   chains_preSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
   chains_preSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
   chains_preSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
@@ -263,19 +263,18 @@ void computeYields(float lumi, const char* finalstate) {
   // backgrounds (alternative to some of the above ones)
   chains_preSel[28]->Add("results/TTbar/*Counters.root");       
 
-  // signal
-  chains_fullSel[0]->Add("results/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
+  chains_fullSel[0]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
   // backgrounds
-  chains_fullSel[1]->Add("results/WJets-madgraph/*Counters.root");       
-  chains_fullSel[2]->Add("results/TTbarJets-madgraph/*Counters.root");       
-  chains_fullSel[3]->Add("results/ZJets-madgraph/*Counters.root");       
-  chains_fullSel[4]->Add("results/WW_2l_7TeV/*Counters.root");   
-  chains_fullSel[5]->Add("results/ZZ_2l2nu/*Counters.root");   
-  chains_fullSel[6]->Add("results/WZ_3l_7TeV/*Counters.root");
-  chains_fullSel[7]->Add("results/Wgamma/*Counters.root");
-  chains_fullSel[8]->Add("results/SingleTop_sChannel-madgraph/*Counters.root");
-  chains_fullSel[9]->Add("results/SingleTop_tChannel-madgraph/*Counters.root");
-  chains_fullSel[10]->Add("results/SingleTop_tWChannel-madgraph/*Counters.root");
+  chains_fullSel[1]->Add("results/WJetsMADGRAPH/WJets-madgraph/*Counters.root");       
+  chains_fullSel[2]->Add("results/TTbar/TTbarJets-madgraph/*Counters.root");       
+  chains_fullSel[3]->Add("results/ZJetsMADGRAPH/ZJets-madgraph/*Counters.root");       
+  chains_fullSel[4]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");   
+  chains_fullSel[5]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");   
+  chains_fullSel[6]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
+  chains_fullSel[7]->Add("results/DiBosons/Wgamma/*Counters.root");
+  chains_fullSel[8]->Add("results/SingleTop/SingleTop_sChannel-madgraph/*Counters.root");
+  chains_fullSel[9]->Add("results/SingleTop/SingleTop_tChannel-madgraph/*Counters.root");
+  chains_fullSel[10]->Add("results/SingleTop/SingleTop_tWChannel-madgraph/*Counters.root");
   chains_fullSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
   chains_fullSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
   chains_fullSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
@@ -645,10 +644,10 @@ void setupCuts() {
   UseCuts[em][12] = UseCuts[em][19] = UseCuts[em][20] = UseCuts[em][21] = 0; // kine
   UseCuts[em][6] = UseCuts[em][7] = UseCuts[em][8] = 0; // lepton
 
-  // show uncorrected jets
-  UseCuts[ee][22] = UseCuts[ee][23] = UseCuts[ee][24] = 0;
-  UseCuts[mm][22] = UseCuts[mm][23] = UseCuts[mm][24] = 0;
-  UseCuts[em][22] = UseCuts[em][23] = UseCuts[em][24] = 0;
+  // show corrected jets
+  UseCuts[ee][25] = UseCuts[ee][26] = UseCuts[ee][27] = 0;
+  UseCuts[mm][25] = UseCuts[mm][26] = UseCuts[mm][27] = 0;
+  UseCuts[em][25] = UseCuts[em][26] = UseCuts[em][27] = 0;
 
   preSelCuts[0]="event";
   preSelCuts[1]="MCtruth";
