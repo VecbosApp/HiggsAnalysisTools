@@ -91,10 +91,8 @@ bool CommonHiggsPreselector::output() {
   theCounter->IncrVar("trigger",m_weight); 
   
   // nEle, nMuon
-  if ( _selection->getSwitch("nRecoLeptons") && 
-       ( !_selection->passCut("nRecoLeptons", m_nEle) && !_selection->passCut("nRecoLeptons", m_nMuon) ) &&
-       ( !_selection->passCut("nRecoLeptonsMix", m_nEle) || !_selection->passCut("nRecoLeptonsMix", m_nMuon) ) 
-       ) return false;
+  int nLeptons = m_nEle + m_nMuon;
+  if ( _selection->getSwitch("nRecoLeptons") && ( !_selection->passCut("nRecoLeptons", nLeptons) ) ) return false;
   theCounter->IncrVar("nRecoLeptons",m_weight);
   
   // leptons in the acceptance
