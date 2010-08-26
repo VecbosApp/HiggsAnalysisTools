@@ -359,6 +359,10 @@ void HiggsMLSelection::Loop() {
     myOutTreeEE->addMcTruthInfos();
     myOutTreeMM->addMcTruthInfos();
     myOutTreeEM->addMcTruthInfos();
+  } else {
+    myOutTreeEE->addRunInfos();
+    myOutTreeMM->addRunInfos();
+    myOutTreeEM->addRunInfos();
   }
 
   myOutTreeEE->addMLVars();
@@ -660,7 +664,8 @@ void HiggsMLSelection::Loop() {
       bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
 
       if(!_preselection->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
-      
+      else myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber);
+
 //       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
 // 				       firedTrg[m_requiredTriggers[1]],
 // 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
@@ -763,7 +768,8 @@ void HiggsMLSelection::Loop() {
       bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
       if(!_preselection->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
-      
+      else myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber);
+
 //       myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
 // 				   firedTrg[m_requiredTriggers[3]],
 // 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
@@ -911,7 +917,8 @@ void HiggsMLSelection::Loop() {
       bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
       if(!_preselection->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
-      
+      else myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber);
+
 //       myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
 // 				       firedTrg[m_requiredTriggers[1]],
 // 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );

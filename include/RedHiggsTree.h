@@ -22,6 +22,8 @@ public:
   void addHLTElectronsInfos();
   //! add the HLT muon triggers informations
   void addHLTMuonsInfos();
+  //! add run,lumi, event number (for data)
+  void addRunInfos();
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
 	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, 
@@ -39,6 +41,8 @@ public:
   void fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR);
   //! fill the HLT muons triggers informations
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
+  //! fill the run,lumi, event number
+  void fillRunInfos(int run, int lumi, int event);
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
@@ -81,6 +85,7 @@ private:
   double myProcesId;
   float myLumi;
   float myKFactor;
+  int myRun, myLS, myEvent;
 
   TFile* myFile;
   TTree* myTree;

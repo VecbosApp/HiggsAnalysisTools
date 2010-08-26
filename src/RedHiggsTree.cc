@@ -89,6 +89,14 @@ void RedHiggsTree::addHLTMuonsInfos() {
 
 }
 
+void RedHiggsTree::addRunInfos() {
+
+  myTree->Branch("run", &myRun,     "run/I");
+  myTree->Branch("lumi", &myLS,     "lumi/I");
+  myTree->Branch("event", &myEvent, "event/I");
+
+}
+
 void RedHiggsTree::store()
 {
   myTree->Fill();
@@ -176,5 +184,13 @@ void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool si
   myHLTSingleMuon = singleMuon;
   myHLTSingleMuonRelaxed = singleMuonRelaxed;
   myHLTSingleMuonOR = singleMuonOR;
+
+}
+
+void RedHiggsTree::fillRunInfos(int run, int lumi, int event) {
+
+  myRun = run;
+  myLS = lumi;
+  myEvent = event;
 
 }
