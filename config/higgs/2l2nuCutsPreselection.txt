@@ -1,8 +1,7 @@
-nRecoLeptons		2		2
-nRecoLeptonsMix		1		1
+nRecoLeptons		2		999
 etaElectronAcc		-2.5		2.5
 ptElectronAcc		10		10000
-etaMuonAcc		-2.5		2.5
+etaMuonAcc		-2.4		2.4
 ptMuonAcc		10		10000
 hardLeptonThreshold	20		10000
 slowLeptonThreshold     10              10000

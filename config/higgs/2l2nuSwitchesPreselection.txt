@@ -6,7 +6,6 @@ addCSA07Infos			0
 trigger				1    
 preselection			1   
 nRecoLeptons			1
-nRecoLeptonsMix			1
 etaElectronAcc			1   
 ptElectronAcc			1   
 etaMuonAcc			1   
