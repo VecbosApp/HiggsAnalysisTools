@@ -164,8 +164,8 @@ float QCD_BCtoE_Pt30to80_xsec = 59.3E+06 * 0.00234;
 float QCD_BCtoE_Pt80to170_xsec = 0.906E+06 * 0.0104;
 
 // xsec (pb)
-float SingleTopS_xsec = 4.6;
-float SingleTopT_xsec = 63.0;
+float SingleTopS_xsec = 4.6 * (0.1080*3);
+float SingleTopT_xsec = 63.0 * (0.1080*3);
 float SingleTopTW_xsec = 10.6;
 
 // xsec (pb)

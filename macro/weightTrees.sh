@@ -14,8 +14,8 @@ root -l -b <<EOF
 
 addWeights("results/merged/H160_ee.root", 0.00818843);
 addWeights("results/merged/TTbar_ee.root", 0.128565);
-addWeights("results/merged/SingleTop_sChannel_ee.root", 0.014741);
-addWeights("results/merged/SingleTop_tChannel_ee.root", 0.131636);
+addWeights("results/merged/SingleTop_sChannel_ee.root", 0.00477608);
+addWeights("results/merged/SingleTop_tChannel_ee.root", 0.04265);
 addWeights("results/merged/SingleTop_tWChannel_ee.root", 0.644887);
 addWeights("results/merged/Wgamma_ee.root", 0.390098);
 addWeights("results/merged/WjetsMadgraph_ee.root", 2.97267);
@@ -35,8 +35,8 @@ gSystem->Load("addWeightsToTree_cc.so");
 
 addWeights("results/merged/H160_mm.root", 0.00818843);
 addWeights("results/merged/TTbar_mm.root", 0.128565);
-addWeights("results/merged/SingleTop_sChannel_mm.root", 0.014741);
-addWeights("results/merged/SingleTop_tChannel_mm.root", 0.131636);
+addWeights("results/merged/SingleTop_sChannel_mm.root", 0.00477608);
+addWeights("results/merged/SingleTop_tChannel_mm.root", 0.04265);
 addWeights("results/merged/SingleTop_tWChannel_mm.root", 0.644887);
 addWeights("results/merged/Wgamma_mm.root", 0.390098);
 addWeights("results/merged/WjetsMadgraph_mm.root", 2.97267);
@@ -57,8 +57,8 @@ gSystem->Load("addWeightsToTree_cc.so");
 
 addWeights("results/merged/H160_em.root", 0.00818843);
 addWeights("results/merged/TTbar_em.root", 0.128565);
-addWeights("results/merged/SingleTop_sChannel_em.root", 0.014741);
-addWeights("results/merged/SingleTop_tChannel_em.root", 0.131636);
+addWeights("results/merged/SingleTop_sChannel_em.root", 0.00477608);
+addWeights("results/merged/SingleTop_tChannel_em.root", 0.04265);
 addWeights("results/merged/SingleTop_tWChannel_em.root", 0.644887);
 addWeights("results/merged/Wgamma_em.root", 0.390098);
 addWeights("results/merged/WjetsMadgraph_em.root", 2.97267);

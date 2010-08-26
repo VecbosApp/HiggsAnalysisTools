@@ -35,8 +35,8 @@ int main(int argc, char* argv[]) {
   w = weight("Zjets",  1.03492e+06,  3*1606.6, 1.0, wantLumi);
   w = weight("TTjets", 1.2834e+06,   165, 1.0, wantLumi);
 
-  w = weight("SingleTop_sChannel", 312055, 4.6, 1.0, wantLumi);
-  w = weight("SingleTop_tChannel", 478593, 63, 1.0, wantLumi);
+  w = weight("SingleTop_sChannel", 312055, 4.6*(3*0.1080), 1.0, wantLumi);
+  w = weight("SingleTop_tChannel", 478593, 63*(3*0.1080), 1.0, wantLumi);
   w = weight("SingleTop_tWChannel", 16437, 10.6, 1.0, wantLumi);
 
   w = weight("QCD_EMenriched_Pt20to30", 2.27098e+07, 235.5E+06, 0.0073, wantLumi);
