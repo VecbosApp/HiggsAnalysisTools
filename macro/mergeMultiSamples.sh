@@ -11,15 +11,11 @@ cp results/merged/H*_ee.root results/datasets_trees
 # WW is a species per se
 cp results/merged/WW_ee.root results/datasets_trees
 
-# ttbar is a species per se
-cp results/merged/TTbarJetsMadgraph_ee.root results/datasets_trees
-cp results/merged/TTbar_ee.root results/datasets_trees
-
-# merging all the samples with a Z boson
-hadd results/datasets_trees/Zspecies_ee.root  results/merged/ZjetsMadgraph_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
+# merging ttbar and single t in a species
+hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/merged/SingleTop_sChannel_ee.root results/merged/SingleTop_tChannel_ee.root results/merged/SingleTop_tWChannel_ee.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_ee.root results/merged/WjetsMadgraph_ee.root results/merged/Wgamma_ee.root results/merged/QCD_*_ee.root results/merged/PhotonJet_*_ee.root
+hadd results/datasets_trees/others_ee.root results/merged/WjetsMadgraph_ee.root results/merged/Wgamma_ee.root results/merged/ZjetsMadgraph_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
 
 
 echo "Now merging species for mm..."
@@ -29,15 +25,11 @@ cp results/merged/H*_mm.root results/datasets_trees
 # WW is a species per se
 cp results/merged/WW_mm.root results/datasets_trees
 
-# ttbar is a species per se
-cp results/merged/TTbarJetsMadgraph_mm.root results/datasets_trees
-cp results/merged/TTbar_mm.root results/datasets_trees
-
-# merging all the samples with a Z boson
-hadd results/datasets_trees/Zspecies_mm.root  results/merged/ZjetsMadgraph_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
+# merging ttbar and single t in a species
+hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/merged/SingleTop_sChannel_mm.root results/merged/SingleTop_tChannel_mm.root results/merged/SingleTop_tWChannel_mm.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_mm.root results/merged/WjetsMadgraph_mm.root results/merged/Wgamma_mm.root results/merged/InclusiveMu15_mm.root
+hadd results/datasets_trees/others_mm.root results/merged/WjetsMadgraph_mm.root results/merged/Wgamma_mm.root results/merged/ZjetsMadgraph_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
 
 
 
@@ -48,9 +40,8 @@ cp results/merged/H*_em.root results/datasets_trees
 # WW is a species per se
 cp results/merged/WW_em.root results/datasets_trees
 
-# ttbar is a species per se
-cp results/merged/TTbarJetsMadgraph_em.root results/datasets_trees
-cp results/merged/TTbar_em.root results/datasets_trees
+# merging ttbar and single t in a species
+hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/merged/SingleTop_sChannel_em.root results/merged/SingleTop_tChannel_em.root results/merged/SingleTop_tWChannel_em.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_em.root results/merged/ZjetsMadgraph_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/WjetsMadgraph_em.root results/merged/Wgamma_em.root results/merged/QCD_*_em.root results/merged/PhotonJet_*_em.root results/merged/InclusiveMu15_em.root
+hadd results/datasets_trees/others_em.root results/merged/ZjetsMadgraph_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/WjetsMadgraph_em.root results/merged/Wgamma_em.root 

@@ -7,67 +7,54 @@ double weight(string sample, double ngen, double xsec, double filtereff, double 
 
 int main(int argc, char* argv[]) {
   
-  double wantLumi = 100.0; //pb-1  
+  double wantLumi = 1000.0; //pb-1  
   double w;
 
-  std::cout << "sample" << "\t" << "xsec" << "\t" << "prescale" << "\t" << "weight" << std:: endl;
+  std::cout << "sample" << "\t" << "xsec" << "\t" << "weight" << std:: endl;
   
-  w = weight("H120", 109550, 0.429291, 1.0, wantLumi);
-  w = weight("H130", 108500, 0.798372, 1.0, wantLumi);
-  w = weight("H140", 109700, 1.160314, 1.0, wantLumi);
-  w = weight("H150", 109550, 1.427122, 1.0, wantLumi);
-  w = weight("H155", 106550, 1.535030, 1.0, wantLumi);
-  w = weight("H160", 108450, 1.645316, 1.0, wantLumi);
-  w = weight("H165",  98550, 1.601116, 1.0, wantLumi);
-  w = weight("H170", 108000, 1.501921, 1.0, wantLumi);
-  w = weight("H175",  98400, 1.403838, 1.0, wantLumi);
-  w = weight("H180", 108000, 1.288077, 1.0, wantLumi);
-  w = weight("H190", 108000, 0.956866, 1.0, wantLumi);
-  w = weight("H200", 105650, 0.811859, 1.0, wantLumi);
-  w = weight("H210", 108000, 0.720998, 1.0, wantLumi);
-  w = weight("H220", 107900, 0.652178, 1.0, wantLumi);
-  w = weight("H230", 105350, 0.596385, 1.0, wantLumi);
-  w = weight("H240", 105500, 0.549726, 1.0, wantLumi);
-  w = weight("H250", 107300, 0.510142, 1.0, wantLumi);
-  w = weight("H275", 113150, 0.434763, 1.0, wantLumi);
-  w = weight("H300", 100500, 0.385833, 1.0, wantLumi);
-  w = weight("H350",  94500, 0.382384, 1.0, wantLumi);
-  w = weight("H400", 101250, 0.294458, 1.0, wantLumi);
-  w = weight("H450", 103400, 0.194491, 1.0, wantLumi);
-  w = weight("H500", 105650, 0.126372, 1.0, wantLumi);
-  w = weight("H550",  98750, 0.082537, 1.0, wantLumi);
-  w = weight("H600", 100400, 0.054517, 1.0, wantLumi);
+  w = weight("H120", 103700, 0.247143, 1.0, wantLumi);
+  w = weight("H130", 108200, 0.452859, 1.0, wantLumi);
+  w = weight("H140", 109550, 0.649260, 1.0, wantLumi);
+  w = weight("H150", 109550, 0.787871, 1.0, wantLumi);
+  w = weight("H155", 97850, 0.842093, 1.0, wantLumi);
+  w = weight("H160", 109550, 0.897043, 1.0, wantLumi);
+  w = weight("H165", 101600, 0.867591, 1.0, wantLumi);
+  w = weight("H170", 108150, 0.808914, 1.0, wantLumi);
+  w = weight("H175", 117450, 0.751628, 1.0, wantLumi);
+  w = weight("H180", 105450, 0.685617, 1.0, wantLumi);
+  w = weight("H190", 103550, 0.503611, 1.0, wantLumi);
 
-  w = weight("Wgamma", 103817, 11960.0, 1.0, wantLumi);
-  w = weight("WW", 7.74607e+06, 44.8, 1.0, wantLumi);
-  w = weight("WZ", 5.00057e+06, 17.4, 1.0, wantLumi);
-  w = weight("ZZ", 2.98244e+06, 7.1, 1.0, wantLumi);
+  // MCFM NLO
+  w = weight("Wgamma", 107050, 23.2*1.8, 1.0, wantLumi);
+  w = weight("WW_2l", 221100, 42.9*0.324*0.324, 1.0, wantLumi);
+  w = weight("WZ_3l", 109000, 18.3*(3*0.108)*(3*0.0337), 1.0, wantLumi);
+  w = weight("ZZ_2l2nu", 109074, 5.9*(2*0.107*0.20), 1.0, wantLumi);
 
-  // crosse sections LO at 10 TeV (even if the sample is at 7 TeV...)
-  w = weight("Wjets", 893068, 46050, 1.0, wantLumi);
-  //  w = weight("Zjets",  179332,  7164, 1.0, wantLumi); // NLO estimate (InvMass = 20-inf GeV)
-  w = weight("Zjets",  179332,  3700 * 1.2, 1.0, wantLumi); // LO (madgraph) * 1.2 (k-factor: check) [madgraph sample = 50-Inf GeV]
-  w = weight("TTjets", 159883,   415, 1.0, wantLumi);
+  // MCFM NLO
+  w = weight("Wjets", 9.7689e+06, 3*9679.9, 1.0, wantLumi);
+  w = weight("Zjets",  1.03492e+06,  3*1606.6, 1.0, wantLumi);
+  w = weight("TTjets", 1.2834e+06,   165, 1.0, wantLumi);
 
-  w = weight("TTbar", 128692 , 375.0, 1.0, wantLumi);
-  //  w = weight("Wenu", 2157227, 11840, 0.738, wantLumi);
-  //  w = weight("Zee", 2675110, 1944, 1.0, wantLumi);
-  w = weight("QCD_EMenriched_Pt20to30", 33.853E+06, 400E+06, 0.008, wantLumi);
-  w = weight("QCD_EMenriched_Pt30to80", 42.284E+06, 100E+06, 0.047, wantLumi);
-  w = weight("QCD_EMenriched_Pt80to170", 5.375E+06, 1.9E+06, 0.15, wantLumi);
-  w = weight("QCD_BCtoE_Pt20to30", 2.468E+06, 400E+06, 0.00048, wantLumi);
-  w = weight("QCD_BCtoE_Pt30to80", 2.041E+06, 100E+06, 0.0024, wantLumi);
-  w = weight("QCD_BCtoE_Pt80to170", 1.042E+06, 1.9E+06, 0.012, wantLumi);
-  w = weight("PhotonJet_Pt0to15", 104595, 100.5E+06, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt15to20", 97480, 168000, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt20to30", 106140, 84870, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt30to50", 119883, 26320, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt50to80", 100001, 4589, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt80to120", 100005, 786.4, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt120to170", 105004, 164.8, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt170to300", 106143, 45.96, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt300to500", 90718, 3.708, 1.0, wantLumi);
-  w = weight("PhotonJet_Pt500toInf", 103786, 0.3285, 1.0, wantLumi);
+  w = weight("SingleTop_sChannel", 312055, 4.6, 1.0, wantLumi);
+  w = weight("SingleTop_tChannel", 478593, 63, 1.0, wantLumi);
+  w = weight("SingleTop_tWChannel", 16437, 10.6, 1.0, wantLumi);
+
+  w = weight("QCD_EMenriched_Pt20to30", 2.27098e+07, 235.5E+06, 0.0073, wantLumi);
+  w = weight("QCD_EMenriched_Pt30to80", 3.11427e+07, 59.3E+06, 0.059, wantLumi);
+  w = weight("QCD_EMenriched_Pt80to170", 2.17402e+06, 0.906E+06, 0.148, wantLumi);
+  w = weight("QCD_BCtoE_Pt20to30", 1.94146e+06, 235.5E+06, 0.00046, wantLumi);
+  w = weight("QCD_BCtoE_Pt30to80", 0, 59.3E+06, 0.00234, wantLumi);
+  w = weight("QCD_BCtoE_Pt80to170", 8674, 0.906E+06, 0.0104, wantLumi);
+  w = weight("PhotonJet_Pt0to15", 115265, 84.46E+06, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt15to20", 108560, 114700, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt20to30", 0, 57180, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt30to50", 110000, 16520, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt50to80", 109730, 2723, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt80to120", 10827, 446.2, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt120to170", 122281, 84.43, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt170to300", 125128, 22.55, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt300to500", 7606, 1.545, 1.0, wantLumi);
+  w = weight("PhotonJet_Pt500toInf", 6895, 0.0923, 1.0, wantLumi);
 
   w = weight("InclusiveMu", 6570971, 0.5091E+09, 0.0002881, wantLumi, 4); // run on SD prescaled
 
@@ -84,7 +71,7 @@ double weight(string sample, double ngen, double xsec, double filtereff,
 
   double W = xsec * filtereff * lumi * prescale / ngen;
 
-  std::cout << sample << "\t" << xsec << "\t" << prescale << "\t" << W << std:: endl;
+  std::cout << sample << "\t" << xsec << "\t" << W << std:: endl;
 
   return W;
 

@@ -37,7 +37,7 @@ void addWeights(const char* filename, float weight) {
   Float_t         bTagImpPar;
   Char_t          finalSelection;
   treeOrig->SetBranchAddress("njets", &njets);
-  treeOrig->SetBranchAddress("met", &met);
+  treeOrig->SetBranchAddress("met", &met); // default MET is tcMET for WW
   treeOrig->SetBranchAddress("deltaPhi", &deltaPhi);
   treeOrig->SetBranchAddress("eleInvMass", &eleInvMass);
   treeOrig->SetBranchAddress("maxPtEle", &maxPtEle);
@@ -75,7 +75,6 @@ void addWeights(const char* filename, float weight) {
         maxPtEle>=20 && maxPtEle<=200 &&
         eleInvMass>=12 && eleInvMass<=150 &&
         bTagImpPar>=-1001 && bTagImpPar<=2 &&
-        weight>=0 && weight<=10000 &&
         finalSelection) {
       event = (float)j;
       treeNew->Fill();
