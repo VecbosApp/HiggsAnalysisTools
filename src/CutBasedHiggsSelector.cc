@@ -22,11 +22,11 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_eleHardTkPtSum   = selector.m_eleHardTkPtSum;
   m_eleHardHcalPtSum = selector.m_eleHardHcalPtSum;
   m_eleHardEcalPtSum = selector.m_eleHardEcalPtSum;
-  m_eleHardGlobalSum = selector.m_eleHardGlobalSum;
+  m_eleHardGlobalPtSum = selector.m_eleHardGlobalPtSum;
   m_eleSlowTkPtSum   = selector.m_eleSlowTkPtSum;
   m_eleSlowHcalPtSum = selector.m_eleSlowHcalPtSum;
   m_eleSlowEcalPtSum = selector.m_eleSlowEcalPtSum;
-  m_eleSlowGlobalSum = selector.m_eleSlowGlobalSum;
+  m_eleSlowGlobalPtSum = selector.m_eleSlowGlobalPtSum;
   m_eleSlowD0 = selector.m_eleSlowD0;
   m_eleHardD0 = selector.m_eleHardD0;
   m_nJets            = selector.m_nJets;
@@ -56,30 +56,26 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection = new Selection(std::string(fileCuts),std::string(fileSwitches));
 
   // tehse cuts are applied in the HiggsSelection class, but are configured here
-  _selection->addSwitch("classDepEleId");
-  _selection->addSwitch("isolation");
+  _selection->addCut("maxPtLepton");
+  _selection->addCut("minPtLepton");
+  _selection->addCut("leptonD0");
+  _selection->addSwitch("eleIso");
+  _selection->addCut("muTrackerIso");
+  _selection->addCut("muHcalIso");
+  _selection->addCut("muEcalIso");
+  _selection->addCut("muGlobalIso");
+  _selection->addSwitch("leptonId");
+  _selection->addSwitch("convRej");
+  _selection->addCut("looseMET");
+  _selection->addCut("mllMin");
+  _selection->addCut("mllMax");
+  _selection->addCut("tightMET");
+  _selection->addCut("projectedMET");
   _selection->addCut("jetConeWidth");
   _selection->addCut("etaJetAcc");
   _selection->addCut("etJetAcc");
-  _selection->addCut("hardLeptonThreshold"); 
-  _selection->addCut("slowLeptonThreshold"); 
-  _selection->addCut("dileptonInvMassMin");  
-  _selection->addCut("trackerPtSumAss");
-  _selection->addCut("trackerPtSumRel");
-  _selection->addCut("hcalPtSumAss");
-  _selection->addCut("hcalPtSumRel");
-  _selection->addCut("ecalPtSumAss");
-  _selection->addCut("ecalPtSumRel");
-  _selection->addCut("globalSum");
-  _selection->addCut("leptonD0");
-  _selection->addCut("MET");
-  _selection->addCut("maxPtLepton");
-  _selection->addCut("minPtLepton");
-  _selection->addCut("dileptonInvMassMax");
-  _selection->addCut("projectedMET");
   _selection->addCut("nSoftMuons");
   _selection->addCut("nExtraLeptons");
-  _selection->addCut("detaLeptons");
   _selection->addCut("deltaPhi");
 
   _selection->summary();
@@ -87,33 +83,27 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter = new Counters();
   globalCounter->SetTitle(theTitle);
   globalCounter->AddVar("preselected");
-  globalCounter->AddVar("hardLeptonThreshold");
-  globalCounter->AddVar("slowLeptonThreshold");
-  globalCounter->AddVar("dileptonInvMassMin");
-  globalCounter->AddVar("classDepEleId");
-  globalCounter->AddVar("isolation");
-  globalCounter->AddVar("trackerIso");
-  globalCounter->AddVar("hcalIso");
-  globalCounter->AddVar("ecalIso");
-  globalCounter->AddVar("globalIso");
-  globalCounter->AddVar("convRej");
-  globalCounter->AddVar("leptonD0");
-  globalCounter->AddVar("MET");
   globalCounter->AddVar("maxPtLepton");
   globalCounter->AddVar("minPtLepton");
-  globalCounter->AddVar("dileptonInvMassMax");
-  globalCounter->AddVar("projectedMET");
+  globalCounter->AddVar("leptonD0");
+  globalCounter->AddVar("eleIso");
+  globalCounter->AddVar("muTrackerIso");
+  globalCounter->AddVar("muHcalIso");
+  globalCounter->AddVar("muEcalIso");
+  globalCounter->AddVar("muGlobalIso");
+  globalCounter->AddVar("leptonId");
+  globalCounter->AddVar("convRej");
+  globalCounter->AddVar("looseMET");
+  globalCounter->AddVar("mllMin");
+  globalCounter->AddVar("mllMax");
+  globalCounter->AddVar("tightMETandPrMET");
+  globalCounter->AddVar("zeroJets");
   globalCounter->AddVar("nSoftMuons");
   globalCounter->AddVar("nExtraLeptons");
-  globalCounter->AddVar("detaLeptons");
   globalCounter->AddVar("deltaPhi");
   globalCounter->AddVar("final");
-  globalCounter->AddVar("zeroJets");
   globalCounter->AddVar("oneJet");
   globalCounter->AddVar("gt1Jets");
-  globalCounter->AddVar("zeroUncorrJets");
-  globalCounter->AddVar("oneUncorrJet");
-  globalCounter->AddVar("gt1UncorrJets");
 }
 
 bool CutBasedHiggsSelector::output() {
@@ -135,34 +125,27 @@ bool CutBasedHiggsSelector::output() {
       Counters *processCounter = new Counters();
       processCounter->SetTitle(buffer);
       processCounter->AddVar("preselected");
-      processCounter->AddVar("hardLeptonThreshold");
-      processCounter->AddVar("slowLeptonThreshold");
-      processCounter->AddVar("dileptonInvMassMin");
-      processCounter->AddVar("classDepEleId");
-      processCounter->AddVar("isolation");
-      processCounter->AddVar("trackerIso");
-      processCounter->AddVar("hcalIso");
-      processCounter->AddVar("ecalIso");
-      processCounter->AddVar("globalIso");
-      processCounter->AddVar("convRej");
-      processCounter->AddVar("leptonD0");
-      processCounter->AddVar("MET");
       processCounter->AddVar("maxPtLepton");
       processCounter->AddVar("minPtLepton");
-      processCounter->AddVar("dileptonInvMassMax");
-      processCounter->AddVar("projectedMET");
+      processCounter->AddVar("leptonD0");
+      processCounter->AddVar("eleIso");
+      processCounter->AddVar("muTrackerIso");
+      processCounter->AddVar("muHcalIso");
+      processCounter->AddVar("muEcalIso");
+      processCounter->AddVar("muGlobalIso");
+      processCounter->AddVar("leptonId");
+      processCounter->AddVar("convRej");
+      processCounter->AddVar("looseMET");
+      processCounter->AddVar("mllMin");
+      processCounter->AddVar("mllMax");
+      processCounter->AddVar("tightMETandPrMET");
+      processCounter->AddVar("zeroJets");
       processCounter->AddVar("nSoftMuons");
       processCounter->AddVar("nExtraLeptons");
-      processCounter->AddVar("detaLeptons");
       processCounter->AddVar("deltaPhi");
       processCounter->AddVar("final");
-      processCounter->AddVar("zeroJets");
       processCounter->AddVar("oneJet");
       processCounter->AddVar("gt1Jets");
-      processCounter->AddVar("zeroUncorrJets");
-      processCounter->AddVar("oneUncorrJet");
-      processCounter->AddVar("gt1UncorrJets");
-      
       multiProcessCounter.insert( std::make_pair(m_processID,processCounter) );      
     }
 
@@ -178,113 +161,91 @@ bool CutBasedHiggsSelector::output() {
 
   theCounter->IncrVar("preselected",m_weight);
 
-  // here I repeat preselection cuts only for the type of leptons I want
-  if (_selection->getSwitch("hardLeptonThreshold") && !_selection->passCut("hardLeptonThreshold", m_highPt)) return false;
-  theCounter->IncrVar("hardLeptonThreshold",m_weight);
-  
-  if (_selection->getSwitch("slowLeptonThreshold") && !_selection->passCut("slowLeptonThreshold", m_lowPt)) return false;
-  theCounter->IncrVar("slowLeptonThreshold",m_weight);
-
-  if (_selection->getSwitch("dileptonInvMassMin") && !_selection->passCut("dileptonInvMassMin", m_invMass)) return false;
-  theCounter->IncrVar("dileptonInvMassMin",m_weight);
-
-  // real selections (after preselection step)
-  if ((_selection->getSwitch("classDepEleId")) && (!m_isElectronId || !m_isPositronId)) return false; 
-  theCounter->IncrVar("classDepEleId",m_weight);
-
-  if ((_selection->getSwitch("isolation")) && (!m_isElectronIsol || !m_isPositronIsol)) return false; 
-  theCounter->IncrVar("isolation",m_weight);
-  
-  if ((_selection->getSwitch("trackerPtSumAss"))) {
-    if (m_highPt>=25 && !_selection->passCut("trackerPtSumAss",m_eleHardTkPtSum)) return false; 
-    if (m_lowPt>=25  && !_selection->passCut("trackerPtSumAss",m_eleSlowTkPtSum)) return false; 
-  }
-  if ((_selection->getSwitch("trackerPtSumRel"))) {
-    if (m_highPt<25  && !_selection->passCut("trackerPtSumRel",m_eleHardTkPtSum)) return false; 
-    if (m_lowPt<25   && !_selection->passCut("trackerPtSumRel",m_eleSlowTkPtSum)) return false; 
-  }
-  theCounter->IncrVar("trackerIso",m_weight);
-
-  if ((_selection->getSwitch("hcalPtSumAss"))) {
-    if (m_highPt>=25 && !_selection->passCut("hcalPtSumAss",m_eleHardHcalPtSum)) return false;
-    if (m_lowPt>=25  && !_selection->passCut("hcalPtSumAss",m_eleSlowHcalPtSum)) return false; 
-  }
-  if ((_selection->getSwitch("hcalPtSumRel"))) {
-    if (m_highPt<25  && !_selection->passCut("hcalPtSumRel",m_eleHardHcalPtSum)) return false;
-    if (m_lowPt<25   && !_selection->passCut("hcalPtSumRel",m_eleSlowHcalPtSum)) return false; 
-  }
-  theCounter->IncrVar("hcalIso",m_weight);
-
-  if ((_selection->getSwitch("ecalPtSumAss"))) {
-    if (m_highPt>=25 && !_selection->passCut("ecalPtSumAss",m_eleHardEcalPtSum)) return false; 
-    if (m_lowPt>=25  && !_selection->passCut("ecalPtSumAss",m_eleSlowEcalPtSum)) return false; 
-  }
-  if ((_selection->getSwitch("ecalPtSumRel"))) {
-    if (m_highPt<25  && !_selection->passCut("ecalPtSumRel",m_eleHardEcalPtSum)) return false; 
-    if (m_lowPt<25   && !_selection->passCut("ecalPtSumRel",m_eleSlowEcalPtSum)) return false; 
-  }
-  theCounter->IncrVar("ecalIso",m_weight);
-
-  if ((_selection->getSwitch("globalSum"))) {
-    if (m_highPt>=25 && !_selection->passCut("globalSum",m_eleHardGlobalSum)) return false; 
-    if (m_lowPt>=25  && !_selection->passCut("globalSum",m_eleSlowGlobalSum)) return false; 
-    if (m_highPt<25  && (m_eleHardGlobalSum > ((m_highPt-10.)/3.) ))          return false; 
-    if (m_lowPt<25   && (m_eleSlowGlobalSum > ((m_lowPt-10.)/3.) ))           return false; 
-  }
-  theCounter->IncrVar("globalIso",m_weight);
-
-  if ((_selection->getSwitch("convRej")) && (!m_isElectronConvRej || !m_isPositronConvRej)) return false; 
-  theCounter->IncrVar("convRej",m_weight);
-
-  if ((_selection->getSwitch("leptonD0")) && (!_selection->passCut("leptonD0",m_eleSlowD0) || !_selection->passCut("leptonD0",m_eleHardD0)) ) return false;
-  theCounter->IncrVar("leptonD0",m_weight);
-
-  m_finalLeptons = true;
-
-  if (m_nJets==0) m_jetVeto = true;
-  if (m_nUncorrJets==0) m_uncorrJetVeto = true;
-
-  if(_selection->getSwitch("MET") && !_selection->passCut("MET",m_met)) return false; 
-  theCounter->IncrVar("MET",m_weight);
-
   if (_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
   theCounter->IncrVar("maxPtLepton",m_weight);
 
   if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
   theCounter->IncrVar("minPtLepton",m_weight);
 
-  if (_selection->getSwitch("dileptonInvMassMax") && !_selection->passCut("dileptonInvMassMax", m_invMass)) return false;
-  theCounter->IncrVar("dileptonInvMassMax",m_weight);
+  if (_selection->getSwitch("leptonD0") && (!_selection->passCut("leptonD0",m_eleSlowD0) || !_selection->passCut("leptonD0",m_eleHardD0)) ) return false;
+  theCounter->IncrVar("leptonD0",m_weight);
 
-  if(_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
-  theCounter->IncrVar("projectedMET",m_weight);
+  if (_selection->getSwitch("eleIso") && (!m_isElectronIsol || !m_isPositronIsol)) return false; 
+  theCounter->IncrVar("eleIso",m_weight);
 
-  if(_selection->getSwitch("nSoftMuons") && !_selection->passCut("nSoftMuons",m_nSoftMuons)) return false; 
-  theCounter->IncrVar("nSoftMuons",m_weight);
+  if (_selection->getSwitch("muTrackerIso") && 
+      (!_selection->passCut("muTrackerIso",m_eleHardTkPtSum) || !_selection->passCut("muTrackerIso",m_eleSlowTkPtSum)) ) return false;
+  theCounter->IncrVar("muTrackerIso",m_weight);
 
-  if(_selection->getSwitch("nExtraLeptons") && !_selection->passCut("nExtraLeptons",m_nExtraLeptons)) return false; 
-  theCounter->IncrVar("nExtraLeptons",m_weight);
+  if (_selection->getSwitch("muHcalIso") && 
+      (!_selection->passCut("muHcalIso",m_eleHardHcalPtSum) || !_selection->passCut("muHcalIso",m_eleSlowHcalPtSum)) ) return false;
+  theCounter->IncrVar("muHcalIso",m_weight);
 
-  if (_selection->getSwitch("detaLeptons") && !_selection->passCut("detaLeptons", m_detaLeptons)) return false;
-  theCounter->IncrVar("detaLeptons",m_weight);
+  if (_selection->getSwitch("muEcalIso") && 
+      (!_selection->passCut("muEcalIso",m_eleHardEcalPtSum) || !_selection->passCut("muEcalIso",m_eleSlowEcalPtSum)) ) return false;
+  theCounter->IncrVar("muEcalIso",m_weight);
 
-  m_preDeltaPhi = true;
+  if (_selection->getSwitch("muGlobalIso") && 
+      (!_selection->passCut("muGlobalIso",m_eleHardGlobalPtSum) || !_selection->passCut("muGlobalIso",m_eleSlowGlobalPtSum)) ) return false;
+  theCounter->IncrVar("muGlobalIso",m_weight);
 
-  if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
-  theCounter->IncrVar("deltaPhi",m_weight); 
+  if (_selection->getSwitch("leptonId") && (!m_isElectronId || !m_isPositronId) ) return false; 
+  theCounter->IncrVar("leptonId",m_weight);
 
+  if (_selection->getSwitch("convRej") && (!m_isElectronConvRej || !m_isPositronConvRej) ) return false; 
+  theCounter->IncrVar("convRej",m_weight);
 
-  theCounter->IncrVar("final",m_weight);
+  m_finalLeptons = true;
 
-  if (m_nJets==0) theCounter->IncrVar("zeroJets",m_weight);
-  if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
-  if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
+  if (_selection->getSwitch("looseMET") && !_selection->passCut("looseMET",m_met)) return false; 
+  theCounter->IncrVar("looseMET",m_weight);
 
-  if (m_nUncorrJets==0) theCounter->IncrVar("zeroUncorrJets",m_weight);
-  if (m_nUncorrJets==1) theCounter->IncrVar("oneUncorrJet",  m_weight);
-  if (m_nUncorrJets>1)  theCounter->IncrVar("gt1UncorrJets", m_weight);
+  if (_selection->getSwitch("mllMin") && !_selection->passCut("mllMin", m_invMass)) return false;
+  theCounter->IncrVar("mllMin",m_weight);
 
-  return true;
+  if (_selection->getSwitch("mllMax") && !_selection->passCut("mllMax", fabs(m_invMass-91.1876))) return false;
+  theCounter->IncrVar("mllMax",m_weight);
+
+  if (_selection->getSwitch("tightMET") && !_selection->passCut("tightMET",m_met)) return false; 
+  if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
+  theCounter->IncrVar("tightMETandPrMET",m_weight);
+  
+  if (m_nJets==0) {
+    theCounter->IncrVar("zeroJets",m_weight);
+    m_jetVeto = true;
+
+    if(!_selection->getSwitch("nSoftMuons") ||
+       (_selection->getSwitch("nSoftMuons") && _selection->passCut("nSoftMuons",m_nSoftMuons))) {
+      theCounter->IncrVar("nSoftMuons",m_weight);
+
+      if(!_selection->getSwitch("nExtraLeptons") ||
+         _selection->getSwitch("nExtraLeptons") && _selection->passCut("nExtraLeptons",m_nExtraLeptons)) {
+        theCounter->IncrVar("nExtraLeptons",m_weight);
+
+        m_preDeltaPhi = true;
+
+        if (!_selection->getSwitch("deltaPhi") ||
+            _selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) {
+          theCounter->IncrVar("deltaPhi",m_weight); 
+          theCounter->IncrVar("final",m_weight);
+          return true;
+        }
+      }
+    }
+  } else {
+
+    // for nJets>0 we do not need cut by cut: just final counter
+    if(_selection->getSwitch("nSoftMuons") && !_selection->passCut("nSoftMuons",m_nSoftMuons)) return false; 
+
+    if(_selection->getSwitch("nExtraLeptons") && !_selection->passCut("nExtraLeptons",m_nExtraLeptons)) return false; 
+
+    if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
+    if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
+    
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -298,33 +259,27 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       Counters *theCounter = iter->second;
 
       theCounter->Draw();
-      theCounter->Draw("hardLeptonThreshold","preselected");
-      theCounter->Draw("slowLeptonThreshold","hardLeptonThreshold");
-      theCounter->Draw("dileptonInvMassMin","slowLeptonThreshold");
-      theCounter->Draw("classDepEleId","dileptonInvMassMin");
-      theCounter->Draw("isolation","classDepEleId");
-      theCounter->Draw("trackerIso","isolation");
-      theCounter->Draw("hcalIso","trackerIso");
-      theCounter->Draw("ecalIso","hcalIso");
-      theCounter->Draw("globalIso","ecalIso");
-      theCounter->Draw("convRej","globalIso");
-      theCounter->Draw("leptonD0","convRej");
-      theCounter->Draw("MET","leptonD0");
-      theCounter->Draw("maxPtLepton","MET");
+      theCounter->Draw("maxPtLepton","preselected");
       theCounter->Draw("minPtLepton","maxPtLepton");
-      theCounter->Draw("dileptonInvMassMax","minPtLepton");
-      theCounter->Draw("projectedMET","dileptonInvMassMax");
-      theCounter->Draw("nSoftMuons","projectedMET");
+      theCounter->Draw("leptonD0","minPtLepton");
+      theCounter->Draw("eleIso","leptonD0");
+      theCounter->Draw("muTrackerIso","eleIso");
+      theCounter->Draw("muHcalIso","muTrackerIso");
+      theCounter->Draw("muEcalIso","muHcalIso");
+      theCounter->Draw("muGlobalIso","muEcalIso");
+      theCounter->Draw("leptonId","muGlobalIso");      
+      theCounter->Draw("convRej","leptonId");
+      theCounter->Draw("looseMET","convRej");
+      theCounter->Draw("mllMin","looseMET");
+      theCounter->Draw("mllMax","mllMin");
+      theCounter->Draw("tightMETandPrMET","mllMax");
+      theCounter->Draw("zeroJets","tightMETandPrMET");
+      theCounter->Draw("nSoftMuons","zeroJets");
       theCounter->Draw("nExtraLeptons","nSoftMuons");
-      theCounter->Draw("detaLeptons","nExtraLeptons");
-      theCounter->Draw("deltaPhi","detaLeptons");
+      theCounter->Draw("deltaPhi","nExtraLeptons");
       theCounter->Draw("final","preselected");
-      theCounter->Draw("zeroJets", "final");
-      theCounter->Draw("oneJet",   "final");
-      theCounter->Draw("gt1Jets",  "final");
-      theCounter->Draw("zeroUncorrJets", "final");
-      theCounter->Draw("oneUncorrJet",   "final");
-      theCounter->Draw("gt1UncorrJets",  "final");
+      theCounter->Draw("oneJet","preselected");
+      theCounter->Draw("gt1Jets","preselected");
     }
   }
 
@@ -334,34 +289,28 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     sprintf(namefile,"%s-Counters.root",datasetName.c_str());
     
     globalCounter->Draw();
-    globalCounter->Draw("hardLeptonThreshold","preselected");
-    globalCounter->Draw("slowLeptonThreshold","hardLeptonThreshold");
-    globalCounter->Draw("dileptonInvMassMin","slowLeptonThreshold");
-    globalCounter->Draw("classDepEleId","dileptonInvMassMin");
-    globalCounter->Draw("isolation","classDepEleId");
-    globalCounter->Draw("trackerIso","isolation");
-    globalCounter->Draw("hcalIso","trackerIso");
-    globalCounter->Draw("ecalIso","hcalIso");
-    globalCounter->Draw("globalIso","ecalIso");
-    globalCounter->Draw("convRej","globalIso");
-    globalCounter->Draw("leptonD0","convRej");
-    globalCounter->Draw("MET","leptonD0");
-    globalCounter->Draw("maxPtLepton","MET");
+    globalCounter->Draw("maxPtLepton","preselected");
     globalCounter->Draw("minPtLepton","maxPtLepton");
-    globalCounter->Draw("dileptonInvMassMax","minPtLepton");
-    globalCounter->Draw("projectedMET","dileptonInvMassMax");
-    globalCounter->Draw("nSoftMuons","projectedMET");
+    globalCounter->Draw("leptonD0","minPtLepton");
+    globalCounter->Draw("eleIso","leptonD0");
+    globalCounter->Draw("muTrackerIso","eleIso");
+    globalCounter->Draw("muHcalIso","muTrackerIso");
+    globalCounter->Draw("muEcalIso","muHcalIso");
+    globalCounter->Draw("muGlobalIso","muEcalIso");
+    globalCounter->Draw("leptonId","muGlobalIso");      
+    globalCounter->Draw("convRej","leptonId");
+    globalCounter->Draw("looseMET","convRej");
+    globalCounter->Draw("mllMin","looseMET");
+    globalCounter->Draw("mllMax","mllMin");
+    globalCounter->Draw("tightMETandPrMET","mllMax");
+    globalCounter->Draw("zeroJets","tightMETandPrMET");
+    globalCounter->Draw("nSoftMuons","zeroJets");
     globalCounter->Draw("nExtraLeptons","nSoftMuons");
-    globalCounter->Draw("detaLeptons","nExtraLeptons");
-    globalCounter->Draw("deltaPhi","detaLeptons");
+    globalCounter->Draw("deltaPhi","nExtraLeptons");
     globalCounter->Draw("final","preselected");
-    globalCounter->Draw("zeroJets", "final");
-    globalCounter->Draw("oneJet",   "final");
-    globalCounter->Draw("gt1Jets",  "final");
-    globalCounter->Draw("zeroUncorrJets", "final");
-    globalCounter->Draw("oneUncorrJet",   "final");
-    globalCounter->Draw("gt1UncorrJets",  "final");
-
+    globalCounter->Draw("oneJet","preselected");
+    globalCounter->Draw("gt1Jets","preselected");
+    
     globalCounter->Save(namefile,"update");
   }
 

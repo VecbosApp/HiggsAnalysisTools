@@ -69,10 +69,6 @@ private:
   float getEcalPtSum(int index);
   //! get global isolation sum for 2 muons case
   float muonIsoGlobalSum(int theMuon, int theOther);
-  //! get global isolation sum for 2 electrons case
-  float electronIsoGlobalSum(int theElectron, int theOther);
-  //! get global isolation sum for electrons in the electron-muon case
-  float elemuIsoGlobalSum(int theElectron, int theOtherMu); 
   //! get global isolation sum for muons in the electron-muon case
   float mueleIsoGlobalSum(int theMuon, int theOtherEle); 
   //! get the kFactor of the event

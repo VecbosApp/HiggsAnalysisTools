@@ -44,8 +44,8 @@ public:
   void SetEleSlowHcalPtSum(float sum)    { m_eleSlowHcalPtSum  = sum; }
   void SetEleHardEcalPtSum(float sum)    { m_eleHardEcalPtSum  = sum; }
   void SetEleSlowEcalPtSum(float sum)    { m_eleSlowEcalPtSum  = sum; }
-  void SetEleHardGlobalSum(float sum)    { m_eleHardGlobalSum  = sum; }
-  void SetEleSlowGlobalSum(float sum)    { m_eleSlowGlobalSum  = sum; }
+  void SetEleHardGlobalPtSum(float sum)  { m_eleHardGlobalPtSum  = sum; }
+  void SetEleSlowGlobalPtSum(float sum)  { m_eleSlowGlobalPtSum  = sum; }
   void SetEleSlowD0(float d0)            { m_eleSlowD0 = d0;}
   void SetEleHardD0(float d0)            { m_eleHardD0 = d0;}
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
@@ -80,8 +80,8 @@ private:
   float m_highPt, m_lowPt;
   bool m_isElectronId, m_isPositronId, m_isElectronIsol, m_isPositronIsol, m_isElectronConvRej, m_isPositronConvRej;
   float m_invMass;
-  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalSum;
-  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalSum;
+  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalPtSum;
+  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalPtSum;
   float m_eleSlowD0, m_eleHardD0;
   bool m_passedJetVeto;
   bool m_passedUncorrJetVeto;
