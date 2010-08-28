@@ -121,6 +121,16 @@ float Photj_finaleff;
 float QCDmu_finaleff;
 float ttbar_finaleff;
 
+float H_final[3];
+float Wj_final[3];
+float ttj_final[3];
+float SingleTop_final[3];
+float Zj_final[3];
+float WW_final[3];
+float ZZ_final[3];
+float WZ_final[3];
+float Wgamma_final[3];
+
 // xsections
 float H120_xsec = 0.247143;
 float H130_xsec = 0.452859;
@@ -700,7 +710,9 @@ void printLatex(float lumi, const char* finalstate) {
   }
 
   computeYields(lumi,finalstate);
-  
+
+
+  /// ==============  print detailed breakdown  ================== ///
   char namefile[200];
   sprintf(namefile,"yields_byCut.tex");
   ofstream textfile;
@@ -924,6 +936,89 @@ void printLatex(float lumi, const char* finalstate) {
            << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
            << "\\end{sidewaystable}" << endl;
 
+  // assign the final yields
+  int channel=-1;
+  if(!strcmp(finalstate,"MM")) channel = mm;
+  if(!strcmp(finalstate,"EM")) channel = em;
+  if(!strcmp(finalstate,"EE")) channel = ee;
+
+  H_final[channel] = H_fullSel[19];
+  Wj_final[channel] = Wj_fullSel[19];
+  ttj_final[channel] = ttj_fullSel[19];
+  SingleTop_final[channel] = SingleTop_fullSel[19];
+  Zj_final[channel] = Zj_fullSel[19];
+  WW_final[channel] = WW_fullSel[19];
+  ZZ_final[channel] = ZZ_fullSel[19];
+  WZ_final[channel] = WZ_fullSel[19];
+  Wgamma_final[channel] = Wgamma_fullSel[19];
+
+}
+
+void printShortBkgSummary(float lumi) {
+
+  /// ==============  print short summary  ================== ///
+
+  char namefile[200];
+  sprintf(namefile,"yields_byCut.tex");
+  ofstream textfile;
+  textfile.open(namefile, ios_base::app);
+  textfile.precision(1);
+
+  std::string channelName[3];
+  channelName[mm] = "$\\mu\\mu$";
+  channelName[ee] = "$ee$";
+  channelName[em] = "$e\\mu$";
+
+  textfile << "\\begin{sidewaystable}[p]" << endl
+           << "\\begin{center}" << endl;
+  textfile << "\\begin{tabular}{|c|c|c|c|c|}" << endl;
+  textfile << "\\hline" << endl;
+
+  textfile << "final state & WW & WZ & ZZ & Z+jets \t\\\\" << endl;
+  textfile << "\\hline" << endl; 
+  for(int ichan=0; ichan<3; ++ichan) {
+    textfile << channelName[ichan] << "\t&\t";
+    textfile << fixed 
+             << WW_final[ichan] << "\t&\t"
+             << WZ_final[ichan] << "\t&\t"
+             << ZZ_final[ichan] << "\t&\t"
+             << Zj_final[ichan] << "\t\\\\"
+             << endl;
+  }
+  textfile << "ll" << "\t&\t";
+  textfile << fixed
+           << WW_final[mm] + WW_final[ee] + WW_final[em] << "\t&\t"
+           << WZ_final[mm] + WZ_final[ee] + WZ_final[em] << "\t&\t"
+           << ZZ_final[mm] + ZZ_final[ee] + ZZ_final[em] << "\t&\t"
+           << Zj_final[mm] + Zj_final[ee] + Zj_final[em] << "\t\\\\"
+           << endl;
+  textfile << "\\hline" << endl; 
+
+  textfile << "final state & W+jets & W+$\\gamma$ & $t\\bar t$ & single $t$ \t\\\\" << endl;
+  textfile << "\\hline" << endl; 
+  for(int ichan=0; ichan<3; ++ichan) {
+    textfile << channelName[ichan] << "\t&\t";
+    textfile << fixed 
+             << Wj_final[ichan] << "\t&\t"
+             << Wgamma_final[ichan] << "\t&\t"
+             << ttj_final[ichan] << "\t&\t"
+             << SingleTop_final[ichan] << "\t\\\\"
+             << endl;
+  }
+  textfile << "ll" << "\t&\t";
+  textfile << fixed
+           << Wj_final[mm] + Wj_final[ee] + Wj_final[em] << "\t&\t"
+           << Wgamma_final[mm] + Wgamma_final[ee] + Wgamma_final[em] << "\t&\t"
+           << ttj_final[mm] + ttj_final[ee] + ttj_final[em] << "\t&\t"
+           << SingleTop_final[mm] + SingleTop_final[ee] + SingleTop_final[em] << "\t\\\\"
+           << endl;
+  textfile << "\\hline" << endl
+           << "\\end{tabular}" << endl
+           << "\\end{center}" << endl
+           << "\\caption{Expected backgrounds events in "
+           << lumi << " $pb^{-1}$.} " << endl 
+           << "\\end{sidewaystable}" << endl;
+
 }
 
 void printLatex(float lumi) {
@@ -944,6 +1039,8 @@ void printLatex(float lumi) {
   printLatex(lumi, "EE");
   printLatex(lumi, "MM");
   printLatex(lumi, "EM");
+
+  printShortBkgSummary(lumi);
 
   textfile.open(namefile, ios_base::app);
   textfile << "\\end{document}" << endl;
