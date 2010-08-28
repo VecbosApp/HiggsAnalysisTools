@@ -4,7 +4,7 @@ ptElectronAcc		10		10000
 etaMuonAcc		-2.4		2.4
 ptMuonAcc		10		10000
 hardLeptonThreshold	20		10000
-slowLeptonThreshold     10              10000
+slowLeptonThreshold     20              10000
 METpreselection		30		10000
 dileptonInvMassMin	12		10000
 etUncorrJetAcc          25              10000
