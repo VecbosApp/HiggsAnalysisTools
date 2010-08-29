@@ -41,8 +41,8 @@ public :
    Int_t           nTrg;
    Int_t           firedTrg[4];   //[nTrg]
    Int_t           nHLT;
+   Int_t           indexHLT[300];   //[nHLT]
    std::vector<std::string>  *nameHLT;
-   Int_t           indexHLT[143];   //[nHLT]
    Int_t           nEle;
    Int_t           chargeEle[100];   //[nEle]
    Float_t         energyEle[100];   //[nEle]
