@@ -13,6 +13,21 @@ using namespace std;
 
 void createSingleDataset(const char *treefile, const char *roofitfile);
 
+void createAllData() {
+
+  cout << "CREATING ROODATASET ON DATA FOR EE CHANNEL..." << endl;
+  createSingleDataset("results_data/merged/dataset_eg_ee.root","results_data/datasets/dataset_eg_ee.root");
+
+  cout << "CREATING ROODATASET ON DATA FOR MM CHANNEL..." << endl;
+  cout << "WARNING: NOT PRODUCING ANYTHING: MISSING DATASET." << endl;
+  //createSingleDataset("results_data/merged/dataset_mu_mm.root","results_data/datasets/dataset_mu_mm.root");
+
+  cout << "CREATING ROODATASET ON DATA FOR EM CHANNEL..." << endl;
+  cout << "WARNING: using only eg dataset for the moment." << endl;
+  createSingleDataset("results_data/merged/dataset_eg_em.root","results_data/datasets/dataset_eg_em.root");
+
+}
+
 void createAll() {
 
   cout << "CREATING ROODATSETS FOR EE CHANNEL..." << endl;
