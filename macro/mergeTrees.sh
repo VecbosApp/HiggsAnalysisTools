@@ -5,7 +5,9 @@
 mkdir -p results/merged
 
 echo "Now merging EE datasets..."
+hadd results/merged/H130_ee.root results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*datasetEE.root
 hadd results/merged/H160_ee.root results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*datasetEE.root
+hadd results/merged/H190_ee.root results/HiggsWW/H190_2W_2lnu_gluonfusion_7TeV/*datasetEE.root
 hadd results/merged/TTbar_ee.root results/TTbar/TTbarJets-madgraph/*datasetEE.root
 hadd results/merged/SingleTop_sChannel_ee.root results/SingleTop/SingleTop_sChannel-madgraph/*datasetEE.root
 hadd results/merged/SingleTop_tChannel_ee.root results/SingleTop/SingleTop_tChannel-madgraph/*datasetEE.root
@@ -19,7 +21,9 @@ hadd results/merged/ZZ_ee.root results/DiBosons/ZZ_2l2nu/*datasetEE.root
 
 
 echo "Now merging MM datasets..."
+hadd results/merged/H130_mm.root results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*datasetMM.root
 hadd results/merged/H160_mm.root results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*datasetMM.root
+hadd results/merged/H190_mm.root results/HiggsWW/H190_2W_2lnu_gluonfusion_7TeV/*datasetMM.root
 hadd results/merged/TTbar_mm.root results/TTbar/TTbarJets-madgraph/*datasetMM.root
 hadd results/merged/SingleTop_sChannel_mm.root results/SingleTop/SingleTop_sChannel-madgraph/*datasetMM.root
 hadd results/merged/SingleTop_tChannel_mm.root results/SingleTop/SingleTop_tChannel-madgraph/*datasetMM.root
@@ -33,7 +37,9 @@ hadd results/merged/ZZ_mm.root results/DiBosons/ZZ_2l2nu/*datasetMM.root
 
 
 echo "Now merging EM datasets..."
+hadd results/merged/H130_em.root results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*datasetEM.root
 hadd results/merged/H160_em.root results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*datasetEM.root
+hadd results/merged/H190_em.root results/HiggsWW/H190_2W_2lnu_gluonfusion_7TeV/*datasetEM.root
 hadd results/merged/TTbar_em.root results/TTbar/TTbarJets-madgraph/*datasetEM.root
 hadd results/merged/SingleTop_sChannel_em.root results/SingleTop/SingleTop_sChannel-madgraph/*datasetEM.root
 hadd results/merged/SingleTop_tChannel_em.root results/SingleTop/SingleTop_tChannel-madgraph/*datasetEM.root
