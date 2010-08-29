@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 
   std::cout << "sample" << "\t" << "xsec" << "\t" << "weight" << std:: endl;
   
-  w = weight("H120", 103700, 0.247143, 1.0, wantLumi);
-  w = weight("H130", 108200, 0.452859, 1.0, wantLumi);
+  w = weight("H120", 9269, 0.247143, 1.0, wantLumi);
+  w = weight("H130", 100000, 0.452859, 1.0, wantLumi);
   w = weight("H140", 109550, 0.649260, 1.0, wantLumi);
   w = weight("H150", 109550, 0.787871, 1.0, wantLumi);
   w = weight("H155", 97850, 0.842093, 1.0, wantLumi);
