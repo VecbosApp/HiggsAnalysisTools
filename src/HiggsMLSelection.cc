@@ -415,7 +415,9 @@ void HiggsMLSelection::Loop() {
     }
 
     //IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    reloadTriggerMask();
+    bool newTriggerMask = false;
+    if (_preselection->getSwitch("isData")) newTriggerMask = true;
+    reloadTriggerMask(newTriggerMask);
     //Good Run selection
     if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && !isGoodRunLS()) {
       if ( lastRun!= runNumber || lastLumi != lumiBlock) {
