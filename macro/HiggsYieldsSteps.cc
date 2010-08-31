@@ -158,9 +158,9 @@ float H500_xsec = 0;
 float H550_xsec = 0;
 float H600_xsec = 0;
 float Wgamma_xsec = 41.76;
-float Wjets_xsec = 29040;
-float Zjets_xsec = 4820;
-float TTjets_xsec = 165;
+float Wjets_xsec = 31314;
+float Zjets_xsec = 3048;
+float TTjets_xsec = 157.5;
 float WW_xsec = 4.50347; // WW_2l2nu
 float WZ_xsec = 0.599442; // WZ_3l
 float ZZ_xsec = 0.25252; // ZZ_2l2nu
@@ -175,8 +175,8 @@ float QCD_BCtoE_Pt30to80_xsec = 59.3E+06 * 0.00234;
 float QCD_BCtoE_Pt80to170_xsec = 0.906E+06 * 0.0104;
 
 // xsec (pb)
-float SingleTopS_xsec = 4.6 * (0.1080*3);
-float SingleTopT_xsec = 63.0 * (0.1080*3);
+float SingleTopS_xsec = 4.21 * (0.1080*3);
+float SingleTopT_xsec = 64.6 * (0.1080*3);
 float SingleTopTW_xsec = 10.6;
 
 // xsec (pb)
