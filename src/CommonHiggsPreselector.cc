@@ -17,7 +17,6 @@ void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwi
   _selection->addSwitch("preselection");
   _selection->addSwitch("leptonAcceptance");
   _selection->addCut("nRecoLeptons");
-  _selection->addCut("nRecoLeptonsMix");
   _selection->addCut("hardLeptonThreshold");
   _selection->addCut("slowLeptonThreshold");
   _selection->addCut("METpreselection");
