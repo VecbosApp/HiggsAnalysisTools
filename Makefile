@@ -40,6 +40,7 @@ OUTLIBCOMMON     = $(INCLUDEDIRCOMMON)/CommonTools/lib/
 
 
 $(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
+	$(INCLUDEDIR)/src/Higgs.cc \
 	$(INCLUDEDIR)/src/HiggsSelection.cc \
 	$(INCLUDEDIR)/src/HiggsMLSelection.cc \
 	$(INCLUDEDIR)/src/HiggsEleIdOptimToyMC.cc \
@@ -73,6 +74,8 @@ $(OUTLIB)EcalCleaner.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/EcalCleaner.
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)EcalCleaner.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CutBasedEleIDSelector.o $<
+$(OUTLIB)Higgs.o: $(INCLUDEDIR)/src/Higgs.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)Higgs.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
 $(OUTLIB)HiggsMLSelection.o: $(INCLUDEDIR)/src/HiggsMLSelection.cc
@@ -129,6 +132,7 @@ $(OUTLIB)BestLeptonSelectorWjets.o: $(INCLUDEDIR)/src/BestLeptonSelectorWjets.cc
 # ==================== HiggsApp =============================================
 HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)HiggsBase.o \
+	$(OUTLIB)Higgs.o \
 	$(OUTLIBCOMMON)Conditions.o \
 	$(OUTLIBCOMMON)Selection.o \
 	$(OUTLIBCOMMON)EfficiencyEvaluator.o \
