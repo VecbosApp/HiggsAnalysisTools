@@ -26,7 +26,14 @@ echo "done with top."
 echo "submitting V+jets..."
 python cmst3_submit_manyfilesperjob.py WJetsMADGRAPH WJets-madgraph 10 HiggsApp 8nh $prefix
 python cmst3_submit_manyfilesperjob.py ZJetsMADGRAPH ZJets-madgraph 5 HiggsApp 8nh $prefix
-Echo "done with V+jets."
+echo "done with V+jets."
+
+echo "submitting W+1jet alpgen..."
+python cmst3_submit_manyfilesperjob.py WJetsALPGEN W1Jets_Pt0to100-alpgen 5 HiggsApp 8nh $prefix
+python cmst3_submit_manyfilesperjob.py WJetsALPGEN W1Jets_Pt100to300-alpgen 5 HiggsApp 8nh $prefix
+python cmst3_submit_manyfilesperjob.py WJetsALPGEN W1Jets_Pt300to800-alpgen 5 HiggsApp 8nh $prefix
+python cmst3_submit_manyfilesperjob.py WJetsALPGEN W1Jets_Pt800to1600-alpgen 5 HiggsApp 8nh $prefix
+echo "done with W+1jet alpgen"
 
 echo "submitting dibosons..."
 python cmst3_submit_manyfilesperjob.py DiBosons WW_2l_7TeV 5 HiggsApp 8nh $prefix
