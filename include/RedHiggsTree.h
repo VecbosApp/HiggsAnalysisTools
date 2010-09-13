@@ -12,6 +12,8 @@ public:
 
   //! add more informations for analysis not cut based
   void addMLVars();
+  //! add the electron ID+iso variables for the selected best electrons
+  void addElectronInfos();
   //! add the CSA07 processID and weight block
   void addCSA07Infos();
   //! add the k-Factor (used for signal only)
@@ -31,6 +33,11 @@ public:
   //! fill more informations for analysis not cut based
   void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex);
+  //! fill electron ID variables
+  void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
+                     int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
+                     float trackerIso[2], float hcalIso[2], float ecalJIso[2], float ecalGTIso[2], float combinedIso[2], int charge[2],
+                     int missHits[2], float dist[2], float dcot[2], float lh[2]);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -86,6 +93,17 @@ private:
   float myLumi;
   float myKFactor;
   int myRun, myLS, myEvent;
+
+  // electron variables
+  int myRecoflag[2];
+  float myPt[2], myEta[2], myPhi[2];
+  int myClassification[2], myNBremClusters[2];
+  float myDeta[2], myDphi[2], myHoe[2], mySee[2], mySpp[2], myEop[2], myFbrem[2];
+  float myTrackerIso[2], myHcalIso[2], myEcalJIso[2], myEcalGTIso[2], myCombinedIso[2];
+  int myCharge[2];
+  int myMissHits[2];
+  float myDist[2], myDcot[2];
+  float myLh[2];
 
   TFile* myFile;
   TTree* myTree;

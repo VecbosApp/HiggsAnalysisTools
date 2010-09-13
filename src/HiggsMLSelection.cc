@@ -369,6 +369,9 @@ void HiggsMLSelection::Loop() {
   myOutTreeMM->addMLVars();
   myOutTreeEM->addMLVars();
 
+  myOutTreeEE->addElectronInfos();
+  myOutTreeEM->addElectronInfos();
+
   // trigger reduced tree
   //  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
   //  myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
@@ -615,6 +618,17 @@ void HiggsMLSelection::Loop() {
       theDetaLeptonsEE = etaEle[theElectron]-etaEle[thePositron];
       theSTransvMassEE  = m_transvMass[ee];
 
+      int hardEle, slowEle;
+      if(m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) {
+        hardEle = theElectron;
+        slowEle = thePositron;
+      } else {
+        hardEle = thePositron;
+        slowEle = theElectron;
+      }
+
+      setEleIdVariables(hardEle, slowEle);
+      
       // selections
       CutBasedHiggsSelectionEE.SetWeight(weight);
       CutBasedHiggsSelectionEE.SetHighElePt(hardestElectronPt);
@@ -694,6 +708,10 @@ void HiggsMLSelection::Loop() {
                                 m_maxTrackCountingHighEffBJetTags,
                                 m_maxImpactParameterMVABJetTags,
                                 m_maxCombinedSecondaryVertexMVABJetTags);
+
+      myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+                                    myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
+                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh );
 
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEE->fillKFactor(evtKfactor);
@@ -850,6 +868,8 @@ void HiggsMLSelection::Loop() {
 
         theEleDxy = dxyEle;
         theMuonDxy = dxyMuonPlus;
+
+        setEleIdVariables(theElectron, -1);
       }
       if(thePositron>-1 && theMuonMinus>-1 ) {
 	theDetaLeptonsEM = etaEle[thePositron]-etaEle[theMuonMinus];
@@ -873,6 +893,7 @@ void HiggsMLSelection::Loop() {
                                   pxGsfTrack[gsfPos], pyGsfTrack[gsfPos], pzGsfTrack[gsfPos]);
         theEleDxy = dxyPos;
         theMuonDxy = dxyMuonMinus;
+        setEleIdVariables(thePositron, -1);
       }
 
 
@@ -950,6 +971,10 @@ void HiggsMLSelection::Loop() {
                                 m_maxImpactParameterMVABJetTags,
                                 m_maxCombinedSecondaryVertexMVABJetTags);
       
+      myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+                                    myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
+                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh );
+
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEM->fillKFactor(evtKfactor);
       }
@@ -1564,6 +1589,44 @@ void HiggsMLSelection::resetKinematics() {
 
 }
 
+void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
+
+  int selectedElectrons[2];
+  selectedElectrons[0] = hard;
+  selectedElectrons[1] = slow; 
+
+  for(int i = 0; i < 2 && selectedElectrons[i] > -1; i++) {
+    int eleIndex = selectedElectrons[i];
+    myRecoflag[i] = recoFlagsEle[eleIndex];
+    myPt[i] = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
+    myEta[i] = etaEle[eleIndex];
+    myPhi[i] = phiEle[eleIndex];
+    myClassification[i] = classificationEle[eleIndex];
+    myNBremClusters[i] = nbremsEle[eleIndex];
+    myDeta[i] = deltaEtaAtVtxEle[eleIndex];
+    myDphi[i] = deltaPhiAtVtxEle[eleIndex];
+    myHoe[i] = hOverEEle[eleIndex];
+    int sc = superClusterIndexEle[eleIndex];
+    mySee[i] = sqrt( covIEtaIEtaSC[sc] );
+    mySpp[i] = sqrt( covIPhiIPhiSC[sc] );
+    myEop[i] = eSuperClusterOverPEle[eleIndex];
+    myFbrem[i] = fbremEle[eleIndex];
+    myTrackerIso[i] = dr03TkSumPtEle[eleIndex];
+    myHcalIso[i] = dr03HcalTowerSumEtEle[eleIndex];
+    myEcalJIso[i] = dr03EcalRecHitSumEtEle[eleIndex];
+    myEcalGTIso[i] = scBasedEcalSum04Ele[eleIndex];
+    myCombinedIso[i] = (dr03TkSumPtEle[eleIndex] + 
+                        TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + 
+                        dr03HcalTowerSumEtEle[eleIndex]) / myPt[i];
+    myCharge[i] = chargeEle[eleIndex];
+    int gsf = gsfTrackIndexEle[eleIndex];
+    myMissHits[i] = expInnerLayersGsfTrack[gsf];
+    myDist[i] = convDistEle[eleIndex];
+    myDcot[i] = convDcotEle[eleIndex];
+    myLh[i] = eleIdLikelihoodEle[eleIndex];
+  }
+
+}
 
 float HiggsMLSelection::getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR) {
 

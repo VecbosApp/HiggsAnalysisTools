@@ -53,6 +53,33 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("bTagSecVertex",       &myBTagSecVertex,       "bTagSecVertex/F");
 }
 
+void RedHiggsTree::addElectronInfos() {
+  
+  myTree->Branch("recoflag", myRecoflag, "recoflag[2]/I");
+  myTree->Branch("pt", myPt, "pt[2]/F");
+  myTree->Branch("eta", myEta, "eta[2]/F");
+  myTree->Branch("phi", myPhi, "phi[2]/F");
+  myTree->Branch("classification", myClassification, "classification[2]/I");
+  myTree->Branch("nbrems", myNBremClusters, "nbrems[2]/I");
+  myTree->Branch("deta", myDeta, "deta[2]/F");
+  myTree->Branch("dphi", myDphi, "dphi[2]/F");
+  myTree->Branch("hoe", myHoe, "hoe[2]/F");
+  myTree->Branch("see", mySee, "see[2]/F");
+  myTree->Branch("spp", mySpp, "spp[2]/F");
+  myTree->Branch("eop", myEop, "eop[2]/F");
+  myTree->Branch("fbrem", myFbrem, "fbrem[2]/F");
+  myTree->Branch("trackerIso", myTrackerIso, "trackerIso[2]/F");
+  myTree->Branch("hcalIso", myHcalIso, "hcalIso[2]/F");
+  myTree->Branch("ecalJIso", myEcalJIso, "ecalJIso[2]/F");
+  myTree->Branch("ecalGTIso", myEcalGTIso, "ecalGTIso[2]/F");
+  myTree->Branch("combinedIso", myCombinedIso, "combinedIso[2]/F");
+  myTree->Branch("charge", myCharge, "charge[2]/I");
+  myTree->Branch("missHits", myMissHits, "missHits[2]/I");
+  myTree->Branch("dist", myDist, "dist[2]/F");
+  myTree->Branch("dcot", myDcot, "dcot[2]/F");
+  myTree->Branch("lh", myLh, "lh[2]/F");
+}
+
 void RedHiggsTree::addCSA07Infos() {
 
   myTree->Branch("CSA07weight",              &myWeight,              "CSA07weight/D");
@@ -148,6 +175,38 @@ void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrje
   myBTagImpPar = bTagImpPar;
   myBTagSecVertex = bTagSecVertex;
 
+}
+
+void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
+                                 int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
+                                 float trackerIso[2], float hcalIso[2], float ecalJIso[2], float ecalGTIso[2], float combinedIso[2], int charge[2],
+                                 int missHits[2], float dist[2], float dcot[2], float lh[2]) {
+
+  for(int i=0; i<2; i++) {
+    myRecoflag[i] = recoflag[i];
+    myPt[i] = pt[i];
+    myEta[i] = eta[i];
+    myPhi[i] = phi[i];
+    myClassification[i] = classification[i];
+    myNBremClusters[i] = nbrems[i];
+    myDeta[i] = deta[i];
+    myDphi[i] = dphi[i];
+    myHoe[i] = hoe[i];
+    mySee[i] = see[i];
+    mySpp[i] = spp[i];
+    myEop[i] = eop[i];
+    myFbrem[i] = fbrem[i];
+    myTrackerIso[i] = trackerIso[i];
+    myHcalIso[i] = hcalIso[i];
+    myEcalJIso[i] = ecalJIso[i];
+    myEcalGTIso[i] = ecalGTIso[i];
+    myCombinedIso[i] = combinedIso[i];
+    myCharge[i] = charge[i];
+    myMissHits[i] = missHits[i];
+    myDist[i] = dist[i];
+    myDcot[i] = dcot[i];
+    myLh[i] = lh[i];
+  }
 }
 
 void RedHiggsTree::fillCSA07(double weight, double processId, float lumi) 
