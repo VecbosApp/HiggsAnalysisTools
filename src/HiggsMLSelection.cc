@@ -95,6 +95,16 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/"+selectionString);
   EgammaCutBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
 
+  // configuring electron likelihood
+  TFile *fileLH = TFile::Open("pdfs_MC.root");
+  TDirectory *EBlt15dir = fileLH->GetDirectory("/");
+  TDirectory *EElt15dir = fileLH->GetDirectory("/");
+  TDirectory *EBgt15dir = fileLH->GetDirectory("/");
+  TDirectory *EEgt15dir = fileLH->GetDirectory("/");
+  LikelihoodSwitches defaultSwitches;
+  LH = new ElectronLikelihood(&(*EBlt15dir), &(*EElt15dir), &(*EBgt15dir), &(*EEgt15dir),
+                              defaultSwitches, std::string("class"),std::string("class"),true,true);
+  
   //Reading GoodRUN LS
   std::cout << "[GoodRunLS]::goodRunLS is " << _preselection->getSwitch("goodRunLS") << " isData is " <<  _preselection->getSwitch("isData") << std::endl;
 
@@ -540,8 +550,10 @@ void HiggsMLSelection::Loop() {
         theSlowest = theElectron;
       }
       // don't look at names
-      theHardEleLhID = eleIdLikelihoodEle[theHardest];
-      theSlowEleLhID = eleIdLikelihoodEle[theSlowest];
+//       theHardEleLhID = eleIdLikelihoodEle[theHardest];
+//       theSlowEleLhID = eleIdLikelihoodEle[theSlowest];
+      theHardEleLhID = likelihoodRatio(theHardest,*LH);
+      theSlowEleLhID = likelihoodRatio(theSlowest,*LH);
 
       // ----------------------
       /*

@@ -5,6 +5,7 @@
 #ifndef Higgs_h
 #define Higgs_h
 
+#include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/HiggsBase.h"
 // ROOT includes
 #include <TLorentzVector.h>
@@ -42,6 +43,17 @@ public:
   bool hasPassedHLT();
   //get the value of the requested bits
   std::vector<int> getHLTOutput();
+
+  /// Get pt given x/y coordinates
+  float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
+
+  // useful electron functions
+  /// sigma ieta ieta of the seed cluster (ecal-driven/tracker-driven)
+  float SigmaiEiE(int electron);
+  /// sigma iphi iphi of the seed cluster (ecal-driven/tracker-driven)
+  float SigmaiPiP(int electron);
+  // get the likelihood electron ID
+  float likelihoodRatio(int eleIndex, ElectronLikelihood &lh);
 
 private:
   ///goodRUN/LS list

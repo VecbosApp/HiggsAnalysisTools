@@ -12,6 +12,7 @@
 #include <vector>
 #include "CommonTools/include/Monitor.hh"
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
+#include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
 #include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
 #include "HiggsAnalysisTools/include/CutBasedHiggsSelector.hh"
@@ -100,6 +101,7 @@ private:
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
+  ElectronLikelihood *LH;
   //! to evaluate preselection efficiency
   Selection *_preselection;
   CommonHiggsPreselector CommonHiggsPreselection;

@@ -5,7 +5,11 @@
 #include <sstream>
 
 #include "CommonTools/include/Utils.hh"
+#include "CommonTools/include/LeptonIdBits.h"
+#include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
+
+using namespace bits;
 
 Higgs::Higgs(TTree *tree) : HiggsBase(tree)
 {
@@ -167,4 +171,58 @@ float Higgs::mT3(TLorentzVector pl1, TLorentzVector pl2, TVector3 met) {
   float mnu = mll;
 
   return sqrt(mll*mll + mnu*mnu + 2*(El*Enu-Ex*Ex-Ey*Ey));
+}
+
+float Higgs::likelihoodRatio(int eleIndex, ElectronLikelihood &lh) {
+  LikelihoodMeasurements measurements;
+  measurements.pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
+  measurements.subdet = (fabs(etaEle[eleIndex])<1.479) ? 0 : 1;
+  measurements.deltaPhi = deltaPhiAtVtxEle[eleIndex];
+  measurements.deltaEta = deltaEtaAtVtxEle[eleIndex];
+  measurements.eSeedClusterOverPout = eSeedOverPoutEle[eleIndex];
+  measurements.eSuperClusterOverP = eSuperClusterOverPEle[eleIndex];
+  measurements.hadronicOverEm = hOverEEle[eleIndex];
+  measurements.sigmaIEtaIEta = SigmaiEiE(eleIndex);
+  measurements.sigmaIPhiIPhi = SigmaiPiP(eleIndex);
+  measurements.fBrem = fbremEle[eleIndex];
+  measurements.nBremClusters = nbremsEle[eleIndex];
+  return lh.result(measurements);
+}
+
+/// sigma ieta ieta of the seed cluster (ecal-driven/tracker-driven)
+float Higgs::SigmaiEiE(int electron) {
+  float see;
+  Utils anaUtils;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[electron], isEcalDriven);
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[electron];
+    see = sqrt(covIEtaIEtaSC[sc]);
+  } else {
+    int sc = PFsuperClusterIndexEle[electron];
+    if(sc>-1) {
+      see = sqrt(covIEtaIEtaPFSC[sc]);
+    } else {
+      see = 999.;
+    }
+  }
+  return see;
+}
+
+/// sigma iphi iphi of the seed cluster (ecal-driven/tracker-driven)
+float Higgs::SigmaiPiP(int electron) {
+  float spp;
+  Utils anaUtils;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[electron], isEcalDriven);
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[electron];
+    spp = sqrt(covIPhiIPhiSC[sc]);
+  } else {
+    int sc = PFsuperClusterIndexEle[electron];
+    if(sc>-1) {
+      spp = sqrt(covIPhiIPhiPFSC[sc]);
+    } else {
+      spp = 999.;
+    }
+  }
+  return spp;
 }
