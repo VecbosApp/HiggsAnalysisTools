@@ -116,6 +116,14 @@ $(OUTLIB)ElectronBestCandidateSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTool
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)ElectronBestCandidateSelector.o $<
 $(OUTLIB)BestLeptonSelectorWjets.o: $(INCLUDEDIR)/src/BestLeptonSelectorWjets.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)BestLeptonSelectorWjets.o $<
+$(OUTLIB)LikelihoodPdf.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/LikelihoodPdf.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)LikelihoodPdf.o $<
+$(OUTLIB)LikelihoodSpecies.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/LikelihoodSpecies.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)LikelihoodSpecies.o $<
+$(OUTLIB)LikelihoodPdfProduct.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/LikelihoodPdfProduct.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)LikelihoodPdfProduct.o $<
+$(OUTLIB)ElectronLikelihood.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/ElectronLikelihood.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)ElectronLikelihood.o $<
 
 # no more used ------------------------------------
 #$(OUTLIB)ElectronID.o: $(INCLUDEDIR)/src/ElectronID.C
@@ -152,7 +160,11 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)EcalCleaner.o \
 	$(OUTLIB)CommonHiggsPreselector.o \
 	$(OUTLIB)CutBasedHiggsSelector.o \
-	$(OUTLIB)VertexTree.o
+	$(OUTLIB)VertexTree.o \
+	$(OUTLIB)LikelihoodPdf.o \
+	$(OUTLIB)LikelihoodSpecies.o \
+	$(OUTLIB)LikelihoodPdfProduct.o \
+	$(OUTLIB)ElectronLikelihood.o
 	$(CXX) $(CXXFLAGS) -ldl -o HiggsApp $(OUTLIB)/*.o $(OUTLIBCOMMON)/*o $(GLIBS) $(LDFLAGS) $ $<
 HiggsApp.clean:
 	rm -f HiggsApp
