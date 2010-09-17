@@ -723,7 +723,7 @@ void HiggsMLSelection::Loop() {
 
       myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
                                     myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
-                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh );
+                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEE->fillKFactor(evtKfactor);
@@ -985,7 +985,7 @@ void HiggsMLSelection::Loop() {
       
       myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
                                     myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
-                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh );
+                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
       if ( _preselection->getSwitch("apply_kFactor") ) {
 	myOutTreeEM->fillKFactor(evtKfactor);
@@ -1636,8 +1636,22 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     myDist[i] = convDistEle[eleIndex];
     myDcot[i] = convDcotEle[eleIndex];
     myLh[i] = eleIdLikelihoodEle[eleIndex];
+ 
+    // match with MC truth
+    myMatched[i] = 999;
+    if ( !_preselection->getSwitch("isData") ) { 
+      int matchedReco = 0;
+      TVector3 pReco(pxEle[eleIndex],pyEle[eleIndex],pzEle[eleIndex]);
+      for (int ii=0; ii<nMc; ii++) {
+	TVector3 Welegen;
+ 	if ( (fabs(idMc[mothMc[ii]])==24) && (fabs(idMc[ii])==11) ) {
+ 	  Welegen.SetMagThetaPhi(pMc[ii],thetaMc[ii],phiMc[ii]);
+ 	  float dRmatch = pReco.DeltaR(Welegen);  	
+ 	  if (fabs(dRmatch)<0.3) matchedReco = 1;
+ 	}}
+      myMatched[i] = matchedReco;
+    }
   }
-
 }
 
 float HiggsMLSelection::getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR) {

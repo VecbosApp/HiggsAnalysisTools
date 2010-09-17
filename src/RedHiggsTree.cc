@@ -78,6 +78,7 @@ void RedHiggsTree::addElectronInfos() {
   myTree->Branch("dist", myDist, "dist[2]/F");
   myTree->Branch("dcot", myDcot, "dcot[2]/F");
   myTree->Branch("lh", myLh, "lh[2]/F");
+  myTree->Branch("matched", myMatched, "matched[2]/I");
 }
 
 void RedHiggsTree::addCSA07Infos() {
@@ -180,7 +181,7 @@ void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrje
 void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                                  int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
                                  float trackerIso[2], float hcalIso[2], float ecalJIso[2], float ecalGTIso[2], float combinedIso[2], int charge[2],
-                                 int missHits[2], float dist[2], float dcot[2], float lh[2]) {
+                                 int missHits[2], float dist[2], float dcot[2], float lh[2], int matched[2]) {
 
   for(int i=0; i<2; i++) {
     myRecoflag[i] = recoflag[i];
@@ -206,6 +207,7 @@ void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], flo
     myDist[i] = dist[i];
     myDcot[i] = dcot[i];
     myLh[i] = lh[i];
+    myMatched[i] = matched[i];
   }
 }
 
@@ -253,3 +255,5 @@ void RedHiggsTree::fillRunInfos(int run, int lumi, int event) {
   myEvent = event;
 
 }
+
+

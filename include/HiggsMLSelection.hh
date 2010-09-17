@@ -182,6 +182,7 @@ private:
   int myMissHits[2];
   float myDist[2], myDcot[2];
   float myLh[2];
+  int myMatched[2];
 
   //! new variables
   float m_eOverP[100];
