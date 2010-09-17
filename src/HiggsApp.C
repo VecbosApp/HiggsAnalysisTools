@@ -89,34 +89,29 @@ int main(int argc, char* argv[]) {
   if (argc < 3 ) strcpy(outputFileName,argv[1]);
   else strcpy(outputFileName,argv[2]);
 
+
   // -------------------------
-  // loading file:
+  // Loading the file
   TChain *theChain = new TChain("ntp1");
   char Buffer[500];
-  char MyRootFile[2000];  
+  char MyRootFile[2000];
   std::cout << "input: " << inputFileName << std::endl;
   ifstream *inputFile = new ifstream(inputFileName);
-
-  // get the tree with the conditions from the first file
-  TTree *treeCond = new TTree();
-
-  int nfiles=1;
+  char tmpFileName[256];
+  vector<string> filesToRemove;
   while( !(inputFile->eof()) ){
     inputFile->getline(Buffer,500);
     if (!strstr(Buffer,"#") && !(strspn(Buffer," ") == strlen(Buffer)))
       {
-	sscanf(Buffer,"%s",MyRootFile);
-	theChain->Add(MyRootFile);
-	if ( nfiles==1 ) {
-	  TFile *firstfile = TFile::Open(MyRootFile);
-	  treeCond = (TTree*)firstfile->Get("Conditions");
-	}
-	std::cout << "chaining " << MyRootFile << std::endl;
-	nfiles++;
+        sscanf(Buffer,"%s",MyRootFile);
+        // theChain->Add("root://castorcms/"+TString(MyRootFile)); 
+        theChain->Add("rfio:"+TString(MyRootFile));
+        std::cout << "chaining " << MyRootFile << std::endl;
       }
   }
   inputFile->close();
   delete inputFile;
+
 
 #if Application == 1
 
