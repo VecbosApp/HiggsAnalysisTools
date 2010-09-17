@@ -56,6 +56,14 @@ void addWeights(const char* filename, float weight) {
     Float_t         bTagTrackCount;
     Float_t         bTagImpPar;
     Float_t         bTagSecVertex;
+    Float_t         pt[2];
+    Float_t         eta[2];
+    Float_t         deta[2];
+    Float_t         dphi[2];
+    Float_t         hoe[2];
+    Float_t         see[2];
+    Int_t           matched[2];
+
     treeOrig->SetBranchAddress("met", &met);  // default MET is tcMET for WW
     treeOrig->SetBranchAddress("pfMet", &pfMet);
     treeOrig->SetBranchAddress("caloMet", &caloMet);
@@ -83,7 +91,22 @@ void addWeights(const char* filename, float weight) {
     treeOrig->SetBranchAddress("bTagTrackCount", &bTagTrackCount);
     treeOrig->SetBranchAddress("bTagImpPar", &bTagImpPar);
     treeOrig->SetBranchAddress("bTagSecVertex", &bTagSecVertex);
+    treeOrig->SetBranchAddress("pt", pt);
+    treeOrig->SetBranchAddress("eta", eta);
+    treeOrig->SetBranchAddress("deta", deta);
+    treeOrig->SetBranchAddress("dphi", dphi);
+    treeOrig->SetBranchAddress("hoe", hoe);
+    treeOrig->SetBranchAddress("see", see);
+    treeOrig->SetBranchAddress("matched", matched);
 
+    // 
+    Float_t pt_1,   pt_2;
+    Float_t eta_1,  eta_2;
+    Float_t deta_1, deta_2;
+    Float_t dphi_1, dphi_2;
+    Float_t hoe_1,  hoe_2;
+    Float_t see_1,  see_2;
+    Int_t   matched_1,  matched_2;
 
     // copy branches
     treeNew->Branch("met", &met, "met/F");  // default MET is tcMET for WW
@@ -113,6 +136,20 @@ void addWeights(const char* filename, float weight) {
     treeNew->Branch("bTagTrackCount", &bTagTrackCount, "bTagTrackCount/F");
     treeNew->Branch("bTagImpPar", &bTagImpPar, "bTagImpPar/F");
     treeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
+    treeNew->Branch("pt1", &pt_1, "pt1/F");
+    treeNew->Branch("eta1", &eta_1, "eta1/F");
+    treeNew->Branch("deta1", &deta_1, "deta1/F");
+    treeNew->Branch("dphi1", &dphi_1, "dphi1/F");
+    treeNew->Branch("hoe1", &hoe_1, "hoe1/F");
+    treeNew->Branch("see1", &see_1, "see1/F");
+    treeNew->Branch("matched1", &matched_1, "matched1/I");
+    treeNew->Branch("pt2", &pt_2, "pt2/F");
+    treeNew->Branch("eta2", &eta_2, "eta2/F");
+    treeNew->Branch("deta2", &deta_2, "deta2/F");
+    treeNew->Branch("dphi2", &dphi_2, "dphi2/F");
+    treeNew->Branch("hoe2", &hoe_2, "hoe2/F");
+    treeNew->Branch("see2", &see_2, "see2/F");
+    treeNew->Branch("matched2", &matched_2, "matched2/I");
 
     float jetcat = 0;
     treeNew->Branch("jetcat", &jetcat,  "jetcat/F");
@@ -130,6 +167,21 @@ void addWeights(const char* filename, float weight) {
       else if(njets==1) jetcat = -1;
       else jetcat = -2;
 
+      pt_1      = pt[0];
+      eta_1     = eta[0];
+      deta_1    = deta[0];
+      dphi_1    = dphi[0];
+      hoe_1     = hoe[0];
+      see_1     = see[0];
+      matched_1 = matched[0];
+      pt_2      = pt[1];
+      eta_2     = eta[1];
+      deta_2    = deta[1];
+      dphi_2    = dphi[1];
+      hoe_2     = hoe[1];
+      see_2     = see[1];
+      matched_2 = matched[1];
+
       // consider only events with 0 or 1 jet
       // and fit variables within fit range
       //     if (njets<=1 && 
@@ -143,7 +195,6 @@ void addWeights(const char* filename, float weight) {
       treeNew->Fill();
       j++;
       //    }
-
     }
   
     fileNew->cd();
@@ -157,5 +208,4 @@ void addWeights(const char* filename, float weight) {
     cout << "Tree T1 not present in the file " << filename << endl;
     return;
   }
-
 }
