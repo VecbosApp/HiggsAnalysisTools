@@ -35,6 +35,11 @@ int main(int argc, char* argv[]) {
   w = weight("Zjets",  1.03492e+06,  3048, 1.0, wantLumi); // mll > 50 GeV
   w = weight("TTjets", 1.2834e+06,   157.5, 1.0, wantLumi);
 
+  w = weight("WJetsALPGEN_0-100",    745069, 3790.08,   1.0, wantLumi);
+  w = weight("WJetsALPGEN_100-300",  162861, 79.948,    1.0, wantLumi);
+  w = weight("WJetsALPGEN_300-800",  88721,   0.60888,  1.0, wantLumi);
+  w = weight("WJetsALPGEN_800-1600", 31896, 0.00108671, 1.0, wantLumi);
+  
   w = weight("SingleTop_sChannel", 312055, 4.21*(3*0.1080), 1.0, wantLumi);
   w = weight("SingleTop_tChannel", 478593, 64.6*(3*0.1080), 1.0, wantLumi);
   w = weight("SingleTop_tWChannel", 16437, 10.6, 1.0, wantLumi);

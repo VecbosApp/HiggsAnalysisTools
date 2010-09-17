@@ -18,7 +18,10 @@ hadd results/merged/WW_ee.root results/DiBosons/WW_2l_7TeV/*datasetEE.root
 hadd results/merged/WZ_ee.root results/DiBosons/WZ_3l_7TeV/*datasetEE.root
 hadd results/merged/ZjetsMadgraph_ee.root results/ZJetsMADGRAPH/ZJets-madgraph/*datasetEE.root
 hadd results/merged/ZZ_ee.root results/DiBosons/ZZ_2l2nu/*datasetEE.root
-
+hadd results/merged/W1Jets_Pt0to100-alpgen_ee.root    results/WJetsALPGEN/W1Jets_Pt0to100-alpgen/*datasetEE.root
+hadd results/merged/W1Jets_Pt100to300-alpgen_ee.root  results/WJetsALPGEN/W1Jets_Pt100to300-alpgen/*datasetEE.root
+hadd results/merged/W1Jets_Pt300to800-alpgen_ee.root  results/WJetsALPGEN/W1Jets_Pt300to800-alpgen/*datasetEE.root
+hadd results/merged/W1Jets_Pt800to1600-alpgen_ee.root results/WJetsALPGEN/W1Jets_Pt800to1600-alpgen/*datasetEE.root
 
 echo "Now merging MM datasets..."
 hadd results/merged/H130_mm.root results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*datasetMM.root
@@ -34,7 +37,10 @@ hadd results/merged/WW_mm.root results/DiBosons/WW_2l_7TeV/*datasetMM.root
 hadd results/merged/WZ_mm.root results/DiBosons/WZ_3l_7TeV/*datasetMM.root
 hadd results/merged/ZjetsMadgraph_mm.root results/ZJetsMADGRAPH/ZJets-madgraph/*datasetMM.root
 hadd results/merged/ZZ_mm.root results/DiBosons/ZZ_2l2nu/*datasetMM.root
-
+hadd results/merged/W1Jets_Pt0to100-alpgen_mm.root    results/WJetsALPGEN/W1Jets_Pt0to100-alpgen/*datasetMM.root
+hadd results/merged/W1Jets_Pt100to300-alpgen_mm.root  results/WJetsALPGEN/W1Jets_Pt100to300-alpgen/*datasetMM.root
+hadd results/merged/W1Jets_Pt300to800-alpgen_mm.root  results/WJetsALPGEN/W1Jets_Pt300to800-alpgen/*datasetMM.root
+hadd results/merged/W1Jets_Pt800to1600-alpgen_mm.root results/WJetsALPGEN/W1Jets_Pt800to1600-alpgen/*datasetMM.root
 
 echo "Now merging EM datasets..."
 hadd results/merged/H130_em.root results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*datasetEM.root
@@ -50,5 +56,8 @@ hadd results/merged/WW_em.root results/DiBosons/WW_2l_7TeV/*datasetEM.root
 hadd results/merged/WZ_em.root results/DiBosons/WZ_3l_7TeV/*datasetEM.root
 hadd results/merged/ZjetsMadgraph_em.root results/ZJetsMADGRAPH/ZJets-madgraph/*datasetEM.root
 hadd results/merged/ZZ_em.root results/DiBosons/ZZ_2l2nu/*datasetEM.root
-
+hadd results/merged/W1Jets_Pt0to100-alpgen_em.root    results/WJetsALPGEN/W1Jets_Pt0to100-alpgen/*datasetEM.root
+hadd results/merged/W1Jets_Pt100to300-alpgen_em.root  results/WJetsALPGEN/W1Jets_Pt100to300-alpgen/*datasetEM.root
+hadd results/merged/W1Jets_Pt300to800-alpgen_em.root  results/WJetsALPGEN/W1Jets_Pt300to800-alpgen/*datasetEM.root
+hadd results/merged/W1Jets_Pt800to1600-alpgen_em.root results/WJetsALPGEN/W1Jets_Pt800to1600-alpgen/*datasetEM.root
 

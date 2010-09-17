@@ -17,6 +17,9 @@ hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/mer
 # merging all other backgrounds
 hadd results/datasets_trees/others_ee.root results/merged/WjetsMadgraph_ee.root results/merged/Wgamma_ee.root results/merged/ZjetsMadgraph_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
 
+# Wjets alpgen (separate from others)
+hadd results/datasets_trees/WjetsAlpgen_ee.root results/merged/W1Jets_Pt0to100-alpgen_ee.root results/merged/W1Jets_Pt100to300-alpgen_ee.root results/merged/W1Jets_Pt300to800-alpgen_ee.root results/merged/W1Jets_Pt800to1600-alpgen_ee.root
+
 
 echo "Now merging species for mm..."
 # signal is always a species per se
@@ -30,6 +33,9 @@ hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/mer
 
 # merging all other backgrounds
 hadd results/datasets_trees/others_mm.root results/merged/WjetsMadgraph_mm.root results/merged/Wgamma_mm.root results/merged/ZjetsMadgraph_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
+
+# Wjets alpgen (separate from others)
+hadd results/datasets_trmms/WjetsAlpgen_mm.root results/merged/W1Jets_Pt0to100-alpgen_mm.root results/merged/W1Jets_Pt100to300-alpgen_mm.root results/merged/W1Jets_Pt300to800-alpgen_mm.root results/merged/W1Jets_Pt800to1600-alpgen_mm.root
 
 
 
@@ -45,3 +51,6 @@ hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/mer
 
 # merging all other backgrounds
 hadd results/datasets_trees/others_em.root results/merged/ZjetsMadgraph_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/WjetsMadgraph_em.root results/merged/Wgamma_em.root 
+# Wjets alpgen (separate from others)
+hadd results/datasets_trems/WjetsAlpgen_em.root results/merged/W1Jets_Pt0to100-alpgen_em.root results/merged/W1Jets_Pt100to300-alpgen_em.root results/merged/W1Jets_Pt300to800-alpgen_em.root results/merged/W1Jets_Pt800to1600-alpgen_em.root
+

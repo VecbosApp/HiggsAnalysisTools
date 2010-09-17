@@ -25,6 +25,10 @@ addWeights("results/merged/WW_ee.root", 0.001 * 0.0203685);
 addWeights("results/merged/WZ_ee.root", 0.001 * 0.00549947);
 addWeights("results/merged/ZjetsMadgraph_ee.root", 0.001 * 2.94516); 
 addWeights("results/merged/ZZ_ee.root", 0.001 * 0.00231513);
+addWeights("results/merged/W1Jets_Pt0to100-alpgen_ee.root", 0.001 * 5.08688);
+addWeights("results/merged/W1Jets_Pt100to300-alpgen_ee.root", 0.001 * 0.490897);
+addWeights("results/merged/W1Jets_Pt300to800-alpgen_ee.root", 0.001 * 0.00686286);
+addWeights("results/merged/W1Jets_Pt800to1600-alpgen_ee.root", 0.001 * 3.40704e-05);
 
 .q
 
@@ -48,6 +52,10 @@ addWeights("results/merged/WW_mm.root", 0.001 * 0.0203685);
 addWeights("results/merged/WZ_mm.root", 0.001 * 0.00549947);
 addWeights("results/merged/ZjetsMadgraph_mm.root", 0.001 * 2.94516); 
 addWeights("results/merged/ZZ_mm.root", 0.001 * 0.00231513);
+addWeights("results/merged/W1Jets_Pt0to100-alpgen_mm.root", 0.001 * 5.08688);
+addWeights("results/merged/W1Jets_Pt100to300-alpgen_mm.root", 0.001 * 0.490897);
+addWeights("results/merged/W1Jets_Pt300to800-alpgen_mm.root", 0.001 * 0.00686286);
+addWeights("results/merged/W1Jets_Pt800to1600-alpgen_mm.root", 0.001 * 3.40704e-05);
 
 .q
 
@@ -72,6 +80,10 @@ addWeights("results/merged/WW_em.root", 0.001 * 0.0203685);
 addWeights("results/merged/WZ_em.root", 0.001 * 0.00549947);
 addWeights("results/merged/ZjetsMadgraph_em.root", 0.001 * 2.94516); 
 addWeights("results/merged/ZZ_em.root", 0.001 * 0.00231513);
+addWeights("results/merged/W1Jets_Pt0to100-alpgen_em.root", 0.001 * 5.08688);
+addWeights("results/merged/W1Jets_Pt100to300-alpgen_em.root", 0.001 * 0.490897);
+addWeights("results/merged/W1Jets_Pt300to800-alpgen_em.root", 0.001 * 0.00686286);
+addWeights("results/merged/W1Jets_Pt800to1600-alpgen_em.root", 0.001 * 3.40704e-05);
 
 .q
 
