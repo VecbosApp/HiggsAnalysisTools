@@ -79,6 +79,7 @@ while (len(inputfiles) > 0):
     outputfile.write('export STAGE_HOST=castorcms\n')
     outputfile.write('export STAGE_SVCCLASS=cmst3\n')
     #    outputfile.write('cd '+pwd)
+    outputfile.write('cp '+pwd+'/pdfs_MC.root $WORKDIR\n')
     outputfile.write('cp -r '+pwd+'/config $WORKDIR\n')
     outputfile.write('cd $WORKDIR\n')
     outputfile.write(pwd+'/'+application+' '+inputfilename+" "+output+"_"+str(ijob)+"_ "+"\n")
