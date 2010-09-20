@@ -61,12 +61,14 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _preselection->addSwitch("apply_kFactor");   
   _preselection->addSwitch("isData");
   _preselection->addSwitch("goodRunLS");
+  _preselection->addSwitch("asymmetricID");
   _preselection->addCut("etaElectronAcc");
   _preselection->addCut("ptElectronAcc");
   _preselection->addCut("etaMuonAcc");
   _preselection->addCut("ptMuonAcc");
   _preselection->addCut("etUncorrJetAcc");
   _preselection->addStringParameter("electronIDType");
+  _preselection->addStringParameter("electronIDTypeLow");
   _preselection->summary();
 
   // selection efficiencies
@@ -90,10 +92,20 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   
   // single electron efficiency
   //  EgammaCutBasedID.Configure("config/higgs"); // this is the class dependent e-ID
+
   TString selectionString(_preselection->getStringParameter("electronIDType"));
-  cout << "=== CONFIGURING " << selectionString << " SYMMETRIC ELECTRON ID ===" << endl;
+  if (!_preselection->getSwitch("asymmetricID")) 
+    cout << "=== CONFIGURING " << selectionString << " SYMMETRIC ELECTRON ID ===" << endl;
   EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/"+selectionString);
   EgammaCutBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
+
+  if (_preselection->getSwitch("asymmetricID")) {
+    TString selectionStringLow (_preselection->getStringParameter("electronIDTypeLow"));
+    cout << "=== CONFIGURING "  << selectionStringLow << " and " 
+	 << selectionString << " for ASYMMETRIC ELECTRON ID ===" << endl;
+    EgammaCutBasedIDLow.ConfigureNoClass("config/higgs/electronId/"+selectionStringLow);
+    EgammaCutBasedIDLow.ConfigureEcalCleaner("config/higgs/electronId/");
+  }
 
   // configuring electron likelihood
   TFile *fileLH = TFile::Open("pdfs_MC.root");
@@ -522,8 +534,25 @@ void HiggsMLSelection::Loop() {
     bool theElectronID, thePositronID, theElectronIsol, thePositronIsol, theElectronConvRej, thePositronConvRej;
     theElectronID = thePositronID = theElectronIsol = thePositronIsol = theElectronConvRej = thePositronConvRej = true;
     // custom electron ID cuts (tight symmetric for ee, tight for emu)
-    if (theElectron > -1) isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej);
-    if (thePositron > -1) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej);
+
+    if (!_preselection->getSwitch("asymmetricID")) {
+      if (theElectron > -1) isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+      if (thePositron > -1) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedID);
+    }
+
+    if (_preselection->getSwitch("asymmetricID")) {
+      if (theElectron > -1) { 
+	float pt = GetPt(pxEle[theElectron],pyEle[theElectron]);
+	if (pt>=20) isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+	if (pt<20)  isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedIDLow);
+      }
+      if (thePositron > -1) { 
+	float pt = GetPt(pxEle[thePositron],pyEle[thePositron]);
+	if (pt>=20) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedID);
+	if (pt<20) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedIDLow);
+      }
+    }
+
     // if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
     // if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
 
@@ -1028,9 +1057,15 @@ void HiggsMLSelection::displayEfficiencies(std::string datasetName) {
   std::cout << "Full EM selections: " << std::endl;
   CutBasedHiggsSelectionEM.displayEfficiencies(datasetName);
 
-  EgammaCutBasedID.displayEfficiencies();
-
-
+  if (!_preselection->getSwitch("asymmetricID")) {
+    std::cout << "symmetric ID: " << std::endl;
+    EgammaCutBasedID.displayEfficiencies();
+  } else {
+    std::cout << "asymmetric ID: Low pT" << std::endl;
+    EgammaCutBasedIDLow.displayEfficiencies();
+    std::cout << "asymmetric ID: High pT" << std::endl;
+    EgammaCutBasedID.displayEfficiencies();
+  }
 }
 
 std::pair<int,int> HiggsMLSelection::getBestElectronPair() {
@@ -1077,8 +1112,8 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair() {
   return make_pair(theLep1,theLep2);
 }
 
-void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput) {
-
+void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID) {
+  
   *eleIdOutput = *isolOutput = *convRejOutput = false;
 
   Utils anaUtils;
@@ -1128,45 +1163,45 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
     }
   }
 
-  EgammaCutBasedID.SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
-  EgammaCutBasedID.SetRecoFlag(recoFlagsEle[eleIndex]);
-  EgammaCutBasedID.applyElectronIDOnPFlowElectrons(true);
-  EgammaCutBasedID.SetHOverE( HoE );
-  EgammaCutBasedID.SetS9S25( s9s25 );
-  EgammaCutBasedID.SetDEta( deta );
-  EgammaCutBasedID.SetDPhiIn( dphiin );
-  EgammaCutBasedID.SetDPhiOut( dphiout );
-  EgammaCutBasedID.SetBremFraction( fbrem );
-  EgammaCutBasedID.SetSigmaEtaEta( see );
-  EgammaCutBasedID.SetSigmaPhiPhi( spp );
-  EgammaCutBasedID.SetEOverPout( eopout );
-  EgammaCutBasedID.SetEOverPin( eop );
-  EgammaCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
-  EgammaCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
-  EgammaCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
-  EgammaCutBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
-  EgammaCutBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
-  EgammaCutBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
-  EgammaCutBasedID.SetCombinedIsolation( (dr03TkSumPtEle[eleIndex] + 
+
+  thisCutBasedID.SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
+  thisCutBasedID.SetRecoFlag(recoFlagsEle[eleIndex]);
+  thisCutBasedID.applyElectronIDOnPFlowElectrons(true);
+  thisCutBasedID.SetHOverE( HoE );
+  thisCutBasedID.SetS9S25( s9s25 );
+  thisCutBasedID.SetDEta( deta );
+  thisCutBasedID.SetDPhiIn( dphiin );
+  thisCutBasedID.SetDPhiOut( dphiout );
+  thisCutBasedID.SetBremFraction( fbrem );
+  thisCutBasedID.SetSigmaEtaEta( see );
+  thisCutBasedID.SetSigmaPhiPhi( spp );
+  thisCutBasedID.SetEOverPout( eopout );
+  thisCutBasedID.SetEOverPin( eop );
+  thisCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
+  thisCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
+  thisCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
+  thisCutBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
+  thisCutBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
+  thisCutBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
+  thisCutBasedID.SetCombinedIsolation( (dr03TkSumPtEle[eleIndex] + 
                                           TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + 
                                           dr03HcalTowerSumEtEle[eleIndex]) / pt );
-  EgammaCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  EgammaCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
-  EgammaCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
+  thisCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
+  thisCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
+  thisCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
 
   // ECAL cleaning variables
-  EgammaCutBasedID.m_cleaner->SetE1(e1);
-  EgammaCutBasedID.m_cleaner->SetE4SwissCross(e4SwissCross);
-  EgammaCutBasedID.m_cleaner->SetFiducialFlag(fidFlagSC);
-  EgammaCutBasedID.m_cleaner->SetSeedFlag(seedRecHitFlag);
-  EgammaCutBasedID.m_cleaner->SetSeedTime(seedTime);
-  EgammaCutBasedID.m_cleaner->SetSeedChi2(seedChi2);
+  thisCutBasedID.m_cleaner->SetE1(e1);
+  thisCutBasedID.m_cleaner->SetE4SwissCross(e4SwissCross);
+  thisCutBasedID.m_cleaner->SetFiducialFlag(fidFlagSC);
+  thisCutBasedID.m_cleaner->SetSeedFlag(seedRecHitFlag);
+  thisCutBasedID.m_cleaner->SetSeedTime(seedTime);
+  thisCutBasedID.m_cleaner->SetSeedChi2(seedChi2);
 
-  //  return EgammaCutBasedID.output(); // class dependent result
-  *eleIdOutput = EgammaCutBasedID.outputNoClassEleId();
-  *isolOutput = EgammaCutBasedID.outputNoClassIso();
-  *convRejOutput = EgammaCutBasedID.outputNoClassConv();
-
+  //  return egammaCutBasedID.output(); // class dependent result
+  *eleIdOutput = thisCutBasedID.outputNoClassEleId();
+  *isolOutput = thisCutBasedID.outputNoClassIso();
+  *convRejOutput = thisCutBasedID.outputNoClassConv();
 }
 
 void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
@@ -1538,7 +1573,16 @@ int HiggsMLSelection::numExtraLeptons() {
     if(_preselection->getSwitch("ptElectronAcc") && !_preselection->passCut("ptElectronAcc",GetPt(pxEle[i],pyEle[i])) ) continue;
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
-    isEleID(i,&theId,&theIso,&theConvRej);
+
+    if (!_preselection->getSwitch("asymmetricID")) 
+      isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
+
+    if (_preselection->getSwitch("asymmetricID")) {
+      float pt = GetPt(pxEle[i],pyEle[i]);	
+      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
+      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedIDLow);
+    }
+
     if(!theId || !theIso || !theConvRej) continue;
     int track = gsfTrackIndexEle[i];
     float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 

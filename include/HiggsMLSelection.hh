@@ -59,7 +59,7 @@ private:
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons();
   //! returns the output of the custom cut electron ID
-  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
+  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
@@ -101,6 +101,7 @@ private:
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
+  CutBasedEleIDSelector EgammaCutBasedIDLow;
   ElectronLikelihood *LH;
   //! to evaluate preselection efficiency
   Selection *_preselection;

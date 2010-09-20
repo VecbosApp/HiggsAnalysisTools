@@ -1,5 +1,6 @@
 isData                          0
 goodRunLS                       0
+asymmetricID			0
 MCtruth				0   
 apply_kFactor			1   
 addCSA07Infos			0  
@@ -17,3 +18,4 @@ METpreselection			0
 dileptonInvMassMin		0
 etUncorrJetAcc                  1 
 electronIDType                  WP80
+electronIDTypeLow		WP80
