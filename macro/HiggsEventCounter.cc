@@ -15,8 +15,8 @@ void countEvents() {
 
   cout << "nametree = " << nametree << endl;
 
-  TChain *chains[33];
-  for(int isample=0; isample<33; isample++) {
+  TChain *chains[38];
+  for(int isample=0; isample<38; isample++) {
     chains[isample] = new TChain(nametree);
   }
 
@@ -54,14 +54,19 @@ void countEvents() {
   chains[24]->Add("results/WJetsALPGEN/W1Jets_Pt300to800-alpgen/*Counters.root");
   chains[25]->Add("results/WJetsALPGEN/W1Jets_Pt800to1600-alpgen/*Counters.root");
 
-  chains[26]->Add("results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*Counters.root");
-  chains[27]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");
-  chains[28]->Add("results/HiggsWW/H190_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[26]->Add("results/HiggsWW/H120_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[27]->Add("results/HiggsWW/H130_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[28]->Add("results/HiggsWW/H140_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[29]->Add("results/HiggsWW/H150_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[30]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[31]->Add("results/HiggsWW/H170_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[32]->Add("results/HiggsWW/H180_2W_2lnu_gluonfusion_7TeV/*Counters.root");
+  chains[33]->Add("results/HiggsWW/H190_2W_2lnu_gluonfusion_7TeV/*Counters.root");
 
-  chains[29]->Add("results/DiBosons/Wgamma/*Counters.root");
-  chains[30]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");
-  chains[31]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
-  chains[32]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");
+  chains[34]->Add("results/DiBosons/Wgamma/*Counters.root");
+  chains[35]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");
+  chains[36]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
+  chains[37]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");
 
   cout << "chains added. " << endl;
 
@@ -101,8 +106,13 @@ void countEvents() {
   sampleName.push_back("W1Jets_Pt300to800-alpgen");
   sampleName.push_back("W1Jets_Pt800to1600-alpgen");
 
+  sampleName.push_back("H120_2W_2lnu");
   sampleName.push_back("H130_2W_2lnu");
+  sampleName.push_back("H140_2W_2lnu");
+  sampleName.push_back("H150_2W_2lnu");
   sampleName.push_back("H160_2W_2lnu");
+  sampleName.push_back("H170_2W_2lnu");
+  sampleName.push_back("H180_2W_2lnu");
   sampleName.push_back("H190_2W_2lnu");
 
   sampleName.push_back("Wgamma");
@@ -110,12 +120,12 @@ void countEvents() {
   sampleName.push_back("WZ_3l");
   sampleName.push_back("ZZ_2l2nu");
 
-  float nEv[33];
-  for(int isample=0; isample<33; isample++) {
+  float nEv[38];
+  for(int isample=0; isample<38; isample++) {
     nEv[isample] = 0.0;
   }
 
-  for(int isample=0; isample<33; isample++) {
+  for(int isample=0; isample<38; isample++) {
 
     cout << "\tProcessing sample # " << isample << "..." << endl;
 
@@ -141,7 +151,7 @@ void countEvents() {
     }
   }
 
-  for(int isample=0; isample<33; isample++) {
+  for(int isample=0; isample<38; isample++) {
     cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
   }
   
