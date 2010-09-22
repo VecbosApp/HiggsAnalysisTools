@@ -15,6 +15,13 @@ merge("results/datasets_trees/WW_ee");
 
 merge("results/datasets_trees/WjetsAlpgen_ee");
 
+merge("results/datasets_trees/H130_ee");
+
+merge("results/datasets_trees/H160_ee");
+
+merge("results/datasets_trees/H190_ee");
+
+
 .q
 
 EOF
