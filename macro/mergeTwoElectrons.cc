@@ -37,6 +37,7 @@ void merge(const char* filename) {
     Float_t         dphi2;
     Float_t         hoe2;
     Float_t         see2;
+    Char_t          finalLeptons;
     Int_t           matched2;
     Float_t         weight;
 
@@ -54,6 +55,7 @@ void merge(const char* filename) {
     treeOrig->SetBranchAddress("hoe2",     &hoe2);
     treeOrig->SetBranchAddress("see2",     &see2);
     treeOrig->SetBranchAddress("matched2", &matched2);
+    treeOrig->SetBranchAddress("finalLeptons", &finalLeptons);
     treeOrig->SetBranchAddress("weight",   &weight);
 
     // copy branches
@@ -69,6 +71,7 @@ void merge(const char* filename) {
     treeNew1->Branch("see",  &see1,  "see/F");
     treeNew1->Branch("matched", &matched1, "matched/I");
     treeNew1->Branch("weight",  &weight,   "weight/F");
+    treeNew1->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
 
     char complete2[500];
     sprintf(complete2,"%s_signal2.root",filename);
@@ -80,8 +83,9 @@ void merge(const char* filename) {
     treeNew2->Branch("dphi", &dphi2, "dphi/F");
     treeNew2->Branch("hoe",  &hoe2,  "hoe/F");
     treeNew2->Branch("see",  &see2,  "see/F");
-    treeNew2->Branch("matched", &matched2, "matched/I");
+    treeNew2->Branch("matched", &matched2, "matched/I");    
     treeNew2->Branch("weight",  &weight,   "weight/F");
+    treeNew->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
 
     char complete3[500];
     sprintf(complete3,"%s_background1.root",filename);
