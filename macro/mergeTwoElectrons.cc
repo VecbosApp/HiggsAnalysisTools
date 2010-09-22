@@ -85,7 +85,7 @@ void merge(const char* filename) {
     treeNew2->Branch("see",  &see2,  "see/F");
     treeNew2->Branch("matched", &matched2, "matched/I");    
     treeNew2->Branch("weight",  &weight,   "weight/F");
-    treeNew->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
+    treeNew2->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
 
     char complete3[500];
     sprintf(complete3,"%s_background1.root",filename);
@@ -99,6 +99,7 @@ void merge(const char* filename) {
     treeNew3->Branch("see",  &see1,  "see/F");
     treeNew3->Branch("matched", &matched1, "matched/I");
     treeNew3->Branch("weight",  &weight,   "weight/F");
+    treeNew3->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
 
     char complete4[500];
     sprintf(complete4,"%s_background2.root",filename);
@@ -112,6 +113,7 @@ void merge(const char* filename) {
     treeNew4->Branch("see",  &see2,  "see/F");
     treeNew4->Branch("matched", &matched2, "matched/I");
     treeNew4->Branch("weight",  &weight,   "weight/F");
+    treeNew4->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
 
     // select only matched electrons for signal
     for(int i=0; i<nentriesOrig; i++) {
