@@ -12,8 +12,13 @@ root -l -b <<EOF
 
 .L addWeightsToTree.cc+
 
+addWeights("results/merged/H120_ee.root", 0.001 * 0.0266634);
 addWeights("results/merged/H130_ee.root", 0.001 * 0.00452859);
+addWeights("results/merged/H140_ee.root", 0.001 * 0.00592661);
+addWeights("results/merged/H150_ee.root", 0.001 * 0.00719188);
 addWeights("results/merged/H160_ee.root", 0.001 * 0.00818843);
+addWeights("results/merged/H170_ee.root", 0.001 * 0.00747956);
+addWeights("results/merged/H180_ee.root", 0.001 * 0.00650182);
 addWeights("results/merged/H190_ee.root", 0.001 * 0.00486346);
 addWeights("results/merged/TTbar_ee.root", 0.001 * 0.122721);
 addWeights("results/merged/SingleTop_sChannel_ee.root", 0.001 * 0.00437115);
@@ -39,8 +44,13 @@ root -l -b <<EOF
 
 gSystem->Load("addWeightsToTree_cc.so");
 
+addWeights("results/merged/H120_mm.root", 0.001 * 0.0266634);
 addWeights("results/merged/H130_mm.root", 0.001 * 0.00452859);
+addWeights("results/merged/H140_mm.root", 0.001 * 0.00592661);
+addWeights("results/merged/H150_mm.root", 0.001 * 0.00719188);
 addWeights("results/merged/H160_mm.root", 0.001 * 0.00818843);
+addWeights("results/merged/H170_mm.root", 0.001 * 0.00747956);
+addWeights("results/merged/H180_mm.root", 0.001 * 0.00650182);
 addWeights("results/merged/H190_mm.root", 0.001 * 0.00486346);
 addWeights("results/merged/TTbar_mm.root", 0.001 * 0.122721);
 addWeights("results/merged/SingleTop_sChannel_mm.root", 0.001 * 0.00437115);
@@ -67,8 +77,13 @@ root -l -b <<EOF
 
 gSystem->Load("addWeightsToTree_cc.so");
 
+addWeights("results/merged/H120_em.root", 0.001 * 0.0266634);
 addWeights("results/merged/H130_em.root", 0.001 * 0.00452859);
+addWeights("results/merged/H140_em.root", 0.001 * 0.00592661);
+addWeights("results/merged/H150_em.root", 0.001 * 0.00719188);
 addWeights("results/merged/H160_em.root", 0.001 * 0.00818843);
+addWeights("results/merged/H170_em.root", 0.001 * 0.00747956);
+addWeights("results/merged/H180_em.root", 0.001 * 0.00650182);
 addWeights("results/merged/H190_em.root", 0.001 * 0.00486346);
 addWeights("results/merged/TTbar_em.root", 0.001 * 0.122721);
 addWeights("results/merged/SingleTop_sChannel_em.root", 0.001 * 0.00437115);
