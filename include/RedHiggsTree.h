@@ -32,7 +32,7 @@ public:
 	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, 
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
-  void fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT,
+  void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex);
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
@@ -75,8 +75,6 @@ private:
   float maxPtEle;  
   float minPtEle;  
   float myDetaLeptons;
-  float myMaxPtLh;
-  float myMinPtLh;
   int myNjets;
   int myNuncorrjets;
   float myDxyEVT;
