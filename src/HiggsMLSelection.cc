@@ -114,6 +114,9 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   TDirectory *EBgt15dir = fileLH->GetDirectory("/");
   TDirectory *EEgt15dir = fileLH->GetDirectory("/");
   LikelihoodSwitches defaultSwitches;
+  defaultSwitches.m_useFBrem = true;
+  defaultSwitches.m_useEoverP = false;
+  defaultSwitches.m_useSigmaPhiPhi = true;
   LH = new ElectronLikelihood(&(*EBlt15dir), &(*EElt15dir), &(*EBgt15dir), &(*EEgt15dir),
                               defaultSwitches, std::string("class"),std::string("class"),true,true);
   
@@ -563,40 +566,6 @@ void HiggsMLSelection::Loop() {
     if (thePositron > -1) myEleIdTree -> fillAll(classificationEle[thePositron], hOverEEle[thePositron], eSuperClusterOverPEle[thePositron], eSeedOverPoutEle[thePositron], deltaEtaAtVtxEle[thePositron], deltaPhiAtVtxEle[thePositron], sqrt(covIEtaIEtaSC[scPositron]));
     myEleIdTree->store();
 
-
-    float theHardEleLhID = 1.0;
-    float theSlowEleLhID = 1.0;
-
-    // custom electron ID (likelihood)
-    if ( theElectron > -1 && thePositron > -1 ) {
-      int theHardest=-1;
-      int theSlowest=-1;
-      if(m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) {
-        theHardest = theElectron;
-        theSlowest = thePositron;
-      } else {
-        theHardest = thePositron;
-        theSlowest = theElectron;
-      }
-      // don't look at names
-//       theHardEleLhID = eleIdLikelihoodEle[theHardest];
-//       theSlowEleLhID = eleIdLikelihoodEle[theSlowest];
-      theHardEleLhID = likelihoodRatio(theHardest,*LH);
-      theSlowEleLhID = likelihoodRatio(theSlowest,*LH);
-
-      // ----------------------
-      /*
-      // to apply likelihood eleID
-      if ( eleIdLikelihoodEle[theHardest] > 0.18 && eleIdLikelihoodEle[theSlowest]> 0.18 ) {
-      theElectronID = true; 
-      thePositronID = true; 
-      }
-      else {
-      theElectronID = false; 
-      thePositronID = false; 
-      }*/
-    }
-
     // --- ele isolation ---
     // separate isolations
     float theEleTrackerPtSum = ( theElectron > -1 ) ? dr03TkSumPtEle[theElectron] : 0.0;
@@ -740,9 +709,7 @@ void HiggsMLSelection::Loop() {
 			     selPreDeltaPhiEE,
 			     isSelectedEE);
 
-      myOutTreeEE -> fillMLVars(theHardEleLhID,
-                                theSlowEleLhID,
-                                njets,
+      myOutTreeEE -> fillMLVars(njets,
                                 nuncorrjets,
                                 m_maxDxyEvt,
                                 m_maxDszEvt,
@@ -848,9 +815,7 @@ void HiggsMLSelection::Loop() {
 			     selPreDeltaPhiMM,
 			     isSelectedMM);
 
-      myOutTreeMM -> fillMLVars(1.0,
-                                1.0,
-                                njets,
+      myOutTreeMM -> fillMLVars(njets,
                                 nuncorrjets,
                                 m_maxDxyEvt,
                                 m_maxDszEvt,
@@ -874,7 +839,6 @@ void HiggsMLSelection::Loop() {
       bool theMuonIDEM = true;
       bool theEleIsolEM = true;
       bool theEleConvRejEM = true;
-      float theEleLikelihoodEM = 0.0;
       float theEleTrackerPtSumEM = 0.0;
       float theEleHcalPtSumEM = 0.0;
       float theEleEcalPtSumEM = 0.0;
@@ -896,7 +860,6 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = theEleHcalPtSum;
 	theEleEcalPtSumEM = theEleEcalPtSum;
         theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron) / m_p4MuonPlus->Pt();
-        theEleLikelihoodEM = eleIdLikelihoodEle[theElectron];
 
         int gsfEle = gsfTrackIndexEle[theElectron]; 
         int ctfMuonPlus = trackIndexMuon[theMuonPlus]; 
@@ -922,7 +885,6 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = thePosHcalPtSum;
 	theEleEcalPtSumEM = thePosEcalPtSum;
         theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron) / m_p4MuonMinus->Pt();
-        theEleLikelihoodEM = eleIdLikelihoodEle[thePositron];
 
         int gsfPos = gsfTrackIndexEle[thePositron]; 
         int ctfMuonMinus = trackIndexMuon[theMuonMinus]; 
@@ -1002,9 +964,7 @@ void HiggsMLSelection::Loop() {
 			     selPreDeltaPhiEM,
 			     isSelectedEM);
 
-      myOutTreeEM -> fillMLVars(theEleLikelihoodEM,
-                                1.0,
-                                njets,
+      myOutTreeEM -> fillMLVars(njets,
                                 nuncorrjets,
                                 m_maxDszEvt,
                                 m_maxDszEvt,
@@ -1179,7 +1139,7 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   thisCutBasedID.SetEOverPin( eop );
   thisCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
   thisCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
-  thisCutBasedID.SetLikelihood( eleIdLikelihoodEle[eleIndex] );
+  thisCutBasedID.SetLikelihood( likelihoodRatio(eleIndex,*LH) );
   thisCutBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
   thisCutBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
   thisCutBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
@@ -1663,8 +1623,8 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     myDphi[i] = deltaPhiAtVtxEle[eleIndex];
     myHoe[i] = hOverEEle[eleIndex];
     int sc = superClusterIndexEle[eleIndex];
-    mySee[i] = sqrt( covIEtaIEtaSC[sc] );
-    mySpp[i] = sqrt( covIPhiIPhiSC[sc] );
+    mySee[i] = SigmaiEiE(eleIndex);
+    mySpp[i] = SigmaiPiP(eleIndex);
     myEop[i] = eSuperClusterOverPEle[eleIndex];
     myFbrem[i] = fbremEle[eleIndex];
     myTrackerIso[i] = dr03TkSumPtEle[eleIndex];
@@ -1679,7 +1639,7 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     myMissHits[i] = expInnerLayersGsfTrack[gsf];
     myDist[i] = convDistEle[eleIndex];
     myDcot[i] = convDcotEle[eleIndex];
-    myLh[i] = eleIdLikelihoodEle[eleIndex];
+    myLh[i] = likelihoodRatio(eleIndex,*LH);
  
     // match with MC truth
     myMatched[i] = 999;

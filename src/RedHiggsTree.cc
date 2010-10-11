@@ -42,8 +42,6 @@ RedHiggsTree::~RedHiggsTree()
 }
 
 void RedHiggsTree::addMLVars() {
-  myTree->Branch("maxPtLh",             &myMaxPtLh,             "maxPtLh/F");
-  myTree->Branch("minPtLh",             &myMinPtLh,             "minPtLh/F");
   myTree->Branch("njets",               &myNjets,               "njets/I");
   myTree->Branch("nuncorrjets",         &myNuncorrjets,         "nuncorrjets/I");
   myTree->Branch("dxyEVT",              &myDxyEVT,              "dxyEVT/F");
@@ -163,11 +161,9 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
 
 }
 
-void RedHiggsTree::fillMLVars(float maxlh, float minlh, int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
+void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
                               float bTagTrackCount, float bTagImpPar, float bTagSecVertex) {
 
-  myMaxPtLh = maxlh;
-  myMinPtLh = minlh;
   myNjets   = njets;
   myNuncorrjets = nuncorrjets;
   myDxyEVT = dxyEVT;
