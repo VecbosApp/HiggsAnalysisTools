@@ -13,6 +13,7 @@ tightMET                1
 projectedMET            1
 mllMin                  1
 mllMax                  1
+bTagVeto                1
 jetConeWidth		1
 etaJetAcc		1
 etJetAcc		1
