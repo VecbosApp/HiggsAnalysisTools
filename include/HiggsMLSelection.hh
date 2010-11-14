@@ -54,6 +54,8 @@ private:
   //! count jet multiplicity
   int numJets();
   int numUncorrJets();
+  //! give the highest b-tag of calojets in the event
+  float bVetoJets();
   //! count the soft muons
   int numSoftMuons();
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV

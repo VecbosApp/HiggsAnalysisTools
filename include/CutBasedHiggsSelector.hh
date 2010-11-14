@@ -52,6 +52,7 @@ public:
   void SetUncorrJetVeto(bool passedUncorrCJV) { m_passedUncorrJetVeto = passedUncorrCJV; }
   void SetNJets(int njets)               { m_nJets         = njets; }
   void SetNUncorrJets(int nuncorrjets)   { m_nUncorrJets   = nuncorrjets; }
+  void SetBTagJets(float btag)           { m_btagJets      = btag; }
   void SetNSoftMuons(int nsoftmu)        { m_nSoftMuons    = nsoftmu; }
   void SetNExtraLeptons(int nextralep)   { m_nExtraLeptons = nextralep; }
   void SetMet(float met)                 { m_met           = met;}
@@ -86,6 +87,7 @@ private:
   bool m_passedJetVeto;
   bool m_passedUncorrJetVeto;
   int m_nJets, m_nUncorrJets, m_nSoftMuons, m_nExtraLeptons;
+  float m_btagJets;
   float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons;
   float m_maxPtElectron, m_minPtElectron;
   int m_processID;
