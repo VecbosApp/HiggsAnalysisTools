@@ -11,6 +11,7 @@ convRej                 1
 looseMET                1
 tightMET                1
 projectedMET            1
+metOverPtLL             1
 mllMin                  1
 mllMax                  1
 bTagVeto                1
@@ -20,5 +21,5 @@ etJetAcc		1
 nSoftMuons              1
 nExtraLeptons           1
 deltaPhi		0
-
+deltaPhiLLJet           1
 
