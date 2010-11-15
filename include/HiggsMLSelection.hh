@@ -56,6 +56,8 @@ private:
   int numUncorrJets();
   //! give the highest b-tag of calojets in the event
   float bVetoJets();
+  //! in the 1-jet bin, deltaphi between ll system and leading jet
+  float deltaPhiLLJet();
   //! count the soft muons
   int numSoftMuons();
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
@@ -130,10 +132,11 @@ private:
   //! kinematics of the event
   int theElectron,  thePositron;
   int theMuonMinus, theMuonPlus;
+  int theLeadingJet;
   TLorentzVector *m_p4ElectronPlus, *m_p4ElectronMinus;
   TLorentzVector *m_p4MuonPlus, *m_p4MuonMinus;
   TLorentzVector *m_p4MET;
-  TVector3 *m_p3ProjectedMET;
+  TVector3 *m_p3ProjectedMET, m_dilepPt;
   float m_HoEElectronMinus, m_HoEElectronPlus;
   float m_CaloEneElectronMinus, m_CaloEneElectronPlus;
   float m_deltaPhi[3];
@@ -142,6 +145,7 @@ private:
   float m_transvMass[3];
   float m_mT2[3];
   float m_projectedMet[3];
+  float m_metOptll[3];
   //! used for ee final state
   float hardestElectronPt, hardestMuonPt;
   //! used for mm final state

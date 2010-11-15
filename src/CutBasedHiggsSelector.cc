@@ -36,6 +36,8 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_nExtraLeptons    = selector.m_nExtraLeptons;
   m_met = selector.m_met;
   m_projectedMet = selector.m_projectedMet;
+  m_metOverPtLL = selector.m_metOverPtLL;
+  m_deltaPhiLLJet = selector.m_deltaPhiLLJet;
   m_deltaPhi = selector.m_deltaPhi;
   m_detaLeptons = selector.m_detaLeptons;
   m_maxPtElectron = selector.m_maxPtElectron;
@@ -72,6 +74,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("mllMax");
   _selection->addCut("tightMET");
   _selection->addCut("projectedMET");
+  _selection->addCut("metOverPtLL");
+  _selection->addCut("deltaPhiLLJet");
   _selection->addCut("jetConeWidth");
   _selection->addCut("etaJetAcc");
   _selection->addCut("etJetAcc");
@@ -99,6 +103,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("mllMin");
   globalCounter->AddVar("mllMax");
   globalCounter->AddVar("tightMETandPrMET");
+  globalCounter->AddVar("metOverPtLL");
   globalCounter->AddVar("zeroJets");
   globalCounter->AddVar("bTagVeto");
   globalCounter->AddVar("nSoftMuons");
@@ -142,6 +147,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("mllMin");
       processCounter->AddVar("mllMax");
       processCounter->AddVar("tightMETandPrMET");
+      processCounter->AddVar("metOverPtLL");
       processCounter->AddVar("zeroJets");
       processCounter->AddVar("bTagVeto");
       processCounter->AddVar("nSoftMuons");
@@ -214,6 +220,9 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
   theCounter->IncrVar("tightMETandPrMET",m_weight);
   
+  if (_selection->getSwitch("metOverPtLL") && !_selection->passCut("metOverPtLL",m_metOverPtLL)) return false;
+  theCounter->IncrVar("metOverPtLL",m_weight);
+
   if (m_nJets==0) {
     theCounter->IncrVar("zeroJets",m_weight);
     m_jetVeto = true;
@@ -251,6 +260,8 @@ bool CutBasedHiggsSelector::output() {
 
     if(_selection->getSwitch("nExtraLeptons") && !_selection->passCut("nExtraLeptons",m_nExtraLeptons)) return false; 
 
+    if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
+    
     if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
     if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
     
@@ -285,7 +296,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("mllMin","looseMET");
       theCounter->Draw("mllMax","mllMin");
       theCounter->Draw("tightMETandPrMET","mllMax");
-      theCounter->Draw("zeroJets","tightMETandPrMET");
+      theCounter->Draw("metOverPtLL","tightMETandPrMET");
+      theCounter->Draw("zeroJets","metOverPtLL");
       theCounter->Draw("bTagVeto","zeroJets");
       theCounter->Draw("nSoftMuons","bTagVeto");
       theCounter->Draw("nExtraLeptons","nSoftMuons");
@@ -316,7 +328,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("mllMin","looseMET");
     globalCounter->Draw("mllMax","mllMin");
     globalCounter->Draw("tightMETandPrMET","mllMax");
-    globalCounter->Draw("zeroJets","tightMETandPrMET");
+    globalCounter->Draw("metOverPtLL","tightMETandPrMET");
+    globalCounter->Draw("zeroJets","metOverPtLL");
     globalCounter->Draw("bTagVeto","zeroJets");
     globalCounter->Draw("nSoftMuons","bTagVeto");
     globalCounter->Draw("nExtraLeptons","nSoftMuons");
