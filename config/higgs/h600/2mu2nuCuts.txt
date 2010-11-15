@@ -1,4 +1,4 @@
-maxPtLepton             130              10000
+maxPtLepton             90              10000
 minPtLepton             30              10000
 leptonD0                -0.020          0.020
 muGlobalIso             -10000          0.15
@@ -9,7 +9,7 @@ looseMET                20              10000
 tightMET                30              10000
 projectedMET            20              10000
 metOverPtLL             0.6             10000
-mll                     12              400
+mll                     12              300
 mllZPeak                15              10000
 bTagVeto                -2.1            2.1
 jetConeWidth		0.0		0.3
