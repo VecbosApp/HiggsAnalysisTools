@@ -70,8 +70,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addSwitch("leptonId");
   _selection->addSwitch("convRej");
   _selection->addCut("looseMET");
-  _selection->addCut("mllMin");
-  _selection->addCut("mllMax");
+  _selection->addCut("mll");
+  _selection->addCut("mllZPeak");
   _selection->addCut("tightMET");
   _selection->addCut("projectedMET");
   _selection->addCut("metOverPtLL");
@@ -100,8 +100,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("leptonId");
   globalCounter->AddVar("convRej");
   globalCounter->AddVar("looseMET");
-  globalCounter->AddVar("mllMin");
-  globalCounter->AddVar("mllMax");
+  globalCounter->AddVar("mll");
+  globalCounter->AddVar("mllZPeak");
   globalCounter->AddVar("tightMETandPrMET");
   globalCounter->AddVar("metOverPtLL");
   globalCounter->AddVar("zeroJets");
@@ -144,8 +144,8 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("leptonId");
       processCounter->AddVar("convRej");
       processCounter->AddVar("looseMET");
-      processCounter->AddVar("mllMin");
-      processCounter->AddVar("mllMax");
+      processCounter->AddVar("mll");
+      processCounter->AddVar("mllZPeak");
       processCounter->AddVar("tightMETandPrMET");
       processCounter->AddVar("metOverPtLL");
       processCounter->AddVar("zeroJets");
@@ -210,11 +210,11 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("looseMET") && !_selection->passCut("looseMET",m_met)) return false; 
   theCounter->IncrVar("looseMET",m_weight);
 
-  if (_selection->getSwitch("mllMin") && !_selection->passCut("mllMin", m_invMass)) return false;
-  theCounter->IncrVar("mllMin",m_weight);
+  if (_selection->getSwitch("mll") && !_selection->passCut("mll", m_invMass)) return false;
+  theCounter->IncrVar("mll",m_weight);
 
-  if (_selection->getSwitch("mllMax") && !_selection->passCut("mllMax", fabs(m_invMass-91.1876))) return false;
-  theCounter->IncrVar("mllMax",m_weight);
+  if (_selection->getSwitch("mllZPeak") && !_selection->passCut("mllZPeak", fabs(m_invMass-91.1876))) return false;
+  theCounter->IncrVar("mllZPeak",m_weight);
 
   if (_selection->getSwitch("tightMET") && !_selection->passCut("tightMET",m_met)) return false; 
   if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
@@ -293,9 +293,9 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("leptonId","muGlobalIso");      
       theCounter->Draw("convRej","leptonId");
       theCounter->Draw("looseMET","convRej");
-      theCounter->Draw("mllMin","looseMET");
-      theCounter->Draw("mllMax","mllMin");
-      theCounter->Draw("tightMETandPrMET","mllMax");
+      theCounter->Draw("mll","looseMET");
+      theCounter->Draw("mllZPeak","mll");
+      theCounter->Draw("tightMETandPrMET","mllZPeak");
       theCounter->Draw("metOverPtLL","tightMETandPrMET");
       theCounter->Draw("zeroJets","metOverPtLL");
       theCounter->Draw("bTagVeto","zeroJets");
@@ -325,9 +325,9 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("leptonId","muGlobalIso");      
     globalCounter->Draw("convRej","leptonId");
     globalCounter->Draw("looseMET","convRej");
-    globalCounter->Draw("mllMin","looseMET");
-    globalCounter->Draw("mllMax","mllMin");
-    globalCounter->Draw("tightMETandPrMET","mllMax");
+    globalCounter->Draw("mll","looseMET");
+    globalCounter->Draw("mllZPeak","mll");
+    globalCounter->Draw("tightMETandPrMET","mllZPeak");
     globalCounter->Draw("metOverPtLL","tightMETandPrMET");
     globalCounter->Draw("zeroJets","metOverPtLL");
     globalCounter->Draw("bTagVeto","zeroJets");

@@ -12,8 +12,8 @@ looseMET                1
 tightMET                1
 projectedMET            1
 metOverPtLL             1
-mllMin                  1
-mllMax                  1
+mll                     1
+mllZPeak                1
 bTagVeto                1
 jetConeWidth		1
 etaJetAcc		1

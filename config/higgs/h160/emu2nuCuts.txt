@@ -9,8 +9,8 @@ looseMET                20              10000
 tightMET                20              10000
 projectedMET            20              10000
 metOverPtLL             0.6             10000
-mllMin                  12              10000
-mllMax                  0               10000
+mll                     12              40
+mllZPeak                0               10000
 bTagVeto                -2.1            2.1
 jetConeWidth		0.0		0.3
 etaJetAcc		-5.0		5.0
