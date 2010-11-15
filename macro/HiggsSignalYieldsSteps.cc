@@ -11,18 +11,18 @@ using namespace std;
 enum { ee=0, mm=1, em=2 };
 
 string preSelCuts[10];
-string fullSelCuts[22];
+string fullSelCuts[23];
 
 int UsePreSelCuts[3][10];
-int UseCuts[3][22];
+int UseCuts[3][23];
 
 int H_mass[8];
 
 float H_preSel[11][8];
-float H_fullSel[22][8];
+float H_fullSel[23][8];
 
 float H_eff_preSel[11][8];
-float H_eff_fullSel[22][8];
+float H_eff_fullSel[23][8];
 
 float H_finaleff_preSel[8];    
 float H_finaleff_fullSel[8];    
@@ -88,7 +88,7 @@ void computeYields(float lumi, const char* finalstate) {
 
 
   float nPreSelTot[10][8];
-  float nFullSelTot[22][8];
+  float nFullSelTot[23][8];
 
   for(int isample=0; isample<8; isample++) {
     for(int icut=0; icut<10; icut++) { nPreSelTot[icut][isample]  = 0.0; }
@@ -97,7 +97,7 @@ void computeYields(float lumi, const char* finalstate) {
 
   // preselections
   int nCutsAnaPre  = 10;
-  int nCutsAnaFull = 22;
+  int nCutsAnaFull = 23;
   for(int isample=0; isample<8; isample++) {
 
     cout << "Processing sample # " << isample << endl;
@@ -190,21 +190,21 @@ void setupCuts() {
   }
 
   for(int ichan=0; ichan<3; ichan++) {
-    for(int i=0; i<22; i++) {
+    for(int i=0; i<23; i++) {
       UseCuts[ichan][i] = 1;
     }
   }
 
   // unusued ee cuts
   UsePreSelCuts[ee][1] = UsePreSelCuts[ee][7] = UsePreSelCuts[ee][8] = 0; 
-  UseCuts[ee][5] = UseCuts[ee][6] = UseCuts[ee][7] = UseCuts[ee][8] = UseCuts[ee][19] = 0; // muon iso
+  UseCuts[ee][5] = UseCuts[ee][6] = UseCuts[ee][7] = UseCuts[ee][8] = UseCuts[ee][20] = 0; // muon iso
 
   // unusued mm cuts
   UsePreSelCuts[mm][1] = UsePreSelCuts[mm][7] = UsePreSelCuts[mm][8] = 0; 
-  UseCuts[mm][4] = UseCuts[mm][10] = UseCuts[mm][5] = UseCuts[mm][6] = UseCuts[mm][7] = UseCuts[mm][19] = 0; // ele ID and conv. rej. and separate mu iso
+  UseCuts[mm][4] = UseCuts[mm][10] = UseCuts[mm][5] = UseCuts[mm][6] = UseCuts[mm][7] = UseCuts[mm][20] = 0; // ele ID and conv. rej. and separate mu iso
 
   // unusued em cuts
-  UsePreSelCuts[em][1] = UsePreSelCuts[em][7] = UsePreSelCuts[em][8] = UseCuts[em][13] = UseCuts[em][19] = 0;
+  UsePreSelCuts[em][1] = UsePreSelCuts[em][7] = UsePreSelCuts[em][8] = UseCuts[em][13] = UseCuts[em][20] = 0;
   UseCuts[em][5] = UseCuts[em][6] = UseCuts[em][7] = 0; // separate mu iso 
   
   preSelCuts[0]="event";
@@ -234,12 +234,13 @@ void setupCuts() {
   fullSelCuts[13]="$|m_{ll}-m_Z|>15$ GeV";
   fullSelCuts[14]="tight (p)MET";
   fullSelCuts[15]="jet veto";
-  fullSelCuts[16]="$\\mu^{soft}$ veto";
-  fullSelCuts[17]="extra lepton veto";
-  fullSelCuts[18]="$\\Delta \\phi$";
-  fullSelCuts[19]="final";
-  fullSelCuts[20]="1 jets";
-  fullSelCuts[21]="$>1$ jets";
+  fullSelCuts[16]="anti b-tag";
+  fullSelCuts[17]="$\\mu^{soft}$ veto";
+  fullSelCuts[18]="extra lepton veto";
+  fullSelCuts[19]="$\\Delta \\phi$";
+  fullSelCuts[20]="final";
+  fullSelCuts[21]="1 jets";
+  fullSelCuts[22]="$>1$ jets";
 
 }
 
@@ -309,7 +310,7 @@ void printLatex(float lumi, const char* finalstate) {
 
   textfile << "\\hline" << endl;
     
-  for(int icut=0; icut<20; icut++) {
+  for(int icut=0; icut<21; icut++) {
 
     if(!strcmp(finalstate,"EE")) {
       if(!UseCuts[ee][icut]) continue;
@@ -335,7 +336,7 @@ void printLatex(float lumi, const char* finalstate) {
 
   textfile << "total fullselection " << "\t&\t";
   for(int imass=0; imass<8; ++imass) {
-    textfile << H_fullSel[19][imass] << " (" << 100. * H_finaleff_fullSel[imass]  << "\\%)";
+    textfile << H_fullSel[20][imass] << " (" << 100. * H_finaleff_fullSel[imass]  << "\\%)";
     if(imass<7) textfile << "\t&\t";
     else textfile << "\t\\\\" << endl;
   }
@@ -344,28 +345,28 @@ void printLatex(float lumi, const char* finalstate) {
     
   textfile << "total " << "\t&\t";
   for(int imass=0; imass<8; ++imass) {
-    textfile << H_fullSel[19][imass] << " (" << 100. * H_finaleff[imass]   << "\\%)";
+    textfile << H_fullSel[20][imass] << " (" << 100. * H_finaleff[imass]   << "\\%)";
     if(imass<7) textfile << "\t&\t";
     else textfile << "\t\\\\" << endl;
   }
     
   textfile << "0 jets bin " << "\t&\t";
   for(int imass=0; imass<8; ++imass) {
-    textfile << H_fullSel[19][imass];
+    textfile << H_fullSel[20][imass];
     if(imass<7) textfile << "\t&\t";
     else textfile << "\t\\\\" << endl;
   }
     
   textfile << "1 jets bin " << "\t&\t";
   for(int imass=0; imass<8; ++imass) {
-    textfile << H_fullSel[20][imass];
+    textfile << H_fullSel[21][imass];
     if(imass<7) textfile << "\t&\t";
     else textfile << "\t\\\\" << endl;
   }
 
   textfile << "$>1$ jets bin " << "\t&\t";
   for(int imass=0; imass<8; ++imass) {
-    textfile << H_fullSel[21][imass];
+    textfile << H_fullSel[22][imass];
     if(imass<7) textfile << "\t&\t";
     else textfile << "\t\\\\" << endl;
   }
@@ -384,7 +385,7 @@ void printLatex(float lumi, const char* finalstate) {
   if(!strcmp(finalstate,"EM")) channel = em;
   if(!strcmp(finalstate,"EE")) channel = ee;
 
-  for(int imass=0; imass<8; ++imass) H_final[channel][imass] = H_fullSel[19][imass];
+  for(int imass=0; imass<8; ++imass) H_final[channel][imass] = H_fullSel[20][imass];
 
 }
 
