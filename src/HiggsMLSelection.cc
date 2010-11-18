@@ -443,9 +443,9 @@ void HiggsMLSelection::Loop() {
     }
 
     //IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    bool newTriggerMask = false;
-    if (_preselection->getSwitch("isData")) newTriggerMask = true;
-    reloadTriggerMask(newTriggerMask);
+//     bool newTriggerMask = false;
+//     if (_preselection->getSwitch("isData")) newTriggerMask = true;
+    reloadTriggerMask(true);
     //Good Run selection
     if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && !isGoodRunLS()) {
       if ( lastRun!= runNumber || lastLumi != lumiBlock) {
@@ -462,8 +462,8 @@ void HiggsMLSelection::Loop() {
       std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is OK" << std::endl;
     }
     
-    // trigger
-    bool passedHLT = hasPassedHLT();
+    // trigger (temporary until decided)
+    bool passedHLT = (_preselection->getSwitch("isData")) ? hasPassedHLT() : true;
 
     //    myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
     //    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
@@ -857,6 +857,7 @@ void HiggsMLSelection::Loop() {
       float theMuonGlobalSumEM = 0.0;
       float theEleDxy = 0.0;
       float theMuonDxy = 0.0;
+      float hardestLeptonPt, slowestLeptonPt;
 
       theDeltaPhiEM    = m_deltaPhi[em];
       theDeltaErreEM   = m_deltaErre[em];
@@ -872,6 +873,13 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = theEleHcalPtSum;
 	theEleEcalPtSumEM = theEleEcalPtSum;
         theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron) / m_p4MuonPlus->Pt();
+        if(m_p4ElectronMinus->Pt() > m_p4MuonPlus->Pt()) {
+          hardestLeptonPt = m_p4ElectronMinus->Pt();
+          slowestLeptonPt = m_p4MuonPlus->Pt();
+        } else {
+          hardestLeptonPt = m_p4MuonPlus->Pt();
+          slowestLeptonPt = m_p4ElectronMinus->Pt();
+        }
 
         int gsfEle = gsfTrackIndexEle[theElectron]; 
         int ctfMuonPlus = trackIndexMuon[theMuonPlus]; 
@@ -897,6 +905,13 @@ void HiggsMLSelection::Loop() {
 	theEleHcalPtSumEM = thePosHcalPtSum;
 	theEleEcalPtSumEM = thePosEcalPtSum;
         theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron) / m_p4MuonMinus->Pt();
+        if(m_p4ElectronPlus->Pt() > m_p4MuonMinus->Pt()) {
+          hardestLeptonPt = m_p4ElectronPlus->Pt();
+          slowestLeptonPt = m_p4MuonMinus->Pt();
+        } else {
+          hardestLeptonPt = m_p4MuonMinus->Pt();
+          slowestLeptonPt = m_p4ElectronPlus->Pt();
+        }
 
         int gsfPos = gsfTrackIndexEle[thePositron]; 
         int ctfMuonMinus = trackIndexMuon[theMuonMinus]; 
@@ -914,8 +929,8 @@ void HiggsMLSelection::Loop() {
 
       // selections
       CutBasedHiggsSelectionEM.SetWeight(weight);
-      CutBasedHiggsSelectionEM.SetHighElePt(hardestElectronPt);
-      CutBasedHiggsSelectionEM.SetLowElePt(slowestMuonPt);
+      CutBasedHiggsSelectionEM.SetHighElePt(hardestLeptonPt);
+      CutBasedHiggsSelectionEM.SetLowElePt(slowestLeptonPt);
       CutBasedHiggsSelectionEM.SetElectronId(true);
       CutBasedHiggsSelectionEM.SetElectronId(theMuonIDEM);
       CutBasedHiggsSelectionEM.SetPositronId(theEleIDEM);
@@ -970,8 +985,8 @@ void HiggsMLSelection::Loop() {
 			     theDeltaErreEM, 
 			     theSTransvMassEM, 
 			     theInvMassEM, 
-			     hardestMuonPt, 
-			     slowestMuonPt, 
+			     hardestLeptonPt, 
+			     slowestLeptonPt, 
 			     theDetaLeptonsEM,
 			     selUpToFinalLeptonsEM,
 			     selUpToJetVetoEM,
@@ -1158,9 +1173,9 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   thisCutBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
   thisCutBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
   thisCutBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
-  thisCutBasedID.SetCombinedIsolation( (dr03TkSumPtEle[eleIndex] + 
-                                          TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + 
-                                          dr03HcalTowerSumEtEle[eleIndex]) / pt );
+  float iso = (fabs(etaEle[eleIndex])<1.479) ? (dr03TkSumPtEle[eleIndex] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtEle[eleIndex]) / pt :
+    (dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtEle[eleIndex]) / pt;
+  thisCutBasedID.SetCombinedIsolation(iso);
   thisCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
   thisCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
   thisCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
