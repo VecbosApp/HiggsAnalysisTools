@@ -158,12 +158,14 @@ float H500_xsec = 0;
 float H550_xsec = 0;
 float H600_xsec = 0;
 float Wgamma_xsec = 41.76;
-float Wjets_xsec = 31314;
-float Zjets_xsec = 3048;
+float Wlnu_xsec = 31314./3. * 0.742; // NLO * filtereff (BR W->lnu included);
+float ZjetsLoMass_xsec = 1950.; // not good: is >50 xsec - 10-50 xsec
+float ZjetsHiMass_xsec = 3048.;
 float TTjets_xsec = 157.5;
 float WW_xsec = 4.50347; // WW_2l2nu
 float WZ_xsec = 0.599442; // WZ_3l
-float ZZ_xsec = 0.25252; // ZZ_2l2nu
+//float ZZ_xsec = 0.25252; // ZZ_2l2nu
+float ZZ_xsec = 5.9; // inclusive
 float TTbar_xsec = 165;
 
 // here xsec = x-sec * filter_eff (pb)
@@ -177,7 +179,7 @@ float QCD_BCtoE_Pt80to170_xsec = 0.906E+06 * 0.0104;
 // xsec (pb)
 float SingleTopS_xsec = 4.21 * (0.1080*3);
 float SingleTopT_xsec = 64.6 * (0.1080*3);
-float SingleTopTW_xsec = 10.6;
+float SingleTopTW_xsec = 10.6 * (0.1080*3);
 
 // xsec (pb)
 float PhotonJet_Pt0to15_xsec = 84.46E+06;
@@ -195,13 +197,13 @@ float InclusiveMu15_xsec = 48.44*0.00176*1.0E+09; // ppMuX
 
 float Higgs_xsec = H160_xsec;
 
-string sampleNames[29];
+string sampleNames[20];
 
 void computeYields(float lumi, const char* finalstate) {
 
-  TChain *chains_preSel[29];
-  TChain *chains_fullSel[29];
-  for(int isample=0; isample<29; isample++) {
+  TChain *chains_preSel[20];
+  TChain *chains_fullSel[20];
+  for(int isample=0; isample<20; isample++) {
     chains_preSel[isample]  = new TChain("PRESELECTION_EVENT_COUNTER");
     char fullsel_treename[200];
     sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_%s",finalstate);
@@ -211,9 +213,9 @@ void computeYields(float lumi, const char* finalstate) {
   // signal
   sampleNames[0] = "Higgs";
   // backgrounds
-  sampleNames[1] = "W+jets";
-  sampleNames[2] = "TTbar+jets";
-  sampleNames[3] = "Z+jets";
+  sampleNames[1] = "TTbar+jets";
+  sampleNames[2] = "Z+jets Hi Mass";
+  sampleNames[3] = "Z+jets Lo Mass";
   sampleNames[4] = "WW";
   sampleNames[5] = "ZZ";
   sampleNames[6] = "WZ";
@@ -221,107 +223,59 @@ void computeYields(float lumi, const char* finalstate) {
   sampleNames[8] = "SingleTop_sChannel";
   sampleNames[9] = "SingleTop_tChannel";
   sampleNames[10] = "SingleTop_tWChannel";
-  sampleNames[11] = "QCD_EMEnriched_Pt20to30";
-  sampleNames[12] = "QCD_EMEnriched_Pt30to80";
-  sampleNames[13] = "QCD_EMEnriched_Pt80to170";
-  sampleNames[14] = "QCD_BCtoE_Pt20to30";
-  sampleNames[15] = "QCD_BCtoE_Pt30to80";
-  sampleNames[16] = "QCD_BCtoE_Pt80to170";
-  sampleNames[17] = "PhotonJet_Pt0to15";
-  sampleNames[18] = "PhotonJet_Pt15to20";
-  sampleNames[19] = "PhotonJet_Pt20to30";
-  sampleNames[20] = "PhotonJet_Pt30to50";
-  sampleNames[21] = "PhotonJet_Pt50to80";
-  sampleNames[22] = "PhotonJet_Pt80to120";
-  sampleNames[23] = "PhotonJet_Pt120to170";
-  sampleNames[24] = "PhotonJet_Pt170to300";
-  sampleNames[25] = "PhotonJet_Pt300to500";
-  sampleNames[26] = "PhotonJet_Pt500toInf";
-  sampleNames[27] = "InclusiveMu15";
-  // backgrounds (alternative to some of the above ones)
-  sampleNames[28] = "TTbar";
+  sampleNames[11] = "Wenu";
+  sampleNames[12] = "Wmunu";
+  sampleNames[13] = "Wtaunu";
 
   // signal
-  chains_preSel[0]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
+  chains_preSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-160/*Counters.root");       
   // backgrounds
-  chains_preSel[1]->Add("results/WJetsMADGRAPH/WJets-madgraph/*Counters.root");       
-  chains_preSel[2]->Add("results/TTbar/TTbarJets-madgraph/*Counters.root");       
-  chains_preSel[3]->Add("results/ZJetsMADGRAPH/ZJets-madgraph/*Counters.root");       
-  chains_preSel[4]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");   
-  chains_preSel[5]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");   
-  chains_preSel[6]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
-  chains_preSel[7]->Add("results/DiBosons/Wgamma/*Counters.root");
-  chains_preSel[8]->Add("results/SingleTop/SingleTop_sChannel-madgraph/*Counters.root");
-  chains_preSel[9]->Add("results/SingleTop/SingleTop_tChannel-madgraph/*Counters.root");
-  chains_preSel[10]->Add("results/SingleTop/SingleTop_tWChannel-madgraph/*Counters.root");
-  chains_preSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
-  chains_preSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
-  chains_preSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
-  chains_preSel[14]->Add("results/QCD_BCtoE_Pt20to30/*Counters.root");
-  chains_preSel[15]->Add("results/QCD_BCtoE_Pt30to80/*Counters.root");
-  chains_preSel[16]->Add("results/QCD_BCtoE_Pt80to170/*Counters.root");
-  chains_preSel[17]->Add("results/PhotonJet_Pt0to15/*Counters.root");
-  chains_preSel[18]->Add("results/PhotonJet_Pt15to20/*Counters.root");
-  chains_preSel[19]->Add("results/PhotonJet_Pt20to30/*Counters.root");
-  chains_preSel[20]->Add("results/PhotonJet_Pt30to50/*Counters.root");
-  chains_preSel[21]->Add("results/PhotonJet_Pt50to80/*Counters.root");
-  chains_preSel[22]->Add("results/PhotonJet_Pt80to120/*Counters.root");
-  chains_preSel[23]->Add("results/PhotonJet_Pt120to170/*Counters.root");
-  chains_preSel[24]->Add("results/PhotonJet_Pt170to300/*Counters.root");
-  chains_preSel[25]->Add("results/PhotonJet_Pt300to500/*Counters.root");
-  chains_preSel[26]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
-  chains_preSel[27]->Add("results/InclusiveMu15/*Counters.root");
-  // backgrounds (alternative to some of the above ones)
-  chains_preSel[28]->Add("results/TTbar/*Counters.root");       
+  chains_preSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
+  chains_preSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
+  chains_preSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
+  chains_preSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
+  chains_preSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
+  chains_preSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
+  chains_preSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
+  chains_preSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains_preSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains_preSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains_preSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
+  chains_preSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
+  chains_preSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains_fullSel[0]->Add("results/HiggsWW/H160_2W_2lnu_gluonfusion_7TeV/*Counters.root");       
+  // signal
+  chains_fullSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-160/*Counters.root");       
   // backgrounds
-  chains_fullSel[1]->Add("results/WJetsMADGRAPH/WJets-madgraph/*Counters.root");       
-  chains_fullSel[2]->Add("results/TTbar/TTbarJets-madgraph/*Counters.root");       
-  chains_fullSel[3]->Add("results/ZJetsMADGRAPH/ZJets-madgraph/*Counters.root");       
-  chains_fullSel[4]->Add("results/DiBosons/WW_2l_7TeV/*Counters.root");   
-  chains_fullSel[5]->Add("results/DiBosons/ZZ_2l2nu/*Counters.root");   
-  chains_fullSel[6]->Add("results/DiBosons/WZ_3l_7TeV/*Counters.root");
-  chains_fullSel[7]->Add("results/DiBosons/Wgamma/*Counters.root");
-  chains_fullSel[8]->Add("results/SingleTop/SingleTop_sChannel-madgraph/*Counters.root");
-  chains_fullSel[9]->Add("results/SingleTop/SingleTop_tChannel-madgraph/*Counters.root");
-  chains_fullSel[10]->Add("results/SingleTop/SingleTop_tWChannel-madgraph/*Counters.root");
-  chains_fullSel[11]->Add("results/QCD_EMEnriched_Pt20to30/*Counters.root");
-  chains_fullSel[12]->Add("results/QCD_EMEnriched_Pt30to80/*Counters.root");
-  chains_fullSel[13]->Add("results/QCD_EMEnriched_Pt80to170/*Counters.root");
-  chains_fullSel[14]->Add("results/QCD_BCtoE_Pt20to30/*Counters.root");
-  chains_fullSel[15]->Add("results/QCD_BCtoE_Pt30to80/*Counters.root");
-  chains_fullSel[16]->Add("results/QCD_BCtoE_Pt80to170/*Counters.root");
-  chains_fullSel[17]->Add("results/PhotonJet_Pt0to15/*Counters.root");
-  chains_fullSel[18]->Add("results/PhotonJet_Pt15to20/*Counters.root");
-  chains_fullSel[19]->Add("results/PhotonJet_Pt20to30/*Counters.root");
-  chains_fullSel[20]->Add("results/PhotonJet_Pt30to50/*Counters.root");
-  chains_fullSel[21]->Add("results/PhotonJet_Pt50to80/*Counters.root");
-  chains_fullSel[22]->Add("results/PhotonJet_Pt80to120/*Counters.root");
-  chains_fullSel[23]->Add("results/PhotonJet_Pt120to170/*Counters.root");
-  chains_fullSel[24]->Add("results/PhotonJet_Pt170to300/*Counters.root");
-  chains_fullSel[25]->Add("results/PhotonJet_Pt300to500/*Counters.root");
-  chains_fullSel[26]->Add("results/PhotonJet_Pt500toInf/*Counters.root");
-  chains_fullSel[27]->Add("results/InclusiveMu15/*Counters.root");
-  // backgrounds (alternative to some of the above ones)
-  chains_fullSel[28]->Add("results/TTbar/*Counters.root");       
+  chains_fullSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
+  chains_fullSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
+  chains_fullSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
+  chains_fullSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
+  chains_fullSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
+  chains_fullSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
+  chains_fullSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
+  chains_fullSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains_fullSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains_fullSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains_fullSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
+  chains_fullSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
+  chains_fullSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
+  float nPreSelTot[10][20];
+  float nFullSelTot[24][20];
 
-  float nPreSelTot[10][29];
-  float nFullSelTot[24][29];
-
-  for(int isample=0; isample<29; isample++) {
+  for(int isample=0; isample<20; isample++) {
     for(int icut=0; icut<10; icut++) { nPreSelTot[icut][isample]  = 0.0; }
     for(int icut=0; icut<28; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
 
-  // preselections
+  // preSelections
   int nCutsAnaPre  = 10;
   int nCutsAnaFull = 24;
-  for(int isample=0; isample<29; isample++) {
+  for(int isample=0; isample<20; isample++) {
 
-    cout << "Processing sample # " << isample << endl;
-    
+    cout << "adding sample " << isample << endl;
+
     // List of branches    
     Int_t           nCutsPre;
     Float_t         nSelPre[11];   //[nCuts]
@@ -355,16 +309,23 @@ void computeYields(float lumi, const char* finalstate) {
     }
   }
 
-  // eff at preselection level
+  // eff at preSelection level
   for(int icut=0; icut<nCutsAnaPre; icut++) {
 
     // numbers
     // N = L * x-sec * eff (eff = N_fin / N_ini)
     if(nPreSelTot[0][0]>0) { 
       H_preSel[icut]      = lumi * Higgs_xsec  * nPreSelTot[icut][0]/nPreSelTot[0][0];
-      Wj_preSel[icut]     = lumi * Wjets_xsec  * nPreSelTot[icut][1]/nPreSelTot[0][1];
-      ttj_preSel[icut]    = lumi * TTjets_xsec * nPreSelTot[icut][2]/nPreSelTot[0][2];
-      Zj_preSel[icut]     = lumi * Zjets_xsec  * nPreSelTot[icut][3]/nPreSelTot[0][3];
+      // Wj_preSel[icut]     = lumi * Wjets_xsec  * nPreSelTot[icut][1]/nPreSelTot[0][1];
+      float W_tmp=0.;
+      W_tmp += lumi * Wlnu_xsec  * nPreSelTot[icut][11]/nPreSelTot[0][11];
+      W_tmp += lumi * Wlnu_xsec  * nPreSelTot[icut][12]/nPreSelTot[0][12];
+      Wj_preSel[icut]     = W_tmp;
+      ttj_preSel[icut]    = lumi * TTjets_xsec * nPreSelTot[icut][1]/nPreSelTot[0][1];
+      float Z_tmp=0.;
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nPreSelTot[icut][2]/nPreSelTot[0][2];
+      Z_tmp += lumi * ZjetsHiMass_xsec  * nPreSelTot[icut][3]/nPreSelTot[0][3];
+      Zj_preSel[icut]     = Z_tmp;
       WW_preSel[icut]     = lumi * WW_xsec     * nPreSelTot[icut][4]/nPreSelTot[0][4];
       ZZ_preSel[icut]     = lumi * ZZ_xsec     * nPreSelTot[icut][5]/nPreSelTot[0][5];
       WZ_preSel[icut]     = lumi * WZ_xsec     * nPreSelTot[icut][6]/nPreSelTot[0][6];
@@ -376,46 +337,17 @@ void computeYields(float lumi, const char* finalstate) {
       singletop_tmp += lumi * SingleTopTW_xsec * nPreSelTot[icut][10]/nPreSelTot[0][10];
       SingleTop_preSel[icut] = singletop_tmp;
 
-      float qcd_em_tmp=0.;
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nPreSelTot[icut][11]/nPreSelTot[0][11];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nPreSelTot[icut][12]/nPreSelTot[0][12];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nPreSelTot[icut][13]/nPreSelTot[0][13];
-      QCDem_preSel[icut] = qcd_em_tmp;
-      
-      float qcd_bc_tmp=0.;
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nPreSelTot[icut][14]/nPreSelTot[0][14];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nPreSelTot[icut][15]/nPreSelTot[0][15];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nPreSelTot[icut][16]/nPreSelTot[0][16];
-      QCDbc_preSel[icut] = qcd_bc_tmp;
-
-      float photj_tmp=0.;
-      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nPreSelTot[icut][17]/nPreSelTot[0][17];
-      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nPreSelTot[icut][18]/nPreSelTot[0][18];
-      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nPreSelTot[icut][19]/nPreSelTot[0][19];
-      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nPreSelTot[icut][20]/nPreSelTot[0][20];
-      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nPreSelTot[icut][21]/nPreSelTot[0][21];
-      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nPreSelTot[icut][22]/nPreSelTot[0][22];
-      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nPreSelTot[icut][23]/nPreSelTot[0][23];
-      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nPreSelTot[icut][24]/nPreSelTot[0][24];
-      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nPreSelTot[icut][25]/nPreSelTot[0][25];
-      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nPreSelTot[icut][26]/nPreSelTot[0][26];
-      Photj_preSel[icut] = photj_tmp;
-
-      QCDmu_preSel[icut] = lumi * InclusiveMu15_xsec * nPreSelTot[icut][27]/nPreSelTot[0][27];
-
-      ttbar_preSel[icut] = lumi * TTbar_xsec * nPreSelTot[icut][28]/nPreSelTot[0][28];
-
     }
 
     
     // efficiencies
     if(icut>0 && nPreSelTot[icut-1][0]>0) H_eff_preSel[icut]      = nPreSelTot[icut][0]/nPreSelTot[icut-1][0];
     else H_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][1]>0) Wj_eff_preSel[icut]     = nPreSelTot[icut][1]/nPreSelTot[icut-1][1];
+    if(icut>0 && Wj_preSel[icut-1]>0) Wj_eff_preSel[icut]     = Wj_preSel[icut]/Wj_preSel[icut-1];
     else Wj_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][2]>0) ttj_eff_preSel[icut]    = nPreSelTot[icut][2]/nPreSelTot[icut-1][2];
+    if(icut>0 && nPreSelTot[icut-1][1]>0) ttj_eff_preSel[icut]    = nPreSelTot[icut][1]/nPreSelTot[icut-1][1];
     else ttj_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][3]>0) Zj_eff_preSel[icut]     = nPreSelTot[icut][3]/nPreSelTot[icut-1][3];
+    if(icut>0 && Zj_preSel[icut-1]>0) Zj_eff_preSel[icut]     = Zj_preSel[icut]/Zj_preSel[icut-1];
     else Zj_eff_preSel[icut] = 0.0;
     if(icut>0 && nPreSelTot[icut-1][4]>0) WW_eff_preSel[icut]     = nPreSelTot[icut][4]/nPreSelTot[icut-1][4];
     else WW_eff_preSel[icut] = 0.0;
@@ -427,27 +359,17 @@ void computeYields(float lumi, const char* finalstate) {
     else Wgamma_eff_preSel[icut] = 0.0;
     if(icut>0 && SingleTop_preSel[icut-1]>0) SingleTop_eff_preSel[icut] = SingleTop_preSel[icut]/SingleTop_preSel[icut-1];
     else SingleTop_eff_preSel[icut] = 0.0;
-    if(icut>0 && QCDem_preSel[icut-1]>0) QCDem_eff_preSel[icut] = QCDem_preSel[icut]/QCDem_preSel[icut-1];
-    else QCDem_eff_preSel[icut] = 0.0;
-    if(icut>0 && QCDbc_preSel[icut-1]>0) QCDbc_eff_preSel[icut] = QCDbc_preSel[icut]/QCDbc_preSel[icut-1];
-    else QCDbc_eff_preSel[icut] = 0.0;
-    if(icut>0 && Photj_preSel[icut-1]>0) Photj_eff_preSel[icut] = Photj_preSel[icut]/Photj_preSel[icut-1];
-    else Photj_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][24]>0) QCDmu_eff_preSel[icut] = nPreSelTot[icut][27]/nPreSelTot[icut-1][27];
-    else QCDmu_eff_preSel[icut] = 0.0;
-    if(icut>0 && nPreSelTot[icut-1][25]>0) ttbar_eff_preSel[icut] = nPreSelTot[icut][28]/nPreSelTot[icut-1][28];
-    else ttbar_eff_preSel[icut] = 0.0;
 
   }
 
-  // final efficiency at preselection level
+  // final efficiency at preSelection level
   if(nPreSelTot[0][0]>0) H_finaleff_preSel      = nPreSelTot[nCutsAnaPre-2][0]/nPreSelTot[0][0];
   else H_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][1]>0) Wj_finaleff_preSel     = nPreSelTot[nCutsAnaPre-2][1]/nPreSelTot[0][1];
+  if(Wj_preSel[0]>0) Wj_finaleff_preSel     = Wj_preSel[nCutsAnaPre-2]/Wj_preSel[0];
   else Wj_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][2]>0) ttj_finaleff_preSel    = nPreSelTot[nCutsAnaPre-2][2]/nPreSelTot[0][2];
+  if(nPreSelTot[0][1]>0) ttj_finaleff_preSel    = nPreSelTot[nCutsAnaPre-2][1]/nPreSelTot[0][1];
   else ttj_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][3]>0) Zj_finaleff_preSel     = nPreSelTot[nCutsAnaPre-2][3]/nPreSelTot[0][3];
+  if(Zj_preSel[0]>0) Zj_finaleff_preSel     = Zj_preSel[nCutsAnaPre-2]/Zj_preSel[0];
   else Zj_finaleff_preSel = 0.0;
   if(nPreSelTot[0][4]>0) WW_finaleff_preSel     = nPreSelTot[nCutsAnaPre-2][4]/nPreSelTot[0][4];
   else WW_finaleff_preSel = 0.0;
@@ -459,16 +381,6 @@ void computeYields(float lumi, const char* finalstate) {
   else Wgamma_finaleff_preSel = 0.0;
   if(SingleTop_preSel[0]>0) SingleTop_finaleff_preSel = SingleTop_preSel[nCutsAnaPre-2]/SingleTop_preSel[0];
   else SingleTop_finaleff_preSel = 0.0;
-  if(QCDem_preSel[0]>0) QCDem_finaleff_preSel = QCDem_preSel[nCutsAnaPre-2]/QCDem_preSel[0];
-  else QCDem_finaleff_preSel = 0.0;
-  if(QCDbc_preSel[0]>0) QCDbc_finaleff_preSel = QCDbc_preSel[nCutsAnaPre-2]/QCDbc_preSel[0];
-  else QCDbc_finaleff_preSel = 0.0;
-  if(Photj_preSel[0]>0) Photj_finaleff_preSel = Photj_preSel[nCutsAnaPre-2]/Photj_preSel[0];
-  else Photj_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][24]>0) QCDmu_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][27]/nPreSelTot[0][27];
-  else QCDmu_finaleff_preSel = 0.0;
-  if(nPreSelTot[0][25]>0) ttbar_finaleff_preSel = nPreSelTot[nCutsAnaPre-2][28]/nPreSelTot[0][28];
-  else ttbar_finaleff_preSel = 0.0;
 
   // eff at full selection level
   for(int icut=0; icut<nCutsAnaFull; icut++) {
@@ -476,9 +388,15 @@ void computeYields(float lumi, const char* finalstate) {
     // numbers
     if(nFullSelTot[0][0]>0) { 
       H_fullSel[icut]      = lumi * Higgs_xsec  * nFullSelTot[icut][0]/nPreSelTot[0][0];
-      Wj_fullSel[icut]     = lumi * Wjets_xsec  * nFullSelTot[icut][1]/nPreSelTot[0][1];
-      ttj_fullSel[icut]    = lumi * TTjets_xsec * nFullSelTot[icut][2]/nPreSelTot[0][2];
-      Zj_fullSel[icut]     = lumi * Zjets_xsec  * nFullSelTot[icut][3]/nPreSelTot[0][3];
+      float W_tmp=0.;
+      W_tmp += lumi * Wlnu_xsec * nFullSelTot[icut][11]/nPreSelTot[0][11];
+      W_tmp += lumi * Wlnu_xsec * nFullSelTot[icut][12]/nPreSelTot[0][12];
+      Wj_fullSel[icut]     = W_tmp;
+      ttj_fullSel[icut]    = lumi * TTjets_xsec * nFullSelTot[icut][1]/nPreSelTot[0][1];
+      float Z_tmp=0.;
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nPreSelTot[0][2];
+      Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][3]/nPreSelTot[0][3];
+      Zj_fullSel[icut]     = Z_tmp;
       WW_fullSel[icut]     = lumi * WW_xsec     * nFullSelTot[icut][4]/nPreSelTot[0][4];
       ZZ_fullSel[icut]     = lumi * ZZ_xsec     * nFullSelTot[icut][5]/nPreSelTot[0][5];
       WZ_fullSel[icut]     = lumi * WZ_xsec     * nFullSelTot[icut][6]/nPreSelTot[0][6];
@@ -490,44 +408,16 @@ void computeYields(float lumi, const char* finalstate) {
       singletop_tmp += lumi * SingleTopTW_xsec * nFullSelTot[icut][10]/nPreSelTot[0][10];
       SingleTop_fullSel[icut] = singletop_tmp;
 
-      float qcd_em_tmp=0.;
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt20to30_xsec * nFullSelTot[icut][11]/nPreSelTot[0][11];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt30to80_xsec * nFullSelTot[icut][12]/nPreSelTot[0][12];
-      qcd_em_tmp += lumi * QCD_EMenriched_Pt80to170_xsec * nFullSelTot[icut][13]/nPreSelTot[0][13];
-      QCDem_fullSel[icut] = qcd_em_tmp;
-      
-      float qcd_bc_tmp=0.;
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt20to30_xsec * nFullSelTot[icut][14]/nPreSelTot[0][14];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt30to80_xsec * nFullSelTot[icut][15]/nPreSelTot[0][15];
-      qcd_bc_tmp += lumi * QCD_BCtoE_Pt80to170_xsec * nFullSelTot[icut][16]/nPreSelTot[0][16];
-      QCDbc_fullSel[icut] = qcd_bc_tmp;
-
-      float photj_tmp=0.;
-      photj_tmp += lumi * PhotonJet_Pt0to15_xsec * nFullSelTot[icut][17]/nPreSelTot[0][17];
-      photj_tmp += lumi * PhotonJet_Pt15to20_xsec * nFullSelTot[icut][18]/nPreSelTot[0][18];
-      photj_tmp += lumi * PhotonJet_Pt20to30_xsec * nFullSelTot[icut][19]/nPreSelTot[0][19];
-      photj_tmp += lumi * PhotonJet_Pt30to50_xsec * nFullSelTot[icut][20]/nPreSelTot[0][20];
-      photj_tmp += lumi * PhotonJet_Pt50to80_xsec * nFullSelTot[icut][21]/nPreSelTot[0][21];
-      photj_tmp += lumi * PhotonJet_Pt80to120_xsec * nFullSelTot[icut][22]/nPreSelTot[0][22];
-      photj_tmp += lumi * PhotonJet_Pt120to170_xsec * nFullSelTot[icut][23]/nPreSelTot[0][23];
-      photj_tmp += lumi * PhotonJet_Pt170to300_xsec * nFullSelTot[icut][24]/nPreSelTot[0][24];
-      photj_tmp += lumi * PhotonJet_Pt300to500_xsec * nFullSelTot[icut][25]/nPreSelTot[0][25];
-      photj_tmp += lumi * PhotonJet_Pt500toInf_xsec * nFullSelTot[icut][26]/nPreSelTot[0][26];
-      Photj_fullSel[icut] = photj_tmp;
-
-      QCDmu_fullSel[icut] = lumi * InclusiveMu15_xsec * nFullSelTot[icut][27]/nPreSelTot[0][27];
-
-      ttbar_fullSel[icut] = lumi * TTbar_xsec * nFullSelTot[icut][28]/nPreSelTot[0][28];
     }
 
     // efficiencies
     if(icut>0 && nFullSelTot[icut-1][0]>0) H_eff_fullSel[icut]      = nFullSelTot[icut][0]/nFullSelTot[icut-1][0];
     else H_eff_fullSel[icut] = 0.0;
-    if(icut>0 && nFullSelTot[icut-1][1]>0) Wj_eff_fullSel[icut]     = nFullSelTot[icut][1]/nFullSelTot[icut-1][1];
+    if(icut>0 && Wj_fullSel[icut-1]>0) Wj_eff_fullSel[icut]     = Wj_fullSel[icut]/Wj_fullSel[icut-1];
     else Wj_eff_fullSel[icut] = 0.0;
-    if(icut>0 && nFullSelTot[icut-1][2]>0) ttj_eff_fullSel[icut]    = nFullSelTot[icut][2]/nFullSelTot[icut-1][2];
+    if(icut>0 && nFullSelTot[icut-1][1]>0) ttj_eff_fullSel[icut]    = nFullSelTot[icut][1]/nFullSelTot[icut-1][1];
     else ttj_eff_fullSel[icut] = 0.0;
-    if(icut>0 && nFullSelTot[icut-1][3]>0) Zj_eff_fullSel[icut]     = nFullSelTot[icut][3]/nFullSelTot[icut-1][3];
+    if(icut>0 && Zj_fullSel[icut-1]>0) Zj_eff_fullSel[icut]     = Zj_fullSel[icut]/Zj_fullSel[icut-1];
     else Zj_eff_fullSel[icut] = 0.0;
     if(icut>0 && nFullSelTot[icut-1][4]>0) WW_eff_fullSel[icut]     = nFullSelTot[icut][4]/nFullSelTot[icut-1][4];
     else WW_eff_fullSel[icut] = 0.0;
@@ -539,43 +429,28 @@ void computeYields(float lumi, const char* finalstate) {
     else Wgamma_eff_fullSel[icut] = 0.0;
     if(icut>0 && SingleTop_fullSel[icut-1]>0) SingleTop_eff_fullSel[icut] = SingleTop_fullSel[icut]/SingleTop_fullSel[icut-1];
     else SingleTop_eff_fullSel[icut] = 0.0;
-    if(icut>0 && QCDem_fullSel[icut-1]>0) QCDem_eff_fullSel[icut] = QCDem_fullSel[icut]/QCDem_fullSel[icut-1];
-    else QCDem_eff_fullSel[icut] = 0.0;
-    if(icut>0 && QCDbc_fullSel[icut-1]>0) QCDbc_eff_fullSel[icut] = QCDbc_fullSel[icut]/QCDbc_fullSel[icut-1];
-    else QCDbc_eff_fullSel[icut] = 0.0;
-    if(icut>0 && Photj_fullSel[icut-1]>0) Photj_eff_fullSel[icut] = Photj_fullSel[icut]/Photj_fullSel[icut-1];
-    else Photj_eff_fullSel[icut] = 0.0;
-    if(icut>0 && nFullSelTot[icut-1][24]>0) QCDmu_eff_fullSel[icut] = nFullSelTot[icut][24]/nFullSelTot[icut-1][24];
-    else QCDmu_eff_fullSel[icut] = 0.0;
-    if(icut>0 && nFullSelTot[icut-1][25]>0) ttbar_eff_fullSel[icut] = nFullSelTot[icut][25]/nFullSelTot[icut-1][25];
-    else ttbar_eff_fullSel[icut] = 0.0;
-    
+
     if(icut==0) { 
       H_eff_fullSel[icut]      = nFullSelTot[icut][0]/nPreSelTot[nCutsAnaPre-2][0];
-      Wj_eff_fullSel[icut]     = nFullSelTot[icut][1]/nPreSelTot[nCutsAnaPre-2][1];
-      ttj_eff_fullSel[icut]    = nFullSelTot[icut][2]/nPreSelTot[nCutsAnaPre-2][2];
-      Zj_eff_fullSel[icut]     = nFullSelTot[icut][3]/nPreSelTot[nCutsAnaPre-2][3];
+      Wj_eff_fullSel[icut]     = Wj_fullSel[icut]/Wj_preSel[nCutsAnaPre-2];
+      ttj_eff_fullSel[icut]    = nFullSelTot[icut][1]/nPreSelTot[nCutsAnaPre-2][1];
+      Zj_eff_fullSel[icut]     = Zj_fullSel[icut]/Zj_preSel[nCutsAnaPre-2];
       WW_eff_fullSel[icut]     = nFullSelTot[icut][4]/nPreSelTot[nCutsAnaPre-2][4];
       ZZ_eff_fullSel[icut]     = nFullSelTot[icut][5]/nPreSelTot[nCutsAnaPre-2][5];
       WZ_eff_fullSel[icut]     = nFullSelTot[icut][6]/nPreSelTot[nCutsAnaPre-2][6];
       Wgamma_eff_fullSel[icut] = nFullSelTot[icut][7]/nPreSelTot[nCutsAnaPre-2][7];
       SingleTop_eff_fullSel[icut] = SingleTop_fullSel[icut]/SingleTop_preSel[nCutsAnaPre-2];
-      QCDem_eff_fullSel[icut] = QCDem_fullSel[icut]/QCDem_preSel[nCutsAnaPre-2];
-      QCDbc_eff_fullSel[icut] = QCDbc_fullSel[icut]/QCDbc_preSel[nCutsAnaPre-2];
-      Photj_eff_fullSel[icut] = Photj_fullSel[icut]/Photj_preSel[nCutsAnaPre-2];
-      QCDmu_eff_fullSel[icut] = nFullSelTot[icut][24]/nPreSelTot[nCutsAnaPre-2][24];
-      ttbar_eff_fullSel[icut] = nFullSelTot[icut][25]/nPreSelTot[nCutsAnaPre-2][25];
     }
   }
   
   // final efficiency after full selections (-4 = 3 x jets + 1=final)
   if(nFullSelTot[0][0]>0) H_finaleff_fullSel      = nFullSelTot[nCutsAnaFull-4][0]/nFullSelTot[0][0];
   else H_finaleff_fullSel = 0.0;
-  if(nFullSelTot[0][1]>0) Wj_finaleff_fullSel     = nFullSelTot[nCutsAnaFull-4][1]/nFullSelTot[0][1];
+  if(Wj_fullSel[0]>0) Wj_finaleff_fullSel = Wj_fullSel[nCutsAnaFull-4]/Wj_fullSel[0];
   else Wj_finaleff_fullSel = 0.0;
-  if(nFullSelTot[0][2]>0) ttj_finaleff_fullSel    = nFullSelTot[nCutsAnaFull-4][2]/nFullSelTot[0][2];
+  if(nFullSelTot[0][1]>0) ttj_finaleff_fullSel    = nFullSelTot[nCutsAnaFull-4][1]/nFullSelTot[0][1];
   else ttj_finaleff_fullSel = 0.0;
-  if(nFullSelTot[0][3]>0) Zj_finaleff_fullSel     = nFullSelTot[nCutsAnaFull-4][3]/nFullSelTot[0][3];
+  if(Zj_fullSel[0]>0) Zj_finaleff_fullSel = Zj_fullSel[nCutsAnaFull-4]/Zj_fullSel[0];
   else Zj_finaleff_fullSel = 0.0;
   if(nFullSelTot[0][4]>0) WW_finaleff_fullSel     = nFullSelTot[nCutsAnaFull-4][4]/nFullSelTot[0][4];
   else WW_finaleff_fullSel = 0.0;
@@ -587,25 +462,15 @@ void computeYields(float lumi, const char* finalstate) {
   else Wgamma_finaleff_fullSel = 0.0;
   if(SingleTop_fullSel[0]>0) SingleTop_finaleff_fullSel = SingleTop_fullSel[nCutsAnaFull-4]/SingleTop_fullSel[0];
   else SingleTop_finaleff_fullSel = 0.0;
-  if(QCDem_fullSel[0]>0) QCDem_finaleff_fullSel = QCDem_fullSel[nCutsAnaFull-4]/QCDem_fullSel[0];
-  else QCDem_finaleff_fullSel = 0.0;
-  if(QCDbc_fullSel[0]>0) QCDbc_finaleff_fullSel = QCDbc_fullSel[nCutsAnaFull-4]/QCDbc_fullSel[0];
-  else QCDbc_finaleff_fullSel = 0.0;
-  if(Photj_fullSel[0]>0) Photj_finaleff_fullSel = Photj_fullSel[nCutsAnaFull-4]/Photj_fullSel[0];
-  else Photj_finaleff_fullSel = 0.0;
-  if(nFullSelTot[0][24]>0) QCDmu_finaleff_fullSel = nFullSelTot[nCutsAnaFull-4][24]/nFullSelTot[0][24];
-  else QCDmu_finaleff_fullSel = 0.0;
-  if(nFullSelTot[0][25]>0) ttbar_finaleff_fullSel = nFullSelTot[nCutsAnaFull-4][25]/nFullSelTot[0][25];
-  else ttbar_finaleff_fullSel = 0.0;
 
   // final efficiency combining pre and full selections
   if(nPreSelTot[0][0]>0) H_finaleff      = nFullSelTot[nCutsAnaFull-4][0]/nPreSelTot[0][0];
   else H_finaleff = 0.0;
-  if(nPreSelTot[0][1]>0) Wj_finaleff     = nFullSelTot[nCutsAnaFull-4][1]/nPreSelTot[0][1];
+  if(Wj_preSel[0]>0) Wj_finaleff = Wj_fullSel[nCutsAnaFull-4]/Wj_preSel[0];
   else Wj_finaleff = 0.0;
-  if(nPreSelTot[0][2]>0) ttj_finaleff    = nFullSelTot[nCutsAnaFull-4][2]/nPreSelTot[0][2];
+  if(nPreSelTot[0][1]>0) ttj_finaleff    = nFullSelTot[nCutsAnaFull-4][1]/nPreSelTot[0][1];
   else ttj_finaleff = 0.0;
-  if(nPreSelTot[0][3]>0) Zj_finaleff     = nFullSelTot[nCutsAnaFull-4][3]/nPreSelTot[0][3];
+  if(Zj_preSel[0]>0) Zj_finaleff = Zj_fullSel[nCutsAnaFull-4]/Zj_preSel[0];
   else Zj_finaleff = 0.0;
   if(nPreSelTot[0][4]>0) WW_finaleff     = nFullSelTot[nCutsAnaFull-4][4]/nPreSelTot[0][4];
   else WW_finaleff = 0.0;
@@ -617,19 +482,9 @@ void computeYields(float lumi, const char* finalstate) {
   else Wgamma_finaleff = 0.0;
   if(SingleTop_preSel[0]>0) SingleTop_finaleff = SingleTop_fullSel[nCutsAnaFull-4]/SingleTop_preSel[0];
   else SingleTop_finaleff = 0.0;
-  if(QCDem_preSel[0]>0) QCDem_finaleff = QCDem_fullSel[nCutsAnaFull-4]/QCDem_preSel[0];
-  else QCDem_finaleff = 0.0;
-  if(QCDbc_preSel[0]>0) QCDbc_finaleff = QCDbc_fullSel[nCutsAnaFull-4]/QCDbc_preSel[0];
-  else QCDbc_finaleff = 0.0;
-  if(Photj_preSel[0]>0) Photj_finaleff = Photj_fullSel[nCutsAnaFull-4]/Photj_preSel[0];
-  else Photj_finaleff = 0.0;
-  if(nPreSelTot[0][24]>0) QCDmu_finaleff = nFullSelTot[nCutsAnaFull-4][24]/nPreSelTot[0][24];
-  else QCDmu_finaleff = 0.0;
-  if(nPreSelTot[0][25]>0) ttbar_finaleff = nFullSelTot[nCutsAnaFull-4][25]/nPreSelTot[0][25];
-  else ttbar_finaleff = 0.0;
 
   cout << "\n\nPROCESSED EVENTS:" << endl;
-  for(int i=0; i<29; i++) {
+  for(int i=0; i<20; i++) {
     cout << sampleNames[i] << "\t" << nPreSelTot[0][i] << endl;
   }
 
@@ -668,11 +523,11 @@ void setupCuts() {
   preSelCuts[4]="acceptance";
   preSelCuts[5]="$p_T^{max}$";
   preSelCuts[6]="$p_T^{min}$";
-  preSelCuts[7]="MET preselection";
+  preSelCuts[7]="MET preSelection";
   preSelCuts[8]="$m_{ll}>12$ GeV";
-  preSelCuts[9]="final presel.";
+  preSelCuts[9]="final preSel.";
 
-  fullSelCuts[0]="channel presel.";
+  fullSelCuts[0]="channel preSel.";
   fullSelCuts[1]="sel $p_T^{max}$";
   fullSelCuts[2]="sel $p_T^{min}$";
   fullSelCuts[3]="e/$\\mu$ d0";
@@ -684,7 +539,7 @@ void setupCuts() {
   fullSelCuts[9]="e/$\\mu$ ID";
   fullSelCuts[10]="conv. rej.";
   fullSelCuts[11]="$MET>20$ GeV";
-  fullSelCuts[12]="$m_{ll}>12$ GeV";
+  fullSelCuts[12]="$m_{ll}$";
   fullSelCuts[13]="$|m_{ll}-m_Z|>15$ GeV";
   fullSelCuts[14]="tight (p)MET";
   fullSelCuts[15]="MET/$p_T^{ll}$";
@@ -776,7 +631,7 @@ void printLatex(float lumi, const char* finalstate) {
   
   textfile << "\\hline" << endl;
   
-  textfile << "total preselection " << "\t&\t"
+  textfile << "total preSelection " << "\t&\t"
            << H_preSel[8]      << " (" << 100. * H_finaleff_preSel  << "\\%)"  << "\t&\t"
            << Wj_preSel[8]     << " (" << 100. * Wj_finaleff_preSel << "\\%)"  << "\t&\t"
            << ttj_preSel[8]    << " (" << 100. * ttj_finaleff_preSel << "\\%)" << "\t&\t"
