@@ -132,31 +132,8 @@ float WZ_final[3];
 float Wgamma_final[3];
 
 // xsections
-float H120_xsec = 0.247143;
-float H130_xsec = 0.452859;
-float H140_xsec = 0.64926;
-float H150_xsec = 0.787871;
-float H155_xsec = 0.842093;
-float H160_xsec = 0.897043;
-float H165_xsec = 0.867591;
-float H170_xsec = 0.808914;
-float H175_xsec = 0.751628;
-float H180_xsec = 0.685617;
-float H190_xsec = 0.503611;
-float H200_xsec = 0; // samples not yet produced
-float H210_xsec = 0;
-float H220_xsec = 0;
-float H230_xsec = 0;
-float H240_xsec = 0;
-float H250_xsec = 0;
-float H275_xsec = 0;
-float H300_xsec = 0;
-float H350_xsec = 0;
-float H400_xsec = 0;
-float H450_xsec = 0;
-float H500_xsec = 0;
-float H550_xsec = 0;
-float H600_xsec = 0;
+std::map<int,float> Higgs_xsec_masses;
+
 float Wgamma_xsec = 41.76;
 float Wlnu_xsec = 31314./3. * 0.742; // NLO * filtereff (BR W->lnu included);
 float ZjetsLoMass_xsec = 1950.; // not good: is >50 xsec - 10-50 xsec
@@ -195,11 +172,9 @@ float PhotonJet_Pt500toInf_xsec = 0.0923;
 
 float InclusiveMu15_xsec = 48.44*0.00176*1.0E+09; // ppMuX
 
-float Higgs_xsec = H160_xsec;
-
 string sampleNames[20];
 
-void computeYields(float lumi, const char* finalstate) {
+void computeYields(float lumi, const char* finalstate, int mass=0) {
 
   TChain *chains_preSel[20];
   TChain *chains_fullSel[20];
@@ -227,39 +202,97 @@ void computeYields(float lumi, const char* finalstate) {
   sampleNames[12] = "Wmunu";
   sampleNames[13] = "Wtaunu";
 
-  // signal
-  chains_preSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-160/*Counters.root");       
-  // backgrounds
-  chains_preSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
-  chains_preSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
-  chains_preSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
-  chains_preSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
-  chains_preSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
-  chains_preSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
-  chains_preSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
-  chains_preSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains_preSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains_preSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
-  chains_preSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
-  chains_preSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
-  chains_preSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  float Higgs_xsec;
+  Higgs_xsec_masses.insert(std::make_pair(120,0.247143));
+  Higgs_xsec_masses.insert(std::make_pair(130,0.452859));
+  Higgs_xsec_masses.insert(std::make_pair(140,0.64926));
+  Higgs_xsec_masses.insert(std::make_pair(150,0.787871));
+  Higgs_xsec_masses.insert(std::make_pair(160,0.897043));
+  Higgs_xsec_masses.insert(std::make_pair(170,0.808914));
+  Higgs_xsec_masses.insert(std::make_pair(200,0.422487));
+  Higgs_xsec_masses.insert(std::make_pair(300,0.181931));
+  Higgs_xsec_masses.insert(std::make_pair(400,0.125106));
 
-  // signal
-  chains_fullSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-160/*Counters.root");       
-  // backgrounds
-  chains_fullSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
-  chains_fullSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
-  chains_fullSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
-  chains_fullSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
-  chains_fullSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
-  chains_fullSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
-  chains_fullSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
-  chains_fullSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains_fullSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains_fullSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
-  chains_fullSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
-  chains_fullSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
-  chains_fullSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  if(mass==0) { // use the default mass to print the cut-by cut table: the one pointed by results/ dir
+    Higgs_xsec = Higgs_xsec_masses[200] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+
+    // signal
+    chains_preSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-200/*Counters.root");       
+    // backgrounds
+    chains_preSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
+    chains_preSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
+    chains_preSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
+    chains_preSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
+    chains_preSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
+    chains_preSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
+    chains_preSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
+    chains_preSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+    chains_preSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+    chains_preSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+    chains_preSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
+    chains_preSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
+    chains_preSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+
+    // signal
+    chains_fullSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-200/*Counters.root");       
+    // backgrounds
+    chains_fullSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
+    chains_fullSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
+    chains_fullSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
+    chains_fullSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
+    chains_fullSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
+    chains_fullSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
+    chains_fullSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
+    chains_fullSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+    chains_fullSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+    chains_fullSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+    chains_fullSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
+    chains_fullSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
+    chains_fullSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  } else {
+
+    Higgs_xsec = Higgs_xsec_masses[mass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+
+    char dir[1000];
+    sprintf(dir,"resultsMassDep/OptimMH%d/MC_HiggsRev38X_V4/OptimMH%d/",mass,mass);
+    char higgsDir[100];
+    sprintf(higgsDir,"HiggsWW/GluGluToHToWWTo2L2Nu_M-%d/",mass);
+
+    // signal
+    chains_preSel[0]->Add(TString(dir)+TString(higgsDir)+TString("*Counters.root"));
+    // backgrounds
+    chains_preSel[1]->Add(TString(dir)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
+    chains_preSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root"));       
+    chains_preSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root"));       
+    chains_preSel[4]->Add(TString(dir)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
+    chains_preSel[5]->Add(TString(dir)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
+    chains_preSel[6]->Add(TString(dir)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
+    chains_preSel[7]->Add(TString(dir)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_preSel[8]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[9]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[10]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[11]->Add(TString(dir)+TString("/WPYTHIA/WToENu_TuneZ2/*Counters.root"));
+    chains_preSel[12]->Add(TString(dir)+TString("/WPYTHIA/WToMuNu_TuneZ2/*Counters.root"));
+    chains_preSel[13]->Add(TString(dir)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
+
+    // signal
+    chains_fullSel[0]->Add(TString(dir)+TString(higgsDir)+TString("*Counters.root"));
+    // backgrounds
+    chains_fullSel[1]->Add(TString(dir)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
+    chains_fullSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root"));       
+    chains_fullSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root"));       
+    chains_fullSel[4]->Add(TString(dir)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
+    chains_fullSel[5]->Add(TString(dir)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
+    chains_fullSel[6]->Add(TString(dir)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
+    chains_fullSel[7]->Add(TString(dir)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_fullSel[8]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[9]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[10]->Add(TString(dir)+TString("/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[11]->Add(TString(dir)+TString("/WPYTHIA/WToENu_TuneZ2/*Counters.root"));
+    chains_fullSel[12]->Add(TString(dir)+TString("/WPYTHIA/WToMuNu_TuneZ2/*Counters.root"));
+    chains_fullSel[13]->Add(TString(dir)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
+
+  }
 
   float nPreSelTot[10][20];
   float nFullSelTot[24][20];
@@ -273,8 +306,6 @@ void computeYields(float lumi, const char* finalstate) {
   int nCutsAnaPre  = 10;
   int nCutsAnaFull = 24;
   for(int isample=0; isample<20; isample++) {
-
-    cout << "adding sample " << isample << endl;
 
     // List of branches    
     Int_t           nCutsPre;
@@ -574,7 +605,7 @@ void printLatex(float lumi, const char* finalstate) {
   sprintf(namefile,"yields_byCut.tex");
   ofstream textfile;
   textfile.open(namefile, ios_base::app);
-  textfile.precision(1);
+  textfile.precision(2);
 
   textfile << "\\begin{sidewaystable}[p]" << endl
            << "\\begin{tiny}" << endl
@@ -819,7 +850,7 @@ void printShortBkgSummary(float lumi) {
   sprintf(namefile,"yields_byCut.tex");
   ofstream textfile;
   textfile.open(namefile, ios_base::app);
-  textfile.precision(1);
+  textfile.precision(2);
 
   std::string channelName[3];
   channelName[mm] = "$\\mu\\mu$";
@@ -884,7 +915,7 @@ void printLatex(float lumi) {
   sprintf(namefile,"yields_byCut.tex");
   ofstream textfile;
   textfile.open(namefile, ios_base::trunc);
-  textfile.precision(1);
+  textfile.precision(2);
 
   textfile << "\\documentclass{article}" << endl;
   textfile << "\\setlength\\textheight{9.8in}" << endl;
@@ -902,6 +933,105 @@ void printLatex(float lumi) {
   textfile.open(namefile, ios_base::app);
   textfile << "\\end{document}" << endl;
   textfile.close();
+
+}
+
+void printSuperSummary(float lumi, int massset) {
+
+  int masses[3];
+  if(massset==0) {
+    masses[0] = 120;
+    masses[1] = 130;
+    masses[2] = 140;
+  } else if(massset==1) {
+    masses[0] = 150;
+    masses[1] = 160;
+    masses[2] = 170;
+  } else if(massset==2) {
+    masses[0] = 200;
+    masses[1] = 300;
+    masses[2] = 400;
+  }
+
+  char namefile[200];
+  sprintf(namefile,"yieldsSummary_byCut.tex");
+  ofstream textfile;
+  if(massset==0) textfile.open(namefile, ios_base::trunc);
+  else textfile.open(namefile, ios_base::app);
+  textfile.precision(2);
+
+  if(massset==0) {
+    textfile << "\\documentclass{article}" << endl;
+    textfile << "\\setlength\\textheight{9.8in}" << endl;
+    textfile << "\\usepackage{rotating}" << endl;
+    textfile << "\\begin{document}" << endl;
+  }
+
+  std::string channelName[3];
+  channelName[mm] = "$\\mu\\mu$";
+  channelName[ee] = "$ee$";
+  channelName[em] = "$e\\mu$";
+  
+  textfile << "\\begin{table}[p]" << endl
+           << "\\begin{center}" << endl;
+  textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|}" << endl;
+  textfile << "\\hline\\hline" << endl;
+
+  char title[1000];
+  sprintf(title,"final state & \\multicolumn{2}{|c|} {$m_H=%d$ GeV} & \\multicolumn{2}{|c|} {$m_H=%d$ GeV} & \\multicolumn{2}{|c|} {$m_H=%d$ GeV} \t\\\\",masses[0],masses[1],masses[2]);
+  textfile << title << endl;
+  textfile << "\\hline" << endl; 
+  textfile << " & signal & background & signal & background & signal & background \\\\" << endl;
+  textfile << "\\hline" << endl;
+
+  for(int ichan=0; ichan<3; ++ichan) {
+
+    textfile << channelName[ichan] << "\t&\t";
+
+    for(int i=0; i<3; i++) {
+      int mass = masses[i];
+      cout << "======> Now analyzing mass = " << mass << "<======" << endl;
+      if(ichan==ee) computeYields(lumi,"EE",mass);
+      if(ichan==mm) computeYields(lumi,"MM",mass);
+      if(ichan==em) computeYields(lumi,"EM",mass);
+
+      H_final[ichan] = H_fullSel[21];
+      Wj_final[ichan] = Wj_fullSel[21];
+      ttj_final[ichan] = ttj_fullSel[21];
+      SingleTop_final[ichan] = SingleTop_fullSel[21];
+      Zj_final[ichan] = Zj_fullSel[21];
+      WW_final[ichan] = WW_fullSel[21];
+      ZZ_final[ichan] = ZZ_fullSel[21];
+      WZ_final[ichan] = WZ_fullSel[21];
+      Wgamma_final[ichan] = Wgamma_fullSel[21];
+
+      textfile << fixed 
+               << H_final[ichan] << "\t&\t"
+               << WW_final[ichan] + 
+        WZ_final[ichan] +
+        ZZ_final[ichan] +
+        Zj_final[ichan] +
+        Wj_final[ichan] +
+        ttj_final[ichan] +
+        SingleTop_final[ichan];
+      if(i<2) textfile << "\t&\t";
+      else textfile << "\t\\\\" << endl;
+      cout << "$$$$$$$> Done with mass = " << mass << "<$$$$$$$" << endl;
+    }
+    cout << "done with ichannel = " << ichan << endl;
+    textfile << "\\hline" << endl;
+  }
+    
+  textfile << "\\hline" << endl
+           << "\\end{tabular}" << endl
+           << "\\end{center}" << endl
+           << "\\caption{Breakdown of signal and backgrounds events for an integrated luminosity of " << lumi << "pb$^-1$.} "
+           << "\\end{table}" << endl;
+
+  if(massset==2) {
+    textfile << "\\end{document}" << endl;
+    textfile.close();
+  }
 
 }
 
