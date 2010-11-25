@@ -15,10 +15,7 @@ cp results/merged/WW_ee.root results/datasets_trees
 hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/merged/SingleTop_sChannel_ee.root results/merged/SingleTop_tChannel_ee.root results/merged/SingleTop_tWChannel_ee.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_ee.root results/merged/WjetsMadgraph_ee.root results/merged/Wgamma_ee.root results/merged/ZjetsMadgraph_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
-
-# Wjets alpgen (separate from others)
-hadd results/datasets_trees/WjetsAlpgen_ee.root results/merged/W1Jets_Pt0to100-alpgen_ee.root results/merged/W1Jets_Pt100to300-alpgen_ee.root results/merged/W1Jets_Pt300to800-alpgen_ee.root results/merged/W1Jets_Pt800to1600-alpgen_ee.root
+hadd results/datasets_trees/others_ee.root results/merged/Wjets_ee.root results/merged/ZjetsHi_ee.root results/merged/ZjetsLo_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
 
 
 echo "Now merging species for mm..."
@@ -32,10 +29,7 @@ cp results/merged/WW_mm.root results/datasets_trees
 hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/merged/SingleTop_sChannel_mm.root results/merged/SingleTop_tChannel_mm.root results/merged/SingleTop_tWChannel_mm.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_mm.root results/merged/WjetsMadgraph_mm.root results/merged/Wgamma_mm.root results/merged/ZjetsMadgraph_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
-
-# Wjets alpgen (separate from others)
-hadd results/datasets_trmms/WjetsAlpgen_mm.root results/merged/W1Jets_Pt0to100-alpgen_mm.root results/merged/W1Jets_Pt100to300-alpgen_mm.root results/merged/W1Jets_Pt300to800-alpgen_mm.root results/merged/W1Jets_Pt800to1600-alpgen_mm.root
+hadd results/datasets_trees/others_mm.root results/merged/Wjets_mm.root results/merged/ZjetsHi_mm.root results/merged/ZjetsLo_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
 
 
 
@@ -50,7 +44,4 @@ cp results/merged/WW_em.root results/datasets_trees
 hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/merged/SingleTop_sChannel_em.root results/merged/SingleTop_tChannel_em.root results/merged/SingleTop_tWChannel_em.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_em.root results/merged/ZjetsMadgraph_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/WjetsMadgraph_em.root results/merged/Wgamma_em.root 
-# Wjets alpgen (separate from others)
-hadd results/datasets_trems/WjetsAlpgen_em.root results/merged/W1Jets_Pt0to100-alpgen_em.root results/merged/W1Jets_Pt100to300-alpgen_em.root results/merged/W1Jets_Pt300to800-alpgen_em.root results/merged/W1Jets_Pt800to1600-alpgen_em.root
-
+hadd results/datasets_trees/others_em.root results/merged/Wjets_em.root results/merged/ZjetsHi_em.root results/merged/ZjetsLo_em.root results/merged/WZ_em.root results/merged/ZZ_em.root
