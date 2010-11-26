@@ -7,26 +7,30 @@ import commands
 #######################################
 ### usage  cmst3_submit_manyfilesperjob.py dataset njobs applicationName queue 
 #######################################
-if len(sys.argv) != 7:
-    print "usage cmst3_submit_manyfilesperjob.py process dataset njobs applicationName queue prefix"
+if len(sys.argv) != 8:
+    print "usage cmst3_submit_manyfilesperjob.py process dataset nfileperjob applicationName queue prefix isMC"
     sys.exit(1)
 process = sys.argv[1]
 dataset = sys.argv[2]
-inputlist = "cmst3_35X/MC/"+process+"/"+dataset+".list"
 output = dataset
 # choose among cmt3 8nm 1nh 8nh 1nd 1nw 
 queue = sys.argv[5]
-ijobmax = int(sys.argv[3])
+nfileperjob = int(sys.argv[3])
 application = sys.argv[4]
 prefix = sys.argv[6]
+isMC = int(sys.argv[7])
+if isMC != 0:
+    inputlist = "cmst3_38X/MC/"+process+"/"+dataset+".list"
+else:
+    inputlist = "cmst3_38X/"+process+"/"+dataset+".list"
 # to write on the cmst3 cluster disks
 ################################################
 #castordir = "/castor/cern.ch/user/m/mpierini/CMST3/Vecbos/output/"
 #outputmain = castordir+output
 # to write on local disks
 ################################################
-castordir = "/castor/cern.ch/user/m/meridian/VecBos21X/OutputSelectionInvertIsolation/"
-diskoutputdir = "/cmsrm/pc18/crovelli/data/Higgs.3.5.X/"+prefix+"/"
+castordir = "/castor/cern.ch/user/e/emanuele/XXX";
+diskoutputdir = "/cmsrm/pc21_2/emanuele/data/Higgs3.9.X/"+prefix+"/"
 outputmain = castordir+"/"+process+"/"+output
 diskoutputmain = diskoutputdir+"/"+prefix+"/"+process+"/"+output
 # prepare job to write on the cmst3 cluster disks
@@ -50,32 +54,22 @@ if diskoutputdir != "none":
 #######################################
 pwd = os.environ['PWD']
 #######################################
-numfiles = reduce(lambda x,y: x+1, file(inputlist).xreadlines(), 0)
-filesperjob = numfiles/ijobmax
-extrafiles  = numfiles%ijobmax
-input = open(inputlist)
-######################################
+inputListfile=open(inputlist)
+inputfiles = inputListfile.readlines()
+ijob=0
 
 #copy the configuration in the actual run directory
 os.system("cp -r config "+prefix)
 
-for ijob in range(ijobmax):
-    # prepare the list file
+while (len(inputfiles) > 0):
     inputfilename = pwd+"/"+prefix+"/"+process+"/"+output+"/input/input_"+str(ijob)+".list"
     inputfile = open(inputfilename,'w')
-    # if it is a normal job get filesperjob lines
-    if ijob != (ijobmax-1):
-        for line in range(filesperjob):
-            ntpfile = input.readline() 
+    for line in range(min(nfileperjob,len(inputfiles))):
+        ntpfile = inputfiles.pop()
+        if ntpfile != '':
             inputfile.write(ntpfile)
-            continue
-    else:
-        # if it is the last job get ALL remaining lines
-        ntpfile = input.readline()
-        while ntpfile != '':
-            inputfile.write(ntpfile)
-            ntpfile = input.readline()
-            continue
+            
+
     inputfile.close()
 
     # prepare the script to run
@@ -98,5 +92,5 @@ for ijob in range(ijobmax):
     os.system("echo bsub -q "+queue+" -o "+prefix+"/"+output+"/log/"+output+"_"+str(ijob)+".log source "+pwd+"/"+outputname)
     os.system("bsub -q "+queue+" -o "+prefix+"/"+process+"/"+output+"/log/"+output+"_"+str(ijob)+".log source "+pwd+"/"+outputname+" -copyInput="+process+"_"+str(ijob))
     ijob = ijob+1
-    time.sleep(5)
+    time.sleep(2)
     continue
