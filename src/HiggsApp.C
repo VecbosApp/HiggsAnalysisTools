@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     if (!strstr(Buffer,"#") && !(strspn(Buffer," ") == strlen(Buffer)))
       {
         sscanf(Buffer,"%s",MyRootFile);
-        // theChain->Add("root://castorcms/"+TString(MyRootFile)); 
+        //theChain->Add("root://castorcms/"+TString(MyRootFile)); 
         theChain->Add("rfio:"+TString(MyRootFile));
         std::cout << "chaining " << MyRootFile << std::endl;
       }
@@ -340,8 +340,17 @@ int main(int argc, char* argv[]) {
   htoww.SetDatasetName(outputFileName);
 
   std::vector<std::string> mask;
-  mask.push_back("HLT_Ele15_LW_L1R");
+  mask.push_back("HLT_Ele10_LW_L1R");
+  mask.push_back("HLT_Ele15_SW_L1R");
+  mask.push_back("HLT_Ele15_SW_CaloEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_CaloEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_TightEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v2");
+  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+
   mask.push_back("HLT_Mu9");
+  mask.push_back("HLT_Mu15_v1");
+
   htoww.setRequiredTriggers(mask);
   htoww.Loop();
   htoww.displayEfficiencies(outputFileName);
