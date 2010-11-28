@@ -1,5 +1,5 @@
-maxPtLepton             35              10000
-minPtLepton             28              10000
+maxPtLepton             38              10000
+minPtLepton             25              10000
 leptonD0                -0.020          0.020
 muGlobalIso             -10000          0.15
 muTrackerIso            -10000          10000
@@ -9,7 +9,7 @@ looseMET                20              10000
 tightMET                20              10000
 projectedMET            20              10000
 metOverPtLL             0.6             10000
-mll                     12              50
+mll                     12              80
 mllZPeak                0               10000
 bTagVeto                -2.1            2.1
 jetConeWidth		0.0		0.3
@@ -17,5 +17,5 @@ etaJetAcc		-5.0		5.0
 etJetAcc		25		10000
 nSoftMuons              0               0
 nExtraLeptons           0               0
-deltaPhi		0		50
+deltaPhi		0		90
 deltaPhiLLJet           0               165

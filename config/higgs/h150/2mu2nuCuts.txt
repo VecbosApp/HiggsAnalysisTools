@@ -1,5 +1,5 @@
 maxPtLepton             27              10000
-minPtLepton             20              10000
+minPtLepton             25              10000
 leptonD0                -0.020          0.020
 muGlobalIso             -10000          0.15
 muTrackerIso            -10000          10000
@@ -7,7 +7,7 @@ muHcalIso               -10000          10000
 muEcalIso               -10000          10000
 looseMET                20              10000
 tightMET                30              10000
-projectedMET            20              10000
+projectedMET            35              10000
 metOverPtLL             0.6             10000
 mll                     12              50
 mllZPeak                15              10000
