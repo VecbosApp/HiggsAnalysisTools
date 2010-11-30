@@ -53,6 +53,9 @@ for($i=0; $i<($#masses+1); $i++) {
     system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToEE_M-20_CT10_TuneZ2_PU 10 HiggsApp 8nh $fullprefix 1");
     system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToMuMu_M-20_CT10_TuneZ2_PU 10 HiggsApp 8nh $fullprefix 1");
     system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola 10 HiggsApp 8nh $fullprefix 1");
+    system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToEE_M-10To20_TuneZ2 10 HiggsApp 8nh $fullprefix 1");
+    system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToMuMu_M-10To20_TuneZ2 10 HiggsApp 8nh $fullprefix 1");
+    system("python cmst3_submit_manyfilesperjob.py ZPYTHIA DYToTauTau_M-10To20_TuneZ2 10 HiggsApp 8nh $fullprefix 1");
     print  "done with V+jets.\n";
     
     print  "submitting dibosons...\n";
