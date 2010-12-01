@@ -1,3 +1,4 @@
+#include <TString.h>
 #include <TFile.h>
 #include <TTree.h>
 #include <TChain.h>
@@ -5,6 +6,11 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+
+// parameters to configure
+int exampleHiggsMass = 200;
+TString castordir_data("/cmsrm/pc21_2/emanuele/data/Higgs3.9.X/Data_HiggsRev_V8/");
+TString castordir_mc("/cmsrm/pc23_2/crovelli/data/Higgs3.9.X/mc_higgsReview_v8/");
 
 using namespace std;
 
@@ -139,8 +145,8 @@ std::map<int,float> Higgs_xsec_masses;
 
 float Wgamma_xsec = 41.76;
 float Wlnu_xsec = 31314./3. * 0.742; // NLO * filtereff (BR W->lnu included);
-float ZjetsLoMass_xsec = 1950.; // not good: is >50 xsec - 10-50 xsec
-float ZjetsHiMass_xsec = 3048.;
+float ZjetsLoMass_xsec = 4998./3.; 
+float ZjetsHiMass_xsec = 3048./3.;
 float TTjets_xsec = 157.5;
 float WW_xsec = 4.50347; // WW_2l2nu
 float WZ_xsec = 0.599442; // WZ_3l
@@ -193,8 +199,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   sampleNames[0] = "Higgs";
   // backgrounds
   sampleNames[1] = "TTbar+jets";
-  sampleNames[2] = "Z+jets Hi Mass";
-  sampleNames[3] = "Z+jets Lo Mass";
+  sampleNames[2] = "Z(ee)";
+  sampleNames[3] = "Z(mumu)";
   sampleNames[4] = "WW";
   sampleNames[5] = "ZZ";
   sampleNames[6] = "WZ";
@@ -220,56 +226,63 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   Higgs_xsec_masses.insert(std::make_pair(400,0.125106));
 
   if(mass==0) { // use the default mass to print the cut-by cut table: the one pointed by results/ dir
-    Higgs_xsec = Higgs_xsec_masses[200] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    Higgs_xsec = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+
+    char dir_mc[1000];
+    sprintf(dir_mc,"%s/OptimMH%d/mc_higgsReview_v8/OptimMH%d/",castordir_mc.Data(),exampleHiggsMass,exampleHiggsMass);
+    char HiggsSample[500];
+    sprintf(HiggsSample,"HiggsWW/GluGluToHToWWTo2L2Nu_M-%d/*Counters.root",exampleHiggsMass);
 
     // signal
-    chains_preSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-200/*Counters.root");       
+    chains_preSel[0]->Add(TString(dir_mc)+TString(HiggsSample));       
     // backgrounds
-    chains_preSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
-    chains_preSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
-    chains_preSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
-    chains_preSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
-    chains_preSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
-    chains_preSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
-    chains_preSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
-    chains_preSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-    chains_preSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-    chains_preSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
-    chains_preSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
-    chains_preSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
-    chains_preSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+    chains_preSel[1]->Add(TString(dir_mc)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
+    chains_preSel[2]->Add(TString(dir_mc)+TString("/ZPYTHIA/DYToEE_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_preSel[3]->Add(TString(dir_mc)+TString("/ZPYTHIA/DYToMuMu_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_preSel[4]->Add(TString(dir_mc)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
+    chains_preSel[5]->Add(TString(dir_mc)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
+    chains_preSel[6]->Add(TString(dir_mc)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
+    //    chains_preSel[7]->Add(TString(dir_mc)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_preSel[8]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[9]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[10]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
+    chains_preSel[11]->Add(TString(dir_mc)+TString("/WPYTHIA/WToENu_TuneZ2/*Counters.root"));
+    chains_preSel[12]->Add(TString(dir_mc)+TString("/WPYTHIA/WToMuNu_TuneZ2/*Counters.root"));
+    chains_preSel[13]->Add(TString(dir_mc)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
 
     // data
-    chains_preSel[14]->Add("results_data/dataset_eg_Sep3rdReReco/*Counters.root");
-    chains_preSel[15]->Add("results_data/PDElectron_11pbTo40pb/*Counters.root");
+    char dir_data[1000];
+    sprintf(dir_data,"%s/OptimMH%d/Data_HiggsRev_V8/OptimMH%d/Data7TeV/",castordir_data.Data(),exampleHiggsMass,exampleHiggsMass);
+    chains_preSel[14]->Add(TString(dir_data)+TString("/dataset_eg_Sep3rdReReco/*Counters.root"));
+    chains_preSel[15]->Add(TString(dir_data)+TString("/PDElectron_11pbTo40pb/*Counters.root"));
 
     // signal
-    chains_fullSel[0]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-200/*Counters.root");       
+    chains_fullSel[0]->Add(TString(dir_mc)+TString(HiggsSample));
     // backgrounds
-    chains_fullSel[1]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");       
-    chains_fullSel[2]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root");       
-    chains_fullSel[3]->Add("results/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root");       
-    chains_fullSel[4]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
-    chains_fullSel[5]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");   
-    chains_fullSel[6]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
-    chains_fullSel[7]->Add("results/DiBosons/WgammaXXXX/*Counters.root");
-    chains_fullSel[8]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-    chains_fullSel[9]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-    chains_fullSel[10]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
-    chains_fullSel[11]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
-    chains_fullSel[12]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
-    chains_fullSel[13]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+    chains_fullSel[1]->Add(TString(dir_mc)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
+    chains_fullSel[2]->Add(TString(dir_mc)+TString("/ZPYTHIA/DYToEE_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_fullSel[3]->Add(TString(dir_mc)+TString("/ZPYTHIA/DYToMuMu_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_fullSel[4]->Add(TString(dir_mc)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
+    chains_fullSel[5]->Add(TString(dir_mc)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
+    chains_fullSel[6]->Add(TString(dir_mc)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
+    //    chains_fullSel[7]->Add(TString(dir_mc)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_fullSel[8]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[9]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[10]->Add(TString(dir_mc)+TString("/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
+    chains_fullSel[11]->Add(TString(dir_mc)+TString("/WPYTHIA/WToENu_TuneZ2/*Counters.root"));
+    chains_fullSel[12]->Add(TString(dir_mc)+TString("/WPYTHIA/WToMuNu_TuneZ2/*Counters.root"));
+    chains_fullSel[13]->Add(TString(dir_mc)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
 
     // data
-    chains_fullSel[14]->Add("results_data/dataset_eg_Sep3rdReReco/*Counters.root");
-    chains_fullSel[15]->Add("results_data/PDElectron_11pbTo40pb/*Counters.root");
+    chains_fullSel[14]->Add(TString(dir_data)+TString("/dataset_eg_Sep3rdReReco/*Counters.root"));
+    chains_fullSel[15]->Add(TString(dir_data)+TString("/PDElectron_11pbTo40pb/*Counters.root"));
 
   } else {
 
     Higgs_xsec = Higgs_xsec_masses[mass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
 
     char dir[1000];
-    sprintf(dir,"resultsMassDep/OptimMH%d/MC_HiggsRev38X_V4/OptimMH%d/",mass,mass);
+    sprintf(dir,"%s/OptimMH%d/mc_higgsReview_v8/OptimMH%d/",castordir_mc.Data(),mass,mass);
     char higgsDir[100];
     sprintf(higgsDir,"HiggsWW/GluGluToHToWWTo2L2Nu_M-%d/",mass);
 
@@ -277,8 +290,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_preSel[0]->Add(TString(dir)+TString(higgsDir)+TString("*Counters.root"));
     // backgrounds
     chains_preSel[1]->Add(TString(dir)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
-    chains_preSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root"));       
-    chains_preSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root"));       
+    chains_preSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYToEE_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_preSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYToMuMu_M-20_CT10_TuneZ2_PU/*Counters.root"));       
     chains_preSel[4]->Add(TString(dir)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
     chains_preSel[5]->Add(TString(dir)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
     chains_preSel[6]->Add(TString(dir)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
@@ -291,19 +304,17 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_preSel[13]->Add(TString(dir)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
 
     // data
-    char dataDir1[1000];
-    sprintf(dataDir1,"results_dataMassDep/OptimMH%d/Data7TeV/dataset_eg_Sep3rdReReco/*Counters.root",mass);
-    char dataDir2[1000];
-    sprintf(dataDir2,"results_dataMassDep/OptimMH%d/Data7TeV/PDElectron_11pbTo40pb/*Counters.root",mass);
-    chains_preSel[14]->Add(dataDir1);
-    chains_preSel[15]->Add(dataDir2);
+    char dir_data[1000];
+    sprintf(dir_data,"%s/OptimMH%d/Data_HiggsRev_V8/OptimMH%d/Data7TeV/",castordir_data.Data(),mass,mass);
+    chains_preSel[14]->Add(TString(dir_data)+TString("/dataset_eg_Sep3rdReReco/*Counters.root"));
+    chains_preSel[15]->Add(TString(dir_data)+TString("/PDElectron_11pbTo40pb/*Counters.root"));
 
     // signal
     chains_fullSel[0]->Add(TString(dir)+TString(higgsDir)+TString("*Counters.root"));
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTbar/TTJets_TuneD6T/*Counters.root"));       
-    chains_fullSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-10To50/*Counters.root"));       
-    chains_fullSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYJetsToLL_TuneD6T_M-50/*Counters.root"));       
+    chains_fullSel[2]->Add(TString(dir)+TString("/ZPYTHIA/DYToEE_M-20_CT10_TuneZ2_PU/*Counters.root"));       
+    chains_fullSel[3]->Add(TString(dir)+TString("/ZPYTHIA/DYToMuMu_M-20_CT10_TuneZ2_PU//*Counters.root"));       
     chains_fullSel[4]->Add(TString(dir)+TString("/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root"));
     chains_fullSel[5]->Add(TString(dir)+TString("/DiBosons/ZZtoAnything_TuneZ2/*Counters.root"));   
     chains_fullSel[6]->Add(TString(dir)+TString("/DiBosons/WZTo3LNu_TuneZ2/*Counters.root"));
@@ -316,8 +327,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[13]->Add(TString(dir)+TString("/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
 
     // data 
-    chains_fullSel[14]->Add(dataDir1);
-    chains_fullSel[15]->Add(dataDir2);
+    chains_fullSel[14]->Add(TString(dir_data)+TString("/dataset_eg_Sep3rdReReco/*Counters.root"));
+    chains_fullSel[15]->Add(TString(dir_data)+TString("/PDElectron_11pbTo40pb/*Counters.root"));
 
   }
 
@@ -354,14 +365,16 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     
     // pre-selection
     for (Long64_t jentry=0; jentry<nentriesPre;jentry++) {
-      Long64_t nb = chains_preSel[isample]->GetEntry(jentry);   
+      Long64_t nb;
+      nb = chains_preSel[isample]->GetEntry(jentry);   
       // nCutsAnaPre = nCutsPre;      
       for(int icut=0; icut<nCutsPre; icut++) nPreSelTot[icut][isample] += nSelPre[icut];	
     }
     
     // full selection
     for (Long64_t jentry=0; jentry<nentriesFull;jentry++) {
-      Long64_t nb2 = chains_fullSel[isample]->GetEntry(jentry);   
+      Long64_t nb2;
+      nb2 = chains_fullSel[isample]->GetEntry(jentry);   
       // nCutsAnaFull = nCutsFull;
       for(int icut=0; icut<nCutsFull; icut++) nFullSelTot[icut][isample] += nSelFull[icut];
     }
@@ -381,8 +394,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
       Wj_preSel[icut]     = W_tmp;
       ttj_preSel[icut]    = lumi * TTjets_xsec * nPreSelTot[icut][1]/nPreSelTot[0][1];
       float Z_tmp=0.;
-      Z_tmp += lumi * ZjetsLoMass_xsec  * nPreSelTot[icut][2]/nPreSelTot[0][2];
-      Z_tmp += lumi * ZjetsHiMass_xsec  * nPreSelTot[icut][3]/nPreSelTot[0][3];
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nPreSelTot[icut][2]/nPreSelTot[0][2]; // Z->ee
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nPreSelTot[icut][3]/nPreSelTot[0][3]; // Z->mumu
       Zj_preSel[icut]     = Z_tmp;
       WW_preSel[icut]     = lumi * WW_xsec     * nPreSelTot[icut][4]/nPreSelTot[0][4];
       ZZ_preSel[icut]     = lumi * ZZ_xsec     * nPreSelTot[icut][5]/nPreSelTot[0][5];
@@ -455,8 +468,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
       Wj_fullSel[icut]     = W_tmp;
       ttj_fullSel[icut]    = lumi * TTjets_xsec * nFullSelTot[icut][1]/nPreSelTot[0][1];
       float Z_tmp=0.;
-      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nPreSelTot[0][2];
-      Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][3]/nPreSelTot[0][3];
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nPreSelTot[0][2]; // Z->ee
+      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][3]/nPreSelTot[0][3]; // Z->mumu
       Zj_fullSel[icut]     = Z_tmp;
       WW_fullSel[icut]     = lumi * WW_xsec     * nFullSelTot[icut][4]/nPreSelTot[0][4];
       ZZ_fullSel[icut]     = lumi * ZZ_xsec     * nFullSelTot[icut][5]/nPreSelTot[0][5];
@@ -570,14 +583,14 @@ void setupCuts() {
 
   // unusued ee cuts
   UsePreSelCuts[ee][1] = UsePreSelCuts[ee][7] = UsePreSelCuts[ee][8] = 0; 
-  UseCuts[ee][5] = UseCuts[ee][6] = UseCuts[ee][7] = UseCuts[ee][8] = UseCuts[ee][21] = 0; // muon iso
+  UseCuts[ee][5] = UseCuts[ee][6] = UseCuts[ee][7] = UseCuts[ee][8] = UseCuts[ee][21] = UseCuts[ee][11] = UseCuts[ee][15] = 0; // muon iso
 
   // unusued mm cuts
   UsePreSelCuts[mm][1] = UsePreSelCuts[mm][7] = UsePreSelCuts[mm][8] = 0; 
-  UseCuts[mm][4] = UseCuts[mm][10] = UseCuts[mm][5] = UseCuts[mm][6] = UseCuts[mm][7] = UseCuts[mm][21] = 0; // ele ID and conv. rej. and separate mu iso
+  UseCuts[mm][4] = UseCuts[mm][10] = UseCuts[mm][5] = UseCuts[mm][6] = UseCuts[mm][7] = UseCuts[mm][21] = UseCuts[mm][11] = UseCuts[mm][15] = 0; // ele ID and conv. rej. and separate mu iso
 
   // unusued em cuts
-  UsePreSelCuts[em][1] = UsePreSelCuts[em][7] = UsePreSelCuts[em][8] = UseCuts[em][13] = UseCuts[em][21] = 0;
+  UsePreSelCuts[em][1] = UsePreSelCuts[em][7] = UsePreSelCuts[em][8] = UseCuts[em][13] = UseCuts[em][21] = UseCuts[em][11] = UseCuts[em][15] = 0;
   UseCuts[em][5] = UseCuts[em][6] = UseCuts[em][7] = 0; // separate mu iso 
   
   preSelCuts[0]="event";
@@ -605,7 +618,7 @@ void setupCuts() {
   fullSelCuts[11]="$MET>20$ GeV";
   fullSelCuts[12]="$m_{ll}$";
   fullSelCuts[13]="$|m_{ll}-m_Z|>15$ GeV";
-  fullSelCuts[14]="tight (p)MET";
+  fullSelCuts[14]="proj. MET";
   fullSelCuts[15]="MET/$p_T^{ll}$";
   fullSelCuts[16]="jet veto";
   fullSelCuts[17]="anti b-tag";

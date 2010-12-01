@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
   std::cout << "sample" << "\t" << "xsec" << "\t" << "weight" << std:: endl;
   
   w = weight("H120", 9269, 0.247143, 1.0, wantLumi);
-  w = weight("H130", 100000, 0.452859, 1.0, wantLumi);
+  w = weight("H130", 109995, 0.452859, 1.0, wantLumi);
   w = weight("H140", 109550, 0.649260, 1.0, wantLumi);
   w = weight("H150", 109550, 0.787871, 1.0, wantLumi);
   w = weight("H155", 97850, 0.842093, 1.0, wantLumi);
@@ -28,18 +28,21 @@ int main(int argc, char* argv[]) {
   //  w = weight("Wgamma", 107050, 23.2*1.8, 1.0, wantLumi);
   w = weight("WW", 110000, 4.50347, 1.0, wantLumi);
   w = weight("WZ", 110000, 0.599442, 1.0, wantLumi);
-  w = weight("ZZ", 2.11337e+06, 5.9, 1.0, wantLumi);
+  w = weight("ZZ", 3.11337e+06, 5.9, 1.0, wantLumi);
 
   // MCFM NLO
-  w = weight("W(e+mu+tau)nu", 2.14853e+06 + 5.33094e+06 + 1.133e+06, 31314./3. * 0.742, 1.0, wantLumi);
+  w = weight("Wenu", 2.79853e+06, 31314./3. * 0.742, 1.0, wantLumi);
+  w = weight("Wmunu", 5.33094e+06, 31314./3. * 0.742, 1.0, wantLumi);
+  w = weight("Wtaunu", 3.91925e+06, 31314./3. * 0.742, 1.0, wantLumi);
 
-  w = weight("DY 10-50 GeV",  188145,  1950, 1.0, wantLumi); // not good: is >50 xsec - 10-50 xsec
-  w = weight("DY >50 GeV",  2027,  3048, 1.0, wantLumi); // mll > 50 GeV
+  w = weight("DY(ee) > 20 GeV",  2.04899e+06,  4998/3., 1.0, wantLumi);
+  w = weight("DY(mm) > 20 GeV",  1.89893e+06,  4998/3., 1.0, wantLumi);
+  w = weight("DY(tautau) > 20 GeV", 1.84822e+06, 4998./3., 1.0, wantLumi);
 
   w = weight("TTjets", 2.01075e+06,   165, 1.0, wantLumi);
 
-  w = weight("SingleTop_sChannel", 394967, 4.21 * (0.1080*3), 1.0, wantLumi);
-  w = weight("SingleTop_tChannel", 484060, 64.6*(3*0.1080), 1.0, wantLumi);
+  w = weight("SingleTop_sChannel", 535570, 4.21 * (0.1080*3), 1.0, wantLumi);
+  w = weight("SingleTop_tChannel", 926480, 64.6*(3*0.1080), 1.0, wantLumi);
   w = weight("SingleTop_tWChannel", 494961, 10.6 * (0.1080*3), 1.0, wantLumi);
 
   return 0;
