@@ -8,7 +8,8 @@
 #include <iomanip>
 
 // parameters to configure
-int exampleHiggsMass = 200;
+int exampleHiggsMass = -1;
+bool runStandalone = true;
 TString castordir_data("/cmsrm/pc21_2/emanuele/data/Higgs3.9.X/Data_HiggsRev_V8/");
 TString castordir_mc("/cmsrm/pc23_2/crovelli/data/Higgs3.9.X/mc_higgsReview_v8/");
 
@@ -917,7 +918,7 @@ void printLatex(float lumi, const char* finalstate) {
            << "\\end{tabular}" << endl
            << "\\end{center}" << endl
            << "\\end{tiny}" << endl
-           << "\\caption{Breakdown of signal and backgrounds events in "
+           << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Breakdown of signal and backgrounds events in "
            << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
            << "\\end{sidewaystable}" << endl;
 
@@ -1005,13 +1006,15 @@ void printShortBkgSummary(float lumi) {
   textfile << "\\hline" << endl
            << "\\end{tabular}" << endl
            << "\\end{center}" << endl
-           << "\\caption{Expected backgrounds events in "
+           << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Expected backgrounds events in "
            << lumi << " $pb^{-1}$.} " << endl 
            << "\\end{sidewaystable}" << endl;
 
 }
 
-void printLatex(float lumi) {
+void printLatex(float lumi, int HiggsMassOptim) {
+
+  exampleHiggsMass = HiggsMassOptim;
   
   char namefile[200];
   sprintf(namefile,"yields_byCut.tex");
@@ -1019,10 +1022,12 @@ void printLatex(float lumi) {
   textfile.open(namefile, ios_base::trunc);
   textfile.precision(2);
 
-  textfile << "\\documentclass{article}" << endl;
-  textfile << "\\setlength\\textheight{9.8in}" << endl;
-  textfile << "\\usepackage{rotating}" << endl;
-  textfile << "\\begin{document}" << endl;
+  if(runStandalone) {
+    textfile << "\\documentclass{article}" << endl;
+    textfile << "\\setlength\\textheight{9.8in}" << endl;
+    textfile << "\\usepackage{rotating}" << endl;
+    textfile << "\\begin{document}" << endl;
+  }
 
   textfile.close();
 
@@ -1033,9 +1038,14 @@ void printLatex(float lumi) {
   printShortBkgSummary(lumi);
 
   textfile.open(namefile, ios_base::app);
-  textfile << "\\end{document}" << endl;
-  textfile.close();
+  textfile << "\\clearpage" << endl;
+  textfile.close();  
 
+  if(runStandalone) {
+    textfile.open(namefile, ios_base::app);
+    textfile << "\\end{document}" << endl;
+    textfile.close();
+  }
 }
 
 void printSuperSummary(float lumi, int massset) {
@@ -1063,10 +1073,12 @@ void printSuperSummary(float lumi, int massset) {
   textfile.precision(2);
 
   if(massset==0) {
-    textfile << "\\documentclass{article}" << endl;
-    textfile << "\\setlength\\textheight{9.8in}" << endl;
-    textfile << "\\usepackage{rotating}" << endl;
-    textfile << "\\begin{document}" << endl;
+    if(runStandalone) {
+      textfile << "\\documentclass{article}" << endl;
+      textfile << "\\setlength\\textheight{9.8in}" << endl;
+      textfile << "\\usepackage{rotating}" << endl;
+      textfile << "\\begin{document}" << endl;
+    }
   }
 
   std::string channelName[3];
@@ -1139,3 +1151,4 @@ void printSuperSummary(float lumi, int massset) {
 
 }
 
+void setRunStandalone(bool what) { runStandalone = what; }
