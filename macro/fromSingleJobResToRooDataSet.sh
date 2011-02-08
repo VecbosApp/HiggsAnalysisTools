@@ -10,7 +10,7 @@ echo "MERGING TREES STEP DONE."
 
 echo "WEIGHTING TREES STEP..."
 chmod u+x ./weightTrees.sh
-./weightTrees.sh
+./weightTrees.sh 35
 echo "MERGING TREES STEP DONE."
 
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION..."
