@@ -1,11 +1,12 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TBranch.h>
+#include <TMath.h>
 #include <iostream>
 
 using namespace std;
 
-void addWeights(const char* filename, float weight) {
+void addWeights(const char* filename, float weight, int finalstate) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << weight << endl;
 
@@ -29,6 +30,9 @@ void addWeights(const char* filename, float weight) {
 
     // add also a branch with jet category (1 for njets=0, -1 for njets=1: useful for the fit)
     // and a branch with float final selection bool (for roofit)
+    Int_t           run;
+    Int_t           lumi;
+    Int_t           event;
     Float_t         met;
     Float_t         pfMet;
     Float_t         caloMet;
@@ -40,13 +44,13 @@ void addWeights(const char* filename, float weight) {
     Float_t         maxPtEle;
     Float_t         minPtEle;
     Float_t         detaLeptons;
-    Char_t          finalLeptons;
-    Char_t          jetVeto;
-    Char_t          uncorrJetVeto;
-    Char_t          preDeltaPhi;
-    Char_t          finalSelection;
+    Bool_t          finalLeptons;
+    Bool_t          jetVeto;
+    Bool_t          uncorrJetVeto;
+    Bool_t          preDeltaPhi;
+    Bool_t          finalSelection;
     Float_t         KFactor;
-    Char_t          promptDecay;
+    Bool_t          promptDecay;
     Float_t         maxPtLh;
     Float_t         minPtLh;
     Int_t           njets;
@@ -64,6 +68,9 @@ void addWeights(const char* filename, float weight) {
     Float_t         see[2];
     Int_t           matched[2];
 
+    treeOrig->SetBranchAddress("run", &run);
+    treeOrig->SetBranchAddress("lumi", &lumi);
+    treeOrig->SetBranchAddress("event", &event);
     treeOrig->SetBranchAddress("met", &met);  // default MET is tcMET for WW
     treeOrig->SetBranchAddress("pfMet", &pfMet);
     treeOrig->SetBranchAddress("caloMet", &caloMet);
@@ -107,8 +114,23 @@ void addWeights(const char* filename, float weight) {
     Float_t hoe_1,  hoe_2;
     Float_t see_1,  see_2;
     Int_t   matched_1,  matched_2;
+    Float_t expCosDphi;
+
+    // convert the booleans into integers (to insert in RooDataset)
+    Int_t         i_finalLeptons;
+    Int_t         i_jetVeto;
+    Int_t         i_uncorrJetVeto;
+    Int_t         i_preDeltaPhi;
+    Int_t         i_finalSelection;
+    Int_t         i_promptDecay;
+
+    // the selected final state: ee=0, mm=1, em=2
+    treeNew->Branch("finalstate", &finalstate, "finalstate/I");
 
     // copy branches
+    treeNew->Branch("run", &run, "run/I");
+    treeNew->Branch("lumi", &lumi, "lumi/I");
+    treeNew->Branch("event", &event, "event/I");
     treeNew->Branch("met", &met, "met/F");  // default MET is tcMET for WW
     treeNew->Branch("pfMet", &pfMet, "pfMet/F");
     treeNew->Branch("caloMet", &caloMet, "caloMet/F");
@@ -120,13 +142,13 @@ void addWeights(const char* filename, float weight) {
     treeNew->Branch("maxPtEle", &maxPtEle, "maxPtEle/F");
     treeNew->Branch("minPtEle", &minPtEle, "minPtEle/F");
     treeNew->Branch("detaLeptons", &detaLeptons, "detaLeptons/F");
-    treeNew->Branch("finalLeptons", &finalLeptons, "finalLeptons/B");
-    treeNew->Branch("jetVeto", &jetVeto, "jetVeto/B");
-    treeNew->Branch("uncorrJetVeto", &uncorrJetVeto, "uncorrJetVeto/B");
-    treeNew->Branch("preDeltaPhi", &preDeltaPhi, "preDeltaPhi/B");
-    treeNew->Branch("finalSelection", &finalSelection, "finalSelection/B");
+    treeNew->Branch("finalLeptons", &i_finalLeptons, "finalLeptons/I");
+    treeNew->Branch("jetVeto", &i_jetVeto, "jetVeto/I");
+    treeNew->Branch("uncorrJetVeto", &i_uncorrJetVeto, "uncorrJetVeto/I");
+    treeNew->Branch("preDeltaPhi", &i_preDeltaPhi, "preDeltaPhi/I");
+    treeNew->Branch("finalSelection", &i_finalSelection, "finalSelection/I");
     treeNew->Branch("KFactor", &KFactor, "KFactor/F");
-    treeNew->Branch("promptDecay", &promptDecay, "promptDecay/B");
+    treeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
     treeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
     treeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
     treeNew->Branch("njets", &njets, "njets/I");
@@ -150,11 +172,12 @@ void addWeights(const char* filename, float weight) {
     treeNew->Branch("hoe2", &hoe_2, "hoe2/F");
     treeNew->Branch("see2", &see_2, "see2/F");
     treeNew->Branch("matched2", &matched_2, "matched2/I");
+    treeNew->Branch("expCosDphi", &expCosDphi, "expCosDphi/F");
 
     float jetcat = 0;
     treeNew->Branch("jetcat", &jetcat,  "jetcat/F");
-    float event = -1;
-    treeNew->Branch("event", &event, "event/F");
+    float consecevent = -1;
+    treeNew->Branch("consecevent", &consecevent, "consecevent/F");
     treeNew->Branch("weight", &weight,  "weight/F");
 
     int j =0;
@@ -181,6 +204,7 @@ void addWeights(const char* filename, float weight) {
       hoe_2     = hoe[1];
       see_2     = see[1];
       matched_2 = matched[1];
+      expCosDphi = exp(cos(TMath::Pi()*deltaPhi/180.));
 
       // consider only events with 0 or 1 jet
       // and fit variables within fit range
@@ -191,7 +215,15 @@ void addWeights(const char* filename, float weight) {
       //         eleInvMass>=12 && eleInvMass<=150 &&
       //         bTagImpPar>=-1001 && bTagImpPar<=2 &&
       //         finalSelection) {
-      event = (float)j;
+      
+      i_finalLeptons = (finalLeptons) ? 1 : 0;
+      i_jetVeto = (jetVeto) ? 1 : 0;
+      i_uncorrJetVeto = (uncorrJetVeto) ? 1 : 0;
+      i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
+      i_finalSelection = (finalSelection) ? 1 : 0;
+      i_promptDecay = (promptDecay) ? 1 : 0;
+
+      consecevent = (float)j;
       treeNew->Fill();
       j++;
       //    }
