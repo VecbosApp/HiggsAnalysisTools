@@ -12,6 +12,7 @@
 #include <vector>
 #include "CommonTools/include/Monitor.hh"
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
+#include "EgammaAnalysisTools/include/CiCBasedEleSelector.hh"
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
 #include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
@@ -62,8 +63,10 @@ private:
   int numSoftMuons();
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons();
-  //! returns the output of the custom cut electron ID
+  //! returns the output of the custom cut electron ID with WPXX
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID);
+  //! returns the output of the custom cut electron ID with CICs
+  void isCicEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CiCBasedEleSelector thisCiCBasedID);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
@@ -106,6 +109,8 @@ private:
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
+  CiCBasedEleSelector EgammaCiCBasedID;
+  CiCBasedEleSelector EgammaCiCBasedIDLow;
   ElectronLikelihood *LH;
   //! to evaluate preselection efficiency
   Selection *_preselection;
@@ -128,7 +133,7 @@ private:
   //! array containing the possibility of having reconstructed a certain sub-channel
   bool m_channel[3];
   bool isOk[3];
-
+  
   //! kinematics of the event
   int theElectron,  thePositron;
   int theMuonMinus, theMuonPlus;
