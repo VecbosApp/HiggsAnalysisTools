@@ -74,6 +74,8 @@ $(OUTLIB)EcalCleaner.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/EcalCleaner.
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)EcalCleaner.o $<
 $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CutBasedEleIDSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CutBasedEleIDSelector.o $<
+$(OUTLIB)CiCBasedEleSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CiCBasedEleSelector.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CiCBasedEleSelector.o $<
 $(OUTLIB)Higgs.o: $(INCLUDEDIR)/src/Higgs.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)Higgs.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
@@ -157,6 +159,7 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)RedIsolationOptimTree.o \
 	$(OUTLIB)RedEleIDTree.o \
 	$(OUTLIB)CutBasedEleIDSelector.o \
+	$(OUTLIB)CiCBasedEleSelector.o \
 	$(OUTLIB)EcalCleaner.o \
 	$(OUTLIB)CommonHiggsPreselector.o \
 	$(OUTLIB)CutBasedHiggsSelector.o \
