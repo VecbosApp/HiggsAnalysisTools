@@ -175,8 +175,12 @@ float Higgs::mT3(TLorentzVector pl1, TLorentzVector pl2, TVector3 met) {
 
 float Higgs::likelihoodRatio(int eleIndex, ElectronLikelihood &lh) {
   LikelihoodMeasurements measurements;
+  Utils anaUtils;
+  bool inEB=anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB);
   measurements.pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
-  measurements.subdet = (fabs(etaEle[eleIndex])<1.479) ? 0 : 1;
+  if(inEB && fabs(etaEle[eleIndex])<1.0) measurements.subdet = 0;
+  else if (inEB && fabs(etaEle[eleIndex])>=1.0) measurements.subdet = 1;
+  else measurements.subdet = 2;
   measurements.deltaPhi = deltaPhiAtVtxEle[eleIndex];
   measurements.deltaEta = deltaEtaAtVtxEle[eleIndex];
   measurements.eSeedClusterOverPout = eSeedOverPoutEle[eleIndex];
@@ -186,7 +190,10 @@ float Higgs::likelihoodRatio(int eleIndex, ElectronLikelihood &lh) {
   measurements.sigmaIPhiIPhi = SigmaiPiP(eleIndex);
   measurements.fBrem = fbremEle[eleIndex];
   measurements.nBremClusters = nbremsEle[eleIndex];
-  return lh.result(measurements);
+  int gsftrack = gsfTrackIndexEle[eleIndex];
+  TVector3 pIn(pxGsfTrack[gsftrack],pyGsfTrack[gsftrack],pzGsfTrack[gsftrack]);
+  measurements.OneOverEMinusOneOverP = 1./(eSuperClusterOverPEle[eleIndex]*pIn.Mag()) - 1./pIn.Mag();
+  return lh.resultLog(measurements);
 }
 
 /// sigma ieta ieta of the seed cluster (ecal-driven/tracker-driven)
