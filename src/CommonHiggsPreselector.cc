@@ -17,6 +17,8 @@ void CommonHiggsPreselector::Configure(const char *fileCuts, const char *fileSwi
   _selection->addSwitch("preselection");
   _selection->addSwitch("leptonAcceptance");
   _selection->addCut("nRecoLeptons");
+  _selection->addCut("leptonD0");
+  _selection->addCut("muGlobalIso");
   _selection->addCut("hardLeptonThreshold");
   _selection->addCut("slowLeptonThreshold");
   _selection->addCut("METpreselection");
@@ -95,7 +97,7 @@ bool CommonHiggsPreselector::output() {
   theCounter->IncrVar("nRecoLeptons",m_weight);
   
   // leptons in the acceptance
-  if( _selection->getSwitch("leptonAcceptance") && !m_isEE && !m_isEM && !m_isMM ) return false;
+  if( _selection->getSwitch("leptonAcceptance") && !m_isEE && !m_isEM && !m_isMM && !m_isME ) return false;
   theCounter->IncrVar("twoGoodRec",m_weight);
   
   // high pt lepton
@@ -111,7 +113,7 @@ bool CommonHiggsPreselector::output() {
 	!_selection->passCut("slowLeptonThreshold", m_lowMuonPt) )
        ) return false;
   theCounter->IncrVar("slowLeptonThreshold",m_weight);
-  
+
   // met cut
   if ( _selection->getSwitch("METpreselection") && 
        !_selection->passCut("METpreselection", m_met) ) return false;
@@ -121,7 +123,8 @@ bool CommonHiggsPreselector::output() {
   if ( _selection->getSwitch("dileptonInvMassMin")) {
     if ( ! ( (m_isEE && _selection->passCut("dileptonInvMassMin", m_mllEE)) ||
 	     (m_isMM && _selection->passCut("dileptonInvMassMin", m_mllMM)) ||
-	     (m_isEM && _selection->passCut("dileptonInvMassMin", m_mllEM)) ) 
+	     (m_isEM && _selection->passCut("dileptonInvMassMin", m_mllEM)) ||
+	     (m_isME && _selection->passCut("dileptonInvMassMin", m_mllME)) ) 
 	 ) return false;
   }
   theCounter->IncrVar("dileptonInvMassMin",m_weight);

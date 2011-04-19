@@ -17,6 +17,9 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree = new TTree("T1","eleID tree");
 
   // GENERAL block
+  myTree->Branch("run",                 &myRun,                 "run/I");
+  myTree->Branch("ls",                  &myLS,                  "ls/I");
+  myTree->Branch("event",               &myEvent,               "event/I");
   myTree->Branch("met",                 &myMet,                 "met/F");  
   myTree->Branch("pfMet",               &myPFMet,               "pfMet/F");  
   myTree->Branch("caloMet",             &myCaloMet,             "caloMet/F");  
@@ -84,6 +87,28 @@ void RedHiggsTree::addCSA07Infos() {
   myTree->Branch("CSA07weight",              &myWeight,              "CSA07weight/D");
   myTree->Branch("CSA07processId",           &myProcesId,            "CSA07processId/D");
   myTree->Branch("CSA07lumi",                &myLumi,                "CSA07lumi/F");
+
+}
+
+void RedHiggsTree::addLatinos() {
+
+  myTree->Branch("step1",              &myStep1,              "step1/B");
+  myTree->Branch("step2",              &myStep2,              "step2/B");
+  myTree->Branch("step3",              &myStep3,              "step3/B");
+  myTree->Branch("step4",              &myStep4,              "step4/B");
+  myTree->Branch("step5",              &myStep5,              "step5/B");
+  myTree->Branch("step6",              &myStep6,              "step6/B");
+  myTree->Branch("step7",              &myStep7,              "step7/B");
+  myTree->Branch("step8",              &myStep8,              "step8/B");
+  myTree->Branch("step9",              &myStep9,              "step9/B");
+  myTree->Branch("step10",             &myStep10,             "step10/B");
+  myTree->Branch("step11",             &myStep11,             "step11/B");
+  myTree->Branch("step12",             &myStep12,             "step12/B");
+  myTree->Branch("step13",             &myStep13,             "step13/B");
+  myTree->Branch("step14",             &myStep14,             "step14/B");
+  myTree->Branch("step15",             &myStep15,             "step15/B");
+  myTree->Branch("step16",             &myStep16,             "step16/B");
+  myTree->Branch("step17",             &myStep17,             "step17/B");
 
 }
 
@@ -172,6 +197,27 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
   myBTagImpPar = bTagImpPar;
   myBTagSecVertex = bTagSecVertex;
 
+}
+
+void RedHiggsTree::fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17) {
+
+  myStep1  = s1;
+  myStep2  = s2;
+  myStep3  = s3;
+  myStep4  = s4;
+  myStep5  = s5;
+  myStep6  = s6;
+  myStep7  = s7;
+  myStep8  = s8;
+  myStep9  = s9;
+  myStep10 = s10;
+  myStep11 = s11;
+  myStep12 = s12;
+  myStep13 = s13;
+  myStep14 = s14;
+  myStep15 = s15;
+  myStep16 = s16;
+  myStep17 = s17;
 }
 
 void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],

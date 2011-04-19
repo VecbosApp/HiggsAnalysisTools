@@ -27,27 +27,22 @@ public:
   Selection* GetSelection() { return _selection; }
 
   //! set event by event observables
+  void SetMcTruth(bool foundMcTree)   { m_foundMcTree = foundMcTree; }
+  void SetHLT(bool passedHLT)         { m_passedHLT   = passedHLT;   }
+  void SetIsChannel(bool channelsel)  { m_isThisChannel = channelsel; }
   void SetProcessID(int processID)       { m_processID     = processID; }
   void SetWeight(float weight)           { m_weight        = weight;    }
   void SetHighElePt(float highPt)        { m_highPt        = highPt;    }
   void SetLowElePt(float lowPt)          { m_lowPt         = lowPt;     }
   void SetInvMass(float mll)             { m_invMass       = mll;       }
-  void SetElectronId(bool isEleId)       { m_isElectronId  = isEleId; }
-  void SetPositronId(bool isPosId)       { m_isPositronId  = isPosId; }
-  void SetElectronIsolation(bool isEleIsol)   { m_isElectronIsol  = isEleIsol; }
-  void SetPositronIsolation(bool isPosIsol)   { m_isPositronIsol  = isPosIsol; }
-  void SetElectronConvRejection(bool isEleConvRej)   { m_isElectronConvRej  = isEleConvRej; }
-  void SetPositronConvRejection(bool isPosConvRej)   { m_isPositronConvRej  = isPosConvRej; }
-  void SetEleHardTrackerPtSum(float sum) { m_eleHardTkPtSum    = sum; }
-  void SetEleSlowTrackerPtSum(float sum) { m_eleSlowTkPtSum    = sum; }
-  void SetEleHardHcalPtSum(float sum)    { m_eleHardHcalPtSum  = sum; }
-  void SetEleSlowHcalPtSum(float sum)    { m_eleSlowHcalPtSum  = sum; }
-  void SetEleHardEcalPtSum(float sum)    { m_eleHardEcalPtSum  = sum; }
-  void SetEleSlowEcalPtSum(float sum)    { m_eleSlowEcalPtSum  = sum; }
-  void SetEleHardGlobalPtSum(float sum)  { m_eleHardGlobalPtSum  = sum; }
-  void SetEleSlowGlobalPtSum(float sum)  { m_eleSlowGlobalPtSum  = sum; }
-  void SetEleSlowD0(float d0)            { m_eleSlowD0 = d0;}
-  void SetEleHardD0(float d0)            { m_eleHardD0 = d0;}
+  void SetElectronId(int isEleId)       { m_isElectronId  = isEleId; }
+  void SetPositronId(int isPosId)       { m_isPositronId  = isPosId; }
+  void SetElectronIsolation(int isEleIsol)   { m_isElectronIsol  = isEleIsol; }
+  void SetPositronIsolation(int isPosIsol)   { m_isPositronIsol  = isPosIsol; }
+  void SetElectronConvRejection(int isEleConvRej)   { m_isElectronConvRej  = isEleConvRej; }
+  void SetPositronConvRejection(int isPosConvRej)   { m_isPositronConvRej  = isPosConvRej; }
+  void SetElectronIp(int isEleIp)       { m_isElectronIp  = isEleIp; }
+  void SetPositronIp(int isPosIp)       { m_isPositronIp  = isPosIp; }
   void SetJetVeto(bool passedCJV)        { m_passedJetVeto = passedCJV; }
   void SetUncorrJetVeto(bool passedUncorrCJV) { m_passedUncorrJetVeto = passedUncorrCJV; }
   void SetNJets(int njets)               { m_nJets         = njets; }
@@ -74,18 +69,40 @@ public:
   //! get output of the selector previous to deltaPhi cut
   bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
+  //! latinos
+  bool outputStep1() { return m_step1; }
+  bool outputStep2() { return m_step2; }
+  bool outputStep3() { return m_step3; }
+  bool outputStep4() { return m_step4; }
+  bool outputStep5() { return m_step5; }
+  bool outputStep6() { return m_step6; }
+  bool outputStep7() { return m_step7; }
+  bool outputStep8() { return m_step8; }
+  bool outputStep9() { return m_step9; }
+  bool outputStep10() { return m_step10; }
+  bool outputStep11() { return m_step11; }
+  bool outputStep12() { return m_step12; }
+  bool outputStep13() { return m_step13; }
+  bool outputStep14() { return m_step14; }
+  bool outputStep15() { return m_step15; }
+  bool outputStep16() { return m_step16; }
+  bool outputStep17() { return m_step17; }
+
   //! display the electron efficiency
   void displayEfficiencies(std::string datasetName);
 
 private:
   
   float m_weight;
+  bool m_foundMcTree;
+  bool m_passedHLT;
+  bool m_isThisChannel;
   float m_highPt, m_lowPt;
-  bool m_isElectronId, m_isPositronId, m_isElectronIsol, m_isPositronIsol, m_isElectronConvRej, m_isPositronConvRej;
+  int m_isElectronId, m_isPositronId;
+  int m_isElectronIsol, m_isPositronIsol;
+  int m_isElectronConvRej, m_isPositronConvRej;
+  int m_isElectronIp, m_isPositronIp;
   float m_invMass;
-  float m_eleHardTkPtSum, m_eleHardHcalPtSum, m_eleHardEcalPtSum, m_eleHardGlobalPtSum;
-  float m_eleSlowTkPtSum, m_eleSlowHcalPtSum, m_eleSlowEcalPtSum, m_eleSlowGlobalPtSum;
-  float m_eleSlowD0, m_eleHardD0;
   bool m_passedJetVeto;
   bool m_passedUncorrJetVeto;
   int m_nJets, m_nUncorrJets, m_nSoftMuons, m_nExtraLeptons;
@@ -108,6 +125,10 @@ private:
   bool m_uncorrJetVeto;
   //! true if passed all the selections previous to deltaPhi
   bool m_preDeltaPhi;
+
+  //! latinos
+  bool m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step7, m_step8, m_step9;  
+  bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step17;
 
   //! this is to do an efficiency for each process in the sample 
   //! (if more than one is present)

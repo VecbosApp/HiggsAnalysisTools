@@ -26,6 +26,8 @@ public:
   void addHLTMuonsInfos();
   //! add run,lumi, event number (for data)
   void addRunInfos();
+  //! add latinos
+  void addLatinos();
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
@@ -51,6 +53,9 @@ public:
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! fill the run,lumi, event number
   void fillRunInfos(int run, int lumi, int event);
+  //! latinos 
+  void fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17);
+
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
@@ -92,6 +97,12 @@ private:
   float myLumi;
   float myKFactor;
   int myRun, myLS, myEvent;
+
+  // latinos
+  bool myStep1,  myStep2,  myStep3,  myStep4,  myStep5;
+  bool myStep6,  myStep7,  myStep8,  myStep9,  myStep10;
+  bool myStep11, myStep12, myStep13, myStep14, myStep15;
+  bool myStep16, myStep17;
 
   // electron variables
   int myRecoflag[2];

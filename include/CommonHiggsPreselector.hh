@@ -27,6 +27,7 @@ public:
   void SetIsEE(bool isEE)             { m_isEE        = isEE;        } 
   void SetIsMM(bool isMM)             { m_isMM        = isMM;        } 
   void SetIsEM(bool isEM)             { m_isEM        = isEM;        } 
+  void SetIsME(bool isME)             { m_isME        = isME;        } 
   void SetHighElePt(float highElePt)  { m_highElePt   = highElePt;   }
   void SetLowElePt(float lowElePt)    { m_lowElePt    = lowElePt;    }
   void SetHighMuonPt(float highMuonPt){ m_highMuonPt  = highMuonPt;  }
@@ -34,6 +35,7 @@ public:
   void SetMet(float met)              { m_met         = met;         }
   void SetMllEE(float mllEE)          { m_mllEE       = mllEE;       }
   void SetMllEM(float mllEM)          { m_mllEM       = mllEM;       }
+  void SetMllME(float mllME)          { m_mllME       = mllME;       }
   void SetMllMM(float mllMM)          { m_mllMM       = mllMM;       }
 
   //! get output of the selector
@@ -52,11 +54,11 @@ private:
   bool m_foundMcTree;
   bool m_passedHLT;
   int m_nEle, m_nMuon;
-  bool m_isEE, m_isEM, m_isMM;
+  bool m_isEE, m_isEM, m_isMM, m_isME;
   float m_highElePt,  m_lowElePt;
   float m_highMuonPt, m_lowMuonPt;
   float m_met;
-  float m_mllEE, m_mllEM, m_mllMM;
+  float m_mllEE, m_mllEM, m_mllMM, m_mllME;
   bool m_evtPresel;
   int m_processID;
 

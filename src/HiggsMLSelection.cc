@@ -50,126 +50,92 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
     }
   }
   
-  std::string fileCutsPreselection     = higgsConfigDir + "2l2nuCutsPreselection.txt";
-  std::string fileSwitchesPreselection = higgsConfigDir + "2l2nuSwitchesPreselection.txt";
-
-  // preselection efficiencies
-  CommonHiggsPreselection.Configure(fileCutsPreselection.c_str(), fileSwitchesPreselection.c_str()); 
-  _preselection = CommonHiggsPreselection.GetSelection();
-
-  //  extra preselection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
-  _preselection->addSwitch("apply_kFactor");   
-  _preselection->addSwitch("isData");
-  _preselection->addSwitch("goodRunLS");
-  _preselection->addSwitch("asymmetricID");
-  _preselection->addSwitch("useCIC");
-  _preselection->addCut("etaElectronAcc");
-  _preselection->addCut("ptElectronAcc");
-  _preselection->addCut("etaMuonAcc");
-  _preselection->addCut("ptMuonAcc");
-  _preselection->addCut("etUncorrJetAcc");
-  _preselection->addStringParameter("electronIDType");
-  _preselection->addStringParameter("electronIDTypeLow");
-  _preselection->addStringParameter("electronIDTypeCIC");
-  _preselection->addStringParameter("electronIDTypeLowCIC");
-  _preselection->summary();
-
   // selection efficiencies
   std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
   std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
-  CutBasedHiggsSelectionEE.AppendPreselection(_preselection);
   _selectionEE = CutBasedHiggsSelectionEE.GetSelection();  
 
   std::string fileCutsMM     = higgsConfigDirMass + "2mu2nuCuts.txt";
   std::string fileSwitchesMM = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionMM.Configure(fileCutsMM.c_str(),fileSwitchesMM.c_str(),"FULL SELECTION EVENT COUNTER MM"); 
-  CutBasedHiggsSelectionMM.AppendPreselection(_preselection);
   _selectionMM = CutBasedHiggsSelectionMM.GetSelection();
 
   std::string fileCutsEM     = higgsConfigDirMass + "emu2nuCuts.txt";
   std::string fileSwitchesEM = higgsConfigDir + "2l2nuSwitches.txt";
   CutBasedHiggsSelectionEM.Configure(fileCutsEM.c_str(),fileSwitchesEM.c_str(),"FULL SELECTION EVENT COUNTER EM"); 
-  CutBasedHiggsSelectionEM.AppendPreselection(_preselection);
   _selectionEM = CutBasedHiggsSelectionEM.GetSelection();
+
+  std::string fileCutsME     = higgsConfigDirMass + "emu2nuCuts.txt";
+  std::string fileSwitchesME = higgsConfigDir + "2l2nuSwitches.txt";
+  CutBasedHiggsSelectionME.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION EVENT COUNTER ME"); 
+  _selectionME = CutBasedHiggsSelectionME.GetSelection();
+
+
+  //  extra selection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
+  _selectionEE->addCut("etaElectronAcc");    
+  _selectionEE->addCut("ptElectronAcc");
+  _selectionEE->addCut("etaMuonAcc");
+  _selectionEE->addCut("ptMuonAcc");
+  _selectionEE->addCut("etUncorrJetAcc");  
+  _selectionEE->addSwitch("apply_kFactor");   
+  _selectionEE->addSwitch("isData");
+  _selectionEE->addSwitch("goodRunLS");
+  _selectionEE->addSwitch("asymmetricID");
+  _selectionEE->addStringParameter("electronIDType");
+  _selectionEE->addStringParameter("electronIDTypeLow");  
+
+  // cut based electron id or likelihood 
+  TString selectionString(_selectionEE->getStringParameter("electronIDType"));
+  if (!_selectionEE->getSwitch("asymmetricID")) 
+    cout << "=== CONFIGURING " << selectionString << " CUT BASED SYMMETRIC ELECTRON ID ===" << endl;
+  EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/"+selectionString);
+  EgammaCutBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
   
-  // single electron efficiency
-  // EgammaCutBasedID.Configure("config/higgs"); // this is the class dependent e-ID
-
-  // cut based electron id or likelihood - not CICs
-  if (!_preselection->getSwitch("useCIC")) {   
-    TString selectionString(_preselection->getStringParameter("electronIDType"));
-    if (!_preselection->getSwitch("asymmetricID")) 
-      cout << "=== CONFIGURING " << selectionString << " CUT BASED SYMMETRIC ELECTRON ID ===" << endl;
-    EgammaCutBasedID.ConfigureNoClass("config/higgs/electronId/"+selectionString);
-    EgammaCutBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
-    
-    if (_preselection->getSwitch("asymmetricID")) {
-      TString selectionStringLow (_preselection->getStringParameter("electronIDTypeLow"));
-      cout << "=== CONFIGURING "  << selectionStringLow << " and " 
-	   << selectionString << " for CUT BASED ASYMMETRIC ELECTRON ID ===" << endl;
-      EgammaCutBasedIDLow.ConfigureNoClass("config/higgs/electronId/"+selectionStringLow);
-      EgammaCutBasedIDLow.ConfigureEcalCleaner("config/higgs/electronId/");
-    }
-    
-    // configuring electron likelihood
-    // TFile *fileLH = TFile::Open("pdfs_MC.root");
-    TDirectory *EBlt15dir = fileLH->GetDirectory("/");
-    TDirectory *EElt15dir = fileLH->GetDirectory("/");
-    TDirectory *EBgt15dir = fileLH->GetDirectory("/");
-    TDirectory *EEgt15dir = fileLH->GetDirectory("/");
-    LikelihoodSwitches defaultSwitches;
-    defaultSwitches.m_useFBrem = true;
-    defaultSwitches.m_useEoverP = false;
-    defaultSwitches.m_useSigmaPhiPhi = true;
-    LH = new ElectronLikelihood(&(*EBlt15dir), &(*EElt15dir), &(*EBgt15dir), &(*EEgt15dir),
-				defaultSwitches, std::string("class"),std::string("class"),true,true);
-  }
-
-  // CIC based electron id
-  if (_preselection->getSwitch("useCIC")) {   
-    TString selectionStringCIC(_preselection->getStringParameter("electronIDTypeCIC"));  
-    if (!_preselection->getSwitch("asymmetricID")) 
-      cout << "=== CONFIGURING " << selectionStringCIC << " SYMMETRIC CIC based ELECTRON ID ===" << endl;
-    std::string cicDirA = std::string(selectionStringCIC);
-    cout << "using " << cicDirA << endl;
-    EgammaCiCBasedID.Configure(cicDirA,1,1,2);
-    EgammaCiCBasedID.ConfigureEcalCleaner("config/higgs/electronId/");
-    
-    if (_preselection->getSwitch("asymmetricID")) {
-      TString selectionStringLowCIC (_preselection->getStringParameter("electronIDTypeLowCIC")); 
-      cout << "=== CONFIGURING "  << selectionStringLowCIC << " and " 
-	   << selectionStringCIC << " for ASYMMETRIC CIC based ELECTRON ID ===" << endl;
-      std::string cicDirB = std::string(selectionStringLowCIC);
-      cout << "using (for low pT) " << cicDirB << endl;
-      EgammaCiCBasedIDLow.Configure(cicDirB,1,1,2);
-      EgammaCiCBasedIDLow.ConfigureEcalCleaner("config/higgs/electronId/");
-    }
+  if (_selectionEE->getSwitch("asymmetricID")) {
+    TString selectionStringLow (_selectionEE->getStringParameter("electronIDTypeLow"));
+    cout << "=== CONFIGURING "  << selectionStringLow << " and " 
+	 << selectionString << " for CUT BASED ASYMMETRIC ELECTRON ID ===" << endl;
+    EgammaCutBasedIDLow.ConfigureNoClass("config/higgs/electronId/"+selectionStringLow);
+    EgammaCutBasedIDLow.ConfigureEcalCleaner("config/higgs/electronId/");
   }
   
-  //Reading GoodRUN LS
-  std::cout << "[GoodRunLS]::goodRunLS is " << _preselection->getSwitch("goodRunLS") << " isData is " <<  _preselection->getSwitch("isData") << std::endl;
+  // configuring electron likelihood
+  TFile *fileLH = TFile::Open("pdfs_MC.root");
+  TDirectory *EB0lt15dir = fileLH->GetDirectory("/");
+  TDirectory *EB1lt15dir = fileLH->GetDirectory("/");
+  TDirectory *EElt15dir = fileLH->GetDirectory("/");
+  TDirectory *EB0gt15dir = fileLH->GetDirectory("/");
+  TDirectory *EB1gt15dir = fileLH->GetDirectory("/");
+  TDirectory *EEgt15dir = fileLH->GetDirectory("/");
+  LikelihoodSwitches defaultSwitches;
+  defaultSwitches.m_useFBrem = true;
+  defaultSwitches.m_useEoverP = false;
+  defaultSwitches.m_useSigmaPhiPhi = true;
+  defaultSwitches.m_useHoverE = false;        
+  defaultSwitches.m_useOneOverEMinusOneOverP = true;
+  LH = new ElectronLikelihood(&(*EB0lt15dir), &(*EB1lt15dir), &(*EElt15dir), &(*EB0gt15dir), &(*EB1gt15dir), &(*EEgt15dir), defaultSwitches, std::string("class"),std::string("class"),true,true);
+  
+  // Reading GoodRUN LS
+  std::cout << "[GoodRunLS]::goodRunLS is " << _selectionEE->getSwitch("goodRunLS") << " isData is " <<  _selectionEE->getSwitch("isData") << std::endl;
 
-  //To read good run list!
-  if (_preselection->getSwitch("goodRunLS") && _preselection->getSwitch("isData")) {
+  // To read good run list!
+  if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
     std::string goodRunJsonFile       = "config/json/goodRunLS.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
 
   // kinematics
-  m_p4ElectronPlus  = new TLorentzVector(0.,0.,0.,0.);
-  m_p4ElectronMinus = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MuonPlus      = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MuonMinus     = new TLorentzVector(0.,0.,0.,0.);
-  m_p4MET           = new TLorentzVector(0.,0.,0.,0.);
+  for(int theChannel=0; theChannel<4; theChannel++) {
+    m_p4LeptonPlus[theChannel]  = new TLorentzVector(0.,0.,0.,0.);
+    m_p4LeptonMinus[theChannel] = new TLorentzVector(0.,0.,0.,0.);
+    m_p4MET = new TLorentzVector(0.,0.,0.,0.);
+  }    
 
   // b-veto event variables
   m_maxDxyEvt = 0.0;
   m_maxDszEvt = 0.0;
-
-  _bestElectrons = new std::vector<int>;
-  _bestMuons     = new std::vector<int>;
 
   // histo to study jet/electron match
   H_deltaRuncorr = new TH1F("H_deltaRuncorr","uncorrected jets",100, 0.,2*TMath::Pi());
@@ -178,20 +144,22 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
 HiggsMLSelection::~HiggsMLSelection(){
 
-  delete m_p4ElectronPlus;
-  delete m_p4ElectronMinus;
-  delete m_p4MuonPlus;
-  delete m_p4MuonMinus;
-  delete m_p4MET;
-  delete _bestElectrons;
-  delete _bestMuons;
-  delete _preselection;
+  for(int theChannel=0; theChannel<4; theChannel++) {  
+    delete m_p4LeptonPlus[theChannel];
+    delete m_p4LeptonMinus[theChannel];
+  }
+  delete m_p4MET;  
+
   delete _selectionEE;
   delete _selectionMM;
   delete _selectionEM;
-  myOutTreeEE   -> save();
-  myOutTreeMM   -> save();
-  myOutTreeEM   -> save();
+  delete _selectionME;
+  
+  myOutTreeEE -> save();
+  myOutTreeMM -> save();
+  myOutTreeEM -> save();
+  myOutTreeME -> save();
+
   //  myTriggerTree -> save();
   myEleIdTree   -> save();
 }
@@ -242,6 +210,9 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
   // signal: em2nu
   if(strcmp(processType,"HtoWWtoem2nu")==0) {
     int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+
+    bool isEM = false;
+
     for(int imc=6;imc<25;imc++) {
       float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
       if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeplus = imc;
@@ -249,14 +220,53 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
       if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
       if( idMc[imc]  ==  11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeminus = imc;
     }
+
     if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos = indeplus;
+      _theGenPos     = indeplus;
       _theGenMuMinus = indmuminus;
+      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
+      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
+      if ( ptMcPos>ptMcMuMinus) isEM = true;
     } else if( indeminus<25 && indmuplus<25 ) {
       _theGenEle = indeminus;
       _theGenMuPlus = indmuplus;
+      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
+      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
+      if ( ptMcEle>ptMcMuPlus) isEM = true;
     }
-    return ( (indeplus<25 && indmuminus<25) || (indeminus<25 && indmuplus<25) );
+    
+    return ( (indeplus<25 && indmuminus<25 && isEM) || (indeminus<25 && indmuplus<25 && isEM) );
+  }
+
+  // signal: me2nu
+  if(strcmp(processType,"HtoWWtome2nu")==0) {
+    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+    
+    bool isME = false;
+
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeplus = imc;
+      if( idMc[imc]  ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc]  ==  11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeminus = imc;
+    }
+
+    if( indeplus<25 && indmuminus<25 ) {
+      _theGenPos     = indeplus;
+      _theGenMuMinus = indmuminus;
+      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
+      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
+      if ( ptMcPos<ptMcMuMinus) isME = true;
+    } else if( indeminus<25 && indmuplus<25 ) {
+      _theGenEle = indeminus;
+      _theGenMuPlus = indmuplus;
+      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
+      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
+      if ( ptMcEle<ptMcMuPlus) isME = true;
+    }
+    
+    return ( (indeplus<25 && indmuminus<25 && isME) || (indeminus<25 && indmuplus<25 && isME) );
   }
 
   // signal ee excluding taus
@@ -292,6 +302,9 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
   // signal em excluding taus
   if(strcmp(processType,"HtoWWtoem2nu_prompt")==0) {
     int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+
+    bool isEM = false;
+
     for(int imc=6;imc<25;imc++) {
       float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
       if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
@@ -299,16 +312,55 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
       if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
       if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
     }
+
     if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos = indeplus;
+      _theGenPos     = indeplus;
       _theGenMuMinus = indmuminus;
+      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
+      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
+      if ( ptMcPos>ptMcMuMinus) isEM = true;
     } else if( indeminus<25 && indmuplus<25 ) {
       _theGenEle = indeminus;
       _theGenMuPlus = indmuplus;
+      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
+      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
+      if ( ptMcEle>ptMcMuPlus) isEM = true;
     }
-    return ( (indeplus<25 && indmuminus<25) || (indeminus<25 && indmuplus<25) );
+    
+    return ( (indeplus<25 && indmuminus<25 && isEM) || (indeminus<25 && indmuplus<25 && isEM) );
   }
 
+  // signal me excluding taus
+  if(strcmp(processType,"HtoWWtome2nu_prompt")==0) {
+    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
+
+    bool isME = false;
+
+    for(int imc=6;imc<25;imc++) {
+      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
+      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
+      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
+      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
+    }
+    
+    if( indeplus<25 && indmuminus<25 ) {
+      _theGenPos     = indeplus;
+      _theGenMuMinus = indmuminus;
+      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
+      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
+      if ( ptMcPos<ptMcMuMinus) isME = true;
+    } else if( indeminus<25 && indmuplus<25 ) {
+      _theGenEle = indeminus;
+      _theGenMuPlus = indmuplus;
+      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
+      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
+      if ( ptMcEle<ptMcMuPlus) isME = true;
+    }
+    
+    return ( (indeplus<25 && indmuminus<25 && isME) || (indeminus<25 && indmuplus<25 && isME) );
+  }
+  
   // signal: 2l2nu
   if(strcmp(processType,"HtoWWto2l2nu")==0) {
     int indlminus=999, indlplus=999;
@@ -375,12 +427,9 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
 float HiggsMLSelection::getkFactor(std::string process) {
 
   float weight = 1.;
-  if((process.compare("Higgs")==0)) {
-    weight = evtKfactor;
-  }
-  else if(process.compare("WW")==0) {
-    weight = 1.0; // we used MC @ NLO weight in 16X   
-  }
+  if((process.compare("Higgs")==0)) weight = evtKfactor;
+  else if(process.compare("WW")==0) weight = 1.0; // we used MC @ NLO weight in 16X   
+
   return weight;
 }
 
@@ -393,36 +442,48 @@ void HiggsMLSelection::Loop() {
   std::string reducedTreeNameEE = _datasetName+"-datasetEE.root";
   std::string reducedTreeNameMM = _datasetName+"-datasetMM.root";
   std::string reducedTreeNameEM = _datasetName+"-datasetEM.root";
+  std::string reducedTreeNameME = _datasetName+"-datasetME.root";
   myOutTreeEE = new RedHiggsTree(reducedTreeNameEE.c_str());
   myOutTreeMM = new RedHiggsTree(reducedTreeNameMM.c_str());
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
+  myOutTreeME = new RedHiggsTree(reducedTreeNameME.c_str());
 
   //  myOutTreeEE->addHLTElectronsInfos();
   //  myOutTreeMM->addHLTMuonsInfos();
   //  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
 
-  if ( !_preselection->getSwitch("isData") && _preselection->getSwitch("apply_kFactor") ) {
+  if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
     myOutTreeEE->addKFactor();
     myOutTreeMM->addKFactor();
     myOutTreeEM->addKFactor();
+    myOutTreeME->addKFactor();
   }
 
-  if(!_preselection->getSwitch("isData")) {
+  if(!_selectionEE->getSwitch("isData")) {
     myOutTreeEE->addMcTruthInfos();
     myOutTreeMM->addMcTruthInfos();
     myOutTreeEM->addMcTruthInfos();
+    myOutTreeME->addMcTruthInfos();
   } else {
     myOutTreeEE->addRunInfos();
     myOutTreeMM->addRunInfos();
     myOutTreeEM->addRunInfos();
+    myOutTreeME->addRunInfos();
   }
 
   myOutTreeEE->addMLVars();
   myOutTreeMM->addMLVars();
   myOutTreeEM->addMLVars();
+  myOutTreeME->addMLVars();
+
+  myOutTreeEE->addLatinos();
+  myOutTreeMM->addLatinos();
+  myOutTreeEM->addLatinos();
+  myOutTreeME->addLatinos();
 
   myOutTreeEE->addElectronInfos();
   myOutTreeEM->addElectronInfos();
+  myOutTreeME->addElectronInfos();
 
   // trigger reduced tree
   //  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
@@ -432,11 +493,10 @@ void HiggsMLSelection::Loop() {
   std::string reducedEleIdTreeName = _datasetName+"-eleId.root";
   myEleIdTree = new RedEleIDTree(reducedEleIdTreeName.c_str());
 
-  float met, deltaPhi, transvMass, deltaErre; 
-  float dileptonInvMass, maxPtEle, minPtEle, detaLeptons;
 
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
+
 
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -446,36 +506,29 @@ void HiggsMLSelection::Loop() {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     if (jentry%1000 == 0) std::cout << ">>> Processing event # " << jentry << std::endl;
-
-    resetKinematics();
+    
+    resetKinematicsStart();
 
     // get the kFactor of the event (for signal)
     float weight = 1;
-    if (!_preselection->getSwitch("isData") && _preselection->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
     
-    // look to the MC truth decay tree
-    bool foundMcTree = false;
-    if( !_preselection->getSwitch("isData") ) foundMcTree = findMcTree("HtoWWto2e2nu");
+    // look to the MC truth decay tree 
+    // bool decayEE = findMcTree("HtoWWto2e2nu");
+    // bool decayMM = findMcTree("HtoWWto2m2nu");
+    // bool decayEM = findMcTree("HtoWWtoem2nu");
 
-    //    bool decayEE = findMcTree("HtoWWto2e2nu");
-    //    bool decayMM = findMcTree("HtoWWto2m2nu");
-    //    bool decayEM = findMcTree("HtoWWtoem2nu");
-
-    bool promptEE, promptMM, promptEM;
-    promptEE = promptMM = promptEM = false;
-    if( !_preselection->getSwitch("isData") ) {
+    bool promptEE, promptMM, promptEM, promptME;
+    promptEE = promptMM = promptEM = promptME = false;
+    if( !_selectionEE->getSwitch("isData") ) {
       promptEE = findMcTree("HtoWWto2e2nu_prompt");
       promptMM = findMcTree("HtoWWto2m2nu_prompt");
-      promptEM = findMcTree("HtoWWtoem2nu_prompt");
+      promptEM = findMcTree("HtoWWtoem2nu_prompt");  
+      promptME = findMcTree("HtoWWtome2nu_prompt");  
     }
 
-
-    //IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-//     bool newTriggerMask = false;
-//     if (_preselection->getSwitch("isData")) newTriggerMask = true;
-    reloadTriggerMask(true);
-    //Good Run selection
-    if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && !isGoodRunLS()) {
+    // Good Run selection
+    if (_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("goodRunLS") && !isGoodRunLS()) {
       if ( lastRun!= runNumber || lastLumi != lumiBlock) {
         lastRun = runNumber;
         lastLumi = lumiBlock;
@@ -483,591 +536,621 @@ void HiggsMLSelection::Loop() {
       }
       continue;
     }
-    
-    if (_preselection->getSwitch("isData") && _preselection->getSwitch("goodRunLS") && ( lastRun!= runNumber || lastLumi != lumiBlock) ) {
+    if (_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("goodRunLS") && ( lastRun!= runNumber || lastLumi != lumiBlock) ) {
       lastRun = runNumber;
       lastLumi = lumiBlock;
       std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is OK" << std::endl;
     }
     
-    // trigger (temporary until decided)
-    bool passedHLT = (_preselection->getSwitch("isData")) ? hasPassedHLT() : true;
-
-    //    myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
-    //    myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
-    //    myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
-    //    myTriggerTree->store();
-
-    // get the best electrons, best muons  
-    std::pair<int,int> theElectrons = getBestElectronPair();
-    std::pair<int,int> theMuons = getBestMuonPair();
-    int tbElectron(theElectrons.second), tbPositron(theElectrons.first);    
-    int tbMuonPlus(theMuons.first),      tbMuonMinus(theMuons.second);
-    theElectron  = tbElectron;
-    thePositron  = tbPositron;
-    theMuonPlus  = tbMuonPlus;
-    theMuonMinus = tbMuonMinus;
     
-    // how many electrons after preselection eleID and isolation   
-    // (in case we want to reproduce CSA07 conditions)
-    int nPreselEle = nEle;
+    // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
+    reloadTriggerMask(true);
+    bool passedHLT = (_selectionEE->getSwitch("isData")) ? hasPassedHLT() : true;
     
+    // trigger tree
+    // myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
+    // myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
+    // myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
+    // myTriggerTree->store();
+
+
+
+
+    // -------------------------------------------------------------
+    
+    // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
+    std::pair<int,int> thePreElectrons = getBestElectronPair_acceptance();
+    std::pair<int,int> thePreMuons     = getBestMuonPair_acceptance();
+    thePreElectron  = thePreElectrons.second;
+    thePrePositron  = thePreElectrons.first;
+    thePreMuonPlus  = thePreMuons.first;
+    thePreMuonMinus = thePreMuons.second;
+
     // reconstructed channel
     m_channel[ee] = false;     
     m_channel[mm] = false;
     m_channel[em] = false;
-    if (theElectron > -1 && thePositron > -1)  m_channel[ee] = true;
-    if (theMuonPlus > -1 && theMuonMinus > -1) m_channel[mm] = true;
-    if ((theElectron > -1 && theMuonPlus > -1) || (thePositron > -1 && theMuonMinus > -1)) m_channel[em] = true;
+    m_channel[me] = false;
+    
+    // at this level the SELECTED channel should have pT > 10 and > 20. So far, at least 2 leptons with pT >20 and 10 in the event
+    if (thePreElectron > -1 && thePrePositron > -1) {
+      float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
+      if (thisMaxPt>20) m_channel[ee] = true;    // fixme: hardcoded
+    }
+
+    if (thePreMuonPlus > -1 && thePreMuonMinus > -1) {
+      float thisMaxPt = TMath::Max(GetPt(pxMuon[thePreMuonMinus],pyMuon[thePreMuonMinus]),GetPt(pxMuon[thePreMuonPlus],pyMuon[thePreMuonPlus]));
+      if (thisMaxPt>20) m_channel[mm] = true;    // fixme: hardcoded
+    }
+
+    if (thePreElectron > -1 && thePreMuonPlus  > -1 ) {
+      float ptEle = GetPt(pxEle[thePreElectron],pyEle[thePreElectron]);
+      float ptMu  = GetPt(pxMuon[thePreMuonPlus],pyMuon[thePreMuonPlus]);
+      if ( (ptEle>ptMu) && (ptEle>20) ) m_channel[em] = true;    // fixme: hardcoded
+      if ( (ptMu>ptEle) && (ptMu>20)  ) m_channel[me] = true;    // fixme: hardcoded
+    }
+
+    if (thePrePositron > -1 && thePreMuonMinus > -1) {
+      float ptEle = GetPt(pxEle[thePrePositron],pyEle[thePrePositron]);
+      float ptMu  = GetPt(pxMuon[thePreMuonMinus],pyMuon[thePreMuonMinus]);
+      if ( (ptEle>ptMu) && (ptEle>20) ) m_channel[em] = true;    // fixme: hardcoded
+      if ( (ptMu>ptEle) && (ptMu>20)  ) m_channel[me] = true;    // fixme: hardcoded
+    }
+    
     if (_verbose) {
-      std::cout << "nEle = " << nEle << "\tnMuon = " << nMuon << std::endl;
-      std::cout << "indices: " << theElectron << " " << thePositron << " " << theMuonMinus << " " << theMuonPlus << std::endl;
-      std::cout << "chargeEle = " << chargeEle[theElectron] << "\tchargePos = " << chargeEle[thePositron] 
-		<< "\tchargeMuonMinus = " << chargeMuon[theMuonMinus] << "\tchargeMuonPlus = " << chargeMuon[theMuonPlus] << std::endl;
-      std::cout << "ee = " << m_channel[ee] << "\tmm = " << m_channel[mm] << "\temu = " << m_channel[em] << std::endl; 
+      std::cout << "nEle = "   << nEle << "\tnMuon = " << nMuon << std::endl;
+      std::cout << "indices: " << thePreElectron << " " << thePrePositron << " " << thePreMuonMinus << " " << thePreMuonPlus << std::endl;
+      std::cout << "chargeEle = " << chargeEle[thePreElectron] << "\tchargePos = " << chargeEle[thePrePositron] 
+		<< "\tchargeMuonMinus = " << chargeMuon[thePreMuonMinus] << "\tchargeMuonPlus = " << chargeMuon[thePreMuonPlus] << std::endl;
+      std::cout << "ee = " << m_channel[ee] << "\tmm = " << m_channel[mm] << "\temu = " << m_channel[em] << "\tmue = " << m_channel[me] << std::endl; 
     }
 
-    // kinematics at preselection level 
-    // only few variables since here we still do not know if two good leptons are reconstructed
-    setPreselKinematics();
+
+
+    // -------------------------------------------------------------
+    // EE candidates: preparing vectors of candidates and selecting the two highest pT ele- and ele+ after each step - to check the 20 GeV cut after 
+
+    // eleID, for electrons in acceptance
+    std::pair<int,int> theBestIdEle = getBestElectronPair_id(_acceptEleAll);   
+
+    // isolation, for identified electrons
+    std::pair<int,int> theBestIsolEle = getBestElectronPair_isol(_idEleAll); 
+
+    // conversion rejection, for isolated electrons
+    std::pair<int,int> theBestConvEle = getBestElectronPair_conv(_isolEleAll);     
+
+    // transverse impact parameter, for electrons passing conversion rejection
+    std::pair<int,int> theBestIpEle = getBestElectronPair_ip(_convEleAll);     
+
+    // the two highest pT electrons at this point are those I use for my analysis since the passed the full lepton selection
+    thePositron = theBestIpEle.first;    
+    theElectron = theBestIpEle.second;
     
-    // setting preselections
-    CommonHiggsPreselection.SetWeight(weight);
-    CommonHiggsPreselection.SetMcTruth(foundMcTree);
-    CommonHiggsPreselection.SetHLT(passedHLT);
-    CommonHiggsPreselection.SetNele(nPreselEle);   
-    CommonHiggsPreselection.SetNmuon(nMuon);
-    CommonHiggsPreselection.SetIsEE(m_channel[ee]);
-    CommonHiggsPreselection.SetIsEM(m_channel[em]);
-    CommonHiggsPreselection.SetIsMM(m_channel[mm]);
-    CommonHiggsPreselection.SetHighElePt(hardestElectronPt);
-    CommonHiggsPreselection.SetLowElePt(slowestElectronPt);
-    CommonHiggsPreselection.SetHighMuonPt(hardestMuonPt);
-    CommonHiggsPreselection.SetLowMuonPt(slowestMuonPt);
-    CommonHiggsPreselection.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));
-    CommonHiggsPreselection.SetMllEE(m_mll[ee]);
-    CommonHiggsPreselection.SetMllEM(m_mll[em]);
-    CommonHiggsPreselection.SetMllMM(m_mll[mm]);
-
-    // did we pass preselections?
-    bool isPreselections = CommonHiggsPreselection.output();    
-    if( !isPreselections ) continue;
-
-    // kinematics after preselections
-    // now we know we have two good reconstructed leptons
-    setKinematics();
-
-    // look for PV in the event (there is always at least 1 PV)
-    m_closestPV = getPV();
-
-    // ----------------------- selection ----------------------------
-    // electron ID (true by default - studied only if ee or emu channel)
-    bool theElectronID, thePositronID, theElectronIsol, thePositronIsol, theElectronConvRej, thePositronConvRej;
-    theElectronID = thePositronID = theElectronIsol = thePositronIsol = theElectronConvRej = thePositronConvRej = true;
-    // custom electron ID cuts (tight symmetric for ee, tight for emu)
-
-    // no class cut based eleid or likelihood
-    if (!_preselection->getSwitch("useCIC")) {   
+    // to be used on the following
+    int theIdElectron(theBestIdEle.second);
+    int theIdPositron(theBestIdEle.first);    
+    int theIsolElectron(theBestIsolEle.second);
+    int theIsolPositron(theBestIsolEle.first);    
+    int theConvElectron(theBestConvEle.second);
+    int theConvPositron(theBestConvEle.first);    
+    int theIpElectron(theBestIpEle.second);
+    int theIpPositron(theBestIpEle.first);    
     
-      if (!_preselection->getSwitch("asymmetricID")) {
-	if (theElectron > -1) isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
-	if (thePositron > -1) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedID);
-      }
-
-      if (_preselection->getSwitch("asymmetricID")) {
-	if (theElectron > -1) { 
-	  float pt = GetPt(pxEle[theElectron],pyEle[theElectron]);
-	  if (pt>=20) isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
-	  if (pt<20)  isEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedIDLow);
-	}
-	if (thePositron > -1) { 
-	  float pt = GetPt(pxEle[thePositron],pyEle[thePositron]);
-	  if (pt>=20) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedID);
-	  if (pt<20) isEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCutBasedIDLow);
-	}
-      }
-    }
-
-    // cic based electron id
-    if (_preselection->getSwitch("useCIC")) {   
-
-      if (!_preselection->getSwitch("asymmetricID")) {
-	if (theElectron > -1) isCicEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCiCBasedID);
-	if (thePositron > -1) isCicEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCiCBasedID);
-      }
-
-      if (_preselection->getSwitch("asymmetricID")) {
-	if (theElectron > -1) { 
-	  float pt = GetPt(pxEle[theElectron],pyEle[theElectron]);
-	  if (pt>=20) isCicEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCiCBasedID);
-	  if (pt<20)  isCicEleID(theElectron,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCiCBasedIDLow);
-	}
-	if (thePositron > -1) { 
-	  float pt = GetPt(pxEle[thePositron],pyEle[thePositron]);
-	  if (pt>=20) isCicEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCiCBasedID);
-	  if (pt<20)  isCicEleID(thePositron,&thePositronID,&thePositronIsol,&thePositronConvRej,EgammaCiCBasedIDLow);
-	}
-      }
-    }
-
-    // if (theElectron > -1) theElectronID = anaUtils.electronIdVal(eleIdCutsEle[theElectron],eleIdTight);
-    // if (thePositron > -1) thePositronID = anaUtils.electronIdVal(eleIdCutsEle[thePositron],eleIdTight);
-
+    // filling the three to compare the distribution before the cut
     int scElectron = superClusterIndexEle[theElectron];
     int scPositron = superClusterIndexEle[thePositron];
-    // filling the three to compare the distribution before the cut
     if (theElectron > -1) myEleIdTree -> fillAll(classificationEle[theElectron], hOverEEle[theElectron], eSuperClusterOverPEle[theElectron], eSeedOverPoutEle[theElectron], deltaEtaAtVtxEle[theElectron], deltaPhiAtVtxEle[theElectron], sqrt(covIEtaIEtaSC[scElectron]));
     if (thePositron > -1) myEleIdTree -> fillAll(classificationEle[thePositron], hOverEEle[thePositron], eSuperClusterOverPEle[thePositron], eSeedOverPoutEle[thePositron], deltaEtaAtVtxEle[thePositron], deltaPhiAtVtxEle[thePositron], sqrt(covIEtaIEtaSC[scPositron]));
     myEleIdTree->store();
 
 
-    // --- ele isolation ---
-    // separate isolations
-    float theEleTrackerPtSum = ( theElectron > -1 ) ? dr03TkSumPtEle[theElectron] : 0.0;
-    float thePosTrackerPtSum = ( thePositron > -1 ) ? dr03TkSumPtEle[thePositron] : 0.0;
-    float theEleEcalPtSum = ( theElectron > -1 ) ? dr03EcalRecHitSumEtEle[theElectron] : 0.0;
-    float thePosEcalPtSum = ( thePositron > -1 ) ? dr03EcalRecHitSumEtEle[thePositron] : 0.0;
-    float theEleHcalPtSum = ( theElectron > -1 ) ? dr03HcalTowerSumEtEle[theElectron] : 0.0;
-    float thePosHcalPtSum = ( thePositron > -1 ) ? dr03HcalTowerSumEtEle[thePositron] : 0.0;
+    // -------------------------------------------------------------
+    // MM candidates: preparing vectors of candidates and selecting the two highest pT mu- and mu+ after each step - to check the 20 GeV cut after 
 
-    // --- muon ID / isolation ---
-    bool theMuonPlusID = true;
-    bool theMuonMinusID = true;
-    if ( theMuonMinus > -1 ) isMuonID(theMuonMinus, &theMuonMinusID);
-    if ( theMuonPlus > -1 ) isMuonID(theMuonPlus, &theMuonPlusID);
+    // muID, for muons in acceptance
+    std::pair<int,int> theBestIdMuon = getBestMuonPair_id(_acceptMuonsAll); 
 
-    // jet counter
-    int njets = numJets();
-    int nuncorrjets = numUncorrJets();
+    // isolation, for identified muons
+    std::pair<int,int> theBestIsolMuon = getBestMuonPair_isol(_idMuonsAll); 
 
-    // if 1-jet bin, use deltaphi(ll-jet)
-    float dphiLLJ = deltaPhiLLJet();
+    // transverse impact parameter, for isolated muons
+    std::pair<int,int> theBestIpMuon = getBestMuonPair_ip(_isolMuonsAll);     
 
-    // b veto
-    float btag = bVetoJets();
+    // the two highest pT muons at this point are those I use for my analysis since the passed the full lepton selection
+    theMuonPlus  = theBestIpMuon.first;
+    theMuonMinus = theBestIpMuon.second;    
 
-    // soft muon counter
-    int nsoftmu = numSoftMuons();
+    // to be used in the following
+    int theIdMuonMinus(theBestIdMuon.second);
+    int theIdMuonPlus(theBestIdMuon.first);
+    int theIsolMuonMinus(theBestIsolMuon.second);
+    int theIsolMuonPlus(theBestIsolMuon.first);
+    int theIpMuonMinus(theBestIpMuon.second);
+    int theIpMuonPlus(theBestIpMuon.first);
+
+
+    // -------------------------------------------------------------
+    // EM candidates: preparing vectors of candidates and selecting the two highest pT ele+- and muon-+ after each step - to check the 20 GeV cut after
+
+    // filling vectors with ele-muons passing the acceptance cuts   
+    std::pair<int,int> theBestAcceptEleMuon = getBestEleMuonPair(thePreElectron,thePrePositron,thePreMuonMinus,thePreMuonPlus);
     
-    // extra lepton counter
-    int nextraleptons = numExtraLeptons();
+    // leptonID, for leptons in acceptance
+    std::pair<int,int> theBestIdEleMuon = getBestEleMuonPair(theIdElectron,theIdPositron,theIdMuonMinus,theIdMuonPlus);
+    
+    // isolation, for identified leptons
+    std::pair<int,int> theBestIsolEleMuon = getBestEleMuonPair(theIsolElectron,theIsolPositron,theIsolMuonMinus,theIsolMuonPlus);
 
-    // and calculate the track impact parameters and the event b-veto variables
-    calcEventBVetoVariables(m_goodJets);
+    // conversion rejection, for isolated leptons
+    std::pair<int,int> theBestConvEleMuon = getBestEleMuonPair(theConvElectron,theConvPositron,theIsolMuonMinus,theIsolMuonPlus);
 
-    // kine variables
-    float theDeltaPhiEE, theDeltaErreEE, theInvMassEE, theSTransvMassEE, theDetaLeptonsEE = 0.;
-    float theDeltaPhiMM, theDeltaErreMM, theInvMassMM, theSTransvMassMM, theDetaLeptonsMM = 0.;
-    float theDeltaPhiEM, theDeltaErreEM, theInvMassEM, theSTransvMassEM, theDetaLeptonsEM = 0.;
+    // transverse impact parameter, for leptons passing conversion rejection
+    std::pair<int,int> theBestIpEleMuon = getBestEleMuonPair(theIpElectron,theIpPositron,theIpMuonMinus,theIpMuonPlus);
+
+
+    // -------------------------------------------------------------
+    // ME candidates: preparing vectors of candidates and selecting the two highest pT ele+- and muon-+ after each step - to check the 20 GeV cut after
+
+    // filling vectors with ele-muons passing the acceptance cuts
+    std::pair<int,int> theBestAcceptMuonEle = getBestMuonElePair(thePreElectron,thePrePositron,thePreMuonMinus,thePreMuonPlus);
+    
+    // leptonID, for leptons in acceptance
+    std::pair<int,int> theBestIdMuonEle = getBestMuonElePair(theIdElectron,theIdPositron,theIdMuonMinus,theIdMuonPlus);
+    
+    // isolation, for identified leptons
+    std::pair<int,int> theBestIsolMuonEle = getBestMuonElePair(theIsolElectron,theIsolPositron,theIsolMuonMinus,theIsolMuonPlus);
+
+    // conversion rejection, for isolated leptons
+    std::pair<int,int> theBestConvMuonEle = getBestMuonElePair(theConvElectron,theConvPositron,theIsolMuonMinus,theIsolMuonPlus);
+
+    // transverse impact parameter, for isolated leptons
+    std::pair<int,int> theBestIpMuonEle = getBestMuonElePair(theIpElectron,theIpPositron,theIpMuonMinus,theIpMuonPlus);
+
+
+
+    // -------------------------------------------------------------
+    // set of kinematics: : now I've all the final leptons 
+    resetKinematics();
+    setKinematicsEE(theElectron, thePositron);
+    setKinematicsMM(theMuonMinus, theMuonPlus);
+    setKinematicsEMME(theElectron, thePositron, theMuonPlus, theMuonMinus);
+
+    
+    // -------------------------------------------------------------    
+    // look for PV in the event (there is always at least 1 PV)
+    m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
+    
+    int njets[4], nuncorrjets[4];
+    float dphiLLJ[4];
+    float btag[4];
+    int nsoftmu[4],nextraleptons[4];
+    for(int ichan=0; ichan<4; ichan++) {
+
+      // jet counter
+      njets[ichan] = numJets(eleCands[ichan],muCands[ichan],ichan);
+      nuncorrjets[ichan] = numUncorrJets(eleCands[ichan],muCands[ichan]);
+
+      // if 1-jet bin, use deltaphi(ll-jet)
+      dphiLLJ[ichan] = deltaPhiLLJet(ichan);   
+
+      // b veto
+      btag[ichan] = bVetoJets(eleCands[ichan],muCands[ichan]);
+
+      // soft muon counter
+      nsoftmu[ichan] = numSoftMuons(muCands[ichan]);
+
+      // extra lepton counter
+      nextraleptons[ichan] = numExtraLeptons(eleCands[ichan],muCands[ichan]);
+    }
+
 
     // ---------------------------------------
-    // ee final state
-    if (m_channel[ee]) {
+    // filling counters for the different final states
 
-      float theEleHardTrackerPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? theEleTrackerPtSum : thePosTrackerPtSum;
-      float theEleSlowTrackerPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? thePosTrackerPtSum : theEleTrackerPtSum;
-      float theEleHardHcalPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? theEleHcalPtSum : thePosHcalPtSum;
-      float theEleSlowHcalPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? thePosHcalPtSum : theEleHcalPtSum;
-      float theEleHardEcalPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? theEleEcalPtSum : thePosEcalPtSum;
-      float theEleSlowEcalPtSum = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? thePosEcalPtSum : theEleEcalPtSum;
-
-      int gsfEle = gsfTrackIndexEle[theElectron]; 
-      int gsfPos = gsfTrackIndexEle[thePositron];
-      float dxyEle = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                trackVxGsfTrack[gsfEle], trackVyGsfTrack[gsfEle], trackVzTrack[gsfEle], 
-                                pxGsfTrack[gsfEle], pyGsfTrack[gsfEle], pzGsfTrack[gsfEle]);
-      float dxyPos = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                trackVxGsfTrack[gsfPos], trackVyGsfTrack[gsfPos], trackVzTrack[gsfPos], 
-                                pxGsfTrack[gsfPos], pyGsfTrack[gsfPos], pzGsfTrack[gsfPos]);
-      
-      float theEleHardDxy = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? dxyEle : dxyPos;
-      float theEleSlowDxy = (m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) ? dxyPos : dxyEle;
-      theDeltaPhiEE    = m_deltaPhi[ee];
-      theDeltaErreEE   = m_deltaErre[ee];
-      theInvMassEE     = m_mll[ee];
-      theDetaLeptonsEE = etaEle[theElectron]-etaEle[thePositron];
-      theSTransvMassEE  = m_transvMass[ee];
-
-      int hardEle, slowEle;
-      if(m_p4ElectronMinus->Pt() > m_p4ElectronPlus->Pt()) {
-        hardEle = theElectron;
-        slowEle = thePositron;
-      } else {
-        hardEle = thePositron;
-        slowEle = theElectron;
-      }
-
-      setEleIdVariables(hardEle, slowEle);
-
-      // selections
-      CutBasedHiggsSelectionEE.SetWeight(weight);
-      CutBasedHiggsSelectionEE.SetHighElePt(hardestElectronPt);
-      CutBasedHiggsSelectionEE.SetLowElePt(slowestElectronPt);
-      CutBasedHiggsSelectionEE.SetElectronId(theElectronID);
-      CutBasedHiggsSelectionEE.SetPositronId(thePositronID);
-      CutBasedHiggsSelectionEE.SetElectronIsolation(theElectronIsol);
-      CutBasedHiggsSelectionEE.SetPositronIsolation(thePositronIsol);
-      CutBasedHiggsSelectionEE.SetElectronConvRejection(theElectronConvRej);
-      CutBasedHiggsSelectionEE.SetPositronConvRejection(thePositronConvRej);
-
-      // pass through the cuts and use the bits above from EleID cuts selector
-      CutBasedHiggsSelectionEE.SetEleHardTrackerPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleSlowTrackerPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleHardHcalPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleSlowHcalPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleHardEcalPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleSlowEcalPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleHardGlobalPtSum(-999);
-      CutBasedHiggsSelectionEE.SetEleSlowGlobalPtSum(-999);
-      
-      // CutBasedHiggsSelectionEE.SetEleHardTrackerPtSum(theEleHardTrackerPtSum);
-      // CutBasedHiggsSelectionEE.SetEleSlowTrackerPtSum(theEleSlowTrackerPtSum);
-      // CutBasedHiggsSelectionEE.SetEleHardHcalPtSum(theEleHardHcalPtSum);
-      // CutBasedHiggsSelectionEE.SetEleSlowHcalPtSum(theEleSlowHcalPtSum);
-      // CutBasedHiggsSelectionEE.SetEleHardEcalPtSum(theEleHardEcalPtSum);
-      // CutBasedHiggsSelectionEE.SetEleSlowEcalPtSum(theEleSlowEcalPtSum);
-      // CutBasedHiggsSelectionEE.SetEleHardGlobalPtSum(theEleHardGlobalSum);
-      // CutBasedHiggsSelectionEE.SetEleSlowGlobalPtSum(theEleSlowGlobalSum);
-      CutBasedHiggsSelectionEE.SetEleHardD0(theEleHardDxy);
-      CutBasedHiggsSelectionEE.SetEleSlowD0(theEleSlowDxy);
-      CutBasedHiggsSelectionEE.SetNJets(njets);
-      CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionEE.SetBTagJets(btag);
-      CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu);
-      CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons);
-      CutBasedHiggsSelectionEE.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
-      CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
-      CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
-      CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ);
-      CutBasedHiggsSelectionEE.SetDeltaPhi(theDeltaPhiEE);
-      CutBasedHiggsSelectionEE.SetInvMass(theInvMassEE);
-      CutBasedHiggsSelectionEE.SetDetaLeptons(theDetaLeptonsEE);
-      bool isSelectedEE = CutBasedHiggsSelectionEE.output();    
-      bool selUpToFinalLeptonsEE = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
-      bool selUpToJetVetoEE = CutBasedHiggsSelectionEE.outputUpToJetVeto();
-      bool selUpToUncorrJetVetoEE = CutBasedHiggsSelectionEE.outputUpToUncorrJetVeto();
-      bool selPreDeltaPhiEE = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
-
-      if(!_preselection->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
-      else myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber);
-
-//       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-// 				       firedTrg[m_requiredTriggers[1]],
-// 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
-
-      myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
-			     GetPt(pxPFMet[0],pyPFMet[0]), 
-			     GetPt(pxMet[0],pyMet[0]), 
-                             m_projectedMet[ee],
-			     theDeltaPhiEE, 
-			     theDeltaErreEE, 
-			     theSTransvMassEE, 
-			     theInvMassEE, 
-			     hardestElectronPt, 
-			     slowestElectronPt, 
-			     theDetaLeptonsEE,
-			     selUpToFinalLeptonsEE,
-			     selUpToJetVetoEE,
-			     selUpToUncorrJetVetoEE,
-			     selPreDeltaPhiEE,
-			     isSelectedEE);
-
-      myOutTreeEE -> fillMLVars(njets,
-                                nuncorrjets,
-                                m_maxDxyEvt,
-                                m_maxDszEvt,
-                                m_maxTrackCountingHighEffBJetTags,
-                                m_maxImpactParameterMVABJetTags,
-                                m_maxCombinedSecondaryVertexMVABJetTags);
-
-      myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
-                                    myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
-                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
-
-      if ( _preselection->getSwitch("apply_kFactor") ) {
-	myOutTreeEE->fillKFactor(evtKfactor);
-      }
-
-      // dumping final tree
-      myOutTreeEE -> store();
+    // EE
+    CutBasedHiggsSelectionEE.SetWeight(weight);               
+    CutBasedHiggsSelectionEE.SetMcTruth(promptEE);  
+    CutBasedHiggsSelectionEE.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionEE.SetIsChannel(m_channel[ee]);     
+    
+    CutBasedHiggsSelectionEE.SetElectronId(theIdElectron);                 
+    CutBasedHiggsSelectionEE.SetPositronId(theIdPositron);                 
+    CutBasedHiggsSelectionEE.SetElectronIsolation(theIsolElectron);        
+    CutBasedHiggsSelectionEE.SetPositronIsolation(theIsolPositron);        
+    CutBasedHiggsSelectionEE.SetElectronConvRejection(theConvElectron);    
+    CutBasedHiggsSelectionEE.SetPositronConvRejection(theConvPositron);    
+    CutBasedHiggsSelectionEE.SetElectronIp(theIpElectron);                 
+    CutBasedHiggsSelectionEE.SetPositronIp(theIpPositron);                 
+    // checking if the highest pT electron at each step has pT>20
+    float thisMaxPtIdEE   = TMath::Max(GetPt(pxEle[theIdElectron],pyEle[theIdElectron]),GetPt(pxEle[theIdPositron],pyEle[theIdPositron]));
+    float thisMaxPtIsolEE = TMath::Max(GetPt(pxEle[theIsolElectron],pyEle[theIsolElectron]),GetPt(pxEle[theIsolPositron],pyEle[theIsolPositron]));
+    float thisMaxPtConvEE = TMath::Max(GetPt(pxEle[theConvElectron],pyEle[theConvElectron]),GetPt(pxEle[theConvPositron],pyEle[theConvPositron]));
+    float thisMaxPtIpEE   = TMath::Max(GetPt(pxEle[theIpElectron],pyEle[theIpElectron]),GetPt(pxEle[theIpPositron],pyEle[theIpPositron]));
+    if (thisMaxPtIdEE<20)   { 
+      CutBasedHiggsSelectionEE.SetElectronId(-1);
+      CutBasedHiggsSelectionEE.SetPositronId(-1);
     }
+    if (thisMaxPtIsolEE<20) { 
+      CutBasedHiggsSelectionEE.SetElectronIsolation(-1);
+      CutBasedHiggsSelectionEE.SetPositronIsolation(-1);
+    }
+    if (thisMaxPtConvEE<20) { 
+      CutBasedHiggsSelectionEE.SetElectronConvRejection(-1);
+      CutBasedHiggsSelectionEE.SetPositronConvRejection(-1);
+    }
+    if (thisMaxPtIpEE<20)   { 
+      CutBasedHiggsSelectionEE.SetElectronIp(-1);
+      CutBasedHiggsSelectionEE.SetPositronIp(-1);
+    }
+
+    CutBasedHiggsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
+    CutBasedHiggsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
+
+    CutBasedHiggsSelectionEE.SetNJets(njets[ee]);
+    CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
+    CutBasedHiggsSelectionEE.SetBTagJets(btag[ee]);
+    CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu[ee]);
+    CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
+    CutBasedHiggsSelectionEE.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
+    CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
+    CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
+    CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
+    CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
+    CutBasedHiggsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+
+    bool isSelectedEE           = CutBasedHiggsSelectionEE.output();    
+    bool selUpToFinalLeptonsEE  = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
+    bool selUpToJetVetoEE       = CutBasedHiggsSelectionEE.outputUpToJetVeto();
+    bool selUpToUncorrJetVetoEE = CutBasedHiggsSelectionEE.outputUpToUncorrJetVeto();
+    bool selPreDeltaPhiEE       = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
+
+    // latinos
+    bool outputStep1  = CutBasedHiggsSelectionEE.outputStep1();
+    bool outputStep2  = CutBasedHiggsSelectionEE.outputStep2();
+    bool outputStep3  = CutBasedHiggsSelectionEE.outputStep3();
+    bool outputStep4  = CutBasedHiggsSelectionEE.outputStep4();
+    bool outputStep5  = CutBasedHiggsSelectionEE.outputStep5();
+    bool outputStep6  = CutBasedHiggsSelectionEE.outputStep6();
+    bool outputStep7  = CutBasedHiggsSelectionEE.outputStep7();
+    bool outputStep8  = CutBasedHiggsSelectionEE.outputStep8();
+    bool outputStep9  = CutBasedHiggsSelectionEE.outputStep9();
+    bool outputStep10 = CutBasedHiggsSelectionEE.outputStep10();
+    bool outputStep11 = CutBasedHiggsSelectionEE.outputStep11();
+    bool outputStep12 = CutBasedHiggsSelectionEE.outputStep12();
+    bool outputStep13 = CutBasedHiggsSelectionEE.outputStep13();
+    bool outputStep14 = CutBasedHiggsSelectionEE.outputStep14();
+    bool outputStep15 = CutBasedHiggsSelectionEE.outputStep15();
+    bool outputStep16 = CutBasedHiggsSelectionEE.outputStep16();
+    bool outputStep17 = CutBasedHiggsSelectionEE.outputStep17();
+
+
+    // eleID variables to fill the tree (after each cut)
+    if( GetPt(pxEle[theElectron],pyEle[theElectron]) > GetPt(pxEle[thePositron],pyEle[thePositron]) ) setEleIdVariables(theElectron,thePositron);
+    else setEleIdVariables(thePositron, theElectron);
+
+    if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
+
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber);
+    
+    //       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
+    // 				       firedTrg[m_requiredTriggers[1]],
+    // 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
+    
+    myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
+			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee],
+			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
+
+    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+
+    myOutTreeEE -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    
+    myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
+				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
+    
+    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(evtKfactor);
+      
+    // dumping final tree
+    myOutTreeEE -> store();
+
+
+
+
+    
+    // ---------------------------------------
+    // MM
+    CutBasedHiggsSelectionMM.SetWeight(weight);               
+    CutBasedHiggsSelectionMM.SetMcTruth(promptMM); 
+    CutBasedHiggsSelectionMM.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionMM.SetIsChannel(m_channel[mm]);     
+    
+    CutBasedHiggsSelectionMM.SetElectronId(theIdMuonMinus);                 
+    CutBasedHiggsSelectionMM.SetPositronId(theIdMuonPlus);                 
+    CutBasedHiggsSelectionMM.SetElectronIsolation(theIsolMuonMinus);        
+    CutBasedHiggsSelectionMM.SetPositronIsolation(theIsolMuonPlus);        
+    CutBasedHiggsSelectionMM.SetElectronConvRejection(true);    
+    CutBasedHiggsSelectionMM.SetPositronConvRejection(true);    
+    CutBasedHiggsSelectionMM.SetElectronIp(theIpMuonMinus);                 
+    CutBasedHiggsSelectionMM.SetPositronIp(theIpMuonPlus);                 
+    // checking if the highest pT electron at each step has pT>20
+    float thisMaxPtIdMM   = TMath::Max(GetPt(pxMuon[theIdMuonMinus],pyMuon[theIdMuonMinus]),GetPt(pxMuon[theIdMuonPlus],pyMuon[theIdMuonPlus]));
+    float thisMaxPtIsolMM = TMath::Max(GetPt(pxMuon[theIsolMuonMinus],pyMuon[theIsolMuonMinus]),GetPt(pxMuon[theIsolMuonPlus],pyMuon[theIsolMuonPlus]));
+    float thisMaxPtIpMM   = TMath::Max(GetPt(pxMuon[theIpMuonMinus],pyMuon[theIpMuonMinus]),GetPt(pxMuon[theIpMuonPlus],pyMuon[theIpMuonPlus]));
+    if (thisMaxPtIdMM<20)   { 
+      CutBasedHiggsSelectionMM.SetElectronId(-1);
+      CutBasedHiggsSelectionMM.SetPositronId(-1);
+    }
+    if (thisMaxPtIsolMM<20) { 
+      CutBasedHiggsSelectionMM.SetElectronIsolation(-1);
+      CutBasedHiggsSelectionMM.SetPositronIsolation(-1);
+    }
+    if (thisMaxPtIpMM<20)   { 
+      CutBasedHiggsSelectionMM.SetElectronIp(-1);
+      CutBasedHiggsSelectionMM.SetPositronIp(-1);
+    }
+
+    CutBasedHiggsSelectionMM.SetHighElePt(hardestLeptonPt[mm]); 
+    CutBasedHiggsSelectionMM.SetLowElePt(slowestLeptonPt[mm]);  
+
+    CutBasedHiggsSelectionMM.SetNJets(njets[mm]);
+    CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets[mm]);
+    CutBasedHiggsSelectionMM.SetBTagJets(btag[mm]);
+    CutBasedHiggsSelectionMM.SetNSoftMuons(nsoftmu[mm]);
+    CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons[mm]);
+    CutBasedHiggsSelectionMM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
+    CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
+    CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ[mm]);   
+    CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
+    CutBasedHiggsSelectionMM.SetInvMass(m_mll[mm]);
+    CutBasedHiggsSelectionMM.SetDetaLeptons(m_deltaEtaLeptons[mm]);
+
+    bool isSelectedMM           = CutBasedHiggsSelectionMM.output();    
+    bool selUpToFinalLeptonsMM  = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
+    bool selUpToJetVetoMM       = CutBasedHiggsSelectionMM.outputUpToJetVeto();
+    bool selUpToUncorrJetVetoMM = CutBasedHiggsSelectionMM.outputUpToUncorrJetVeto();
+    bool selPreDeltaPhiMM       = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
+
+    // latinos
+    outputStep1  = CutBasedHiggsSelectionMM.outputStep1();
+    outputStep2  = CutBasedHiggsSelectionMM.outputStep2();
+    outputStep3  = CutBasedHiggsSelectionMM.outputStep3();
+    outputStep4  = CutBasedHiggsSelectionMM.outputStep4();
+    outputStep5  = CutBasedHiggsSelectionMM.outputStep5();
+    outputStep6  = CutBasedHiggsSelectionMM.outputStep6();
+    outputStep7  = CutBasedHiggsSelectionMM.outputStep7();
+    outputStep8  = CutBasedHiggsSelectionMM.outputStep8();
+    outputStep9  = CutBasedHiggsSelectionMM.outputStep9();
+    outputStep10 = CutBasedHiggsSelectionMM.outputStep10();
+    outputStep11 = CutBasedHiggsSelectionMM.outputStep11();
+    outputStep12 = CutBasedHiggsSelectionMM.outputStep12();
+    outputStep13 = CutBasedHiggsSelectionMM.outputStep13();
+    outputStep14 = CutBasedHiggsSelectionMM.outputStep14();
+    outputStep15 = CutBasedHiggsSelectionMM.outputStep15();
+    outputStep16 = CutBasedHiggsSelectionMM.outputStep16();
+    outputStep17 = CutBasedHiggsSelectionMM.outputStep17();
+
+
+    // filling the tree
+    if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
+    myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber);
+
+    myOutTreeMM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+			   m_projectedMet[mm], m_deltaPhi[mm], m_deltaErre[mm], m_transvMass[mm], m_mll[mm], 
+			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm],
+			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
+
+    myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+    
+    myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    
+    if ( _selectionMM->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(evtKfactor);
+      
+    // dumping final tree
+    myOutTreeMM -> store();
+
+
+
 
     // ---------------------------------------
-    // mm final state
-    if (m_channel[mm]){
+    // EM
+    CutBasedHiggsSelectionEM.SetWeight(weight);               
+    CutBasedHiggsSelectionEM.SetMcTruth(promptEM);  
+    CutBasedHiggsSelectionEM.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionEM.SetIsChannel(m_channel[em]);     
 
-      theDeltaPhiMM    = m_deltaPhi[mm];
-      theDeltaErreMM   = m_deltaErre[mm];
-      theInvMassMM     = m_mll[mm];
-      theDetaLeptonsMM = etaEle[theMuonMinus]-etaEle[theMuonPlus];
-      theSTransvMassMM  = m_transvMass[mm];
-
-      float theMuonMinusGlobalSum = muonIsoGlobalSum(theMuonMinus, theMuonPlus) / m_p4MuonMinus->Pt();
-      float theMuonPlusGlobalSum  = muonIsoGlobalSum(theMuonPlus, theMuonMinus) / m_p4MuonPlus->Pt();
-      float theMuonHardGlobalSum  = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? theMuonMinusGlobalSum : theMuonPlusGlobalSum;
-      float theMuonSlowGlobalSum  = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? theMuonPlusGlobalSum : theMuonMinusGlobalSum;
-
-      int ctfMuonMinus = trackIndexMuon[theMuonMinus]; 
-      int ctfMuonPlus = trackIndexMuon[theMuonPlus]; 
-      float dxyMuonMinus = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                      trackVxTrack[ctfMuonMinus], trackVyTrack[ctfMuonMinus], trackVzTrack[ctfMuonMinus], 
-                                      pxTrack[ctfMuonMinus], pyTrack[ctfMuonMinus], pzTrack[ctfMuonMinus]);
-      float dxyMuonPlus = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                     trackVxTrack[ctfMuonPlus], trackVyTrack[ctfMuonPlus], trackVzTrack[ctfMuonPlus], 
-                                     pxTrack[ctfMuonPlus], pyTrack[ctfMuonPlus], pzTrack[ctfMuonPlus]);
-
-      float theMuonHardDxy = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? dxyMuonMinus : dxyMuonPlus;
-      float theMuonSlowDxy = (m_p4MuonMinus->Pt() > m_p4MuonPlus->Pt()) ? dxyMuonPlus : dxyMuonMinus;
-
-      // selections
-      CutBasedHiggsSelectionMM.SetWeight(weight);
-      CutBasedHiggsSelectionMM.SetHighElePt(hardestMuonPt);
-      CutBasedHiggsSelectionMM.SetLowElePt(slowestMuonPt);
-      CutBasedHiggsSelectionMM.SetElectronId(theMuonMinusID);
-      CutBasedHiggsSelectionMM.SetPositronId(theMuonPlusID);
-      // bits not used for muons: pass through and use cuts (global iso)
-      CutBasedHiggsSelectionMM.SetElectronIsolation(true);
-      CutBasedHiggsSelectionMM.SetPositronIsolation(true);
-      CutBasedHiggsSelectionMM.SetElectronConvRejection(true);
-      CutBasedHiggsSelectionMM.SetPositronConvRejection(true);
-      CutBasedHiggsSelectionMM.SetEleHardTrackerPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleSlowTrackerPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleHardHcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleSlowHcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleHardEcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleSlowEcalPtSum(0);
-      CutBasedHiggsSelectionMM.SetEleHardGlobalPtSum(theMuonHardGlobalSum);
-      CutBasedHiggsSelectionMM.SetEleSlowGlobalPtSum(theMuonSlowGlobalSum);
-      CutBasedHiggsSelectionMM.SetEleHardD0(theMuonHardDxy);
-      CutBasedHiggsSelectionMM.SetEleSlowD0(theMuonSlowDxy);
-      CutBasedHiggsSelectionMM.SetNJets(njets);
-      CutBasedHiggsSelectionMM.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionMM.SetBTagJets(btag);
-      CutBasedHiggsSelectionMM.SetNSoftMuons(nsoftmu);
-      CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons);
-      CutBasedHiggsSelectionMM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
-      CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
-      CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
-      CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ);
-      CutBasedHiggsSelectionMM.SetDeltaPhi(theDeltaPhiMM);
-      CutBasedHiggsSelectionMM.SetInvMass(theInvMassMM);
-      CutBasedHiggsSelectionMM.SetDetaLeptons(theDetaLeptonsMM);
-      bool isSelectedMM = CutBasedHiggsSelectionMM.output();    
-      bool selUpToFinalLeptonsMM = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
-      bool selUpToJetVetoMM = CutBasedHiggsSelectionMM.outputUpToJetVeto();
-      bool selUpToUncorrJetVetoMM = CutBasedHiggsSelectionMM.outputUpToUncorrJetVeto();
-      bool selPreDeltaPhiMM = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
-
-      if(!_preselection->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
-      else myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber);
-
-//       myOutTreeMM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
-// 				   firedTrg[m_requiredTriggers[3]],
-// 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
-      
-      myOutTreeMM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
-			     GetPt(pxPFMet[0],pyPFMet[0]), 
-			     GetPt(pxMet[0],pyMet[0]), 
-			     m_projectedMet[mm],
-                             theDeltaPhiMM, 
-			     theDeltaErreMM, 
-			     theSTransvMassMM, 
-			     theInvMassMM, 
-			     hardestMuonPt, 
-			     slowestMuonPt, 
-			     theDetaLeptonsMM,
-			     selUpToFinalLeptonsMM,
-			     selUpToJetVetoMM,
-			     selUpToUncorrJetVetoMM,
-			     selPreDeltaPhiMM,
-			     isSelectedMM);
-
-      myOutTreeMM -> fillMLVars(njets,
-                                nuncorrjets,
-                                m_maxDxyEvt,
-                                m_maxDszEvt,
-                                m_maxTrackCountingHighEffBJetTags,
-                                m_maxImpactParameterMVABJetTags,
-                                m_maxCombinedSecondaryVertexMVABJetTags);
-      
-      if ( _preselection->getSwitch("apply_kFactor") ) {
-	myOutTreeMM->fillKFactor(evtKfactor);
-      }
-
-      // dumping final tree
-      myOutTreeMM -> store();
-      
+    CutBasedHiggsSelectionEM.SetElectronId(theBestIdEleMuon.first);                 
+    CutBasedHiggsSelectionEM.SetPositronId(theBestIdEleMuon.second);                 
+    
+    CutBasedHiggsSelectionEM.SetElectronIsolation(theBestIsolEleMuon.first);        
+    CutBasedHiggsSelectionEM.SetPositronIsolation(theBestIsolEleMuon.second);        
+    CutBasedHiggsSelectionEM.SetElectronConvRejection(theBestConvEleMuon.first);    
+    CutBasedHiggsSelectionEM.SetPositronConvRejection(theBestConvEleMuon.second);    
+    CutBasedHiggsSelectionEM.SetElectronIp(theBestIpEleMuon.first);                 
+    CutBasedHiggsSelectionEM.SetPositronIp(theBestIpEleMuon.second);                 
+    // checking if the highest pT electron at each step has pT>20. E is the hardest in EM
+    float thisMaxPtIdEM   = GetPt(pxEle[theBestIdEleMuon.first],pyEle[theBestIdEleMuon.first]);
+    float thisMaxPtIsolEM = GetPt(pxEle[theBestIsolEleMuon.first],pyEle[theBestIsolEleMuon.first]);
+    float thisMaxPtIpEM   = GetPt(pxEle[theBestIpEleMuon.first],pyEle[theBestIpEleMuon.first]);
+    if (thisMaxPtIdEM<20)   { 
+      CutBasedHiggsSelectionEM.SetElectronId(-1);
+      CutBasedHiggsSelectionEM.SetPositronId(-1);
+    }
+    if (thisMaxPtIsolEM<20) { 
+      CutBasedHiggsSelectionEM.SetElectronIsolation(-1);
+      CutBasedHiggsSelectionEM.SetPositronIsolation(-1);
+    }
+    if (thisMaxPtIpEM<20)   { 
+      CutBasedHiggsSelectionEM.SetElectronIp(-1);
+      CutBasedHiggsSelectionEM.SetPositronIp(-1);
     }
 
-    if (m_channel[em]){
+    CutBasedHiggsSelectionEM.SetHighElePt(hardestLeptonPt[em]); 
+    CutBasedHiggsSelectionEM.SetLowElePt(slowestLeptonPt[em]);  
 
-      // electron ID, isolations for the only electron / positron
-      bool theEleIDEM = true;
-      bool theMuonIDEM = true;
-      bool theEleIsolEM = true;
-      bool theEleConvRejEM = true;
-      float theEleTrackerPtSumEM = 0.0;
-      float theEleHcalPtSumEM = 0.0;
-      float theEleEcalPtSumEM = 0.0;
-      float theMuonGlobalSumEM = 0.0;
-      float theEleDxy = 0.0;
-      float theMuonDxy = 0.0;
-      float hardestLeptonPt, slowestLeptonPt;
+    CutBasedHiggsSelectionEM.SetNJets(njets[em]);
+    CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets[em]);
+    CutBasedHiggsSelectionEM.SetBTagJets(btag[em]);
+    CutBasedHiggsSelectionEM.SetNSoftMuons(nsoftmu[em]);
+    CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons[em]);
+    CutBasedHiggsSelectionEM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
+    CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
+    CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ[em]);  
+    CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
+    CutBasedHiggsSelectionEM.SetInvMass(m_mll[em]);
+    CutBasedHiggsSelectionEM.SetDetaLeptons(m_deltaEtaLeptons[em]);
 
-      theDeltaPhiEM    = m_deltaPhi[em];
-      theDeltaErreEM   = m_deltaErre[em];
-      theInvMassEM     = m_mll[em];
-      theSTransvMassEM  = m_transvMass[em];
-      if(theElectron>-1 && theMuonPlus>-1) {
-	theDetaLeptonsEM = etaEle[theElectron]-etaEle[theMuonPlus];
-        theEleIDEM = theElectronID;
-        theMuonIDEM = theMuonPlusID;
-        theEleIsolEM = theElectronIsol;
-        theEleConvRejEM = theElectronConvRej;
-	theEleTrackerPtSumEM = theEleTrackerPtSum;
-	theEleHcalPtSumEM = theEleHcalPtSum;
-	theEleEcalPtSumEM = theEleEcalPtSum;
-        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonPlus, theElectron) / m_p4MuonPlus->Pt();
-        if(m_p4ElectronMinus->Pt() > m_p4MuonPlus->Pt()) {
-          hardestLeptonPt = m_p4ElectronMinus->Pt();
-          slowestLeptonPt = m_p4MuonPlus->Pt();
-        } else {
-          hardestLeptonPt = m_p4MuonPlus->Pt();
-          slowestLeptonPt = m_p4ElectronMinus->Pt();
-        }
+    bool isSelectedEM           = CutBasedHiggsSelectionEM.output();    
+    bool selUpToFinalLeptonsEM  = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
+    bool selUpToJetVetoEM       = CutBasedHiggsSelectionEM.outputUpToJetVeto();
+    bool selUpToUncorrJetVetoEM = CutBasedHiggsSelectionEM.outputUpToUncorrJetVeto();
+    bool selPreDeltaPhiEM       = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
-        int gsfEle = gsfTrackIndexEle[theElectron]; 
-        int ctfMuonPlus = trackIndexMuon[theMuonPlus]; 
-        float dxyMuonPlus = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                       trackVxTrack[ctfMuonPlus], trackVyTrack[ctfMuonPlus], trackVzTrack[ctfMuonPlus], 
-                                       pxTrack[ctfMuonPlus], pyTrack[ctfMuonPlus], pzTrack[ctfMuonPlus]);
-        float dxyEle = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                  trackVxGsfTrack[gsfEle], trackVyGsfTrack[gsfEle], trackVzTrack[gsfEle], 
-                                  pxGsfTrack[gsfEle], pyGsfTrack[gsfEle], pzGsfTrack[gsfEle]);
+    // latinos
+    outputStep1  = CutBasedHiggsSelectionEM.outputStep1();
+    outputStep2  = CutBasedHiggsSelectionEM.outputStep2();
+    outputStep3  = CutBasedHiggsSelectionEM.outputStep3();
+    outputStep4  = CutBasedHiggsSelectionEM.outputStep4();
+    outputStep5  = CutBasedHiggsSelectionEM.outputStep5();
+    outputStep6  = CutBasedHiggsSelectionEM.outputStep6();
+    outputStep7  = CutBasedHiggsSelectionEM.outputStep7();
+    outputStep8  = CutBasedHiggsSelectionEM.outputStep8();
+    outputStep9  = CutBasedHiggsSelectionEM.outputStep9();
+    outputStep10 = CutBasedHiggsSelectionEM.outputStep10();
+    outputStep11 = CutBasedHiggsSelectionEM.outputStep11();
+    outputStep12 = CutBasedHiggsSelectionEM.outputStep12();
+    outputStep13 = CutBasedHiggsSelectionEM.outputStep13();
+    outputStep14 = CutBasedHiggsSelectionEM.outputStep14();
+    outputStep15 = CutBasedHiggsSelectionEM.outputStep15();
+    outputStep16 = CutBasedHiggsSelectionEM.outputStep16();
+    outputStep17 = CutBasedHiggsSelectionEM.outputStep17();
 
-        theEleDxy = dxyEle;
-        theMuonDxy = dxyMuonPlus;
+    // filling the tree
+    if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
 
-        setEleIdVariables(theElectron, -1);
-      }
-      if(thePositron>-1 && theMuonMinus>-1 ) {
-	theDetaLeptonsEM = etaEle[thePositron]-etaEle[theMuonMinus];
-        theEleIDEM = thePositronID;
-        theMuonIDEM = theMuonMinusID;
-        theEleIsolEM = thePositronIsol;
-        theEleConvRejEM = thePositronConvRej;
-	theEleTrackerPtSumEM = thePosTrackerPtSum;
-	theEleHcalPtSumEM = thePosHcalPtSum;
-	theEleEcalPtSumEM = thePosEcalPtSum;
-        theMuonGlobalSumEM = mueleIsoGlobalSum(theMuonMinus, thePositron) / m_p4MuonMinus->Pt();
-        if(m_p4ElectronPlus->Pt() > m_p4MuonMinus->Pt()) {
-          hardestLeptonPt = m_p4ElectronPlus->Pt();
-          slowestLeptonPt = m_p4MuonMinus->Pt();
-        } else {
-          hardestLeptonPt = m_p4MuonMinus->Pt();
-          slowestLeptonPt = m_p4ElectronPlus->Pt();
-        }
+    myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber);
 
-        int gsfPos = gsfTrackIndexEle[thePositron]; 
-        int ctfMuonMinus = trackIndexMuon[theMuonMinus]; 
-        float dxyMuonMinus = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                        trackVxTrack[ctfMuonMinus], trackVyTrack[ctfMuonMinus], trackVzTrack[ctfMuonMinus], 
-                                        pxTrack[ctfMuonMinus], pyTrack[ctfMuonMinus], pzTrack[ctfMuonMinus]);
-        float dxyPos = trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                  trackVxGsfTrack[gsfPos], trackVyGsfTrack[gsfPos], trackVzTrack[gsfPos], 
-                                  pxGsfTrack[gsfPos], pyGsfTrack[gsfPos], pzGsfTrack[gsfPos]);
-        theEleDxy = dxyPos;
-        theMuonDxy = dxyMuonMinus;
-        setEleIdVariables(thePositron, -1);
-      }
+    myOutTreeEM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+			   m_projectedMet[em], m_deltaPhi[em], m_deltaErre[em], m_transvMass[em], m_mll[em], 
+			   hardestLeptonPt[em], slowestLeptonPt[em], m_deltaEtaLeptons[em],
+			   selUpToFinalLeptonsEM, selUpToJetVetoEM, selUpToUncorrJetVetoEM, selPreDeltaPhiEM, isSelectedEM);
+
+    setEleIdVariables(theBestIpEleMuon.first, -1);
+    myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
+				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
+    
+    myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+    
+    myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    
+    if ( _selectionEM->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(evtKfactor);
+    
+    // dumping final tree
+    myOutTreeEM -> store();
 
 
-      // selections
-      CutBasedHiggsSelectionEM.SetWeight(weight);
-      CutBasedHiggsSelectionEM.SetHighElePt(hardestLeptonPt);
-      CutBasedHiggsSelectionEM.SetLowElePt(slowestLeptonPt);
-      CutBasedHiggsSelectionEM.SetElectronId(true);
-      CutBasedHiggsSelectionEM.SetElectronId(theMuonIDEM);
-      CutBasedHiggsSelectionEM.SetPositronId(theEleIDEM);
-      CutBasedHiggsSelectionEM.SetElectronIsolation(true); // bit: pass through and use cut
-      CutBasedHiggsSelectionEM.SetPositronIsolation(theEleIsolEM);
-      CutBasedHiggsSelectionEM.SetPositronConvRejection(true); // bit: pass through
-      CutBasedHiggsSelectionEM.SetElectronConvRejection(theEleConvRejEM);
-      CutBasedHiggsSelectionEM.SetEleHardTrackerPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleSlowTrackerPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleHardHcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleSlowHcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleHardEcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleSlowEcalPtSum(0);
-      CutBasedHiggsSelectionEM.SetEleHardGlobalPtSum(theMuonGlobalSumEM); //order in pt unimportant
-      CutBasedHiggsSelectionEM.SetEleSlowGlobalPtSum(0); // for electron, already applied the bit
-      CutBasedHiggsSelectionEM.SetEleHardD0(theEleDxy);
-      CutBasedHiggsSelectionEM.SetEleSlowD0(theMuonDxy);
-      CutBasedHiggsSelectionEM.SetNJets(njets);
-      CutBasedHiggsSelectionEM.SetNSoftMuons(nsoftmu);
-      CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons);
-      CutBasedHiggsSelectionEM.SetNUncorrJets(nuncorrjets);
-      CutBasedHiggsSelectionEM.SetBTagJets(btag);
-      CutBasedHiggsSelectionEM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
-      CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
-      CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
-      CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ);
-      CutBasedHiggsSelectionEM.SetDeltaPhi(theDeltaPhiEM);
-      CutBasedHiggsSelectionEM.SetInvMass(theInvMassEM);
-      CutBasedHiggsSelectionEM.SetDetaLeptons(theDetaLeptonsEM);
-      bool isSelectedEM = CutBasedHiggsSelectionEM.output();    
-      bool selUpToFinalLeptonsEM = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
-      bool selUpToJetVetoEM = CutBasedHiggsSelectionEM.outputUpToJetVeto();
-      bool selUpToUncorrJetVetoEM = CutBasedHiggsSelectionEM.outputUpToUncorrJetVeto();
-      bool selPreDeltaPhiEM = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
+  
 
-      if(!_preselection->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
-      else myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber);
-
-//       myOutTreeEM -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-// 				       firedTrg[m_requiredTriggers[1]],
-// 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
-
-//       myOutTreeEM -> fillHLTMuons( firedTrg[m_requiredTriggers[2]], 
-// 				   firedTrg[m_requiredTriggers[3]],
-// 				   (firedTrg[m_requiredTriggers[2]] || firedTrg[m_requiredTriggers[3]]) );
-
-      myOutTreeEM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), 
-			     GetPt(pxPFMet[0],pyPFMet[0]), 
-			     GetPt(pxMet[0],pyMet[0]), 
-                             m_projectedMet[em],
-			     theDeltaPhiEM, 
-			     theDeltaErreEM, 
-			     theSTransvMassEM, 
-			     theInvMassEM, 
-			     hardestLeptonPt, 
-			     slowestLeptonPt, 
-			     theDetaLeptonsEM,
-			     selUpToFinalLeptonsEM,
-			     selUpToJetVetoEM,
-			     selUpToUncorrJetVetoEM,
-			     selPreDeltaPhiEM,
-			     isSelectedEM);
-
-      myOutTreeEM -> fillMLVars(njets,
-                                nuncorrjets,
-                                m_maxDszEvt,
-                                m_maxDszEvt,
-                                m_maxTrackCountingHighEffBJetTags,
-                                m_maxImpactParameterMVABJetTags,
-                                m_maxCombinedSecondaryVertexMVABJetTags);
-      
-      myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
-                                    myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
-                                    myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
-
-      if ( _preselection->getSwitch("apply_kFactor") ) {
-	myOutTreeEM->fillKFactor(evtKfactor);
-      }
-
-      // dumping final tree
-      myOutTreeEM -> store();
+    // ---------------------------------------
+    // ME
+    CutBasedHiggsSelectionME.SetWeight(weight);               
+    CutBasedHiggsSelectionME.SetMcTruth(promptME);    
+    CutBasedHiggsSelectionME.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionME.SetIsChannel(m_channel[me]);     
+    
+    CutBasedHiggsSelectionME.SetElectronId(theBestIdMuonEle.first);                 
+    CutBasedHiggsSelectionME.SetPositronId(theBestIdMuonEle.second);                 
+    CutBasedHiggsSelectionME.SetElectronIsolation(theBestIsolMuonEle.first);        
+    CutBasedHiggsSelectionME.SetPositronIsolation(theBestIsolMuonEle.second);        
+    CutBasedHiggsSelectionME.SetElectronConvRejection(theBestConvMuonEle.first);    
+    CutBasedHiggsSelectionME.SetPositronConvRejection(theBestConvMuonEle.second);    
+    CutBasedHiggsSelectionME.SetElectronIp(theBestIpMuonEle.first);                 
+    CutBasedHiggsSelectionME.SetPositronIp(theBestIpMuonEle.second);                 
+    // checking if the highest pT electron at each step has pT>20. MU is the hardest in ME
+    float thisMaxPtIdME = GetPt(pxMuon[theBestIdMuonEle.first],pyMuon[theBestIdMuonEle.first]);
+    float thisMaxPtIsolME = GetPt(pxMuon[theBestIsolMuonEle.first],pyMuon[theBestIsolMuonEle.first]);
+    float thisMaxPtIpME = GetPt(pxMuon[theBestIpMuonEle.first],pyMuon[theBestIpMuonEle.first]);
+    if (thisMaxPtIdME<20)   { 
+      CutBasedHiggsSelectionME.SetElectronId(-1);
+      CutBasedHiggsSelectionME.SetPositronId(-1);
     }
+    if (thisMaxPtIsolME<20) { 
+      CutBasedHiggsSelectionME.SetElectronIsolation(-1);
+      CutBasedHiggsSelectionME.SetPositronIsolation(-1);
+    }
+    if (thisMaxPtIpME<20)   { 
+      CutBasedHiggsSelectionME.SetElectronIp(-1);
+      CutBasedHiggsSelectionME.SetPositronIp(-1);
+    }
+
+    CutBasedHiggsSelectionME.SetHighElePt(hardestLeptonPt[me]); 
+    CutBasedHiggsSelectionME.SetLowElePt(slowestLeptonPt[me]);  
+
+    CutBasedHiggsSelectionME.SetNJets(njets[me]);
+    CutBasedHiggsSelectionME.SetNUncorrJets(nuncorrjets[me]);
+    CutBasedHiggsSelectionME.SetBTagJets(btag[me]);
+    CutBasedHiggsSelectionME.SetNSoftMuons(nsoftmu[me]);
+    CutBasedHiggsSelectionME.SetNExtraLeptons(nextraleptons[me]);
+    CutBasedHiggsSelectionME.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionME.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsSelectionME.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsSelectionME.SetDeltaPhiLLJet(dphiLLJ[me]);   
+    CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
+    CutBasedHiggsSelectionME.SetInvMass(m_mll[me]);
+    CutBasedHiggsSelectionME.SetDetaLeptons(m_deltaEtaLeptons[me]);
+
+    bool isSelectedME           = CutBasedHiggsSelectionME.output();    
+    bool selUpToFinalLeptonsME  = CutBasedHiggsSelectionME.outputUpToFinalLeptons();
+    bool selUpToJetVetoME       = CutBasedHiggsSelectionME.outputUpToJetVeto();
+    bool selUpToUncorrJetVetoME = CutBasedHiggsSelectionME.outputUpToUncorrJetVeto();
+    bool selPreDeltaPhiME       = CutBasedHiggsSelectionME.outputPreDeltaPhi();
+
+    // latinos
+    outputStep1  = CutBasedHiggsSelectionME.outputStep1();
+    outputStep2  = CutBasedHiggsSelectionME.outputStep2();
+    outputStep3  = CutBasedHiggsSelectionME.outputStep3();
+    outputStep4  = CutBasedHiggsSelectionME.outputStep4();
+    outputStep5  = CutBasedHiggsSelectionME.outputStep5();
+    outputStep6  = CutBasedHiggsSelectionME.outputStep6();
+    outputStep7  = CutBasedHiggsSelectionME.outputStep7();
+    outputStep8  = CutBasedHiggsSelectionME.outputStep8();
+    outputStep9  = CutBasedHiggsSelectionME.outputStep9();
+    outputStep10 = CutBasedHiggsSelectionME.outputStep10();
+    outputStep11 = CutBasedHiggsSelectionME.outputStep11();
+    outputStep12 = CutBasedHiggsSelectionME.outputStep12();
+    outputStep13 = CutBasedHiggsSelectionME.outputStep13();
+    outputStep14 = CutBasedHiggsSelectionME.outputStep14();
+    outputStep15 = CutBasedHiggsSelectionME.outputStep15();
+    outputStep16 = CutBasedHiggsSelectionME.outputStep16();
+    outputStep17 = CutBasedHiggsSelectionME.outputStep17();
+
+    // filling the tree
+    if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
+
+    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber);
+
+    myOutTreeME -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
+			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me],
+			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);
+
+    setEleIdVariables(theBestIpMuonEle.second, -1);
+    myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
+				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
+
+    myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+    
+    myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    
+    if ( _selectionME->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(evtKfactor);
+      
+    // dumping final tree
+    myOutTreeME -> store();
 
   }
 
@@ -1084,11 +1167,7 @@ void HiggsMLSelection::displayEfficiencies(std::string datasetName) {
   if( loc != std::string::npos ) {
     datasetName.erase(loc);
   }
-
-  std::cout << "--------------------------------" << std::endl;
-  std::cout << "Common preselections: " << std::endl;
-  CommonHiggsPreselection.displayEfficiencies(datasetName);
-
+  
   std::cout << "--------------------------------" << std::endl;
   std::cout << "Full EE selections: " << std::endl;
   CutBasedHiggsSelectionEE.displayEfficiencies(datasetName);
@@ -1101,76 +1180,630 @@ void HiggsMLSelection::displayEfficiencies(std::string datasetName) {
   std::cout << "Full EM selections: " << std::endl;
   CutBasedHiggsSelectionEM.displayEfficiencies(datasetName);
 
-  // no class cut based or like based ele id
-  if (!_preselection->getSwitch("useCIC")) {   
-    if (!_preselection->getSwitch("asymmetricID")) {
-      std::cout << "cut based symmetric ID: " << std::endl;
-      EgammaCutBasedID.displayEfficiencies();
-    } else {
-      std::cout << "cut based asymmetric ID: Low pT" << std::endl;
-      EgammaCutBasedIDLow.displayEfficiencies();
-      std::cout << "cut based asymmetric ID: High pT" << std::endl;
-      EgammaCutBasedID.displayEfficiencies();
-    }
-  }
+  std::cout << "--------------------------------" << std::endl;
+  std::cout << "Full ME selections: " << std::endl;
+  CutBasedHiggsSelectionME.displayEfficiencies(datasetName);
 
-  // cic based ele id
-  if (_preselection->getSwitch("useCIC")) {   
-    if (!_preselection->getSwitch("asymmetricID")) {
-      std::cout << "cic based symmetric ID: " << std::endl;
-      EgammaCiCBasedID.displayEfficiencies();
-    } else {
-      std::cout << "cic based asymmetric ID: Low pT" << std::endl;
-      EgammaCiCBasedIDLow.displayEfficiencies();
-      std::cout << "cic based asymmetric ID: High pT" << std::endl;
-      EgammaCiCBasedID.displayEfficiencies();
-    }
+
+  // simple cuts based or like based ele id
+  if (!_selectionEE->getSwitch("asymmetricID")) {
+    std::cout << "cut based symmetric ID: " << std::endl;
+    EgammaCutBasedID.displayEfficiencies();
+  } else {
+    std::cout << "cut based asymmetric ID: Low pT" << std::endl;
+    EgammaCutBasedIDLow.displayEfficiencies();
+    std::cout << "cut based asymmetric ID: High pT" << std::endl;
+    EgammaCutBasedID.displayEfficiencies();
   }
 }
 
-std::pair<int,int> HiggsMLSelection::getBestElectronPair() {
+std::pair<int,int> HiggsMLSelection::getBestElectronPair_acceptance() {
+  
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
 
-  int theLep1=-1;
-  int theLep2=-1;
-  float maxPtLep1=-1000.;
-  float maxPtLep2=-1000.;
-  std::vector<int> goodRecoLeptons;
+  _acceptEleAll.clear();
+
   for(int i=0;i<nEle;i++) {
     
-    if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
+    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
+
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
-    if(_preselection->getSwitch("ptElectronAcc") && !_preselection->passCut("ptElectronAcc",thisPt) ) continue;
-    // fixme: (in the future) put here full electron ID not to loose efficiency I think
+    if(_selectionEE->getSwitch("ptElectronAcc") && !_selectionEE->passCut("ptElectronAcc",thisPt) ) continue;
+    
     float thisCharge = chargeEle[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
+
+    _acceptEleAll.push_back(i);   
   }
-  _bestElectrons->clear();
-  _bestElectrons->push_back(theLep1);  _bestElectrons->push_back(theLep2); 
+
   return make_pair(theLep1,theLep2);
 }
 
-std::pair<int,int> HiggsMLSelection::getBestMuonPair() {
-  int theLep1=-1;
-  int theLep2=-1;
-  float maxPtLep1=-1000.;
-  float maxPtLep2=-1000.;
-  std::vector<int> goodRecoLeptons;
+std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> acceptEle ) {
+
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+
+  _idEleAll.clear();
+
+  for (int iEle=0; iEle<acceptEle.size(); iEle++) {
+    int thisEle = acceptEle[iEle];
+    
+    bool theElectronID, theElectronIsol, theElectronConvRej;
+    theElectronID = theElectronIsol = theElectronConvRej = true;
+    
+    float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+    if ( _selectionEE->getSwitch("asymmetricID")) {
+      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedIDLow);
+    }
+
+    if (!theElectronID) continue;
+
+    float thisCharge = chargeEle[thisEle];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+
+    _idEleAll.push_back(thisEle);  
+  }
+
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> idEle ) {
+
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+
+  _isolEleAll.clear();
+
+  for (int iEle=0; iEle<idEle.size(); iEle++) {
+    int thisEle = idEle[iEle];
+    
+    bool theElectronID, theElectronIsol, theElectronConvRej;
+    theElectronID = theElectronIsol = theElectronConvRej = true;
+    
+    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+
+    if (!theElectronIsol) continue;
+    
+    float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
+    float thisCharge = chargeEle[thisEle];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+
+    _isolEleAll.push_back(thisEle);  
+  }
+
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> isolEle ) {
+
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+  
+  _convEleAll.clear();
+
+  for (int iEle=0; iEle<isolEle.size(); iEle++) {
+    int thisEle = isolEle[iEle];
+    
+    bool theElectronID, theElectronIsol, theElectronConvRej;
+    theElectronID = theElectronIsol = theElectronConvRej = true;
+    
+    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+    
+    if (!theElectronConvRej) continue;
+
+    float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
+    float thisCharge = chargeEle[thisEle];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+
+    _convEleAll.push_back(thisEle);      
+  }
+
+  return make_pair(theLep1,theLep2);
+}
+
+
+std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> convEle ) {
+
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+
+  _ipEleAll.clear();
+
+  for (int iEle=0; iEle<convEle.size(); iEle++) {
+    int thisEle = convEle[iEle];
+    
+    int gsfTrack = gsfTrackIndexEle[thisEle]; 
+    float dxyEle = transvImpactParBiasedGsfTrack[gsfTrack];
+    float dzEle  = PVzPV[m_closestPV] - trackVzGsfTrack[gsfTrack];   
+    if (_selectionEE->getSwitch("leptonD0") && (!_selectionEE->passCut("leptonD0",dxyEle)) ) continue;  
+    if (_selectionEE->getSwitch("leptonDz") && (!_selectionEE->passCut("leptonDz",dzEle)) )  continue;  
+
+    float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
+    float thisCharge = chargeEle[thisEle];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+
+    _ipEleAll.push_back(thisEle);  
+  }
+
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestMuonPair_acceptance() {
+  
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+  
+  _acceptMuonsAll.clear();
+
   for(int i=0;i<nMuon;i++) {
-    if(_preselection->getSwitch("etaMuonAcc") && !_preselection->passCut("etaMuonAcc",etaMuon[i]) ) continue;
-    TVector3 pLepton(pxMuon[i],pyMuon[i],pzMuon[i]);
-    float thisPt=pLepton.Pt();
-    if(_preselection->getSwitch("ptMuonAcc") && !_preselection->passCut("ptMuonAcc",thisPt) ) continue;
-    // fixme: (in the future) put here full electron ID not to loose efficiency I think
+
+    // only not standalone muons latinos
+    Utils anaUtils;
+    bool thisMuFlag1 = anaUtils.muonIdVal(muonIdMuon[i],AllGlobalMuons);
+    bool thisMuFlag2 = anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons);
+    if (!thisMuFlag1 && !thisMuFlag2) continue;
+    // only not standalone muons latinos
+
+    if(_selectionEE->getSwitch("etaMuonAcc") && !_selectionEE->passCut("etaMuonAcc",etaMuon[i]) ) continue;
+
+    float thisPt = GetPt(pxMuon[i],pyMuon[i]);
+    if(_selectionEE->getSwitch("ptMuonAcc") && !_selectionEE->passCut("ptMuonAcc",thisPt) ) continue;
+
     float thisCharge = chargeMuon[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
+    
+    _acceptMuonsAll.push_back(i);  
   }
-  _bestMuons->clear();
-  _bestMuons->push_back(theLep1);  _bestMuons->push_back(theLep2); 
+  
   return make_pair(theLep1,theLep2);
 }
+
+
+std::pair<int,int> HiggsMLSelection::getBestMuonPair_id( std::vector<int> acceptMu ) {
+  
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+  
+  _idMuonsAll.clear();
+
+  for(int iMu=0; iMu<acceptMu.size(); iMu++) {
+
+    int thisMu = acceptMu[iMu];
+
+    bool theMuonID = true;
+    isMuonID(thisMu, &theMuonID);
+    if (!theMuonID) continue;
+
+    float thisPt     = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
+    float thisCharge = chargeMuon[thisMu];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
+    
+    _idMuonsAll.push_back(thisMu);   
+  }
+  
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu ) {
+  
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+   
+  _isolMuonsAll.clear();
+
+  for(int iMu=0; iMu<idMu.size(); iMu++) {
+
+    int thisMu   = idMu[iMu];
+    float thisPt = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
+
+    // fixme: diverso da prima: rimuovevo il secondo leptone....
+    float muonTrackerForGlobal = sumPt03Muon[thisMu];
+    float muonEcalForGlobal    = emEt03Muon[thisMu];
+    float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
+    float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
+    float theRelMuonIso        = theMuonGlobalSum/thisPt; 
+    if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",theRelMuonIso)) continue;  
+
+    float thisCharge = chargeMuon[thisMu];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
+
+    _isolMuonsAll.push_back(thisMu);   
+  }
+  
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu ) {
+
+  int theLep1 = -1;
+  int theLep2 = -1;
+  float maxPtLep1 = -1000.;
+  float maxPtLep2 = -1000.;
+
+  _ipMuonsAll.clear();  
+
+  for(int iMu=0; iMu<isoMu.size(); iMu++) {
+
+    int thisMu = isoMu[iMu];
+    
+    int ctfMuon   = trackIndexMuon[thisMu]; 
+    float dxyMuon = transvImpactParBiasedTrack[ctfMuon];
+    float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];   
+    if (_selectionEE->getSwitch("leptonD0") && (!_selectionEE->passCut("leptonD0",dxyMuon)) ) continue;  
+    if (_selectionEE->getSwitch("leptonDz") && (!_selectionEE->passCut("leptonDz",dzMuon)) )  continue;  
+
+    float thisPt     = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
+    float thisCharge = chargeMuon[thisMu];
+    if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
+    if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
+
+    _ipMuonsAll.push_back(thisMu);   
+  }
+
+  return make_pair(theLep1,theLep2);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestEleMuonPair(int eleM, int eleP, int muM, int muP) {
+
+  int theEle=-1;
+  int theMuon=-1;
+  TVector3 p3EleM(pxEle[eleM],pyEle[eleM],pzEle[eleM]);
+  TVector3 p3EleP(pxEle[eleP],pyEle[eleP],pzEle[eleP]);
+  TVector3 p3MuonM(pxMuon[muM],pyMuon[muM],pzMuon[muM]);
+  TVector3 p3MuonP(pxMuon[muP],pyMuon[muP],pzMuon[muP]);
+
+  if(p3EleM.Pt()>p3EleP.Pt()) {
+
+    theEle = eleM;
+    
+    if(p3MuonP.Pt()<p3EleM.Pt()) theMuon = muP;
+    else {
+      theEle = eleP;
+      if(p3MuonM.Pt()<p3EleP.Pt()) theMuon = muM;
+    }
+  } else {
+
+    theEle = eleP;
+
+    if(p3MuonM.Pt()<p3EleP.Pt()) theMuon = muM;
+    else {
+      theEle = eleM;
+      if (p3MuonP.Pt()<p3EleM.Pt()) theMuon = muP;
+    }
+  }
+  
+  return make_pair(theEle,theMuon);
+}
+
+std::pair<int,int> HiggsMLSelection::getBestMuonElePair(int eleM, int eleP, int muM, int muP) {
+
+  int theEle=-1;
+  int theMuon=-1;
+  TVector3 p3EleM(pxEle[eleM],pyEle[eleM],pzEle[eleM]);
+  TVector3 p3EleP(pxEle[eleP],pyEle[eleP],pzEle[eleP]);
+  TVector3 p3MuonM(pxMuon[muM],pyMuon[muM],pzMuon[muM]);
+  TVector3 p3MuonP(pxMuon[muP],pyMuon[muP],pzMuon[muP]);
+
+  if(p3MuonM.Pt()>p3MuonP.Pt()) {
+
+    theMuon = muM;
+
+    if(p3EleP.Pt()<p3MuonM.Pt()) theEle = eleP;
+    else {
+      theMuon = muP;
+      if (p3EleM.Pt()<p3MuonP.Pt()) theEle = eleM;
+    }
+
+  } else {
+
+    theMuon = muP;
+
+    if(p3EleM.Pt()<p3MuonP.Pt()) theEle = eleM;
+    else {
+      theMuon = muM;
+      if(p3EleP.Pt()<p3MuonM.Pt()) theEle = eleP;
+    }
+  }
+  
+  return make_pair(theMuon,theEle);
+}
+
+void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
+
+  if (myPosi > -1 && myEle > -1) {
+
+    eleCands[ee].push_back(myEle);
+    eleCands[ee].push_back(myPosi);   
+    hardestLeptonPt[ee] = TMath::Max(GetPt(pxEle[myEle],pyEle[myEle]),GetPt(pxEle[myPosi],pyEle[myPosi]));
+    slowestLeptonPt[ee] = TMath::Min(GetPt(pxEle[myEle],pyEle[myEle]),GetPt(pxEle[myPosi],pyEle[myPosi]));
+    m_p4LeptonMinus[ee] -> SetXYZT(pxEle[myEle], pyEle[myEle], pzEle[myEle], energyEle[myEle]);
+    m_p4LeptonPlus[ee]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+    m_mll[ee]       = (*(m_p4LeptonMinus[ee]) + *(m_p4LeptonPlus[ee])).M();
+    m_deltaPhi[ee]  = fabs(180./TMath::Pi() * m_p4LeptonMinus[ee]->Vect().DeltaPhi(m_p4LeptonPlus[ee]->Vect()));
+    m_deltaErre[ee] = m_p4LeptonMinus[ee]->Vect().DeltaR(m_p4LeptonPlus[ee]->Vect());
+    m_deltaEtaLeptons[ee] = etaEle[myEle]-etaEle[myPosi];
+    m_dilepPt[ee].SetXYZ( m_p4LeptonMinus[ee]->Vect().X()+m_p4LeptonPlus[ee]->Vect().X(),m_p4LeptonMinus[ee]->Vect().Y()+m_p4LeptonPlus[ee]->Vect().Y(),0.0 );
+    // def. 3 of http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213                           
+    m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
+    m_metOptll[ee] = m_p4MET->Pt() / m_dilepPt[ee].Pt();
+    m_mT2[ee] = 0.;
+    m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+    m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
+  }
+
+}
+
+void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
+  
+  if (myMuPlus > -1 && myMuMinus > -1){
+
+    muCands[mm].push_back(myMuMinus);
+    muCands[mm].push_back(myMuPlus);
+    hardestLeptonPt[mm] = TMath::Max(GetPt(pxMuon[myMuPlus],pyMuon[myMuPlus]),GetPt(pxMuon[myMuMinus],pyMuon[myMuMinus]));
+    slowestLeptonPt[mm] = TMath::Min(GetPt(pxMuon[myMuPlus],pyMuon[myMuPlus]),GetPt(pxMuon[myMuMinus],pyMuon[myMuMinus]));
+    m_p4LeptonMinus[mm] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+    m_p4LeptonPlus[mm]  -> SetXYZT(pxMuon[myMuPlus], pyMuon[myMuPlus], pzMuon[myMuPlus], energyMuon[myMuPlus]);
+    m_mll[mm]             = (*(m_p4LeptonMinus[mm]) + *(m_p4LeptonPlus[mm])).M();
+    m_deltaPhi[mm]        = fabs(180./TMath::Pi() * m_p4LeptonMinus[mm]->Vect().DeltaPhi(m_p4LeptonPlus[mm]->Vect()));
+    m_deltaErre[mm]       = m_p4LeptonMinus[mm]->Vect().DeltaR(m_p4LeptonPlus[mm]->Vect());
+    m_deltaEtaLeptons[mm] = etaEle[myMuMinus]-etaEle[myMuPlus];
+    m_dilepPt[mm].SetXYZ( m_p4LeptonMinus[mm]->Vect().X()+m_p4LeptonPlus[mm]->Vect().X(),m_p4LeptonMinus[mm]->Vect().Y()+m_p4LeptonPlus[mm]->Vect().Y(),0.0 );
+    m_transvMass[mm]      = mT3(*m_p4LeptonMinus[mm],*m_p4LeptonPlus[mm],m_p4MET->Vect());
+    m_metOptll[mm]        = m_p4MET->Pt() / m_dilepPt[mm].Pt();
+    m_mT2[mm]             = 0.;
+    m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+    m_projectedMet[mm]    = GetProjectedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
+  }
+
+}
+
+void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, int myMuMinus) {
+
+  m_p4MET -> SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+
+  if ( myEle > -1 && myMuPlus > -1 && ( myPosi<0 || myMuMinus<0 ) ) {  // only 1 pair reconstructed                                    
+
+    float ptE = GetPt(pxEle[myEle],pyEle[myEle]);
+    float ptM = GetPt(pxMuon[myMuPlus],pyMuon[myMuPlus]);
+    
+    if (ptE > ptM) {
+      eleCands[em].push_back(myEle);
+      muCands[em].push_back(myMuPlus);
+      m_p4LeptonMinus[em] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
+      m_p4LeptonPlus[em]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+      hardestLeptonPt[em] = ptE;
+      slowestLeptonPt[em] = ptM;
+      m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
+      m_deltaPhi[em]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[em]->Vect().DeltaPhi(m_p4LeptonPlus[em]->Vect()));
+      m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
+      m_deltaEtaLeptons[em] = etaEle[myEle]-etaEle[myMuPlus];
+      m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
+      m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+      m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
+      m_mT2[em]           = 0.;
+      m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+
+    } else {
+      eleCands[me].push_back(myEle);
+      muCands[me].push_back(myMuPlus);
+      m_p4LeptonMinus[me] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
+      m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+      hardestLeptonPt[me] = ptM;
+      slowestLeptonPt[me] = ptE;
+      m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+      m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+      m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+      m_deltaEtaLeptons[me] = etaEle[myEle]-etaEle[myMuPlus];
+      m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+      m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+      m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
+      m_mT2[me]           = 0.;
+      m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+    }
+  }
+  
+  if ( myPosi > -1 && myMuMinus > -1 && (myEle<0 || myMuPlus<0 )) {   // only 1 pair reconstructed                                     
+
+    float ptE = GetPt(pxEle[myPosi],pyEle[myPosi]);
+    float ptM = GetPt(pxMuon[myMuMinus],pyMuon[myMuMinus]);
+
+    if (ptE > ptM) {
+      eleCands[em].push_back(myPosi);
+      muCands[em].push_back(myMuMinus);
+      m_p4LeptonMinus[em] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+      m_p4LeptonPlus[em]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+      hardestLeptonPt[em] = ptE;
+      slowestLeptonPt[em] = ptM;
+      m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
+      m_deltaPhi[em]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[em]->Vect().DeltaPhi(m_p4LeptonPlus[em]->Vect()));
+      m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
+      m_deltaEtaLeptons[em] = etaEle[myMuMinus]-etaEle[myPosi];
+      m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
+      m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+      m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
+      m_mT2[em]           = 0.;
+      m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+
+    } else {
+      eleCands[me].push_back(myPosi);
+      muCands[me].push_back(myMuMinus);
+      m_p4LeptonMinus[me] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+      m_p4LeptonPlus[me]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+      hardestLeptonPt[me] = ptM;
+      slowestLeptonPt[me] = ptE;
+      m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+      m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+      m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+      m_deltaEtaLeptons[me] = etaEle[myMuMinus]-etaEle[myPosi];
+      m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+      m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+      m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
+      m_mT2[me]           = 0.;
+      m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+    }
+  }
+  
+  // if two pairs are built we choose the one with highest di-lepton pt                                                                
+  if ( myPosi>-1 && myEle>-1 &&  myMuPlus>-1 && myMuMinus>-1) {   // 2 pairs reconstructed                                             
+    
+    TLorentzVector *m_posi, *m_ele, *m_mum, *m_mup;
+    m_posi -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+    m_ele  -> SetXYZT(pxEle[myEle], pyEle[myEle], pzEle[myEle], energyEle[myEle]);
+    m_mum  -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+    m_mup  -> SetXYZT(pxMuon[myMuPlus], pyMuon[myMuPlus], pzMuon[myMuPlus], energyMuon[myMuPlus]);
+    TVector3 m_ep_mm( m_posi->Vect().X()+m_mum->Vect().X(), m_posi->Vect().Y()+m_mum->Vect().Y(), 0.0 );
+    TVector3 m_em_mp( m_ele->Vect().X()+m_mup->Vect().X(),  m_ele->Vect().Y()+m_mup->Vect().Y(),  0.0 );
+    float mod_ep_mm = m_ep_mm.Mag();
+    float mod_em_mp = m_em_mp.Mag();
+    
+    if (mod_ep_mm>mod_em_mp) {
+
+      float ptE = GetPt(pxEle[myPosi],pyEle[myPosi]);
+      float ptM = GetPt(pxMuon[myMuMinus],pyMuon[myMuMinus]);
+      
+      if (ptE > ptM) {
+        eleCands[em].push_back(myPosi);
+        muCands[em].push_back(myMuMinus);
+        m_p4LeptonMinus[em] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+        m_p4LeptonPlus[em]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+        hardestLeptonPt[em] = ptE;
+        slowestLeptonPt[em] = ptM;
+        m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
+        m_deltaPhi[em]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[em]->Vect().DeltaPhi(m_p4LeptonPlus[em]->Vect()));
+        m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
+	m_deltaEtaLeptons[em] = etaEle[myMuMinus]-etaEle[myPosi];
+        m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
+        m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+        m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
+        m_mT2[em]           = 0.;
+        m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+
+      } else {
+        eleCands[me].push_back(myPosi);
+        muCands[me].push_back(myMuMinus);
+	m_p4LeptonMinus[me] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+        m_p4LeptonPlus[me]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+        hardestLeptonPt[me] = ptM;
+        slowestLeptonPt[me] = ptE;
+        m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+        m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+        m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+	m_deltaEtaLeptons[me] = etaEle[myMuMinus]-etaEle[myPosi];
+        m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+        m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+        m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
+        m_mT2[me]           = 0.;
+        m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      }
+
+    } else {
+      float ptE = GetPt(pxEle[myEle],pyEle[myEle]);
+      float ptM = GetPt(pxMuon[myMuPlus],pyMuon[myMuPlus]);
+      
+      if (ptE > ptM) {
+        eleCands[em].push_back(myEle);
+        muCands[em].push_back(myMuPlus);
+        m_p4LeptonMinus[em] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
+        m_p4LeptonPlus[em]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+        hardestLeptonPt[em] = ptE;
+        slowestLeptonPt[em] = ptM;
+        m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
+        m_deltaPhi[em]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[em]->Vect().DeltaPhi(m_p4LeptonPlus[em]->Vect()));
+        m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
+	m_deltaEtaLeptons[em] = etaEle[myEle]-etaEle[myMuPlus];
+        m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
+        m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+        m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
+        m_mT2[em]           = 0.;
+        m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+
+      } else {
+        eleCands[me].push_back(myEle);
+        muCands[me].push_back(myMuPlus);
+        m_p4LeptonMinus[me] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
+        m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+        hardestLeptonPt[me] = ptM;
+        slowestLeptonPt[me] = ptE;
+        m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+        m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+        m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+	m_deltaEtaLeptons[me] = etaEle[myEle]-etaEle[myMuPlus];
+        m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+        m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+        m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
+        m_mT2[me]           = 0.;
+        m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      }
+    }
+  }
+  
+}
+
+void HiggsMLSelection::resetKinematicsStart() {
+
+  theElectron  = -1;
+  thePositron  = -1;
+  theMuonMinus = -1;
+  theMuonPlus  = -1;
+
+  thePreElectron  = -1;
+  thePrePositron  = -1;
+  thePreMuonMinus = -1;
+  thePreMuonPlus  = -1;
+}
+
+void HiggsMLSelection::resetKinematics() {
+
+  for(int theChannel=0; theChannel<4; theChannel++) {
+    eleCands[theChannel].clear();
+    muCands[theChannel].clear();
+    m_p4LeptonMinus[theChannel] -> SetXYZT(0,0,0,0);                                                        
+    m_p4LeptonPlus[theChannel]  -> SetXYZT(0,0,0,0);
+    m_p4MET                     -> SetXYZT(0,0,0,0);
+    hardestLeptonPt[theChannel]   = 0.;
+    slowestLeptonPt[theChannel]   = 0.;
+    m_mll[theChannel]             = 0.;
+    m_deltaPhi[theChannel]        = 0.;
+    m_deltaErre[theChannel]       = 0.;
+    m_deltaEtaLeptons[theChannel] = 0.; 
+    m_dilepPt[theChannel]         = 0.;
+    m_transvMass[theChannel]      = 0.;
+    m_metOptll[theChannel]        = 0.;
+    m_mT2[theChannel]             = 0.;
+    m_projectedMet[theChannel]    = 0.;
+  }
+}
+
+
 
 void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID) {
   
@@ -1178,7 +1811,6 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
 
   Utils anaUtils;
   int gsf = gsfTrackIndexEle[eleIndex];
-  TVector3 pTrkAtOuter(pxAtOuterGsfTrack[gsf],pyAtOuterGsfTrack[gsf],pzAtOuterGsfTrack[gsf]);
   float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
 
   // if is ECAL driven, take the electron ID variables from the standard electron
@@ -1240,12 +1872,13 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   thisCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
   thisCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
   thisCutBasedID.SetLikelihood( likelihoodRatio(eleIndex,*LH) );
-  thisCutBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
-  thisCutBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
-  thisCutBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
-  float iso = (fabs(etaEle[eleIndex])<1.479) ? (dr03TkSumPtEle[eleIndex] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtEle[eleIndex]) / pt :
-    (dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtEle[eleIndex]) / pt;
-  thisCutBasedID.SetCombinedIsolation(iso);
+  thisCutBasedID.SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
+  thisCutBasedID.SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
+  thisCutBasedID.SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
+  float iso = 0.0;
+  if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
+  else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
+  thisCutBasedID.SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
   thisCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
   thisCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
   thisCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
@@ -1264,110 +1897,10 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   *convRejOutput = thisCutBasedID.outputNoClassConv();
 }
 
-void HiggsMLSelection::isCicEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CiCBasedEleSelector thisCicBasedID) {
-
-  *eleIdOutput = *isolOutput = *convRejOutput = false;
-
-  Utils anaUtils;
-  int gsf = gsfTrackIndexEle[eleIndex];
-  TVector3 pTrkAtOuter(pxAtOuterGsfTrack[gsf],pyAtOuterGsfTrack[gsf],pzAtOuterGsfTrack[gsf]);
-  TVector3 pEle(pxEle[eleIndex],pyEle[eleIndex],pzEle[eleIndex]); 
-
-  // if is ECAL driven, take the electron ID variables from the standard electron
-  // above all, take the ECAL supercluster instead of PF super cluster
-  float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
-  float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
-  float eseed,  sce, scet,sceta, rawe, eseedopin;
-
-  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
-  HoE = hOverEEle[eleIndex];
-  deta = deltaEtaAtVtxEle[eleIndex];
-  dphiin = deltaPhiAtVtxEle[eleIndex];
-  dphiout = deltaPhiAtCaloEle[eleIndex];
-  fbrem = fbremEle[eleIndex];
-  eopout = eSeedOverPoutEle[eleIndex];
-  eop = eSuperClusterOverPEle[eleIndex];
-
-  if(ecaldriven) {
-
-    int sc = superClusterIndexEle[eleIndex];
-    s9s25 = e3x3SC[sc]/e5x5SC[sc];
-    see = sqrt(covIEtaIEtaSC[sc]);
-    spp = sqrt(covIPhiIPhiSC[sc]);
-    e1 = eMaxSC[sc];
-    e4SwissCross = e4SwissCrossSC[sc];
-    fidFlagSC = fiducialFlagsEle[eleIndex];
-    seedRecHitFlag = recoFlagSC[sc];
-    seedTime = timeSC[sc];
-    seedChi2 = chi2SC[sc];
-    eseed = seedEnergySC[sc];
-    sce = energySC[sc];
-    rawe = rawEnergySC[sc];
-    scet = energySC[sc]/TMath::CosH(etaSC[sc]);
-    sceta = etaSC[sc];
-    
-  } else {
-
-    int sc = PFsuperClusterIndexEle[eleIndex];
-    if(sc>-1) {
-      s9s25 = e3x3PFSC[sc]/e5x5PFSC[sc];
-      see = sqrt(covIEtaIEtaPFSC[sc]);
-      spp = sqrt(covIPhiIPhiPFSC[sc]);
-      e1 = eMaxSC[sc];
-      e4SwissCross = e4SwissCrossSC[sc];
-      fidFlagSC = fiducialFlagsEle[eleIndex];
-      seedRecHitFlag = recoFlagSC[sc];
-      seedTime = timeSC[sc];
-      seedChi2 = chi2SC[sc];
-      eseed = seedEnergyPFSC[sc];
-      sce = energyPFSC[sc];
-      rawe = rawEnergyPFSC[sc];
-      scet = energyPFSC[sc]/TMath::CosH(etaPFSC[sc]);
-      sceta = etaPFSC[sc];
-    } else {
-      s9s25 = 999.;
-      see = 999.;
-      spp = 999.;
-    }
-  }
-
-  eseedopin = eSeedOverPoutEle[eleIndex]*(1-fbremEle[eleIndex]);
-
-  thisCicBasedID.SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
-  thisCicBasedID.SetRecoFlag(recoFlagsEle[eleIndex]);
-  thisCicBasedID.SetSCEt(scet);
-  thisCicBasedID.SetSCEta(sceta);
-  thisCicBasedID.SetHOverE( HoE );
-  thisCicBasedID.SetDEta( deta );
-  thisCicBasedID.SetDPhiIn( dphiin );
-  thisCicBasedID.SetBremFraction( fbrem );
-  thisCicBasedID.SetSigmaEtaEta( see );
-  thisCicBasedID.SetEOverPin( eop );
-  thisCicBasedID.SetESeedOverPin( eseedopin );
-  thisCicBasedID.SetEcalIsolation( dr03EcalRecHitSumEtEle[eleIndex] );
-  thisCicBasedID.SetTrkIsolation( dr03TkSumPtEle[eleIndex] );
-  thisCicBasedID.SetHcalIsolation( dr03HcalTowerSumEtEle[eleIndex] );
-  thisCicBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  thisCicBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
-  thisCicBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
-
-  // ECAL cleaning variables
-  thisCicBasedID.m_cleaner->SetE1(e1);
-  thisCicBasedID.m_cleaner->SetE4SwissCross(e4SwissCross);
-  thisCicBasedID.m_cleaner->SetFiducialFlag(fidFlagSC);
-  thisCicBasedID.m_cleaner->SetSeedFlag(seedRecHitFlag);
-  thisCicBasedID.m_cleaner->SetSeedTime(seedTime);
-  thisCicBasedID.m_cleaner->SetSeedChi2(seedChi2);
-
-  *eleIdOutput   = thisCicBasedID.outputEleId();
-  *isolOutput    = thisCicBasedID.outputIso();
-  *convRejOutput = thisCicBasedID.outputConv();
-}
-
 void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
 
   *muonIdOutput = true;
-  
+
   Utils anaUtils; 
   bool flag = anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons) && 
     anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons);
@@ -1377,296 +1910,75 @@ void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
     return;
   }
   int track = trackIndexMuon[muonIndex];
+
   if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
+
+  if( (numberOfValidPixelBarrelHitsTrack[track]<1) && (numberOfValidPixelEndcapHitsTrack[track]<1) ) *muonIdOutput = false; 
+
   int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
   if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] >= 10) *muonIdOutput = false;
   if(trackValidHitsGlobalMuonTrack[globalMuonTrack] == 0) *muonIdOutput = false;
-  float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                              trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
-                              pxTrack[track], pyTrack[track], pzTrack[track]));
-  if(dxy > 0.020) *muonIdOutput = false;
-  float dz = fabs(trackVzTrack[track]-PVzPV[m_closestPV]);
-  if(dz > 1.0) *muonIdOutput = false;
-}
 
-void HiggsMLSelection::setPreselKinematics() {
-
-  // highest and lowest pt for electrons
-  // + mll if 2 good electrons are reconstructed
-  if (thePositron > -1 && theElectron > -1) {
-    hardestElectronPt = TMath::Max(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxEle[thePositron],pyEle[thePositron]));
-    slowestElectronPt = TMath::Min(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxEle[thePositron],pyEle[thePositron]));
-    m_p4ElectronMinus -> SetXYZT(pxEle[theElectron],pyEle[theElectron],pzEle[theElectron],energyEle[theElectron]);
-    m_p4ElectronPlus  -> SetXYZT(pxEle[thePositron],pyEle[thePositron],pzEle[thePositron],energyEle[thePositron]);      
-    m_mll[ee] = (*m_p4ElectronMinus + *m_p4ElectronPlus).M();
-  }
-  if (thePositron <= -1 && theElectron > -1) {
-    hardestElectronPt = GetPt(pxEle[theElectron],pyEle[theElectron]);
-    slowestElectronPt = GetPt(pxEle[theElectron],pyEle[theElectron]);
-    m_p4ElectronMinus -> SetXYZT(pxEle[theElectron],pyEle[theElectron],pzEle[theElectron],energyEle[theElectron]);
-    m_mll[ee] = -999.;
-  }
-  if (thePositron > -1 && theElectron <= -1) {
-    hardestElectronPt = GetPt(pxEle[thePositron],pyEle[thePositron]);
-    slowestElectronPt = GetPt(pxEle[thePositron],pyEle[thePositron]);
-    m_p4ElectronPlus  -> SetXYZT(pxEle[thePositron],pyEle[thePositron],pzEle[thePositron],energyEle[thePositron]);      
-    m_mll[ee] = -999.;
-  }
-  if (theElectron <= -1 && thePositron <= -1) {
-    hardestElectronPt = -999.;
-    slowestElectronPt = -999.;
-    m_mll[ee] = -999.;
-  }
-
-  // highest and lowest pt for muons
-  // + mll if 2 good muons are reconstructed  
-  if (theMuonPlus > -1 && theMuonMinus > -1){ 
-    hardestMuonPt = TMath::Max(GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-    slowestMuonPt = TMath::Min(GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-    m_p4MuonMinus -> SetXYZT(pxMuon[theMuonMinus],pyMuon[theMuonMinus],pzMuon[theMuonMinus],energyMuon[theMuonMinus]);
-    m_p4MuonPlus  -> SetXYZT(pxMuon[theMuonPlus],pyMuon[theMuonPlus],pzMuon[theMuonPlus],energyMuon[theMuonPlus]);      
-    m_mll[mm] = (*m_p4MuonMinus + *m_p4MuonPlus).M();
-  }
-  if (theMuonMinus > -1 && theMuonPlus <= -1) {
-    hardestMuonPt = GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]);
-    slowestMuonPt = GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]);
-    m_p4MuonMinus -> SetXYZT(pxMuon[theMuonMinus],pyMuon[theMuonMinus],pzMuon[theMuonMinus],energyMuon[theMuonMinus]);
-    m_mll[mm]     = -999.;
-  }
-  if (theMuonPlus > -1 && theMuonMinus <= -1) {
-    hardestMuonPt = GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]);
-    slowestMuonPt = GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]);
-    m_p4MuonPlus  -> SetXYZT(pxMuon[theMuonPlus],pyMuon[theMuonPlus],pzMuon[theMuonPlus],energyMuon[theMuonPlus]);      
-    m_mll[mm]     = -999.;
-  }
-  if (theMuonMinus <= -1 && theMuonPlus <= -1) {
-    hardestMuonPt = -999.;
-    slowestMuonPt = -999.;
-    m_mll[mm]     = -999.;
-  }
+  // chiara
+  // bool station = anaUtils.muonIdVal(muonIdMuon[muonIndex],TMOneStationLoose);
+  // if (!station) *muonIdOutput = false;
   
-  // mixed channel mll: only a lower cut used to reject fake dilepton pairs originating from a single object
-  // no need to consider cases with extra pairs: events with extra leptons will be rejected by selection
-  if ( theElectron > -1 && theMuonPlus > -1 ) {
-    m_p4ElectronMinus -> SetXYZT(pxEle[theElectron],pyEle[theElectron],pzEle[theElectron],energyEle[theElectron]);
-    m_p4MuonPlus  -> SetXYZT(pxMuon[theMuonPlus],pyMuon[theMuonPlus],pzMuon[theMuonPlus],energyMuon[theMuonPlus]);
-    m_mll[em] = (*m_p4ElectronMinus + *m_p4MuonPlus).M();
-  }
-  if ( thePositron > -1 && theMuonMinus > -1 ) {
-    m_p4ElectronPlus  -> SetXYZT(pxEle[thePositron],pyEle[thePositron],pzEle[thePositron],energyEle[thePositron]);    
-    m_p4MuonMinus -> SetXYZT(pxMuon[theMuonMinus],pyMuon[theMuonMinus],pzMuon[theMuonMinus],energyMuon[theMuonMinus]);
-    m_mll[em] = (*m_p4ElectronPlus + *m_p4MuonMinus).M();
-  }
-  
-  // MET
-  m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]); 
+  float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
+  float sign = fabs(ptErrorTrack[track]/ptTrack);
+  if (sign>=0.1) *muonIdOutput = false;
 }
 
 
-
-void HiggsMLSelection::setKinematics( ) {
-
-  // electron variables used for ele quality in jet veto 
-  m_HoEElectronMinus     = hOverEEle[theElectron];
-  m_HoEElectronPlus      = hOverEEle[thePositron];
-  int scEle = superClusterIndexEle[theElectron];
-  int scPos = superClusterIndexEle[thePositron];
-  m_CaloEneElectronMinus = energySC[scEle];
-  m_CaloEneElectronPlus  = energySC[scPos];
-
-  // compute delta Phi in degrees, di-lepton invariant mass, transverse mass
-  if ( m_channel[ee] ) {
-    m_deltaPhi[ee]  = fabs(180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4ElectronPlus->Vect()));
-    m_deltaErre[ee] = m_p4ElectronMinus->Vect().DeltaR(m_p4ElectronPlus->Vect());
-    m_dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4ElectronPlus->Vect().X(),
-                      m_p4ElectronMinus->Vect().Y()+m_p4ElectronPlus->Vect().Y(),
-                      0.0 );
-    // m_transvMass[ee]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect())) ) );
-    // def. 3 of http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213
-    m_transvMass[ee]=mT3(*m_p4ElectronMinus,*m_p4ElectronPlus,m_p4MET->Vect());
-    m_metOptll[ee] = m_p4MET->Pt() / m_dilepPt.Pt();
-    // m_mT2[ee] = mT2(m_p4ElectronMinus->Vect(),m_p4ElectronPlus->Vect(),m_p4MET->Vect());
-    m_mT2[ee] = 0.;
-    m_projectedMet[ee] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4ElectronPlus->Vect()); 
-  }
-  else {    
-    m_deltaPhi[ee]   = -1.;
-    m_deltaErre[ee]  = -1.;
-    m_transvMass[ee] = -1.;
-    m_mT2[ee] = -1.;
-    m_projectedMet[ee] = -1.;
-  }
-
-  if ( m_channel[mm] ) {    
-    m_deltaPhi[mm]  = fabs(180./TMath::Pi() * m_p4MuonMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
-    m_deltaErre[mm] = m_p4MuonMinus->Vect().DeltaR(m_p4MuonPlus->Vect());
-    m_dilepPt.SetXYZ( m_p4MuonMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
-                      m_p4MuonMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
-                      0.0 );
-    // m_transvMass[mm]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect()))));
-    m_transvMass[mm]=mT3(*m_p4MuonMinus,*m_p4MuonPlus,m_p4MET->Vect());
-    m_metOptll[mm] = m_p4MET->Pt() / m_dilepPt.Pt();
-    m_projectedMet[mm] = GetProjectedMet(m_p4MuonMinus->Vect(),m_p4MuonPlus->Vect()); 
-    // m_mT2[mm] = mT2(m_p4MuonMinus->Vect(),m_p4MuonPlus->Vect(),m_p4MET->Vect());
-    m_mT2[mm] = 0.;
-  }
-  else { 
-    m_deltaPhi[mm]   = -1.;
-    m_deltaErre[mm]  = -1.;
-    m_transvMass[mm] = -1.;
-    m_mT2[mm] = -1.;
-    m_projectedMet[mm] = -1.;
-  }
-  
-  if ( m_channel[em] ) {
-    float deltaPhiEPlusMuMinus  = -1.0;
-    float deltaPhiEMinusMuPlus  = -1.0;
-    float deltaErreEPlusMuMinus = -1.0;
-    float deltaErreEMinusMuPlus = -1.0;
-    float dilepPtEPlusMuMinus   = -1.0;
-    float dilepPtEMinusMuPlus   = -1.0;
-
-    if ( thePositron > -1 && theMuonMinus > -1 ) {
-      deltaPhiEPlusMuMinus  = fabs(180./TMath::Pi() * m_p4ElectronPlus->Vect().DeltaPhi(m_p4MuonMinus->Vect()));
-      deltaErreEPlusMuMinus = m_p4ElectronPlus->Vect().DeltaR(m_p4MuonMinus->Vect());
-      m_deltaPhi[em]  = deltaPhiEPlusMuMinus;
-      m_deltaErre[em] = deltaErreEPlusMuMinus;
-      m_dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
-                        m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
-                        0.0 );
-      dilepPtEPlusMuMinus = m_dilepPt.Mag();
-      //m_transvMass[em]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect()))));
-      m_transvMass[em]=mT3(*m_p4ElectronPlus,*m_p4MuonMinus,m_p4MET->Vect());
-      m_metOptll[em] = m_p4MET->Pt() / m_dilepPt.Pt();
-      hardestLeptonPt = TMath::Max(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-      slowestLeptonPt = TMath::Min(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-      m_projectedMet[em] = GetProjectedMet(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect()); 
-      // m_mT2[em] = mT2(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect(),m_p4MET->Vect());
-      m_mT2[em] = 0.;
-    }
-    if ( theElectron > -1 && theMuonPlus > -1 ) {
-      deltaPhiEMinusMuPlus  = fabs( 180./TMath::Pi() * m_p4ElectronMinus->Vect().DeltaPhi(m_p4MuonPlus->Vect()));
-      deltaErreEMinusMuPlus = m_p4ElectronMinus->Vect().DeltaR(m_p4MuonPlus->Vect());
-      m_deltaPhi[em]  = deltaPhiEMinusMuPlus;
-      m_deltaErre[em] = deltaErreEMinusMuPlus;
-      m_dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
-                        m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
-                        0.0 );
-      dilepPtEMinusMuPlus = m_dilepPt.Mag();
-      // m_transvMass[em]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect())) ) );
-      m_transvMass[em]=mT3(*m_p4ElectronMinus,*m_p4MuonPlus,m_p4MET->Vect());
-      m_metOptll[em] = m_p4MET->Pt() / m_dilepPt.Pt();
-      hardestLeptonPt = TMath::Max(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
-      slowestLeptonPt = TMath::Min(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
-      m_projectedMet[em] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect()); 
-      // m_mT2[em] = mT2(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect(),m_p4MET->Vect());
-      m_mT2[em] = 0.;
-    }
-    if ( thePositron > -1 && theMuonMinus > -1 &&
-	 theElectron > -1 && theMuonPlus > -1) {
-      
-      // if two pairs are built we choose the one with highest di-lepton pt
-      if ( dilepPtEPlusMuMinus > dilepPtEMinusMuPlus ) {
-	m_deltaPhi[em]  = deltaPhiEPlusMuMinus;
-	m_deltaErre[em] = deltaErreEPlusMuMinus;
-	m_dilepPt.SetXYZ( m_p4ElectronPlus->Vect().X()+m_p4MuonMinus->Vect().X(),
-                          m_p4ElectronPlus->Vect().Y()+m_p4MuonMinus->Vect().Y(),
-                          0.0 );
-	// m_transvMass[em]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect())) ) );
-        m_transvMass[em]=mT3(*m_p4ElectronPlus,*m_p4MuonMinus,m_p4MET->Vect()); 
-        m_metOptll[em] = m_p4MET->Pt() / m_dilepPt.Pt();
-	hardestLeptonPt = TMath::Max(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-	slowestLeptonPt = TMath::Min(GetPt(pxEle[thePositron],pyEle[thePositron]),GetPt(pxMuon[theMuonMinus],pyMuon[theMuonMinus]));
-        m_projectedMet[em] = GetProjectedMet(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect()); 
-        // m_mT2[em] = mT2(m_p4ElectronPlus->Vect(),m_p4MuonMinus->Vect(),m_p4MET->Vect());
-        m_mT2[em] = 0.;
-      }
-      else {
-	m_deltaPhi[em]  = deltaPhiEMinusMuPlus;
-	m_deltaErre[em] = deltaErreEMinusMuPlus;
-	m_dilepPt.SetXYZ( m_p4ElectronMinus->Vect().X()+m_p4MuonPlus->Vect().X(),
-                          m_p4ElectronMinus->Vect().Y()+m_p4MuonPlus->Vect().Y(),
-                          0.0 );
-	//m_transvMass[em]=sqrt(2*m_dilepPt.Mag() * m_p4MET->Vect().Mag() * (1-cos(m_dilepPt.Angle(m_p4MET->Vect())) ) );
-        m_transvMass[em]=mT3(*m_p4ElectronMinus,*m_p4MuonPlus,m_p4MET->Vect());
-        m_metOptll[em] = m_p4MET->Pt() / m_dilepPt.Pt();
-        hardestLeptonPt = TMath::Max(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
-	slowestLeptonPt = TMath::Min(GetPt(pxEle[theElectron],pyEle[theElectron]),GetPt(pxMuon[theMuonPlus],pyMuon[theMuonPlus]));
-        m_projectedMet[em] = GetProjectedMet(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect()); 
-        // m_mT2[em] = mT2(m_p4ElectronMinus->Vect(),m_p4MuonPlus->Vect(),m_p4MET->Vect());
-        m_mT2[em] = 0.;
-      }
-    }
-  }
-  else {
-    m_deltaPhi[em]  = -1.;
-    m_deltaErre[em] = -1.;
-    m_transvMass[em] = -1.;
-    m_mT2[em] = -1.;
-    m_projectedMet[em] = -1;
-  }
-  
-  if( !_preselection->getSwitch("isData") ) {
-    // --- Higgs and electron generator level ---
-    if(_theGenEle>0 && _theGenPos>0) {
-      if(pMc[_theGenEle]>=pMc[_theGenPos]) {
-        _highestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
-        _lowestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
-      }
-      else {
-        _highestPtGen[0]=pMc[_theGenPos]*fabs(sin(thetaMc[_theGenPos]));
-        _lowestPtGen[0]=pMc[_theGenEle]*fabs(sin(thetaMc[_theGenEle]));
-      }
-    }
-  }
-}
-
-
-int HiggsMLSelection::numJets() {
+int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) {
 
   int num=0;
   m_goodJets.clear();
   float ETMax=0.;
-  theLeadingJet=-1;
-  for(int j=0;j<nAK5PFJet;j++) {
 
-    // check if the electron/muon falls into the jet
-    TVector3 p3Jet(pxAK5PFJet[j],pyAK5PFJet[j],pzAK5PFJet[j]);
-    if ( theElectron > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronMinus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      // taking from ee config file, but jets veto is the same for all the channels
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
-    }
+  theLeadingJet[theChannel]=-1;   
 
-    if ( thePositron > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronPlus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
-    }
+  for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
-    if ( theMuonMinus > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonMinus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
-    }
+    TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
 
-    if ( theMuonPlus > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonPlus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
-    }
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFJet[j]))) continue;
-
-    float pt = GetPt(pxAK5PFJet[j],pyAK5PFJet[j]);
+    float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
+
+    bool foundMatch = false;
+
+    // check if the electrons falls into the jet
+    for(int i=0; i<(int)eleToRemove.size(); i++) {
+      int ele = eleToRemove[i];
+      if ( ele > -1 ) {
+        TVector3 p3Ele(pxEle[ele],pyEle[ele],pzEle[ele]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Ele ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+    if(foundMatch) continue;
+
+    // check if the muons falls into the jet
+    for(int i=0; i<(int)muonToRemove.size(); i++) {
+      int mu = muonToRemove[i];
+      if ( mu > -1 ) {
+        TVector3 p3Muon(pxMuon[mu],pyMuon[mu],pzMuon[mu]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Muon ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+    if(foundMatch) continue;
 
     m_goodJets.push_back(j);
     num++;
     
     if(pt>ETMax) {
-      theLeadingJet = j;
+      theLeadingJet[theChannel] = j;
       ETMax = pt;
     }
 
@@ -1676,42 +1988,45 @@ int HiggsMLSelection::numJets() {
 }
 
 
-int HiggsMLSelection::numUncorrJets() {
+int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove ) {
 
   int num=0;
 
-  for(int j=0;j<nAK5PFJet;j++) {
+  for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
-    float uncorrEt = uncorrEnergyAK5PFJet[j]*fabs(sin(thetaAK5PFJet[j]));
+    float uncorrEt = uncorrEnergyAK5PFPUcorrJet[j]*fabs(sin(thetaAK5PFPUcorrJet[j]));
     TLorentzVector p4Jet;
-    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFJet[j],phiAK5PFJet[j],uncorrEnergyAK5PFJet[j]);
+    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFPUcorrJet[j],phiAK5PFPUcorrJet[j],uncorrEnergyAK5PFPUcorrJet[j]);
     TVector3 p3Jet = p4Jet.Vect();
-    
-    if ( theElectron > -1 ) {
-      float deltaR = p3Jet.DeltaR( m_p4ElectronMinus->Vect() );
-      H_deltaRuncorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
-    }
-    if ( thePositron > -1 ) {
-      float deltaR = p3Jet.DeltaR( m_p4ElectronPlus->Vect() );
-      H_deltaRuncorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
-    }
 
-    if ( theMuonMinus > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonMinus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
-    }
-
-    if ( theMuonPlus > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4MuonPlus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
-    }
-
-    if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFJet[j]))) continue;    
+    if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;    
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
+
+    bool foundMatch=false;
+    // check if the electrons falls into the jet
+    for(int i=0; i<(int)eleToRemove.size(); i++) {
+      int ele = eleToRemove[i];
+      if ( ele > -1 ) {
+        TVector3 p3Ele(pxEle[ele],pyEle[ele],pzEle[ele]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Ele ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+
+    // check if the muons falls into the jet
+    for(int i=0; i<(int)muonToRemove.size(); i++) {
+      int mu = muonToRemove[i];
+      if ( mu > -1 ) {
+        TVector3 p3Muon(pxMuon[mu],pyMuon[mu],pzMuon[mu]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Muon ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+    if(foundMatch) continue;
     
     num++;
   }
@@ -1719,29 +2034,42 @@ int HiggsMLSelection::numUncorrJets() {
   return num;
 }
 
-float HiggsMLSelection::bVetoJets() {
+float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove ) {
 
   float output=-999;
-  for(int j=0;j<nAK5Jet;j++) {
+  for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
-    // check if the electron/muon falls into the jet
-    TVector3 p3Jet(pxAK5Jet[j],pyAK5Jet[j],pzAK5Jet[j]);
-    if ( theElectron > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronMinus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      // taking from ee config file, but jets veto is the same for all the channels
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) continue;
+    TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
+
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+
+    bool foundMatch=false;
+    // check if the electrons falls into the jet
+    for(int i=0; i<(int)eleToRemove.size(); i++) {
+      int ele = eleToRemove[i];
+      if ( ele > -1 ) {
+        TVector3 p3Ele(pxEle[ele],pyEle[ele],pzEle[ele]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Ele ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
     }
 
-    if ( thePositron > -1 ) {
-      float deltaR =  fabs( p3Jet.DeltaR( m_p4ElectronPlus->Vect() ) );
-      H_deltaRcorr -> Fill(deltaR);
-      if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR) ) continue;
+    // check if the muons falls into the jet
+    for(int i=0; i<(int)muonToRemove.size(); i++) {
+      int mu = muonToRemove[i];
+      if ( mu > -1 ) {
+        TVector3 p3Muon(pxMuon[mu],pyMuon[mu],pzMuon[mu]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Muon ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
     }
+    if(foundMatch) continue;
 
-    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFJet[j]))) continue;
-
-    float tmp = trackCountingHighEffBJetTagsAK5Jet[j];
+    float tmp = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];     
     if(tmp > output) output = tmp;
     
   }
@@ -1750,132 +2078,112 @@ float HiggsMLSelection::bVetoJets() {
 
 }
 
-float HiggsMLSelection::deltaPhiLLJet() {
-  if(theLeadingJet > -1) {
-    TVector3 leadingJetP3(pxAK5Jet[theLeadingJet],pyAK5Jet[theLeadingJet],pzAK5Jet[theLeadingJet]);
-    return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt));
+float HiggsMLSelection::deltaPhiLLJet(int ichan) {   
+  
+  int myLeadingJet = theLeadingJet[ichan];
+
+  if(myLeadingJet > -1) {
+    TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);    
+    return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));                           
   } else return -999.;
 }
 
-int HiggsMLSelection::numSoftMuons() {
+int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
+
   int num = 0;
   for(int i=0; i<nMuon; ++i) {
-    if(i==theMuonMinus || i==theMuonPlus) continue;
+
+    bool isSelMuon=false;
+    for(int muSel=0; muSel<(int)muonToRemove.size(); muSel++) { 
+      if(i==muonToRemove[muSel]) isSelMuon=true;
+    }
+    if(isSelMuon) continue;
+
     float pt = GetPt(pxMuon[i],pyMuon[i]);
     if(pt < 3.0) continue;
+
     Utils anaUtils;
-    if(!anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons) ||
-       !anaUtils.muonIdVal(muonIdMuon[i],TMLastStationTight)) continue;
+    if(!anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons) || !anaUtils.muonIdVal(muonIdMuon[i],TMLastStationTight)) continue;
+       
     int track = trackIndexMuon[i];
     if(trackValidHitsTrack[track]<=10) continue;
-    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
-                                pxTrack[track], pyTrack[track], pzTrack[track]));
+
+    float dxy = transvImpactParBiasedTrack[track];
     if(dxy > 0.200) continue;
-    float isoSumRel = (sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i]) / pt;
+    
+    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    float isoSumRel = isoSumAbs / pt;
     if(pt>20 || isoSumRel<0.1) continue;
+    
     num++;
   }
   return num;
 }
 
-int HiggsMLSelection::numExtraLeptons() {
+int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove  ) {
 
   int numEle = 0;
   for(int i=0; i<nEle; ++i) {
-    if(i==theElectron || i==thePositron) continue;
-    if(_preselection->getSwitch("etaElectronAcc") && !_preselection->passCut("etaElectronAcc",etaEle[i]) ) continue;
-    if(_preselection->getSwitch("ptElectronAcc") && !_preselection->passCut("ptElectronAcc",GetPt(pxEle[i],pyEle[i])) ) continue;
+    
+    bool isSelEle=false;
+    for(int eleSel=0; eleSel<(int)eleToRemove.size(); eleSel++) {
+      if(i==eleToRemove[eleSel]) isSelEle=true;
+    }
+    if(isSelEle) continue;
+
+    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
+    if(_selectionEE->getSwitch("ptElectronAcc")  && !_selectionEE->passCut("ptElectronAcc",GetPt(pxEle[i],pyEle[i])) ) continue;
+
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
-
-    // electrons selected using no class / like based eleID
-    if (!_preselection->getSwitch("useCIC")) {   
-
-      if (!_preselection->getSwitch("asymmetricID")) 
-	isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
-
-      if (_preselection->getSwitch("asymmetricID")) {
-	float pt = GetPt(pxEle[i],pyEle[i]);	
-	if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
-	if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedIDLow);
-      }
+    if (!_selectionEE->getSwitch("asymmetricID")) 
+      isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
+    if (_selectionEE->getSwitch("asymmetricID")) {
+      float pt = GetPt(pxEle[i],pyEle[i]);	
+      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
+      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedIDLow);
     }
-
-    // electrons selected using CIC based eleID
-    if (_preselection->getSwitch("useCIC")) {   
-
-      if (!_preselection->getSwitch("asymmetricID")) 
-	isCicEleID(i,&theId,&theIso,&theConvRej,EgammaCiCBasedID);
-
-      if (_preselection->getSwitch("asymmetricID")) {
-	float pt = GetPt(pxEle[i],pyEle[i]);	
-	if(pt>=20) isCicEleID(i,&theId,&theIso,&theConvRej,EgammaCiCBasedID);
-	if(pt<20)  isCicEleID(i,&theId,&theIso,&theConvRej,EgammaCiCBasedIDLow);
-      }
-    }
-
     if(!theId || !theIso || !theConvRej) continue;
+
     int track = gsfTrackIndexEle[i];
-    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
-                                pxTrack[track], pyTrack[track], pzTrack[track]));
+    float dxy = transvImpactParBiasedGsfTrack[track];
+    float dz  = PVzPV[m_closestPV] - trackVzGsfTrack[track];  
     if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
+    if(_selectionEE->getSwitch("leptonDz") && !_selectionEE->passCut("leptonDz",dz))  continue;  
+
     numEle++;
   }
 
   int numMu = 0;
   for(int i=0; i<nMuon; ++i) {
-    if(i==theMuonMinus || i==theMuonPlus) continue;
+    
+    bool isSelMuon=false;
+    for(int muSel=0; muSel<(int)muonToRemove.size(); muSel++) {
+      if(i==muonToRemove[muSel]) isSelMuon=true;
+    }
+    if(isSelMuon) continue;
+    
     float ptMu = GetPt(pxMuon[i],pyMuon[i]);
-    if(_preselection->getSwitch("etaMuonAcc") && !_preselection->passCut("etaMuonAcc",etaMuon[i]) ) continue;
-    if(_preselection->getSwitch("ptMuonAcc") && !_preselection->passCut("ptMuonAcc",ptMu) ) continue;
+    if(_selectionEE->getSwitch("etaMuonAcc") && !_selectionEE->passCut("etaMuonAcc",etaMuon[i]) ) continue;
+    if(_selectionEE->getSwitch("ptMuonAcc") && !_selectionEE->passCut("ptMuonAcc",ptMu) ) continue;
+
     bool theId = true;
     isMuonID(i,&theId);
     if(!theId) continue;
-    float isoSumRel = (sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i]) / ptMu;
+    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    float isoSumRel = isoSumAbs / ptMu;
     if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
+
     int track = trackIndexMuon[i];
-    float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                trackVxTrack[track], trackVyTrack[track], trackVzTrack[track], 
-                                pxTrack[track], pyTrack[track], pzTrack[track]));
+    float dxy = transvImpactParBiasedTrack[track];
+    float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
     if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
+    if(_selectionEE->getSwitch("leptonDz") && !_selectionEE->passCut("leptonDz",dz))  continue;  
+
     numMu++;
   }
-
-  return numEle + numMu;
-
-}
-
-void HiggsMLSelection::resetKinematics() {
-
-  theElectron = -1;
-  thePositron = -1;
-  theMuonMinus = -1;
-  theMuonPlus = -1;
-  m_p4ElectronMinus->SetXYZT(0,0,0,0);
-  m_p4ElectronPlus->SetXYZT(0,0,0,0);
-  m_p4MuonMinus->SetXYZT(0,0,0,0);
-  m_p4MuonPlus->SetXYZT(0,0,0,0);
-  m_p4MET->SetXYZT(0,0,0,0);
-  m_HoEElectronMinus = 0;
-  m_HoEElectronPlus = 0;
-  m_CaloEneElectronMinus = 0;
-  m_CaloEneElectronPlus = 0;
-
-  for(int ichan=0;ichan<3;ichan++) {
-    m_deltaPhi[ichan] = 0;
-    m_deltaErre[ichan] = 0;
-    m_mll[ichan] = 0;
-    m_transvMass[ichan] = 0;
-    m_projectedMet[ichan] = 0;
-  }
   
-  hardestElectronPt = 0;
-  hardestMuonPt = 0;
-  slowestElectronPt = 0;
-  slowestMuonPt = 0;
-
+  return numEle + numMu;
 }
 
 void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
@@ -1900,27 +2208,27 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     mySpp[i] = SigmaiPiP(eleIndex);
     myEop[i] = eSuperClusterOverPEle[eleIndex];
     myFbrem[i] = fbremEle[eleIndex];
-    myTrackerIso[i] = dr03TkSumPtEle[eleIndex];
-    myHcalIso[i] = dr03HcalTowerSumEtEle[eleIndex];
-    myEcalJIso[i] = dr03EcalRecHitSumEtEle[eleIndex];
-    myEcalGTIso[i] = scBasedEcalSum04Ele[eleIndex];
-    myCombinedIso[i] = (dr03TkSumPtEle[eleIndex] + 
-                        TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + 
-                        dr03HcalTowerSumEtEle[eleIndex]) / myPt[i];
+    myTrackerIso[i]  = dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    myHcalIso[i]     = dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    myEcalJIso[i]    = dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    myEcalGTIso[i]   = 1000.;
+    float combinedIso = 0.0;
+    if ( fabs(myEta[i])<1.476 ) combinedIso = dr03TkSumPtEle[eleIndex] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
+    else combinedIso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
+    myCombinedIso[i] = ( (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / myPt[i] );
     myCharge[i] = chargeEle[eleIndex];
     int gsf = gsfTrackIndexEle[eleIndex];
     myMissHits[i] = expInnerLayersGsfTrack[gsf];
     myDist[i] = convDistEle[eleIndex];
     myDcot[i] = convDcotEle[eleIndex];
-    if (!_preselection->getSwitch("useCIC")) myLh[i] = likelihoodRatio(eleIndex,*LH);
-    if ( _preselection->getSwitch("useCIC")) myLh[i] = 999.;
+    myLh[i] = likelihoodRatio(eleIndex,*LH);
  
     // match with MC truth
     myMatched[i] = 999;
-    if ( !_preselection->getSwitch("isData") ) { 
+    if ( !_selectionEE->getSwitch("isData") ) { 
       int matchedReco = 0;
       TVector3 pReco(pxEle[eleIndex],pyEle[eleIndex],pzEle[eleIndex]);
-      for (int ii=0; ii<nMc; ii++) {
+      for (int ii=0; ii<25; ii++) {  // chiara
 	TVector3 Welegen;
  	if ( (fabs(idMc[mothMc[ii]])==24) && (fabs(idMc[ii])==11) ) {
  	  Welegen.SetMagThetaPhi(pMc[ii],thetaMc[ii],phiMc[ii]);
@@ -1932,104 +2240,7 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
   }
 }
 
-float HiggsMLSelection::getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR) {
-
-  TVector3 secondEle(pxEle[second],pyEle[second],pzEle[second]);
-
-  float secondEleTrackPt = 0.0;
-  float dr = firstLepton.DeltaR(secondEle);
-
-  if( dr < deltaR ) { 
-    secondEleTrackPt = secondEle.Pt();
-  }
-
-  return secondEleTrackPt;
-
-}
-
-float HiggsMLSelection::getSecondMuonTkPt(TVector3 firstLepton, int second, float deltaR) {
-
-  TVector3 secondMuon(pxMuon[second],pyMuon[second],pzMuon[second]);
-
-  float secondMuonTrackPt = 0.0;
-  float dr = firstLepton.DeltaR(secondMuon);
-
-  if( dr < deltaR ) { 
-    secondMuonTrackPt = secondMuon.Pt();
-  }
-
-  return secondMuonTrackPt;
-
-}
-
-float HiggsMLSelection::getEcalPtSum(int index) {
-
-  float ptsum = 0.0;
-
-  // in barrel, use isolation by SC footprint removal
-  if( classificationEle[index] < 100 ) ptsum = scBasedEcalSum04Ele[index];
-  // in endcaps, use jurassic isolation
-  else ptsum = dr04EcalRecHitSumEtEle[index];
-
-  return ptsum;
-
-}
-
-float HiggsMLSelection::muonIsoGlobalSum(int theMuon, int theOther) {
-
-  TVector3 muonP3(pxMuon[theMuon],pyMuon[theMuon],pzMuon[theMuon]);
-  TVector3 otherP3(pxMuon[theOther],pyMuon[theOther],pzMuon[theOther]);
-
-  // global isolation
-  float theMuonGlobalSum = 0.;
-  float muonTrackerForGlobal = sumPt03Muon[theMuon];
-  float muonEcalForGlobal    = emEt03Muon[theMuon]; 
-  float muonHcalForGlobal    = hadEt03Muon[theMuon];
-
-  // if the second muon falls into the cone, remove it from tracker only
-  float theDr = muonP3.DeltaR(otherP3);
-  if (theDr<0.3) muonTrackerForGlobal = muonTrackerForGlobal-otherP3.Pt(); 
-
-  theMuonGlobalSum = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal;
-
-  return theMuonGlobalSum;
-
-}
-
-float HiggsMLSelection::mueleIsoGlobalSum(int theMuon, int theOtherEle) {
-
-  TVector3 muonP3(pxMuon[theMuon],pyMuon[theMuon],pzMuon[theMuon]);
-  TVector3 otherEleP3(pxEle[theOtherEle],pyEle[theOtherEle],pzEle[theOtherEle]);
-
-  // global isolation
-  float theMuonGlobalSum = 0.;
-  float muonTrackerForGlobal = sumPt03Muon[theMuon];
-  float muonEcalForGlobal    = emEt03Muon[theMuon]; 
-  float muonHcalForGlobal    = hadEt03Muon[theMuon];
-
-  // if the electron falls into the cone, remove it
-  float theDr = muonP3.DeltaR(otherEleP3);
-  if (theDr<0.3) { 
-    
-    // from tracker: use the KF track closer to the GSF track
-    int kftrack = trackIndexEle[theOtherEle];
-    // check if there is the linked KF track (not true in 100% of cases)
-    if(kftrack>=0 && kftrack<nTrack) muonTrackerForGlobal -= GetPt(pxTrack[kftrack],pyTrack[kftrack]);
-
-    // from ECAL: use the supercluster energy
-    // int sc = superClusterIndexEle[theOtherEle];
-    // muonEcalForGlobal = muonEcalForGlobal-rawEnergySC[sc]; 
-  }
-  
-  theMuonGlobalSum = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal;
-  
-  return theMuonGlobalSum;
-
-}
-
-
 int HiggsMLSelection::getPV() {
-  // search for hardest PV of the event
   int hardestPV = -1;
   float sumPtMax = 0.0;
   for(int v=0; v<nPV; v++) {
@@ -2041,17 +2252,6 @@ int HiggsMLSelection::getPV() {
   return hardestPV;
 }
 
-double HiggsMLSelection::trackDxyPV(float PVx, float PVy, float PVz, float eleVx, float eleVy, float eleVz, float elePx, float elePy, float elePz) {
-  float elePt = sqrt(elePx*elePx + elePy*elePy);
-  return ( - (eleVx-PVx)*elePy + (eleVy-PVy)*elePx ) / elePt;
-}
-
-double HiggsMLSelection::trackDszPV(float PVx, float PVy, float PVz, float eleVx, float eleVy, float eleVz, float elePx, float elePy, float elePz) {
-  float elePt = sqrt(elePx*elePx + elePy*elePy);
-  float eleP  = sqrt(elePx*elePx + elePy*elePy + elePz*elePz);
-  return (eleVz-PVz)*elePt/eleP - ((eleVx-PVx)*elePx+(eleVy-PVy)*elePy)/elePt *elePz/eleP;
-}
-
 bool HiggsMLSelection::isGoodTrack(int iTrack, float ptMin, float ptMax, float chi2, float etaMax, float nHits) {
   TVector3 p3Track(pxTrack[iTrack],pyTrack[iTrack],pzTrack[iTrack]);
   double pt = p3Track.Pt();
@@ -2061,94 +2261,6 @@ bool HiggsMLSelection::isGoodTrack(int iTrack, float ptMin, float ptMax, float c
   if(fabs(p3Track.Eta()) > etaMax) return false;
   if(trackValidHitsTrack[iTrack] < nHits) return false;
   return true;
-}
-
-std::vector<float> HiggsMLSelection::jetBTagVariables(int jetIndex) {
-
-  float nTracks   = 0;
-  float sumNumDxy = 0.;
-  float sumNumDsz = 0;
-  float sumDen    = 0.;
-
-  TVector3 p3Jet(pxAK5PFJet[jetIndex],pyAK5PFJet[jetIndex],pzAK5PFJet[jetIndex]);
-  TLorentzVector p4TracksInJet(0.,0.,0.,0.);
-
-  for(int iTrack=0; iTrack<nTrack; iTrack++) {
-    if (!isGoodTrack(iTrack,0.5,500,20,2.4,5)) continue;
-    TVector3 p3Track(pxTrack[iTrack],pyTrack[iTrack],pzTrack[iTrack]);
-    TLorentzVector p4Track(pxTrack[iTrack],pyTrack[iTrack],pzTrack[iTrack],p3Track.Mag());      // assume mass=0...
-
-    float deltaR = p3Jet.DeltaR(p3Track);
-    if(fabs(deltaR)<0.5){
-
-      nTracks++;
-
-      float weight = p3Track.Pt() * p3Track.Pt() * p3Track.Pt() * p3Track.Pt();
-
-      float dxy = fabs(trackDxyPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                  trackVxTrack[iTrack], trackVyTrack[iTrack], trackVzTrack[iTrack], 
-                                  pxTrack[iTrack], pyTrack[iTrack], pzTrack[iTrack]));
-      float w_dxy = dxy*weight;
-      float dsz = fabs(trackDszPV(PVxPV[m_closestPV], PVyPV[m_closestPV], PVzPV[m_closestPV], 
-                                  trackVxTrack[iTrack], trackVyTrack[iTrack], trackVzTrack[iTrack], 
-                                  pxTrack[iTrack], pyTrack[iTrack], pzTrack[iTrack]));
-      float w_dsz = dsz*weight;
-
-      sumNumDxy = sumNumDxy + w_dxy;
-      sumNumDsz = sumNumDsz + w_dsz;
-      sumDen    = sumDen + weight;
-      
-      p4TracksInJet += p4Track;
-    }
-  }
-  
-  float DxyAverage = 0.0;
-  float DszAverage = 0.0;
-
-  if (sumDen != 0) {
-    DxyAverage = sumNumDxy / sumDen;
-    DszAverage = sumNumDsz / sumDen;
-  }
-
-  float jetMass = p4TracksInJet.M();
-
-  std::vector<float> variables;
-  variables.clear();
-  variables.push_back(DxyAverage);
-  variables.push_back(DszAverage);
-  variables.push_back(trackCountingHighEffBJetTagsAK5PFJet[jetIndex]);
-  variables.push_back(jetProbabilityBJetTagsAK5PFJet[jetIndex]);
-  variables.push_back(combinedSecondaryVertexMVABJetTagsAK5PFJet[jetIndex]);
-  variables.push_back(jetMass);
-  variables.push_back(nTracks);
-
-  return variables;
-
-}
-
-void HiggsMLSelection::calcEventBVetoVariables(std::vector<int> jets) {
-  
-  m_maxDxyEvt=-1000; 
-  m_maxDszEvt=-1000;
-  m_maxTrackCountingHighEffBJetTags=-1000;
-  m_maxImpactParameterMVABJetTags=-1000;
-  m_maxCombinedSecondaryVertexMVABJetTags=-1000;
-
-  for (unsigned int iJet=0; iJet<jets.size(); iJet++){     
-    int thisJet = jets[iJet];
-    std::vector<float> variables = jetBTagVariables(thisJet);    
-    float dxy = variables[0];
-    float dsz = variables[1];
-    float trackCounting = variables[2];
-    float impactParameter = variables[3];
-    float combinedSV = variables[4];
-    if (dxy > m_maxDxyEvt) m_maxDxyEvt=dxy;
-    if (dsz > m_maxDszEvt) m_maxDszEvt=dsz;
-    if (trackCounting > m_maxTrackCountingHighEffBJetTags ) m_maxTrackCountingHighEffBJetTags = trackCounting;
-    if (impactParameter > m_maxImpactParameterMVABJetTags ) m_maxImpactParameterMVABJetTags = impactParameter;
-    if (combinedSV > m_maxCombinedSecondaryVertexMVABJetTags ) m_maxCombinedSecondaryVertexMVABJetTags = combinedSV;
-  }
-
 }
 
 double HiggsMLSelection::mT(TVector3 plep, TVector3 pneu) {

@@ -12,7 +12,6 @@
 #include <vector>
 #include "CommonTools/include/Monitor.hh"
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
-#include "EgammaAnalysisTools/include/CiCBasedEleSelector.hh"
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
 #include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
@@ -44,45 +43,56 @@ private:
 
   bool findMcTree(const char* processType);
 
-  //! get the two hardest electrons with opposite charge
-  std::pair<int,int> getBestElectronPair();
-  //! get the two hardest muons with opposite charge 
-  std::pair<int,int> getBestMuonPair();
-  //! set the 4 vectors, invariant mass, etc. after preselections
-  void setKinematics();  
-  //! set the 4 vectors, invariant mass, etc. before preselections
-  void setPreselKinematics();  
+  //! get the two hardest electrons with opposite charge after different steps
+  std::pair<int,int> getBestElectronPair_acceptance();
+  std::pair<int,int> getBestElectronPair_id( std::vector<int> acceptEle );
+  std::pair<int,int> getBestElectronPair_isol( std::vector<int> idEle );
+  std::pair<int,int> getBestElectronPair_conv( std::vector<int> isolEle );
+  std::pair<int,int> getBestElectronPair_ip( std::vector<int> convEle );
+
+  //! get the two hardest muons with opposite charge after different steps
+  std::pair<int,int> getBestMuonPair_acceptance();
+  std::pair<int,int> getBestMuonPair_id( std::vector<int> acceptMu ); 
+  std::pair<int,int> getBestMuonPair_isol( std::vector<int> idMu );
+  std::pair<int,int> getBestMuonPair_ip( std::vector<int> isoMu ); 
+
+  //! get the two hardest ele-muon with opposite charge
+  std::pair<int,int> getBestEleMuonPair(int eleM, int eleP, int muM, int muP);
+  std::pair<int,int> getBestMuonElePair(int eleM, int eleP, int muM, int muP);
+
+  //! set the 4 vectors, invariant mass, etc. after preselections and full selection
+  void setKinematicsEE(int myEle, int myPosi);
+  void setKinematicsMM(int myMuMinus, int myMuPlus);
+  void setKinematicsEMME(int myEle, int myPosi, int myMuPlus, int myMuMinus);
+  //! reset the kinematic quantities at the beginning of event and after the selection if needed
+  void resetKinematicsStart();
+  void resetKinematics();
+
   //! count jet multiplicity
-  int numJets();
-  int numUncorrJets();
+  int numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) ;
+  int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! give the highest b-tag of calojets in the event
-  float bVetoJets();
+  float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! in the 1-jet bin, deltaphi between ll system and leading jet
-  float deltaPhiLLJet();
+  float deltaPhiLLJet(int ichan);
   //! count the soft muons
-  int numSoftMuons();
+  int numSoftMuons(std::vector<int> muonToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
-  int numExtraLeptons();
+  int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! returns the output of the custom cut electron ID with WPXX
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID);
-  //! returns the output of the custom cut electron ID with CICs
-  void isCicEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CiCBasedEleSelector thisCiCBasedID);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
   float getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR);
   //! if the 2nd muon falls in deltaR from first, get its Pt in tracker
   float getSecondMuonTkPt(TVector3 firstLepton, int second, float deltaR);
-  //! get ECAL isolation sum
-  float getEcalPtSum(int index);
   //! get global isolation sum for 2 muons case
   float muonIsoGlobalSum(int theMuon, int theOther);
   //! get global isolation sum for muons in the electron-muon case
   float mueleIsoGlobalSum(int theMuon, int theOtherEle); 
   //! get the kFactor of the event
   float getkFactor(std::string process);
-  //! reset the kinematic quantities at the beginning of event
-  void resetKinematics();
   //! set the electron ID variables to dump
   void setEleIdVariables(int hard, int slow);
   //! search for the hardest lepton vertex
@@ -109,17 +119,16 @@ private:
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
-  CiCBasedEleSelector EgammaCiCBasedID;
-  CiCBasedEleSelector EgammaCiCBasedIDLow;
   ElectronLikelihood *LH;
   //! to evaluate preselection efficiency
   Selection *_preselection;
   CommonHiggsPreselector CommonHiggsPreselection;
   //! to evaluate full selection efficiency
-  Selection *_selectionEE, *_selectionMM, *_selectionEM;
+  Selection *_selectionEE, *_selectionMM, *_selectionEM, *_selectionME;
   CutBasedHiggsSelector CutBasedHiggsSelectionEE;
   CutBasedHiggsSelector CutBasedHiggsSelectionMM;
   CutBasedHiggsSelector CutBasedHiggsSelectionEM;
+  CutBasedHiggsSelector CutBasedHiggsSelectionME;
   //! be verbose during runtime
   bool _verbose;
 
@@ -128,35 +137,32 @@ private:
   std::string _process;
 
   //! an integer defining the sub-channel
-  enum { ee=0, mm=1, em=2 };
+  enum { ee=0, mm=1, em=2, me=3 };
 
   //! array containing the possibility of having reconstructed a certain sub-channel
-  bool m_channel[3];
-  bool isOk[3];
+  bool m_channel[4];
+  bool isOk[4];
   
   //! kinematics of the event
   int theElectron,  thePositron;
   int theMuonMinus, theMuonPlus;
-  int theLeadingJet;
-  TLorentzVector *m_p4ElectronPlus, *m_p4ElectronMinus;
-  TLorentzVector *m_p4MuonPlus, *m_p4MuonMinus;
+  int thePreElectron,  thePrePositron;
+  int thePreMuonMinus, thePreMuonPlus;
+  int theLeadingJet[4];
+  std::vector<int> eleCands[4], muCands[4];
+  TLorentzVector *m_p4LeptonPlus[4], *m_p4LeptonMinus[4];
   TLorentzVector *m_p4MET;
-  TVector3 *m_p3ProjectedMET, m_dilepPt;
-  float m_HoEElectronMinus, m_HoEElectronPlus;
-  float m_CaloEneElectronMinus, m_CaloEneElectronPlus;
-  float m_deltaPhi[3];
-  float m_deltaErre[3];
-  float m_mll[3];
-  float m_transvMass[3];
-  float m_mT2[3];
-  float m_projectedMet[3];
-  float m_metOptll[3];
-  //! used for ee final state
-  float hardestElectronPt, hardestMuonPt;
-  //! used for mm final state
-  float slowestElectronPt, slowestMuonPt;    
-  //! used for mixed final state
-  float hardestLeptonPt, slowestLeptonPt;
+
+  TVector3 m_dilepPt[4];
+  float m_deltaPhi[4];
+  float m_deltaErre[4];
+  float m_deltaEtaLeptons[4];
+  float m_mll[4];
+  float m_transvMass[4];
+  float m_mT2[4];
+  float m_projectedMet[4];
+  float m_metOptll[4];
+  float hardestLeptonPt[4], slowestLeptonPt[4];
   
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
@@ -167,8 +173,8 @@ private:
   int _theGenMuMinus, _theGenMuPlus;
 
   //! vectors to store indices of best candidates
-  std::vector<int> *_bestElectrons;
-  std::vector<int> *_bestMuons;
+  std::vector<int> _acceptEleAll, _idEleAll, _isolEleAll, _convEleAll, _ipEleAll;
+  std::vector<int> _acceptMuonsAll, _idMuonsAll, _isolMuonsAll, _ipMuonsAll;
 
   //! vector to store indices of candidate to include / exclude
   std::vector<int> m_goodJets;
@@ -177,6 +183,7 @@ private:
   RedHiggsTree *myOutTreeEE;
   RedHiggsTree *myOutTreeMM;
   RedHiggsTree *myOutTreeEM;
+  RedHiggsTree *myOutTreeME;
 
   //! reduced tree for trigger studies (on all events)
   RedTriggerTree *myTriggerTree;
