@@ -1,6 +1,7 @@
 maxPtLepton             38              10000
 minPtLepton             25              10000
 leptonD0                -0.020          0.020
+leptonDz                -1.             1.
 muGlobalIso             -10000          0.15
 muTrackerIso            -10000          10000
 muHcalIso               -10000          10000
@@ -19,3 +20,8 @@ nSoftMuons              0               0
 nExtraLeptons           0               0
 deltaPhi		0		90
 deltaPhiLLJet           0               165
+etaElectronAcc		-2.5		2.5
+ptElectronAcc		10		10000
+etaMuonAcc		-2.4		2.4
+ptMuonAcc		10		10000
+etUncorrJetAcc          25              10000
