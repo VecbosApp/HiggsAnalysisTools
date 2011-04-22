@@ -1240,10 +1240,10 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
-      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedIDLow);
+      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
     if (!theElectronID) continue;
@@ -1273,7 +1273,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
 
     if (!theElectronIsol) continue;
     
@@ -1303,7 +1303,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,EgammaCutBasedID);
+    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     
     if (!theElectronConvRej) continue;
 
@@ -1805,7 +1805,7 @@ void HiggsMLSelection::resetKinematics() {
 
 
 
-void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector thisCutBasedID) {
+void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
   
   *eleIdOutput = *isolOutput = *convRejOutput = false;
 
@@ -1856,45 +1856,45 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   }
 
 
-  thisCutBasedID.SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
-  thisCutBasedID.SetRecoFlag(recoFlagsEle[eleIndex]);
-  thisCutBasedID.applyElectronIDOnPFlowElectrons(true);
-  thisCutBasedID.SetHOverE( HoE );
-  thisCutBasedID.SetS9S25( s9s25 );
-  thisCutBasedID.SetDEta( deta );
-  thisCutBasedID.SetDPhiIn( dphiin );
-  thisCutBasedID.SetDPhiOut( dphiout );
-  thisCutBasedID.SetBremFraction( fbrem );
-  thisCutBasedID.SetSigmaEtaEta( see );
-  thisCutBasedID.SetSigmaPhiPhi( spp );
-  thisCutBasedID.SetEOverPout( eopout );
-  thisCutBasedID.SetEOverPin( eop );
-  thisCutBasedID.SetElectronClass ( classificationEle[eleIndex] );
-  thisCutBasedID.SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
-  thisCutBasedID.SetLikelihood( likelihoodRatio(eleIndex,*LH) );
-  thisCutBasedID.SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
-  thisCutBasedID.SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
-  thisCutBasedID.SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
+  thisCutBasedID->SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
+  thisCutBasedID->SetRecoFlag(recoFlagsEle[eleIndex]);
+  thisCutBasedID->applyElectronIDOnPFlowElectrons(true);
+  thisCutBasedID->SetHOverE( HoE );
+  thisCutBasedID->SetS9S25( s9s25 );
+  thisCutBasedID->SetDEta( deta );
+  thisCutBasedID->SetDPhiIn( dphiin );
+  thisCutBasedID->SetDPhiOut( dphiout );
+  thisCutBasedID->SetBremFraction( fbrem );
+  thisCutBasedID->SetSigmaEtaEta( see );
+  thisCutBasedID->SetSigmaPhiPhi( spp );
+  thisCutBasedID->SetEOverPout( eopout );
+  thisCutBasedID->SetEOverPin( eop );
+  thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
+  thisCutBasedID->SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
+  thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
+  thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
+  thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
+  thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
   float iso = 0.0;
   if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
   else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
-  thisCutBasedID.SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
-  thisCutBasedID.SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  thisCutBasedID.SetConvDist( fabs(convDistEle[eleIndex]) );
-  thisCutBasedID.SetConvDcot( fabs(convDcotEle[eleIndex]) );
+  thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
+  thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
+  thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
+  thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
 
   // ECAL cleaning variables
-  thisCutBasedID.m_cleaner->SetE1(e1);
-  thisCutBasedID.m_cleaner->SetE4SwissCross(e4SwissCross);
-  thisCutBasedID.m_cleaner->SetFiducialFlag(fidFlagSC);
-  thisCutBasedID.m_cleaner->SetSeedFlag(seedRecHitFlag);
-  thisCutBasedID.m_cleaner->SetSeedTime(seedTime);
-  thisCutBasedID.m_cleaner->SetSeedChi2(seedChi2);
+  thisCutBasedID->m_cleaner->SetE1(e1);
+  thisCutBasedID->m_cleaner->SetE4SwissCross(e4SwissCross);
+  thisCutBasedID->m_cleaner->SetFiducialFlag(fidFlagSC);
+  thisCutBasedID->m_cleaner->SetSeedFlag(seedRecHitFlag);
+  thisCutBasedID->m_cleaner->SetSeedTime(seedTime);
+  thisCutBasedID->m_cleaner->SetSeedChi2(seedChi2);
 
   //  return egammaCutBasedID.output(); // class dependent result
-  *eleIdOutput = thisCutBasedID.outputNoClassEleId();
-  *isolOutput = thisCutBasedID.outputNoClassIso();
-  *convRejOutput = thisCutBasedID.outputNoClassConv();
+  *eleIdOutput = thisCutBasedID->outputNoClassEleId();
+  *isolOutput = thisCutBasedID->outputNoClassIso();
+  *convRejOutput = thisCutBasedID->outputNoClassConv();
 }
 
 void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
@@ -2137,11 +2137,11 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
     if (!_selectionEE->getSwitch("asymmetricID")) 
-      isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
+      isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedID);
-      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,EgammaCutBasedIDLow);
+      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
 
