@@ -826,8 +826,8 @@ void HiggsMLSelection::Loop() {
 
 
     // eleID variables to fill the tree (after each cut)
-    if( GetPt(pxEle[theElectron],pyEle[theElectron]) > GetPt(pxEle[thePositron],pyEle[thePositron]) ) setEleIdVariables(theElectron,thePositron);
-    else setEleIdVariables(thePositron, theElectron);
+    if( GetPt(pxEle[thePreElectron],pyEle[thePreElectron]) > GetPt(pxEle[thePrePositron],pyEle[thePrePositron]) ) setEleIdVariables(thePreElectron,thePrePositron);
+    else setEleIdVariables(thePrePositron, thePreElectron);
 
     if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
 
@@ -1139,7 +1139,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);
 
     setEleIdVariables(theBestIpMuonEle.second, -1);
-    myOutTreeEM -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
+    myOutTreeME -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
