@@ -1,90 +1,140 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TChain.h>
+#include <TString.h>
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 
 using namespace std;
 
-void countEvents() {
+double weight(double ngen, double xsec, double filtereff, double lumi = 1);
+
+void countEvents(int mH=160) {
 
   char nametree[200];
-  sprintf(nametree,"PRESELECTION_EVENT_COUNTER");
+  sprintf(nametree,"FULL_SELECTION_EVENT_COUNTER_EE");
 
   cout << "nametree = " << nametree << endl;
 
-  TChain *chains[17];
-  for(int isample=0; isample<17; isample++) {
+  TChain *chains[20];
+  for(int isample=0; isample<18; isample++) {
     chains[isample] = new TChain(nametree);
   }
 
-  chains[0]->Add("results/WPYTHIA/WToENu_TuneZ2/*Counters.root");
-  chains[1]->Add("results/WPYTHIA/WToMuNu_TuneZ2/*Counters.root");
-  chains[2]->Add("results/WPYTHIA/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[0]->Add("results/Spring11/WToENu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[1]->Add("results/Spring11/WToMuNu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[2]->Add("results/Spring11/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[3]->Add("results/ZPYTHIA/DYToEE_M-10To20_TuneZ2/*Counters.root");
-  chains[4]->Add("results/ZPYTHIA/DYToMuMu_M-10To20_TuneZ2/*Counters.root");
-  chains[5]->Add("results/ZPYTHIA/DYToTauTau_M-10To20_TuneZ2/*Counters.root");
+  chains[3]->Add("results/Spring11/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[4]->Add("results/Spring11/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[5]->Add("results/Spring11/xxxx/*Counters.root");
 
-  chains[6]->Add("results/ZPYTHIA/DYToEE_M-20_CT10_TuneZ2_PU/*Counters.root");
-  chains[7]->Add("results/ZPYTHIA/DYToMuMu_M-20_CT10_TuneZ2_PU/*Counters.root");
-  chains[8]->Add("results/ZPYTHIA/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*Counters.root");
+  chains[6]->Add("results/Spring11/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[7]->Add("results/Spring11/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[8]->Add("results/Spring11/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[9]->Add("results/SingleTop/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains[10]->Add("results/SingleTop/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains[11]->Add("results/SingleTop/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains[9]->Add("results/Spring11/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains[10]->Add("results/Spring11/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains[11]->Add("results/Spring11/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[12]->Add("results/TTbar/TTJets_TuneD6T/*Counters.root");
+  chains[12]->Add("results/Spring11/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[13]->Add("results/HiggsWW/GluGluToHToWWTo2L2Nu_M-130/*Counters.root");
+  TString hSample("results/Spring11/GluGluToHToWWTo2L2Nu_M-");
+  char mass[5];
+  sprintf(mass,"%d",mH);
+  hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
+
+  chains[13]->Add(hSample.Data());
 
   //  chains[34]->Add("results/DiBosons/Wgamma/*Counters.root");
-  chains[14]->Add("results/DiBosons/WWTo2L2Nu_TuneZ2/*Counters.root");
-  chains[15]->Add("results/DiBosons/WZTo3LNu_TuneZ2/*Counters.root");
-  chains[16]->Add("results/DiBosons/ZZtoAnything_TuneZ2/*Counters.root");
+  chains[14]->Add("results/Spring11/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[15]->Add("results/Spring11/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[16]->Add("results/Spring11/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[17]->Add("results/Spring11/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
   cout << "chains added. " << endl;
 
-  std::vector<std::string> sampleName;
+  std::vector<TString> sampleName;
 
-  sampleName.push_back("W->enu");
-  sampleName.push_back("W->munu");
-  sampleName.push_back("W->taunu");
+  sampleName.push_back("results/merged/Wenu_ee.root");
+  sampleName.push_back("results/merged/Wmunu_ee.root");
+  sampleName.push_back("results/merged/Wtaunu_ee.root");
 
-  sampleName.push_back("DY(ee) 10<m<20 GeV");
-  sampleName.push_back("DY(mm) 10<m<20 GeV");
-  sampleName.push_back("DY(tautau) 10<m<20 GeV");
+  sampleName.push_back("results/merged/Zee_Lo_ee.root");
+  sampleName.push_back("results/merged/Zmm_Lo_ee.root");
+  sampleName.push_back("results/merged/Ztautau_Lo_ee.root");
 
-  sampleName.push_back("DY(ee) m>20 GeV");
-  sampleName.push_back("DY(mm) m>20 GeV");
-  sampleName.push_back("DY(tautau) m>20 GeV");
+  sampleName.push_back("results/merged/Zee_Hi_ee.root");
+  sampleName.push_back("results/merged/Zmm_Hi_ee.root");
+  sampleName.push_back("results/merged/Ztautau_Hi_ee.root");
 
-  sampleName.push_back("single top s");
-  sampleName.push_back("single top t");
-  sampleName.push_back("single top tW");
+  sampleName.push_back("results/merged/SingleTop_sChannel_ee.root");
+  sampleName.push_back("esults/merged/SingleTop_tChannel_ee.root");
+  sampleName.push_back("results/merged/SingleTop_tWChannel_ee.root");
 
-  sampleName.push_back("ttbar");
+  sampleName.push_back("results/merged/TTbar_ee.root");
 
-  sampleName.push_back("Higgs");
+  sampleName.push_back(TString("results/merged/H")+TString(mass)+TString("_ee.root"));
 
   //  sampleName.push_back("Wgamma");
-  sampleName.push_back("WW");
-  sampleName.push_back("WZ");
-  sampleName.push_back("ZZ");
+  sampleName.push_back("results/merged/WW_ee.root");
+  sampleName.push_back("results/merged/ggWW_ee.root");
+  sampleName.push_back("results/merged/WZ_ee.root");
+  sampleName.push_back("results/merged/ZZ_ee.root");
 
-  float nEv[17];
-  for(int isample=0; isample<17; isample++) {
+  std::map<int,float> Higgs_xsec_masses;
+  Higgs_xsec_masses.insert(std::make_pair(120,0.247143));
+  Higgs_xsec_masses.insert(std::make_pair(130,0.452859));
+  Higgs_xsec_masses.insert(std::make_pair(140,0.64926));
+  Higgs_xsec_masses.insert(std::make_pair(150,0.787871));
+  Higgs_xsec_masses.insert(std::make_pair(160,0.897043));
+  Higgs_xsec_masses.insert(std::make_pair(170,0.808914));
+  Higgs_xsec_masses.insert(std::make_pair(200,0.422487));
+  Higgs_xsec_masses.insert(std::make_pair(210,0.370845));
+  Higgs_xsec_masses.insert(std::make_pair(220,0.331814));
+  Higgs_xsec_masses.insert(std::make_pair(230,0.300268));
+  Higgs_xsec_masses.insert(std::make_pair(250,0.251763));
+  Higgs_xsec_masses.insert(std::make_pair(300,0.181931));
+  Higgs_xsec_masses.insert(std::make_pair(400,0.125106));
+  Higgs_xsec_masses.insert(std::make_pair(500,0.047826));
+  Higgs_xsec_masses.insert(std::make_pair(600,0.018751));
+
+  std::vector<float> sampleXsec;
+  sampleXsec.push_back(31314./3. * 0.742);
+  sampleXsec.push_back(31314./3. * 0.742);
+  sampleXsec.push_back(31314./3. * 0.742);
+  sampleXsec.push_back(2659./3.);
+  sampleXsec.push_back(2659./3.);
+  sampleXsec.push_back(2659./3.);
+  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(4.21 * (0.1080*3));
+  sampleXsec.push_back(64.6 * (0.1080*3));
+  sampleXsec.push_back(10.6);
+  sampleXsec.push_back(157.5);
+  sampleXsec.push_back(Higgs_xsec_masses[mH]);
+  sampleXsec.push_back(4.50347);
+  sampleXsec.push_back(0.1538);
+  sampleXsec.push_back(0.599442);
+  sampleXsec.push_back(5.9);
+
+  std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " Higgs_xsec_masses[mH] pb " << std::endl;
+
+  float nEv[20];
+  for(int isample=0; isample<20; isample++) {
     nEv[isample] = 0.0;
   }
 
-  for(int isample=0; isample<17; isample++) {
+  for(int isample=0; isample<18; isample++) {
 
     cout << "\tProcessing sample # " << isample << "..." << endl;
 
     Int_t           nCuts;
-    Float_t         nSel[20];   //[nCuts]
+    Float_t         nSel[24];   //[nCuts]
     
     // List of branches
     TBranch        *b_nCuts;   //!
@@ -105,9 +155,72 @@ void countEvents() {
     }
   }
 
-  for(int isample=0; isample<17; isample++) {
-    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
-  }
+  if (sampleXsec.size() != sampleName.size() ) cout << "nasty error! check sizes..." << endl;
+
+  std::ofstream weightsFile;
+  weightsFile.open("weightTrees.sh");
+  weightsFile << "#! /bin/sh\n\n" << std::endl;
+  weightsFile << "lumi=$1" << std::endl;
   
+  weightsFile << "echo \"===> THIS WEIGHTING IS FOR MH = " << mH << " <====\" "<< std::endl;
+
+  // now write ee
+  weightsFile << "echo \"Adding weights for ee datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "root -l -b <<EOF" << std::endl;
+  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
+  for(int isample=0; isample<18; isample++) {
+    //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
+    float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
+    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumi, 0);" << std::endl;
+  }
+  weightsFile << ".q\n\nEOF\n" << std::endl;
+  
+  // now write mm
+  weightsFile << "echo \"Adding weights for mm datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "root -l -b <<EOF" << std::endl;
+  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
+  for(int isample=0; isample<18; isample++) {
+    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
+    float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
+    TString sampleNameMM = sampleName[isample].ReplaceAll("ee","mm");
+    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumi, 1);" << std::endl;
+  }
+  weightsFile << ".q\n\nEOF\n" << std::endl;
+
+
+  // now write em
+  weightsFile << "echo \"Adding weights for em datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "root -l -b <<EOF" << std::endl;
+  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
+  for(int isample=0; isample<18; isample++) {
+    //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
+    float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
+    TString sampleNameEM = sampleName[isample].ReplaceAll("mm","em");
+    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumi, 2);" << std::endl;
+  }
+  weightsFile << ".q\n\nEOF\n" << std::endl;
+
+
+  // now write me
+  weightsFile << "echo \"Adding weights for me datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "root -l -b <<EOF" << std::endl;
+  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
+  for(int isample=0; isample<18; isample++) {
+    //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
+    float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
+    TString sampleNameEM = sampleName[isample].ReplaceAll("em","me");
+    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumi, 2);" << std::endl;
+  }
+  weightsFile << ".q\n\nEOF\n" << std::endl;
+
+  weightsFile << "echo \"done weighting.\"" << std::endl;
+
+}
+
+double weight(double ngen, double xsec, double filtereff, double lumi) {
+
+  if(ngen==0) return 0;
+  return xsec * filtereff * lumi / ngen;
+
 }
 
