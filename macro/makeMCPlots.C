@@ -11,9 +11,9 @@
 
 #include <iostream>
 
-#define NSPECIES 4
+#define NSPECIES 5
 #define NVARIABLES 8
-#define NCUTS 2
+#define NCUTS 3
 
 void makeMCPlots(const char *finalstate)
 {
@@ -29,45 +29,50 @@ void makeMCPlots(const char *finalstate)
   gStyle->SetMarkerSize(1.0);
   gStyle->SetMarkerColor(1);
 
-  TString suffix="WWSynch";
+  TString suffix="";
 
   TString species[NSPECIES];
-  species[0]="H160";
-  species[1]="Others";
-  species[2]="top";
-  species[3]="WW";
+  species[0]="Data";
+  species[1]="H120";
+  species[2]="others";
+  species[3]="top";
+  species[4]="WW";
 
   Color_t colors[NSPECIES];
   colors[0]=kBlack;
-  colors[1]=kAzure-1;
-  colors[2]=kOrange;
-  colors[3]=kViolet;
+  colors[1]=kRed;       
+  colors[2]=kAzure-1;
+  colors[3]=kOrange;
+  colors[4]=kViolet;
 
   Color_t lineColors[NSPECIES];
   lineColors[0]=kBlack;
-  lineColors[1]=kAzure+3;
-  lineColors[2]=kOrange+3;
-  lineColors[3]=kViolet+3;
+  lineColors[1]=kRed;      
+  lineColors[2]=kAzure+3;
+  lineColors[3]=kOrange+3;
+  lineColors[4]=kViolet+3;
 
   int legendOrder[NSPECIES];
   legendOrder[0]=0;
-  legendOrder[1]=3;
-  legendOrder[2]=2;
-  legendOrder[3]=1;
+  legendOrder[1]=1;
+  legendOrder[2]=4;
+  legendOrder[3]=3;
+  legendOrder[4]=2;
 
+  // chiara, da sistemare
   TString files[NSPECIES];
+  files[0]="results_data/merged/dataset_"+TString(finalstate)+".root";  
+  files[1]="results/datasets_trees/H120_"+TString(finalstate)+".root";  
+  files[2]="results/datasets_trees/others_"+TString(finalstate)+".root";
+  files[3]="results/datasets_trees/top_"+TString(finalstate)+".root";
+  files[4]="results/datasets_trees/WW_"+TString(finalstate)+".root";
 
-  files[0]="results/datasets_trees/H160_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees/others_"+TString(finalstate)+".root";
-  files[2]="results/datasets_trees/top_"+TString(finalstate)+".root";
-  files[3]="results/datasets_trees/WW_"+TString(finalstate)+".root";
+  TString plotsDir="./HWW/"+TString(finalstate)+"/";
 
-  TString plotsDir="./HWWMC/"+TString(finalstate)+"/";
-
-  TFile* fOut=new TFile("pfMTHistos_"+suffix+".root","RECREATE");
+  TFile* fOut=new TFile("HWW_histos_"+suffix+".root","RECREATE");
   
   char icut[NCUTS][100];
-  TH1F* histos[NSPECIES][NCUTS][NVARIABLES]; //5 species, 3 cut levels, 8 variables
+  TH1F* histos[NSPECIES][NCUTS][NVARIABLES];    // 5 species, 2 cut levels, 8 variables
   
   TString variables[NVARIABLES];
   variables[0]="met";
@@ -90,13 +95,13 @@ void makeMCPlots(const char *finalstate)
   units[7]="";
 
   int nbins[NVARIABLES];
-  nbins[0]=15;
-  nbins[1]=15;
-  nbins[2]=15;
-  nbins[3]=15;
-  nbins[4]=10;
-  nbins[5]=10;
-  nbins[6]=15;
+  nbins[0]=30;
+  nbins[1]=30;
+  nbins[2]=30;
+  nbins[3]=30;
+  nbins[4]=30;
+  nbins[5]=30;
+  nbins[6]=30;
   nbins[7]=7;
 
   float range[NVARIABLES][2]; // 8 variables, min, max
@@ -110,7 +115,7 @@ void makeMCPlots(const char *finalstate)
   range[2][0]=0.;
   range[2][1]=250.;
   // mll
-  range[3][0]=0.;
+  range[3][0]=20.;
   range[3][1]=150.;
   // max pt
   range[4][0]=0.;
@@ -137,39 +142,35 @@ void makeMCPlots(const char *finalstate)
 
   TString binSize[NVARIABLES];
 
-  for (int z=0;z<NVARIABLES;++z)
-    {
-      for (int j=0;j<NCUTS;++j)
-	{
-	  sprintf(icut[j],"icut%d",j);
-	  for (int i=0;i<NSPECIES;++i)
-	    {
-	      histos[i][j][z]=new TH1F(variables[z]+"_W_"+species[i]+"_"+TString(icut[j]),variables[z]+"_W_"+species[i]+"_"+TString(icut[j]),nbins[z],range[z][0],range[z][1]);
-              if(i==0)
-                histos[i][j][z]->Sumw2();
-	      char binsiz[10];
-	      sprintf(binsiz,"%2.0f",(range[z][1]-range[z][0])/nbins[z]);
-	      binSize[z]=TString(binsiz);
-	    }
-	}
+  for (int z=0;z<NVARIABLES;++z) {
+    for (int j=0;j<NCUTS;++j) {
+      sprintf(icut[j],"icut%d",j);
+      for (int i=0;i<NSPECIES;++i) {
+	histos[i][j][z]=new TH1F(variables[z]+"_W_"+species[i]+"_"+TString(icut[j]),variables[z]+"_W_"+species[i]+"_"+TString(icut[j]),nbins[z],range[z][0],range[z][1]);
+	if(i==0)
+	  histos[i][j][z]->Sumw2();
+	char binsiz[10];
+	sprintf(binsiz,"%2.0f",(range[z][1]-range[z][0])/nbins[z]);
+	binSize[z]=TString(binsiz);
+      }
     }
+  }
 
   TString cut[NCUTS];
-  cut[0]="(finalLeptons)*";
-  cut[1]="(preDeltaPhi)*";
+  cut[0]="(finalLeptons*(eleInvMass>20))*";
+  cut[1]="(jetVeto)*";
+  cut[2]="(preDeltaPhi)*";
 
-  TString intLumi="35";
+  TString intLumi="29";     
   TFile *_file[NSPECIES];
   TTree *T1[NSPECIES];
-
+  
   TCanvas* c1= new TCanvas("test","test",800,800);
-
-  for (int i=0;i<NSPECIES;++i)
-    {
-      _file[i]=TFile::Open(files[i]);
-      //      _file[i]->cd();
-      T1[i] = (TTree*)_file[i]->Get("T1");
-    }
+  
+  for (int i=0;i<NSPECIES;++i) {
+    _file[i]=TFile::Open(files[i]);
+    T1[i] = (TTree*)_file[i]->Get("T1");
+  }
 
   int nspeciesToRun=NSPECIES;
 
@@ -187,7 +188,8 @@ void makeMCPlots(const char *finalstate)
 		  std::cout << "Tree not found" << std::endl;
 		  return;
 		}
-              T1[i]->Project(histoName,variables[z],cut[j]+"weight*"+intLumi);
+              // T1[i]->Project(histoName,variables[z],cut[j]+"weight*"+intLumi);
+              T1[i]->Project(histoName,variables[z],cut[j]+"weight");
 	      std::cout << "Done " << histoName << std::endl;
 	    }
 	  
@@ -216,10 +218,10 @@ void makeMCPlots(const char *finalstate)
 	  pt1.SetTextAlign(12);
 	  pt1.SetFillColor(0);
 	  pt1.SetBorderSize(0);
-	  pt1.AddText("CMS Preliminary 2010");
-	  pt1.AddText("");
-	  pt1.AddText("");
-	  pt1.AddText("");
+	  // pt1.AddText("CMS Preliminary 2010");
+	  // pt1.AddText("");
+	  // pt1.AddText("");
+	  // pt1.AddText("");
 	  pt1.AddText("#sqrt{s}=7 TeV L_{int}="+intLumi+" pb^{-1}");
 	  pt1.Draw();
 
@@ -241,6 +243,7 @@ void makeMCPlots(const char *finalstate)
 	  c1->SetLogy(0);
 	  c1->Update();
 	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".png");
+	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".root");
 	  histo_MC.SetMaximum(maximum*100);
 	  c1->SetLogy(1);
 	  c1->Update();
