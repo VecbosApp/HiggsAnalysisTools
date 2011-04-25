@@ -183,7 +183,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     int j =0;
 
     for(int i=0; i<nentriesOrig; i++) {
-      if (i%1000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl;
+      if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl;
       treeOrig->GetEntry(i);
 
       if (njets==0) jetcat = 1;
