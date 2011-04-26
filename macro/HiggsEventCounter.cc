@@ -86,21 +86,22 @@ void countEvents(int mH=160) {
   sampleName.push_back("results/merged/ZZ_ee.root");
 
   std::map<int,float> Higgs_xsec_masses;
-  Higgs_xsec_masses.insert(std::make_pair(120,0.247143));
-  Higgs_xsec_masses.insert(std::make_pair(130,0.452859));
-  Higgs_xsec_masses.insert(std::make_pair(140,0.64926));
-  Higgs_xsec_masses.insert(std::make_pair(150,0.787871));
-  Higgs_xsec_masses.insert(std::make_pair(160,0.897043));
-  Higgs_xsec_masses.insert(std::make_pair(170,0.808914));
-  Higgs_xsec_masses.insert(std::make_pair(200,0.422487));
-  Higgs_xsec_masses.insert(std::make_pair(210,0.370845));
-  Higgs_xsec_masses.insert(std::make_pair(220,0.331814));
-  Higgs_xsec_masses.insert(std::make_pair(230,0.300268));
-  Higgs_xsec_masses.insert(std::make_pair(250,0.251763));
-  Higgs_xsec_masses.insert(std::make_pair(300,0.181931));
-  Higgs_xsec_masses.insert(std::make_pair(400,0.125106));
-  Higgs_xsec_masses.insert(std::make_pair(500,0.047826));
-  Higgs_xsec_masses.insert(std::make_pair(600,0.018751));
+  // samples are emu only
+  Higgs_xsec_masses.insert(std::make_pair(120,0.247143*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(130,0.452859*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(140,0.64926*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(150,0.787871*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(160,0.897043*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(170,0.808914*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(200,0.422487*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(210,0.370845*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(220,0.331814*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(230,0.300268*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(250,0.251763*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(300,0.181931*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(400,0.125106*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(500,0.047826*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(600,0.018751*4./9.));
 
   std::vector<float> sampleXsec;
   sampleXsec.push_back(31314./3. * 0.742);
