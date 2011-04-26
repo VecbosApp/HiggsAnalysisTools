@@ -121,7 +121,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile       = "config/json/goodRunLS.json";
+    std::string goodRunJsonFile       = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -791,7 +791,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetBTagJets(btag[ee]);
     CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu[ee]);
     CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
-    CutBasedHiggsSelectionEE.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionEE.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
@@ -899,7 +899,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetBTagJets(btag[mm]);
     CutBasedHiggsSelectionMM.SetNSoftMuons(nsoftmu[mm]);
     CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons[mm]);
-    CutBasedHiggsSelectionMM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionMM.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
     CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
     CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
     CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ[mm]);   
@@ -995,7 +995,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetBTagJets(btag[em]);
     CutBasedHiggsSelectionEM.SetNSoftMuons(nsoftmu[em]);
     CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons[em]);
-    CutBasedHiggsSelectionEM.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionEM.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
     CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
     CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
     CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ[em]);  
@@ -1095,7 +1095,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetBTagJets(btag[me]);
     CutBasedHiggsSelectionME.SetNSoftMuons(nsoftmu[me]);
     CutBasedHiggsSelectionME.SetNExtraLeptons(nextraleptons[me]);
-    CutBasedHiggsSelectionME.SetMet(GetPt(pxTCMet[0],pyTCMet[0]));					
+    CutBasedHiggsSelectionME.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
     CutBasedHiggsSelectionME.SetProjectedMet(m_projectedMet[me]);
     CutBasedHiggsSelectionME.SetMetOverPtLL(m_metOptll[me]);
     CutBasedHiggsSelectionME.SetDeltaPhiLLJet(dphiLLJ[me]);   
@@ -1556,7 +1556,7 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
     m_metOptll[ee] = m_p4MET->Pt() / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
-    m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+    m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
     m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
   }
 
@@ -1580,7 +1580,7 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_transvMass[mm]      = mT3(*m_p4LeptonMinus[mm],*m_p4LeptonPlus[mm],m_p4MET->Vect());
     m_metOptll[mm]        = m_p4MET->Pt() / m_dilepPt[mm].Pt();
     m_mT2[mm]             = 0.;
-    m_p4MET->SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+    m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
     m_projectedMet[mm]    = GetProjectedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
   }
 
@@ -1588,7 +1588,7 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
 
 void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, int myMuMinus) {
 
-  m_p4MET -> SetXYZT(pxTCMet[0],pyTCMet[0],pzTCMet[0],energyTCMet[0]);
+  m_p4MET -> SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
 
   if ( myEle > -1 && myMuPlus > -1 && ( myPosi<0 || myMuMinus<0 ) ) {  // only 1 pair reconstructed                                    
 
