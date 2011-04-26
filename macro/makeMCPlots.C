@@ -15,7 +15,7 @@
 #define NVARIABLES 8
 #define NCUTS 3
 
-void makeMCPlots(const char *finalstate)
+void makeMCPlots(const char *finalstate, int signalFactor=1)
 {
   gROOT->SetStyle("Plain");
   gROOT->ProcessLine(".x tdrstyle.C");
@@ -33,7 +33,12 @@ void makeMCPlots(const char *finalstate)
 
   TString species[NSPECIES];
   species[0]="Data";
-  species[1]="H120";
+  if(signalFactor==1) species[1]="H120";
+  else {
+    char scaleF[10];
+    sprintf(scaleF,"%dxH120",signalFactor);
+    species[1]=TString(scaleF);
+  }
   species[2]="others";
   species[3]="top";
   species[4]="WW";
@@ -101,7 +106,7 @@ void makeMCPlots(const char *finalstate)
   nbins[3]=30;
   nbins[4]=30;
   nbins[5]=30;
-  nbins[6]=30;
+  nbins[6]=20;
   nbins[7]=7;
 
   float range[NVARIABLES][2]; // 8 variables, min, max
@@ -194,7 +199,7 @@ void makeMCPlots(const char *finalstate)
 	    }
 	  
 	  THStack histo_MC(variables[z]+"_MC",variables[z]+"_MC");
-	  for (int i=1;i<nspeciesToRun;++i)
+	  for (int i=2;i<nspeciesToRun;++i)
 	    {
 	      histos[i][j][z]->SetFillColor(colors[i]);
 	      histos[i][j][z]->SetLineColor(lineColors[i]);
@@ -207,6 +212,11 @@ void makeMCPlots(const char *finalstate)
 	  histo_MC.Draw("");
 	  histo_MC.GetXaxis()->SetTitle(xaxisLabel[z]+" ["+units[z]+"]");
 	  histo_MC.GetYaxis()->SetTitle("Events/"+binSize[z]+" "+units[z]);
+
+          histos[1][j][z]->Scale(signalFactor);
+	  histos[1][j][z]->SetLineColor(lineColors[1]);
+	  histos[1][j][z]->SetLineWidth(2.0);
+	  histos[1][j][z]->Draw("SAME");
 	  
 	  histos[0][j][z]->SetMarkerStyle(20);
 	  histos[0][j][z]->SetMarkerSize(1.3);
