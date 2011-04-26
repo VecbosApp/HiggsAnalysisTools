@@ -1675,13 +1675,13 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
   // if two pairs are built we choose the one with highest di-lepton pt                                                                
   if ( myPosi>-1 && myEle>-1 &&  myMuPlus>-1 && myMuMinus>-1) {   // 2 pairs reconstructed                                             
     
-    TLorentzVector *m_posi, *m_ele, *m_mum, *m_mup;
-    m_posi -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
-    m_ele  -> SetXYZT(pxEle[myEle], pyEle[myEle], pzEle[myEle], energyEle[myEle]);
-    m_mum  -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
-    m_mup  -> SetXYZT(pxMuon[myMuPlus], pyMuon[myMuPlus], pzMuon[myMuPlus], energyMuon[myMuPlus]);
-    TVector3 m_ep_mm( m_posi->Vect().X()+m_mum->Vect().X(), m_posi->Vect().Y()+m_mum->Vect().Y(), 0.0 );
-    TVector3 m_em_mp( m_ele->Vect().X()+m_mup->Vect().X(),  m_ele->Vect().Y()+m_mup->Vect().Y(),  0.0 );
+    TLorentzVector m_posi, m_ele, m_mum, m_mup;
+    m_posi.SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+    m_ele.SetXYZT(pxEle[myEle], pyEle[myEle], pzEle[myEle], energyEle[myEle]);
+    m_mum.SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
+    m_mup.SetXYZT(pxMuon[myMuPlus], pyMuon[myMuPlus], pzMuon[myMuPlus], energyMuon[myMuPlus]);
+    TVector3 m_ep_mm( m_posi.Vect().X()+m_mum.Vect().X(), m_posi.Vect().Y()+m_mum.Vect().Y(), 0.0 );
+    TVector3 m_em_mp( m_ele.Vect().X()+m_mup.Vect().X(),  m_ele.Vect().Y()+m_mup.Vect().Y(),  0.0 );
     float mod_ep_mm = m_ep_mm.Mag();
     float mod_em_mp = m_em_mp.Mag();
     
@@ -1902,10 +1902,11 @@ void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
   *muonIdOutput = true;
 
   Utils anaUtils; 
-  bool flag = anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons) && 
-    anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons);
-  // the following cuts are based on KF and global muon track. So if the cut above has failed, return here
-  if(!flag) {
+  bool flag = anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons) ||
+    (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
+     anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ;
+     // the following cuts are based on KF and global muon track. So if the cut above has failed, return here
+     if(!flag) {
     *muonIdOutput = false;
     return;
   }
