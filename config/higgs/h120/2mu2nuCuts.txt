@@ -1,5 +1,5 @@
 maxPtLepton             20              10000
-minPtLepton             20              10000
+minPtLepton             10              10000
 leptonD0                -0.020          0.020
 leptonDz                -1.             1.
 muGlobalIso             -10000          0.15
