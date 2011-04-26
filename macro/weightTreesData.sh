@@ -5,36 +5,15 @@
 
 # usage: ./weightTreesData.sh
 
-echo "Adding weights for ee datasets..."
+echo "Adding weights..."
 root -l -b <<EOF
 
 .L addWeightsToTree.cc+
 
-addWeights("results_data/merged/dataset_eg_ee.root", 1.0, 0);
-
-.q
-
-EOF
-
-echo "Adding weights for mm datasets..."
-root -l -b <<EOF
-
-.L addWeightsToTree.cc+
-
-addWeights("results_data/merged/dataset_mu_mm.root", 1.0, 1);
-
-.q
-
-EOF
-
-
-echo "Adding weights for em datasets..."
-root -l -b <<EOF
-
-.L addWeightsToTree.cc+
-
-addWeights("results_data/merged/dataset_mu_em.root", 1.0, 2);
-addWeights("results_data/merged/dataset_eg_em.root", 1.0, 2);
+addWeights("results_data/merged/dataset_ee.root", 1.0, 0);
+addWeights("results_data/merged/dataset_mm.root", 1.0, 1);
+addWeights("results_data/merged/dataset_em.root", 1.0, 2);
+addWeights("results_data/merged/dataset_me.root", 1.0, 2);
 
 .q
 
