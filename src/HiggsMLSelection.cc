@@ -852,10 +852,8 @@ void HiggsMLSelection::Loop() {
     
     if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(evtKfactor);
       
-    // dumping final tree
-    myOutTreeEE -> store();
-
-
+    // dumping final tree, only if there are 2 leptons in the acceptance
+    if(outputStep1) myOutTreeEE -> store();
 
 
     
@@ -948,8 +946,8 @@ void HiggsMLSelection::Loop() {
     
     if ( _selectionMM->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(evtKfactor);
       
-    // dumping final tree
-    myOutTreeMM -> store();
+    // dumping final tree, only if there are 2 leptons in the acceptance
+    if(outputStep1) myOutTreeMM -> store();
 
 
 
@@ -1049,8 +1047,8 @@ void HiggsMLSelection::Loop() {
     
     if ( _selectionEM->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(evtKfactor);
     
-    // dumping final tree
-    myOutTreeEM -> store();
+    // dumping final tree, only if there are 2 leptons in the acceptance
+    if(outputStep1) myOutTreeEM -> store();
 
 
   
@@ -1149,8 +1147,8 @@ void HiggsMLSelection::Loop() {
     
     if ( _selectionME->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(evtKfactor);
       
-    // dumping final tree
-    myOutTreeME -> store();
+    // dumping final tree, only if there are 2 leptons in the acceptance
+    if(outputStep1) myOutTreeME -> store();
 
   }
 
