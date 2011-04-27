@@ -7,7 +7,7 @@ getopts('p:');
 if($opt_p) {$prefix = $opt_p;}
 else { die "usage: ./submitMassDependentAnalysis.pl -p <prefix>";}
 
-@masses = (120,130,140,150,160,170,200,300,400,500,600);
+@masses = (120,130,140,150,160,170,180,190,200,210,220,230,250,300,350,400,450,500,550,600);
 
 for($i=0; $i<($#masses+1); $i++) {
     $mass = $masses[$i];
@@ -18,15 +18,17 @@ for($i=0; $i<($#masses+1); $i++) {
 
     $fullprefix=$prefix."/"."OptimMH$mass";
 
-    print  "submitting E/gamma...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeV dataset_eg_Sep3rdReReco 30 HiggsApp 8nh $fullprefix 0");
-    system("python cmst3_submit_manyfilesperjob.py Data7TeV PDElectron_11pbTo40pb 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with E/gamma.\n";
+    print  "submitting double ele...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeV DoubleElectron 5 HiggsApp 8nh $fullprefix 0");
+    print  "done with double ele.\n";
     
-    print  "submitting mu...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeV dataset_mu 20 HiggsApp 8nh $fullprefix 0");
-    system("python cmst3_submit_manyfilesperjob.py Data7TeV PDMu_11pbTo40pb 20 HiggsApp 8nh $fullprefix 0");
-    print  "done with mu.\n";
+    print  "submitting double mu...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeV DoubleMu 5 HiggsApp 8nh $fullprefix 0");
+    print  "done with double mu.\n";
+
+    print  "submitting mu eg...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeV MuEG 5 HiggsApp 8nh $fullprefix 0");
+    print  "done with mu eg.\n";
     
     print "\nDONE WITH MASS $mass GeV\n";
     print "<--------------------------";
