@@ -94,7 +94,7 @@ float data_final[4];
 // xsections
 std::map<int,float> Higgs_xsec_masses;
 
-float Wgamma_xsec      = 41.76;      // not used
+float Wgamma_xsec      = 173.;      // Madgraph VPhoton+jets
 // float Wlnu_xsec        = 31314.;     // madgraph 
 float Wlnu_xsec        = 31314./3. * 0.742;  // pythia
 float ZjetsLoMass_xsec = 2659./3.;           // pythia <20
@@ -185,13 +185,13 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir_mc[1000];                  
-    sprintf(dir_mc,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/MC2011_WP90_V2/OptimMH%d/Spring11/",exampleHiggsMass);
+    sprintf(dir_mc,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/MC2011_WP90_V4/OptimMH%d/Spring11/",exampleHiggsMass);
     char HiggsSample[500];
     sprintf(HiggsSample,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V2/OptimMH%d/Data7TeV",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV",exampleHiggsMass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir_mc)+TString(HiggsSample));       
@@ -207,7 +207,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[9]->Add(TString(dir_mc)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir_mc)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir_mc)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
-    // chains_fullSel[12]->Add(TString(dir_mc)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_fullSel[12]->Add(TString(dir_mc)+TString("/PhotonVJets_7TeV-madgraph/*Counters.root"));
     chains_fullSel[13]->Add(TString(dir_mc)+TString("TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[14]->Add(TString(dir_mc)+TString("TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[15]->Add(TString(dir_mc)+TString("TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
@@ -215,9 +215,9 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[17]->Add(TString(dir_mc)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.root"));
     chains_fullSel[18]->Add(TString(dir_mc)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.root"));
     // data
-    if (finalstate=="EE") chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (finalstate=="MM") chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (finalstate=="EM" || finalstate=="ME") chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+    if (strcmp(finalstate,"EE")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
+    if (strcmp(finalstate,"MM")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
 
   } else {
 
@@ -225,15 +225,15 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir[1000];                  
-    sprintf(dir,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/MC2011_WP90_V2/OptimMH%d/Spring11/",mass);
+    sprintf(dir,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/MC2011_WP90_V4/OptimMH%d/Spring11/",mass);
     char HiggsDir[500];
     sprintf(HiggsDir,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
 
     // data
     char dir_data[1000]; 
-    if (finalstate=="EE") sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V2/OptimMH%d/Data7TeV/DoubleElectron",mass);
-    if (finalstate=="MM") sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V2/OptimMH%d/Data7TeV/DoubleMu",mass);
-    if (finalstate=="EM" || finalstate=="ME") sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V2/OptimMH%d/Data7TeV/MuEG",mass);
+    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/DoubleElectron",mass);
+    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/DoubleMu",mass);
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/MuEG",mass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir)+TString(HiggsDir)+TString("*Counters.root"));
@@ -249,7 +249,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[9]->Add(TString(dir)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
-    // chains_fullSel[12]->Add(TString(dir)+TString("/DiBosons/WgammaXXXX/*Counters.root"));
+    chains_fullSel[12]->Add(TString(dir)+TString("/PhotonVJets_7TeV-madgraph/*Counters.root"));
     chains_fullSel[13]->Add(TString(dir)+TString("TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[14]->Add(TString(dir)+TString("TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[15]->Add(TString(dir)+TString("TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
@@ -257,9 +257,9 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[17]->Add(TString(dir)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.root"));
     chains_fullSel[18]->Add(TString(dir)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.root"));
     // data
-    if (finalstate=="EE") chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (finalstate=="MM") chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (finalstate=="EM" || finalstate=="ME") chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+    if (strcmp(finalstate,"EE")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
+    if (strcmp(finalstate,"MM")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+    if (strcmp(finalstate,"EM") || strcmp(finalstate,"ME")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
   }
 
   float nFullSelTot[24][20];
@@ -670,7 +670,7 @@ void printLatex(float lumi, const char* finalstate) {
 
 }
 
-void printShortBkgSummary(float lumi) {
+void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
 
   /// ==============  print short summary  ================== ///
 
@@ -737,12 +737,12 @@ void printShortBkgSummary(float lumi) {
            << "\\end{tabular}" << endl
            << "\\end{center}" << endl
            << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Expected backgrounds events in "
-           << lumi << " $pb^{-1}$.} " << endl 
+           << lumiEE << " pb$^-1$ (EE), " << lumiMM << " pb$^-1$ (MM), " << lumiEM << " pb$^-1$ (EM,ME).} "
            << "\\end{sidewaystable}" << endl;
 
 }
 
-void printLatex(float lumi, int HiggsMassOptim) {
+void printLatex(float lumiEE, float lumiMM, float lumiEM, int HiggsMassOptim) {
 
   exampleHiggsMass = HiggsMassOptim;
   
@@ -761,12 +761,12 @@ void printLatex(float lumi, int HiggsMassOptim) {
 
   textfile.close();
 
-  printLatex(lumi, "EE");
-  printLatex(lumi, "MM");
-  printLatex(lumi, "EM");
-  printLatex(lumi, "ME");
+  printLatex(lumiEE, "EE");
+  printLatex(lumiMM, "MM");
+  printLatex(lumiEM, "EM");
+  printLatex(lumiEM, "ME");
 
-  printShortBkgSummary(lumi);
+  printShortBkgSummary(lumiEE,lumiMM,lumiEM);
 
   textfile.open(namefile, ios_base::app);
   textfile << "\\clearpage" << endl;
@@ -779,7 +779,7 @@ void printLatex(float lumi, int HiggsMassOptim) {
   }
 }
 
-void printSuperSummary(float lumi, int massset) {
+void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
 
   int masses[3];
   if(massset==0) {
@@ -787,11 +787,15 @@ void printSuperSummary(float lumi, int massset) {
     masses[1] = 130;
     masses[2] = 140;
   } else if(massset==1) {
-    masses[0] = 160;
-    masses[1] = 120;
-    masses[2] = 130;
-  } 
-
+    masses[0] = 150;
+    masses[1] = 160;
+    masses[2] = 170;
+  } else if(massset==2) {
+    masses[0] = 180;
+    masses[1] = 190;
+    masses[2] = 200;    
+  }
+ 
   char namefile[200];
   sprintf(namefile,"yieldsSummary_byCut.tex");
   ofstream textfile;
@@ -840,10 +844,10 @@ void printSuperSummary(float lumi, int massset) {
       if(ichan==em) computeYields(lumi,"EM",mass);
       if(ichan==me) computeYields(lumi,"ME",mass);
       */
-      if(ichan==ee) computeYields(lumi,"EE");
-      if(ichan==mm) computeYields(lumi,"MM");
-      if(ichan==em) computeYields(lumi,"EM");
-      if(ichan==me) computeYields(lumi,"ME");
+      if(ichan==ee) computeYields(lumiEE,"EE");
+      if(ichan==mm) computeYields(lumiMM,"MM");
+      if(ichan==em) computeYields(lumiEM,"EM");
+      if(ichan==me) computeYields(lumiEM,"ME");
 
       H_final[ichan] = H_fullSel[21];
       Wj_final[ichan] = Wj_fullSel[21];
@@ -878,7 +882,8 @@ void printSuperSummary(float lumi, int massset) {
   textfile << "\\hline" << endl
            << "\\end{tabular}" << endl
            << "\\end{center}" << endl
-           << "\\caption{Breakdown of signal and backgrounds events for an integrated luminosity of " << lumi << "pb$^-1$.} "
+           << "\\caption{Breakdown of signal and backgrounds events for an integrated luminosity of " 
+           << lumiEE << " pb$^-1$ (EE), " << lumiMM << " pb$^-1$ (MM), " << lumiEM << " pb$^-1$ (EM,ME).} "
            << "\\end{table}" << endl;
 
   if(massset==1) {
