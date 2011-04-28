@@ -51,6 +51,7 @@ $(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
 	$(INCLUDEDIR)/src/RedEleIDTree.cc \
 	$(INCLUDEDIR)/src/ZplusJetsSelection.cc \
 	$(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc \
+	$(INCLUDEDIR)/src/LeptonPlusFakeMLSelection.cc \
 	$(INCLUDEDIR)/src/HiggsVertexing.cpp \
 	$(INCLUDEDIR)/src/VertexTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsBase.o $<
@@ -110,6 +111,8 @@ $(OUTLIB)ZplusJetsSelection.o: $(INCLUDEDIR)/src/ZplusJetsSelection.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ZplusJetsSelection.o $<
 $(OUTLIB)LeptonPlusFakeSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeSelection.o $<
+$(OUTLIB)LeptonPlusFakeMLSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeMLSelection.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeMLSelection.o $<
 $(OUTLIB)HiggsVertexing.o: $(INCLUDEDIR)/src/HiggsVertexing.cpp
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsVertexing.o $<
 $(OUTLIB)VertexTree.o: $(INCLUDEDIR)/src/VertexTree.cc

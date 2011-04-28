@@ -75,6 +75,9 @@
 #if Application == 18
 #include "HiggsAnalysisTools/src/HiggsMLSelection.cc"
 #endif
+#if Application == 19
+#include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -356,6 +359,30 @@ int main(int argc, char* argv[]) {
   htoww.displayEfficiencies(outputFileName);
 
 #endif
+
+#if Application == 19
+
+  LeptonPlusFakeMLSelection lplusfake(theChain);
+  lplusfake.SetDatasetName(outputFileName);
+
+  std::vector<std::string> mask;
+  mask.push_back("HLT_Ele10_LW_L1R");
+  mask.push_back("HLT_Ele15_SW_L1R");
+  mask.push_back("HLT_Ele15_SW_CaloEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_CaloEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_TightEleId_L1R");
+  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v2");
+  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+
+  mask.push_back("HLT_Mu9");
+  mask.push_back("HLT_Mu15_v1");
+
+  lplusfake.setRequiredTriggers(mask);
+  lplusfake.Loop();
+  lplusfake.displayEfficiencies(outputFileName);
+
+#endif
+
 
   return 0;
 
