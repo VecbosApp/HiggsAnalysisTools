@@ -3,9 +3,13 @@
 use Getopt::Std;
 use Cwd;
 
-getopts('l:');
-if($opt_l) {$lumi = $opt_l;}
-else { die "usage: ./makeTables.pl -l <lumi (pb-1)>";}
+getopts('l:m:n:');
+if($opt_l) {$lumiEE = $opt_l;}
+else { die "usage: ./makeTables.pl -l <lumiEE (pb-1)> -m <lumiMM (pb-1)> -n <lumiEM (pb-1)>";}
+if($opt_m) {$lumiMM = $opt_m;}
+else { die "usage: ./makeTables.pl -l <lumiEE (pb-1)> -m <lumiMM (pb-1)> -n <lumiEM (pb-1)>";}
+if($opt_n) {$lumiEM = $opt_n;}
+else { die "usage: ./makeTables.pl -l <lumiEE (pb-1)> -m <lumiMM (pb-1)> -n <lumiEM (pb-1)>";}
 
 #$topDir="/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/MC2011_WP90_V2/";
 #$suffix="Spring11";
@@ -22,7 +26,7 @@ print TEX "\\usepackage{rotating}\n";
 print TEX "\\begin{document}\n";
 
 # the detailed tables
-@masses = (120,130,140,160);
+@masses = (120,130,140,150,160,170,180,190,200,210,220,230,250,300,350,400,450,500,550,600);
 
 for($i=0; $i<($#masses+1); $i++) {
     # configure
@@ -41,7 +45,7 @@ for($i=0; $i<($#masses+1); $i++) {
     print SCRIPT "root -l -b <<EOF\n";
     print SCRIPT ".L HiggsYieldsSteps.cc+\n";
     print SCRIPT "setRunStandalone(false)\n";
-    print SCRIPT "printLatex($lumi,$mass)\n";
+    print SCRIPT "printLatex($lumiEE,$lumiMM,$lumiEM,$mass)\n";
     print SCRIPT "EOF\n";
     
     # run the macro and compile latex table
@@ -53,14 +57,14 @@ for($i=0; $i<($#masses+1); $i++) {
 # the super-summary table
 print "NOW DOING THE SUPERSUMMARY....\n\n";
 system ("rm -f yieldsSummary_byCut.tex");
-for($i=0; $i<2; $i++) {
+for($i=0; $i<7; $i++) {
     print "\tDoing supersummary $i/3...\n";
     open(SCRIPT,">script.sh");
     print SCRIPT "#/bin/sh\n";
     print SCRIPT "root -l -b <<EOF\n"; 
     print SCRIPT ".L HiggsYieldsSteps.cc+\n";
     print SCRIPT "setRunStandalone(false)\n";
-    print SCRIPT "printSuperSummary($lumi,$i)\n";
+    print SCRIPT "printSuperSummary($lumiEE,$lumiMM,$lumiEM,$i)\n";
     print SCRIPT "EOF\n";
 
     # run the macro and compile latex table
