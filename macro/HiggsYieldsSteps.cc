@@ -80,16 +80,16 @@ float Photj_finaleff;
 float QCDmu_finaleff;
 float ttbar_finaleff;
 
-float H_final[4];
-float Wj_final[4];
-float ttj_final[4];
-float SingleTop_final[4];
-float Zj_final[4];
-float WW_final[4];
-float ZZ_final[4];
-float WZ_final[4];
-float Wgamma_final[4];
-float data_final[4];
+float H_final[4][3];
+float Wj_final[4][3];
+float ttj_final[4][3];
+float SingleTop_final[4][3];
+float Zj_final[4][3];
+float WW_final[4][3];
+float ZZ_final[4][3];
+float WZ_final[4][3];
+float Wgamma_final[4][3];
+float data_final[4][3];
 
 // xsections
 std::map<int,float> Higgs_xsec_masses;
@@ -191,7 +191,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4bis/OptimMH%d/Data7TeV",exampleHiggsMass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir_mc)+TString(HiggsSample));       
@@ -231,9 +231,9 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/DoubleElectron",mass);
-    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/DoubleMu",mass);
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4/OptimMH%d/Data7TeV/MuEG",mass);
+    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4bis/OptimMH%d/Data7TeV/DoubleElectron",mass);
+    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4bis/OptimMH%d/Data7TeV/DoubleMu",mass);
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc23_2/emanuele/data/Higgs4.1.X/Data2011_WP90_V4bis/OptimMH%d/Data7TeV/MuEG",mass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir)+TString(HiggsDir)+TString("*Counters.root"));
@@ -657,16 +657,28 @@ void printLatex(float lumi, const char* finalstate) {
   if(!strcmp(finalstate,"EE")) channel = ee;
   if(!strcmp(finalstate,"ME")) channel = me;
 
-  data_final[channel] = data_fullSel[21];
-  H_final[channel] = H_fullSel[21];
-  Wj_final[channel] = Wj_fullSel[21];
-  ttj_final[channel] = ttj_fullSel[21];
-  SingleTop_final[channel] = SingleTop_fullSel[21];
-  Zj_final[channel] = Zj_fullSel[21];
-  WW_final[channel] = WW_fullSel[21];
-  ZZ_final[channel] = ZZ_fullSel[21];
-  WZ_final[channel] = WZ_fullSel[21];
-  Wgamma_final[channel] = Wgamma_fullSel[21];
+  for(int jet=0; jet<3; ++jet) {
+    
+    int step;
+    if(jet==0) step = 21;
+    else if(jet==1) step = 22;
+    else if(jet==2) step = 23;
+    else {
+      std::cout << "WRONG JET BIN. Stopping now." << std::endl;
+    }
+
+    data_final[channel][jet] = data_fullSel[step];
+    H_final[channel][jet] = H_fullSel[step];
+    Wj_final[channel][jet] = Wj_fullSel[step];
+    ttj_final[channel][jet] = ttj_fullSel[step];
+    SingleTop_final[channel][jet] = SingleTop_fullSel[step];
+    Zj_final[channel][jet] = Zj_fullSel[step];
+    WW_final[channel][jet] = WW_fullSel[step];
+    ZZ_final[channel][jet] = ZZ_fullSel[step];
+    WZ_final[channel][jet] = WZ_fullSel[step];
+    Wgamma_final[channel][jet] = Wgamma_fullSel[step];
+
+  }
 
 }
 
@@ -680,11 +692,23 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   textfile.open(namefile, ios_base::app);
   textfile.precision(2);
 
-  std::string channelName[4];
-  channelName[mm] = "$\\mu\\mu$";
-  channelName[ee] = "$ee$";
-  channelName[em] = "$e\\mu$";
-  channelName[me] = "$\\mu e$";
+  std::string channelName[4][3];
+  channelName[mm][0] = "$\\mu\\mu$ 0 j";
+  channelName[ee][0] = "$ee$ 0 j";
+  channelName[em][0] = "$e\\mu$ 0 j";
+  channelName[me][0] = "$\\mu e$ 0 j";
+
+  channelName[mm][1] = "$\\mu\\mu$ 1 j";
+  channelName[ee][1] = "$ee$ 1 j";
+  channelName[em][1] = "$e\\mu$ 1 j";
+  channelName[me][1] = "$\\mu e$ 1 j";
+
+  channelName[mm][2] = "$\\mu\\mu$ 2 j";
+  channelName[ee][2] = "$ee$ 2 j";
+  channelName[em][2] = "$e\\mu$ 2 j";
+  channelName[me][2] = "$\\mu e$ 2 j";
+
+  for(int jet=0; jet<3; ++jet) {
 
   textfile << "\\begin{sidewaystable}[p]" << endl
            << "\\begin{center}" << endl;
@@ -694,44 +718,44 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   textfile << "final state & H & WW & WZ & ZZ & Z+jets \t\\\\" << endl;
   textfile << "\\hline" << endl; 
   for(int ichan=0; ichan<4; ++ichan) {
-    textfile << channelName[ichan] << "\t&\t";
+    textfile << channelName[ichan][jet] << "\t&\t";
     textfile << fixed 
-             << H_final[ichan] << "\t&\t"
-             << WW_final[ichan] << "\t&\t"
-             << WZ_final[ichan] << "\t&\t"
-             << ZZ_final[ichan] << "\t&\t"
-             << Zj_final[ichan] << "\t\\\\"
+             << H_final[ichan][jet] << "\t&\t"
+             << WW_final[ichan][jet] << "\t&\t"
+             << WZ_final[ichan][jet] << "\t&\t"
+             << ZZ_final[ichan][jet] << "\t&\t"
+             << Zj_final[ichan][jet] << "\t\\\\"
              << endl;
   }
   textfile << "ll" << "\t&\t";
   textfile << fixed
-           << H_final[mm]  + H_final[ee]  + H_final[em]  + H_final[me]  << "\t&\t"
-           << WW_final[mm] + WW_final[ee] + WW_final[em] + WW_final[me] << "\t&\t"
-           << WZ_final[mm] + WZ_final[ee] + WZ_final[em] + WZ_final[me] << "\t&\t"
-           << ZZ_final[mm] + ZZ_final[ee] + ZZ_final[em] + ZZ_final[me] << "\t&\t"
-           << Zj_final[mm] + Zj_final[ee] + Zj_final[em] + Zj_final[me] << "\t\\\\"
+           << H_final[mm][jet]  + H_final[ee][jet]  + H_final[em][jet]  + H_final[me][jet]  << "\t&\t"
+           << WW_final[mm][jet] + WW_final[ee][jet] + WW_final[em][jet] + WW_final[me][jet] << "\t&\t"
+           << WZ_final[mm][jet] + WZ_final[ee][jet] + WZ_final[em][jet] + WZ_final[me][jet] << "\t&\t"
+           << ZZ_final[mm][jet] + ZZ_final[ee][jet] + ZZ_final[em][jet] + ZZ_final[me][jet] << "\t&\t"
+           << Zj_final[mm][jet] + Zj_final[ee][jet] + Zj_final[em][jet] + Zj_final[me][jet] << "\t\\\\"
            << endl;
   textfile << "\\hline" << endl; 
 
   textfile << "final state & W+jets & W+$\\gamma$ & $t\\bar t$ & single $t$ & data \t\\\\" << endl;
   textfile << "\\hline" << endl; 
   for(int ichan=0; ichan<4; ++ichan) {
-    textfile << channelName[ichan] << "\t&\t";
+    textfile << channelName[ichan][jet] << "\t&\t";
     textfile << fixed 
-             << Wj_final[ichan] << "\t&\t"
-             << Wgamma_final[ichan] << "\t&\t"
-             << ttj_final[ichan] << "\t&\t"
-             << SingleTop_final[ichan] << "\t&\t"
-             << data_final[ichan] << "\t\\\\"
+             << Wj_final[ichan][jet] << "\t&\t"
+             << Wgamma_final[ichan][jet] << "\t&\t"
+             << ttj_final[ichan][jet] << "\t&\t"
+             << SingleTop_final[ichan][jet] << "\t&\t"
+             << data_final[ichan][jet] << "\t\\\\"
              << endl;
   }
   textfile << "ll" << "\t&\t";
   textfile << fixed
-           << Wj_final[mm]     + Wj_final[ee]     + Wj_final[em]     + Wj_final[me]      << "\t&\t"
-           << Wgamma_final[mm] + Wgamma_final[ee] + Wgamma_final[em] + Wgamma_final[me]  << "\t&\t"
-           << ttj_final[mm]    + ttj_final[ee]    + ttj_final[em]    + ttj_final[me]     << "\t&\t"
-           << SingleTop_final[mm] + SingleTop_final[ee] + SingleTop_final[em] + SingleTop_final[me] << "\t&\t"
-           << data_final[mm] + data_final[ee] + data_final[em]  + data_final[me]  << "\t\\\\"
+           << Wj_final[mm][jet]     + Wj_final[ee][jet]     + Wj_final[em][jet]     + Wj_final[me][jet]      << "\t&\t"
+           << Wgamma_final[mm][jet] + Wgamma_final[ee][jet] + Wgamma_final[em][jet] + Wgamma_final[me][jet]  << "\t&\t"
+           << ttj_final[mm][jet]    + ttj_final[ee][jet]    + ttj_final[em][jet]    + ttj_final[me][jet]     << "\t&\t"
+           << SingleTop_final[mm][jet] + SingleTop_final[ee][jet] + SingleTop_final[em][jet] + SingleTop_final[me][jet] << "\t&\t"
+           << data_final[mm][jet] + data_final[ee][jet] + data_final[em][jet]  + data_final[me][jet]  << "\t\\\\"
            << endl;
   textfile << "\\hline" << endl
            << "\\end{tabular}" << endl
@@ -739,7 +763,7 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
            << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Expected backgrounds events in "
            << lumiEE << " pb$^-1$ (EE), " << lumiMM << " pb$^-1$ (MM), " << lumiEM << " pb$^-1$ (EM,ME).} "
            << "\\end{sidewaystable}" << endl;
-
+  }
 }
 
 void printLatex(float lumiEE, float lumiMM, float lumiEM, int HiggsMassOptim) {
@@ -794,14 +818,38 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
     masses[0] = 180;
     masses[1] = 190;
     masses[2] = 200;    
+  } else if(massset==3) {
+    masses[0] = 210;
+    masses[1] = 220;
+    masses[2] = 230;    
+  } else if(massset==4) {
+    masses[0] = 250;
+    masses[1] = 300;
+    masses[2] = 350;
+  } else if(massset==5) {
+    masses[0] = 400;
+    masses[1] = 450;
+    masses[2] = 500;
+  } else if(massset==6) {
+    masses[0] = 550;
+    masses[1] = 600;
+    masses[2] = 600;
   }
  
   char namefile[200];
   sprintf(namefile,"yieldsSummary_byCut.tex");
+  ofstream simpletextfile;
   ofstream textfile;
-  if(massset==0) textfile.open(namefile, ios_base::trunc);
-  else textfile.open(namefile, ios_base::app);
+  if(massset==0) {
+    textfile.open(namefile, ios_base::trunc);
+    simpletextfile.open("yields_plain.txt", ios_base::trunc);
+  }
+  else {
+    textfile.open(namefile, ios_base::app);
+    simpletextfile.open("yields_plain.txt", ios_base::app);
+  }
   textfile.precision(2);
+  simpletextfile.precision(2);
 
   if(massset==0) {
     if(runStandalone) {
@@ -812,12 +860,22 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
     }
   }
 
-  std::string channelName[4];
-  channelName[mm] = "$\\mu\\mu$";
-  channelName[ee] = "$ee$";
-  channelName[em] = "$e\\mu$";
-  channelName[me] = "$\\mu e$";
+  std::string channelName[4][3];
+  channelName[mm][0] = "$\\mu\\mu$ 0 j";
+  channelName[ee][0] = "$ee$ 0 j";
+  channelName[em][0] = "$e\\mu$ 0 j";
+  channelName[me][0] = "$\\mu e$ 0 j";
+
+  channelName[mm][1] = "$\\mu\\mu$ 1 j";
+  channelName[ee][1] = "$ee$ 1 j";
+  channelName[em][1] = "$e\\mu$ 1 j";
+  channelName[me][1] = "$\\mu e$ 1 j";
   
+  channelName[mm][2] = "$\\mu\\mu$ 2 j";
+  channelName[ee][2] = "$ee$ 2 j";
+  channelName[em][2] = "$e\\mu$ 2 j";
+  channelName[me][2] = "$\\mu e$ 2 j";
+
   textfile << "\\begin{table}[p]" << endl
            << "\\begin{center}" << endl;
   textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}" << endl;
@@ -832,48 +890,65 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
 
   for(int ichan=0; ichan<4; ++ichan) {
 
-    textfile << channelName[ichan] << "\t&\t";
+    for(int jet=0; jet<3; ++jet) {
+      
+      textfile << channelName[ichan][jet] << "\t&\t";
+      
+      for(int i=0; i<3; i++) {
+        int mass = masses[i];
+        cout << "======> Now analyzing mass = " << mass << "<======" << endl;
+        exampleHiggsMass = mass;
+        /*
+          if(ichan==ee) computeYields(lumi,"EE",mass);
+          if(ichan==mm) computeYields(lumi,"MM",mass);
+          if(ichan==em) computeYields(lumi,"EM",mass);
+          if(ichan==me) computeYields(lumi,"ME",mass);
+        */
+        if(ichan==ee) computeYields(lumiEE,"EE");
+        if(ichan==mm) computeYields(lumiMM,"MM");
+        if(ichan==em) computeYields(lumiEM,"EM");
+        if(ichan==me) computeYields(lumiEM,"ME");
 
-    for(int i=0; i<3; i++) {
-      int mass = masses[i];
-      cout << "======> Now analyzing mass = " << mass << "<======" << endl;
-      exampleHiggsMass = mass;
-      /*
-      if(ichan==ee) computeYields(lumi,"EE",mass);
-      if(ichan==mm) computeYields(lumi,"MM",mass);
-      if(ichan==em) computeYields(lumi,"EM",mass);
-      if(ichan==me) computeYields(lumi,"ME",mass);
-      */
-      if(ichan==ee) computeYields(lumiEE,"EE");
-      if(ichan==mm) computeYields(lumiMM,"MM");
-      if(ichan==em) computeYields(lumiEM,"EM");
-      if(ichan==me) computeYields(lumiEM,"ME");
+        int step;
+        if(jet==0) step = 21;
+        else if(jet==1) step = 22;
+        else if(jet==2) step = 23;
+        else {
+          std::cout << "WRONG JET BIN. Stopping now." << std::endl;
+        }
 
-      H_final[ichan] = H_fullSel[21];
-      Wj_final[ichan] = Wj_fullSel[21];
-      ttj_final[ichan] = ttj_fullSel[21];
-      SingleTop_final[ichan] = SingleTop_fullSel[21];
-      Zj_final[ichan] = Zj_fullSel[21];
-      WW_final[ichan] = WW_fullSel[21];
-      ZZ_final[ichan] = ZZ_fullSel[21];
-      WZ_final[ichan] = WZ_fullSel[21];
-      Wgamma_final[ichan] = Wgamma_fullSel[21];
-      data_final[ichan] = data_fullSel[21];
-
-      textfile << fixed 
-               << H_final[ichan] << "\t&\t"
-               << WW_final[ichan] + 
-        // WZ_final[ichan] +
-        // ZZ_final[ichan] +
-        Zj_final[ichan] +
-        Wj_final[ichan] +
-        ttj_final[ichan] +
-        SingleTop_final[ichan] 
-	       << "\t&\t"
-               << data_final[ichan];
-      if(i<2) textfile << "\t&\t";
-      else textfile << "\t\\\\" << endl;
-      cout << "$$$$$$$> Done with mass = " << mass << "<$$$$$$$" << endl;
+        H_final[ichan][jet] = H_fullSel[step];
+        Wj_final[ichan][jet] = Wj_fullSel[step];
+        ttj_final[ichan][jet] = ttj_fullSel[step];
+        SingleTop_final[ichan][jet] = SingleTop_fullSel[step];
+        Zj_final[ichan][jet] = Zj_fullSel[step];
+        WW_final[ichan][jet] = WW_fullSel[step];
+        ZZ_final[ichan][jet] = ZZ_fullSel[step];
+        WZ_final[ichan][jet] = WZ_fullSel[step];
+        Wgamma_final[ichan][jet] = Wgamma_fullSel[step];
+        data_final[ichan][jet] = data_fullSel[step];
+        
+        textfile << fixed 
+                 << H_final[ichan][jet] << "\t&\t"
+                 << WW_final[ichan][jet] + 
+          WZ_final[ichan][jet] +
+          ZZ_final[ichan][jet] +
+          Zj_final[ichan][jet] +
+          Wj_final[ichan][jet] +
+          ttj_final[ichan][jet] +
+          SingleTop_final[ichan][jet] 
+                 << "\t&\t"
+                 << data_final[ichan][jet];
+        
+        simpletextfile << exampleHiggsMass << "\t" 
+                       << H_final[ichan][jet] << "\t"
+                       << WW_final[ichan][jet] + WZ_final[ichan][jet] + ZZ_final[ichan][jet] + Zj_final[ichan][jet] + Wj_final[ichan][jet] + ttj_final[ichan][jet] << "\t"
+                       << data_final[ichan][jet] << endl;
+        
+        if(i<2) textfile << "\t&\t";
+        else textfile << "\t\\\\" << endl;
+        cout << "$$$$$$$> Done with mass = " << mass << "<$$$$$$$" << endl;
+      }
     }
     cout << "done with ichannel = " << ichan << endl;
     textfile << "\\hline" << endl;
@@ -886,9 +961,10 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
            << lumiEE << " pb$^-1$ (EE), " << lumiMM << " pb$^-1$ (MM), " << lumiEM << " pb$^-1$ (EM,ME).} "
            << "\\end{table}" << endl;
 
-  if(massset==1) {
+  if(massset==6) {
     textfile << "\\end{document}" << endl;
     textfile.close();
+    simpletextfile.close();
   }
 
 }
