@@ -57,6 +57,8 @@ $(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsBase.o $<
 $(OUTLIBCOMMON)Conditions.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Conditions.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)Conditions.o $<
+$(OUTLIBCOMMON)PUWeight.o: $(INCLUDEDIRCOMMON)/CommonTools/src/PUWeight.C
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIBCOMMON)PUWeight.o $<
 $(OUTLIBCOMMON)Utils.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Utils.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIBCOMMON)Utils.o $<
 $(OUTLIBCOMMON)Counters.o: $(INCLUDEDIRCOMMON)/CommonTools/src/Counters.cc
@@ -147,6 +149,7 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIB)HiggsBase.o \
 	$(OUTLIB)Higgs.o \
 	$(OUTLIBCOMMON)Conditions.o \
+	$(OUTLIBCOMMON)PUWeight.o \
 	$(OUTLIBCOMMON)Selection.o \
 	$(OUTLIBCOMMON)EfficiencyEvaluator.o \
 	$(OUTLIBCOMMON)Counters.o \
