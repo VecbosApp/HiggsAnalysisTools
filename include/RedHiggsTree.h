@@ -54,7 +54,8 @@ public:
   //! fill the run,lumi, event number
   void fillRunInfos(int run, int lumi, int event);
   //! latinos 
-  void fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17);
+  void fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
+                   bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24);
 
   //! effectively store the events in the tree
   void store();
@@ -99,10 +100,12 @@ private:
   int myRun, myLS, myEvent;
 
   // latinos
-  bool myStep1,  myStep2,  myStep3,  myStep4,  myStep5;
-  bool myStep6,  myStep7,  myStep8,  myStep9,  myStep10;
-  bool myStep11, myStep12, myStep13, myStep14, myStep15;
-  bool myStep16, myStep17;
+  bool mySteps[24];
+/*   bool myStep1,  myStep2,  myStep3,  myStep4,  myStep5; */
+/*   bool myStep6,  myStep7,  myStep8,  myStep9,  myStep10; */
+/*   bool myStep11, myStep12, myStep13, myStep14, myStep15; */
+/*   bool myStep16, myStep17, myStep18, myStep19, myStep20; */
+/*   bool myStep21, myStep22, myStep23, myStep24; */
 
   // electron variables
   int myRecoflag[2];
