@@ -223,6 +223,13 @@ bool CutBasedHiggsSelector::output() {
   m_step15 = false;
   m_step16 = false;
   m_step17 = false;
+  m_step18 = false;
+  m_step19 = false;
+  m_step20 = false;
+  m_step21 = false;
+  m_step22 = false;
+  m_step23 = false;
+  m_step24 = false;
 
   theCounter->IncrVar("event",m_weight);
   
@@ -327,16 +334,25 @@ bool CutBasedHiggsSelector::output() {
 
     // for nJets>0 we do not need cut by cut: just final counter
     if(_selection->getSwitch("bTagVeto") && !_selection->passCut("bTagVeto",m_btagJets)) return false;
+    m_step18 = true;
 
     if(_selection->getSwitch("nSoftMuons") && !_selection->passCut("nSoftMuons",m_nSoftMuons)) return false; 
-
-    if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
-
-    if(_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
-
-    if (_selection->getSwitch("minPtLepton") && _selection->passCut("minPtLepton", m_lowPt)) return false;
+    m_step19 = true;
 
     if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
+    m_step20 = true;
+
+    if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
+    m_step21 = true;
+
+    if(_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
+    m_step22 = true;
+
+    if (_selection->getSwitch("minPtLepton") && _selection->passCut("minPtLepton", m_lowPt)) return false;
+    m_step23 = true;
+
+    if (_selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) return false;
+    m_step24 = true;
 
     if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
 
