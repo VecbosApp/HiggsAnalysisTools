@@ -8,8 +8,9 @@ trackerPtSumRel         -1000           0.065
 hcalPtSumRel	        -1000           0.16
 ecalPtSumRel		-1000           0.2
 globalSum               -1000           5.
-leptonD0                -0.25          0.25
-leptonDz                -1.             1.
+muonIP                  -0.010          0.010
+muonDz                  -0.050          0.050
+electronIP              -0.030          0.030
 MET			40		10000
 deltaPhi		0		80
 maxPtLepton		29		66

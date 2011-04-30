@@ -8,7 +8,9 @@ preselection		1
 maxPtLepton		1
 minPtLepton		1
 leptonD0                1
-leptonDz		0
+electronIP		1
+muonIP			1
+muonDz			0
 leptonIso               1
 muGlobalIso             1
 muTrackerIso		0

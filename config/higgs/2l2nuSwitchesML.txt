@@ -1,7 +1,9 @@
 maxPtLepton		0
 minPtLepton		1
 leptonD0                1
-leptonDz                1
+electronIP		1
+muonIP			1
+muonDz			0
 eleIso                  1
 muGlobalIso             1
 muTrackerIso		0
