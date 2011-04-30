@@ -54,6 +54,10 @@ public:
   float SigmaiPiP(int electron);
   // get the likelihood electron ID
   float likelihoodRatio(int eleIndex, ElectronLikelihood &lh);
+  // get the PFjet ID
+  bool isPFJetID(double eta, double nHFrac, double nEmFrac, int nConst, double chHFrac, double chMult, double chEmFrac, int WP);
+
+  enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 
 private:
   ///goodRUN/LS list

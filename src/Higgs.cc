@@ -233,3 +233,28 @@ float Higgs::SigmaiPiP(int electron) {
   }
   return spp;
 }
+
+bool Higgs::isPFJetID(double eta, double neutralHadFrac, double neutralEmFraction, int nConstituents, double chargedHadFraction, 
+                      double chargedMultiplicity, double chargedEmFraction, int WP) {
+  switch(WP) {
+  case none:
+    return true;
+    break;
+  case loose:
+    if(neutralHadFrac>=0.99 || neutralEmFraction>=0.99 || nConstituents<=1) return false;
+    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    break;
+  case medium:
+    if(neutralHadFrac>=0.95 || neutralEmFraction>=0.95 || nConstituents<=1) return false;
+    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    break;
+  case tight:
+    if(neutralHadFrac>=0.90 || neutralEmFraction>=0.90 || nConstituents<=1) return false;
+    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    break;
+  default:
+    std::cout << "Jet::isPFJetID(nt WP). Requested wrong Working point. Available are loose, medium, tight." << std::endl;
+    return false;
+  }
+  return true;
+}
