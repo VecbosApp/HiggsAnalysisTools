@@ -234,8 +234,8 @@ float Higgs::SigmaiPiP(int electron) {
   return spp;
 }
 
-bool Higgs::isPFJetID(double eta, double neutralHadFrac, double neutralEmFraction, int nConstituents, double chargedHadFraction, 
-                      double chargedMultiplicity, double chargedEmFraction, int WP) {
+bool Higgs::isPFJetID(float eta, float neutralHadFrac, float neutralEmFraction, int nConstituents, float chargedHadFraction, 
+                      float chargedMultiplicity, float chargedEmFraction, int WP) {
   switch(WP) {
   case none:
     return true;

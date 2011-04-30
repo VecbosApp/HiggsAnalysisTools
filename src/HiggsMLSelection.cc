@@ -9,6 +9,7 @@
 #include "HiggsAnalysisTools/include/HiggsMLSelection.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
+#include "CommonTools/include/PUWeight.h"
 //#include "Mt2/SUSYPhys_Mt2_222_Calculator.h"
 
 #include <iostream>
@@ -497,6 +498,7 @@ void HiggsMLSelection::Loop() {
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
 
+  PUWeight* fPUWeight = new PUWeight();
 
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -511,7 +513,11 @@ void HiggsMLSelection::Loop() {
 
     // get the kFactor of the event (for signal)
     float weight = 1;
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) weight = getkFactor("Higgs");
+
+    // weight for the PU observed in 2011 data
+    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPV);
+
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) weight *= getkFactor("Higgs");
     
     // look to the MC truth decay tree 
     // bool decayEE = findMcTree("HtoWWto2e2nu");
@@ -1976,6 +1982,19 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
 
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
+      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
+      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+
     bool foundMatch = false;
 
     // check if the electrons falls into the jet
@@ -2032,6 +2051,19 @@ int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<i
     if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;    
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
 
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
+      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
+      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+
     bool foundMatch=false;
     // check if the electrons falls into the jet
     for(int i=0; i<(int)eleToRemove.size(); i++) {
@@ -2072,6 +2104,19 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
+      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
+      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch=false;
     // check if the electrons falls into the jet
