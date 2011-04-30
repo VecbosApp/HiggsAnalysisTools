@@ -56,6 +56,9 @@ public:
   float likelihoodRatio(int eleIndex, ElectronLikelihood &lh);
   // get the PFjet ID
   bool isPFJetID(float eta, float nHFrac, float nEmFrac, int nConst, float chHFrac, float chMult, float chEmFrac, int WP);
+  //! Chris kinematic variables
+  double CalcMRstar(TLorentzVector ja, TLorentzVector jb);
+  double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 

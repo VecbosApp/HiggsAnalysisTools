@@ -1588,7 +1588,8 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_deltaEtaLeptons[ee] = etaEle[myEle]-etaEle[myPosi];
     m_dilepPt[ee].SetXYZ( m_p4LeptonMinus[ee]->Vect().X()+m_p4LeptonPlus[ee]->Vect().X(),m_p4LeptonMinus[ee]->Vect().Y()+m_p4LeptonPlus[ee]->Vect().Y(),0.0 );
     // def. 3 of http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213                           
-    m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
+    //m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
+    m_transvMass[ee]=CalcGammaMRstar(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee]);
     m_metOptll[ee] = m_p4MET->Pt() / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
     m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
@@ -1612,7 +1613,7 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_deltaErre[mm]       = m_p4LeptonMinus[mm]->Vect().DeltaR(m_p4LeptonPlus[mm]->Vect());
     m_deltaEtaLeptons[mm] = etaEle[myMuMinus]-etaEle[myMuPlus];
     m_dilepPt[mm].SetXYZ( m_p4LeptonMinus[mm]->Vect().X()+m_p4LeptonPlus[mm]->Vect().X(),m_p4LeptonMinus[mm]->Vect().Y()+m_p4LeptonPlus[mm]->Vect().Y(),0.0 );
-    m_transvMass[mm]      = mT3(*m_p4LeptonMinus[mm],*m_p4LeptonPlus[mm],m_p4MET->Vect());
+    m_transvMass[mm]      = CalcGammaMRstar(*m_p4LeptonMinus[mm],*m_p4LeptonPlus[mm]);
     m_metOptll[mm]        = m_p4MET->Pt() / m_dilepPt[mm].Pt();
     m_mT2[mm]             = 0.;
     m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
@@ -1642,7 +1643,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
       m_deltaEtaLeptons[em] = etaEle[myEle]-etaEle[myMuPlus];
       m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
-      m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+      m_transvMass[em]    = CalcGammaMRstar(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em]);
       m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
       m_mT2[em]           = 0.;
       m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
@@ -1659,7 +1660,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
       m_deltaEtaLeptons[me] = etaEle[myEle]-etaEle[myMuPlus];
       m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-      m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+      m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
       m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
       m_mT2[me]           = 0.;
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
@@ -1683,7 +1684,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
       m_deltaEtaLeptons[em] = etaEle[myMuMinus]-etaEle[myPosi];
       m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
-      m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+      m_transvMass[em]    = CalcGammaMRstar(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em]);
       m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
       m_mT2[em]           = 0.;
       m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
@@ -1700,7 +1701,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
       m_deltaEtaLeptons[me] = etaEle[myMuMinus]-etaEle[myPosi];
       m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-      m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+      m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
       m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
       m_mT2[me]           = 0.;
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
@@ -1737,7 +1738,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
 	m_deltaEtaLeptons[em] = etaEle[myMuMinus]-etaEle[myPosi];
         m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
-        m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+        m_transvMass[em]    = CalcGammaMRstar(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em]);
         m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
         m_mT2[em]           = 0.;
         m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
@@ -1754,7 +1755,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
 	m_deltaEtaLeptons[me] = etaEle[myMuMinus]-etaEle[myPosi];
         m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-        m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+        m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
         m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
         m_mT2[me]           = 0.;
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
@@ -1776,7 +1777,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_deltaErre[em]     = m_p4LeptonMinus[em]->Vect().DeltaR(m_p4LeptonPlus[em]->Vect());
 	m_deltaEtaLeptons[em] = etaEle[myEle]-etaEle[myMuPlus];
         m_dilepPt[em].SetXYZ( m_p4LeptonMinus[em]->Vect().X()+m_p4LeptonPlus[em]->Vect().X(),m_p4LeptonMinus[em]->Vect().Y()+m_p4LeptonPlus[em]->Vect().Y(),0.0 );
-        m_transvMass[em]    = mT3(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em],m_p4MET->Vect());
+        m_transvMass[em]    = CalcGammaMRstar(*m_p4LeptonMinus[em],*m_p4LeptonPlus[em]);
         m_metOptll[em]      = m_p4MET->Pt() / m_dilepPt[em].Pt();
         m_mT2[em]           = 0.;
         m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
@@ -1793,7 +1794,7 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
 	m_deltaEtaLeptons[me] = etaEle[myEle]-etaEle[myMuPlus];
         m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-        m_transvMass[me]    = mT3(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],m_p4MET->Vect());
+        m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
         m_metOptll[me]      = m_p4MET->Pt() / m_dilepPt[me].Pt();
         m_mT2[me]           = 0.;
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
@@ -2496,3 +2497,4 @@ void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& re
   else if(channel==em) notRequiredTriggersEM=reqTriggers;
   else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
 }
+
