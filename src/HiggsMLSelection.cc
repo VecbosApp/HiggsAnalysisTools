@@ -515,7 +515,7 @@ void HiggsMLSelection::Loop() {
     float weight = 1;
 
     // weight for the PU observed in 2011 data
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPV);
+    // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPV);
 
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) weight *= getkFactor("Higgs");
     
@@ -1369,7 +1369,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> co
     int thisEle = convEle[iEle];
 
     int gsfTrack = gsfTrackIndexEle[thisEle]; 
-    float d3dEle = impactPar3DBiasedGsfTrack[gsfTrack];
+    float d3dEle = impactPar3DGsfTrack[gsfTrack];
     if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;   
 
     float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
@@ -1491,7 +1491,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
     int thisMu = isoMu[iMu];
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
-    float dxyMuon = transvImpactParBiasedTrack[ctfMuon];
+    float dxyMuon = transvImpactParTrack[ctfMuon];
     float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];   
     if (_selectionEE->getSwitch("muonIP") && (!_selectionEE->passCut("muonIP",dxyMuon)) ) continue;   
     if (_selectionEE->getSwitch("muonDz") && (!_selectionEE->passCut("muonDz",dzMuon)) )  continue;   
@@ -2183,7 +2183,7 @@ int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
     int track = trackIndexMuon[i];
     if(trackValidHitsTrack[track]<=10) continue;
 
-    float dxy = transvImpactParBiasedTrack[track];
+    float dxy = transvImpactParTrack[track];
     if(dxy > 0.100) continue;   
 
     float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
@@ -2221,7 +2221,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     if(!theId || !theIso || !theConvRej) continue;
 
     int track = gsfTrackIndexEle[i];
-    float d3dEle = impactPar3DBiasedGsfTrack[track];
+    float d3dEle = impactPar3DGsfTrack[track];
     if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;    
 
     numEle++;
@@ -2248,7 +2248,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
 
     int track = trackIndexMuon[i];
-    float dxy = transvImpactParBiasedTrack[track];
+    float dxy = transvImpactParTrack[track];
     float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
     if(_selectionEE->getSwitch("muonIP") && !_selectionEE->passCut("muonIP",dxy)) continue;
     if(_selectionEE->getSwitch("muonDz") && !_selectionEE->passCut("muonDz",dz))  continue;  
