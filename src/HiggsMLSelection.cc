@@ -1908,6 +1908,7 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
   thisCutBasedID->SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
   thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
+  thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
   thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
   thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
   thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
