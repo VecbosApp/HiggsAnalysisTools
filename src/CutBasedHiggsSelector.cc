@@ -98,10 +98,12 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addSwitch("trigger");
   _selection->addSwitch("leptonId");
   _selection->addSwitch("leptonIso");
+  _selection->addSwitch("leptonD0"); 
   _selection->addSwitch("convRej");
   _selection->addCut("muGlobalIso");
-  _selection->addCut("leptonD0");
-  _selection->addCut("leptonDz");
+  _selection->addCut("electronIP");
+  _selection->addCut("muonIP");
+  _selection->addCut("muonDz");
   _selection->addCut("nExtraLeptons");
   _selection->addCut("looseMET");
   _selection->addCut("mll");
@@ -131,7 +133,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("leptonId");
   globalCounter->AddVar("leptonIso");
   globalCounter->AddVar("convRej");
-  globalCounter->AddVar("leptonD0");
+  globalCounter->AddVar("leptonD0");       
   globalCounter->AddVar("nExtraLeptons");
   globalCounter->AddVar("looseMET");
   globalCounter->AddVar("mll");
@@ -175,7 +177,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("leptonId");
       processCounter->AddVar("leptonIso");      
       processCounter->AddVar("convRej");
-      processCounter->AddVar("leptonD0");
+      processCounter->AddVar("leptonD0");         
       processCounter->AddVar("nExtraLeptons");
       processCounter->AddVar("looseMET");
       processCounter->AddVar("mll");
