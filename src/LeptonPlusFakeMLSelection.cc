@@ -88,10 +88,10 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
   TFile *fileLH = TFile::Open("pdfs_MC.root");
   TDirectory *EB0lt15dir = fileLH->GetDirectory("/");
   TDirectory *EB1lt15dir = fileLH->GetDirectory("/");
-  TDirectory *EElt15dir = fileLH->GetDirectory("/");
+  TDirectory *EElt15dir  = fileLH->GetDirectory("/");
   TDirectory *EB0gt15dir = fileLH->GetDirectory("/");
   TDirectory *EB1gt15dir = fileLH->GetDirectory("/");
-  TDirectory *EEgt15dir = fileLH->GetDirectory("/");
+  TDirectory *EEgt15dir  = fileLH->GetDirectory("/");
   LikelihoodSwitches defaultSwitches;
   defaultSwitches.m_useFBrem = true;
   defaultSwitches.m_useEoverP = false;
@@ -170,268 +170,6 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.028946;
 }
 
-
-
-bool LeptonPlusFakeMLSelection::findMcTree(const char* processType) {
-
-  _process = "UNDEFINED";
-  _theGenEle = -1;
-  _theGenPos = -1;
-  
-  // now we look for ee || mumu || emu
-  // in the acceptance and with a loose pT threshold
-  float etaEleAcc_  = 2.5;
-  float ptEleAcc_   = 5.0; // GeV
-  float etaMuonAcc_ = 2.4;
-  float ptMuonAcc_  = 0.0; // GeV
-  
-  // signal: 2e2nu
-  if(strcmp(processType,"HtoWWto2e2nu")==0) {
-    int indeminus=999, indeplus=999;
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc] == -11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
-      if( idMc[imc] ==  11 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
-    }
-    if( indeminus<25 && indeplus<25 ) {
-      _theGenPos = indeplus;
-      _theGenEle = indeminus;
-    }
-    return ( indeplus < 25 && indeminus < 25 );
-  }
-
-  // signal: 2m2nu
-  if(strcmp(processType,"HtoWWto2m2nu")==0) {
-    int indmuminus=999, indmuplus=999;
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc] == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc] ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
-    }
-    if( indmuminus<25 && indmuplus<25 ) {
-      _theGenMuPlus  = indmuplus;
-      _theGenMuMinus = indmuminus;
-    }
-    return ( indmuplus < 25 && indmuminus < 25 );
-  }
-
-  // signal: em2nu
-  if(strcmp(processType,"HtoWWtoem2nu")==0) {
-    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
-
-    bool isEM = false;
-
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeplus = imc;
-      if( idMc[imc]  ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
-      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  ==  11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeminus = imc;
-    }
-
-    if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos     = indeplus;
-      _theGenMuMinus = indmuminus;
-      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
-      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
-      if ( ptMcPos>ptMcMuMinus) isEM = true;
-    } else if( indeminus<25 && indmuplus<25 ) {
-      _theGenEle = indeminus;
-      _theGenMuPlus = indmuplus;
-      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
-      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
-      if ( ptMcEle>ptMcMuPlus) isEM = true;
-    }
-    
-    return ( (indeplus<25 && indmuminus<25 && isEM) || (indeminus<25 && indmuplus<25 && isEM) );
-  }
-
-  // signal: me2nu
-  if(strcmp(processType,"HtoWWtome2nu")==0) {
-    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
-    
-    bool isME = false;
-
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeplus = imc;
-      if( idMc[imc]  ==  13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
-      if( idMc[imc]  == -13 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  ==  11 && fabs(etaMc[imc]) < etaEleAcc_  && ptMc > ptEleAcc_ )  indeminus = imc;
-    }
-
-    if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos     = indeplus;
-      _theGenMuMinus = indmuminus;
-      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
-      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
-      if ( ptMcPos<ptMcMuMinus) isME = true;
-    } else if( indeminus<25 && indmuplus<25 ) {
-      _theGenEle = indeminus;
-      _theGenMuPlus = indmuplus;
-      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
-      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
-      if ( ptMcEle<ptMcMuPlus) isME = true;
-    }
-    
-    return ( (indeplus<25 && indmuminus<25 && isME) || (indeminus<25 && indmuplus<25 && isME) );
-  }
-
-  // signal ee excluding taus
-  if(strcmp(processType,"HtoWWto2e2nu_prompt")==0) {
-    int indeminus=999, indeplus=999;
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
-      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
-    }
-    if( indeminus<25 && indeplus<25 ) {
-      _theGenPos = indeplus;
-      _theGenEle = indeminus;
-    }
-    return ( indeplus < 25 && indeminus < 25 );
-  }
-
-  // signal mm excluding taus
-  if(strcmp(processType,"HtoWWto2m2nu_prompt")==0) {
-    int indmuminus=999, indmuplus=999;
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = 11;
-    }
-    if( indmuminus<25 && indmuplus<25 ) {
-      _theGenMuPlus = indmuplus;
-      _theGenMuMinus = indmuminus;
-    }
-    return ( indmuplus < 25 && indmuminus < 25 );
-  }
-
-  // signal em excluding taus
-  if(strcmp(processType,"HtoWWtoem2nu_prompt")==0) {
-    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
-
-    bool isEM = false;
-
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
-      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
-      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
-    }
-
-    if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos     = indeplus;
-      _theGenMuMinus = indmuminus;
-      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
-      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
-      if ( ptMcPos>ptMcMuMinus) isEM = true;
-    } else if( indeminus<25 && indmuplus<25 ) {
-      _theGenEle = indeminus;
-      _theGenMuPlus = indmuplus;
-      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
-      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
-      if ( ptMcEle>ptMcMuPlus) isEM = true;
-    }
-    
-    return ( (indeplus<25 && indmuminus<25 && isEM) || (indeminus<25 && indmuplus<25 && isEM) );
-  }
-
-  // signal me excluding taus
-  if(strcmp(processType,"HtoWWtome2nu_prompt")==0) {
-    int indeminus=999, indeplus=999, indmuminus=999, indmuplus=999;
-
-    bool isME = false;
-
-    for(int imc=6;imc<25;imc++) {
-      float ptMc = pMc[imc]*fabs(sin(thetaMc[imc]));
-      if( idMc[imc]  == -11 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeplus = imc;
-      if( idMc[imc]  == 13 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuminus = imc;
-      if( idMc[imc]  == -13 && idMc[mothMc[imc]]==24 && fabs(etaMc[imc]) < etaMuonAcc_ && ptMc > ptMuonAcc_ ) indmuplus = imc;
-      if( idMc[imc]  == 11 && idMc[mothMc[imc]]==-24 && fabs(etaMc[imc]) < etaEleAcc_ && ptMc > ptEleAcc_ ) indeminus = imc;
-    }
-    
-    if( indeplus<25 && indmuminus<25 ) {
-      _theGenPos     = indeplus;
-      _theGenMuMinus = indmuminus;
-      float ptMcPos     = pMc[indeplus]*fabs(sin(thetaMc[indeplus]));      
-      float ptMcMuMinus = pMc[indmuminus]*fabs(sin(thetaMc[indmuminus]));      
-      if ( ptMcPos<ptMcMuMinus) isME = true;
-    } else if( indeminus<25 && indmuplus<25 ) {
-      _theGenEle = indeminus;
-      _theGenMuPlus = indmuplus;
-      float ptMcEle    = pMc[indeminus]*fabs(sin(thetaMc[indeminus]));      
-      float ptMcMuPlus = pMc[indmuplus]*fabs(sin(thetaMc[indmuplus]));      
-      if ( ptMcEle<ptMcMuPlus) isME = true;
-    }
-    
-    return ( (indeplus<25 && indmuminus<25 && isME) || (indeminus<25 && indmuplus<25 && isME) );
-  }
-  
-  // signal: 2l2nu
-  if(strcmp(processType,"HtoWWto2l2nu")==0) {
-    int indlminus=999, indlplus=999;
-    for(int imc=6;imc<25;imc++) {
-      if(idMc[imc]>10 && idMc[imc]<19 && idMc[mothMc[imc]]==-24)  indlminus=imc;
-      if(idMc[imc]<-10 && idMc[imc]>-19 && idMc[mothMc[imc]]==24) indlplus=imc;
-    }
-    if(indlminus<25 && indlplus<25) {
-      if( (idMc[indlminus]==-11) || (idMc[indlminus]==-13) || (idMc[indlminus]==-15))  
-	_theGenEle = indlminus;
-      if( (idMc[indlplus]==11) || (idMc[indlplus]==13) || (idMc[indlplus]==15) )
-	_theGenPos = indlplus;
-    }
-    return (indlminus<25 && indlplus<25);
-  }
-  
-
-  // WW: e / mu / tau
-  else if(strcmp(processType,"WW")==0) {
-    _process = "WW";
-    TVector3 WminusP, WplusP;
-    WminusP.SetMagThetaPhi(pMc[6],thetaMc[6],phiMc[6]);
-    WplusP.SetMagThetaPhi(pMc[7],thetaMc[7],phiMc[7]);
-    float pT = (WminusP+WplusP).Pt();
-    _theGenEle = 6;
-    _theGenPos = 7;
-    _genHiggsPt[0] = pT;
-    return (
-	    (abs(idMc[6])==24) && (abs(idMc[7])==24) &&
-	    (abs(idMc[8])>10 && abs(idMc[8])<19 && abs(idMc[mothMc[8]])==24) &&
-	    (abs(idMc[10])>10 && abs(idMc[10])<19 && abs(idMc[mothMc[10]])==24)
-	    );
-  }
-  // w+jets: e / mu / tau
-  else if(strcmp(processType,"Wjets")==0) {
-    _process = "Wjets";
-    return ( ((abs(idMc[8])==11) && abs(idMc[9])==12) || ((abs(idMc[8])==13) && abs(idMc[9])==14) || ((abs(idMc[8])==15) && abs(idMc[9])==16));
-  }
-  // ttbar: e / mu / tau
-  else if(strcmp(processType,"ttbar")==0) {
-    _process = "ttbar";
-    _theGenEle = 13;
-    _theGenPos = 15;
-    return ( 
-	    abs(idMc[9])==24 && abs(idMc[15])>10 && abs(idMc[15])<19 &&
-	    abs(idMc[11])==24 && abs(idMc[13])>10 && abs(idMc[13])<19 &&
-	    (idMc[13]*idMc[15]<0)
-	    );
-  }
-  else if(strcmp(processType,"ZZleptonic")==0) {
-    _process = "ZZleptonic";
-    // 8,9; 10,11 are the daughters of the Z;Z
-    return (fabs(idMc[8])>10 && fabs(idMc[8])<19 &&
-	    fabs(idMc[9])>10 && fabs(idMc[9])<19 &&
-	    fabs(idMc[10])>10 && fabs(idMc[10])<19 &&
-	    fabs(idMc[11])>10 && fabs(idMc[11])<19);
-  }
-  else {
-    std::cout << "This processType: " << processType << "is not expected, you should put MTtruth switch off" << std::endl;
-    return false;
-  }
-}
-
 float LeptonPlusFakeMLSelection::getkFactor(std::string process) {
 
   float weight = 1.;
@@ -454,8 +192,7 @@ void LeptonPlusFakeMLSelection::Loop() {
 
   if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->addKFactor();
 
-  if(!_selectionEE->getSwitch("isData")) myOutTreeEE->addMcTruthInfos();
-  else myOutTreeEE->addRunInfos();
+  if(_selectionEE->getSwitch("isData")) myOutTreeEE->addRunInfos();
 
   myOutTreeEE->addMLVars();
 
@@ -477,8 +214,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) tmpWeight = getkFactor("Higgs");
     
     // MC truth
-    bool promptEE = false;
-    if( !_selectionEE->getSwitch("isData") ) promptEE = findMcTree("HtoWWto2e2nu_prompt");
+    bool promptEE = true;
 
     // Good Run selection
     if (_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("goodRunLS") && !isGoodRunLS()) {
@@ -552,13 +288,6 @@ void LeptonPlusFakeMLSelection::Loop() {
     // consider all possible denominators different from the selected tight candidate and use the highest pT one as a fake
     theFake = getBestDenominator(theReal);      
 
-    // now check if fake ele passes all the requirements                                                                                       
-    // bool fakePassedId   = passEleId(theFake);
-    // bool fakePassedIsol = passEleIsol(theFake);
-    // bool fakePassedConv = passEleConv(theFake);
-    // bool fakePassedIP   = passEleIp(theFake);
-    // if (!fakePassedId || !fakePassedIsol || !fakePassedConv || !fakePassedIP) theFake = -1;
-
     // set of kinematics: : now I've all the final leptons 
     resetKinematics();
     setKinematicsEE(theReal, theFake);   
@@ -573,7 +302,6 @@ void LeptonPlusFakeMLSelection::Loop() {
       float fakerate    = getFakeRate( theFakePt, isFakeBarrel );
       float fakerateErr = getFakeRateError( theFakePt, isFakeBarrel );
       weight      = tmpWeight * fakerate;                           
-      // cout << theFakePt << " " << etaEle[theFake]  << " " << tmpWeight << " " << fakerate << " " << weight << " " << endl;
       weightError = tmpWeight * fakerateErr;                        
     } else {
       weight      = tmpWeight;
@@ -592,7 +320,7 @@ void LeptonPlusFakeMLSelection::Loop() {
       // jet counter
       njets[ichan] = numJets(eleCands[ichan],muCands[ichan],ichan);
       nuncorrjets[ichan] = numUncorrJets(eleCands[ichan],muCands[ichan]);
-
+      
       // if 1-jet bin, use deltaphi(ll-jet)
       dphiLLJ[ichan] = deltaPhiLLJet(ichan);   
 
@@ -615,8 +343,6 @@ void LeptonPlusFakeMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetMcTruth(promptEE);  
     CutBasedHiggsSelectionEE.SetHLT(passedHLT);               
     CutBasedHiggsSelectionEE.SetIsChannel(m_channel[ee]);     
-    // CutBasedHiggsSelectionEE.SetElectronId(1);                 
-    // CutBasedHiggsSelectionEE.SetPositronId(1);
     CutBasedHiggsSelectionEE.SetElectronId(theReal);                 
     CutBasedHiggsSelectionEE.SetPositronId(theFake);
     CutBasedHiggsSelectionEE.SetElectronIsolation(theReal);                 
@@ -955,54 +681,6 @@ bool LeptonPlusFakeMLSelection::isDenomFake(int theEle) {
   if (theSpikeSC>0.95) isGoodDenom = false;
   
   return isGoodDenom;
-}
-
-bool LeptonPlusFakeMLSelection::passEleId( int thisEle ) {
-
-  bool theElectronID, theElectronIsol, theElectronConvRej;
-  theElectronID = theElectronIsol = theElectronConvRej = true;
-
-  float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-  if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-  if ( _selectionEE->getSwitch("asymmetricID")) {
-    if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-    if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
-  }
-
-  return theElectronID;
-}
-
-bool LeptonPlusFakeMLSelection::passEleIsol( int thisEle ) {
-
-  bool theElectronID, theElectronIsol, theElectronConvRej;
-  theElectronID = theElectronIsol = theElectronConvRej = true;
-
-  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-
-  return theElectronIsol;
-}
-
-bool LeptonPlusFakeMLSelection::passEleConv( int thisEle ) {
-
-  bool theElectronID, theElectronIsol, theElectronConvRej;
-  theElectronID = theElectronIsol = theElectronConvRej = true;
-
-  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-
-  return theElectronConvRej;
-}
-
-bool LeptonPlusFakeMLSelection::passEleIp( int thisEle ) {
-
-  bool passedIP = true;
-
-  int gsfTrack = gsfTrackIndexEle[thisEle];
-  float dxyEle = transvImpactParBiasedGsfTrack[gsfTrack];
-  float dzEle  = PVzPV[m_closestPV] - trackVzGsfTrack[gsfTrack];
-  if (_selectionEE->getSwitch("leptonD0") && (!_selectionEE->passCut("leptonD0",dxyEle)) ) passedIP = false;
-  if (_selectionEE->getSwitch("leptonDz") && (!_selectionEE->passCut("leptonDz",dzEle)) )  passedIP = false;
-
-  return passedIP;
 }
 
 float LeptonPlusFakeMLSelection::getFakeRate( float fakePt, bool isFakeBarrel ) {

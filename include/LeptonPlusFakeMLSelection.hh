@@ -55,10 +55,6 @@ private:
   //! fake related selection
   int getBestDenominator(int realEle);
   bool isDenomFake(int theEle);
-  bool passEleId( int thisEle );
-  bool passEleIsol( int thisEle );
-  bool passEleConv( int thisEle );
-  bool passEleIp( int thisEle );
 
   //! set the 4 vectors, invariant mass, etc. after preselections and full selection
   void setKinematicsEE(int myEle, int myPosi);
