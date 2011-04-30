@@ -544,9 +544,14 @@ void HiggsMLSelection::Loop() {
     
     
     // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    reloadTriggerMask(true);
-    bool passedHLT = (_selectionEE->getSwitch("isData")) ? hasPassedHLT() : true;
-    
+    reloadTriggerMask();
+    //    bool passedHLT = (_selectionEE->getSwitch("isData")) ? hasPassedHLT() : true;
+    bool passedHLT[4];
+    passedHLT[ee] = hasPassedHLT(ee);
+    passedHLT[mm] = hasPassedHLT(mm);
+    passedHLT[em] = hasPassedHLT(em);
+    passedHLT[me] = hasPassedHLT(em); // same triggers for em and me
+
     // trigger tree
     // myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
     // myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
@@ -750,7 +755,7 @@ void HiggsMLSelection::Loop() {
     // EE
     CutBasedHiggsSelectionEE.SetWeight(weight);               
     CutBasedHiggsSelectionEE.SetMcTruth(promptEE);  
-    CutBasedHiggsSelectionEE.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionEE.SetHLT(passedHLT[ee]);               
     CutBasedHiggsSelectionEE.SetIsChannel(m_channel[ee]);     
     
     CutBasedHiggsSelectionEE.SetElectronId(theIdElectron);                 
@@ -823,6 +828,13 @@ void HiggsMLSelection::Loop() {
     bool outputStep15 = CutBasedHiggsSelectionEE.outputStep15();
     bool outputStep16 = CutBasedHiggsSelectionEE.outputStep16();
     bool outputStep17 = CutBasedHiggsSelectionEE.outputStep17();
+    bool outputStep18 = CutBasedHiggsSelectionEE.outputStep18();
+    bool outputStep19 = CutBasedHiggsSelectionEE.outputStep19();
+    bool outputStep20 = CutBasedHiggsSelectionEE.outputStep20();
+    bool outputStep21 = CutBasedHiggsSelectionEE.outputStep21();
+    bool outputStep22 = CutBasedHiggsSelectionEE.outputStep22();
+    bool outputStep23 = CutBasedHiggsSelectionEE.outputStep23();
+    bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
 
 
     // eleID variables to fill the tree (after each cut)
@@ -844,7 +856,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
 
-    myOutTreeEE -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    myOutTreeEE -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
@@ -861,7 +873,7 @@ void HiggsMLSelection::Loop() {
     // MM
     CutBasedHiggsSelectionMM.SetWeight(weight);               
     CutBasedHiggsSelectionMM.SetMcTruth(promptMM); 
-    CutBasedHiggsSelectionMM.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionMM.SetHLT(passedHLT[mm]);               
     CutBasedHiggsSelectionMM.SetIsChannel(m_channel[mm]);     
     
     CutBasedHiggsSelectionMM.SetElectronId(theIdMuonMinus);                 
@@ -929,6 +941,13 @@ void HiggsMLSelection::Loop() {
     outputStep15 = CutBasedHiggsSelectionMM.outputStep15();
     outputStep16 = CutBasedHiggsSelectionMM.outputStep16();
     outputStep17 = CutBasedHiggsSelectionMM.outputStep17();
+    outputStep18 = CutBasedHiggsSelectionMM.outputStep18();
+    outputStep19 = CutBasedHiggsSelectionMM.outputStep19();
+    outputStep20 = CutBasedHiggsSelectionMM.outputStep20();
+    outputStep21 = CutBasedHiggsSelectionMM.outputStep21();
+    outputStep22 = CutBasedHiggsSelectionMM.outputStep22();
+    outputStep23 = CutBasedHiggsSelectionMM.outputStep23();
+    outputStep24 = CutBasedHiggsSelectionMM.outputStep24();
 
 
     // filling the tree
@@ -942,7 +961,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     if ( _selectionMM->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(evtKfactor);
       
@@ -956,7 +975,7 @@ void HiggsMLSelection::Loop() {
     // EM
     CutBasedHiggsSelectionEM.SetWeight(weight);               
     CutBasedHiggsSelectionEM.SetMcTruth(promptEM);  
-    CutBasedHiggsSelectionEM.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionEM.SetHLT(passedHLT[em]);               
     CutBasedHiggsSelectionEM.SetIsChannel(m_channel[em]);     
 
     CutBasedHiggsSelectionEM.SetElectronId(theBestIdEleMuon.first);                 
@@ -1025,6 +1044,13 @@ void HiggsMLSelection::Loop() {
     outputStep15 = CutBasedHiggsSelectionEM.outputStep15();
     outputStep16 = CutBasedHiggsSelectionEM.outputStep16();
     outputStep17 = CutBasedHiggsSelectionEM.outputStep17();
+    outputStep18 = CutBasedHiggsSelectionEM.outputStep18();
+    outputStep19 = CutBasedHiggsSelectionEM.outputStep19();
+    outputStep20 = CutBasedHiggsSelectionEM.outputStep20();
+    outputStep21 = CutBasedHiggsSelectionEM.outputStep21();
+    outputStep22 = CutBasedHiggsSelectionEM.outputStep22();
+    outputStep23 = CutBasedHiggsSelectionEM.outputStep23();
+    outputStep24 = CutBasedHiggsSelectionEM.outputStep24();
 
     // filling the tree
     if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
@@ -1043,7 +1069,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     if ( _selectionEM->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(evtKfactor);
     
@@ -1057,7 +1083,7 @@ void HiggsMLSelection::Loop() {
     // ME
     CutBasedHiggsSelectionME.SetWeight(weight);               
     CutBasedHiggsSelectionME.SetMcTruth(promptME);    
-    CutBasedHiggsSelectionME.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionME.SetHLT(passedHLT[me]);               
     CutBasedHiggsSelectionME.SetIsChannel(m_channel[me]);     
     
     CutBasedHiggsSelectionME.SetElectronId(theBestIdMuonEle.first);                 
@@ -1125,6 +1151,13 @@ void HiggsMLSelection::Loop() {
     outputStep15 = CutBasedHiggsSelectionME.outputStep15();
     outputStep16 = CutBasedHiggsSelectionME.outputStep16();
     outputStep17 = CutBasedHiggsSelectionME.outputStep17();
+    outputStep18 = CutBasedHiggsSelectionME.outputStep18();
+    outputStep19 = CutBasedHiggsSelectionME.outputStep19();
+    outputStep20 = CutBasedHiggsSelectionME.outputStep20();
+    outputStep21 = CutBasedHiggsSelectionME.outputStep21();
+    outputStep22 = CutBasedHiggsSelectionME.outputStep22();
+    outputStep23 = CutBasedHiggsSelectionME.outputStep23();
+    outputStep24 = CutBasedHiggsSelectionME.outputStep24();
 
     // filling the tree
     if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
@@ -1143,7 +1176,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17 ); 
+    myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     if ( _selectionME->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(evtKfactor);
       
@@ -2303,4 +2336,122 @@ float HiggsMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
   if(deltaphi<TMath::Pi()/2.) return met.Mag() * sin(deltaphi);
   else return met.Mag();
 
+}
+
+
+/// specific for HWW that has multiple channels with different HLT requirements
+bool HiggsMLSelection::reloadTriggerMask()
+{
+  std::vector<int> triggerMask;
+
+  // load the triggers required for EE
+  for (std::vector< std::string >::const_iterator fIter=requiredTriggersEE.begin();fIter!=requiredTriggersEE.end();++fIter)
+    {   
+      //      std::cout << "For EE required: " << *fIter << std::endl;
+      for(unsigned int i=0; i<nameHLT->size(); i++)
+        {
+          //if( !strcmp ((*fIter).c_str(), nameHLT->at(i).c_str() ) )
+          // nameHLT[i] has ..._vXXX
+          if(nameHLT->at(i).compare(*fIter)>0)
+            {
+              triggerMask.push_back( indexHLT[i] ) ;
+              break;
+            }
+        }
+    }
+  m_requiredTriggersEE = triggerMask;
+
+  // load the triggers required for MM
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=requiredTriggersMM.begin();fIter!=requiredTriggersMM.end();++fIter)
+    {   
+      //      std::cout << "For MM required: " << *fIter << std::endl;
+      for(unsigned int i=0; i<nameHLT->size(); i++)
+        {
+          if(nameHLT->at(i).compare(*fIter)>0)
+            {
+              triggerMask.push_back( indexHLT[i] ) ;
+              break;
+            }
+        }
+    }
+  m_requiredTriggersMM = triggerMask;
+
+  // load the triggers NOT required for MM
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersMM.begin();fIter!=notRequiredTriggersMM.end();++fIter)
+    {   
+      //      std::cout << "For MM not required: " << *fIter << std::endl;
+      for(unsigned int i=0; i<nameHLT->size(); i++)
+        {
+          if(nameHLT->at(i).compare(*fIter)>0)
+            {
+              triggerMask.push_back( indexHLT[i] ) ;
+              break;
+            }
+        }
+    }
+  m_notRequiredTriggersMM = triggerMask;
+
+  // load the triggers required for EM
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=requiredTriggersEM.begin();fIter!=requiredTriggersEM.end();++fIter)
+    {   
+      //      std::cout << "For EM required: " << *fIter << std::endl;
+      for(unsigned int i=0; i<nameHLT->size(); i++)
+        {
+          if(nameHLT->at(i).compare(*fIter)>0)
+            {
+              triggerMask.push_back( indexHLT[i] ) ;
+              break;
+            }
+        }
+    }
+  m_requiredTriggersEM = triggerMask;
+
+  // load the triggers NOT required for EM
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersEM.begin();fIter!=notRequiredTriggersEM.end();++fIter)
+    {   
+      //      std::cout << "For EM not required: " << *fIter << std::endl;
+      for(unsigned int i=0; i<nameHLT->size(); i++)
+        {
+          if(nameHLT->at(i).compare(*fIter)>0)
+            {
+              triggerMask.push_back( indexHLT[i] ) ;
+              break;
+            }
+        }
+    }
+  m_notRequiredTriggersEM = triggerMask;
+
+}
+
+bool HiggsMLSelection::hasPassedHLT(int channel) {
+  Utils anaUtils;
+  if(channel==ee) return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+  else if(channel==mm) {
+    bool required = anaUtils.getTriggersOR(m_requiredTriggersMM, firedTrg);
+    bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersMM, firedTrg);
+    return (required && !notRequired);
+  } else if(channel==em) {
+    bool required = anaUtils.getTriggersOR(m_requiredTriggersEM, firedTrg);
+    bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersEM, firedTrg);
+    return (required && !notRequired);
+  }
+  return true;
+}
+
+void HiggsMLSelection::setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
+  if(channel==ee) requiredTriggersEE=reqTriggers;
+  else if(channel==mm) requiredTriggersMM=reqTriggers;
+  else if(channel==em) requiredTriggersEM=reqTriggers;
+  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+}
+
+void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
+  if(channel==ee) notRequiredTriggersEE=reqTriggers;
+  else if(channel==mm) notRequiredTriggersMM=reqTriggers;
+  else if(channel==em) notRequiredTriggersEM=reqTriggers;
+  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
 }

@@ -36,8 +36,10 @@ public:
   void SetDatasetName(std::string filename) {_datasetName=filename;};
   //! display the efficiency table
   void displayEfficiencies(std::string filename);
-  //! set the list of the required triggers
-  void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
+  //! set the required triggers masks (one per channel)
+  void setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
+  //! set the not-required triggers masks (one per channel)
+  void setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
   
 private:
 
@@ -115,6 +117,10 @@ private:
   float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
   //! for the two leptons, find the closest one to MET in phi. if(deltaPhi(lepton-MET)<pi/2) projectedMET = MET * sin(deltaPhi(lepton-MET)); else projectedMET = MET
   float GetProjectedMet(TVector3 p1, TVector3 p2);
+  //! reload the trigger mask_s_ (one per channel)
+  bool reloadTriggerMask();
+  //! get the trigger answer depending on the channel
+  bool hasPassedHLT(int channel);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -143,6 +149,12 @@ private:
   bool m_channel[4];
   bool isOk[4];
   
+  //! trigger masks
+  std::vector<int>  m_requiredTriggersEE, m_requiredTriggersMM, m_notRequiredTriggersMM,
+    m_requiredTriggersEM, m_notRequiredTriggersEM;
+  std::vector<std::string> requiredTriggersEE, requiredTriggersMM, requiredTriggersEM;
+  std::vector<std::string> notRequiredTriggersEE, notRequiredTriggersMM, notRequiredTriggersEM;
+
   //! kinematics of the event
   int theElectron,  thePositron;
   int theMuonMinus, theMuonPlus;

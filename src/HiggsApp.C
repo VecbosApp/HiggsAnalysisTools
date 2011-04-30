@@ -83,15 +83,20 @@ int main(int argc, char* argv[]) {
 
   char inputFileName[150];
   char outputFileName[150];
+  char dataset[150];
   if ( argc < 2 ){
     std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
-    std::cout << "HiggsApp inputFile [outputFile]" << std::endl;
+    std::cout << "HiggsApp inputFile [outputFile] [1=MC,0=data] [dataset]" << std::endl;
     return 1;
   }
   strcpy(inputFileName,argv[1]);
   if (argc < 3 ) strcpy(outputFileName,argv[1]);
   else strcpy(outputFileName,argv[2]);
-
+  bool isMC=1;
+  if(argc==5) {
+    isMC=argv[3];
+    strcpy(dataset,argv[4]);
+  }
 
   // -------------------------
   // Loading the file
@@ -107,8 +112,9 @@ int main(int argc, char* argv[]) {
     if (!strstr(Buffer,"#") && !(strspn(Buffer," ") == strlen(Buffer)))
       {
         sscanf(Buffer,"%s",MyRootFile);
-        //theChain->Add("root://castorcms/"+TString(MyRootFile)); 
-        theChain->Add("rfio:"+TString(MyRootFile));
+        // theChain->Add("root://castorcms/"+TString(MyRootFile)); 
+        // theChain->Add("rfio:"+TString(MyRootFile));
+        theChain->Add(TString(MyRootFile));
         std::cout << "chaining " << MyRootFile << std::endl;
       }
   }
@@ -342,19 +348,45 @@ int main(int argc, char* argv[]) {
   HiggsMLSelection htoww(theChain);
   htoww.SetDatasetName(outputFileName);
 
-  std::vector<std::string> mask;
-  mask.push_back("HLT_Ele10_LW_L1R");
-  mask.push_back("HLT_Ele15_SW_L1R");
-  mask.push_back("HLT_Ele15_SW_CaloEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_CaloEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_TightEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v2");
-  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+  std::vector<std::string> maskEE, maskMM, maskEM;
+  std::vector<std::string> maskNotEE, maskNotMM, maskNotEM;
+  
+//   mask.push_back("HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v2");
+//   mask.push_back("HLT_Mu5_Ele17_v2");
+//   mask.push_back("HLT_DoubleMu5_v1");
 
-  mask.push_back("HLT_Mu9");
-  mask.push_back("HLT_Mu15_v1");
+//   htoww.setRequiredTriggers(mask);
+  
+  if(isMC) {
+    maskEE.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+    maskMM.push_back("HLT_DoubleMu5_v1");
+    maskMM.push_back("HLT_Mu25_v1");
+    maskEM.push_back("HLT_Mu5_Ele17_v2");
+    maskEM.push_back("HLT_Mu25_v1");
+  } else {
+    TString DatasetName(dataset);
+    if(DatasetName.Contains("DoubleElectron")) {
+      maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
+    } else if(DatasetName.Contains("DoubleMu")) {
+      maskMM.push_back("HLT_DoubleMu7");
+      maskNotMM.push_back("HLT_Mu24");
+    } else if(DatasetName.Contains("MuEG")) {
+      maskEM.push_back("HLT_Mu8_Ele17_CaloIdL");
+      maskEM.push_back("HLT_Mu17_Ele8_CaloIdL");
+      maskNotEM.push_back("HLT_Mu24");
+    } else if(DatasetName.Contains("SingleMu")) {
+      maskMM.push_back("HLT_Mu24");
+      maskEM.push_back("HLT_Mu24");
+    }
+  }
 
-  htoww.setRequiredTriggers(mask);
+  htoww.setRequiredTriggers(maskEE,0);
+  htoww.setRequiredTriggers(maskMM,1);
+  htoww.setRequiredTriggers(maskEM,2);
+
+  htoww.setNotRequiredTriggers(maskNotMM,1);
+  htoww.setNotRequiredTriggers(maskNotEM,2);
+
   htoww.Loop();
   htoww.displayEfficiencies(outputFileName);
 
