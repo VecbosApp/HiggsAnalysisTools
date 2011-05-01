@@ -13,7 +13,7 @@ projectedMET            20              10000
 metOverPtLL             0.6             10000
 mll                     12              10000
 mllZPeak                0               10000
-bTagVeto                -2.1            2.1
+bTagVeto                -10000          2.1
 mll2                    12              60
 jetConeWidth		0.0		0.3
 etaJetAcc		-5.0		5.0
