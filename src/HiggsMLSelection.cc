@@ -1939,28 +1939,28 @@ void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
   *muonIdOutput = true;
 
   Utils anaUtils; 
-  bool flag = anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons) ||
-    (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
-     anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ;
-     // the following cuts are based on KF and global muon track. So if the cut above has failed, return here
-     if(!flag) {
+  bool flagGlobalMu = false;
+  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
+    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
+    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
+       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 ) flagGlobalMu = true;
+  }
+
+  bool flagTrackerMu = false;
+  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
+       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
+
+  if(!(flagGlobalMu || flagTrackerMu)) {
     *muonIdOutput = false;
     return;
   }
+    
   int track = trackIndexMuon[muonIndex];
 
   if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
 
-  if( (numberOfValidPixelBarrelHitsTrack[track]<1) && (numberOfValidPixelEndcapHitsTrack[track]<1) ) *muonIdOutput = false; 
+  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
 
-  int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
-  if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] >= 10) *muonIdOutput = false;
-  if(trackValidHitsGlobalMuonTrack[globalMuonTrack] == 0) *muonIdOutput = false;
-
-  // chiara
-  // bool station = anaUtils.muonIdVal(muonIdMuon[muonIndex],TMOneStationLoose);
-  // if (!station) *muonIdOutput = false;
-  
   float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
   float sign = fabs(ptErrorTrack[track]/ptTrack);
   if (sign>=0.1) *muonIdOutput = false;
@@ -1985,14 +1985,14 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
-      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
-      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -2054,14 +2054,14 @@ int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<i
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
-      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
-      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -2108,14 +2108,14 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int nConstituents = chargedHadronMultiplicityAK5PFJet[j] + neutralHadronMultiplicityAK5PFJet[j] +
-      photonMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j] +
-      HFHadronMultiplicityAK5PFJet[j] + HFEMMultiplicityAK5PFJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFJet[j]/energyAK5PFJet[j];
-    int chargedMultiplicity = chargedHadronMultiplicityAK5PFJet[j] + electronMultiplicityAK5PFJet[j] + muonMultiplicityAK5PFJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFJet[j]/energyAK5PFJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
