@@ -297,9 +297,8 @@ bool CutBasedHiggsSelector::output() {
       theCounter->IncrVar("nSoftMuons",m_weight);
       m_step12 = true;
 
-      // track counting = -100 means no output. Do not reject the event.
       if(!_selection->getSwitch("bTagVeto") ||
-	 (_selection->getSwitch("bTagVeto") && (m_btagJets==-100 || m_btagJets==-999 || _selection->passCut("bTagVeto",m_btagJets)))) {
+	 (_selection->getSwitch("bTagVeto") && _selection->passCut("bTagVeto",m_btagJets))) {
 	theCounter->IncrVar("bTagVeto",m_weight);
 	m_step13 = true;
       
