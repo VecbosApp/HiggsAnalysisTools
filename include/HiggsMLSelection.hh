@@ -59,8 +59,8 @@ private:
   std::pair<int,int> getBestMuonPair_ip( std::vector<int> isoMu ); 
 
   //! get the two hardest ele-muon with opposite charge
-  std::pair<int,int> getBestEleMuonPair(int eleM, int eleP, int muM, int muP);
-  std::pair<int,int> getBestMuonElePair(int eleM, int eleP, int muM, int muP);
+  std::pair<int,int> getBestEleMuonPair(std::vector<int> electrons, std::vector<int> muons);
+  std::pair<int,int> getBestMuonElePair(std::vector<int> electrons, std::vector<int> muons);
 
   //! set the 4 vectors, invariant mass, etc. after preselections and full selection
   void setKinematicsEE(int myEle, int myPosi);
@@ -158,8 +158,8 @@ private:
   //! kinematics of the event
   int theElectron,  thePositron;
   int theMuonMinus, theMuonPlus;
-  int thePreElectron,  thePrePositron;
-  int thePreMuonMinus, thePreMuonPlus;
+  int thePreElectron,  thePrePositron, thePreElectronME, thePreElectronEM;
+  int thePreMuonMinus, thePreMuonPlus, thePreMuonME, thePreMuonEM;
   int theLeadingJet[4];
   std::vector<int> eleCands[4], muCands[4];
   TLorentzVector *m_p4LeptonPlus[4], *m_p4LeptonMinus[4];

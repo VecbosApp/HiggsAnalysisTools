@@ -59,6 +59,8 @@ public:
   //! Chris kinematic variables
   double CalcMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
+  std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
+  std::vector<int> sortMuonsByPt(std::vector<int> muons);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 

@@ -311,6 +311,8 @@ public :
    Int_t           standAloneTrackIndexMuon[100];   //[nMuon]
    Int_t           combinedTrackIndexMuon[100];   //[nMuon]
    Int_t           muonIdMuon[100];   //[nMuon]
+   Int_t           typeMuon[100];   //[nMuon]
+   Int_t           numberOfMatchesMuon[100];   //[nMuon]
    Float_t         sumPt03Muon[100];   //[nMuon]
    Float_t         emEt03Muon[100];   //[nMuon]
    Float_t         hadEt03Muon[100];   //[nMuon]
@@ -818,6 +820,8 @@ public :
    TBranch        *b_trackIndexMuon;   //!
    TBranch        *b_standAloneTrackIndexMuon;   //!
    TBranch        *b_combinedTrackIndexMuon;   //!
+   TBranch        *b_typeMuon;   //!
+   TBranch        *b_numberOfMatchesMuon;   //!
    TBranch        *b_muonIdMuon;   //!
    TBranch        *b_sumPt03Muon;   //!
    TBranch        *b_emEt03Muon;   //!
@@ -1400,6 +1404,8 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("standAloneTrackIndexMuon", standAloneTrackIndexMuon, &b_standAloneTrackIndexMuon);
    fChain->SetBranchAddress("combinedTrackIndexMuon", combinedTrackIndexMuon, &b_combinedTrackIndexMuon);
    fChain->SetBranchAddress("muonIdMuon", muonIdMuon, &b_muonIdMuon);
+   fChain->SetBranchAddress("typeMuon", typeMuon, &b_typeMuon);
+   fChain->SetBranchAddress("numberOfMatchesMuon", numberOfMatchesMuon, &b_numberOfMatchesMuon);
    fChain->SetBranchAddress("sumPt03Muon", sumPt03Muon, &b_sumPt03Muon);
    fChain->SetBranchAddress("emEt03Muon", emEt03Muon, &b_emEt03Muon);
    fChain->SetBranchAddress("hadEt03Muon", hadEt03Muon, &b_hadEt03Muon);

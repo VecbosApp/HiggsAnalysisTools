@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <TTree.h>
 
@@ -572,10 +573,19 @@ void HiggsMLSelection::Loop() {
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
     std::pair<int,int> thePreElectrons = getBestElectronPair_acceptance();
     std::pair<int,int> thePreMuons     = getBestMuonPair_acceptance();
+    // filling vectors with ele-muons passing the acceptance cuts   
+    std::pair<int,int> theBestAcceptEleMuon = getBestEleMuonPair(_acceptEleAll,_acceptMuonsAll);
+    // filling vectors with ele-muons passing the acceptance cuts
+    std::pair<int,int> theBestAcceptMuonEle = getBestMuonElePair(_acceptEleAll,_acceptMuonsAll);
+
     thePreElectron  = thePreElectrons.second;
     thePrePositron  = thePreElectrons.first;
     thePreMuonPlus  = thePreMuons.first;
     thePreMuonMinus = thePreMuons.second;
+    thePreElectronEM = theBestAcceptEleMuon.first;
+    thePreMuonEM = theBestAcceptEleMuon.second;
+    thePreElectronME = theBestAcceptMuonEle.second;
+    thePreMuonME = theBestAcceptMuonEle.first;
 
     // reconstructed channel
     m_channel[ee] = false;     
@@ -594,18 +604,14 @@ void HiggsMLSelection::Loop() {
       if (thisMaxPt>20) m_channel[mm] = true;    // fixme: hardcoded
     }
 
-    if (thePreElectron > -1 && thePreMuonPlus  > -1 ) {
-      float ptEle = GetPt(pxEle[thePreElectron],pyEle[thePreElectron]);
-      float ptMu  = GetPt(pxMuon[thePreMuonPlus],pyMuon[thePreMuonPlus]);
-      if ( (ptEle>ptMu) && (ptEle>20) ) m_channel[em] = true;    // fixme: hardcoded
-      if ( (ptMu>ptEle) && (ptMu>20)  ) m_channel[me] = true;    // fixme: hardcoded
+    if ( thePreElectronEM > -1 && thePreMuonEM > -1 ) {
+      float thisMaxPt = GetPt(pxEle[thePreElectronEM],pyEle[thePreElectronEM]);
+      if (thisMaxPt>20) m_channel[em] = true;    // fixme: hardcoded
     }
 
-    if (thePrePositron > -1 && thePreMuonMinus > -1) {
-      float ptEle = GetPt(pxEle[thePrePositron],pyEle[thePrePositron]);
-      float ptMu  = GetPt(pxMuon[thePreMuonMinus],pyMuon[thePreMuonMinus]);
-      if ( (ptEle>ptMu) && (ptEle>20) ) m_channel[em] = true;    // fixme: hardcoded
-      if ( (ptMu>ptEle) && (ptMu>20)  ) m_channel[me] = true;    // fixme: hardcoded
+    if ( thePreElectronME > -1 && thePreMuonME > -1 ) {
+      float thisMaxPt  = GetPt(pxMuon[thePreMuonME],pyMuon[thePreMuonME]);
+      if (thisMaxPt>20) m_channel[me] = true;    // fixme: hardcoded
     }
     
     if (_verbose) {
@@ -682,40 +688,34 @@ void HiggsMLSelection::Loop() {
 
     // -------------------------------------------------------------
     // EM candidates: preparing vectors of candidates and selecting the two highest pT ele+- and muon-+ after each step - to check the 20 GeV cut after
-
-    // filling vectors with ele-muons passing the acceptance cuts   
-    std::pair<int,int> theBestAcceptEleMuon = getBestEleMuonPair(thePreElectron,thePrePositron,thePreMuonMinus,thePreMuonPlus);
     
     // leptonID, for leptons in acceptance
-    std::pair<int,int> theBestIdEleMuon = getBestEleMuonPair(theIdElectron,theIdPositron,theIdMuonMinus,theIdMuonPlus);
+    std::pair<int,int> theBestIdEleMuon = getBestEleMuonPair(_idEleAll,_idMuonsAll);
     
     // isolation, for identified leptons
-    std::pair<int,int> theBestIsolEleMuon = getBestEleMuonPair(theIsolElectron,theIsolPositron,theIsolMuonMinus,theIsolMuonPlus);
+    std::pair<int,int> theBestIsolEleMuon = getBestEleMuonPair(_isolEleAll,_isolMuonsAll);
 
     // conversion rejection, for isolated leptons
-    std::pair<int,int> theBestConvEleMuon = getBestEleMuonPair(theConvElectron,theConvPositron,theIsolMuonMinus,theIsolMuonPlus);
+    std::pair<int,int> theBestConvEleMuon = getBestEleMuonPair(_convEleAll,_isolMuonsAll);
 
     // transverse impact parameter, for leptons passing conversion rejection
-    std::pair<int,int> theBestIpEleMuon = getBestEleMuonPair(theIpElectron,theIpPositron,theIpMuonMinus,theIpMuonPlus);
+    std::pair<int,int> theBestIpEleMuon = getBestEleMuonPair(_ipEleAll,_ipMuonsAll);
 
 
     // -------------------------------------------------------------
     // ME candidates: preparing vectors of candidates and selecting the two highest pT ele+- and muon-+ after each step - to check the 20 GeV cut after
 
-    // filling vectors with ele-muons passing the acceptance cuts
-    std::pair<int,int> theBestAcceptMuonEle = getBestMuonElePair(thePreElectron,thePrePositron,thePreMuonMinus,thePreMuonPlus);
-    
     // leptonID, for leptons in acceptance
-    std::pair<int,int> theBestIdMuonEle = getBestMuonElePair(theIdElectron,theIdPositron,theIdMuonMinus,theIdMuonPlus);
+    std::pair<int,int> theBestIdMuonEle = getBestMuonElePair(_idEleAll,_idMuonsAll);
     
     // isolation, for identified leptons
-    std::pair<int,int> theBestIsolMuonEle = getBestMuonElePair(theIsolElectron,theIsolPositron,theIsolMuonMinus,theIsolMuonPlus);
+    std::pair<int,int> theBestIsolMuonEle = getBestMuonElePair(_isolEleAll,_isolMuonsAll);
 
     // conversion rejection, for isolated leptons
-    std::pair<int,int> theBestConvMuonEle = getBestMuonElePair(theConvElectron,theConvPositron,theIsolMuonMinus,theIsolMuonPlus);
+    std::pair<int,int> theBestConvMuonEle = getBestMuonElePair(_convEleAll,_isolMuonsAll);
 
     // transverse impact parameter, for isolated leptons
-    std::pair<int,int> theBestIpMuonEle = getBestMuonElePair(theIpElectron,theIpPositron,theIpMuonMinus,theIpMuonPlus);
+    std::pair<int,int> theBestIpMuonEle = getBestMuonElePair(_ipEleAll,_ipMuonsAll);
 
 
 
@@ -994,9 +994,9 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetElectronIp(theBestIpEleMuon.first);                 
     CutBasedHiggsSelectionEM.SetPositronIp(theBestIpEleMuon.second);                 
     // checking if the highest pT electron at each step has pT>20. E is the hardest in EM
-    float thisMaxPtIdEM   = GetPt(pxEle[theBestIdEleMuon.first],pyEle[theBestIdEleMuon.first]);
-    float thisMaxPtIsolEM = GetPt(pxEle[theBestIsolEleMuon.first],pyEle[theBestIsolEleMuon.first]);
-    float thisMaxPtIpEM   = GetPt(pxEle[theBestIpEleMuon.first],pyEle[theBestIpEleMuon.first]);
+    float thisMaxPtIdEM   = (theBestIdEleMuon.first > -1) ? GetPt(pxEle[theBestIdEleMuon.first],pyEle[theBestIdEleMuon.first]) : 0.;
+    float thisMaxPtIsolEM = (theBestIsolEleMuon.first > -1) ? GetPt(pxEle[theBestIsolEleMuon.first],pyEle[theBestIsolEleMuon.first]) : 0.;
+    float thisMaxPtIpEM   = (theBestIpEleMuon.first > -1) ? GetPt(pxEle[theBestIpEleMuon.first],pyEle[theBestIpEleMuon.first]) : 0.;
     if (thisMaxPtIdEM<20)   { 
       CutBasedHiggsSelectionEM.SetElectronId(-1);
       CutBasedHiggsSelectionEM.SetPositronId(-1);
@@ -1101,9 +1101,9 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetElectronIp(theBestIpMuonEle.first);                 
     CutBasedHiggsSelectionME.SetPositronIp(theBestIpMuonEle.second);                 
     // checking if the highest pT electron at each step has pT>20. MU is the hardest in ME
-    float thisMaxPtIdME = GetPt(pxMuon[theBestIdMuonEle.first],pyMuon[theBestIdMuonEle.first]);
-    float thisMaxPtIsolME = GetPt(pxMuon[theBestIsolMuonEle.first],pyMuon[theBestIsolMuonEle.first]);
-    float thisMaxPtIpME = GetPt(pxMuon[theBestIpMuonEle.first],pyMuon[theBestIpMuonEle.first]);
+    float thisMaxPtIdME = (theBestIdMuonEle.first > -1) ? GetPt(pxMuon[theBestIdMuonEle.first],pyMuon[theBestIdMuonEle.first]) : 0.;
+    float thisMaxPtIsolME = (theBestIsolMuonEle.first > -1) ? GetPt(pxMuon[theBestIsolMuonEle.first],pyMuon[theBestIsolMuonEle.first]) : 0.;
+    float thisMaxPtIpME = (theBestIpMuonEle.first > -1) ? GetPt(pxMuon[theBestIpMuonEle.first],pyMuon[theBestIpMuonEle.first]) : 0.;
     if (thisMaxPtIdME<20)   { 
       CutBasedHiggsSelectionME.SetElectronId(-1);
       CutBasedHiggsSelectionME.SetPositronId(-1);
@@ -1244,11 +1244,12 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_acceptance() {
   _acceptEleAll.clear();
 
   for(int i=0;i<nEle;i++) {
-    
-    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
 
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
+
+    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
+
     if(_selectionEE->getSwitch("ptElectronAcc") && !_selectionEE->passCut("ptElectronAcc",thisPt) ) continue;
     
     float thisCharge = chargeEle[i];
@@ -1257,6 +1258,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_acceptance() {
 
     _acceptEleAll.push_back(i);   
   }
+  _acceptEleAll = sortElectronsByPt(_acceptEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -1291,6 +1293,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
 
     _idEleAll.push_back(thisEle);  
   }
+  _idEleAll = sortElectronsByPt(_idEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -1321,6 +1324,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
 
     _isolEleAll.push_back(thisEle);  
   }
+  _isolEleAll = sortElectronsByPt(_isolEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -1351,6 +1355,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
 
     _convEleAll.push_back(thisEle);      
   }
+  _convEleAll = sortElectronsByPt(_convEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -1379,6 +1384,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> co
 
     _ipEleAll.push_back(thisEle);  
   }
+  _ipEleAll = sortElectronsByPt(_ipEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -1399,6 +1405,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_acceptance() {
     bool thisMuFlag1 = anaUtils.muonIdVal(muonIdMuon[i],AllGlobalMuons);
     bool thisMuFlag2 = anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons);
     if (!thisMuFlag1 && !thisMuFlag2) continue;
+    // if(typeMuon[i]==8) continue;  // to be used when new trees are available
     // only not standalone muons latinos
 
     if(_selectionEE->getSwitch("etaMuonAcc") && !_selectionEE->passCut("etaMuonAcc",etaMuon[i]) ) continue;
@@ -1412,7 +1419,8 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_acceptance() {
     
     _acceptMuonsAll.push_back(i);  
   }
-  
+  _acceptMuonsAll = sortMuonsByPt(_acceptMuonsAll);
+
   return make_pair(theLep1,theLep2);
 }
 
@@ -1441,6 +1449,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_id( std::vector<int> accept
     
     _idMuonsAll.push_back(thisMu);   
   }
+  _idMuonsAll = sortMuonsByPt(_idMuonsAll);
   
   return make_pair(theLep1,theLep2);
 }
@@ -1473,7 +1482,8 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu
 
     _isolMuonsAll.push_back(thisMu);   
   }
-  
+  _isolMuonsAll = sortMuonsByPt(_isolMuonsAll);
+
   return make_pair(theLep1,theLep2);
 }
 
@@ -1503,73 +1513,50 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
 
     _ipMuonsAll.push_back(thisMu);   
   }
+  _ipMuonsAll = sortMuonsByPt(_ipMuonsAll);
 
   return make_pair(theLep1,theLep2);
 }
 
-std::pair<int,int> HiggsMLSelection::getBestEleMuonPair(int eleM, int eleP, int muM, int muP) {
+std::pair<int,int> HiggsMLSelection::getBestEleMuonPair(std::vector<int> electrons, std::vector<int> muons) {
 
   int theEle=-1;
   int theMuon=-1;
-  TVector3 p3EleM(pxEle[eleM],pyEle[eleM],pzEle[eleM]);
-  TVector3 p3EleP(pxEle[eleP],pyEle[eleP],pzEle[eleP]);
-  TVector3 p3MuonM(pxMuon[muM],pyMuon[muM],pzMuon[muM]);
-  TVector3 p3MuonP(pxMuon[muP],pyMuon[muP],pzMuon[muP]);
 
-  if(p3EleM.Pt()>p3EleP.Pt()) {
-
-    theEle = eleM;
-    
-    if(p3MuonP.Pt()<p3EleM.Pt()) theMuon = muP;
-    else {
-      theEle = eleP;
-      if(p3MuonM.Pt()<p3EleP.Pt()) theMuon = muM;
-    }
-  } else {
-
-    theEle = eleP;
-
-    if(p3MuonM.Pt()<p3EleP.Pt()) theMuon = muM;
-    else {
-      theEle = eleM;
-      if (p3MuonP.Pt()<p3EleM.Pt()) theMuon = muP;
+  std::vector<int>::const_iterator eleiter;
+  for(eleiter=electrons.begin(); eleiter<electrons.end();++eleiter) {
+    int eleCharge = chargeEle[*eleiter];
+    float elePt = GetPt(pxEle[*eleiter],pyEle[*eleiter]);
+    theEle = *eleiter;
+    std::vector<int>::const_iterator muiter;
+    for(muiter=muons.begin(); muiter<muons.end();++muiter) {
+      int muCharge = chargeMuon[*muiter];
+      float muPt = GetPt(pxMuon[*muiter],pyMuon[*muiter]);
+      if(eleCharge*muCharge<0 && elePt > muPt) return std::make_pair(*eleiter,*muiter); 
     }
   }
   
-  return make_pair(theEle,theMuon);
+  return std::make_pair(theEle,theMuon);
 }
 
-std::pair<int,int> HiggsMLSelection::getBestMuonElePair(int eleM, int eleP, int muM, int muP) {
+std::pair<int,int> HiggsMLSelection::getBestMuonElePair(std::vector<int> electrons, std::vector<int> muons) {
 
   int theEle=-1;
   int theMuon=-1;
-  TVector3 p3EleM(pxEle[eleM],pyEle[eleM],pzEle[eleM]);
-  TVector3 p3EleP(pxEle[eleP],pyEle[eleP],pzEle[eleP]);
-  TVector3 p3MuonM(pxMuon[muM],pyMuon[muM],pzMuon[muM]);
-  TVector3 p3MuonP(pxMuon[muP],pyMuon[muP],pzMuon[muP]);
 
-  if(p3MuonM.Pt()>p3MuonP.Pt()) {
-
-    theMuon = muM;
-
-    if(p3EleP.Pt()<p3MuonM.Pt()) theEle = eleP;
-    else {
-      theMuon = muP;
-      if (p3EleM.Pt()<p3MuonP.Pt()) theEle = eleM;
-    }
-
-  } else {
-
-    theMuon = muP;
-
-    if(p3EleM.Pt()<p3MuonP.Pt()) theEle = eleM;
-    else {
-      theMuon = muM;
-      if(p3EleP.Pt()<p3MuonM.Pt()) theEle = eleP;
+  std::vector<int>::const_iterator muiter;
+  for(muiter=muons.begin(); muiter<muons.end();++muiter) {
+    int muCharge = chargeMuon[*muiter];
+    float muPt = GetPt(pxMuon[*muiter],pyMuon[*muiter]);
+    theMuon = *muiter;
+    std::vector<int>::const_iterator eleiter;
+    for(eleiter=electrons.begin(); eleiter<electrons.end();++eleiter) {
+      int eleCharge = chargeEle[*eleiter];
+      float elePt = GetPt(pxEle[*eleiter],pyEle[*eleiter]);
+      if(eleCharge*muCharge<0 && muPt > elePt) return std::make_pair(*muiter,*eleiter); 
     }
   }
-  
-  return make_pair(theMuon,theEle);
+  return std::make_pair(theMuon,theEle); 
 }
 
 void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
@@ -1944,6 +1931,7 @@ void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
     int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
     if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
        trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 ) flagGlobalMu = true;
+       //       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
   }
 
   bool flagTrackerMu = false;

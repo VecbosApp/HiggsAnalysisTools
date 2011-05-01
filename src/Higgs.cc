@@ -310,3 +310,41 @@ double Higgs::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
 
   return temp;
 }
+
+std::vector<int> Higgs::sortElectronsByPt(std::vector<int> electrons) {
+  int tmp;
+  int max;
+  for(int i=0;i<(int)electrons.size();i++) {
+      max = i;
+      float maxelePt = GetPt(pxEle[i],pyEle[i]);
+      for(int x=i; x<(int)electrons.size(); x++) {
+        float xelePt = GetPt(pxEle[x],pyEle[x]);
+        if(xelePt > maxelePt) {
+          max = x;
+        }
+      }
+      tmp = electrons[i];
+      electrons[i] = electrons[max];
+      electrons[max] = tmp;
+  }
+  return electrons;
+}
+
+std::vector<int> Higgs::sortMuonsByPt(std::vector<int> muons) {
+  int tmp;
+  int max;
+  for(int i=0;i<(int)muons.size();i++) {
+      max = i;
+      float maxmuonPt = GetPt(pxMuon[i],pyMuon[i]);
+      for(int x=i; x<(int)muons.size(); x++) {
+        float xmuonPt = GetPt(pxMuon[x],pyMuon[x]);
+        if(xmuonPt > maxmuonPt) {
+          max = x;
+        }
+      }
+      tmp = muons[i];
+      muons[i] = muons[max];
+      muons[max] = tmp;
+  }
+  return muons;
+}
