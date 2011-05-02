@@ -49,6 +49,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Bool_t          uncorrJetVeto;
     Bool_t          preDeltaPhi;
     Bool_t          finalSelection;
+    Bool_t          step[24];
     Float_t         KFactor;
     Bool_t          promptDecay;
     Float_t         maxPtLh;
@@ -87,6 +88,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeOrig->SetBranchAddress("uncorrJetVeto", &uncorrJetVeto);
     treeOrig->SetBranchAddress("preDeltaPhi", &preDeltaPhi);
     treeOrig->SetBranchAddress("finalSelection", &finalSelection);
+    treeOrig->SetBranchAddress("step", step);
     treeOrig->SetBranchAddress("KFactor", &KFactor);
     treeOrig->SetBranchAddress("promptDecay", &promptDecay);
     treeOrig->SetBranchAddress("maxPtLh", &maxPtLh);
@@ -115,6 +117,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Float_t see_1,  see_2;
     Int_t   matched_1,  matched_2;
     Float_t expCosDphi;
+    Float_t gammaStMRSt;
 
     // convert the booleans into integers (to insert in RooDataset)
     Int_t         i_finalLeptons;
@@ -123,6 +126,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Int_t         i_preDeltaPhi;
     Int_t         i_finalSelection;
     Int_t         i_promptDecay;
+    Int_t         i_WWSel;
 
     // the selected final state: ee=0, mm=1, em=2
     treeNew->Branch("finalstate", &finalstate, "finalstate/I");
@@ -137,7 +141,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("projMet", &projMet, "projMet/F");
     treeNew->Branch("deltaPhi", &deltaPhi, "deltaPhi/F");
     treeNew->Branch("deltaR", &deltaR, "deltaR/F");
-    treeNew->Branch("transvMass", &transvMass, "transvMass/F");
+    treeNew->Branch("gammaStMRSt", &gammaStMRSt, "gammaStMRSt/F");
     treeNew->Branch("eleInvMass", &eleInvMass, "eleInvMass/F");
     treeNew->Branch("maxPtEle", &maxPtEle, "maxPtEle/F");
     treeNew->Branch("minPtEle", &minPtEle, "minPtEle/F");
@@ -147,6 +151,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("uncorrJetVeto", &i_uncorrJetVeto, "uncorrJetVeto/I");
     treeNew->Branch("preDeltaPhi", &i_preDeltaPhi, "preDeltaPhi/I");
     treeNew->Branch("finalSelection", &i_finalSelection, "finalSelection/I");
+    treeNew->Branch("WWSel", &i_WWSel, "WWSel/I");
     treeNew->Branch("KFactor", &KFactor, "KFactor/F");
     treeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
     treeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
@@ -205,6 +210,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       see_2     = see[1];
       matched_2 = matched[1];
       expCosDphi = exp(cos(TMath::Pi()*deltaPhi/180.));
+      gammaStMRSt = 2*transvMass;
 
       // consider only events with 0 or 1 jet
       // and fit variables within fit range
@@ -222,6 +228,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
+      i_WWSel = (step[12]) ? 1 : 0;
 
       consecevent = (float)j;
       treeNew->Fill();
