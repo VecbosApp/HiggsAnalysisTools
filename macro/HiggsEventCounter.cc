@@ -20,48 +20,44 @@ void countEvents(int mH=160) {
   cout << "nametree = " << nametree << endl;
 
   TChain *chains[20];
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<20; isample++) {
     chains[isample] = new TChain(nametree);
   }
 
-  chains[0]->Add("results/Spring11/WToENu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[1]->Add("results/Spring11/WToMuNu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[2]->Add("results/Spring11/WToTauNu_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[0]->Add("results/Spring11/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[3]->Add("results/Spring11/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[4]->Add("results/Spring11/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[5]->Add("results/Spring11/xxxx/*Counters.root");
+  chains[1]->Add("results/Spring11/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[2]->Add("results/Spring11/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[3]->Add("results/Spring11/xxxx/*Counters.root");
 
-  chains[6]->Add("results/Spring11/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[7]->Add("results/Spring11/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[8]->Add("results/Spring11/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[4]->Add("results/Spring11/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[5]->Add("results/Spring11/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[6]->Add("results/Spring11/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[9]->Add("results/Spring11/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains[10]->Add("results/Spring11/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains[11]->Add("results/Spring11/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains[7]->Add("results/Spring11/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains[8]->Add("results/Spring11/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains[9]->Add("results/Spring11/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[12]->Add("results/Spring11/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[10]->Add("results/Spring11/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
   TString hSample("results/Spring11/GluGluToHToWWTo2L2Nu_M-");
   char mass[5];
   sprintf(mass,"%d",mH);
   hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
 
-  chains[13]->Add(hSample.Data());
+  chains[11]->Add(hSample.Data());
 
-  //  chains[34]->Add("results/DiBosons/Wgamma/*Counters.root");
-  chains[14]->Add("results/Spring11/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[15]->Add("results/Spring11/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[16]->Add("results/Spring11/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[17]->Add("results/Spring11/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[12]->Add("results/Spring11/PhotonVJets_7TeV-madgraph/*Counters.root");
+  chains[13]->Add("results/Spring11/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[14]->Add("results/Spring11/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[15]->Add("results/Spring11/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[16]->Add("results/Spring11/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
   cout << "chains added. " << endl;
 
   std::vector<TString> sampleName;
 
-  sampleName.push_back("results/merged/Wenu_ee.root");
-  sampleName.push_back("results/merged/Wmunu_ee.root");
-  sampleName.push_back("results/merged/Wtaunu_ee.root");
+  sampleName.push_back("results/merged/Wjets_ee.root");
 
   sampleName.push_back("results/merged/Zee_Lo_ee.root");
   sampleName.push_back("results/merged/Zmm_Lo_ee.root");
@@ -79,7 +75,7 @@ void countEvents(int mH=160) {
 
   sampleName.push_back(TString("results/merged/H")+TString(mass)+TString("_ee.root"));
 
-  //  sampleName.push_back("Wgamma");
+  sampleName.push_back("results/merged/Wgamma_ee.root");
   sampleName.push_back("results/merged/WW_ee.root");
   sampleName.push_back("results/merged/ggWW_ee.root");
   sampleName.push_back("results/merged/WZ_ee.root");
@@ -104,12 +100,10 @@ void countEvents(int mH=160) {
   Higgs_xsec_masses.insert(std::make_pair(600,0.018751*4./9.));
 
   std::vector<float> sampleXsec;
-  sampleXsec.push_back(31314./3. * 0.742);
-  sampleXsec.push_back(31314./3. * 0.742);
-  sampleXsec.push_back(31314./3. * 0.742);
-  sampleXsec.push_back(2659./3.);
-  sampleXsec.push_back(2659./3.);
-  sampleXsec.push_back(2659./3.);
+  sampleXsec.push_back(31314.);
+  sampleXsec.push_back(3456./3.);
+  sampleXsec.push_back(3456./3.);
+  sampleXsec.push_back(3456./3.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
@@ -118,19 +112,20 @@ void countEvents(int mH=160) {
   sampleXsec.push_back(10.6);
   sampleXsec.push_back(157.5);
   sampleXsec.push_back(Higgs_xsec_masses[mH]);
+  sampleXsec.push_back(173.);
   sampleXsec.push_back(4.50347);
   sampleXsec.push_back(0.1538);
   sampleXsec.push_back(0.599442);
-  sampleXsec.push_back(5.9);
+  sampleXsec.push_back(5.9*1.3); // 1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
 
-  std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " Higgs_xsec_masses[mH] pb " << std::endl;
+  std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " pb " << std::endl;
 
   float nEv[20];
   for(int isample=0; isample<20; isample++) {
     nEv[isample] = 0.0;
   }
 
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<17; isample++) {
 
     cout << "\tProcessing sample # " << isample << "..." << endl;
 
@@ -161,56 +156,58 @@ void countEvents(int mH=160) {
   std::ofstream weightsFile;
   weightsFile.open("weightTrees.sh");
   weightsFile << "#! /bin/sh\n\n" << std::endl;
-  weightsFile << "lumi=$1" << std::endl;
+  weightsFile << "lumiEE=$1" << std::endl;
+  weightsFile << "lumiMM=$2" << std::endl;
+  weightsFile << "lumiEM=$3" << std::endl;
   
   weightsFile << "echo \"===> THIS WEIGHTING IS FOR MH = " << mH << " <====\" "<< std::endl;
 
   // now write ee
-  weightsFile << "echo \"Adding weights for ee datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "echo \"Adding weights for ee datasets for \" $lumiEE \" pb-1...\"" << std::endl;
   weightsFile << "root -l -b <<EOF" << std::endl;
   weightsFile << ".L addWeightsToTree.cc+" << std::endl;
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<17; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumi, 0);" << std::endl;
+    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, 0);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
   
   // now write mm
-  weightsFile << "echo \"Adding weights for mm datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "echo \"Adding weights for mm datasets for \" $lumiMM \" pb-1...\"" << std::endl;
   weightsFile << "root -l -b <<EOF" << std::endl;
   weightsFile << ".L addWeightsToTree.cc+" << std::endl;
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<17; isample++) {
     cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    TString sampleNameMM = sampleName[isample].ReplaceAll("ee","mm");
-    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumi, 1);" << std::endl;
+    TString sampleNameMM = sampleName[isample].ReplaceAll("_ee","_mm");
+    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, 1);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
 
 
   // now write em
-  weightsFile << "echo \"Adding weights for em datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "echo \"Adding weights for em datasets for \" $lumiEM \" pb-1...\"" << std::endl;
   weightsFile << "root -l -b <<EOF" << std::endl;
   weightsFile << ".L addWeightsToTree.cc+" << std::endl;
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<17; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    TString sampleNameEM = sampleName[isample].ReplaceAll("mm","em");
-    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumi, 2);" << std::endl;
+    TString sampleNameEM = sampleName[isample].ReplaceAll("_mm","_em");
+    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, 2);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
 
 
   // now write me
-  weightsFile << "echo \"Adding weights for me datasets for \" $lumi \" pb-1...\"" << std::endl;
+  weightsFile << "echo \"Adding weights for me datasets for \" $lumiEM \" pb-1...\"" << std::endl;
   weightsFile << "root -l -b <<EOF" << std::endl;
   weightsFile << ".L addWeightsToTree.cc+" << std::endl;
-  for(int isample=0; isample<18; isample++) {
+  for(int isample=0; isample<17; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    TString sampleNameEM = sampleName[isample].ReplaceAll("em","me");
-    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumi, 2);" << std::endl;
+    TString sampleNameEM = sampleName[isample].ReplaceAll("_em","_me");
+    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, 2);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
 
