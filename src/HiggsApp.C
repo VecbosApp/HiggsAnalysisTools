@@ -397,19 +397,18 @@ int main(int argc, char* argv[]) {
   LeptonPlusFakeMLSelection lplusfake(theChain);
   lplusfake.SetDatasetName(outputFileName);
 
-  std::vector<std::string> mask;
-  mask.push_back("HLT_Ele10_LW_L1R");
-  mask.push_back("HLT_Ele15_SW_L1R");
-  mask.push_back("HLT_Ele15_SW_CaloEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_CaloEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_TightEleId_L1R");
-  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v2");
-  mask.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+  std::vector<std::string> maskEE, maskNotEE;
+  
+  if(isMC) {
+    maskEE.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+  } else {
+    TString DatasetName(dataset);
+    if(DatasetName.Contains("DoubleElectron")) {
+      maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
+    }
+  }
 
-  mask.push_back("HLT_Mu9");
-  mask.push_back("HLT_Mu15_v1");
-
-  lplusfake.setRequiredTriggers(mask);
+  lplusfake.setRequiredTriggers(maskEE,0);
   lplusfake.Loop();
   lplusfake.displayEfficiencies(outputFileName);
 
