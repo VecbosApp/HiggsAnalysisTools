@@ -33,6 +33,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Int_t           run;
     Int_t           lumi;
     Int_t           event;
+    Float_t         puweight;
     Float_t         met;
     Float_t         pfMet;
     Float_t         caloMet;
@@ -56,6 +57,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Float_t         minPtLh;
     Int_t           njets;
     Int_t           nuncorrjets;
+    Int_t           nVtx;
     Float_t         dxyEVT;
     Float_t         dszEVT;
     Float_t         bTagTrackCount;
@@ -72,6 +74,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeOrig->SetBranchAddress("run", &run);
     treeOrig->SetBranchAddress("lumi", &lumi);
     treeOrig->SetBranchAddress("event", &event);
+    treeOrig->SetBranchAddress("puweight", &puweight);
     treeOrig->SetBranchAddress("met", &met);  // default MET is tcMET for WW
     treeOrig->SetBranchAddress("pfMet", &pfMet);
     treeOrig->SetBranchAddress("caloMet", &caloMet);
@@ -83,6 +86,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeOrig->SetBranchAddress("maxPtEle", &maxPtEle);
     treeOrig->SetBranchAddress("minPtEle", &minPtEle);
     treeOrig->SetBranchAddress("detaLeptons", &detaLeptons);
+    treeOrig->SetBranchAddress("nVtx", &nVtx);
     treeOrig->SetBranchAddress("finalLeptons", &finalLeptons);
     treeOrig->SetBranchAddress("jetVeto", &jetVeto);
     treeOrig->SetBranchAddress("uncorrJetVeto", &uncorrJetVeto);
@@ -135,6 +139,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("run", &run, "run/I");
     treeNew->Branch("lumi", &lumi, "lumi/I");
     treeNew->Branch("event", &event, "event/I");
+    treeNew->Branch("puweight", &puweight, "puweight/F");
     treeNew->Branch("met", &met, "met/F");  // default MET is tcMET for WW
     treeNew->Branch("pfMet", &pfMet, "pfMet/F");
     treeNew->Branch("caloMet", &caloMet, "caloMet/F");
@@ -146,6 +151,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("maxPtEle", &maxPtEle, "maxPtEle/F");
     treeNew->Branch("minPtEle", &minPtEle, "minPtEle/F");
     treeNew->Branch("detaLeptons", &detaLeptons, "detaLeptons/F");
+    treeNew->Branch("nVtx", &nVtx, "nVtx/I");
     treeNew->Branch("finalLeptons", &i_finalLeptons, "finalLeptons/I");
     treeNew->Branch("jetVeto", &i_jetVeto, "jetVeto/I");
     treeNew->Branch("uncorrJetVeto", &i_uncorrJetVeto, "uncorrJetVeto/I");

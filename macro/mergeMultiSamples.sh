@@ -15,7 +15,7 @@ cp results/merged/WW_ee.root results/datasets_trees
 cp results/merged/Wjets_ee.root results/datasets_trees/Wjets_ee.root
 
 # Zjets is a species per se
-hadd results/datasets_trees/Zjets_ee.root results/merged/Zee_*_ee.root results/merged/Zmm_*_ee.root results/merged/Ztautau_*_ee.root
+hadd results/datasets_trees/Zjets_ee.root results/merged/Zjets_*ee.root
 
 # merging ttbar and single t in a species
 hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/merged/SingleTop_sChannel_ee.root results/merged/SingleTop_tChannel_ee.root results/merged/SingleTop_tWChannel_ee.root 
@@ -35,7 +35,7 @@ cp results/merged/WW_mm.root results/datasets_trees
 cp results/merged/Wjets_mm.root results/datasets_trees/Wjets_mm.root
 
 # Zjets is a species per se
-hadd results/datasets_trees/Zjets_mm.root results/merged/Zee_*_mm.root results/merged/Zmm_*_mm.root results/merged/Ztautau_*_mm.root
+hadd results/datasets_trees/Zjets_mm.root results/merged/Zjets_*mm.root
 
 # merging ttbar and single t in a species
 hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/merged/SingleTop_sChannel_mm.root results/merged/SingleTop_tChannel_mm.root results/merged/SingleTop_tWChannel_mm.root 
@@ -55,7 +55,7 @@ cp results/merged/WW_em.root results/datasets_trees
 cp results/merged/Wjets_em.root results/datasets_trees/Wjets_em.root
 
 # Zjets is a species per se
-hadd results/datasets_trees/Zjets_em.root results/merged/Zee_*_em.root results/merged/Zmm_*_em.root results/merged/Ztautau_*_em.root
+hadd results/datasets_trees/Zjets_em.root results/merged/Zjets_*em.root
 
 # merging ttbar and single t in a species
 hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/merged/SingleTop_sChannel_em.root results/merged/SingleTop_tChannel_em.root results/merged/SingleTop_tWChannel_em.root 
@@ -76,7 +76,7 @@ cp results/merged/WW_me.root results/datasets_trees
 cp results/merged/Wjets_me.root results/datasets_trees/Wjets_me.root
 
 # Zjets is a species per se
-hadd results/datasets_trees/Zjets_me.root results/merged/Zee_*_me.root results/merged/Zmm_*_me.root results/merged/Ztautau_*_me.root
+hadd results/datasets_trees/Zjets_me.root results/merged/Zjets_*me.root
 
 # merging ttbar and single t in a species
 hadd results/datasets_trees/top_me.root results/merged/TTbar_me.root results/merged/SingleTop_sChannel_me.root results/merged/SingleTop_tChannel_me.root results/merged/SingleTop_tWChannel_me.root 
