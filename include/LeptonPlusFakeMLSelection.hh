@@ -14,6 +14,7 @@
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
+#include "HiggsAnalysisTools/include/CommonHiggsPreselector.hh"
 #include "HiggsAnalysisTools/include/CutBasedHiggsSelector.hh"
 #include "HiggsAnalysisTools/include/RedHiggsTree.h"
 #include <TVector3.h>
@@ -33,12 +34,12 @@ public:
   void SetDatasetName(std::string filename) {_datasetName=filename;};
   //! display the efficiency table
   void displayEfficiencies(std::string filename);
-  //! set the list of the required triggers
-  void requireTrigger(vector<int> requiredTriggers) { m_requiredTriggers = requiredTriggers; }
+  //! set the required triggers masks (one per channel)
+  void setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
+  //! set the not-required triggers masks (one per channel)
+  void setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
   
 private:
-
-  bool findMcTree(const char* processType);
 
   //! get the two hardest electrons with opposite charge after different steps
   std::pair<int,int> getBestElectronPair_acceptance();
@@ -47,12 +48,12 @@ private:
   std::pair<int,int> getBestElectronPair_conv( std::vector<int> isolEle );
   std::pair<int,int> getBestElectronPair_ip( std::vector<int> convEle );
 
-  //! fake rates initialization
+  //! fake rates initialization                                                                                                     
   void initialiseFakeRate();
   float getFakeRate( float fakePt, bool isEB );
   float getFakeRateError( float fakePt, bool isEE );
 
-  //! fake related selection
+  //! fake related selection                                                                                                        
   int getBestDenominator(int realEle);
   bool isDenomFake(int theEle);
 
@@ -91,13 +92,19 @@ private:
   float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
   //! for the two leptons, find the closest one to MET in phi. if(deltaPhi(lepton-MET)<pi/2) projectedMET = MET * sin(deltaPhi(lepton-MET)); else projectedMET = MET
   float GetProjectedMet(TVector3 p1, TVector3 p2);
+  //! reload the trigger mask_s_ (one per channel)
+  bool reloadTriggerMask();
+  //! get the trigger answer depending on the channel
+  bool hasPassedHLT(int channel);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
   ElectronLikelihood *LH;
+
   //! to evaluate full selection efficiency
   Selection *_selectionEE;
+  Selection *_selectionErrEE;
   CutBasedHiggsSelector CutBasedHiggsSelectionEE;
   CutBasedHiggsSelector CutBasedHiggsErrorsSelectionEE;
 
@@ -115,6 +122,11 @@ private:
   bool m_channel[1];
   bool isOk[1];
   
+  //! trigger masks
+  std::vector<int>  m_requiredTriggersEE;
+  std::vector<std::string> requiredTriggersEE;
+  std::vector<std::string> notRequiredTriggersEE;
+
   //! kinematics of the event
   int theReal,  theFake;
   int thePreElectron,  thePrePositron;
@@ -134,11 +146,11 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1], slowestLeptonPt[1];
 
-  //! fake rates
+  //! fake rates                                                                                                                    
   float m_minFakePt[5],  m_maxFakePt[5];
   float m_fakeRateEB[5], m_fakeRateEB_err[5];
   float m_fakeRateEE[5], m_fakeRateEE_err[5];
-  
+
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
   float m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags; 

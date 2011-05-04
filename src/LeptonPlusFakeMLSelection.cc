@@ -9,9 +9,11 @@
 #include "HiggsAnalysisTools/include/LeptonPlusFakeMLSelection.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
+#include "CommonTools/include/PUWeight.h"
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include <TTree.h>
 
@@ -52,9 +54,10 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
   // selection efficiencies
   std::string fileCutsEE     = higgsConfigDirMass + "2e2nuCuts.txt";
   std::string fileSwitchesEE = higgsConfigDir + "2l2nuSwitches.txt";
-  CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),      "FULL SELECTION EVENT COUNTER EE"); 
-  CutBasedHiggsErrorsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION ERRORS EE");   
-  _selectionEE = CutBasedHiggsSelectionEE.GetSelection();  
+  CutBasedHiggsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION EVENT COUNTER EE"); 
+  CutBasedHiggsErrorsSelectionEE.Configure(fileCutsEE.c_str(),fileSwitchesEE.c_str(),"FULL SELECTION ERRORS EE");
+  _selectionEE    = CutBasedHiggsSelectionEE.GetSelection();  
+  _selectionErrEE = CutBasedHiggsErrorsSelectionEE.GetSelection();  
 
   //  extra selection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   _selectionEE->addCut("etaElectronAcc");    
@@ -88,10 +91,10 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
   TFile *fileLH = TFile::Open("pdfs_MC.root");
   TDirectory *EB0lt15dir = fileLH->GetDirectory("/");
   TDirectory *EB1lt15dir = fileLH->GetDirectory("/");
-  TDirectory *EElt15dir  = fileLH->GetDirectory("/");
+  TDirectory *EElt15dir = fileLH->GetDirectory("/");
   TDirectory *EB0gt15dir = fileLH->GetDirectory("/");
   TDirectory *EB1gt15dir = fileLH->GetDirectory("/");
-  TDirectory *EEgt15dir  = fileLH->GetDirectory("/");
+  TDirectory *EEgt15dir = fileLH->GetDirectory("/");
   LikelihoodSwitches defaultSwitches;
   defaultSwitches.m_useFBrem = true;
   defaultSwitches.m_useEoverP = false;
@@ -131,32 +134,35 @@ LeptonPlusFakeMLSelection::~LeptonPlusFakeMLSelection(){
   delete m_p4MET;  
 
   delete _selectionEE;
+  delete _selectionErrEE;
+  
   myOutTreeEE -> save();
 }
 
 void LeptonPlusFakeMLSelection::initialiseFakeRate() {
 
-  // binning                                                                                                                                    
+  // binning                                      
   m_minFakePt[0] = 10.;   m_maxFakePt[0] = 15.;
   m_minFakePt[1] = 15.;   m_maxFakePt[1] = 20.;
   m_minFakePt[2] = 20.;   m_maxFakePt[2] = 25.;
   m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
   m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
 
-  // fake in the barrel
-  m_fakeRateEB[0] = 0.149401;  
-  m_fakeRateEB[1] = 0.140707;   
-  m_fakeRateEB[2] = 0.105181;   
-  m_fakeRateEB[3] = 0.0995595;   
-  m_fakeRateEB[4] = 0.175;  
+  /* first attempt - Matt's talk
+  // fake in the barrel                                   
+  m_fakeRateEB[0] = 0.149401;
+  m_fakeRateEB[1] = 0.140707;
+  m_fakeRateEB[2] = 0.105181;
+  m_fakeRateEB[3] = 0.0995595;
+  m_fakeRateEB[4] = 0.175;
 
-  m_fakeRateEB_err[0] = 0.00813347;  
+  m_fakeRateEB_err[0] = 0.00813347;
   m_fakeRateEB_err[1] = 0.00889542;
   m_fakeRateEB_err[2] = 0.0085951;
   m_fakeRateEB_err[3] = 0.00888732;
   m_fakeRateEB_err[4] = 0.0424816;
 
-  // fake in the endcap
+  // fake in the endcap                                                                     
   m_fakeRateEE[0] = 0.0823442;
   m_fakeRateEE[1] = 0.0733788;
   m_fakeRateEE[2] = 0.0637136;
@@ -168,6 +174,117 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00601647;
   m_fakeRateEE_err[3] = 0.0056055;
   m_fakeRateEE_err[4] = 0.028946;
+  */
+
+  /*
+  // fake in the barrel from QCD MC                                  
+  m_fakeRateEB[0] = 0.318519;
+  m_fakeRateEB[1] = 0.093561;
+  m_fakeRateEB[2] = 0.0653243; 
+  m_fakeRateEB[3] = 0.0582813;
+  m_fakeRateEB[4] = 0.0457173;
+
+  m_fakeRateEB_err[0] = 0.00598496;
+  m_fakeRateEB_err[1] = 0.003919;
+  m_fakeRateEB_err[2] = 0.00357566;
+  m_fakeRateEB_err[3] = 0.00339644;
+  m_fakeRateEB_err[4] = 0.0121774;
+
+  // fake in the endcap from QCD MC                                                                     
+  m_fakeRateEE[0] = 0.208276;
+  m_fakeRateEE[1] = 0.0627951;
+  m_fakeRateEE[2] = 0.0546009;
+  m_fakeRateEE[3] = 0.0521685;
+  m_fakeRateEE[4] = 0.0524358;
+
+  m_fakeRateEE_err[0] = 0.00714286;
+  m_fakeRateEE_err[1] = 0.00346753;
+  m_fakeRateEE_err[2] = 0.00320969;
+  m_fakeRateEE_err[3] = 0.00307286;
+  m_fakeRateEE_err[4] = 0.0147189;
+  */
+
+  // fake in the barrel from data (jet:30))
+  m_fakeRateEB[0] = 0.154532;
+  m_fakeRateEB[1] = 0.136631;
+  m_fakeRateEB[2] = 0.0817844;
+  m_fakeRateEB[3] = 0.0799476;
+  m_fakeRateEB[4] = 0.107692;
+
+  m_fakeRateEB_err[0] = 0.0139332;
+  m_fakeRateEB_err[1] = 0.0117874;
+  m_fakeRateEB_err[2] = 0.00964652;
+  m_fakeRateEB_err[3] = 0.00981853;
+  m_fakeRateEB_err[4] = 0.0384497;
+
+  // fake in the endcap from data (jet:30)
+  m_fakeRateEE[0] = 0.119089;
+  m_fakeRateEE[1] = 0.0482625; 
+  m_fakeRateEE[2] = 0.074184;
+  m_fakeRateEE[3] = 0.0465328;
+  m_fakeRateEE[4] = 0.0566038;
+
+  m_fakeRateEE_err[0] = 0.0135545;
+  m_fakeRateEE_err[1] = 0.00665861;
+  m_fakeRateEE_err[2] = 0.00824217;
+  m_fakeRateEE_err[3] = 0.00636249;
+  m_fakeRateEE_err[4] = 0.0317418;
+
+  /*
+  // fake in the barrel from data (jet:15))
+  m_fakeRateEB[0] = 0.166922;
+  m_fakeRateEB[1] = 0.128733;
+  m_fakeRateEB[2] = 0.102072;
+  m_fakeRateEB[3] = 0.0806324;
+  m_fakeRateEB[4] = 0.108108;
+
+  m_fakeRateEB_err[0] = 0.00551924;
+  m_fakeRateEB_err[1] = 0.00610026;
+  m_fakeRateEB_err[2] = 0.00680535;
+  m_fakeRateEB_err[3] = 0.00765516;
+  m_fakeRateEB_err[4] = 0.0360969;
+
+  // fake in the endcap from data (jet:15)
+  m_fakeRateEE[0] = 0.125552;
+  m_fakeRateEE[1] = 0.0627326;
+  m_fakeRateEE[2] = 0.0664093;
+  m_fakeRateEE[3] = 0.0513254;
+  m_fakeRateEE[4] = 0.0508475;
+
+  m_fakeRateEE_err[0] = 0.00550408;
+  m_fakeRateEE_err[1] = 0.00395338;
+  m_fakeRateEE_err[2] = 0.00489263;
+  m_fakeRateEE_err[3] = 0.00524047;
+  m_fakeRateEE_err[4] = 0.0286007;
+  */
+
+  /*
+  // fake in the barrel from data (jet:50))
+  m_fakeRateEB[0] = 0.133333;
+  m_fakeRateEB[1] = 0.168;
+  m_fakeRateEB[2] = 0.107914;
+  m_fakeRateEB[3] = 0.056338;
+  m_fakeRateEB[4] = 0.0740741;
+
+  m_fakeRateEB_err[0] = 0.0392523;
+  m_fakeRateEB_err[1] = 0.0334396;
+  m_fakeRateEB_err[2] = 0.0263169;
+  m_fakeRateEB_err[3] = 0.0157986;
+  m_fakeRateEB_err[4] = 0.0356389;
+
+  // fake in the endcap from data (jet:50)
+  m_fakeRateEE[0] = 0.0491803;
+  m_fakeRateEE[1] = 0.030303;
+  m_fakeRateEE[2] = 0.0902778;
+  m_fakeRateEE[3] = 0.029703;
+  m_fakeRateEE[4] = 0.0588235;
+
+  m_fakeRateEE_err[0] = 0.0276873;
+  m_fakeRateEE_err[1] = 0.0149202;
+  m_fakeRateEE_err[2] = 0.0238816;
+  m_fakeRateEE_err[3] = 0.00975284;
+  m_fakeRateEE_err[4] = 0.0403526;
+  */
 }
 
 float LeptonPlusFakeMLSelection::getkFactor(std::string process) {
@@ -190,14 +307,15 @@ void LeptonPlusFakeMLSelection::Loop() {
   std::string reducedTreeNameEE = _datasetName+"-datasetEE.root";
   myOutTreeEE = new RedHiggsTree(reducedTreeNameEE.c_str());
 
-  if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->addKFactor();
-
-  if(_selectionEE->getSwitch("isData")) myOutTreeEE->addRunInfos();
-
+  if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->addKFactor();
+  if ( _selectionEE->getSwitch("isData")) myOutTreeEE->addRunInfos();
   myOutTreeEE->addMLVars();
 
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
+
+  PUWeight* fPUWeight = new PUWeight();
+
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
   std::cout << "Number of entries = " << nentries << std::endl;
@@ -211,9 +329,13 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     // get the kFactor of the event (for signal)
     float tmpWeight = 1;
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) tmpWeight = getkFactor("Higgs");
-    
-    // MC truth
+
+    // weight for the PU observed in 2011 data
+    // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPV);
+
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) tmpWeight *= getkFactor("Higgs");
+
+    // dummy MC truth
     bool promptEE = true;
 
     // Good Run selection
@@ -231,14 +353,13 @@ void LeptonPlusFakeMLSelection::Loop() {
       std::cout << "[GoodRunLS]::Run " << lastRun << " LS " << lastLumi << " is OK" << std::endl;
     }
     
+    
     // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    reloadTriggerMask(true);
-    bool passedHLT = (_selectionEE->getSwitch("isData")) ? hasPassedHLT() : true;
-    
+    reloadTriggerMask();
+    bool passedHLT[1];
+    passedHLT[ee] = hasPassedHLT(ee);
 
-
-    // -------------------------------------------------------------
-    
+    // ----------------------------------------------------------------------------
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
     std::pair<int,int> thePreElectrons = getBestElectronPair_acceptance();
     thePreElectron  = thePreElectrons.second;
@@ -246,7 +367,7 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     // reconstructed channel
     m_channel[ee] = false;     
-    
+
     // at this level the SELECTED channel should have pT > 10 and > 20. So far, at least 2 leptons with pT >20 and 10 in the event
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
@@ -254,12 +375,12 @@ void LeptonPlusFakeMLSelection::Loop() {
     }
 
     if (_verbose) {
-      std::cout << "nEle = "   << nEle << std::endl;
+      std::cout << "nEle = "   << nEle << "\tnMuon = " << nMuon << std::endl;
       std::cout << "indices: " << thePreElectron << " " << thePrePositron << std::endl;
       std::cout << "chargeEle = " << chargeEle[thePreElectron] << "\tchargePos = " << chargeEle[thePrePositron] << std::endl;
       std::cout << "ee = " << m_channel[ee] << std::endl;
     }
-
+    
 
 
     // -------------------------------------------------------------
@@ -277,22 +398,23 @@ void LeptonPlusFakeMLSelection::Loop() {
     // transverse impact parameter, for electrons passing conversion rejection
     std::pair<int,int> theBestIpEle = getBestElectronPair_ip(_convEleAll);     
 
-    // the highest pT electron or positron at this point is the one I use for my analysis since it passed the full lepton selection
-    int thePositron  = theBestIpEle.first;    
-    int theElectron  = theBestIpEle.second;
+    // the two highest pT electrons at this point are those I use for my analysis since the passed the full lepton selection
+    int thePositron = theBestIpEle.first;    
+    int theElectron = theBestIpEle.second;
     float ptPositron = GetPt(pxEle[thePositron],pyEle[thePositron]);
     float ptElectron = GetPt(pxEle[theElectron],pyEle[theElectron]);
-    if (ptPositron>ptElectron) theReal = thePositron;    
+    if (ptPositron>ptElectron) theReal = thePositron;
     else theReal = theElectron;
 
-    // consider all possible denominators different from the selected tight candidate and use the highest pT one as a fake
-    theFake = getBestDenominator(theReal);      
+    // consider all possible denominators different from the selected tight candidate and use the highest pT one as a fake          
+    theFake = getBestDenominator(theReal);    
 
     // set of kinematics: : now I've all the final leptons 
     resetKinematics();
-    setKinematicsEE(theReal, theFake);   
-
-    // weight with the Fake -> L2 probability                                                                                                    
+    setKinematicsEE(theReal, theFake);
+    
+    
+    // weight with the Fake -> L2 probability	
     float weight       = 1.;
     float weightError  = 1.;
     float theFakePt    = GetPt(pxEle[theFake],pyEle[theFake]);
@@ -301,8 +423,8 @@ void LeptonPlusFakeMLSelection::Loop() {
     if ( theFake>-1 ) {
       float fakerate    = getFakeRate( theFakePt, isFakeBarrel );
       float fakerateErr = getFakeRateError( theFakePt, isFakeBarrel );
-      weight      = tmpWeight * fakerate;                           
-      weightError = tmpWeight * fakerateErr;                        
+      weight      = tmpWeight * fakerate;
+      weightError = tmpWeight * fakerateErr;
     } else {
       weight      = tmpWeight;
       weightError = tmpWeight;
@@ -312,18 +434,18 @@ void LeptonPlusFakeMLSelection::Loop() {
     // look for PV in the event (there is always at least 1 PV)
     m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
     
-    int njets[1], nuncorrjets[1], nsoftmu[1],nextraleptons[1];
+    int njets[1], nuncorrjets[1];
     float dphiLLJ[1], btag[1];
-
+    int nsoftmu[1],nextraleptons[1];
     for(int ichan=0; ichan<1; ichan++) {
 
       // jet counter
       njets[ichan] = numJets(eleCands[ichan],muCands[ichan],ichan);
       nuncorrjets[ichan] = numUncorrJets(eleCands[ichan],muCands[ichan]);
-      
+
       // if 1-jet bin, use deltaphi(ll-jet)
       dphiLLJ[ichan] = deltaPhiLLJet(ichan);   
-
+      
       // b veto
       btag[ichan] = bVetoJets(eleCands[ichan],muCands[ichan]);
 
@@ -341,17 +463,17 @@ void LeptonPlusFakeMLSelection::Loop() {
     // EE
     CutBasedHiggsSelectionEE.SetWeight(weight);               
     CutBasedHiggsSelectionEE.SetMcTruth(promptEE);  
-    CutBasedHiggsSelectionEE.SetHLT(passedHLT);               
+    CutBasedHiggsSelectionEE.SetHLT(passedHLT[ee]);               
     CutBasedHiggsSelectionEE.SetIsChannel(m_channel[ee]);     
-    CutBasedHiggsSelectionEE.SetElectronId(theReal);                 
+    CutBasedHiggsSelectionEE.SetElectronId(theReal);
     CutBasedHiggsSelectionEE.SetPositronId(theFake);
-    CutBasedHiggsSelectionEE.SetElectronIsolation(theReal);                 
+    CutBasedHiggsSelectionEE.SetElectronIsolation(theReal);
     CutBasedHiggsSelectionEE.SetPositronIsolation(theFake);
-    CutBasedHiggsSelectionEE.SetElectronConvRejection(theReal);                 
+    CutBasedHiggsSelectionEE.SetElectronConvRejection(theReal);
     CutBasedHiggsSelectionEE.SetPositronConvRejection(theFake);
     CutBasedHiggsSelectionEE.SetElectronIp(theReal);
-    CutBasedHiggsSelectionEE.SetPositronIp(theFake);                 
-    // checking if the highest pT electron at the end has pT>20
+    CutBasedHiggsSelectionEE.SetPositronIp(theFake);
+    // checking if the highest pT electron at each step has pT>20
     float thisMaxPtIpEE = TMath::Max(GetPt(pxEle[theReal],pyEle[theReal]),GetPt(pxEle[theFake],pyEle[theFake]));
     if (thisMaxPtIpEE<20)   { 
       CutBasedHiggsSelectionEE.SetElectronIp(-1);
@@ -360,7 +482,7 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     CutBasedHiggsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
     CutBasedHiggsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
-
+    
     CutBasedHiggsSelectionEE.SetNJets(njets[ee]);
     CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
     CutBasedHiggsSelectionEE.SetBTagJets(btag[ee]);
@@ -381,8 +503,6 @@ void LeptonPlusFakeMLSelection::Loop() {
     bool selPreDeltaPhiEE       = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
     bool outputStep1            = CutBasedHiggsSelectionEE.outputStep1();
 
-    if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
-
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber);
     
     myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
@@ -397,41 +517,38 @@ void LeptonPlusFakeMLSelection::Loop() {
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
 
-
-
-    // for errors
-    CutBasedHiggsErrorsSelectionEE.SetWeight(weightError);               
-    CutBasedHiggsErrorsSelectionEE.SetMcTruth(promptEE);  
-    CutBasedHiggsErrorsSelectionEE.SetHLT(passedHLT);               
-    CutBasedHiggsErrorsSelectionEE.SetIsChannel(m_channel[ee]);     
-    CutBasedHiggsErrorsSelectionEE.SetElectronId(1);                 
+    // for errors                                                                                                                   
+    CutBasedHiggsErrorsSelectionEE.SetWeight(weightError);
+    CutBasedHiggsErrorsSelectionEE.SetMcTruth(promptEE);
+    CutBasedHiggsErrorsSelectionEE.SetHLT(passedHLT[ee]);
+    CutBasedHiggsErrorsSelectionEE.SetIsChannel(m_channel[ee]);
+    CutBasedHiggsErrorsSelectionEE.SetElectronId(1);
     CutBasedHiggsErrorsSelectionEE.SetPositronId(1);
     CutBasedHiggsErrorsSelectionEE.SetElectronIsolation(1);
     CutBasedHiggsErrorsSelectionEE.SetPositronIsolation(1);
     CutBasedHiggsErrorsSelectionEE.SetElectronConvRejection(1);
     CutBasedHiggsErrorsSelectionEE.SetPositronConvRejection(1);
     CutBasedHiggsErrorsSelectionEE.SetElectronIp(theReal);
-    CutBasedHiggsErrorsSelectionEE.SetPositronIp(theFake);                 
-    if (thisMaxPtIpEE<20)   { 
+    CutBasedHiggsErrorsSelectionEE.SetPositronIp(theFake);
+    if (thisMaxPtIpEE<20) {
       CutBasedHiggsErrorsSelectionEE.SetElectronIp(-1);
       CutBasedHiggsErrorsSelectionEE.SetPositronIp(-1);
     }
-    CutBasedHiggsErrorsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
-    CutBasedHiggsErrorsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
+    CutBasedHiggsErrorsSelectionEE.SetHighElePt(hardestLeptonPt[ee]);
+    CutBasedHiggsErrorsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNJets(njets[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
     CutBasedHiggsErrorsSelectionEE.SetBTagJets(btag[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNSoftMuons(nsoftmu[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
-    CutBasedHiggsErrorsSelectionEE.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
+    CutBasedHiggsErrorsSelectionEE.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));
     CutBasedHiggsErrorsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsErrorsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
-    CutBasedHiggsErrorsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
+    CutBasedHiggsErrorsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsErrorsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
   }
-
 }
 
 void LeptonPlusFakeMLSelection::displayEfficiencies(std::string datasetName) {
@@ -448,7 +565,7 @@ void LeptonPlusFakeMLSelection::displayEfficiencies(std::string datasetName) {
   std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM FAKE RATE FOR EE SELECTION ===" << std::endl;
   CutBasedHiggsErrorsSelectionEE.displayEfficiencies(datasetName);
 
-  // simple cuts based or like based ele id
+  // simple cuts based or like based ele id                                                                                         
   if (!_selectionEE->getSwitch("asymmetricID")) {
     std::cout << "cut based symmetric ID: " << std::endl;
     EgammaCutBasedID.displayEfficiencies();
@@ -470,11 +587,12 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_acceptance() {
   _acceptEleAll.clear();
 
   for(int i=0;i<nEle;i++) {
-    
-    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
 
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
+
+    if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
+
     if(_selectionEE->getSwitch("ptElectronAcc") && !_selectionEE->passCut("ptElectronAcc",thisPt) ) continue;
     
     float thisCharge = chargeEle[i];
@@ -483,6 +601,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_acceptance() {
 
     _acceptEleAll.push_back(i);   
   }
+  _acceptEleAll = sortElectronsByPt(_acceptEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -517,6 +636,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_id( std::vecto
 
     _idEleAll.push_back(thisEle);  
   }
+  _idEleAll = sortElectronsByPt(_idEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -547,6 +667,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_isol( std::vec
 
     _isolEleAll.push_back(thisEle);  
   }
+  _isolEleAll = sortElectronsByPt(_isolEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -577,6 +698,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_conv( std::vec
 
     _convEleAll.push_back(thisEle);      
   }
+  _convEleAll = sortElectronsByPt(_convEleAll);
 
   return make_pair(theLep1,theLep2);
 }
@@ -593,12 +715,10 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_ip( std::vecto
 
   for (int iEle=0; iEle<convEle.size(); iEle++) {
     int thisEle = convEle[iEle];
-    
+
     int gsfTrack = gsfTrackIndexEle[thisEle]; 
-    float dxyEle = transvImpactParBiasedGsfTrack[gsfTrack];
-    float dzEle  = PVzPV[m_closestPV] - trackVzGsfTrack[gsfTrack];   
-    if (_selectionEE->getSwitch("leptonD0") && (!_selectionEE->passCut("leptonD0",dxyEle)) ) continue;  
-    if (_selectionEE->getSwitch("leptonDz") && (!_selectionEE->passCut("leptonDz",dzEle)) )  continue;  
+    float d3dEle = impactPar3DGsfTrack[gsfTrack];
+    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;   
 
     float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
     float thisCharge = chargeEle[thisEle];
@@ -607,12 +727,13 @@ std::pair<int,int> LeptonPlusFakeMLSelection::getBestElectronPair_ip( std::vecto
 
     _ipEleAll.push_back(thisEle);  
   }
+  _ipEleAll = sortElectronsByPt(_ipEleAll);
 
   return make_pair(theLep1,theLep2);
 }
 
 int LeptonPlusFakeMLSelection::getBestDenominator(int realEle) {
-
+  
   int theFake=-1;
   float maxPtFake=-1000.;
   
@@ -621,66 +742,64 @@ int LeptonPlusFakeMLSelection::getBestDenominator(int realEle) {
     if (iele==realEle) continue;
     
     if (chargeEle[iele]*chargeEle[realEle]>0) continue;
-    
+
     bool isGoodDenom = isDenomFake(iele);
     if (!isGoodDenom) continue;
 
     float thisElePt = GetPt(pxEle[iele],pyEle[iele]);
     if( thisElePt > maxPtFake ) { maxPtFake = thisElePt; theFake=iele; }
   }
-  
+
   return theFake;
 }
 
-bool LeptonPlusFakeMLSelection::isDenomFake(int theEle) {  
-
-  Utils anaUtils;
+bool LeptonPlusFakeMLSelection::isDenomFake(int theEle) {
   
+  Utils anaUtils;
   bool isGoodDenom = true;
-
   TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
-
-  // acceptance                                                                                                                                  
+  
+  // acceptance	                                                                                                                                    
   if( fabs(p3Ele.Eta()) > 2.5 ) isGoodDenom = false;
   if( p3Ele.Pt() < 10. )        isGoodDenom = false;
-
-  // only ecal driven                                                                                                                            
+  
+  // only ecal driven	  
   bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
   if(!ecalDriven) isGoodDenom = false;
-
-  // barrel or endcap                                                                                                                            
+  
+  // barrel or endcap              
   bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
-
-  // isolation                                                                                                                                   
-  float combinedIso;
-  if (isEleEB)  combinedIso = dr03TkSumPtEle[theEle] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[theEle]-1.0) + dr03HcalTowerSumEtFullConeEle[theEle];
-  if (!isEleEB) combinedIso = dr03TkSumPtEle[theEle] + dr03EcalRecHitSumEtEle[theEle] + dr03HcalTowerSumEtFullConeEle[theEle];
-  float corrCombinedIso = (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / p3Ele.Pt();
-  if ( corrCombinedIso>0.15 ) isGoodDenom = false;
   
-  // H/E                                                                                                                                         
-  bool isBarrelEle;
-  if ( fabs(etaEle[theEle]) <  1.479 ) isBarrelEle = true;
-  if ( fabs(etaEle[theEle]) >= 1.479 ) isBarrelEle = false;
-  if ( isBarrelEle && hOverEEle[theEle]>0.15) isGoodDenom = false;
-  if (!isBarrelEle && hOverEEle[theEle]>0.10) isGoodDenom = false;
-
-  // sigmaIetaIeta                                                                                                                               
-  bool isBarrelSc;
-  int sc = superClusterIndexEle[theEle];
-  if ( sc < 0 ) isGoodDenom = false;
-  if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
-  if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
-  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.014 ) isGoodDenom = false;
-  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.035 ) isGoodDenom = false;
-  
-  // spikes                                                                                                                                      
-  float theE1 = eMaxSC[sc];
-  float theE4SwissCross = e4SwissCrossSC[sc];
-  float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
-  if (theSpikeSC>0.95) isGoodDenom = false;
-  
-  return isGoodDenom;
+  // isolation	  
+    float combinedIso;
+    if (isEleEB)  combinedIso = dr03TkSumPtEle[theEle] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[theEle]-1.0) + dr03HcalTowerSumEtFullConeEle[theEle];
+    if (!isEleEB) combinedIso = dr03TkSumPtEle[theEle] + dr03EcalRecHitSumEtEle[theEle] + dr03HcalTowerSumEtFullConeEle[theEle];
+    float corrCombinedIso = (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / p3Ele.Pt();
+    if ( corrCombinedIso>0.15 ) isGoodDenom = false;
+    
+    // H/E                                                                                                                                     
+    bool isBarrelEle;
+    if ( fabs(etaEle[theEle]) <  1.479 ) isBarrelEle = true;
+    if ( fabs(etaEle[theEle]) >= 1.479 ) isBarrelEle = false;
+    if ( isBarrelEle && hOverEEle[theEle]>0.15) isGoodDenom = false;
+    if (!isBarrelEle && hOverEEle[theEle]>0.10) isGoodDenom = false;
+    
+    // sigmaIetaIeta	    
+      bool isBarrelSc;
+      int sc = superClusterIndexEle[theEle];
+      if ( sc < 0 ) isGoodDenom = false;
+      if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
+      if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
+      if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.014 ) isGoodDenom = false;
+      if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.035 ) isGoodDenom = false;
+      
+      // spikes                            
+      float theE1 = eMaxSC[sc];
+      float theE4SwissCross = e4SwissCrossSC[sc];
+      float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
+      if (theSpikeSC>0.95) isGoodDenom = false;
+      
+      return isGoodDenom;
 }
 
 float LeptonPlusFakeMLSelection::getFakeRate( float fakePt, bool isFakeBarrel ) {
@@ -689,10 +808,10 @@ float LeptonPlusFakeMLSelection::getFakeRate( float fakePt, bool isFakeBarrel ) 
 
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
       if (isFakeBarrel)  return m_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m_fakeRateEE[theBin];	
+      if (!isFakeBarrel) return m_fakeRateEE[theBin];
     }
   }
-  
+
   std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
   return -1.;
 }
@@ -705,7 +824,7 @@ float LeptonPlusFakeMLSelection::getFakeRateError( float fakePt, bool isFakeBarr
       if (!isFakeBarrel) return m_fakeRateEE_err[theBin];
     }
   }
-  
+
   return -1.;
 }
 
@@ -714,7 +833,7 @@ void LeptonPlusFakeMLSelection::setKinematicsEE(int myReal, int myFake) {
   if (myFake > -1 && myReal > -1) {
 
     eleCands[ee].push_back(myReal);
-    eleCands[ee].push_back(myFake);   
+    eleCands[ee].push_back(myFake);
     hardestLeptonPt[ee] = TMath::Max(GetPt(pxEle[myReal],pyEle[myReal]),GetPt(pxEle[myFake],pyEle[myFake]));
     slowestLeptonPt[ee] = TMath::Min(GetPt(pxEle[myReal],pyEle[myReal]),GetPt(pxEle[myFake],pyEle[myFake]));
     m_p4LeptonMinus[ee] -> SetXYZT(pxEle[myReal], pyEle[myReal], pzEle[myReal], energyEle[myReal]);
@@ -730,15 +849,15 @@ void LeptonPlusFakeMLSelection::setKinematicsEE(int myReal, int myFake) {
     m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
     m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
   }
-
+  
 }
 
 void LeptonPlusFakeMLSelection::resetKinematicsStart() {
 
-  theReal        = -1;
-  theFake        = -1;
-  thePreElectron = -1;
-  thePrePositron = -1;
+  theReal         = -1;
+  theFake         = -1;
+  thePreElectron  = -1;
+  thePrePositron  = -1;
 }
 
 void LeptonPlusFakeMLSelection::resetKinematics() {
@@ -832,6 +951,7 @@ void LeptonPlusFakeMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *i
   thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
   thisCutBasedID->SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
   thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
+  thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
   thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
   thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
   thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
@@ -862,28 +982,29 @@ void LeptonPlusFakeMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
   *muonIdOutput = true;
 
   Utils anaUtils; 
-  bool flag = anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons) ||
-    (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
-     anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ;
-     // the following cuts are based on KF and global muon track. So if the cut above has failed, return here
-     if(!flag) {
+  bool flagGlobalMu = false;
+  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
+    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
+    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
+       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 ) flagGlobalMu = true;
+       //       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
+  }
+
+  bool flagTrackerMu = false;
+  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
+       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
+
+  if(!(flagGlobalMu || flagTrackerMu)) {
     *muonIdOutput = false;
     return;
   }
+    
   int track = trackIndexMuon[muonIndex];
 
   if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
 
-  if( (numberOfValidPixelBarrelHitsTrack[track]<1) && (numberOfValidPixelEndcapHitsTrack[track]<1) ) *muonIdOutput = false; 
+  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
 
-  int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
-  if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] >= 10) *muonIdOutput = false;
-  if(trackValidHitsGlobalMuonTrack[globalMuonTrack] == 0) *muonIdOutput = false;
-
-  // chiara
-  // bool station = anaUtils.muonIdVal(muonIdMuon[muonIndex],TMOneStationLoose);
-  // if (!station) *muonIdOutput = false;
-  
   float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
   float sign = fabs(ptErrorTrack[track]/ptTrack);
   if (sign>=0.1) *muonIdOutput = false;
@@ -906,6 +1027,19 @@ int LeptonPlusFakeMLSelection::numJets( std::vector<int> eleToRemove, std::vecto
 
     float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
+
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch = false;
 
@@ -961,6 +1095,19 @@ int LeptonPlusFakeMLSelection::numUncorrJets( std::vector<int> eleToRemove, std:
     if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;    
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
 
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+
     bool foundMatch=false;
     // check if the electrons falls into the jet
     for(int i=0; i<(int)eleToRemove.size(); i++) {
@@ -999,6 +1146,19 @@ float LeptonPlusFakeMLSelection::bVetoJets( std::vector<int> eleToRemove, std::v
     TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch=false;
     // check if the electrons falls into the jet
@@ -1063,9 +1223,9 @@ int LeptonPlusFakeMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
     int track = trackIndexMuon[i];
     if(trackValidHitsTrack[track]<=10) continue;
 
-    float dxy = transvImpactParBiasedTrack[track];
-    if(dxy > 0.200) continue;
-    
+    float dxy = transvImpactParTrack[track];
+    if(dxy > 0.100) continue;   
+
     float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
     float isoSumRel = isoSumAbs / pt;
     if(pt>20 || isoSumRel<0.1) continue;
@@ -1101,10 +1261,8 @@ int LeptonPlusFakeMLSelection::numExtraLeptons( std::vector<int> eleToRemove, st
     if(!theId || !theIso || !theConvRej) continue;
 
     int track = gsfTrackIndexEle[i];
-    float dxy = transvImpactParBiasedGsfTrack[track];
-    float dz  = PVzPV[m_closestPV] - trackVzGsfTrack[track];  
-    if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
-    if(_selectionEE->getSwitch("leptonDz") && !_selectionEE->passCut("leptonDz",dz))  continue;  
+    float d3dEle = impactPar3DGsfTrack[track];
+    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;    
 
     numEle++;
   }
@@ -1130,10 +1288,10 @@ int LeptonPlusFakeMLSelection::numExtraLeptons( std::vector<int> eleToRemove, st
     if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",isoSumRel)) continue;
 
     int track = trackIndexMuon[i];
-    float dxy = transvImpactParBiasedTrack[track];
+    float dxy = transvImpactParTrack[track];
     float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
-    if(_selectionEE->getSwitch("leptonD0") && !_selectionEE->passCut("leptonD0",dxy)) continue;
-    if(_selectionEE->getSwitch("leptonDz") && !_selectionEE->passCut("leptonDz",dz))  continue;  
+    if(_selectionEE->getSwitch("muonIP") && !_selectionEE->passCut("muonIP",dxy)) continue;
+    if(_selectionEE->getSwitch("muonDz") && !_selectionEE->passCut("muonDz",dz))  continue;  
 
     numMu++;
   }
@@ -1174,3 +1332,40 @@ float LeptonPlusFakeMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
   else return met.Mag();
 
 }
+
+/// specific for HWW that has multiple channels with different HLT requirements
+bool LeptonPlusFakeMLSelection::reloadTriggerMask() {
+
+  std::vector<int> triggerMask;
+  // load the triggers required for EE
+  for (std::vector< std::string >::const_iterator fIter=requiredTriggersEE.begin();fIter!=requiredTriggersEE.end();++fIter) {
+    //      std::cout << "For EE required: " << *fIter << std::endl;
+    for(unsigned int i=0; i<nameHLT->size(); i++) {
+      //if( !strcmp ((*fIter).c_str(), nameHLT->at(i).c_str() ) )
+      // nameHLT[i] has ..._vXXX
+      if(nameHLT->at(i).find(*fIter) != string::npos)
+	{
+	  triggerMask.push_back( indexHLT[i] ) ;
+	  break;
+	}
+    }
+  }
+  m_requiredTriggersEE = triggerMask;
+}
+
+bool LeptonPlusFakeMLSelection::hasPassedHLT(int channel) {
+  Utils anaUtils;
+  if(channel==ee) return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+  return true;
+}
+
+void LeptonPlusFakeMLSelection::setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
+  if(channel==ee) requiredTriggersEE=reqTriggers;
+  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+}
+
+void LeptonPlusFakeMLSelection::setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
+  if(channel==ee) notRequiredTriggersEE=reqTriggers;
+  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+}
+
