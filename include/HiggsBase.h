@@ -286,15 +286,18 @@ public :
    Int_t           numberOfValidStripTOBHitsSTAMuonTrack[100];   //[nSTAMuonTrack]
    Int_t           numberOfValidStripTECHitsSTAMuonTrack[100];   //[nSTAMuonTrack]
    Int_t           nPV;
-   Float_t         PVxPV[20];   //[nPV]
-   Float_t         PVyPV[20];   //[nPV]
-   Float_t         PVzPV[20];   //[nPV]
-   Float_t         PVErrxPV[20];   //[nPV]
-   Float_t         PVErryPV[20];   //[nPV]
-   Float_t         PVErrzPV[20];   //[nPV]
-   Float_t         SumPtPV[20];   //[nPV]
-   Float_t         ndofPV[20];   //[nPV]
-   Float_t         chi2PV[20];   //[nPV]
+   Float_t         PVxPV[100];   //[nPV]
+   Float_t         PVyPV[100];   //[nPV]
+   Float_t         PVzPV[100];   //[nPV]
+   Float_t         PVErrxPV[100];   //[nPV]
+   Float_t         PVErryPV[100];   //[nPV]
+   Float_t         PVErrzPV[100];   //[nPV]
+   Float_t         SumPtPV[100];   //[nPV]
+   Float_t         ndofPV[100];   //[nPV]
+   Float_t         chi2PV[100];   //[nPV]
+   Float_t         pxChMetPV[100];   //[nPV]
+   Float_t         pyChMetPV[100];   //[nPV]
+   Float_t         pzChMetPV[100];   //[nPV]
    Int_t           nMuon;
    Int_t           chargeMuon[100];   //[nMuon]
    Float_t         energyMuon[100];   //[nMuon]
@@ -805,6 +808,9 @@ public :
    TBranch        *b_SumPtPV;   //!
    TBranch        *b_ndofPV;   //!
    TBranch        *b_chi2PV;   //!
+   TBranch        *b_pxChMetPV;   //!
+   TBranch        *b_pyChMetPV;   //!
+   TBranch        *b_pzChMetPV;   //!
    TBranch        *b_nMuon;   //!
    TBranch        *b_chargeMuon;   //!
    TBranch        *b_energyMuon;   //!
@@ -1388,6 +1394,9 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("SumPtPV", SumPtPV, &b_SumPtPV);
    fChain->SetBranchAddress("ndofPV", ndofPV, &b_ndofPV);
    fChain->SetBranchAddress("chi2PV", chi2PV, &b_chi2PV);
+   fChain->SetBranchAddress("pxChMetPV", pxChMetPV, &b_pxChMetPV);
+   fChain->SetBranchAddress("pyChMetPV", pyChMetPV, &b_pyChMetPV);
+   fChain->SetBranchAddress("pzChMetPV", pzChMetPV, &b_pzChMetPV);
    fChain->SetBranchAddress("nMuon", &nMuon, &b_nMuon);
    fChain->SetBranchAddress("chargeMuon", chargeMuon, &b_chargeMuon);
    fChain->SetBranchAddress("energyMuon", energyMuon, &b_energyMuon);
