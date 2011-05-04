@@ -85,7 +85,7 @@ while (len(inputfiles) > 0):
     outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_1_3/\n')
     outputfile.write('eval `scramv1 runtime -sh`\n')
     outputfile.write('cd $WORKDIR\n')
-    outputfile.write(pwd+'/'+application+' '+inputfilename+" "+output+"_"+str(ijob)+" "+dataset+" "+str(isMC)+"\n")
+    outputfile.write(pwd+'/'+application+' '+inputfilename+" "+output+"_"+str(ijob)+" "+str(isMC)+" "+dataset+"\n")
 
 #    if castordir != "none": outputfile.write('./VecbosApp '+inputfilename+" "+" rfio://"+outputroot+output+"_"+str(ijob)+".root\n")
 #    else:  
