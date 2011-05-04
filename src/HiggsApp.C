@@ -92,12 +92,12 @@ int main(int argc, char* argv[]) {
   strcpy(inputFileName,argv[1]);
   if (argc < 3 ) strcpy(outputFileName,argv[1]);
   else strcpy(outputFileName,argv[2]);
-  bool isMC=1;
+  int isMC=1;
   if(argc==5) {
-    isMC=argv[3];
+    isMC=atoi(argv[3]);
     strcpy(dataset,argv[4]);
   }
-
+  
   // -------------------------
   // Loading the file
   TChain *theChain = new TChain("ntp1");
@@ -369,11 +369,11 @@ int main(int argc, char* argv[]) {
       maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
     } else if(DatasetName.Contains("DoubleMu")) {
       maskMM.push_back("HLT_DoubleMu7");
-      maskNotMM.push_back("HLT_Mu24");
+      //      maskNotMM.push_back("HLT_Mu24");
     } else if(DatasetName.Contains("MuEG")) {
       maskEM.push_back("HLT_Mu8_Ele17_CaloIdL");
       maskEM.push_back("HLT_Mu17_Ele8_CaloIdL");
-      maskNotEM.push_back("HLT_Mu24");
+      //      maskNotEM.push_back("HLT_Mu24");
     } else if(DatasetName.Contains("SingleMu")) {
       maskMM.push_back("HLT_Mu24");
       maskEM.push_back("HLT_Mu24");
