@@ -31,7 +31,7 @@ public:
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
-	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, 
+	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, int nvtx,
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
@@ -44,7 +44,7 @@ public:
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
-  void fillKFactor(double kfactor);
+  void fillKFactor(float kfactor);
   //! fill the MC truth informations
   void fillMcTruth(bool prompt);
   //! fill the HLT electron triggers informations
@@ -52,7 +52,7 @@ public:
   //! fill the HLT muons triggers informations
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! fill the run,lumi, event number
-  void fillRunInfos(int run, int lumi, int event);
+  void fillRunInfos(int run, int lumi, int event, float puweight);
   //! latinos 
   void fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24);
@@ -81,6 +81,7 @@ private:
   float maxPtEle;  
   float minPtEle;  
   float myDetaLeptons;
+  int myNVtx;
   int myNjets;
   int myNuncorrjets;
   float myDxyEVT;
@@ -96,7 +97,7 @@ private:
   double myWeight;
   double myProcesId;
   float myLumi;
-  float myKFactor;
+  float myKFactor, myPUWeight;
   int myRun, myLS, myEvent;
 
   // latinos

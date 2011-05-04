@@ -20,6 +20,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("run",                 &myRun,                 "run/I");
   myTree->Branch("ls",                  &myLS,                  "ls/I");
   myTree->Branch("event",               &myEvent,               "event/I");
+  myTree->Branch("puweight",            &myPUWeight,            "puweight/F");
   myTree->Branch("met",                 &myMet,                 "met/F");  
   myTree->Branch("pfMet",               &myPFMet,               "pfMet/F");  
   myTree->Branch("caloMet",             &myCaloMet,             "caloMet/F");  
@@ -31,6 +32,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("maxPtEle",            &maxPtEle,              "maxPtEle/F");  
   myTree->Branch("minPtEle",            &minPtEle,              "minPtEle/F");  
   myTree->Branch("detaLeptons",         &myDetaLeptons,         "detaLeptons/F");  
+  myTree->Branch("nVtx",                &myNVtx,                "nVtx/I");
   myTree->Branch("finalLeptons",        &myFinalLeptons,        "finalLeptons/O");
   myTree->Branch("jetVeto",             &myJetVeto,             "jetVeto/O");
   myTree->Branch("uncorrJetVeto",       &myUncorrJetVeto,       "uncorrJetVeto/O");
@@ -164,7 +166,7 @@ void RedHiggsTree::save()
 
 
 void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet, 
-			   float dphi, float derre, float tmass, float mee, float max, float min, float deta,
+			   float dphi, float derre, float tmass, float mee, float max, float min, float deta, int nvtx,
 			   bool finalLeptons, bool jetVeto, bool uncorrjetVeto, bool preDeltaPhi, bool finalSelection)
 {
 
@@ -179,6 +181,7 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
   maxPtEle      = max;
   minPtEle      = min;
   myDetaLeptons = deta;
+  myNVtx        = nvtx;
   myFinalLeptons = finalLeptons;
   myJetVeto       = jetVeto;
   myUncorrJetVeto = uncorrjetVeto;
@@ -271,7 +274,7 @@ void RedHiggsTree::fillCSA07(double weight, double processId, float lumi)
 
 }
 
-void RedHiggsTree::fillKFactor(double kfactor) {
+void RedHiggsTree::fillKFactor(float kfactor) {
 
   myKFactor = kfactor;
 
@@ -299,11 +302,12 @@ void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool si
 
 }
 
-void RedHiggsTree::fillRunInfos(int run, int lumi, int event) {
+void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight) {
 
   myRun = run;
   myLS = lumi;
   myEvent = event;
+  myPUWeight = puweight;
 
 }
 

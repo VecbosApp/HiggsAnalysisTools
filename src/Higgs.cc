@@ -300,7 +300,7 @@ double Higgs::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
   double temp = sqrt((A+B)*(A+B)-(az+bz)*(az+bz)-
                      (jbT.Dot(jbT)-jaT.Dot(jaT))*(jbT.Dot(jbT)-jaT.Dot(jaT))/(jaT+jbT).Mag2());
 
-  double mybeta = (jbT.Dot(jbT)-jaT.Dot(jaT))*(jbT.Dot(jbT)-jaT.Dot(jaT))/
+  double mybeta = (jbT.Dot(jbT)-jaT.Dot(jaT))/
     sqrt(ATBT*((A+B)*(A+B)-(az+bz)*(az+bz)));
 
   double mygamma = 1./sqrt(1.-mybeta*mybeta);
