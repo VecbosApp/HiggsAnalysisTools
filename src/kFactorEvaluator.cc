@@ -8,7 +8,7 @@ kFactorEvaluator::kFactorEvaluator(int mH) {
   
   ranges.clear();
   kfactors.clear();
-
+  
   char mass[5];
   sprintf(mass,"%d",mH);
 
@@ -43,5 +43,7 @@ float kFactorEvaluator::evaluate(float ptH) {
     float max = (ranges[i]).max;
     if(ptH>=min && ptH<max) return kfactors[i];
   }
+  std::cout << "H pT = " << ptH << ": out of range, use 1" << std::endl;
+  return 1;
 }
 
