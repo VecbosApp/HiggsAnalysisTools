@@ -543,7 +543,7 @@ void HiggsMLSelection::Loop() {
     float evtKfactor = 1.0;
 
     // weight for the PU observed in 2011 data
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
+    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) {
       evtKfactor = getkFactor("Higgs");
@@ -832,6 +832,7 @@ void HiggsMLSelection::Loop() {
 
     CutBasedHiggsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
     CutBasedHiggsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
+    CutBasedHiggsSelectionEE.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT cut only on electrons
 
     CutBasedHiggsSelectionEE.SetNJets(njets[ee]);
     CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
@@ -859,6 +860,7 @@ void HiggsMLSelection::Loop() {
     bool outputStep4  = CutBasedHiggsSelectionEE.outputStep4();
     bool outputStep5  = CutBasedHiggsSelectionEE.outputStep5();
     bool outputStep6  = CutBasedHiggsSelectionEE.outputStep6();
+    bool outputStep6bis  = CutBasedHiggsSelectionEE.outputStep6bis();
     bool outputStep7  = CutBasedHiggsSelectionEE.outputStep7();
     bool outputStep8  = CutBasedHiggsSelectionEE.outputStep8();
     bool outputStep9  = CutBasedHiggsSelectionEE.outputStep9();
@@ -972,6 +974,7 @@ void HiggsMLSelection::Loop() {
     outputStep4  = CutBasedHiggsSelectionMM.outputStep4();
     outputStep5  = CutBasedHiggsSelectionMM.outputStep5();
     outputStep6  = CutBasedHiggsSelectionMM.outputStep6();
+    outputStep6bis  = CutBasedHiggsSelectionMM.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionMM.outputStep7();
     outputStep8  = CutBasedHiggsSelectionMM.outputStep8();
     outputStep9  = CutBasedHiggsSelectionMM.outputStep9();
@@ -1075,6 +1078,7 @@ void HiggsMLSelection::Loop() {
     outputStep4  = CutBasedHiggsSelectionEM.outputStep4();
     outputStep5  = CutBasedHiggsSelectionEM.outputStep5();
     outputStep6  = CutBasedHiggsSelectionEM.outputStep6();
+    outputStep6bis  = CutBasedHiggsSelectionEM.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionEM.outputStep7();
     outputStep8  = CutBasedHiggsSelectionEM.outputStep8();
     outputStep9  = CutBasedHiggsSelectionEM.outputStep9();
@@ -1155,6 +1159,7 @@ void HiggsMLSelection::Loop() {
 
     CutBasedHiggsSelectionME.SetHighElePt(hardestLeptonPt[me]); 
     CutBasedHiggsSelectionME.SetLowElePt(slowestLeptonPt[me]);  
+    CutBasedHiggsSelectionME.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT only on electrons
 
     CutBasedHiggsSelectionME.SetNJets(njets[me]);
     CutBasedHiggsSelectionME.SetNUncorrJets(nuncorrjets[me]);
@@ -1182,6 +1187,7 @@ void HiggsMLSelection::Loop() {
     outputStep4  = CutBasedHiggsSelectionME.outputStep4();
     outputStep5  = CutBasedHiggsSelectionME.outputStep5();
     outputStep6  = CutBasedHiggsSelectionME.outputStep6();
+    outputStep6bis  = CutBasedHiggsSelectionME.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionME.outputStep7();
     outputStep8  = CutBasedHiggsSelectionME.outputStep8();
     outputStep9  = CutBasedHiggsSelectionME.outputStep9();

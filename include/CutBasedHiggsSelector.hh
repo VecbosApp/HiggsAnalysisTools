@@ -56,6 +56,7 @@ public:
   void SetDeltaPhiLLJet(float deltaphiLLJet) { m_deltaPhiLLJet = deltaphiLLJet; }
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
+  void SetExtraSlowLeptonPTCut(float ptMin) { m_extraSlowLeptonPTMin = ptMin; }
 
   //! get output of the selector
   bool output();
@@ -76,6 +77,7 @@ public:
   bool outputStep4() { return m_step4; }
   bool outputStep5() { return m_step5; }
   bool outputStep6() { return m_step6; }
+  bool outputStep6bis() { return m_step6bis; }
   bool outputStep7() { return m_step7; }
   bool outputStep8() { return m_step8; }
   bool outputStep9() { return m_step9; }
@@ -116,6 +118,7 @@ private:
   float m_btagJets;
   float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons, m_metOverPtLL, m_deltaPhiLLJet;
   float m_maxPtElectron, m_minPtElectron;
+  float m_extraSlowLeptonPTMin;
   int m_processID;
 
   //! contains the preselection cuts
@@ -134,7 +137,7 @@ private:
   bool m_preDeltaPhi;
 
   //! latinos
-  bool m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step7, m_step8, m_step9;  
+  bool m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step6bis, m_step7, m_step8, m_step9;  
   bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step17;
   bool m_step18, m_step19, m_step20, m_step21, m_step22, m_step23, m_step24;
 
