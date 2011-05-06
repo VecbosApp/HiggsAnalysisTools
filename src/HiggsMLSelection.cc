@@ -5,7 +5,6 @@
 #include "CommonTools/include/Counters.hh"
 #include "CommonTools/include/Selection.hh"
 #include "CommonTools/include/Utils.hh"
-#include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
 #include "HiggsAnalysisTools/include/HiggsMLSelection.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
@@ -19,9 +18,6 @@
 #include <TTree.h>
 
 using namespace bits;
-
-// WARNING: TREES PRODUCED WITHOUT KFACTOR
-float evtKfactor = 1.0;
 
 HiggsMLSelection::HiggsMLSelection(TTree *tree) 
   : Higgs(tree) {
@@ -431,10 +427,22 @@ bool HiggsMLSelection::findMcTree(const char* processType) {
 float HiggsMLSelection::getkFactor(std::string process) {
 
   float weight = 1.;
-  if((process.compare("Higgs")==0)) weight = evtKfactor;
+  if((process.compare("Higgs")==0)) {
+    // if computed in AOD
+    //    weight = evtKfactor;
+
+    // if computed offline
+    for(int imc=2;imc<10;imc++) {
+      if(idMc[imc]==25 && statusMc[imc]==3) {
+        float ptHiggs = pMc[imc]*fabs(sin(thetaMc[imc]));
+        return calculator_->evaluate(ptHiggs);
+      }
+    }
+  }
   else if(process.compare("WW")==0) weight = 1.0; // we used MC @ NLO weight in 16X   
 
-  return weight;
+  std::cout << "Higgs not found. Returning kFactor = 1.0 " << endl;
+  return 1.0;
 }
 
 void HiggsMLSelection::Loop() {
@@ -501,6 +509,22 @@ void HiggsMLSelection::Loop() {
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
 
+  /// kfactors
+  std::ifstream file("config/higgs/higgsMass.txt");
+  std::string var;
+  int mh;
+  if(!file.good()) {
+    std::cout << "Error! Unable to open the mass file. Using kFactor = 1 always!" << std::endl;   
+  } else {
+    while(!file.eof()) {
+      file >> var >> mh;
+    }
+  }
+  
+  cout << "higgs mass = " << mh << endl;
+
+  calculator_ = new kFactorEvaluator(mh);
+
   PUWeight* fPUWeight = new PUWeight();
 
   Long64_t nbytes = 0, nb = 0;
@@ -516,12 +540,16 @@ void HiggsMLSelection::Loop() {
 
     // get the kFactor of the event (for signal)
     float weight = 1;
+    float evtKfactor = 1.0;
 
     // weight for the PU observed in 2011 data
     if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) weight *= getkFactor("Higgs");
-    
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) {
+      evtKfactor = getkFactor("Higgs");
+      weight *= evtKfactor;
+    }
+
     // look to the MC truth decay tree 
     // bool decayEE = findMcTree("HtoWWto2e2nu");
     // bool decayMM = findMcTree("HtoWWto2m2nu");
@@ -876,7 +904,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(weight);
+    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(evtKfactor);
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
@@ -977,7 +1005,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
-    if ( _selectionMM->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(weight);
+    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(evtKfactor);
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeMM -> store();
@@ -1085,7 +1113,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
-    if ( _selectionEM->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(weight);
+    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(evtKfactor);
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEM -> store();
@@ -1192,7 +1220,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
-    if ( _selectionME->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(weight);
+    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(evtKfactor);
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
