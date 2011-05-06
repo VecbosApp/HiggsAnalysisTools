@@ -133,7 +133,8 @@ private:
   int theLeadingJet[1];
   std::vector<int> eleCands[1], muCands[1];
   TLorentzVector *m_p4LeptonPlus[1], *m_p4LeptonMinus[1];
-  TLorentzVector *m_p4MET;
+  TVector3 *m_p3PFMET, *m_p3TKMET;
+  float m_theMET;
 
   TVector3 m_dilepPt[1];
   float m_deltaPhi[1];

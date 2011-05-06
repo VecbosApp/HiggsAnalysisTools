@@ -5,7 +5,6 @@
 #include "CommonTools/include/Counters.hh"
 #include "CommonTools/include/Selection.hh"
 #include "CommonTools/include/Utils.hh"
-#include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
 #include "HiggsAnalysisTools/include/LeptonPlusFakeMLSelection.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
@@ -18,9 +17,6 @@
 #include <TTree.h>
 
 using namespace bits;
-
-// WARNING: TREES PRODUCED WITHOUT KFACTOR
-float evtKfactor = 1.0;
 
 LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree) 
   : Higgs(tree) {
@@ -117,7 +113,8 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
   for(int theChannel=0; theChannel<1; theChannel++) {
     m_p4LeptonPlus[theChannel]  = new TLorentzVector(0.,0.,0.,0.);
     m_p4LeptonMinus[theChannel] = new TLorentzVector(0.,0.,0.,0.);
-    m_p4MET = new TLorentzVector(0.,0.,0.,0.);
+    m_p3PFMET = new TVector3(0.,0.,0.);
+    m_p3TKMET = new TVector3(0.,0.,0.);
   }    
 
   // b-veto event variables
@@ -131,7 +128,8 @@ LeptonPlusFakeMLSelection::~LeptonPlusFakeMLSelection(){
     delete m_p4LeptonPlus[theChannel];
     delete m_p4LeptonMinus[theChannel];
   }
-  delete m_p4MET;  
+  delete m_p3PFMET;
+  delete m_p3TKMET;
 
   delete _selectionEE;
   delete _selectionErrEE;
@@ -176,7 +174,6 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.028946;
   */
 
-  /*
   // fake in the barrel from QCD MC                                  
   m_fakeRateEB[0] = 0.318519;
   m_fakeRateEB[1] = 0.093561;
@@ -202,8 +199,8 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00320969;
   m_fakeRateEE_err[3] = 0.00307286;
   m_fakeRateEE_err[4] = 0.0147189;
-  */
 
+  /*
   // fake in the barrel from data (jet:30))
   m_fakeRateEB[0] = 0.154532;
   m_fakeRateEB[1] = 0.136631;
@@ -229,6 +226,7 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00824217;
   m_fakeRateEE_err[3] = 0.00636249;
   m_fakeRateEE_err[4] = 0.0317418;
+  */
 
   /*
   // fake in the barrel from data (jet:15))
@@ -287,15 +285,6 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   */
 }
 
-float LeptonPlusFakeMLSelection::getkFactor(std::string process) {
-
-  float weight = 1.;
-  if((process.compare("Higgs")==0)) weight = evtKfactor;
-  else if(process.compare("WW")==0) weight = 1.0; // we used MC @ NLO weight in 16X   
-
-  return weight;
-}
-
 void LeptonPlusFakeMLSelection::Loop() {
 
   _verbose=false;
@@ -307,7 +296,6 @@ void LeptonPlusFakeMLSelection::Loop() {
   std::string reducedTreeNameEE = _datasetName+"-datasetEE.root";
   myOutTreeEE = new RedHiggsTree(reducedTreeNameEE.c_str());
 
-  if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->addKFactor();
   if ( _selectionEE->getSwitch("isData")) myOutTreeEE->addRunInfos();
   myOutTreeEE->addMLVars();
 
@@ -327,13 +315,9 @@ void LeptonPlusFakeMLSelection::Loop() {
     
     resetKinematicsStart();
 
-    // get the kFactor of the event (for signal)
-    float tmpWeight = 1;
-
     // weight for the PU observed in 2011 data
-    // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPV);
-
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) tmpWeight *= getkFactor("Higgs");
+    float tmpWeight = 1.;
+    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  // chiara: on by default
 
     // dummy MC truth
     bool promptEE = true;
@@ -411,6 +395,12 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     // set of kinematics: : now I've all the final leptons 
     resetKinematics();
+
+    // MET is an event variable. Independent o the channel        
+    m_p3PFMET->SetXYZ(pxPFMet[0],pyPFMet[0],pzPFMet[0]);
+    m_p3TKMET->SetXYZ(pxChMetPV[0],pyChMetPV[0],pzChMetPV[0]); // the one associated to the 0th vertex     
+    m_theMET = m_p3PFMET->Pt();
+
     setKinematicsEE(theReal, theFake);
     
     
@@ -429,6 +419,7 @@ void LeptonPlusFakeMLSelection::Loop() {
       weight      = tmpWeight;
       weightError = tmpWeight;
     }
+
 
     // -------------------------------------------------------------    
     // look for PV in the event (there is always at least 1 PV)
@@ -488,7 +479,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetBTagJets(btag[ee]);
     CutBasedHiggsSelectionEE.SetNSoftMuons(nsoftmu[ee]);
     CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
-    CutBasedHiggsSelectionEE.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));					
+    CutBasedHiggsSelectionEE.SetMet(m_theMET);
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
@@ -503,21 +494,20 @@ void LeptonPlusFakeMLSelection::Loop() {
     bool selPreDeltaPhiEE       = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
     bool outputStep1            = CutBasedHiggsSelectionEE.outputStep1();
 
-    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber);
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
     
     myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
-			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee],
+			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
 
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(evtKfactor);
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
 
-    // for errors                                                                                                                   
+    // for errors                                    
     CutBasedHiggsErrorsSelectionEE.SetWeight(weightError);
     CutBasedHiggsErrorsSelectionEE.SetMcTruth(promptEE);
     CutBasedHiggsErrorsSelectionEE.SetHLT(passedHLT[ee]);
@@ -541,13 +531,14 @@ void LeptonPlusFakeMLSelection::Loop() {
     CutBasedHiggsErrorsSelectionEE.SetBTagJets(btag[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNSoftMuons(nsoftmu[ee]);
     CutBasedHiggsErrorsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
-    CutBasedHiggsErrorsSelectionEE.SetMet(GetPt(pxPFMet[0],pyPFMet[0]));
+    CutBasedHiggsErrorsSelectionEE.SetMet(m_theMET);
     CutBasedHiggsErrorsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsErrorsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsErrorsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+    bool isSelectedErrorEE = CutBasedHiggsErrorsSelectionEE.output();    
   }
 }
 
@@ -843,10 +834,11 @@ void LeptonPlusFakeMLSelection::setKinematicsEE(int myReal, int myFake) {
     m_deltaErre[ee] = m_p4LeptonMinus[ee]->Vect().DeltaR(m_p4LeptonPlus[ee]->Vect());
     m_deltaEtaLeptons[ee] = etaEle[myReal]-etaEle[myFake];
     m_dilepPt[ee].SetXYZ( m_p4LeptonMinus[ee]->Vect().X()+m_p4LeptonPlus[ee]->Vect().X(),m_p4LeptonMinus[ee]->Vect().Y()+m_p4LeptonPlus[ee]->Vect().Y(),0.0 );
-    m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
-    m_metOptll[ee] = m_p4MET->Pt() / m_dilepPt[ee].Pt();
+    // m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
+    m_transvMass[ee] = 0.;
+    m_metOptll[ee] = m_theMET / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
-    m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
+    // m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
     m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
   }
   
@@ -867,7 +859,8 @@ void LeptonPlusFakeMLSelection::resetKinematics() {
     muCands[theChannel].clear();
     m_p4LeptonMinus[theChannel] -> SetXYZT(0,0,0,0);                                                        
     m_p4LeptonPlus[theChannel]  -> SetXYZT(0,0,0,0);
-    m_p4MET                     -> SetXYZT(0,0,0,0);
+    m_p3PFMET                   -> SetXYZ(0,0,0);
+    m_p3TKMET                   -> SetXYZ(0,0,0);
     hardestLeptonPt[theChannel]   = 0.;
     slowestLeptonPt[theChannel]   = 0.;
     m_mll[theChannel]             = 0.;
@@ -1324,12 +1317,23 @@ bool LeptonPlusFakeMLSelection::isGoodTrack(int iTrack, float ptMin, float ptMax
 
 float LeptonPlusFakeMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
 
-  TVector3 met = m_p4MET->Vect();
-  float deltaPhi1 = fabs(p1.DeltaPhi(met));
-  float deltaPhi2 = fabs(p2.DeltaPhi(met));
-  float deltaphi = TMath::Min(deltaPhi1,deltaPhi2);
-  if(deltaphi<TMath::Pi()/2.) return met.Mag() * sin(deltaphi);
-  else return met.Mag();
+  // calculate with PF met  
+  float projMET_pf = 0.0;
+  float deltaPhi1_pf = fabs(p1.DeltaPhi(*m_p3PFMET));
+  float deltaPhi2_pf = fabs(p2.DeltaPhi(*m_p3PFMET));
+  float deltaphi_pf = TMath::Min(deltaPhi1_pf,deltaPhi2_pf);
+  if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * sin(deltaphi_pf);
+  else projMET_pf = m_p3PFMET->Mag();
+
+  // calculate with TKMET                                                
+  float projMET_tk = 0.0;
+  float deltaPhi1_tk = fabs(p1.DeltaPhi(*m_p3TKMET));
+  float deltaPhi2_tk = fabs(p2.DeltaPhi(*m_p3TKMET));
+  float deltaphi_tk = TMath::Min(deltaPhi1_tk,deltaPhi2_tk);
+  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = m_p3TKMET->Mag() * sin(deltaphi_tk);
+  else projMET_tk = m_p3TKMET->Mag();
+
+  return TMath::Min(projMET_pf,projMET_tk);
 
 }
 
