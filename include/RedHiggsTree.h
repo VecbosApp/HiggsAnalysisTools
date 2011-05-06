@@ -44,7 +44,7 @@ public:
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
-  void fillKFactor(float kfactor);
+  void fillKFactor(float kfactor, float genh, float ptlj );
   //! fill the MC truth informations
   void fillMcTruth(bool prompt);
   //! fill the HLT electron triggers informations
@@ -98,6 +98,8 @@ private:
   double myProcesId;
   float myLumi;
   float myKFactor, myPUWeight;
+  float myGenHPt;
+  float myLeadingJetPt;
   int myRun, myLS, myEvent;
 
   // latinos

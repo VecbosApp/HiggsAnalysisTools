@@ -541,7 +541,7 @@ void HiggsMLSelection::Loop() {
     // get the kFactor of the event (for signal)
     float weight = 1;
     float evtKfactor = 1.0;
-
+    
     // weight for the PU observed in 2011 data
     //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
@@ -790,6 +790,12 @@ void HiggsMLSelection::Loop() {
       nextraleptons[ichan] = numExtraLeptons(eleCands[ichan],muCands[ichan]);
     }
 
+    float genPtHiggs = -1.;
+    if ( !_selectionEE->getSwitch("isData") ) {
+      for(int imc=2;imc<10;imc++) {
+        if(idMc[imc]==25 && statusMc[imc]==3) genPtHiggs = pMc[imc]*fabs(sin(thetaMc[imc]));
+      }}
+    
 
     // ---------------------------------------
     // filling counters for the different final states
@@ -888,7 +894,13 @@ void HiggsMLSelection::Loop() {
     if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
 
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
-    
+
+    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
+      int theLJ  = theLeadingJet[ee];
+      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+      myOutTreeEE->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
+    }
+
     //       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
     // 				       firedTrg[m_requiredTriggers[1]],
     // 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
@@ -906,7 +918,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEE->fillKFactor(evtKfactor);
+
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
@@ -999,6 +1011,12 @@ void HiggsMLSelection::Loop() {
     if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
     myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
+      int theLJ  = theLeadingJet[mm];
+      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+      myOutTreeMM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
+    }
+
     myOutTreeMM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[mm], m_deltaPhi[mm], m_deltaErre[mm], m_transvMass[mm], m_mll[mm], 
 			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm], nPV,
@@ -1008,8 +1026,6 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeMM->fillKFactor(evtKfactor);
-      
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeMM -> store();
 
@@ -1103,6 +1119,12 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
+      int theLJ  = theLeadingJet[em];
+      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+      myOutTreeEM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
+    }
+
     myOutTreeEM -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[em], m_deltaPhi[em], m_deltaErre[em], m_transvMass[em], m_mll[em], 
 			   hardestLeptonPt[em], slowestLeptonPt[em], m_deltaEtaLeptons[em], nPV,
@@ -1116,8 +1138,6 @@ void HiggsMLSelection::Loop() {
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
     myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
-    
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeEM->fillKFactor(evtKfactor);
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEM -> store();
@@ -1212,6 +1232,12 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
+      int theLJ  = theLeadingJet[me];
+      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+      myOutTreeME->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
+    }
+
     myOutTreeME -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
 			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me], nPV,
@@ -1226,8 +1252,6 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
-    if ( _selectionEE->getSwitch("apply_kFactor") ) myOutTreeME->fillKFactor(evtKfactor);
-      
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
 

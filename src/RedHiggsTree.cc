@@ -117,8 +117,9 @@ void RedHiggsTree::addLatinos() {
 
 void RedHiggsTree::addKFactor() {
   
-  myTree->Branch("KFactor",  &myKFactor,   "KFactor/F");
-
+  myTree->Branch("KFactor",       &myKFactor,      "KFactor/F");
+  myTree->Branch("GenHPt",        &myGenHPt,       "GenHPt/F");
+  myTree->Branch("leadingJetPt",  &myLeadingJetPt, "leadingJetPt/F");
 }
 
 void RedHiggsTree::addMcTruthInfos() {
@@ -274,10 +275,11 @@ void RedHiggsTree::fillCSA07(double weight, double processId, float lumi)
 
 }
 
-void RedHiggsTree::fillKFactor(float kfactor) {
+void RedHiggsTree::fillKFactor(float kfactor, float genh, float ptlj ) {
 
-  myKFactor = kfactor;
-
+  myKFactor      = kfactor;
+  myGenHPt       = genh;
+  myLeadingJetPt = ptlj;
 }
 
 void RedHiggsTree::fillMcTruth(bool prompt) {
