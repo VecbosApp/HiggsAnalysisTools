@@ -19,6 +19,7 @@
 #include "HiggsAnalysisTools/include/RedHiggsTree.h"
 #include "HiggsAnalysisTools/include/RedTriggerTree.hh"
 #include "HiggsAnalysisTools/include/RedEleIDTree.h"
+#include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
 #include <TVector3.h>
 #include <TLorentzVector.h>
 
@@ -231,5 +232,9 @@ private:
   TFile *fMatch;
   TH1F *H_deltaRcorr;
   TH1F *H_deltaRuncorr;
+
+  //! kfactor evaluator offline
+  kFactorEvaluator *calculator_;
+
 };
 #endif
