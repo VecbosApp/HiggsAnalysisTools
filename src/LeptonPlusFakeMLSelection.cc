@@ -473,7 +473,8 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     CutBasedHiggsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
     CutBasedHiggsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
-    
+    CutBasedHiggsSelectionEE.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT cut only on electrons 
+
     CutBasedHiggsSelectionEE.SetNJets(njets[ee]);
     CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
     CutBasedHiggsSelectionEE.SetBTagJets(btag[ee]);
