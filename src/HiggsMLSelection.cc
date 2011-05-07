@@ -441,7 +441,7 @@ float HiggsMLSelection::getkFactor(std::string process) {
   }
   else if(process.compare("WW")==0) weight = 1.0; // we used MC @ NLO weight in 16X   
 
-  std::cout << "Higgs not found. Returning kFactor = 1.0 " << endl;
+  // std::cout << "Higgs not found. Returning kFactor = 1.0 " << endl;
   return 1.0;
 }
 
@@ -543,7 +543,7 @@ void HiggsMLSelection::Loop() {
     float evtKfactor = 1.0;
     
     // weight for the PU observed in 2011 data
-    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
+    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) {
       evtKfactor = getkFactor("Higgs");
