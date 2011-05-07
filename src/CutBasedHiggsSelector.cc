@@ -356,10 +356,10 @@ bool CutBasedHiggsSelector::output() {
     if(_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
     m_step22 = true;
 
-    if (_selection->getSwitch("minPtLepton") && _selection->passCut("minPtLepton", m_lowPt)) return false;
+    if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
     m_step23 = true;
 
-    if (_selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) return false;
+    if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
     m_step24 = true;
 
     if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
