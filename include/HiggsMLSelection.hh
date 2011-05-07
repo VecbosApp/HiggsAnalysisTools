@@ -235,6 +235,6 @@ private:
 
   //! kfactor evaluator offline
   kFactorEvaluator *calculator_;
-
+  
 };
 #endif

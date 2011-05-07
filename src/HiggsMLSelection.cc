@@ -441,7 +441,6 @@ float HiggsMLSelection::getkFactor(std::string process) {
   }
   else if(process.compare("WW")==0) weight = 1.0; // we used MC @ NLO weight in 16X   
 
-  // std::cout << "Higgs not found. Returning kFactor = 1.0 " << endl;
   return 1.0;
 }
 
@@ -852,6 +851,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+    CutBasedHiggsSelectionEE.SetWWInvMass(2.*m_transvMass[ee]/_massVal);
 
     bool isSelectedEE           = CutBasedHiggsSelectionEE.output();    
     bool selUpToFinalLeptonsEE  = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
@@ -972,6 +972,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
     CutBasedHiggsSelectionMM.SetInvMass(m_mll[mm]);
     CutBasedHiggsSelectionMM.SetDetaLeptons(m_deltaEtaLeptons[mm]);
+    CutBasedHiggsSelectionMM.SetWWInvMass(2.*m_transvMass[mm]/_massVal);
 
     bool isSelectedMM           = CutBasedHiggsSelectionMM.output();    
     bool selUpToFinalLeptonsMM  = CutBasedHiggsSelectionMM.outputUpToFinalLeptons();
@@ -1080,6 +1081,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
     CutBasedHiggsSelectionEM.SetInvMass(m_mll[em]);
     CutBasedHiggsSelectionEM.SetDetaLeptons(m_deltaEtaLeptons[em]);
+    CutBasedHiggsSelectionEM.SetWWInvMass(2.*m_transvMass[em]/_massVal);
 
     bool isSelectedEM           = CutBasedHiggsSelectionEM.output();    
     bool selUpToFinalLeptonsEM  = CutBasedHiggsSelectionEM.outputUpToFinalLeptons();
@@ -1193,6 +1195,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
     CutBasedHiggsSelectionME.SetInvMass(m_mll[me]);
     CutBasedHiggsSelectionME.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionME.SetWWInvMass(2.*m_transvMass[me]/_massVal);
 
     bool isSelectedME           = CutBasedHiggsSelectionME.output();    
     bool selUpToFinalLeptonsME  = CutBasedHiggsSelectionME.outputUpToFinalLeptons();

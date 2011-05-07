@@ -27,7 +27,16 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_step14 = false;
   m_step15 = false;
   m_step16 = false;
+  m_step16bis = false;
   m_step17 = false;
+  m_step18 = false;
+  m_step19 = false;
+  m_step20 = false;
+  m_step21 = false;
+  m_step22 = false;
+  m_step23 = false;
+  m_step23bis = false;
+  m_step24 = false;
 
   m_processID = -1;
 }
@@ -61,6 +70,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_detaLeptons = selector.m_detaLeptons;
   m_maxPtElectron = selector.m_maxPtElectron;
   m_minPtElectron = selector.m_minPtElectron;
+  m_WWInvMass = selector.m_WWInvMass;
   m_extraSlowLeptonPTMin = selector.m_extraSlowLeptonPTMin;
   m_processID = selector.m_processID;
   *_selection = *selector._selection;
@@ -77,7 +87,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_step4  = selector.m_step4;
   m_step5  = selector.m_step5;
   m_step6  = selector.m_step6;
-  m_step6bis = selector.m_step6;
+  m_step6bis = selector.m_step6bis;
   m_step7  = selector.m_step7;
   m_step8  = selector.m_step8;
   m_step9  = selector.m_step9;
@@ -88,7 +98,16 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_step14 = selector.m_step14;
   m_step15 = selector.m_step15;
   m_step16 = selector.m_step16;
+  m_step16bis = selector.m_step16bis;
   m_step17 = selector.m_step17;
+  m_step18 = selector.m_step18;
+  m_step19 = selector.m_step19;
+  m_step20 = selector.m_step20;
+  m_step21 = selector.m_step21;
+  m_step22 = selector.m_step22;
+  m_step23 = selector.m_step23;
+  m_step23bis = selector.m_step23bis;
+  m_step24 = selector.m_step24;
 }
 
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
@@ -123,6 +142,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("mll2");
   _selection->addCut("maxPtLepton");
   _selection->addCut("minPtLepton");
+  _selection->addCut("higgsMassRel");
   _selection->addCut("deltaPhiLLJet");
   _selection->addCut("deltaPhi");
 
@@ -150,6 +170,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("mll2");
   globalCounter->AddVar("maxPtLepton");
   globalCounter->AddVar("minPtLepton");
+  globalCounter->AddVar("higgsMassRel");
   globalCounter->AddVar("deltaPhi");
   globalCounter->AddVar("final");
   globalCounter->AddVar("oneJet");
@@ -194,6 +215,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("mll2");
       processCounter->AddVar("maxPtLepton");
       processCounter->AddVar("minPtLepton");
+      processCounter->AddVar("higgsMassRel");
       processCounter->AddVar("deltaPhi");
       processCounter->AddVar("final");
       processCounter->AddVar("oneJet");
@@ -229,6 +251,7 @@ bool CutBasedHiggsSelector::output() {
   m_step14 = false;
   m_step15 = false;
   m_step16 = false;
+  m_step16bis = false;
   m_step17 = false;
   m_step18 = false;
   m_step19 = false;
@@ -236,6 +259,7 @@ bool CutBasedHiggsSelector::output() {
   m_step21 = false;
   m_step22 = false;
   m_step23 = false;
+  m_step23bis = false;
   m_step24 = false;
 
   theCounter->IncrVar("event",m_weight);
@@ -323,23 +347,29 @@ bool CutBasedHiggsSelector::output() {
                 && m_lowPt >= m_extraSlowLeptonPTMin ) {
 	      theCounter->IncrVar("minPtLepton",m_weight);
 	      m_step16 = true;
-
-	      m_preDeltaPhi = true;
-	      
-	      if (!_selection->getSwitch("deltaPhi") ||
-		  _selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) {
-		theCounter->IncrVar("deltaPhi",m_weight); 
-		theCounter->IncrVar("final",m_weight);
-		m_step17 = true;
-		return true;
-	      }
-	    }
-	  }
-	}
+              
+              if (!_selection->getSwitch("higgsMassRel") || 
+                  (_selection->getSwitch("higgsMassRel") && _selection->passCut("higgsMassRel", m_WWInvMass))) {
+                theCounter->IncrVar("higgsMassRel",m_weight);
+                m_step16bis = true;
+               
+                m_preDeltaPhi = true;
+                
+                if (!_selection->getSwitch("deltaPhi") ||
+                    _selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) {
+                  theCounter->IncrVar("deltaPhi",m_weight); 
+                  theCounter->IncrVar("final",m_weight);
+                  m_step17 = true;
+                  return true;
+                }
+              }
+            }
+          }
+        }
       }
     }
   } else {
-
+    
     // for nJets>0 we do not need cut by cut: just final counter
     if(_selection->getSwitch("bTagVeto") && !_selection->passCut("bTagVeto",m_btagJets)) return false;
     m_step18 = true;
@@ -358,6 +388,9 @@ bool CutBasedHiggsSelector::output() {
 
     if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
     m_step23 = true;
+
+    if (_selection->getSwitch("higgsMassRel") && !_selection->passCut("higgsMassRel", m_WWInvMass)) return false;
+    m_step23bis = true;
 
     if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
     m_step24 = true;
@@ -400,7 +433,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("mll2","bTagVeto");
       theCounter->Draw("maxPtLepton","mll2");
       theCounter->Draw("minPtLepton","maxPtLepton");
-      theCounter->Draw("deltaPhi","deltaPhi");
+      theCounter->Draw("higgsMassRel","minPtLepton");
+      theCounter->Draw("deltaPhi","higgsMassRel");
       theCounter->Draw("final","preselected");
       theCounter->Draw("oneJet","preselected");
       theCounter->Draw("gt1Jets","preselected");
@@ -430,7 +464,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("mll2","bTagVeto");
     globalCounter->Draw("maxPtLepton","mll2");
     globalCounter->Draw("minPtLepton","maxPtLepton");
-    globalCounter->Draw("deltaPhi","deltaPhi");
+    globalCounter->Draw("higgsMassRel","minPtLepton");
+    globalCounter->Draw("deltaPhi","higgsMassRel");
     globalCounter->Draw("final","preselected");
     globalCounter->Draw("oneJet","preselected");
     globalCounter->Draw("gt1Jets","preselected");
