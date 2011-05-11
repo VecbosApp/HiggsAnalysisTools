@@ -38,7 +38,7 @@ nSoftMuons              1
 nExtraLeptons           1
 deltaPhi		1
 deltaPhiLLJet           1
-higgsMassRel            0
+higgsMassRel            1
 electronIDType          LHLoose
 electronIDTypeLow	LHLoose
 
