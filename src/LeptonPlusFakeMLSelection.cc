@@ -104,7 +104,7 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile       = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/certifiedLatinos.json";    // chiara
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -146,143 +146,143 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
   m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
 
-  /* first attempt - Matt's talk
-  // fake in the barrel                                   
-  m_fakeRateEB[0] = 0.149401;
-  m_fakeRateEB[1] = 0.140707;
-  m_fakeRateEB[2] = 0.105181;
-  m_fakeRateEB[3] = 0.0995595;
-  m_fakeRateEB[4] = 0.175;
-
-  m_fakeRateEB_err[0] = 0.00813347;
-  m_fakeRateEB_err[1] = 0.00889542;
-  m_fakeRateEB_err[2] = 0.0085951;
-  m_fakeRateEB_err[3] = 0.00888732;
-  m_fakeRateEB_err[4] = 0.0424816;
-
-  // fake in the endcap                                                                     
-  m_fakeRateEE[0] = 0.0823442;
-  m_fakeRateEE[1] = 0.0733788;
-  m_fakeRateEE[2] = 0.0637136;
-  m_fakeRateEE[3] = 0.0508143;
-  m_fakeRateEE[4] = 0.0597015;
-
-  m_fakeRateEE_err[0] = 0.00748706;
-  m_fakeRateEE_err[1] = 0.00621909;
-  m_fakeRateEE_err[2] = 0.00601647;
-  m_fakeRateEE_err[3] = 0.0056055;
-  m_fakeRateEE_err[4] = 0.028946;
-  */
-
+  /*
   // fake in the barrel from QCD MC                                  
-  m_fakeRateEB[0] = 0.318519;
-  m_fakeRateEB[1] = 0.093561;
-  m_fakeRateEB[2] = 0.0653243; 
-  m_fakeRateEB[3] = 0.0582813;
-  m_fakeRateEB[4] = 0.0457173;
+  m_fakeRateEB[0] = 0.31852;
+  m_fakeRateEB[1] = 0.0815463;
+  m_fakeRateEB[2] = 0.0707214;
+  m_fakeRateEB[3] = 0.0588124;
+  m_fakeRateEB[4] = 0.0458273;
 
   m_fakeRateEB_err[0] = 0.00598496;
-  m_fakeRateEB_err[1] = 0.003919;
-  m_fakeRateEB_err[2] = 0.00357566;
-  m_fakeRateEB_err[3] = 0.00339644;
-  m_fakeRateEB_err[4] = 0.0121774;
+  m_fakeRateEB_err[1] = 0.00467256;
+  m_fakeRateEB_err[2] = 0.00381354;
+  m_fakeRateEB_err[3] = 0.00335443;
+  m_fakeRateEB_err[4] = 0.0120015;
 
   // fake in the endcap from QCD MC                                                                     
-  m_fakeRateEE[0] = 0.208276;
-  m_fakeRateEE[1] = 0.0627951;
-  m_fakeRateEE[2] = 0.0546009;
-  m_fakeRateEE[3] = 0.0521685;
-  m_fakeRateEE[4] = 0.0524358;
+  m_fakeRateEE[0] = 0.208365;
+  m_fakeRateEE[1] = 0.0621581;
+  m_fakeRateEE[2] = 0.0546968; 
+  m_fakeRateEE[3] = 0.0522816; 
+  m_fakeRateEE[4] = 0.0515749;
 
-  m_fakeRateEE_err[0] = 0.00714286;
-  m_fakeRateEE_err[1] = 0.00346753;
-  m_fakeRateEE_err[2] = 0.00320969;
-  m_fakeRateEE_err[3] = 0.00307286;
-  m_fakeRateEE_err[4] = 0.0147189;
+  m_fakeRateEE_err[0] = 0.00714442;
+  m_fakeRateEE_err[1] = 0.00411465;
+  m_fakeRateEE_err[2] = 0.00314477;
+  m_fakeRateEE_err[3] = 0.00299393;
+  m_fakeRateEE_err[4] = 0.0142672;
+  */
 
-  /*
-  // fake in the barrel from data (jet:30))
-  m_fakeRateEB[0] = 0.154532;
-  m_fakeRateEB[1] = 0.136631;
-  m_fakeRateEB[2] = 0.0817844;
-  m_fakeRateEB[3] = 0.0799476;
-  m_fakeRateEB[4] = 0.107692;
+  /*    // chiara
+  // fake in the barrel from data (jet:30)) - no EWK subtraction
+  m_fakeRateEB[0] = 0.170909;
+  m_fakeRateEB[1] = 0.127837; 
+  m_fakeRateEB[2] = 0.0843061;
+  m_fakeRateEB[3] = 0.0857687;
+  m_fakeRateEB[4] = 0.116071; 
 
-  m_fakeRateEB_err[0] = 0.0139332;
-  m_fakeRateEB_err[1] = 0.0117874;
-  m_fakeRateEB_err[2] = 0.00964652;
-  m_fakeRateEB_err[3] = 0.00981853;
-  m_fakeRateEB_err[4] = 0.0384497;
+  m_fakeRateEB_err[0] = 0.00926705;
+  m_fakeRateEB_err[1] = 0.00918355;
+  m_fakeRateEB_err[2] = 0.00707559;
+  m_fakeRateEB_err[3] = 0.00705814;
+  m_fakeRateEB_err[4] = 0.0302665;
 
-  // fake in the endcap from data (jet:30)
-  m_fakeRateEE[0] = 0.119089;
-  m_fakeRateEE[1] = 0.0482625; 
-  m_fakeRateEE[2] = 0.074184;
-  m_fakeRateEE[3] = 0.0465328;
-  m_fakeRateEE[4] = 0.0566038;
+  // fake in the endcap from data (jet:30) - no EWK subtraction
+  m_fakeRateEE[0] = 0.136997;
+  m_fakeRateEE[1] = 0.0632603;
+  m_fakeRateEE[2] = 0.0563645;
+  m_fakeRateEE[3] = 0.045511;
+  m_fakeRateEE[4] = 0.0300752;
 
-  m_fakeRateEE_err[0] = 0.0135545;
-  m_fakeRateEE_err[1] = 0.00665861;
-  m_fakeRateEE_err[2] = 0.00824217;
-  m_fakeRateEE_err[3] = 0.00636249;
-  m_fakeRateEE_err[4] = 0.0317418;
+  m_fakeRateEE_err[0] = 0.009566;
+  m_fakeRateEE_err[1] = 0.00693256;
+  m_fakeRateEE_err[2] = 0.00499824;
+  m_fakeRateEE_err[3] = 0.00423941;
+  m_fakeRateEE_err[4] = 0.0148097;
   */
 
   /*
-  // fake in the barrel from data (jet:15))
-  m_fakeRateEB[0] = 0.166922;
-  m_fakeRateEB[1] = 0.128733;
-  m_fakeRateEB[2] = 0.102072;
-  m_fakeRateEB[3] = 0.0806324;
-  m_fakeRateEB[4] = 0.108108;
+  // fake in the barrel from data (jet:30)) - with EWK subtraction (apart from bin0, where no EWK removal)
+  m_fakeRateEB[0] = 0.170909;
+  m_fakeRateEB[1] = 0.126939;
+  m_fakeRateEB[2] = 0.0829306;
+  m_fakeRateEB[3] = 0.0804465;
+  m_fakeRateEB[4] = 0.0993018;
 
-  m_fakeRateEB_err[0] = 0.00551924;
-  m_fakeRateEB_err[1] = 0.00610026;
-  m_fakeRateEB_err[2] = 0.00680535;
-  m_fakeRateEB_err[3] = 0.00765516;
-  m_fakeRateEB_err[4] = 0.0360969;
+  m_fakeRateEB_err[0] = 0.00926705;
+  m_fakeRateEB_err[1] = 0.00916318;
+  m_fakeRateEB_err[2] = 0.00703008;
+  m_fakeRateEB_err[3] = 0.00687927;
+  m_fakeRateEB_err[4] = 0.0285547;
+
+  // fake in the endcap from data (jet:30) - with EWK subtraction (apart from bin0, where no EWK removal)
+  m_fakeRateEE[0] = 0.136997;
+  m_fakeRateEE[1] = 0.0628376;
+  m_fakeRateEE[2] = 0.0559572;
+  m_fakeRateEE[3] = 0.0441833;
+  m_fakeRateEE[4] = 0.0255683;
+
+  m_fakeRateEE_err[0] = 0.009566;
+  m_fakeRateEE_err[1] = 0.00691408;
+  m_fakeRateEE_err[2] = 0.00498304;
+  m_fakeRateEE_err[3] = 0.00418404;
+  m_fakeRateEE_err[4] = 0.01372;
+  */
+
+  /*
+  // fake in the barrel from data (jet:15)) - no EWK subtraction
+  m_fakeRateEB[0] = 0.176334; 
+  m_fakeRateEB[1] = 0.13883;
+  m_fakeRateEB[2] = 0.105588;
+  m_fakeRateEB[3] = 0.0916634;
+  m_fakeRateEB[4] = 0.114754;
+  
+  m_fakeRateEB_err[0] = 0.00382773;
+  m_fakeRateEB_err[1] = 0.00532204;
+  m_fakeRateEB_err[2] = 0.00503719;
+  m_fakeRateEB_err[3] = 0.00573555;
+  m_fakeRateEB_err[4] = 0.028856;
 
   // fake in the endcap from data (jet:15)
-  m_fakeRateEE[0] = 0.125552;
-  m_fakeRateEE[1] = 0.0627326;
-  m_fakeRateEE[2] = 0.0664093;
-  m_fakeRateEE[3] = 0.0513254;
-  m_fakeRateEE[4] = 0.0508475;
+  m_fakeRateEE[0] = 0.138302;
+  m_fakeRateEE[1] = 0.0695556;
+  m_fakeRateEE[2] = 0.0601607;
+  m_fakeRateEE[3] = 0.0486044;
+  m_fakeRateEE[4] = 0.0357143;
 
-  m_fakeRateEE_err[0] = 0.00550408;
-  m_fakeRateEE_err[1] = 0.00395338;
-  m_fakeRateEE_err[2] = 0.00489263;
-  m_fakeRateEE_err[3] = 0.00524047;
-  m_fakeRateEE_err[4] = 0.0286007;
+  m_fakeRateEE_err[0] = 0.00379404;
+  m_fakeRateEE_err[1] = 0.00379232;
+  m_fakeRateEE_err[2] = 0.00310862;
+  m_fakeRateEE_err[3] = 0.00333565;
+  m_fakeRateEE_err[4] = 0.0156841;
   */
 
-  /*
   // fake in the barrel from data (jet:50))
-  m_fakeRateEB[0] = 0.133333;
-  m_fakeRateEB[1] = 0.168;
-  m_fakeRateEB[2] = 0.107914;
-  m_fakeRateEB[3] = 0.056338;
-  m_fakeRateEB[4] = 0.0740741;
-
-  m_fakeRateEB_err[0] = 0.0392523;
-  m_fakeRateEB_err[1] = 0.0334396;
-  m_fakeRateEB_err[2] = 0.0263169;
-  m_fakeRateEB_err[3] = 0.0157986;
-  m_fakeRateEB_err[4] = 0.0356389;
+  m_fakeRateEB[0] = 0.130682;
+  m_fakeRateEB[1] = 0.101523;
+  m_fakeRateEB[2] = 0.0920502;
+  m_fakeRateEB[3] = 0.0910973;
+  m_fakeRateEB[4] = 0.0804598;
+  
+  m_fakeRateEB_err[0] = 0.0254063;
+  m_fakeRateEB_err[1] = 0.021518;
+  m_fakeRateEB_err[2] = 0.0187001;
+  m_fakeRateEB_err[3] = 0.013093;
+  m_fakeRateEB_err[4] = 0.0291619;
 
   // fake in the endcap from data (jet:50)
-  m_fakeRateEE[0] = 0.0491803;
-  m_fakeRateEE[1] = 0.030303;
-  m_fakeRateEE[2] = 0.0902778;
-  m_fakeRateEE[3] = 0.029703;
-  m_fakeRateEE[4] = 0.0588235;
+  m_fakeRateEE[0] = 0.104575;
+  m_fakeRateEE[1] = 0.0753425;
+  m_fakeRateEE[2] = 0.0536913;
+  m_fakeRateEE[3] = 0.0351438;
+  m_fakeRateEE[4] = 0.0222222;
 
-  m_fakeRateEE_err[0] = 0.0276873;
-  m_fakeRateEE_err[1] = 0.0149202;
-  m_fakeRateEE_err[2] = 0.0238816;
-  m_fakeRateEE_err[3] = 0.00975284;
-  m_fakeRateEE_err[4] = 0.0403526;
-  */
+  m_fakeRateEE_err[0] = 0.0247391;
+  m_fakeRateEE_err[1] = 0.0218441;
+  m_fakeRateEE_err[2] = 0.0130575;
+  m_fakeRateEE_err[3] = 0.00735984;
+  m_fakeRateEE_err[4] = 0.0155379;
 }
 
 void LeptonPlusFakeMLSelection::Loop() {
@@ -317,7 +317,7 @@ void LeptonPlusFakeMLSelection::Loop() {
 
     // weight for the PU observed in 2011 data
     float tmpWeight = 1.;
-    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  // chiara: on by default
+    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  
 
     // dummy MC truth
     bool promptEE = true;
@@ -341,7 +341,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
     reloadTriggerMask();
     bool passedHLT[1];
-    passedHLT[ee] = hasPassedHLT(ee);
+    passedHLT[ee] = hasPassedHLT();
 
     // ----------------------------------------------------------------------------
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
@@ -385,10 +385,19 @@ void LeptonPlusFakeMLSelection::Loop() {
     // the two highest pT electrons at this point are those I use for my analysis since the passed the full lepton selection
     int thePositron = theBestIpEle.first;    
     int theElectron = theBestIpEle.second;
-    float ptPositron = GetPt(pxEle[thePositron],pyEle[thePositron]);
-    float ptElectron = GetPt(pxEle[theElectron],pyEle[theElectron]);
-    if (ptPositron>ptElectron) theReal = thePositron;
-    else theReal = theElectron;
+
+    if (thePositron>-1 && theElectron>-1) {
+      float ptPositron = GetPt(pxEle[thePositron],pyEle[thePositron]);
+      float ptElectron = GetPt(pxEle[theElectron],pyEle[theElectron]);
+      if (ptPositron>ptElectron) theReal = thePositron;
+      else theReal = theElectron;
+    } 
+    if (thePositron>-1 && theElectron<0) { 
+      theReal = thePositron;
+    }
+    if (theElectron>-1 && thePositron<0) { 
+      theReal = theElectron;
+    }
 
     // consider all possible denominators different from the selected tight candidate and use the highest pT one as a fake          
     theFake = getBestDenominator(theReal);    
@@ -402,8 +411,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     m_theMET = m_p3PFMET->Pt();
 
     setKinematicsEE(theReal, theFake);
-    
-    
+        
     // weight with the Fake -> L2 probability	
     float weight       = 1.;
     float weightError  = 1.;
@@ -980,8 +988,8 @@ void LeptonPlusFakeMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
   if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
     int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
     if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
-       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 ) flagGlobalMu = true;
-       //       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
+       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
+       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
   }
 
   bool flagTrackerMu = false;
@@ -1335,7 +1343,6 @@ float LeptonPlusFakeMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
   else projMET_tk = m_p3TKMET->Mag();
 
   return TMath::Min(projMET_pf,projMET_tk);
-
 }
 
 /// specific for HWW that has multiple channels with different HLT requirements
@@ -1358,19 +1365,17 @@ bool LeptonPlusFakeMLSelection::reloadTriggerMask() {
   m_requiredTriggersEE = triggerMask;
 }
 
-bool LeptonPlusFakeMLSelection::hasPassedHLT(int channel) {
+bool LeptonPlusFakeMLSelection::hasPassedHLT(){
   Utils anaUtils;
-  if(channel==ee) return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+  return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
   return true;
 }
 
-void LeptonPlusFakeMLSelection::setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
-  if(channel==ee) requiredTriggersEE=reqTriggers;
-  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+void LeptonPlusFakeMLSelection::setRequiredTriggers(const std::vector<std::string>& reqTriggers) {
+  requiredTriggersEE=reqTriggers;
 }
 
-void LeptonPlusFakeMLSelection::setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel) {
-  if(channel==ee) notRequiredTriggersEE=reqTriggers;
-  else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+void LeptonPlusFakeMLSelection::setNotRequiredTriggers(const std::vector<std::string>& reqTriggers){
+  notRequiredTriggersEE=reqTriggers;
 }
 

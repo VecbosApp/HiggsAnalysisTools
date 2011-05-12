@@ -35,9 +35,9 @@ public:
   //! display the efficiency table
   void displayEfficiencies(std::string filename);
   //! set the required triggers masks (one per channel)
-  void setRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
+  void setRequiredTriggers(const std::vector<std::string>& reqTriggers);
   //! set the not-required triggers masks (one per channel)
-  void setNotRequiredTriggers(const std::vector<std::string>& reqTriggers, int channel);
+  void setNotRequiredTriggers(const std::vector<std::string>& reqTriggers);
   
 private:
 
@@ -48,12 +48,12 @@ private:
   std::pair<int,int> getBestElectronPair_conv( std::vector<int> isolEle );
   std::pair<int,int> getBestElectronPair_ip( std::vector<int> convEle );
 
-  //! fake rates initialization                                                                                                     
+  //! fake rates initialization                                         
   void initialiseFakeRate();
   float getFakeRate( float fakePt, bool isEB );
   float getFakeRateError( float fakePt, bool isEE );
 
-  //! fake related selection                                                                                                        
+  //! fake related selection                
   int getBestDenominator(int realEle);
   bool isDenomFake(int theEle);
 
@@ -78,8 +78,6 @@ private:
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
-  //! get the kFactor of the event
-  float getkFactor(std::string process);
   //! search for the hardest lepton vertex
   int getPV();
   //! methods for the jet veto: track quality
@@ -95,7 +93,7 @@ private:
   //! reload the trigger mask_s_ (one per channel)
   bool reloadTriggerMask();
   //! get the trigger answer depending on the channel
-  bool hasPassedHLT(int channel);
+  bool hasPassedHLT();
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -110,10 +108,6 @@ private:
 
   //! be verbose during runtime
   bool _verbose;
-
-  //! process variables to initialize kFactors
-  int _massVal;
-  std::string _process;
 
   //! an integer defining the sub-channel
   enum { ee=0 };
@@ -147,7 +141,7 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1], slowestLeptonPt[1];
 
-  //! fake rates                                                                                                                    
+  //! fake rates                                                                     
   float m_minFakePt[5],  m_maxFakePt[5];
   float m_fakeRateEB[5], m_fakeRateEB_err[5];
   float m_fakeRateEE[5], m_fakeRateEE_err[5];
@@ -170,8 +164,7 @@ private:
   RedHiggsTree *myOutTreeEE;
 
   //! new variables
-  float m_eOverP[100];
-
+  int _massVal;
   float _highestPtGen[1], _lowestPtGen[1];
   float _genHiggsPt[1];
   float _nGenJet[1];
