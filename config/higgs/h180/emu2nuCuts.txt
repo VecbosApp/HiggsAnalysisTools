@@ -21,7 +21,7 @@ etJetAcc             30              10000
 nSoftMuons              0               0
 nExtraLeptons           0               0
 deltaPhi		0		70
-deltaPhiLLJet           0               165
+deltaPhiLLJet           0               360
 etaElectronAcc		-2.5		2.5
 ptElectronAcc		10		10000
 etaMuonAcc		-2.4		2.4
