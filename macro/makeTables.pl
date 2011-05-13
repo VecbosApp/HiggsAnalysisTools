@@ -27,6 +27,7 @@ print TEX "\\begin{document}\n";
 
 # the detailed tables
 @masses = (120,130,140,150,160,170,180,190,200,210,220,230,250,300,350,400,450,500,550,600);
+#@masses = (120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600);
 
 for($i=0; $i<($#masses+1); $i++) {
     # configure
@@ -45,6 +46,7 @@ for($i=0; $i<($#masses+1); $i++) {
     print SCRIPT "root -l -b <<EOF\n";
     print SCRIPT ".L HiggsYieldsSteps.cc+\n";
     print SCRIPT "setRunStandalone(false)\n";
+    print SCRIPT "setPrintCutsBreakdown(false)\n";
     print SCRIPT "printLatex($lumiEE,$lumiMM,$lumiEM,$mass)\n";
     print SCRIPT "EOF\n";
     
@@ -64,6 +66,7 @@ for($i=0; $i<7; $i++) {
     print SCRIPT "root -l -b <<EOF\n"; 
     print SCRIPT ".L HiggsYieldsSteps.cc+\n";
     print SCRIPT "setRunStandalone(false)\n";
+    print SCRIPT "setPrintCutsBreakdown(false)\n";
     print SCRIPT "printSuperSummary($lumiEE,$lumiMM,$lumiEM,$i)\n";
     print SCRIPT "EOF\n";
 
