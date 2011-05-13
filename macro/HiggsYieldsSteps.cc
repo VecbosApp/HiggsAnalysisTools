@@ -10,6 +10,7 @@
 // parameters to configure
 int exampleHiggsMass = -1;
 bool runStandalone = true;
+bool printCutsBreakdown = false;
 
 using namespace std;
 
@@ -170,28 +171,39 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   sampleNames[19] = "data";
 
   float Higgs_xsec;
-  Higgs_xsec_masses.insert(std::make_pair(120,0.247143));
-  Higgs_xsec_masses.insert(std::make_pair(130,0.452859));
-  Higgs_xsec_masses.insert(std::make_pair(140,0.64926));
-  Higgs_xsec_masses.insert(std::make_pair(150,0.787871));
-  Higgs_xsec_masses.insert(std::make_pair(160,0.897043));
-  Higgs_xsec_masses.insert(std::make_pair(170,0.808914));
-  Higgs_xsec_masses.insert(std::make_pair(200,0.422487));
-  Higgs_xsec_masses.insert(std::make_pair(300,0.181931));
-  Higgs_xsec_masses.insert(std::make_pair(400,0.125106));
+  Higgs_xsec_masses.insert(std::make_pair(120,0.249642));
+  Higgs_xsec_masses.insert(std::make_pair(130,0.452090));
+  Higgs_xsec_masses.insert(std::make_pair(140,0.641773));
+  Higgs_xsec_masses.insert(std::make_pair(150,0.770471));
+  Higgs_xsec_masses.insert(std::make_pair(160,0.866443));
+  Higgs_xsec_masses.insert(std::make_pair(170,0.782962));
+  Higgs_xsec_masses.insert(std::make_pair(180,0.659328));
+  Higgs_xsec_masses.insert(std::make_pair(190,0.486486));
+  Higgs_xsec_masses.insert(std::make_pair(200,0.408305));
+  Higgs_xsec_masses.insert(std::make_pair(210,0.358465));
+  Higgs_xsec_masses.insert(std::make_pair(220,0.321398));
+  Higgs_xsec_masses.insert(std::make_pair(230,0.290454));
+  Higgs_xsec_masses.insert(std::make_pair(250,0.243724));
+  Higgs_xsec_masses.insert(std::make_pair(300,0.175652));
+  Higgs_xsec_masses.insert(std::make_pair(350,0.160052));
+  Higgs_xsec_masses.insert(std::make_pair(400,0.124330));
+  Higgs_xsec_masses.insert(std::make_pair(450,0.078433));
+  Higgs_xsec_masses.insert(std::make_pair(500,0.048702));
+  Higgs_xsec_masses.insert(std::make_pair(550,0.030364));
+  Higgs_xsec_masses.insert(std::make_pair(600,0.019184));
 
   if(mass==0) { // use the default mass to print the cut-by cut table: the one pointed by results/ dir
     Higgs_xsec = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
 
     // mc
     char dir_mc[1000];                  
-    sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V10bis/OptimMH%d/Spring11_V2/",exampleHiggsMass);
+    sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",exampleHiggsMass);
     char HiggsSample[500];
     sprintf(HiggsSample,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V10/OptimMH%d/Data7TeV",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV",exampleHiggsMass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir_mc)+TString(HiggsSample));       
@@ -226,15 +238,15 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir[1000];                  
-    sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V10bis/OptimMH%d/Spring11_V2/",mass);
+    sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",mass);
     char HiggsDir[500];
     sprintf(HiggsDir,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
 
     // data
     char dir_data[1000]; 
-    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V10/OptimMH%d/Data7TeV/DoubleElectron",mass);
-    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V10/OptimMH%d/Data7TeV/DoubleMu",mass);
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V10/OptimMH%d/Data7TeV/MuEG",mass);
+    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleElectron",mass);
+    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleMu",mass);
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/MuEG",mass);
 
     // signal
     chains_fullSel[0]->Add(TString(dir)+TString(HiggsDir)+TString("*Counters.root"));
@@ -475,7 +487,7 @@ void printLatex(float lumi, const char* finalstate) {
   
   computeYields(lumi,finalstate);
   
-  
+  if(printCutsBreakdown) {
   /// ==============  print detailed breakdown  ================== ///
   char namefile[200];
   sprintf(namefile,"yields_byCut.tex");
@@ -652,7 +664,7 @@ void printLatex(float lumi, const char* finalstate) {
            << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Breakdown of signal and backgrounds events in "
            << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
            << "\\end{sidewaystable}" << endl;
-
+  }
   // assign the final yields
   int channel=-1;
   if(!strcmp(finalstate,"MM")) channel = mm;
@@ -713,7 +725,7 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
 
   for(int jet=0; jet<3; ++jet) {
 
-  textfile << "\\begin{sidewaystable}[p]" << endl
+  textfile << "\\begin{table}[p]" << endl
            << "\\begin{center}" << endl;
   textfile << "\\begin{tabular}{|c|c|c|c|c|c|}" << endl;
   textfile << "\\hline" << endl;
@@ -765,7 +777,7 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
            << "\\end{center}" << endl
            << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Expected backgrounds events in "
            << lumiEE << " pb$^-1$ (EE), " << lumiMM << " pb$^-1$ (MM), " << lumiEM << " pb$^-1$ (EM,ME).} "
-           << "\\end{sidewaystable}" << endl;
+           << "\\end{table}" << endl;
   }
 }
 
@@ -974,3 +986,5 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
 }
 
 void setRunStandalone(bool what) { runStandalone = what; }
+void setPrintCutsBreakdown(bool what) { printCutsBreakdown = what; }
+
