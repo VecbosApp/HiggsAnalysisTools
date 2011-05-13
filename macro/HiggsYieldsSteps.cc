@@ -12,6 +12,8 @@ int exampleHiggsMass = -1;
 bool runStandalone = true;
 bool printCutsBreakdown = false;
 
+float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
+
 using namespace std;
 
 enum { ee=0, mm=1, em=2, me=3 };
@@ -35,6 +37,22 @@ float Photj_fullSel[25];
 float QCDmu_fullSel[25];
 float ttbar_fullSel[25];
 float data_fullSel[25];
+
+float H_fullSel_err[25];
+float Wj_fullSel_err[25];
+float ttj_fullSel_err[25];
+float SingleTop_fullSel_err[25];
+float Zj_fullSel_err[25];
+float WW_fullSel_err[25];
+float ZZ_fullSel_err[25];
+float WZ_fullSel_err[25];
+float Wgamma_fullSel_err[25];
+float QCDem_fullSel_err[25];
+float QCDbc_fullSel_err[25];
+float Photj_fullSel_err[25];
+float QCDmu_fullSel_err[25];
+float ttbar_fullSel_err[25];
+float data_fullSel_err[25];
 
 float H_eff_fullSel[25];
 float Wj_eff_fullSel[25];
@@ -90,10 +108,19 @@ float WW_final[4][3];
 float ZZ_final[4][3];
 float WZ_final[4][3];
 float Wgamma_final[4][3];
+float H_final_err[4][3];
+float Wj_final_err[4][3];
+float ttj_final_err[4][3];
+float SingleTop_final_err[4][3];
+float Zj_final_err[4][3];
+float WW_final_err[4][3];
+float ZZ_final_err[4][3];
+float WZ_final_err[4][3];
+float Wgamma_final_err[4][3];
 float data_final[4][3];
 
 // xsections
-std::map<int,float> Higgs_xsec_masses;
+std::map<int,float> Higgs_xsec_masses, vbfHiggs_xsec_masses;
 
 float Wgamma_xsec      = 165.;      // Madgraph VPhoton+jets
 float Wlnu_xsec        = 31314.;     // madgraph 
@@ -135,20 +162,20 @@ float PhotonJet_Pt500toInf_xsec = 0.0923;
 
 float InclusiveMu15_xsec = 48.44*0.00176*1.0E+09; // ppMuX
 
-string sampleNames[20];
+string sampleNames[23];
 
 void computeYields(float lumi, const char* finalstate, int mass=0) {
 
-  TChain *chains_fullSel[20];
+  TChain *chains_fullSel[23];
 
-  for(int isample=0; isample<20; isample++) {
+  for(int isample=0; isample<23; isample++) {
     char fullsel_treename[200];
     sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_%s",finalstate);
     chains_fullSel[isample] = new TChain(fullsel_treename);
   }
 
-  // signal
-  sampleNames[0]  = "Higgs";
+  // data
+  sampleNames[0] = "data";
   // backgrounds
   sampleNames[1]  = "TTbar+jets";
   sampleNames[2]  = "Z(ee) 10-20 GeV";
@@ -168,9 +195,13 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   sampleNames[16] = "WToENu";
   sampleNames[17] = "WToMuNu";
   sampleNames[18] = "WToTauNu";
-  sampleNames[19] = "data";
+  // signal
+  sampleNames[19]  = "ggH->WW->2L2Nu";
+  sampleNames[20]  = "ggH->WW->TauNuLNu";
+  sampleNames[21]  = "qqH->WW->2L2Nu";
+  sampleNames[22]  = "qqH->WW->TauNuLNu";
 
-  float Higgs_xsec;
+  float Higgs_xsec_2l2nu, Higgs_xsec_taunulnu;
   Higgs_xsec_masses.insert(std::make_pair(120,0.249642));
   Higgs_xsec_masses.insert(std::make_pair(130,0.452090));
   Higgs_xsec_masses.insert(std::make_pair(140,0.641773));
@@ -192,21 +223,54 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   Higgs_xsec_masses.insert(std::make_pair(550,0.030364));
   Higgs_xsec_masses.insert(std::make_pair(600,0.019184));
 
+  float vbfHiggs_xsec_2l2nu, vbfHiggs_xsec_taunulnu;
+  vbfHiggs_xsec_masses.insert(std::make_pair(120,0.019057));
+  vbfHiggs_xsec_masses.insert(std::make_pair(130,0.036942));
+  vbfHiggs_xsec_masses.insert(std::make_pair(140,0.055686));
+  vbfHiggs_xsec_masses.insert(std::make_pair(150,0.070561));
+  vbfHiggs_xsec_masses.insert(std::make_pair(160,0.083858));
+  vbfHiggs_xsec_masses.insert(std::make_pair(170,0.082794));
+  vbfHiggs_xsec_masses.insert(std::make_pair(180,0.073183));
+  vbfHiggs_xsec_masses.insert(std::make_pair(190,0.057139));
+  vbfHiggs_xsec_masses.insert(std::make_pair(200,0.049566));
+  vbfHiggs_xsec_masses.insert(std::make_pair(210,0.044544));
+  vbfHiggs_xsec_masses.insert(std::make_pair(220,0.040624));
+  vbfHiggs_xsec_masses.insert(std::make_pair(230,0.037243));
+  vbfHiggs_xsec_masses.insert(std::make_pair(250,0.031672));
+  vbfHiggs_xsec_masses.insert(std::make_pair(300,0.021873));
+  vbfHiggs_xsec_masses.insert(std::make_pair(350,0.015113));
+  vbfHiggs_xsec_masses.insert(std::make_pair(400,0.009885));
+  vbfHiggs_xsec_masses.insert(std::make_pair(450,0.007143));
+  vbfHiggs_xsec_masses.insert(std::make_pair(500,0.005439));
+  vbfHiggs_xsec_masses.insert(std::make_pair(550,0.004249));
+  vbfHiggs_xsec_masses.insert(std::make_pair(600,0.003374));
+
   if(mass==0) { // use the default mass to print the cut-by cut table: the one pointed by results/ dir
-    Higgs_xsec = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+
+    Higgs_xsec_2l2nu = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    Higgs_xsec_taunulnu = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // i.e. 2*BR(W->tau nu) * BR(W->e/mu nu) = 2 * 1/3 * 2/3
+    vbfHiggs_xsec_2l2nu = vbfHiggs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    vbfHiggs_xsec_taunulnu = vbfHiggs_xsec_masses[exampleHiggsMass] * 4./9.; // i.e. 2*BR(W->tau nu) * BR(W->e/mu nu) = 2 * 1/3 * 2/3
 
     // mc
     char dir_mc[1000];                  
     sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",exampleHiggsMass);
-    char HiggsSample[500];
-    sprintf(HiggsSample,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
+    char HiggsSample_2L2Nu[500];
+    sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
+
+    char HiggsSample_TauNuLNu[500];
+    sprintf(HiggsSample_TauNuLNu,"GluGluToHToWWToLNuTauNu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
+
+    char vbfHiggsSample_2L2Nu[500];
+    sprintf(vbfHiggsSample_2L2Nu,"VBF_HToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
+
+    char vbfHiggsSample_TauNuLNu[500];
+    sprintf(vbfHiggsSample_TauNuLNu,"VBF_HToWWToLNuTauNu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeVxxxx",exampleHiggsMass);
 
-    // signal
-    chains_fullSel[0]->Add(TString(dir_mc)+TString(HiggsSample));       
     // backgrounds
     chains_fullSel[1]->Add(TString(dir_mc)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
     chains_fullSel[2]->Add(TString(dir_mc)+TString("/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
@@ -227,29 +291,45 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     //    chains_fullSel[16]->Add(TString(dir_mc)+TString("WToENu_TuneZ2_7TeV-pythia6/*Counters.root"));
     chains_fullSel[17]->Add(TString(dir_mc)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // not used when using madgraph inclusive W+jets
     chains_fullSel[18]->Add(TString(dir_mc)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // "  "
+    chains_fullSel[19]->Add(TString(dir_mc)+TString(HiggsSample_2L2Nu));       
+    chains_fullSel[20]->Add(TString(dir_mc)+TString(HiggsSample_TauNuLNu));       
+    chains_fullSel[21]->Add(TString(dir_mc)+TString(vbfHiggsSample_2L2Nu));    
+    chains_fullSel[22]->Add(TString(dir_mc)+TString(vbfHiggsSample_TauNuLNu));    
+    
     // data
-    if (strcmp(finalstate,"EE")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (strcmp(finalstate,"MM")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+    if (strcmp(finalstate,"EE")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
+    if (strcmp(finalstate,"MM")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
 
   } else {
 
-    Higgs_xsec = Higgs_xsec_masses[mass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    Higgs_xsec_2l2nu = Higgs_xsec_masses[mass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    Higgs_xsec_taunulnu = Higgs_xsec_masses[exampleHiggsMass] * 4./9.; // i.e. 2*BR(W->tau nu) * BR(W->e/mu nu) = 2 * 1/3 * 2/3
+    vbfHiggs_xsec_2l2nu = vbfHiggs_xsec_masses[exampleHiggsMass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
+    vbfHiggs_xsec_taunulnu = vbfHiggs_xsec_masses[exampleHiggsMass] * 4./9.; // i.e. 2*BR(W->tau nu) * BR(W->e/mu nu) = 2 * 1/3 * 2/3
 
     // mc
     char dir[1000];                  
     sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",mass);
-    char HiggsDir[500];
-    sprintf(HiggsDir,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
+
+    char HiggsSample_2L2Nu[500];
+    sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
+
+    char HiggsSample_TauNuLNu[500];
+    sprintf(HiggsSample_TauNuLNu,"GluGluToHToWWToLNuTauNu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
+
+    char vbfHiggsSample_2L2Nu[500];
+    sprintf(vbfHiggsSample_2L2Nu,"VBF_HToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
+
+    char vbfHiggsSample_TauNuLNu[500];
+    sprintf(vbfHiggsSample_TauNuLNu,"VBF_HToWWToLNuTauNu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
 
     // data
     char dir_data[1000]; 
-    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleElectron",mass);
-    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleMu",mass);
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/MuEG",mass);
+    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleElectronxxx",mass);
+    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleMuxxx",mass);
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/MuEGxxx",mass);
 
-    // signal
-    chains_fullSel[0]->Add(TString(dir)+TString(HiggsDir)+TString("*Counters.root"));
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
     chains_fullSel[2]->Add(TString(dir)+TString("/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
@@ -270,21 +350,27 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     //    chains_fullSel[16]->Add(TString(dir)+TString("WToENu_TuneZ2_7TeV-pythia6/*Counters.root"));
     chains_fullSel[17]->Add(TString(dir)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // not used when using madgraph inclusive W+jets
     chains_fullSel[18]->Add(TString(dir)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // "  "
+    // signal
+    chains_fullSel[19]->Add(TString(dir)+TString(HiggsSample_2L2Nu));
+    chains_fullSel[20]->Add(TString(dir)+TString(HiggsSample_TauNuLNu));
+    chains_fullSel[21]->Add(TString(dir)+TString(vbfHiggsSample_2L2Nu));
+    chains_fullSel[22]->Add(TString(dir)+TString(vbfHiggsSample_TauNuLNu));
+
     // data
-    if (strcmp(finalstate,"EE")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (strcmp(finalstate,"MM")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (strcmp(finalstate,"EM") || strcmp(finalstate,"ME")==0) chains_fullSel[19]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+    if (strcmp(finalstate,"EE")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
+    if (strcmp(finalstate,"MM")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+    if (strcmp(finalstate,"EM") || strcmp(finalstate,"ME")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
   }
 
-  float nFullSelTot[25][20];
+  float nFullSelTot[25][23];
 
-  for(int isample=0; isample<20; isample++) {
+  for(int isample=0; isample<23; isample++) {
     for(int icut=0; icut<25; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
   
   // full selection
   int nCutsAnaFull = 25;
-  for(int isample=0; isample<20; isample++) {
+  for(int isample=0; isample<23; isample++) {
 
     // List of branches    
     Int_t           nCutsFull;
@@ -307,50 +393,70 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   // eff at full selection level
   for(int icut=0; icut<nCutsAnaFull; icut++) {
 
-    // numbers
-    if(nFullSelTot[0][0]>0) { 
-      
-      H_fullSel[icut]   = lumi * Higgs_xsec  * nFullSelTot[icut][0]/nFullSelTot[0][0];
+    float Higgs_tmp=0.;
+    if(nFullSelTot[0][19]) Higgs_tmp += lumi * Higgs_xsec_2l2nu  * nFullSelTot[icut][19]/nFullSelTot[0][19];
+    if(nFullSelTot[0][20]) Higgs_tmp += lumi * Higgs_xsec_taunulnu * nFullSelTot[icut][20]/nFullSelTot[0][20];
+    if(nFullSelTot[0][21]) Higgs_tmp += lumi * vbfHiggs_xsec_2l2nu  * nFullSelTot[icut][21]/nFullSelTot[0][21];
+    if(nFullSelTot[0][22]) Higgs_tmp += lumi * vbfHiggs_xsec_taunulnu * nFullSelTot[icut][22]/nFullSelTot[0][22];
+    H_fullSel[icut] = Higgs_tmp;
+    H_fullSel_err[icut] = yieldErrPoisson(lumi * Higgs_xsec_2l2nu  * nFullSelTot[icut][19]/nFullSelTot[0][19], nFullSelTot[icut][19],
+                                          lumi * Higgs_xsec_taunulnu * nFullSelTot[icut][20]/nFullSelTot[0][20], nFullSelTot[icut][20],
+                                          lumi * vbfHiggs_xsec_2l2nu  * nFullSelTot[icut][21]/nFullSelTot[0][21], nFullSelTot[icut][21],
+                                          lumi * vbfHiggs_xsec_taunulnu * nFullSelTot[icut][22]/nFullSelTot[0][22], nFullSelTot[icut][22]);
 
-      ttj_fullSel[icut] = lumi * TTjets_xsec * nFullSelTot[icut][1]/nFullSelTot[0][1];
+    ttj_fullSel[icut] = lumi * TTjets_xsec * nFullSelTot[icut][1]/nFullSelTot[0][1];
+    ttj_fullSel_err[icut] = yieldErrPoisson(lumi * TTjets_xsec * nFullSelTot[icut][1]/nFullSelTot[0][1], nFullSelTot[icut][1]);
 
-      float Z_tmp=0.;
-      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nFullSelTot[0][2];
-      Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][3]/nFullSelTot[0][3];
-      // Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][4]/nFullSelTot[0][4];
-      Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][5]/nFullSelTot[0][5];
-      Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][6]/nFullSelTot[0][6];
-      Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][7]/nFullSelTot[0][7];
-      Zj_fullSel[icut]  = Z_tmp;
+    float Z_tmp=0.;
+    Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nFullSelTot[0][2];
+    Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][3]/nFullSelTot[0][3];
+    // Z_tmp += lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][4]/nFullSelTot[0][4];
+    Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][5]/nFullSelTot[0][5];
+    Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][6]/nFullSelTot[0][6];
+    Z_tmp += lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][7]/nFullSelTot[0][7];
+    Zj_fullSel[icut]  = Z_tmp;
+    Zj_fullSel_err[icut] = yieldErrPoisson(lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][2]/nFullSelTot[0][2], nFullSelTot[icut][2],
+                                           lumi * ZjetsLoMass_xsec  * nFullSelTot[icut][3]/nFullSelTot[0][3], nFullSelTot[icut][3],
+                                           lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][5]/nFullSelTot[0][5], nFullSelTot[icut][5],
+                                           lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][6]/nFullSelTot[0][6], nFullSelTot[icut][6],
+                                           lumi * ZjetsHiMass_xsec  * nFullSelTot[icut][7]/nFullSelTot[0][7], nFullSelTot[icut][7]);
 
-      float WW_tmp=0.;
-      WW_tmp += lumi * WW_xsec   * nFullSelTot[icut][8]/nFullSelTot[0][8];
-      WW_tmp += lumi * ggWW_xsec * nFullSelTot[icut][9]/nFullSelTot[0][9];
-      WW_fullSel[icut] = WW_tmp;
+    float WW_tmp=0.;
+    WW_tmp += lumi * WW_xsec   * nFullSelTot[icut][8]/nFullSelTot[0][8];
+    WW_tmp += lumi * ggWW_xsec * nFullSelTot[icut][9]/nFullSelTot[0][9];
+    WW_fullSel[icut] = WW_tmp;
+    WW_fullSel_err[icut] = yieldErrPoisson(lumi * WW_xsec   * nFullSelTot[icut][8]/nFullSelTot[0][8], nFullSelTot[icut][8],
+                                           lumi * ggWW_xsec * nFullSelTot[icut][9]/nFullSelTot[0][9], nFullSelTot[icut][9]);
 
-      ZZ_fullSel[icut]     = lumi * ZZ_xsec     * nFullSelTot[icut][10]/nFullSelTot[0][10];
-      WZ_fullSel[icut]     = lumi * WZ_xsec     * nFullSelTot[icut][11]/nFullSelTot[0][11];
-      Wgamma_fullSel[icut] = lumi * Wgamma_xsec * nFullSelTot[icut][12]/nFullSelTot[0][12];
+    ZZ_fullSel[icut]     = lumi * ZZ_xsec     * nFullSelTot[icut][10]/nFullSelTot[0][10];
+    ZZ_fullSel_err[icut] = yieldErrPoisson(lumi * ZZ_xsec     * nFullSelTot[icut][10]/nFullSelTot[0][10], nFullSelTot[icut][10]);
+    WZ_fullSel[icut]     = lumi * WZ_xsec     * nFullSelTot[icut][11]/nFullSelTot[0][11];
+    WZ_fullSel_err[icut] = yieldErrPoisson(lumi * WZ_xsec     * nFullSelTot[icut][11]/nFullSelTot[0][11],  nFullSelTot[icut][11]);
+    Wgamma_fullSel[icut] = lumi * Wgamma_xsec * nFullSelTot[icut][12]/nFullSelTot[0][12];
+    Wgamma_fullSel_err[icut] = yieldErrPoisson(lumi * Wgamma_xsec * nFullSelTot[icut][12]/nFullSelTot[0][12], nFullSelTot[icut][12]);
 
-      float singletop_tmp=0.;
-      singletop_tmp += lumi * SingleTopS_xsec  * nFullSelTot[icut][13]/nFullSelTot[0][13];
-      singletop_tmp += lumi * SingleTopT_xsec  * nFullSelTot[icut][14]/nFullSelTot[0][14];
-      singletop_tmp += lumi * SingleTopTW_xsec * nFullSelTot[icut][15]/nFullSelTot[0][15];
-      SingleTop_fullSel[icut] = singletop_tmp;
+    float singletop_tmp=0.;
+    singletop_tmp += lumi * SingleTopS_xsec  * nFullSelTot[icut][13]/nFullSelTot[0][13];
+    singletop_tmp += lumi * SingleTopT_xsec  * nFullSelTot[icut][14]/nFullSelTot[0][14];
+    singletop_tmp += lumi * SingleTopTW_xsec * nFullSelTot[icut][15]/nFullSelTot[0][15];
+    SingleTop_fullSel[icut] = singletop_tmp;
+    SingleTop_fullSel_err[icut] = yieldErrPoisson(lumi * SingleTopS_xsec  * nFullSelTot[icut][13]/nFullSelTot[0][13], nFullSelTot[icut][13],
+                                                  lumi * SingleTopT_xsec  * nFullSelTot[icut][14]/nFullSelTot[0][14], nFullSelTot[icut][14],
+                                                  lumi * SingleTopTW_xsec * nFullSelTot[icut][15]/nFullSelTot[0][15],  nFullSelTot[icut][15]);
 
-      Wj_fullSel[icut]  = lumi * Wlnu_xsec * nFullSelTot[icut][16]/nFullSelTot[0][16]; 
-      // float W_tmp=0.;
-      // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][16]/nFullSelTot[0][16]; // W->enu                                
-      // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][17]/nFullSelTot[0][17]; // W->munu                               
-      // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][18]/nFullSelTot[0][18]; // W->taunu                              
-      // Wj_fullSel[icut]  = W_tmp;
+    Wj_fullSel[icut]  = lumi * Wlnu_xsec * nFullSelTot[icut][16]/nFullSelTot[0][16]; 
+    Wj_fullSel_err[icut]  = yieldErrPoisson(lumi * Wlnu_xsec * nFullSelTot[icut][16]/nFullSelTot[0][16], nFullSelTot[icut][16]);
+    // float W_tmp=0.;
+    // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][16]/nFullSelTot[0][16]; // W->enu                                
+    // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][17]/nFullSelTot[0][17]; // W->munu                               
+    // W_tmp += lumi * Wlnu_xsec  * nFullSelTot[icut][18]/nFullSelTot[0][18]; // W->taunu                              
+    // Wj_fullSel[icut]  = W_tmp;
 
-      // data
-      data_fullSel[icut] = nFullSelTot[icut][19];
-    }
+    // data
+    data_fullSel[icut] = nFullSelTot[icut][0];
 
     // efficiencies
-    if(icut>0 && nFullSelTot[icut-1][0]>0)  H_eff_fullSel[icut]      = nFullSelTot[icut][0]/nFullSelTot[icut-1][0];
+    if(icut>0 && nFullSelTot[icut-1][0]>0)  H_eff_fullSel[icut]      = H_fullSel[icut]/H_fullSel[icut-1];
     else H_eff_fullSel[icut] = 0.0;
 
     if(icut>0 && nFullSelTot[icut-1][1]>0)  ttj_eff_fullSel[icut]    = nFullSelTot[icut][1]/nFullSelTot[icut-1][1];
@@ -379,7 +485,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     
     if(icut==0) { 
-      H_eff_fullSel[icut]         = nFullSelTot[icut][0]/nFullSelTot[0][0];
+      H_eff_fullSel[icut]         = H_fullSel[icut]/H_fullSel[0];
       ttj_eff_fullSel[icut]       = nFullSelTot[icut][1]/nFullSelTot[0][1];
       Zj_eff_fullSel[icut]        = Zj_fullSel[icut]/Zj_fullSel[0];
       WW_eff_fullSel[icut]        = WW_fullSel[icut]/WW_fullSel[0];
@@ -392,7 +498,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   }
   
   // final efficiency after full selections (-4 = 3 x jets + 1=final)
-  if(nFullSelTot[0][0]>0)  H_finaleff_fullSel  = nFullSelTot[nCutsAnaFull-4][0]/nFullSelTot[0][0];
+  if(nFullSelTot[0][0]>0)  H_finaleff_fullSel  = H_fullSel[nCutsAnaFull-4]/H_fullSel[0];
   else H_finaleff_fullSel = 0.0;
   if(nFullSelTot[0][1]>0) ttj_finaleff_fullSel = nFullSelTot[nCutsAnaFull-4][1]/nFullSelTot[0][1];
   else ttj_finaleff_fullSel = 0.0;
@@ -412,7 +518,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   else Wj_finaleff_fullSel = 0.0;
   
   // final efficiency combining pre and full selections
-  if(nFullSelTot[0][0]>0) H_finaleff       = nFullSelTot[nCutsAnaFull-4][0]/nFullSelTot[0][0];
+  if(nFullSelTot[0][0]>0) H_finaleff       = H_fullSel[nCutsAnaFull-4]/H_fullSel[0];
   else H_finaleff = 0.0;
   if(nFullSelTot[0][1]>0) ttj_finaleff     = nFullSelTot[nCutsAnaFull-4][1]/nFullSelTot[0][1];
   else ttj_finaleff = 0.0;
@@ -432,7 +538,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
   else Wj_finaleff = 0.0;
 
   cout << "\n\nPROCESSED EVENTS:" << endl;
-  for(int i=0; i<20; i++) {
+  for(int i=0; i<23; i++) {
     cout << sampleNames[i] << "\t" << nFullSelTot[0][i] << endl;
   }
 
@@ -693,6 +799,16 @@ void printLatex(float lumi, const char* finalstate) {
     WZ_final[channel][jet] = WZ_fullSel[step];
     Wgamma_final[channel][jet] = Wgamma_fullSel[step];
 
+    H_final_err[channel][jet] = H_fullSel_err[step];
+    Wj_final_err[channel][jet] = Wj_fullSel_err[step];
+    ttj_final_err[channel][jet] = ttj_fullSel_err[step];
+    SingleTop_final_err[channel][jet] = SingleTop_fullSel_err[step];
+    Zj_final_err[channel][jet] = Zj_fullSel_err[step];
+    WW_final_err[channel][jet] = WW_fullSel_err[step];
+    ZZ_final_err[channel][jet] = ZZ_fullSel_err[step];
+    WZ_final_err[channel][jet] = WZ_fullSel_err[step];
+    Wgamma_final_err[channel][jet] = Wgamma_fullSel_err[step];
+
   }
 
 }
@@ -735,20 +851,25 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   for(int ichan=0; ichan<4; ++ichan) {
     textfile << channelName[ichan][jet] << "\t&\t";
     textfile << fixed 
-             << H_final[ichan][jet] << "\t&\t"
-             << WW_final[ichan][jet] << "\t&\t"
-             << WZ_final[ichan][jet] << "\t&\t"
-             << ZZ_final[ichan][jet] << "\t&\t"
-             << Zj_final[ichan][jet] << "\t\\\\"
+             << H_final[ichan][jet] << "$\\pm$" <<  H_final_err[ichan][jet] << "\t&\t"
+             << WW_final[ichan][jet] << "$\\pm$" <<  WW_final_err[ichan][jet] << "\t&\t"
+             << WZ_final[ichan][jet] << "$\\pm$" <<  WZ_final_err[ichan][jet] << "\t&\t"
+             << ZZ_final[ichan][jet] << "$\\pm$" <<  ZZ_final_err[ichan][jet] << "\t&\t"
+             << Zj_final[ichan][jet] << "$\\pm$" <<  Zj_final_err[ichan][jet] << "\t\\\\"
              << endl;
   }
   textfile << "ll" << "\t&\t";
   textfile << fixed
-           << H_final[mm][jet]  + H_final[ee][jet]  + H_final[em][jet]  + H_final[me][jet]  << "\t&\t"
-           << WW_final[mm][jet] + WW_final[ee][jet] + WW_final[em][jet] + WW_final[me][jet] << "\t&\t"
-           << WZ_final[mm][jet] + WZ_final[ee][jet] + WZ_final[em][jet] + WZ_final[me][jet] << "\t&\t"
-           << ZZ_final[mm][jet] + ZZ_final[ee][jet] + ZZ_final[em][jet] + ZZ_final[me][jet] << "\t&\t"
-           << Zj_final[mm][jet] + Zj_final[ee][jet] + Zj_final[em][jet] + Zj_final[me][jet] << "\t\\\\"
+           << H_final[mm][jet]  + H_final[ee][jet]  + H_final[em][jet]  + H_final[me][jet] << "$\\pm$"
+           << sqrt(pow(H_final_err[mm][jet],2)+pow(H_final_err[ee][jet],2)+pow(H_final_err[em][jet],2)+pow(H_final_err[me][jet],2)) << "\t&\t"
+           << WW_final[mm][jet] + WW_final[ee][jet] + WW_final[em][jet] + WW_final[me][jet] << "$\\pm$"
+           << sqrt(pow(WW_final_err[mm][jet],2) + pow(WW_final_err[ee][jet],2) + pow(WW_final_err[em][jet],2) + pow(WW_final_err[me][jet],2)) <<  "\t&\t"
+           << WZ_final[mm][jet] + WZ_final[ee][jet] + WZ_final[em][jet] + WZ_final[me][jet] << "$\\pm$"
+           << sqrt(pow(WZ_final_err[mm][jet],2) + pow(WZ_final_err[ee][jet],2) + pow(WZ_final_err[em][jet],2) + pow(WZ_final_err[me][jet],2)) << "\t&\t"
+           << ZZ_final[mm][jet] + ZZ_final[ee][jet] + ZZ_final[em][jet] + ZZ_final[me][jet] << "$\\pm$"
+           << sqrt(pow(ZZ_final_err[mm][jet],2) + pow(ZZ_final_err[ee][jet],2) + pow(ZZ_final_err[em][jet],2) + pow(ZZ_final_err[me][jet],2)) << "\t&\t"
+           << Zj_final[mm][jet] + Zj_final[ee][jet] + Zj_final[em][jet] + Zj_final[me][jet] << "$\\pm$"
+           << sqrt(pow(Zj_final_err[mm][jet],2) + pow(Zj_final_err[ee][jet],2) + pow(Zj_final_err[em][jet],2) + pow(Zj_final_err[me][jet],2)) << "\t\\\\"
            << endl;
   textfile << "\\hline" << endl; 
 
@@ -757,19 +878,23 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   for(int ichan=0; ichan<4; ++ichan) {
     textfile << channelName[ichan][jet] << "\t&\t";
     textfile << fixed 
-             << Wj_final[ichan][jet] << "\t&\t"
-             << Wgamma_final[ichan][jet] << "\t&\t"
-             << ttj_final[ichan][jet] << "\t&\t"
-             << SingleTop_final[ichan][jet] << "\t&\t"
+             << Wj_final[ichan][jet] << "$\\pm$" << Wj_final_err[ichan][jet] << "\t&\t"
+             << Wgamma_final[ichan][jet] << "$\\pm$" << Wgamma_final_err[ichan][jet] << "\t&\t"
+             << ttj_final[ichan][jet] << "$\\pm$" << ttj_final_err[ichan][jet] << "\t&\t"
+             << SingleTop_final[ichan][jet] << "$\\pm$" << SingleTop_final_err[ichan][jet] << "\t&\t"
              << data_final[ichan][jet] << "\t\\\\"
              << endl;
   }
   textfile << "ll" << "\t&\t";
   textfile << fixed
-           << Wj_final[mm][jet]     + Wj_final[ee][jet]     + Wj_final[em][jet]     + Wj_final[me][jet]      << "\t&\t"
-           << Wgamma_final[mm][jet] + Wgamma_final[ee][jet] + Wgamma_final[em][jet] + Wgamma_final[me][jet]  << "\t&\t"
-           << ttj_final[mm][jet]    + ttj_final[ee][jet]    + ttj_final[em][jet]    + ttj_final[me][jet]     << "\t&\t"
-           << SingleTop_final[mm][jet] + SingleTop_final[ee][jet] + SingleTop_final[em][jet] + SingleTop_final[me][jet] << "\t&\t"
+           << Wj_final[mm][jet]     + Wj_final[ee][jet]     + Wj_final[em][jet]     + Wj_final[me][jet]      << "$\\pm$" 
+           << sqrt(pow(Wj_final_err[mm][jet],2)     + pow(Wj_final_err[ee][jet],2)     + pow(Wj_final_err[em][jet],2)     + pow(Wj_final_err[me][jet],2) ) << "\t&\t"
+           << Wgamma_final[mm][jet] + Wgamma_final[ee][jet] + Wgamma_final[em][jet] + Wgamma_final[me][jet]  << "$\\pm$" 
+           << sqrt(pow(Wgamma_final_err[mm][jet],2) + pow(Wgamma_final_err[ee][jet],2) + pow(Wgamma_final_err[em][jet],2) + pow(Wgamma_final_err[me][jet],2)) <<  "\t&\t"
+           << ttj_final[mm][jet]    + ttj_final[ee][jet]    + ttj_final[em][jet]    + ttj_final[me][jet] << "$\\pm$"
+           << sqrt(pow(ttj_final_err[mm][jet],2) + pow(ttj_final_err[ee][jet],2) + pow(ttj_final_err[em][jet],2) + pow(ttj_final_err[me][jet],2)) << "\t&\t"
+           << SingleTop_final[mm][jet] + SingleTop_final[ee][jet] + SingleTop_final[em][jet] + SingleTop_final[me][jet] << "$\\pm$"
+           << sqrt(pow(SingleTop_final_err[mm][jet],2) + pow(SingleTop_final_err[ee][jet],2) + pow(SingleTop_final_err[em][jet],2) + pow(SingleTop_final_err[me][jet],2)) << "\t&\t"
            << data_final[mm][jet] + data_final[ee][jet] + data_final[em][jet]  + data_final[me][jet]  << "\t\\\\"
            << endl;
   textfile << "\\hline" << endl
@@ -943,8 +1068,18 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
         Wgamma_final[ichan][jet] = Wgamma_fullSel[step];
         data_final[ichan][jet] = data_fullSel[step];
         
+        H_final_err[ichan][jet] = H_fullSel_err[step];
+        Wj_final_err[ichan][jet] = Wj_fullSel_err[step];
+        ttj_final_err[ichan][jet] = ttj_fullSel_err[step];
+        SingleTop_final_err[ichan][jet] = SingleTop_fullSel_err[step];
+        Zj_final_err[ichan][jet] = Zj_fullSel_err[step];
+        WW_final_err[ichan][jet] = WW_fullSel_err[step];
+        ZZ_final_err[ichan][jet] = ZZ_fullSel_err[step];
+        WZ_final_err[ichan][jet] = WZ_fullSel_err[step];
+        Wgamma_final_err[ichan][jet] = Wgamma_fullSel_err[step];
+        
         textfile << fixed 
-                 << H_final[ichan][jet] << "\t&\t"
+                 << H_final[ichan][jet] << "$\\pm$" <<  "\t&\t"
                  << WW_final[ichan][jet] + 
           WZ_final[ichan][jet] +
           ZZ_final[ichan][jet] +
@@ -952,13 +1087,16 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
           Wj_final[ichan][jet] +
           ttj_final[ichan][jet] +
           SingleTop_final[ichan][jet] 
-                 << "\t&\t"
+                 << "$\\pm$" << sqrt(pow(WW_final_err[ichan][jet],2)+pow(WZ_final_err[ichan][jet],2)+pow(ZZ_final_err[ichan][jet],2)+
+                                     pow(Zj_final_err[ichan][jet],2)+pow(Wj_final_err[ichan][jet],2)+pow(ttj_final_err[ichan][jet],2)+pow(SingleTop_final_err[ichan][jet],2)) << "\t&\t"
                  << data_final[ichan][jet];
         
         simpletextfile << exampleHiggsMass << "\t"
                        << channelName[ichan][jet] << "\t"
-                       << H_final[ichan][jet] << "\t"
-                       << WW_final[ichan][jet] + WZ_final[ichan][jet] + ZZ_final[ichan][jet] + Zj_final[ichan][jet] + Wj_final[ichan][jet] + ttj_final[ichan][jet] << "\t"
+                       << H_final[ichan][jet] << "\t+/-\t" << H_final_err[ichan][jet] << "\t"
+                       << WW_final[ichan][jet] + WZ_final[ichan][jet] + ZZ_final[ichan][jet] + Zj_final[ichan][jet] + Wj_final[ichan][jet] + ttj_final[ichan][jet] << "\t+/-\t"
+                       << sqrt(pow(WW_final_err[ichan][jet],2)+pow(WZ_final_err[ichan][jet],2)+pow(ZZ_final_err[ichan][jet],2)+
+                               pow(Zj_final_err[ichan][jet],2)+pow(Wj_final_err[ichan][jet],2)+pow(ttj_final_err[ichan][jet],2)+pow(SingleTop_final_err[ichan][jet],2)) << "\t"
                        << data_final[ichan][jet] << endl;
         
         if(i<2) textfile << "\t&\t";
@@ -988,3 +1126,15 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
 void setRunStandalone(bool what) { runStandalone = what; }
 void setPrintCutsBreakdown(bool what) { printCutsBreakdown = what; }
 
+float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3, float n3, float nEst4, float n4, float nEst5, float n5, float nEst6, float n6) {
+
+  float sum=0;
+  if(n1>0) sum += pow(nEst1,2)/n1;
+  if(n2>0) sum += pow(nEst2,2)/n2;
+  if(n3>0) sum += pow(nEst3,2)/n3;
+  if(n4>0) sum += pow(nEst4,2)/n4;
+  if(n5>0) sum += pow(nEst5,2)/n5;
+  if(n6>0) sum += pow(nEst6,2)/n6;
+  
+  return sqrt(sum);
+}
