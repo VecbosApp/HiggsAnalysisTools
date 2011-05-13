@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define NSAMPLES 13
+#define NSAMPLES 17
 
 using namespace std;
 
@@ -28,35 +28,46 @@ void countEvents(int mH=160) {
 
   chains[0]->Add("results/Spring11_V2/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[1]->Add("results/Spring11_V2/DYJetsToLL_TuneD6T_M-50_7TeV-madgraph-tauola/*Counters.root");
-  chains[2]->Add("results/Spring11_V2/DYJetsToLL_TuneD6T_M-10To50_7TeV-madgraph-tauola/*Counters.root");
+  chains[1]->Add("results/Spring11_V2/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[2]->Add("results/Spring11_V2/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[3]->Add("results/Spring11_V2/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
 
-  chains[3]->Add("results/Spring11_V2/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains[4]->Add("results/Spring11_V2/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains[5]->Add("results/Spring11_V2/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains[4]->Add("results/Spring11_V2/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[5]->Add("results/Spring11_V2/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[6]->Add("results/Spring11_V2/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
 
-  chains[6]->Add("results/Spring11_V2/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[7]->Add("results/Spring11_V2/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains[8]->Add("results/Spring11_V2/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains[9]->Add("results/Spring11_V2/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+
+  chains[10]->Add("results/Spring11_V2/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
   TString hSample("results/Spring11_V2/GluGluToHToWWTo2L2Nu_M-");
   char mass[5];
   sprintf(mass,"%d",mH);
   hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
 
-  chains[7]->Add(hSample.Data());
+  chains[11]->Add(hSample.Data());
 
-  chains[8]->Add("results/Spring11_V2/PhotonVJets_7TeV-madgraph/*Counters.root");
-  chains[9]->Add("results/Spring11_V2/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[10]->Add("results/Spring11_V2/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[11]->Add("results/Spring11_V2/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[12]->Add("results/Spring11_V2/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[12]->Add("results/Spring11_V2/PhotonVJets_7TeV-madgraph/*Counters.root");
+  chains[13]->Add("results/Spring11_V2/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[14]->Add("results/Spring11_V2/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[15]->Add("results/Spring11_V2/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[16]->Add("results/Spring11_V2/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
   cout << "chains added. " << endl;
 
   std::vector<TString> sampleName;
 
   sampleName.push_back("results/merged/Wjets_ee.root");
-  sampleName.push_back("results/merged/Zjets_Hi_ee.root");
-  sampleName.push_back("results/merged/Zjets_Lo_ee.root");
+
+  sampleName.push_back("results/merged/Zee_Lo_ee.root");
+  sampleName.push_back("results/merged/Zmm_Lo_ee.root");
+  sampleName.push_back("results/merged/Ztautau_Lo_ee.root");
+
+  sampleName.push_back("results/merged/Zee_Hi_ee.root");
+  sampleName.push_back("results/merged/Zmm_Hi_ee.root");
+  sampleName.push_back("results/merged/Ztautau_Hi_ee.root");
 
   sampleName.push_back("results/merged/SingleTop_sChannel_ee.root");
   sampleName.push_back("esults/merged/SingleTop_tChannel_ee.root");
@@ -74,36 +85,45 @@ void countEvents(int mH=160) {
 
   std::map<int,float> Higgs_xsec_masses;
   // samples are emu only
-  Higgs_xsec_masses.insert(std::make_pair(120,0.247143*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(130,0.452859*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(140,0.64926*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(150,0.787871*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(160,0.897043*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(170,0.808914*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(200,0.422487*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(210,0.370845*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(220,0.331814*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(230,0.300268*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(250,0.251763*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(300,0.181931*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(400,0.125106*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(500,0.047826*4./9.));
-  Higgs_xsec_masses.insert(std::make_pair(600,0.018751*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(120,0.249642*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(130,0.452090*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(140,0.641773*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(150,0.770471*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(160,0.866443*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(170,0.782962*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(180,0.659328*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(190,0.486486*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(200,0.408305*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(210,0.358465*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(220,0.321398*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(230,0.290454*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(250,0.243724*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(300,0.175652*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(350,0.160052*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(400,0.124330*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(450,0.078433*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(500,0.048702*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(550,0.030364*4./9.));
+  Higgs_xsec_masses.insert(std::make_pair(600,0.019184*4./9.));
 
   std::vector<float> sampleXsec;
   sampleXsec.push_back(31314.);
-  sampleXsec.push_back(3048.);
-  sampleXsec.push_back(310.);
+  sampleXsec.push_back(3457./3.);
+  sampleXsec.push_back(3457./3.);
+  sampleXsec.push_back(3457./3.);
+  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4.21 * (0.1080*3));
   sampleXsec.push_back(64.6 * (0.1080*3));
   sampleXsec.push_back(10.6);
   sampleXsec.push_back(157.5);
   sampleXsec.push_back(Higgs_xsec_masses[mH]);
-  sampleXsec.push_back(173.);
+  sampleXsec.push_back(165.);
   sampleXsec.push_back(4.50347);
   sampleXsec.push_back(0.1538);
   sampleXsec.push_back(0.599442);
-  sampleXsec.push_back(5.9*1.3); // 1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
+  sampleXsec.push_back(7.67); // 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
 
   std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " pb " << std::endl;
 
@@ -117,7 +137,7 @@ void countEvents(int mH=160) {
     cout << "\tProcessing sample # " << isample << "..." << endl;
 
     Int_t           nCuts;
-    Float_t         nSel[24];   //[nCuts]
+    Float_t         nSel[25];   //[nCuts]
     
     // List of branches
     TBranch        *b_nCuts;   //!
