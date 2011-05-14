@@ -495,6 +495,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+    CutBasedHiggsSelectionEE.SetWWInvMass(2.*m_transvMass[ee]/_massVal);
 
     bool isSelectedEE           = CutBasedHiggsSelectionEE.output();    
     bool selUpToFinalLeptonsEE  = CutBasedHiggsSelectionEE.outputUpToFinalLeptons();
@@ -547,6 +548,7 @@ void LeptonPlusFakeMLSelection::Loop() {
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsErrorsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+    CutBasedHiggsErrorsSelectionEE.SetWWInvMass(2.*m_transvMass[ee]/_massVal);
     bool isSelectedErrorEE = CutBasedHiggsErrorsSelectionEE.output();    
   }
 }
@@ -843,8 +845,7 @@ void LeptonPlusFakeMLSelection::setKinematicsEE(int myReal, int myFake) {
     m_deltaErre[ee] = m_p4LeptonMinus[ee]->Vect().DeltaR(m_p4LeptonPlus[ee]->Vect());
     m_deltaEtaLeptons[ee] = etaEle[myReal]-etaEle[myFake];
     m_dilepPt[ee].SetXYZ( m_p4LeptonMinus[ee]->Vect().X()+m_p4LeptonPlus[ee]->Vect().X(),m_p4LeptonMinus[ee]->Vect().Y()+m_p4LeptonPlus[ee]->Vect().Y(),0.0 );
-    // m_transvMass[ee]=mT3(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee],m_p4MET->Vect());
-    m_transvMass[ee] = 0.;
+    m_transvMass[ee]=CalcGammaMRstar(*m_p4LeptonMinus[ee],*m_p4LeptonPlus[ee]);
     m_metOptll[ee] = m_theMET / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
     // m_p4MET->SetXYZT(pxPFMet[0],pyPFMet[0],pzPFMet[0],energyPFMet[0]);
