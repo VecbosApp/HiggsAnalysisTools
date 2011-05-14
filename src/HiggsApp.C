@@ -78,6 +78,9 @@
 #if Application == 19
 #include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection.cc"
 #endif
+#if Application == 20
+#include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection_ME.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -408,12 +411,38 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  lplusfake.setRequiredTriggers(maskEE,0);
+  lplusfake.setRequiredTriggers(maskEE);
+  lplusfake.Loop();
+  lplusfake.displayEfficiencies(outputFileName);
+  
+#endif
+
+#if Application == 20
+
+  LeptonPlusFakeMLSelection_ME lplusfake(theChain);
+  lplusfake.SetDatasetName(outputFileName);
+
+  std::vector<std::string> maskME, maskNotME;
+  
+  if(isMC) {
+    maskME.push_back("HLT_Mu5_Ele17_v2");
+    maskME.push_back("HLT_Mu25_v1");
+  } else {
+    TString DatasetName(dataset);
+    if(DatasetName.Contains("MuEG")) {
+      maskME.push_back("HLT_Mu8_Ele17_CaloIdL");
+      maskME.push_back("HLT_Mu17_Ele8_CaloIdL");
+    } else if(DatasetName.Contains("SingleMu")) {
+      maskME.push_back("HLT_Mu24");
+    }
+  }
+
+  lplusfake.setRequiredTriggers(maskME);
+  lplusfake.setNotRequiredTriggers(maskNotME);
   lplusfake.Loop();
   lplusfake.displayEfficiencies(outputFileName);
 
 #endif
-
 
   return 0;
 
