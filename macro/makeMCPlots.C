@@ -8,6 +8,7 @@
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TPaveText.h"
+#include "scripts/LatinoPlot.C"
 
 #include <iostream>
 
@@ -33,10 +34,10 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
 
   TString species[NSPECIES];
   species[0]="Data";
-  if(signalFactor==1) species[1]="H140";
+  if(signalFactor==1) species[1]="H120";
   else {
     char scaleF[10];
-    sprintf(scaleF,"%dxH140",signalFactor);
+    sprintf(scaleF,"%dxH120",signalFactor);
     species[1]=TString(scaleF);
   }
   species[2]="Wjets";
@@ -79,7 +80,7 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   // chiara, da sistemare
   TString files[NSPECIES];
   files[0]="results_data/merged/dataset_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees/H140_"+TString(finalstate)+".root";  
+  files[1]="results/datasets_trees/H120_"+TString(finalstate)+".root";  
   files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees/others_"+TString(finalstate)+".root";
   files[4]="results/datasets_trees/top_"+TString(finalstate)+".root";
@@ -116,13 +117,13 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   units[8]="";
 
   int nbins[NVARIABLES];
-  nbins[0]=30;
-  nbins[1]=30;
-  nbins[2]=30;
-  nbins[3]=30;
-  nbins[4]=30;
-  nbins[5]=30;
-  nbins[6]=20;
+  nbins[0]=60;
+  nbins[1]=60;
+  nbins[2]=60;
+  nbins[3]=60;
+  nbins[4]=60;
+  nbins[5]=60;
+  nbins[6]=40;
   nbins[7]=7;
   nbins[8]=20;
 
@@ -130,22 +131,22 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   float range[NVARIABLES][2]; // 8 variables, min, max
   // met
   range[0][0]=0.;
-  range[0][1]=200.;
+  range[0][1]=300.;
   // projected met
   range[1][0]=0.;
-  range[1][1]=200.;
+  range[1][1]=300.;
   // gamma*MR*
   range[2][0]=0.;
-  range[2][1]=250.;
+  range[2][1]=400.;
   // mll
   range[3][0]=20.;
-  range[3][1]=150.;
+  range[3][1]=300.;
   // max pt
   range[4][0]=0.;
   range[4][1]=200.;
   // min pt
   range[5][0]=0.;
-  range[5][1]=200.;
+  range[5][1]=100.;
   // delta phi
   range[6][0]=0.;
   range[6][1]=180.;
@@ -184,7 +185,7 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   }
 
   TString cut[NCUTS];
-  cut[0]="(finalLeptons*(eleInvMass>20))*";
+  cut[0]="(finalLeptons*(eleInvMass>20)*minPtEle>20)*";
   cut[1]="(WWSel)*";
   cut[2]="(preDeltaPhi)*";
 
@@ -193,8 +194,6 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   TString intLumi=TString(lumistr);     
   TFile *_file[NSPECIES];
   TTree *T1[NSPECIES];
-  
-  TCanvas* c1= new TCanvas("test","test",800,800);
   
   if(!blindData) {
     _file[0]=TFile::Open(files[0]);
@@ -228,73 +227,49 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
               if(i>0) T1[i]->Project(histoName,variables[z],cut[j]+"weight*puweight");
               else T1[i]->Project(histoName,variables[z],cut[j]+"weight");
 	      std::cout << "Done " << histoName << std::endl;
-              if(j>0) histos[i][j][z]->Rebin(2);
 	    }
+          
+          LatinoPlot myPlot;
+          myPlot.setLumi(lumi);
+          myPlot.setLabel((xaxisLabel[z]).Data());
+          myPlot.setUnits((units[z]).Data());
+          myPlot.setMCHist(iHWW,     histos[1][j][z]);
+          myPlot.setMCHist(iWJets,   histos[2][j][z]);
+          myPlot.setMCHist(iWZ,      histos[3][j][z]);
+          myPlot.setMCHist(iTop,     histos[4][j][z]);
+          myPlot.setMCHist(iZJets,   histos[5][j][z]);
+          myPlot.setMCHist(iWW,      histos[6][j][z]);
 
-	  THStack histo_MC(variables[z]+"_MC",variables[z]+"_MC");
-	  for (int i=2;i<nspeciesToRun;++i)
-	    {
-	      histos[i][j][z]->SetFillColor(colors[i]);
-	      histos[i][j][z]->SetLineColor(lineColors[i]);
-	      histo_MC.Add(histos[i][j][z]);
-	    }
-	  
-	  float maximum=TMath::Max(histo_MC.GetMaximum(),histos[0][j][z]->GetMaximum());
-	  histo_MC.SetMinimum(0.001);
-	  histo_MC.SetMaximum(maximum*1.2);
-	  histo_MC.Draw("");
-	  histo_MC.GetXaxis()->SetTitle(xaxisLabel[z]+" ["+units[z]+"]");
-	  histo_MC.GetYaxis()->SetTitle("Events/"+binSize[z]+" "+units[z]);
+          myPlot.setDataHist(histos[0][j][z]);
+          
+	  // Draw
+	  //--------------------------------------------------------------------
+	  TCanvas* c1 = new TCanvas(Form("test_%d_%d_lin", z, j),
+				    Form("test_%d_%d_lin", z, j));
 
-          histos[1][j][z]->Scale(signalFactor);
-	  histos[1][j][z]->SetLineColor(lineColors[1]);
-	  histos[1][j][z]->SetLineWidth(2.0);
-	  histos[1][j][z]->Draw("SAME");
-	  
-          if(!blindData) {
-            histos[0][j][z]->SetMarkerStyle(20);
-            histos[0][j][z]->SetMarkerSize(1.3);
-            histos[0][j][z]->Draw("EPSAME");
-          }
-	  //  c1->SetLogy();
-	  TPaveText pt1(0.6,0.83,0.8,0.9,"NDC");
-	  //	  pt1.SetTextFont(72);
-	  pt1.SetTextSize(0.028);
-	  pt1.SetTextAlign(12);
-	  pt1.SetFillColor(0);
-	  pt1.SetBorderSize(0);
-	  // pt1.AddText("CMS Preliminary 2010");
-	  // pt1.AddText("");
-	  // pt1.AddText("");
-	  // pt1.AddText("");
-	  pt1.AddText("#sqrt{s}=7 TeV L_{int}="+intLumi+" pb^{-1}");
-	  pt1.Draw();
+ 	  c1->SetLogy(0);
 
-	  c1->Update();
-	  TLegendEntry *legge;
-	  TLegend *leg;
-	  leg = new TLegend(0.6,0.65,0.93,0.8,cut[j]);
-	  leg->SetFillStyle(0); leg->SetBorderSize(0.); leg->SetTextSize(0.025);
-	  leg->SetFillColor(0);
-	  //      leg->SetTitle(cut[j]);
-	  for (int i=0;i<nspeciesToRun;++i)
-	    {
-	      if (i == 0)
-		legge = leg->AddEntry(histos[legendOrder[i]][j][z],species[legendOrder[i]], "lpe");
-	  else
-	    legge = leg->AddEntry(histos[legendOrder[i]][j][z],species[legendOrder[i]],"f");
-	    }
-	  leg->Draw();
-	  c1->SetLogy(0);
-	  c1->Update();
+          (j == 0 || z == 7) ? myPlot.Draw() : myPlot.Draw(2);
+
+          c1->GetFrame()->DrawClone();
+
 	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".png");
 	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".root");
 	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".eps");
 	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".pdf");
-	  histo_MC.SetMaximum(maximum*100);
-	  c1->SetLogy(1);
-	  c1->Update();
-	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+"_log.png");
+
+	  TCanvas* c2 = new TCanvas(Form("test_%d_%d_log", z, j),
+				    Form("test_%d_%d_log", z, j));
+
+	  c2->SetLogy(1);
+
+          myPlot.Draw();
+
+          c2->GetFrame()->DrawClone();
+          
+	  c2->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+"_log.png");
+
+
 	}
     }
   
