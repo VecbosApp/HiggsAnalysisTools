@@ -38,6 +38,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
     while (1) {
       setfile >> var >> massVal;
       _massVal = atoi(massVal.c_str());
+
       if(!setfile.good()) break;
       if(var.compare("HiggsMass")==0) { 
 	found=true;
@@ -119,6 +120,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
+    // std::string goodRunJsonFile       = "config/json/certifiedLatinos_125s6.json";
     std::string goodRunJsonFile       = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
@@ -625,7 +627,8 @@ void HiggsMLSelection::Loop() {
     // at this level the SELECTED channel should have pT > 10 and > 20. So far, at least 2 leptons with pT >20 and 10 in the event
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
-      if (thisMaxPt>20) m_channel[ee] = true;    // fixme: hardcoded
+      float thisMinPt = TMath::Min(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
+      if (thisMaxPt>20 && thisMinPt>15) m_channel[ee] = true;    // fixme: hardcoded
     }
 
     if (thePreMuonPlus > -1 && thePreMuonMinus > -1) {
@@ -640,7 +643,8 @@ void HiggsMLSelection::Loop() {
 
     if ( thePreElectronME > -1 && thePreMuonME > -1 ) {
       float thisMaxPt  = GetPt(pxMuon[thePreMuonME],pyMuon[thePreMuonME]);
-      if (thisMaxPt>20) m_channel[me] = true;    // fixme: hardcoded
+      float thisMinPt  = GetPt(pxEle[thePreElectronME],pyEle[thePreElectronME]);
+      if (thisMaxPt>20 && thisMinPt>15) m_channel[me] = true;    // fixme: hardcoded
     }
     
     if (_verbose) {

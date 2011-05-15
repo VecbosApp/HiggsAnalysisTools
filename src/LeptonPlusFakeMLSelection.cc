@@ -104,7 +104,7 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/certifiedLatinos.json";    // chiara
+    std::string goodRunJsonFile = "config/json/certifiedLatinos_125s6.json";    // chiara
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -355,7 +355,8 @@ void LeptonPlusFakeMLSelection::Loop() {
     // at this level the SELECTED channel should have pT > 10 and > 20. So far, at least 2 leptons with pT >20 and 10 in the event
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
-      if (thisMaxPt>20) m_channel[ee] = true;    // fixme: hardcoded
+      float thisMinPt = TMath::Min(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
+      if (thisMaxPt>20 && thisMinPt>15) m_channel[ee] = true;    // fixme: hardcoded
     }
 
     if (_verbose) {
