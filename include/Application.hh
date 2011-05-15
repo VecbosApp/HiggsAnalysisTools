@@ -18,6 +18,7 @@
 //  16 = vertexing studies
 //  17 = isolation selection for Higgs studies; to produce input histos for performance plots 
 //  18 = Higgs -> WW -> 2e2nu NOT cut and count
-//  19 = lepton + fake selection for W+jets estimation NOT cut and count
+//  19 = lepton + fake selection for W+jets estimation NOT cut and count - EE
+//  20 = lepton + fake selection for W+jets estimation NOT cut and count - ME
 
 #define Application 18
