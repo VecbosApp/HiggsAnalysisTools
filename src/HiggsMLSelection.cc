@@ -2214,7 +2214,7 @@ float HiggsMLSelection::deltaPhiLLJet(int ichan) {
   
   int myLeadingJet = theLeadingJet[ichan];
 
-  if(myLeadingJet > -1) {
+  if(myLeadingJet > -1 && m_dilepPt[ichan].Pt()>0) {
     TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);    
     return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));                           
   } else return -999.;

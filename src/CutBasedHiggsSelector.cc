@@ -387,6 +387,7 @@ bool CutBasedHiggsSelector::output() {
     m_step22 = true;
 
     if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
+    if (_selection->getSwitch("minPtLepton") && m_lowPt < m_extraSlowLeptonPTMin) return false;
     m_step23 = true;
 
     if (_selection->getSwitch("higgsMassRel") && !_selection->passCut("higgsMassRel", m_WWInvMass)) return false;
