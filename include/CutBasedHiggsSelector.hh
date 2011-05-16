@@ -71,14 +71,14 @@ public:
   //! get output of the selector previous to deltaPhi cut
   bool outputPreDeltaPhi() { return m_preDeltaPhi; }
 
-  //! latinos
+  //! latinos 
+  bool outputStep0() { return m_step0; }
   bool outputStep1() { return m_step1; }
   bool outputStep2() { return m_step2; }
   bool outputStep3() { return m_step3; }
   bool outputStep4() { return m_step4; }
   bool outputStep5() { return m_step5; }
   bool outputStep6() { return m_step6; }
-  bool outputStep6bis() { return m_step6bis; }
   bool outputStep7() { return m_step7; }
   bool outputStep8() { return m_step8; }
   bool outputStep9() { return m_step9; }
@@ -140,7 +140,7 @@ private:
   bool m_preDeltaPhi;
 
   //! latinos
-  bool m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step6bis, m_step7, m_step8, m_step9;  
+  bool m_step0, m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step7, m_step8, m_step9;  
   bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step16bis, m_step17;
   bool m_step18, m_step19, m_step20, m_step21, m_step22, m_step23, m_step23bis, m_step24;
 

@@ -10,13 +10,13 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_extraSlowLeptonPTMin = 0.;
 
   // latinos
+  m_step0 = false;
   m_step1 = false;
   m_step2 = false;
   m_step3 = false;
   m_step4 = false;
   m_step5 = false;
   m_step6 = false;
-  m_step6bis = false;
   m_step7 = false;
   m_step8 = false;
   m_step9 = false;
@@ -81,13 +81,13 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   multiProcessCounter = selector.multiProcessCounter;
 
   // latinos
+  m_step0  = selector.m_step0;
   m_step1  = selector.m_step1;
   m_step2  = selector.m_step2;
   m_step3  = selector.m_step3;
   m_step4  = selector.m_step4;
   m_step5  = selector.m_step5;
   m_step6  = selector.m_step6;
-  m_step6bis = selector.m_step6bis;
   m_step7  = selector.m_step7;
   m_step8  = selector.m_step8;
   m_step9  = selector.m_step9;
@@ -152,13 +152,13 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->SetTitle(theTitle);
   globalCounter->AddVar("event");
   globalCounter->AddVar("MCtruth");
+  globalCounter->AddVar("trigger");
   globalCounter->AddVar("preselected");
   globalCounter->AddVar("leptonId");
   globalCounter->AddVar("leptonIso");
   globalCounter->AddVar("convRej");
   globalCounter->AddVar("leptonD0");       
   globalCounter->AddVar("nExtraLeptons");
-  globalCounter->AddVar("trigger");
   globalCounter->AddVar("looseMET");
   globalCounter->AddVar("mll");
   globalCounter->AddVar("mllZPeak");
@@ -197,13 +197,13 @@ bool CutBasedHiggsSelector::output() {
       processCounter->SetTitle(buffer);
       processCounter->AddVar("event");
       processCounter->AddVar("MCtruth");
+      processCounter->AddVar("trigger");
       processCounter->AddVar("preselected");
       processCounter->AddVar("leptonId");
       processCounter->AddVar("leptonIso");      
       processCounter->AddVar("convRej");
       processCounter->AddVar("leptonD0");
       processCounter->AddVar("nExtraLeptons");
-      processCounter->AddVar("trigger");
       processCounter->AddVar("looseMET");
       processCounter->AddVar("mll");
       processCounter->AddVar("mllZPeak");
@@ -234,13 +234,13 @@ bool CutBasedHiggsSelector::output() {
   m_preDeltaPhi = false;
   
   // latinos
+  m_step0 = false;
   m_step1 = false;
   m_step2 = false;
   m_step3 = false;
   m_step4 = false;
   m_step5 = false;
   m_step6 = false;
-  m_step6bis = false;
   m_step7 = false;
   m_step8 = false;
   m_step9 = false;
@@ -267,6 +267,10 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("MCtruth") && !m_foundMcTree) return false;
   theCounter->IncrVar("MCtruth",m_weight);
 
+  if(_selection->getSwitch("trigger") && !m_passedHLT ) return false;
+  theCounter->IncrVar("trigger",m_weight); 
+  m_step0 = true;
+
   if(!m_isThisChannel) return false;
   theCounter->IncrVar("preselected",m_weight);
   m_step1 = true;
@@ -292,10 +296,6 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("nExtraLeptons") && (!_selection->passCut("nExtraLeptons",m_nExtraLeptons)) ) return false;
   theCounter->IncrVar("nExtraLeptons",m_weight);
   m_step6 = true;
-
-  if(_selection->getSwitch("trigger") && !m_passedHLT ) return false;
-  theCounter->IncrVar("trigger",m_weight); 
-  m_step6bis = true;
   
   if (_selection->getSwitch("looseMET") && !_selection->passCut("looseMET",m_met)) return false; 
   theCounter->IncrVar("looseMET",m_weight);
@@ -417,13 +417,14 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       Counters *theCounter = iter->second;
 
       theCounter->Draw();
+      theCounter->Draw("trigger","MCtruth");
+      theCounter->Draw("preselected","trigger");
       theCounter->Draw("leptonId","preselected");     
       theCounter->Draw("leptonIso","leptonId");
       theCounter->Draw("convRej","leptonIso");
       theCounter->Draw("leptonD0","convRej");
       theCounter->Draw("nExtraLeptons","leptonD0");
-      theCounter->Draw("trigger","nExtraLeptons");
-      theCounter->Draw("looseMET","trigger");
+      theCounter->Draw("looseMET","nExtraLeptons");
       theCounter->Draw("mll","looseMET");
       theCounter->Draw("mllZPeak","mll");
       theCounter->Draw("tightMETandPrMET","mllZPeak");
@@ -448,13 +449,14 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     sprintf(namefile,"%s-Counters.root",datasetName.c_str());
     
     globalCounter->Draw();
+    globalCounter->Draw("trigger","MCtruth");
+    globalCounter->Draw("preselected","trigger");
     globalCounter->Draw("leptonId","preselected");     
     globalCounter->Draw("leptonIso","leptonId");
     globalCounter->Draw("convRej","leptonIso");
     globalCounter->Draw("leptonD0","convRej");
     globalCounter->Draw("nExtraLeptons","leptonD0");
-    globalCounter->Draw("trigger","nExtraLeptons");
-    globalCounter->Draw("looseMET","trigger");
+    globalCounter->Draw("looseMET","nExtraLeptons");
     globalCounter->Draw("mll","looseMET");
     globalCounter->Draw("mllZPeak","mll");
     globalCounter->Draw("tightMETandPrMET","mllZPeak");

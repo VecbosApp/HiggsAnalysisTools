@@ -94,24 +94,7 @@ void RedHiggsTree::addCSA07Infos() {
 
 void RedHiggsTree::addLatinos() {
 
-  myTree->Branch("step",              mySteps,              "step[24]/O"); 
-//  myTree->Branch("step1",              &myStep1,              "step1/O");
-//   myTree->Branch("step2",              &myStep2,              "step2/O");
-//   myTree->Branch("step3",              &myStep3,              "step3/O");
-//   myTree->Branch("step4",              &myStep4,              "step4/O");
-//   myTree->Branch("step5",              &myStep5,              "step5/O");
-//   myTree->Branch("step6",              &myStep6,              "step6/O");
-//   myTree->Branch("step7",              &myStep7,              "step7/O");
-//   myTree->Branch("step8",              &myStep8,              "step8/O");
-//   myTree->Branch("step9",              &myStep9,              "step9/O");
-//   myTree->Branch("step10",             &myStep10,             "step10/O");
-//   myTree->Branch("step11",             &myStep11,             "step11/O");
-//   myTree->Branch("step12",             &myStep12,             "step12/O");
-//   myTree->Branch("step13",             &myStep13,             "step13/O");
-//   myTree->Branch("step14",             &myStep14,             "step14/O");
-//   myTree->Branch("step15",             &myStep15,             "step15/O");
-//   myTree->Branch("step16",             &myStep16,             "step16/O");
-//   myTree->Branch("step17",             &myStep17,             "step17/O");
+  myTree->Branch("step",              mySteps,              "step[25]/O"); 
 
 }
 
@@ -204,32 +187,33 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
 
 }
 
-void RedHiggsTree::fillLatinos(bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
+void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                                bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24) {
-  mySteps[0]  = s1;
-  mySteps[1]  = s2;
-  mySteps[2]  = s3;
-  mySteps[3]  = s4;
-  mySteps[4]  = s5;
-  mySteps[5]  = s6;
-  mySteps[6]  = s7;
-  mySteps[7]  = s8;
-  mySteps[8]  = s9;
-  mySteps[9] = s10;
-  mySteps[10] = s11;
-  mySteps[11] = s12;
-  mySteps[12] = s13;
-  mySteps[13] = s14;
-  mySteps[14] = s15;
-  mySteps[15] = s16;
-  mySteps[16] = s17;
-  mySteps[17] = s18;
-  mySteps[18] = s19;
-  mySteps[19] = s20;
-  mySteps[20] = s21;
-  mySteps[21] = s22;
-  mySteps[22] = s23;
-  mySteps[23] = s24;
+  mySteps[0]  = s0;
+  mySteps[1]  = s1;
+  mySteps[2]  = s2;
+  mySteps[3]  = s3;
+  mySteps[4]  = s4;
+  mySteps[5]  = s5;
+  mySteps[6]  = s6;
+  mySteps[7]  = s7;
+  mySteps[8]  = s8;
+  mySteps[9]  = s9;
+  mySteps[10] = s10;
+  mySteps[11] = s11;
+  mySteps[12] = s12;
+  mySteps[13] = s13;
+  mySteps[14] = s14;
+  mySteps[15] = s15;
+  mySteps[16] = s16;
+  mySteps[17] = s17;
+  mySteps[18] = s18;
+  mySteps[19] = s19;
+  mySteps[20] = s20;
+  mySteps[21] = s21;
+  mySteps[22] = s22;
+  mySteps[23] = s23;
+  mySteps[24] = s24;
 
 }
 

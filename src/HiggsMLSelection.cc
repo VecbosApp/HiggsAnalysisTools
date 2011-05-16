@@ -864,13 +864,13 @@ void HiggsMLSelection::Loop() {
     bool selPreDeltaPhiEE       = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
 
     // latinos
+    bool outputStep0  = CutBasedHiggsSelectionEE.outputStep0();
     bool outputStep1  = CutBasedHiggsSelectionEE.outputStep1();
     bool outputStep2  = CutBasedHiggsSelectionEE.outputStep2();
     bool outputStep3  = CutBasedHiggsSelectionEE.outputStep3();
     bool outputStep4  = CutBasedHiggsSelectionEE.outputStep4();
     bool outputStep5  = CutBasedHiggsSelectionEE.outputStep5();
     bool outputStep6  = CutBasedHiggsSelectionEE.outputStep6();
-    bool outputStep6bis  = CutBasedHiggsSelectionEE.outputStep6bis();
     bool outputStep7  = CutBasedHiggsSelectionEE.outputStep7();
     bool outputStep8  = CutBasedHiggsSelectionEE.outputStep8();
     bool outputStep9  = CutBasedHiggsSelectionEE.outputStep9();
@@ -916,7 +916,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
 
-    myOutTreeEE -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     myOutTreeEE -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
@@ -985,13 +985,13 @@ void HiggsMLSelection::Loop() {
     bool selPreDeltaPhiMM       = CutBasedHiggsSelectionMM.outputPreDeltaPhi();
 
     // latinos
+    outputStep0  = CutBasedHiggsSelectionMM.outputStep0();
     outputStep1  = CutBasedHiggsSelectionMM.outputStep1();
     outputStep2  = CutBasedHiggsSelectionMM.outputStep2();
     outputStep3  = CutBasedHiggsSelectionMM.outputStep3();
     outputStep4  = CutBasedHiggsSelectionMM.outputStep4();
     outputStep5  = CutBasedHiggsSelectionMM.outputStep5();
     outputStep6  = CutBasedHiggsSelectionMM.outputStep6();
-    outputStep6bis  = CutBasedHiggsSelectionMM.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionMM.outputStep7();
     outputStep8  = CutBasedHiggsSelectionMM.outputStep8();
     outputStep9  = CutBasedHiggsSelectionMM.outputStep9();
@@ -1029,7 +1029,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeMM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeMM -> store();
@@ -1094,13 +1094,13 @@ void HiggsMLSelection::Loop() {
     bool selPreDeltaPhiEM       = CutBasedHiggsSelectionEM.outputPreDeltaPhi();
 
     // latinos
+    outputStep0  = CutBasedHiggsSelectionEM.outputStep0();
     outputStep1  = CutBasedHiggsSelectionEM.outputStep1();
     outputStep2  = CutBasedHiggsSelectionEM.outputStep2();
     outputStep3  = CutBasedHiggsSelectionEM.outputStep3();
     outputStep4  = CutBasedHiggsSelectionEM.outputStep4();
     outputStep5  = CutBasedHiggsSelectionEM.outputStep5();
     outputStep6  = CutBasedHiggsSelectionEM.outputStep6();
-    outputStep6bis  = CutBasedHiggsSelectionEM.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionEM.outputStep7();
     outputStep8  = CutBasedHiggsSelectionEM.outputStep8();
     outputStep9  = CutBasedHiggsSelectionEM.outputStep9();
@@ -1143,7 +1143,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeEM -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEM -> store();
@@ -1208,13 +1208,13 @@ void HiggsMLSelection::Loop() {
     bool selPreDeltaPhiME       = CutBasedHiggsSelectionME.outputPreDeltaPhi();
 
     // latinos
+    outputStep0  = CutBasedHiggsSelectionME.outputStep0();
     outputStep1  = CutBasedHiggsSelectionME.outputStep1();
     outputStep2  = CutBasedHiggsSelectionME.outputStep2();
     outputStep3  = CutBasedHiggsSelectionME.outputStep3();
     outputStep4  = CutBasedHiggsSelectionME.outputStep4();
     outputStep5  = CutBasedHiggsSelectionME.outputStep5();
     outputStep6  = CutBasedHiggsSelectionME.outputStep6();
-    outputStep6bis  = CutBasedHiggsSelectionME.outputStep6bis();
     outputStep7  = CutBasedHiggsSelectionME.outputStep7();
     outputStep8  = CutBasedHiggsSelectionME.outputStep8();
     outputStep9  = CutBasedHiggsSelectionME.outputStep9();
@@ -1257,7 +1257,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
-    myOutTreeME -> fillLatinos( outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();

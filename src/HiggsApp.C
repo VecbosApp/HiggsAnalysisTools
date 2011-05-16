@@ -372,11 +372,11 @@ int main(int argc, char* argv[]) {
       maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
     } else if(DatasetName.Contains("DoubleMu")) {
       maskMM.push_back("HLT_DoubleMu7");
-      //      maskNotMM.push_back("HLT_Mu24");
+      maskNotMM.push_back("HLT_Mu24");
     } else if(DatasetName.Contains("MuEG")) {
       maskEM.push_back("HLT_Mu8_Ele17_CaloIdL");
       maskEM.push_back("HLT_Mu17_Ele8_CaloIdL");
-      //      maskNotEM.push_back("HLT_Mu24");
+      maskNotEM.push_back("HLT_Mu24");
     } else if(DatasetName.Contains("SingleMu")) {
       maskMM.push_back("HLT_Mu24");
       maskEM.push_back("HLT_Mu24");
