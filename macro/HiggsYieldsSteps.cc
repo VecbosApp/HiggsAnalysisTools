@@ -254,7 +254,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir_mc[1000];                  
-    sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",exampleHiggsMass);
+    sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH%d/Spring11_V2/",exampleHiggsMass);
+
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
 
@@ -269,7 +270,8 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeVxxxx",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV",exampleHiggsMass);
+    cout << "dir_data = " << dir_data << endl;
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir_mc)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
@@ -310,7 +312,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir[1000];                  
-    sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/",mass);
+    sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH%d/Spring11_V2/",mass);
 
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
@@ -326,9 +328,9 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleElectronxxx",mass);
-    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/DoubleMuxxx",mass);
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V11/OptimMH%d/Data7TeV/MuEGxxx",mass);
+    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/DoubleElectron",mass);
+    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/DoubleMu",mass);
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/MuEG",mass);
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
@@ -554,13 +556,13 @@ void setupCuts() {
 
   fullSelCuts[0]="event";
   fullSelCuts[1]="MCtruth";
-  fullSelCuts[2]="channel preSel.";
-  fullSelCuts[3]="e/$\\mu$ ID";
-  fullSelCuts[4]="e/$\\mu$ isolation";
-  fullSelCuts[5]="conv. rej.";
-  fullSelCuts[6]="e/$\\mu$ d0";
-  fullSelCuts[7]="extra lepton veto";
-  fullSelCuts[8]="trigger";
+  fullSelCuts[2]="trigger";
+  fullSelCuts[3]="channel preSel.";
+  fullSelCuts[4]="e/$\\mu$ ID";
+  fullSelCuts[5]="e/$\\mu$ isolation";
+  fullSelCuts[6]="conv. rej.";
+  fullSelCuts[7]="e/$\\mu$ d0";
+  fullSelCuts[8]="extra lepton veto";
   fullSelCuts[9]="$MET>20$ GeV";
   fullSelCuts[10]="$m_{ll}$";
   fullSelCuts[11]="$|m_{ll}-m_Z|>15$ GeV";
