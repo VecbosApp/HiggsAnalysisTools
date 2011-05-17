@@ -8,31 +8,30 @@
 #include <math.h>
 
 // arrays filled from counters
-float nEv_init[9];          // mass
-float nEv_endWW[9];
-float nEv_end0j[9];
-float nEv_end1j[9];
+float nEv_init[5];          // mass
+float nEv_endWW[5];
+float nEv_end0j[5];
+float nEv_end1j[5];
 
 // arrays filled with final results
-float numAtHiggs_0j[9];     // mass
-float errAtHiggs_0j[9];     // mass
-float numAtHiggs_1j[9];     // mass
-float errAtHiggs_1j[9];     // mass
+float numAtHiggs_0j[5];     // mass
+float errAtHiggs_0j[5];     // mass
+float numAtHiggs_1j[5];     // mass
+float errAtHiggs_1j[5];     // mass
 
 void countEvents(int mass);
 
 void estimateWjets() {
 
   // W+jets number of events at WW level measured from data  
-  float numAtWW = 7.45;
-  float errAtWW = 1.27;     
+  float numAtWW = 4.87;
+  float errAtWW = 0.90;     
   
 
   // -------------------------------------------------------------------
   // for 1 mass only: taking MC files with kine variables to estimate the W+jets amount in the WW control region
   char file_mcTree[1000];
-  sprintf(file_mcTree,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH120/datasets_trees/Wjets_ee.root");   
-  // sprintf(file_mcTree,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH120/datasets_trees/Wjets_me.root");
+  sprintf(file_mcTree,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH120/datasets_trees/Wjets_ee.root");
   cout << "reading file " << file_mcTree << endl;
 
   TFile *fileWjets = TFile::Open(file_mcTree);
@@ -40,10 +39,10 @@ void estimateWjets() {
     
   TH1F *WjetsH = new TH1F("WjetsH","",50,0,180);
   
-  treeWjets->Project("WjetsH","deltaPhi","(WWSel)*weight");
+  treeWjets->Project("WjetsH","deltaPhi","(WWSel)*weight*puweight");
   float nWjetsTotal = WjetsH->Integral();
 
-  treeWjets->Project("WjetsH","deltaPhi","(eleInvMass>100 && WWSel)*weight");
+  treeWjets->Project("WjetsH","deltaPhi","(eleInvMass>100 && WWSel)*weight*puweight");
   float nWjetsControl = WjetsH->Integral();
 
   std::cout <<"in total = " << nWjetsTotal << " events, in the control region = " << nWjetsControl << std::endl;
@@ -55,7 +54,7 @@ void estimateWjets() {
 
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int myMass=0; myMass<9; myMass++) {
+  for (int myMass=0; myMass<5; myMass++) {
     
     int mass = 120 + myMass*10; 
     std::cout << "analyzing mass " << mass << std::endl;
@@ -65,12 +64,10 @@ void estimateWjets() {
     float ratioEndWW_0j = nEv_end0j[myMass]/nEv_endWW[myMass];
     numAtHiggs_0j[myMass] = numAtWW*ratioEndWW_0j;
     errAtHiggs_0j[myMass] = errAtWW*ratioEndWW_0j;   
-    // cout << nEv_end0j[myMass] << " " << nEv_endWW[myMass] << " " << ratioEndWW_0j  << endl;
 
     float ratioEndWW_1j = nEv_end1j[myMass]/nEv_endWW[myMass];
     numAtHiggs_1j[myMass] = numAtWW*ratioEndWW_1j;
     errAtHiggs_1j[myMass] = errAtWW*ratioEndWW_1j;   
-    cout << nEv_end1j[myMass] << " " << nEv_endWW[myMass] << " " << ratioEndWW_1j  << endl;
   }
 
   std::cout << std::endl;
@@ -79,12 +76,12 @@ void estimateWjets() {
   std::cout << "in the WW control region = "   << numWWcontrol << " +- " << errWWcontrol << std::endl; 
   std::cout << std::endl;
   std::cout << "at the end of the Higgs, 0 jets, selection: " << std::endl;
-  // for (int myMass=0; myMass<9; myMass++) 
-  //  cout << "mass = " << 120 + myMass*10 << ": " << numAtHiggs_0j[myMass] << " +- " << errAtHiggs_0j[myMass] << std::endl;
+  for (int myMass=0; myMass<5; myMass++) 
+    cout << "mass = " << 120 + myMass*10 << ": " << numAtHiggs_0j[myMass] << " +- " << errAtHiggs_0j[myMass] << std::endl;
   // std::cout << std::endl;
-  for (int myMass=0; myMass<9; myMass++) 
-    cout << "mass = " << 120 + myMass*10 << ": " << numAtHiggs_1j[myMass] << " +- " << errAtHiggs_1j[myMass] << std::endl;
-  std::cout << std::endl;
+  // for (int myMass=0; myMass<5; myMass++) 
+  //  cout << "mass = " << 120 + myMass*10 << ": " << numAtHiggs_1j[myMass] << " +- " << errAtHiggs_1j[myMass] << std::endl;
+  // std::cout << std::endl;
 
 }
 
@@ -93,14 +90,13 @@ void countEvents(int myMass) {
   // taking the EE or ME trees for the wanted mass
   char nametree[200];
   sprintf(nametree,"FULL_SELECTION_EVENT_COUNTER_EE");  
-  // sprintf(nametree,"FULL_SELECTION_EVENT_COUNTER_ME");
   TChain *theChain = new TChain(nametree);
   
   int mass = 120 + myMass*10; 
   std::cout << "in countEvents: analyzing mass " << mass << std::endl;
     
   char file_mc[1000];
-  sprintf(file_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V12/OptimMH%d/Spring11_V2/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc23_2/crovelli/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH%d/Spring11_V2/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
   theChain->Add(file_mc);
   cout << "reading tree " << nametree << " from file " << file_mc << endl;    
   
