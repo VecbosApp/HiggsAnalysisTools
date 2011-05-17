@@ -121,6 +121,8 @@ void estimateWW() {
   ///// END TOP /////////
 
 
+  /// W + JETS ESTIMATION ////
+  // MC estimation
   float nWjetsEEOut = WjetsEEH->Integral();
   float nWjetsEEOut_err = yieldErrPoisson(nWjetsEEOut,WjetsEEH->GetEntries());
   float nWjetsMEOut = WjetsMEH->Integral();
@@ -133,6 +135,17 @@ void estimateWW() {
   float nWjetsOut = nWjetsEEOut + nWjetsMEOut + nWjetsMMOut + nWjetsEMOut;
   float nWjetsOut_err = quadrSum(nWjetsEEOut_err,nWjetsMEOut_err,nWjetsMMOut_err,nWjetsEMOut_err);
 
+  // data estimation (ee)
+  float nWjetsEEOutData = 0.612778;
+  float nWjetsEEOutData_err = 0.113244;
+  float nWjetsMEOutData = 0.887411;
+  float nWjetsMEOutData_err = 0.13546;
+
+  // still MC fort mumu
+  float nWjetsOutData = nWjetsEEOutData + nWjetsMEOutData + nWjetsMMOut + nWjetsEMOut;
+  float nWjetsOutData_err = quadrSum(nWjetsEEOutData_err,nWjetsMEOutData_err,nWjetsMMOut_err,nWjetsEMOut_err);
+  /////////////////////////////
+  
   // DY estimation /////
   std::cout << "DY ESTIMATION..." << std::endl;
   float nZeejetsOut = ZeejetsH->Integral();
@@ -172,8 +185,8 @@ void estimateWW() {
   // data estimation (where possible)
   float DYTot = neeExp + nmmExp + nemExp;
   float DYTot_err = quadrSum(neeExp_err,nmmExp_err,nemExp_err);
-  float bkgTot = nWjetsOut + nTopOutSoftMuVeto_data + DYTot + nDiBosonsOut;
-  float bkgTot_err = quadrSum(nWjetsOut_err,nTopOutSoftMuVeto_data_err,DYTot_err,nDiBosonsOut_err);
+  float bkgTot = nWjetsOutData + nTopOutSoftMuVeto_data + DYTot + nDiBosonsOut;
+  float bkgTot_err = quadrSum(nWjetsOutData_err,nTopOutSoftMuVeto_data_err,DYTot_err,nDiBosonsOut_err);
 
   // MC estimation
   float DYTotMC = nZeejetsOut + nZmmjetsOut + nZemjetsOut;
@@ -185,7 +198,7 @@ void estimateWW() {
   std::cout << "---->  BACKGROUND SUMMARY  <-------" << std::endl;
   std::cout << "bkg\t\tMC\t\t\tdata" << std::endl;   
   std::cout.precision(3);
-  std::cout << "W+jets =\t" << nWjetsOut << " +/- " << nWjetsOut_err << "\t\tn.a." << std::endl;
+  std::cout << "W+jets =\t" << nWjetsOut << " +/- " << nWjetsOut_err << "\t\t" << nWjetsOutData << " +/- " << nWjetsOutData_err << std::endl;
   std::cout << "top =\t\t" << nTopOut << " +/- " << nTopOut_err << "\t\t" << nTopOutSoftMuVeto_data << " +/-" << nTopOutSoftMuVeto_data_err << std::endl;
   std::cout << "DY =\t\t" << DYTotMC << " +/- " << DYTotMC_err << "\t\t\t" << DYTot << " +/- " << DYTot_err << std::endl;
   std::cout << "WZ,ZZ =\t\t" << nDiBosonsOut << " +/- " << nDiBosonsOut_err << "\tn.a." << std::endl;
