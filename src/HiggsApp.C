@@ -432,6 +432,7 @@ int main(int argc, char* argv[]) {
     if(DatasetName.Contains("MuEG")) {
       maskME.push_back("HLT_Mu8_Ele17_CaloIdL");
       maskME.push_back("HLT_Mu17_Ele8_CaloIdL");
+      maskNotME.push_back("HLT_Mu24");
     } else if(DatasetName.Contains("SingleMu")) {
       maskME.push_back("HLT_Mu24");
     }
