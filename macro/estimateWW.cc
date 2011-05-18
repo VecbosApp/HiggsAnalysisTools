@@ -136,14 +136,18 @@ void estimateWW() {
   float nWjetsOut_err = quadrSum(nWjetsEEOut_err,nWjetsMEOut_err,nWjetsMMOut_err,nWjetsEMOut_err);
 
   // data estimation (ee)
-  float nWjetsEEOutData = 0.612778;
-  float nWjetsEEOutData_err = 0.113244;
-  float nWjetsMEOutData = 0.887411;
-  float nWjetsMEOutData_err = 0.13546;
+  float nWjetsEEOutData = 0.478;
+  float nWjetsEEOutData_err = 0.0983;
+  float nWjetsMEOutData = 0.752; 
+  float nWjetsMEOutData_err = 0.116;
+  float nWjetsMMOutData = 0.073;
+  float nWjetsMMOutData_err = 0.0392;
+  float nWjetsEMOutData = 0.;
+  float nWjetsEMOutData_err = 2.3;
 
   // still MC fort mumu
-  float nWjetsOutData = nWjetsEEOutData + nWjetsMEOutData + nWjetsMMOut + nWjetsEMOut;
-  float nWjetsOutData_err = quadrSum(nWjetsEEOutData_err,nWjetsMEOutData_err,nWjetsMMOut_err,nWjetsEMOut_err);
+  float nWjetsOutData = nWjetsEEOutData + nWjetsMEOutData + nWjetsMMOutData + nWjetsEMOutData;
+  float nWjetsOutData_err = quadrSum(nWjetsEEOutData_err,nWjetsMEOutData_err,nWjetsMMOutData_err,nWjetsEMOutData_err);
   /////////////////////////////
   
   // DY estimation /////
