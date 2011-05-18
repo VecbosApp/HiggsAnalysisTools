@@ -202,7 +202,6 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.0148097;
   */
 
-  /*
   // fake in the barrel from data (jet:30)) - with EWK subtraction (apart from bin0, where no EWK removal)
   m_fakeRateEB[0] = 0.170909;
   m_fakeRateEB[1] = 0.126939;
@@ -228,7 +227,6 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00498304;
   m_fakeRateEE_err[3] = 0.00418404;
   m_fakeRateEE_err[4] = 0.01372;
-  */
 
   /*
   // fake in the barrel from data (jet:15)) - no EWK subtraction
@@ -258,6 +256,7 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.0156841;
   */
 
+  /*
   // fake in the barrel from data (jet:50))
   m_fakeRateEB[0] = 0.130682;
   m_fakeRateEB[1] = 0.101523;
@@ -283,6 +282,7 @@ void LeptonPlusFakeMLSelection::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.0130575;
   m_fakeRateEE_err[3] = 0.00735984;
   m_fakeRateEE_err[4] = 0.0155379;
+  */
 }
 
 void LeptonPlusFakeMLSelection::Loop() {
@@ -422,8 +422,8 @@ void LeptonPlusFakeMLSelection::Loop() {
     if ( theFake>-1 ) {
       float fakerate    = getFakeRate( theFakePt, isFakeBarrel );
       float fakerateErr = getFakeRateError( theFakePt, isFakeBarrel );
-      weight      = tmpWeight * fakerate;
-      weightError = tmpWeight * fakerateErr;
+      weight      = tmpWeight * fakerate / (1. - fakerate);
+      weightError = tmpWeight * fakerateErr / ( (1. - fakerate)*(1. - fakerate) );
     } else {
       weight      = tmpWeight;
       weightError = tmpWeight;
@@ -750,6 +750,24 @@ int LeptonPlusFakeMLSelection::getBestDenominator(int realEle) {
     if (!isGoodDenom) continue;
 
     float thisElePt = GetPt(pxEle[iele],pyEle[iele]);
+
+    // removing candidates passing the tight selection
+    bool isTight = true;
+    bool theElectronID, theElectronIsol, theElectronConvRej;
+    theElectronID = theElectronIsol = theElectronConvRej = true;
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    if ( _selectionEE->getSwitch("asymmetricID")) {
+      if (thisElePt>=20) isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisElePt<20)  isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+    }
+    if (!theElectronID)      isTight = false;
+    if (!theElectronIsol)    isTight = false; 
+    if (!theElectronConvRej) isTight = false;
+    int gsfTrack = gsfTrackIndexEle[iele]; 
+    float d3dEle = impactPar3DGsfTrack[gsfTrack];
+    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) isTight = false;
+    if (isTight) continue;
+
     if( thisElePt > maxPtFake ) { maxPtFake = thisElePt; theFake=iele; }
   }
 
