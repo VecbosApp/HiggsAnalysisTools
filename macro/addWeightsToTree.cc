@@ -234,7 +234,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
-      i_WWSel = (step[12]) ? 1 : 0;
+      i_WWSel = (step[13]) ? 1 : 0;
 
       consecevent = (float)j;
       treeNew->Fill();
