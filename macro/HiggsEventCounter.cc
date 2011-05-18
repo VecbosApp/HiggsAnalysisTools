@@ -50,7 +50,8 @@ void countEvents(int mH=160) {
   chains[11]->Add(hSample.Data());
 
   chains[12]->Add("results/Spring11_V2/PhotonVJets_7TeV-madgraph/*Counters.root");
-  chains[13]->Add("results/Spring11_V2/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root");
+  //  chains[13]->Add("results/Spring11_V2/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
+  chains[13]->Add("results/Spring11_V2/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"); // MADGRAPH sample
   chains[14]->Add("results/Spring11_V2/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
   chains[15]->Add("results/Spring11_V2/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
   chains[16]->Add("results/Spring11_V2/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
@@ -214,7 +215,7 @@ void countEvents(int mH=160) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_em","_me");
-    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, 2);" << std::endl;
+    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, 3);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
 
