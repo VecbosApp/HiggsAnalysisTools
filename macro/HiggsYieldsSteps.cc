@@ -129,7 +129,7 @@ float ZjetsLoMass_xsec = 3457./3.;           // pythia <20
 float ZjetsHiMass_xsec = 4998./3.;           // pythia >20
 float TTjets_xsec      = 157.5;
 float ggWW_xsec        = 0.1538; // gg->WW->4l
-float WW_xsec          = 4.50347; // WW_2l2nu
+float WW_xsec          = 4.513968; // WW_2l2nu PYTHIA
 float WZ_xsec          = 0.599442; // WZ_3l
 //float ZZ_xsec = 0.25252; // ZZ_2l2nu
 float ZZ_xsec = 7.67; // inclusive
@@ -282,6 +282,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[6]->Add(TString(dir_mc)+TString("/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[7]->Add(TString(dir_mc)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[8]->Add(TString(dir_mc)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    // chains_fullSel[8]->Add(TString(dir_mc)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
     chains_fullSel[9]->Add(TString(dir_mc)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir_mc)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir_mc)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
@@ -300,9 +301,14 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     
     // data
     if (strcmp(finalstate,"EE")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (strcmp(finalstate,"MM")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
-
+    if (strcmp(finalstate,"MM")==0) {
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/SingleMu/*Counters.root"));
+    }
+    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) {
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/SingleMu/*Counters.root"));
+    }
   } else {
 
     Higgs_xsec_2l2nu = Higgs_xsec_masses[mass] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
@@ -328,9 +334,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    if (strcmp(finalstate,"EE")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/DoubleElectron",mass);
-    if (strcmp(finalstate,"MM")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/DoubleMu",mass);
-    if (strcmp(finalstate,"EM")==0 || strcmp(finalstate,"ME")==0) sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/MuEG",mass);
+    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/",mass);
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
@@ -341,6 +345,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[6]->Add(TString(dir)+TString("/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[7]->Add(TString(dir)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[8]->Add(TString(dir)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    // chains_fullSel[8]->Add(TString(dir)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
     chains_fullSel[9]->Add(TString(dir)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
@@ -360,8 +365,14 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     if (strcmp(finalstate,"EE")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleElectron/*Counters.root"));
-    if (strcmp(finalstate,"MM")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
-    if (strcmp(finalstate,"EM") || strcmp(finalstate,"ME")==0) chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+    if (strcmp(finalstate,"MM")==0) {
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/DoubleMu/*Counters.root"));
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/SingleMu/*Counters.root"));
+    }
+    if (strcmp(finalstate,"EM") || strcmp(finalstate,"ME")==0) {
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/MuEG/*Counters.root"));
+      chains_fullSel[0]->Add(TString(dir_data)+TString("/SingleMu/*Counters.root"));
+    }
   }
 
   float nFullSelTot[25][23];
@@ -1081,7 +1092,7 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
         Wgamma_final_err[ichan][jet] = Wgamma_fullSel_err[step];
         
         textfile << fixed 
-                 << H_final[ichan][jet] << "$\\pm$" <<  "\t&\t"
+                 << H_final[ichan][jet] << "$\\pm$" <<  H_final_err[ichan][jet] << "\t&\t"
                  << WW_final[ichan][jet] + 
           WZ_final[ichan][jet] +
           ZZ_final[ichan][jet] +
