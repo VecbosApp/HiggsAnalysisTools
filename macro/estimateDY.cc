@@ -154,6 +154,19 @@ void estimateDY() {
       nDYMC_HiggsSel_err[icha] = nDYMC_HiggsSel[icha] * quadrSum(DYMCErrRel,effErrRel);
     }
 
+    cout.precision(2);
+    cout << "Zero jets bin" << endl;
+    cout << "Higgs Mass = " << mass << endl;
+    cout << "\tee: MC = "   << 150./126. * nDYMC_HiggsSel[ee]   << " +/- " << nDYMC_HiggsSel_err[ee]
+	 << "\tee: data = " << 150./126. * nDYData_HiggsSel[ee] << " +/- " << nDYData_HiggsSel_err[ee] << std::endl;
+    cout << "\tmm: MC = "   << 150./126. * nDYMC_HiggsSel[mm]   << " +/- " << nDYMC_HiggsSel_err[mm]
+	 << "\tmm: data = " << 150./126. * nDYData_HiggsSel[mm] << " +/- " << nDYData_HiggsSel_err[mm] << std::endl;
+    cout << "\tem: MC = "   << 150./126. * nDYMC_HiggsSel[em]   << " +/- " << nDYMC_HiggsSel_err[em]
+	 << "\tem: data = " << 150./126. * nDYData_HiggsSel[em] << " +/- " << nDYData_HiggsSel_err[em] << std::endl;
+    cout << "\tme: MC = "   << 150./126. * nDYMC_HiggsSel[me]   << " +/- " << nDYMC_HiggsSel_err[me]
+	 << "\tme: data = " << 150./126. * nDYData_HiggsSel[me] << " +/- " << nDYData_HiggsSel_err[me] << std::endl;
+    cout << endl;
+
     float nDYData_HiggsSel_Tot = nDYData_HiggsSel[ee] + nDYData_HiggsSel[mm] + nDYData_HiggsSel[em] + nDYData_HiggsSel[me];
     float nDYData_HiggsSel_Tot_err = quadrSum(nDYData_HiggsSel_err[ee],nDYData_HiggsSel_err[mm],nDYData_HiggsSel_err[em],nDYData_HiggsSel_err[me]);
 
