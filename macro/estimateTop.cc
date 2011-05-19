@@ -2,6 +2,7 @@
 #include <TChain.h>
 #include <TTree.h>
 #include <TH1F.h>
+#include <fstream>
 #include <iostream>
 #include <vector>
 #include <map>
@@ -121,6 +122,10 @@ void estimateTop() {
             << "*\tME = " << nTopData[me] << " +/- " << nTopData_err[me] << std::endl;
 
 
+  ofstream textfile;
+  textfile.open("TopYieldsData.txt", ios_base::app);
+  textfile.precision(2);
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
@@ -133,37 +138,74 @@ void estimateTop() {
     countEvents(mass,"EM");
     countEvents(mass,"ME");
 
-    float nTopData_HiggsSel[4];
-    float nTopData_HiggsSel_err[4];
+    float nTopData_HiggsSel_0j[4], nTopData_HiggsSel_1j[4];
+    float nTopData_HiggsSel_0j_err[4], nTopData_HiggsSel_1j_err[4];
 
-    float nTopMC_HiggsSel[4];
-    float nTopMC_HiggsSel_err[4];
+    float nTopMC_HiggsSel_0j[4],  nTopMC_HiggsSel_1j[4];
+    float nTopMC_HiggsSel_0j_err[4], nTopMC_HiggsSel_1j_err[4];
 
     for(int icha=0;icha<4;icha++) {
       float eff_0j = nEv_end0j[icha]/nEv_endWW[icha];
       float eff_0j_err = sqrt(eff_0j*(1-eff_0j)/nEv_endWW[icha]);
       float effErrRel = (eff_0j==0) ? 0. : eff_0j_err/eff_0j;
     
-      nTopData_HiggsSel[icha] = nTopData[icha] * eff_0j;
+      nTopData_HiggsSel_0j[icha] = nTopData[icha] * eff_0j;
       float topDataErrRel = (nTopData[icha]==0) ? 0. : nTopData_err[icha]/nTopData[icha];
-      nTopData_HiggsSel_err[icha] = nTopData_HiggsSel[icha] * quadrSum(topDataErrRel,effErrRel);
+      nTopData_HiggsSel_0j_err[icha] = nTopData_HiggsSel_0j[icha] * quadrSum(topDataErrRel,effErrRel);
 
-      nTopMC_HiggsSel[icha] = nTopMC[icha] * eff_0j;
+      nTopMC_HiggsSel_0j[icha] = nTopMC[icha] * eff_0j;
       float topMCErrRel = (nTopMC[icha]==0) ? 0. : nTopMC_err[icha]/nTopMC[icha];
-      nTopMC_HiggsSel_err[icha] = nTopMC_HiggsSel[icha] * quadrSum(topMCErrRel,effErrRel);
+      nTopMC_HiggsSel_0j_err[icha] = nTopMC_HiggsSel_0j[icha] * quadrSum(topMCErrRel,effErrRel);
+
+      float eff_1j = nEv_end1j[icha]/nEv_endWW[icha];
+      float eff_1j_err = sqrt(eff_1j*(1-eff_1j)/nEv_endWW[icha]);
+      effErrRel = (eff_1j==0) ? 0. : eff_1j_err/eff_1j;
+    
+      nTopData_HiggsSel_1j[icha] = nTopData[icha] * eff_1j;
+      topDataErrRel = (nTopData[icha]==0) ? 0. : nTopData_err[icha]/nTopData[icha];
+      nTopData_HiggsSel_1j_err[icha] = nTopData_HiggsSel_1j[icha] * quadrSum(topDataErrRel,effErrRel);
+
+      nTopMC_HiggsSel_1j[icha] = nTopMC[icha] * eff_1j;
+      topMCErrRel = (nTopMC[icha]==0) ? 0. : nTopMC_err[icha]/nTopMC[icha];
+      nTopMC_HiggsSel_1j_err[icha] = nTopMC_HiggsSel_1j[icha] * quadrSum(topMCErrRel,effErrRel);
+
+      char channelName[2];
+      if(icha==ee) sprintf(channelName,"EE");
+      if(icha==mm) sprintf(channelName,"MM");
+      if(icha==em) sprintf(channelName,"EM");
+      if(icha==me) sprintf(channelName,"ME");
+      
+      textfile << channelName << ": Higgs Mass = " << mass 
+               << "\tdata 0 jet = " << nTopData_HiggsSel_0j[icha] << " +/- " << nTopData_HiggsSel_0j_err[icha] 
+               << "\tdata 1 jet = " << nTopData_HiggsSel_1j[icha] << " +/- " << nTopData_HiggsSel_1j_err[icha] 
+               << "\tMC 0 jet = " << nTopMC_HiggsSel_0j[icha] << " +/- " << nTopMC_HiggsSel_0j_err[icha] 
+               << "\tMC 1 jet = " << nTopMC_HiggsSel_1j[icha] << " +/- " << nTopMC_HiggsSel_1j_err[icha]
+               << std::endl;
     }
 
-    float nTopData_HiggsSel_Tot = nTopData_HiggsSel[ee] + nTopData_HiggsSel[mm] + nTopData_HiggsSel[em] + nTopData_HiggsSel[me];
-    float nTopData_HiggsSel_Tot_err = quadrSum(nTopData_HiggsSel_err[ee],nTopData_HiggsSel_err[mm],nTopData_HiggsSel_err[em],nTopData_HiggsSel_err[me]);
+    float nTopData_HiggsSel_0j_Tot = nTopData_HiggsSel_0j[ee] + nTopData_HiggsSel_0j[mm] + nTopData_HiggsSel_0j[em] + nTopData_HiggsSel_0j[me];
+    float nTopData_HiggsSel_0j_Tot_err = quadrSum(nTopData_HiggsSel_0j_err[ee],nTopData_HiggsSel_0j_err[mm],nTopData_HiggsSel_0j_err[em],nTopData_HiggsSel_0j_err[me]);
 
-    float nTopMC_HiggsSel_Tot = nTopMC_HiggsSel[ee] + nTopMC_HiggsSel[mm] + nTopMC_HiggsSel[em] + nTopMC_HiggsSel[me];
-    float nTopMC_HiggsSel_Tot_err = quadrSum(nTopMC_HiggsSel_err[ee],nTopMC_HiggsSel_err[mm],nTopMC_HiggsSel_err[em],nTopMC_HiggsSel_err[me]);
+    float nTopMC_HiggsSel_0j_Tot = nTopMC_HiggsSel_0j[ee] + nTopMC_HiggsSel_0j[mm] + nTopMC_HiggsSel_0j[em] + nTopMC_HiggsSel_0j[me];
+    float nTopMC_HiggsSel_0j_Tot_err = quadrSum(nTopMC_HiggsSel_0j_err[ee],nTopMC_HiggsSel_0j_err[mm],nTopMC_HiggsSel_0j_err[em],nTopMC_HiggsSel_0j_err[me]);
+
+    float nTopData_HiggsSel_1j_Tot = nTopData_HiggsSel_1j[ee] + nTopData_HiggsSel_1j[mm] + nTopData_HiggsSel_1j[em] + nTopData_HiggsSel_1j[me];
+    float nTopData_HiggsSel_1j_Tot_err = quadrSum(nTopData_HiggsSel_1j_err[ee],nTopData_HiggsSel_1j_err[mm],nTopData_HiggsSel_1j_err[em],nTopData_HiggsSel_1j_err[me]);
+
+    float nTopMC_HiggsSel_1j_Tot = nTopMC_HiggsSel_1j[ee] + nTopMC_HiggsSel_1j[mm] + nTopMC_HiggsSel_1j[em] + nTopMC_HiggsSel_1j[me];
+    float nTopMC_HiggsSel_1j_Tot_err = quadrSum(nTopMC_HiggsSel_1j_err[ee],nTopMC_HiggsSel_1j_err[mm],nTopMC_HiggsSel_1j_err[em],nTopMC_HiggsSel_1j_err[me]);
     
-    cout.precision(2);
-    cout << "Higgs Mass = " << mass 
-         << "\tMC = " << nTopMC_HiggsSel_Tot << " +/- " << nTopMC_HiggsSel_Tot_err
-         << "\tdata = " << nTopData_HiggsSel_Tot << " +/- " << nTopData_HiggsSel_Tot_err << std::endl;
+    textfile.precision(2);
+    textfile << "\t===>> TOTAL: Higgs Mass = " << mass 
+             << "\tdata 0 jet = " << nTopData_HiggsSel_0j_Tot << " +/- " << nTopData_HiggsSel_0j_Tot_err 
+             << "\tdata 1 jet = " << nTopData_HiggsSel_1j_Tot << " +/- " << nTopData_HiggsSel_1j_Tot_err
+             << "\tMC 0 jet = " << nTopMC_HiggsSel_0j_Tot << " +/- " << nTopMC_HiggsSel_0j_Tot_err 
+             << "\tMC 1 jet = " << nTopMC_HiggsSel_1j_Tot << " +/- " << nTopMC_HiggsSel_1j_Tot_err
+             << std::endl;
+
   }
+
+  std::cout << "Full top yields in data in:  TopYieldsData.txt " << std::endl;
 
 }
 
