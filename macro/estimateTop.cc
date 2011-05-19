@@ -232,10 +232,10 @@ void estimateTop() {
       tablefile3 << "# \t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile3 << mass 
-	       << " " << "\t" << nTopMC_HiggsSel_0j[1] << " +/- " <<  nTopMC_HiggsSel_0j_err[1] 
-	       << " " << "\t" << nTopMC_HiggsSel_0j[3] << " +/- " <<  nTopMC_HiggsSel_0j_err[3] 
-	       << " " << "\t" << nTopMC_HiggsSel_0j[2] << " +/- " <<  nTopMC_HiggsSel_0j_err[2] 
-	       << " " << "\t" << nTopMC_HiggsSel_0j[0] << " +/- " <<  nTopMC_HiggsSel_0j_err[0] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_0j[1] << " +/- " <<  nTopMC_HiggsSel_0j_err[1] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_0j[3] << " +/- " <<  nTopMC_HiggsSel_0j_err[3] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_0j[2] << " +/- " <<  nTopMC_HiggsSel_0j_err[2] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_0j[0] << " +/- " <<  nTopMC_HiggsSel_0j_err[0] 
 	       << std::endl;
     
     if (i==0) { 
@@ -243,10 +243,10 @@ void estimateTop() {
       tablefile4 << "#\t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile4 << mass 
-	       << " " << "\t" << nTopMC_HiggsSel_1j[1] << " +/- " <<  nTopMC_HiggsSel_1j_err[1] 
-	       << " " << "\t" << nTopMC_HiggsSel_1j[3] << " +/- " <<  nTopMC_HiggsSel_1j_err[3] 
-	       << " " << "\t" << nTopMC_HiggsSel_1j[2] << " +/- " <<  nTopMC_HiggsSel_1j_err[2] 
-	       << " " << "\t" << nTopMC_HiggsSel_1j[0] << " +/- " <<  nTopMC_HiggsSel_1j_err[0] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_1j[1] << " +/- " <<  nTopMC_HiggsSel_1j_err[1] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_1j[3] << " +/- " <<  nTopMC_HiggsSel_1j_err[3] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_1j[2] << " +/- " <<  nTopMC_HiggsSel_1j_err[2] 
+	       << " " << "\t" << (150./126.) * nTopMC_HiggsSel_1j[0] << " +/- " <<  nTopMC_HiggsSel_1j_err[0] 
 	       << std::endl;
 
     float nTopData_HiggsSel_0j_Tot = nTopData_HiggsSel_0j[ee] + nTopData_HiggsSel_0j[mm] + nTopData_HiggsSel_0j[em] + nTopData_HiggsSel_0j[me];

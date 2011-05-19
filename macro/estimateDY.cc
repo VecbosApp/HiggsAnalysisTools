@@ -3,6 +3,7 @@
 #include <TTree.h>
 #include <TH1F.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <math.h>
@@ -34,10 +35,10 @@ void estimateDY() {
   float kee_err = 0.00874687;
 
 
-  TFile *fileData = TFile::Open("results_data/merged/dataset_ll.root");
+  TFile *fileData  = TFile::Open("results_data/merged/dataset_ll.root");
   TFile *fileZjets = TFile::Open("results/datasets_trees/Zjets_ll.root");
 
-  TTree *treeData = (TTree*)fileData->Get("T1");
+  TTree *treeData  = (TTree*)fileData->Get("T1");
   TTree *treeZjets = (TTree*)fileZjets->Get("T1");
 
   TH1F *ZeejetsH = new TH1F("ZeejetsH","",50,0,180);
@@ -53,7 +54,7 @@ void estimateDY() {
   treeZjets->Project("ZmmjetsH","deltaPhi","(WWSel && finalstate==1)*weight*puweight");
   treeZjets->Project("ZemjetsH","deltaPhi","(WWSel && (finalstate==2))*weight*puweight");
   treeZjets->Project("ZmejetsH","deltaPhi","(WWSel && (finalstate==3))*weight*puweight");
-
+  
   treeData->Project("neeInH","deltaPhi","eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0"); // missing softmu... not available in red trees... hopefully small contrib here
   treeData->Project("nmmInH","deltaPhi","eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1"); // missing softmu... not available in red trees... hopefully small contrib here
   treeData->Project("nemInH","deltaPhi","eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3)"); // missing softmu... not available in red trees... hopefully small contrib here
@@ -68,7 +69,6 @@ void estimateDY() {
   float nZemjetsMC_err = yieldErrPoisson(nZemjetsMC,ZemjetsH->GetEntries());
   float nZmejetsMC = ZmejetsH->Integral();
   float nZmejetsMC_err = yieldErrPoisson(nZmejetsMC,ZmejetsH->GetEntries());
-
   
   float nDYMC[4], nDYMC_err[4];
   nDYMC[ee] = ZeejetsH->Integral();
@@ -84,12 +84,13 @@ void estimateDY() {
   float nmmIn = nmmInH->Integral() * eff_softmu_Z;
   float nemIn = (nemInH->Integral()) * eff_softmu_Z;
 
+  // ee and mm from data
   float neeExp = (nDYout(neeIn, nemIn, Ree, Ree_err, kee, kee_err)).first;
   float neeExp_err = (nDYout(neeIn, nemIn, Ree, Ree_err, kee, kee_err)).second;
   float nmmExp = (nDYout(nmmIn, nemIn, Rmm, Rmm_err, kmm, kmm_err)).first;
   float nmmExp_err = (nDYout(nmmIn, nemIn, Rmm, Rmm_err, kmm, kmm_err)).second;
 
-  // ee and mm from data and em from MC
+  // and em from MC
   float nemExp = nZemjetsMC;
   float nemExp_err = yieldErrPoisson(nZemjetsMC,ZemjetsH->GetEntries());
   float nmeExp = nZmejetsMC;
@@ -99,12 +100,12 @@ void estimateDY() {
   float nemmeExp_err = quadrSum(nZemjetsMC_err,nZmejetsMC_err);
 
   std::cout << "Number of DY->ll events at W+W- level: " << std::endl;
-  std::cout << "neeIn = " << neeIn << "\tnmmIn = " << nmmIn << "\tnemIn = " << nemIn << std::endl;
-  std::cout << "nEE MC = " << nZeejetsMC << " +/- " << nZeejetsMC_err
-            << "\tData = " << neeExp << " +/- " << neeExp_err << std::endl;
-  std::cout << "nMM MC = " << nZmmjetsMC << " +/- " << nZmmjetsMC_err
-            << "\tData = " << nmmExp << " +/- " << nmmExp_err << std::endl;
-  std::cout << "nEM+nME MC = " << nemmeExp << " +/- " << nemmeExp_err << std::endl; 
+  std::cout << "neeIn = "  << ( 150./126.) * neeIn << "\tnmmIn = "  << (150./126.) * nmmIn << "\tnemIn = " << (150./126.) * nemIn << std::endl;
+  std::cout << "nEE MC = " << ( 150./126.) * nZeejetsMC  << " +/- " << nZeejetsMC_err
+            << "\tData = " << ( 150./126.) * neeExp      << " +/- " << neeExp_err << std::endl;
+  std::cout << "nMM MC = " << ( 150./126.) * nZmmjetsMC  << " +/- " << nZmmjetsMC_err
+            << "\tData = " << ( 150./126.) * nmmExp      << " +/- " << nmmExp_err << std::endl;
+  std::cout << "nEM+nME MC = " << (150./126.) * nemmeExp << " +/- " << nemmeExp_err << std::endl; 
 
   std::cout << "END DY ESTIMATION." << std::endl;
   ////////// END DY ///////////
@@ -121,6 +122,15 @@ void estimateDY() {
   nDYData_err[em] = nemExp_err;
   nDYData[me] = nmeExp;
   nDYData_err[me] = nmeExp_err;
+
+  
+  ofstream tablefile1;
+  tablefile1.open("DYYieldsData_ForTable_0j.txt", ios_base::app);
+  tablefile1.precision(2);
+
+  ofstream tablefile3;
+  tablefile3.open("DYYieldsMC_ForTable_0j.txt", ios_base::app);
+  tablefile3.precision(2);
 
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
@@ -153,7 +163,7 @@ void estimateDY() {
       float DYMCErrRel = (nDYMC[icha]==0) ? 0. : nDYMC_err[icha]/nDYMC[icha];
       nDYMC_HiggsSel_err[icha] = nDYMC_HiggsSel[icha] * quadrSum(DYMCErrRel,effErrRel);
     }
-
+  
     cout.precision(2);
     cout << "Zero jets bin" << endl;
     cout << "Higgs Mass = " << mass << endl;
@@ -167,6 +177,30 @@ void estimateDY() {
 	 << "\tme: data = " << 150./126. * nDYData_HiggsSel[me] << " +/- " << nDYData_HiggsSel_err[me] << std::endl;
     cout << endl;
 
+
+    // summary table for limits                                                                                                             
+    if (i==0) {
+      tablefile1 << "# zero jets bin data" << endl;
+      tablefile1 << "# \t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile1 << mass
+               << " " << "\t" << (150./126.) * nDYData_HiggsSel[1] << " +/- " <<  nDYData_HiggsSel_err[1]
+               << " " << "\t" << (150./126.) * nDYData_HiggsSel[3] << " +/- " <<  nDYData_HiggsSel_err[3]
+               << " " << "\t" << (150./126.) * nDYData_HiggsSel[2] << " +/- " <<  nDYData_HiggsSel_err[2]
+               << " " << "\t" << (150./126.) * nDYData_HiggsSel[0] << " +/- " <<  nDYData_HiggsSel_err[0]
+               << std::endl;
+
+    if (i==0) {
+      tablefile3 << "# zero jets bin MC" << endl;
+      tablefile3 << "# \t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile3 << mass
+               << " " << "\t" << (150./126.) * nDYMC_HiggsSel[1] << " +/- " <<  nDYMC_HiggsSel_err[1]
+               << " " << "\t" << (150./126.) * nDYMC_HiggsSel[3] << " +/- " <<  nDYMC_HiggsSel_err[3]
+               << " " << "\t" << (150./126.) * nDYMC_HiggsSel[2] << " +/- " <<  nDYMC_HiggsSel_err[2]
+               << " " << "\t" << (150./126.) * nDYMC_HiggsSel[0] << " +/- " <<  nDYMC_HiggsSel_err[0]
+               << std::endl;
+
     float nDYData_HiggsSel_Tot = nDYData_HiggsSel[ee] + nDYData_HiggsSel[mm] + nDYData_HiggsSel[em] + nDYData_HiggsSel[me];
     float nDYData_HiggsSel_Tot_err = quadrSum(nDYData_HiggsSel_err[ee],nDYData_HiggsSel_err[mm],nDYData_HiggsSel_err[em],nDYData_HiggsSel_err[me]);
 
@@ -175,7 +209,7 @@ void estimateDY() {
     
     cout.precision(2);
     cout << "Higgs Mass = " << mass 
-         << "\tMC = " << 150./126. *  nDYMC_HiggsSel_Tot << " +/- " << nDYMC_HiggsSel_Tot_err
+         << "\tMC = "   << 150./126. * nDYMC_HiggsSel_Tot   << " +/- " << nDYMC_HiggsSel_Tot_err
          << "\tdata = " << 150./126. * nDYData_HiggsSel_Tot << " +/- " << nDYData_HiggsSel_Tot_err << std::endl;
   }
 
