@@ -3,6 +3,7 @@
 #include <TTree.h>
 #include <TH1F.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <math.h>
@@ -400,6 +401,14 @@ void estimateWW() {
   std::cout << "data = " << nWWData_WWSel_tot << " +/- " << nWWData_WWSel_tot_err << std::endl;
   std::cout << "=================================================" << std::endl; 
 
+  ofstream tablefile1;
+  tablefile1.open("WWYieldsData_ForTable_0j.txt", ios_base::app);
+  tablefile1.precision(2);
+
+  ofstream tablefile2;
+  tablefile2.open("WWYieldsData_ForTable_1j.txt", ios_base::app);
+  tablefile2.precision(2);
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
@@ -450,6 +459,31 @@ void estimateWW() {
                 << "\tMC 1 jet = " << nWWMC_HiggsSel_1j[icha] << " +/- " << nWWMC_HiggsSel_1j_err[icha]
                 << std::endl;
     }
+
+
+    // summary table for limits                                                                                          
+    if (i==0) {
+      tablefile1 << "zero jets bin" << endl;
+      tablefile1 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile1 << mass
+               << " " << "\t" << nWWData_HiggsSel_0j[1] << " +/- " << nWWData_HiggsSel_0j_err[1]
+               << " " << "\t" << nWWData_HiggsSel_0j[3] << " +/- " << nWWData_HiggsSel_0j_err[3]
+               << " " << "\t" << nWWData_HiggsSel_0j[2] << " +/- " << nWWData_HiggsSel_0j_err[2]
+               << " " << "\t" << nWWData_HiggsSel_0j[0] << " +/- " << nWWData_HiggsSel_0j_err[0]
+               << std::endl;
+
+    if (i==0) {
+      tablefile2 << "one jets bin" << endl;
+      tablefile2 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile2 << mass
+               << " " << "\t" << nWWData_HiggsSel_1j[1] << " +/- " << nWWData_HiggsSel_1j_err[1]
+               << " " << "\t" << nWWData_HiggsSel_1j[3] << " +/- " << nWWData_HiggsSel_1j_err[3]
+               << " " << "\t" << nWWData_HiggsSel_1j[2] << " +/- " << nWWData_HiggsSel_1j_err[2]
+               << " " << "\t" << nWWData_HiggsSel_1j[0] << " +/- " << nWWData_HiggsSel_1j_err[0]
+               << std::endl;
+
 
     float nWWData_HiggsSel_0j_Tot = nWWData_HiggsSel_0j[ee] + nWWData_HiggsSel_0j[mm] + nWWData_HiggsSel_0j[em] + nWWData_HiggsSel_0j[me];
     float nWWData_HiggsSel_0j_Tot_err = quadrSum(nWWData_HiggsSel_0j_err[ee],nWWData_HiggsSel_0j_err[mm],nWWData_HiggsSel_0j_err[em],nWWData_HiggsSel_0j_err[me]);
