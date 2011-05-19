@@ -188,6 +188,15 @@ void estimateWjets() {
   textfile.open("WjetsYieldsData.txt", ios_base::app);
   textfile.precision(2);
 
+  ofstream tablefile1;
+  tablefile1.open("WjetsYieldsData_ForTable_0j.txt", ios_base::app);
+  tablefile1.precision(2);
+
+  ofstream tablefile2;
+  tablefile2.open("WjetsYieldsData_ForTable_1j.txt", ios_base::app);
+  tablefile2.precision(2);
+
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
@@ -229,6 +238,30 @@ void estimateWjets() {
                << "\tMC 1 jet = " << numAtHiggsMC_1j[icha] << " +/- " << errAtHiggsMC_1j[icha]
                << std::endl;
     }
+
+
+    // summary table for limits                                                                                                             
+    if (i==0) {
+      tablefile1 << "zero jets bin" << endl;
+      tablefile1 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile1 << mass
+               << " " << "\t" << numAtHiggs_0j[1] << " +/- " << errAtHiggs_0j[1]
+               << " " << "\t" << numAtHiggs_0j[3] << " +/- " << errAtHiggs_0j[3]
+               << " " << "\t" << numAtHiggs_0j[2] << " +/- " << errAtHiggs_0j[2]
+               << " " << "\t" << numAtHiggs_0j[0] << " +/- " << errAtHiggs_0j[0]
+               << std::endl;
+
+    if (i==0) {
+      tablefile2 << "one jet bin" << endl;
+      tablefile2 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile2 << mass
+               << " " << "\t" << numAtHiggs_1j[1] << " +/- " << errAtHiggs_1j[1]
+               << " " << "\t" << numAtHiggs_1j[3] << " +/- " << errAtHiggs_1j[3]
+               << " " << "\t" << numAtHiggs_1j[2] << " +/- " << errAtHiggs_1j[2]
+               << " " << "\t" << numAtHiggs_1j[0] << " +/- " << errAtHiggs_1j[0]
+               << std::endl;
 
     float numAtHiggs_0j_Tot = numAtHiggs_0j[ee] + numAtHiggs_0j[mm] + numAtHiggs_0j[em] + numAtHiggs_0j[me];
     float errAtHiggs_0j_Tot = quadrSum(errAtHiggs_0j[ee],errAtHiggs_0j[mm],errAtHiggs_0j[em],errAtHiggs_0j[me]); 
