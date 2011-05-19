@@ -115,12 +115,17 @@ void estimateTop() {
   nTopData[me] = nTopSoftMuVeto_data;
   nTopData_err[me] = nTopSoftMuVeto_data_err;
 
-  std::cout << "Number of Top events at W+W- level: " << std::endl
-            << "*\tEE = " << nTopData[ee] << " +/- " << nTopData_err[ee] << std::endl
-            << "*\tMM = " << nTopData[mm] << " +/- " << nTopData_err[mm] << std::endl
-            << "*\tEM = " << nTopData[em] << " +/- " << nTopData_err[em] << std::endl
-            << "*\tME = " << nTopData[me] << " +/- " << nTopData_err[me] << std::endl;
+  std::cout << "Number of Top events from data at W+W- level: " << std::endl
+            << "*\tEE = " << (150./126.) * nTopData[ee] << " +/- " << nTopData_err[ee] << std::endl
+            << "*\tMM = " << (150./126.) * nTopData[mm] << " +/- " << nTopData_err[mm] << std::endl
+            << "*\tEM = " << (150./126.) * nTopData[em] << " +/- " << nTopData_err[em] << std::endl
+            << "*\tME = " << (150./126.) * nTopData[me] << " +/- " << nTopData_err[me] << std::endl;
 
+  std::cout << "Number of Top events from MC at W+W- level: " << std::endl
+            << "*\tEE = " << (150./126.) * nTopMC[ee] << " +/- " << nTopMC_err[ee] << std::endl
+            << "*\tMM = " << (150./126.) * nTopMC[mm] << " +/- " << nTopMC_err[mm] << std::endl
+            << "*\tEM = " << (150./126.) * nTopMC[em] << " +/- " << nTopMC_err[em] << std::endl
+            << "*\tME = " << (150./126.) * nTopMC[me] << " +/- " << nTopMC_err[me] << std::endl;
 
   ofstream textfile;
   textfile.open("TopYieldsData.txt", ios_base::app);
@@ -133,6 +138,14 @@ void estimateTop() {
   ofstream tablefile2;
   tablefile2.open("TopYieldsData_ForTable_1j.txt", ios_base::app);
   tablefile2.precision(2);
+
+  ofstream tablefile3;
+  tablefile3.open("TopYieldsMC_ForTable_0j.txt", ios_base::app);
+  tablefile3.precision(2);
+
+  ofstream tablefile4;
+  tablefile4.open("TopYieldsMC_ForTable_1j.txt", ios_base::app);
+  tablefile4.precision(2);
 
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
@@ -193,28 +206,49 @@ void estimateTop() {
 
     // summary table for limits
     if (i==0) { 
-      tablefile1 << "zero jets bin" << endl;
-      tablefile1 << "\t mumu \t mue \t emu \t ee" << endl;
+      tablefile1 << "# zero jets bin data" << endl;
+      tablefile1 << "# \t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile1 << mass 
-	       << " " << "\t" << nTopData_HiggsSel_0j[1] << " +/- " << nTopData_HiggsSel_0j_err[1] 
-	       << " " << "\t" << nTopData_HiggsSel_0j[3] << " +/- " << nTopData_HiggsSel_0j_err[3] 
-	       << " " << "\t" << nTopData_HiggsSel_0j[2] << " +/- " << nTopData_HiggsSel_0j_err[2] 
-	       << " " << "\t" << nTopData_HiggsSel_0j[0] << " +/- " << nTopData_HiggsSel_0j_err[0] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_0j[1] << " +/- " <<  nTopData_HiggsSel_0j_err[1] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_0j[3] << " +/- " <<  nTopData_HiggsSel_0j_err[3] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_0j[2] << " +/- " <<  nTopData_HiggsSel_0j_err[2] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_0j[0] << " +/- " <<  nTopData_HiggsSel_0j_err[0] 
 	       << std::endl;
     
     if (i==0) { 
-      tablefile2 << "one jets bin" << endl;
-      tablefile2 << "\t mumu \t mue \t emu \t ee" << endl;
+      tablefile2 << "#one jet bin data" << endl;
+      tablefile2 << "#\t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile2 << mass 
-	       << " " << "\t" << nTopData_HiggsSel_1j[1] << " +/- " << nTopData_HiggsSel_1j_err[1] 
-	       << " " << "\t" << nTopData_HiggsSel_1j[3] << " +/- " << nTopData_HiggsSel_1j_err[3] 
-	       << " " << "\t" << nTopData_HiggsSel_1j[2] << " +/- " << nTopData_HiggsSel_1j_err[2] 
-	       << " " << "\t" << nTopData_HiggsSel_1j[0] << " +/- " << nTopData_HiggsSel_1j_err[0] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_1j[1] << " +/- " <<  nTopData_HiggsSel_1j_err[1] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_1j[3] << " +/- " <<  nTopData_HiggsSel_1j_err[3] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_1j[2] << " +/- " <<  nTopData_HiggsSel_1j_err[2] 
+	       << " " << "\t" << (150./126.) * nTopData_HiggsSel_1j[0] << " +/- " <<  nTopData_HiggsSel_1j_err[0] 
 	       << std::endl;
 
+    if (i==0) { 
+      tablefile3 << "# zero jets bin MC" << endl;
+      tablefile3 << "# \t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile3 << mass 
+	       << " " << "\t" << nTopMC_HiggsSel_0j[1] << " +/- " <<  nTopMC_HiggsSel_0j_err[1] 
+	       << " " << "\t" << nTopMC_HiggsSel_0j[3] << " +/- " <<  nTopMC_HiggsSel_0j_err[3] 
+	       << " " << "\t" << nTopMC_HiggsSel_0j[2] << " +/- " <<  nTopMC_HiggsSel_0j_err[2] 
+	       << " " << "\t" << nTopMC_HiggsSel_0j[0] << " +/- " <<  nTopMC_HiggsSel_0j_err[0] 
+	       << std::endl;
     
+    if (i==0) { 
+      tablefile4 << "#one jet bin MC" << endl;
+      tablefile4 << "#\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile4 << mass 
+	       << " " << "\t" << nTopMC_HiggsSel_1j[1] << " +/- " <<  nTopMC_HiggsSel_1j_err[1] 
+	       << " " << "\t" << nTopMC_HiggsSel_1j[3] << " +/- " <<  nTopMC_HiggsSel_1j_err[3] 
+	       << " " << "\t" << nTopMC_HiggsSel_1j[2] << " +/- " <<  nTopMC_HiggsSel_1j_err[2] 
+	       << " " << "\t" << nTopMC_HiggsSel_1j[0] << " +/- " <<  nTopMC_HiggsSel_1j_err[0] 
+	       << std::endl;
+
     float nTopData_HiggsSel_0j_Tot = nTopData_HiggsSel_0j[ee] + nTopData_HiggsSel_0j[mm] + nTopData_HiggsSel_0j[em] + nTopData_HiggsSel_0j[me];
     float nTopData_HiggsSel_0j_Tot_err = quadrSum(nTopData_HiggsSel_0j_err[ee],nTopData_HiggsSel_0j_err[mm],nTopData_HiggsSel_0j_err[em],nTopData_HiggsSel_0j_err[me]);
 
