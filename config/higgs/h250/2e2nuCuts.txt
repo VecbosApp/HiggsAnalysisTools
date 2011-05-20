@@ -1,7 +1,8 @@
 maxPtLepton             55              10000
 minPtLepton             25              10000
-leptonD0                -0.020          0.020
-leptonDz                -1.             1.
+muonIP                  -0.010          0.010
+muonDz                  -0.050          0.050
+electronIP              -0.030          0.030
 muGlobalIso             -10000          0.15
 muTrackerIso            -10000          10000
 muHcalIso               -10000          10000
