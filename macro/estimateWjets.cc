@@ -45,7 +45,7 @@ void estimateWjets() {
   
   numAtWW[mm] = 6.33;
   errAtWW[mm] = quadrSum(1.28, 3.15); // stat (+) syst
-
+  
   numAtWW[em] = 6.75;
   errAtWW[em] = quadrSum(1.28, 3.38); // stat (+) syst
 
@@ -117,16 +117,15 @@ void estimateWjets() {
   errAtWWMC[2] = nWjetsTotalEM_err;
   errAtWWMC[3] = nWjetsTotalME_err;
 
-  float nWjetsControl_Tot = nWjetsControlEE+nWjetsControlMM+nWjetsControlEM+nWjetsControlME;
-  float nWjetsControl_Tot_err = quadrSum(nWjetsControlEE_err,nWjetsControlMM_err,nWjetsControlEM_err,nWjetsControlME_err);
+  // pure MC:
+  float nWjetsControlMC_Tot     = nWjetsControlEE+nWjetsControlMM+nWjetsControlEM+nWjetsControlME;
+  float nWjetsControlMC_Tot_err = quadrSum(nWjetsControlEE_err,nWjetsControlMM_err,nWjetsControlEM_err,nWjetsControlME_err);
   
-  // std::cout <<"from pure MC: in total = " << nWjetsTotalEE+nWjetsTotalMM+nWjetsTotalEM+nWjetsTotalME
-  //        << " events, in the control region = " << nWjetsControl_Tot << " +/- " << nWjetsControl_Tot_err << std::endl;
 
 
 
   // -------------------------------------------------------------------  
-  // this is the WWcontrol estimate starting with the measure in WW and using the MC ratio to extrapolate
+  // this is the WWcontrol estimate starting with the measure in data done at WW and using the MC ratio to extrapolate
   float ratioInOut[4];
   float numWWcontrol[4], errWWcontrol[4];
 
@@ -148,13 +147,18 @@ void estimateWjets() {
 
   float nWjetsControlData_Tot = numWWcontrol[ee] + numWWcontrol[mm] + numWWcontrol[em] + numWWcontrol[me];
   float nWjetsControlData_Tot_err = quadrSum(errWWcontrol[ee],errWWcontrol[mm],errWWcontrol[em],errWWcontrol[me]);
-  
-  std::cout << "W+jets TOTAL in WW control region: in MC = " << nWjetsControl_Tot << " +/- " << nWjetsControl_Tot_err
-            << "\t data = " << nWjetsControlData_Tot << " +/- " << nWjetsControlData_Tot_err << std::endl;
-  
-  std::cout << std::endl;
 
+
+
+
+  std::cout << std::endl;
+  std::cout << "-----------------------------------------------------" << std::endl;
   std::cout << "summary WW control region:: -------------------------" << std::endl;
+  std::cout << std::endl;
+  std::cout <<"from pure MC: in total = " << nWjetsTotalEE+nWjetsTotalMM+nWjetsTotalEM+nWjetsTotalME << " events" << std::endl;
+  std::cout <<"from pure MC: in the control region = " << nWjetsControlMC_Tot   << " +/- " << nWjetsControlMC_Tot_err   << std::endl;
+  std::cout <<"from data: in the control region = "    << nWjetsControlData_Tot << " +/- " << nWjetsControlData_Tot_err << std::endl;
+  std::cout << std::endl;
   for(int icha=0;icha<4;icha++) {
     char channelName[2];
     if(icha==ee) sprintf(channelName,"EE");
@@ -164,11 +168,9 @@ void estimateWjets() {
     std::cout.precision(3);
     std::cout << channelName << ": data = " << numWWcontrol[icha] << " +/- " << errWWcontrol[icha] << std::endl;
   }
+  std::cout << "-----------------------------------------------------" << std::endl;
 
 
-
-
-  std::cout << "----------------------------------------------------" << std::endl;
 
   ofstream textfile;
   textfile.open("WjetsYieldsData.txt", ios_base::app);
@@ -190,14 +192,13 @@ void estimateWjets() {
   tablefile4.open("WjetsYieldsMC_ForTable_1j.txt", ios_base::app);
   tablefile4.precision(2);
 
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
   for (int i=0; i<17; i++) {
     
     int mass = masses[i];
-    //    std::cout << "analyzing mass " << mass << std::endl;
-
     countEvents(mass,"EE");
     countEvents(mass,"MM");
     countEvents(mass,"EM");
@@ -225,8 +226,8 @@ void estimateWjets() {
       if(icha==me) sprintf(channelName,"ME");
 
       textfile << channelName << ": Higgs Mass = " << mass 
-               << "\tdata 0 jet = " << numAtHiggs_0j[icha] << " +/- " << errAtHiggs_0j[icha] 
-               << "\tdata 1 jet = " << numAtHiggs_1j[icha] << " +/- " << errAtHiggs_1j[icha] 
+               << "\tdata 0 jet = " << numAtHiggs_0j[icha] << " +/- " << errAtHiggs_0j[icha]      // non metto fattori moltiplicativi per la stat 
+               << "\tdata 1 jet = " << numAtHiggs_1j[icha] << " +/- " << errAtHiggs_1j[icha]      // perche' sono gia' all'inizio
                << "\tMC 0 jet = " << (150./126.) * numAtHiggsMC_0j[icha] << " +/- " << errAtHiggsMC_0j[icha] 
                << "\tMC 1 jet = " << (150./126.) * numAtHiggsMC_1j[icha] << " +/- " << errAtHiggsMC_1j[icha]
                << std::endl;
