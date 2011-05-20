@@ -409,6 +409,14 @@ void estimateWW() {
   tablefile2.open("WWYieldsData_ForTable_1j.txt", ios_base::app);
   tablefile2.precision(2);
 
+  ofstream tablefile3;
+  tablefile3.open("WWYieldsMC_ForTable_0j.txt", ios_base::app);
+  tablefile3.precision(2);
+
+  ofstream tablefile4;
+  tablefile4.open("WWYieldsMC_ForTable_1j.txt", ios_base::app);
+  tablefile4.precision(2);
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
@@ -463,25 +471,47 @@ void estimateWW() {
 
     // summary table for limits                                                                                          
     if (i==0) {
-      tablefile1 << "zero jets bin" << endl;
+      tablefile1 << "zero jets bin data" << endl;
       tablefile1 << "\t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile1 << mass
-               << " " << "\t" << nWWData_HiggsSel_0j[1] << " +/- " << nWWData_HiggsSel_0j_err[1]
-               << " " << "\t" << nWWData_HiggsSel_0j[3] << " +/- " << nWWData_HiggsSel_0j_err[3]
-               << " " << "\t" << nWWData_HiggsSel_0j[2] << " +/- " << nWWData_HiggsSel_0j_err[2]
-               << " " << "\t" << nWWData_HiggsSel_0j[0] << " +/- " << nWWData_HiggsSel_0j_err[0]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_0j[1] << " +/- " << nWWData_HiggsSel_0j_err[1]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_0j[3] << " +/- " << nWWData_HiggsSel_0j_err[3]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_0j[2] << " +/- " << nWWData_HiggsSel_0j_err[2]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_0j[0] << " +/- " << nWWData_HiggsSel_0j_err[0]
                << std::endl;
 
     if (i==0) {
-      tablefile2 << "one jets bin" << endl;
+      tablefile2 << "one jet bin data" << endl;
       tablefile2 << "\t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile2 << mass
-               << " " << "\t" << nWWData_HiggsSel_1j[1] << " +/- " << nWWData_HiggsSel_1j_err[1]
-               << " " << "\t" << nWWData_HiggsSel_1j[3] << " +/- " << nWWData_HiggsSel_1j_err[3]
-               << " " << "\t" << nWWData_HiggsSel_1j[2] << " +/- " << nWWData_HiggsSel_1j_err[2]
-               << " " << "\t" << nWWData_HiggsSel_1j[0] << " +/- " << nWWData_HiggsSel_1j_err[0]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_1j[1] << " +/- " << nWWData_HiggsSel_1j_err[1]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_1j[3] << " +/- " << nWWData_HiggsSel_1j_err[3]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_1j[2] << " +/- " << nWWData_HiggsSel_1j_err[2]
+               << " " << "\t" << 150./126. * nWWData_HiggsSel_1j[0] << " +/- " << nWWData_HiggsSel_1j_err[0]
+               << std::endl;
+
+    if (i==0) {
+      tablefile3 << "zero jets bin MC" << endl;
+      tablefile3 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile3 << mass
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_0j[1] << " +/- " << nWWMC_HiggsSel_0j_err[1]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_0j[3] << " +/- " << nWWMC_HiggsSel_0j_err[3]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_0j[2] << " +/- " << nWWMC_HiggsSel_0j_err[2]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_0j[0] << " +/- " << nWWMC_HiggsSel_0j_err[0]
+               << std::endl;
+
+    if (i==0) {
+      tablefile4 << "one jet bin MC" << endl;
+      tablefile4 << "\t mumu \t mue \t emu \t ee" << endl;
+    }
+    tablefile4 << mass
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_1j[1] << " +/- " << nWWMC_HiggsSel_1j_err[1]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_1j[3] << " +/- " << nWWMC_HiggsSel_1j_err[3]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_1j[2] << " +/- " << nWWMC_HiggsSel_1j_err[2]
+               << " " << "\t" << 150./126. * nWWMC_HiggsSel_1j[0] << " +/- " << nWWMC_HiggsSel_1j_err[0]
                << std::endl;
 
 
