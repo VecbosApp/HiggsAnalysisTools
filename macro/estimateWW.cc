@@ -329,7 +329,7 @@ void estimateWW() {
   nDataOut_err[mm] = yieldErrPoisson(nDataOut[mm],dataMMH->GetEntries());
   nDataOut_err[em] = yieldErrPoisson(nDataOut[em],dataEMH->GetEntries());
   nDataOut_err[me] = yieldErrPoisson(nDataOut[me],dataMEH->GetEntries());
-  // sto qua
+
   float nWWOutData[4], nWWOutData_err[4];
   nWWOutData[ee] = nDataOut[ee] - bkgTotCha[ee];
   nWWOutData_err[ee] = quadrSum(nDataOut_err[ee],bkgTotCha_err[ee]);
@@ -380,6 +380,15 @@ void estimateWW() {
   float nWWMC_tot = nWWMC[ee]+nWWMC[mm]+nWWMC[em]+nWWMC[me];
   float nWWMC_tot_err = quadrSum(nWWMC_err[ee],nWWMC_err[mm],nWWMC_err[em],nWWMC_err[me]);
 
+  /// WW CHANNEL FRACTIONS FROM MC ///
+  // they are used in case of low stat to use the summed WW estimation in the 4 sub-channels
+  std::cout << "Using channel fractions from MC!" << std::endl;
+  float frac[4];
+  for(int icha=0; icha<4; icha++) {
+    frac[icha] = nWWMC[icha]/nWWMC_tot;
+    std::cout << "Fraction of WW in channel " << icha << " = " << frac[icha] << std::endl;
+  }
+
   float RSC[4],RSC_err[4];
   for(int icha=0; icha<4;icha++) {
     RSC[icha] = nWWMC[icha]/nWWOutMC[icha];
@@ -401,20 +410,24 @@ void estimateWW() {
   std::cout << "data = " << nWWData_WWSel_tot << " +/- " << nWWData_WWSel_tot_err << std::endl;
   std::cout << "=================================================" << std::endl; 
 
+  ofstream textfile;
+  textfile.open("WWYieldsData.txt", ios_base::trunc);
+  textfile.precision(2);
+
   ofstream tablefile1;
-  tablefile1.open("WWYieldsData_ForTable_0j.txt", ios_base::app);
+  tablefile1.open("WWYieldsData_ForTable_0j.txt", ios_base::trunc);
   tablefile1.precision(2);
 
   ofstream tablefile2;
-  tablefile2.open("WWYieldsData_ForTable_1j.txt", ios_base::app);
+  tablefile2.open("WWYieldsData_ForTable_1j.txt", ios_base::trunc);
   tablefile2.precision(2);
 
   ofstream tablefile3;
-  tablefile3.open("WWYieldsMC_ForTable_0j.txt", ios_base::app);
+  tablefile3.open("WWYieldsMC_ForTable_0j.txt", ios_base::trunc);
   tablefile3.precision(2);
 
   ofstream tablefile4;
-  tablefile4.open("WWYieldsMC_ForTable_1j.txt", ios_base::app);
+  tablefile4.open("WWYieldsMC_ForTable_1j.txt", ios_base::trunc);
   tablefile4.precision(2);
 
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
@@ -439,8 +452,12 @@ void estimateWW() {
       float eff_0j = (nEv_endWW[icha]==0) ? 0. : nEv_end0j[icha]/nEv_endWW[icha];
       float eff_0j_err = (nEv_endWW[icha]==0) ? 0. : sqrt(eff_0j*(1-eff_0j)/nEv_endWW[icha]);
       
-      nWWData_HiggsSel_0j[icha] = nWWData_WWSel[icha] * eff_0j;
-      nWWData_HiggsSel_0j_err[icha] = nWWData_HiggsSel_0j[icha] * quadrSum(nWWData_WWSel_err[icha]/nWWData_WWSel[icha],eff_0j_err/eff_0j);
+      // this is the correct esztimation for when we have sufficient stat
+      // nWWData_HiggsSel_0j[icha] = nWWData_WWSel[icha] * eff_0j;
+      // nWWData_HiggsSel_0j_err[icha] = nWWData_HiggsSel_0j[icha] * quadrSum(nWWData_WWSel_err[icha]/nWWData_WWSel[icha],eff_0j_err/eff_0j);
+      // and this is using fraction of the subchannel from MC
+      nWWData_HiggsSel_0j[icha] = nWWData_WWSel_tot * frac[icha] * eff_0j;
+      nWWData_HiggsSel_0j_err[icha] = nWWData_HiggsSel_0j[icha] * quadrSum(nWWData_WWSel_tot_err/nWWData_WWSel_tot,eff_0j_err/eff_0j);
 
       nWWMC_HiggsSel_0j[icha] = nWWMC[icha] * eff_0j;
       nWWMC_HiggsSel_0j_err[icha] = nWWMC_HiggsSel_0j[icha] * quadrSum(nWWMC_err[icha]/nWWMC[icha],eff_0j_err/eff_0j);
@@ -448,8 +465,11 @@ void estimateWW() {
       float eff_1j = nEv_end1j[icha]/nEv_endWW[icha];
       float eff_1j_err = sqrt(eff_1j*(1-eff_1j)/nEv_endWW[icha]);
 
-      nWWData_HiggsSel_1j[icha] = nWWData_WWSel[icha] * eff_1j;
-      nWWData_HiggsSel_1j_err[icha] = nWWData_HiggsSel_1j[icha] * quadrSum(nWWData_WWSel_err[icha]/nWWData_WWSel[icha],eff_1j_err/eff_1j);
+      // this is the correct esztimation for when we have sufficient stat
+      // nWWData_HiggsSel_1j[icha] = nWWData_WWSel[icha] * eff_1j;
+      // nWWData_HiggsSel_1j_err[icha] = nWWData_HiggsSel_1j[icha] * quadrSum(nWWData_WWSel_err[icha]/nWWData_WWSel[icha],eff_1j_err/eff_1j);
+      nWWData_HiggsSel_1j[icha] = nWWData_WWSel_tot * frac[icha] * eff_1j;
+      nWWData_HiggsSel_1j_err[icha] =  nWWData_HiggsSel_1j[icha] * quadrSum(nWWData_WWSel_tot_err/nWWData_WWSel_tot,eff_1j_err/eff_1j);      
 
       nWWMC_HiggsSel_1j[icha] = nWWMC[icha] * eff_1j;
       nWWMC_HiggsSel_1j_err[icha] = nWWMC_HiggsSel_1j[icha] * quadrSum(nWWMC_err[icha]/nWWMC[icha],eff_1j_err/eff_1j);
@@ -460,12 +480,12 @@ void estimateWW() {
       if(icha==em) sprintf(channelName,"EM");
       if(icha==me) sprintf(channelName,"ME");
 
-      std::cout << channelName << ": Higgs Mass = " << mass
-                << "\tdata 0 jet = " << nWWData_HiggsSel_0j[icha] << " +/- " << nWWData_HiggsSel_0j_err[icha]
-                << "\tMC 0 jet = " << nWWMC_HiggsSel_0j[icha] << " +/- " << nWWMC_HiggsSel_0j_err[icha]
-                << "\tdata 1 jet = " << nWWData_HiggsSel_1j[icha] << " +/- " << nWWData_HiggsSel_1j_err[icha]
-                << "\tMC 1 jet = " << nWWMC_HiggsSel_1j[icha] << " +/- " << nWWMC_HiggsSel_1j_err[icha]
-                << std::endl;
+      textfile << channelName << ": Higgs Mass = " << mass
+               << "\tdata 0 jet = " << nWWData_HiggsSel_0j[icha] << " +/- " << nWWData_HiggsSel_0j_err[icha]
+               << "\tMC 0 jet = " << nWWMC_HiggsSel_0j[icha] << " +/- " << nWWMC_HiggsSel_0j_err[icha]
+               << "\tdata 1 jet = " << nWWData_HiggsSel_1j[icha] << " +/- " << nWWData_HiggsSel_1j_err[icha]
+               << "\tMC 1 jet = " << nWWMC_HiggsSel_1j[icha] << " +/- " << nWWMC_HiggsSel_1j_err[icha]
+               << std::endl;
     }
 
 
@@ -527,8 +547,8 @@ void estimateWW() {
     float nWWMC_HiggsSel_1j_Tot = nWWMC_HiggsSel_1j[ee] + nWWMC_HiggsSel_1j[mm] + nWWMC_HiggsSel_1j[em] + nWWMC_HiggsSel_1j[me];
     float nWWMC_HiggsSel_1j_Tot_err = quadrSum(nWWMC_HiggsSel_1j_err[ee],nWWMC_HiggsSel_1j_err[mm],nWWMC_HiggsSel_1j_err[em],nWWMC_HiggsSel_1j_err[me]);
     
-    std::cout.precision(2);
-    std::cout << "\t===>> TOTAL: Higgs Mass = " << mass 
+    
+    textfile << "\t===>> TOTAL: Higgs Mass = " << mass 
              << "\tdata 0 jet = " << nWWData_HiggsSel_0j_Tot << " +/- " << nWWData_HiggsSel_0j_Tot_err 
              << "\tdata 1 jet = " << nWWData_HiggsSel_1j_Tot << " +/- " << nWWData_HiggsSel_1j_Tot_err
              << "\tMC 0 jet = " << nWWMC_HiggsSel_0j_Tot << " +/- " << nWWMC_HiggsSel_0j_Tot_err 
@@ -536,6 +556,8 @@ void estimateWW() {
              << std::endl;
 
   }
+
+  std::cout << "Full WW yields in data in:  WWYieldsData.txt " << std::endl;
 
 }
 
