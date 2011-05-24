@@ -37,11 +37,11 @@ void estimateWjets() {
   float numAtWW[4];
   float errAtWW[4];
   
-  numAtWW[ee] = (150. / 126. ) * 3.8;
-  errAtWW[ee] = quadrSum(0.5, 0.6); // stat (+) syst
+  numAtWW[ee] = 4.87;
+  errAtWW[ee] = quadrSum(0.66, 0.53); // stat (+) syst
 
-  numAtWW[me] = (150. / 126.) * 8.8;
-  errAtWW[me] = quadrSum(0.8, 1.1); // stat (+) syst
+  numAtWW[me] = 10.8;
+  errAtWW[me] = quadrSum(1.01, 0.74); // stat (+) syst
   
   numAtWW[mm] = 6.33;
   errAtWW[mm] = quadrSum(1.28, 3.15); // stat (+) syst
