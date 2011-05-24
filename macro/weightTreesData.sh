@@ -13,7 +13,7 @@ root -l -b <<EOF
 addWeights("results_data/merged/dataset_ee.root", 1.0, 0);
 addWeights("results_data/merged/dataset_mm.root", 1.0, 1);
 addWeights("results_data/merged/dataset_em.root", 1.0, 2);
-addWeights("results_data/merged/dataset_me.root", 1.0, 2);
+addWeights("results_data/merged/dataset_me.root", 1.0, 3);
 
 .q
 
