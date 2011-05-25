@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "TString.h"
 #include "CommonTools/include/Utils.hh"
 #include "CommonTools/include/LeptonIdBits.h"
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
@@ -15,6 +16,13 @@ Higgs::Higgs(TTree *tree) : HiggsBase(tree)
 {
   jsonFile = "";
   lastFile = "";
+
+  //initialize the JES objects for calo and PF
+  jecUnc_calo = 
+    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/START38_V13_AK5Calo_Uncertainty.txt");
+  jecUnc_PF = 
+    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/START38_V13_AK5PF_Uncertainty.txt");
+
 }
 
 Higgs::~Higgs()
@@ -347,4 +355,28 @@ std::vector<int> Higgs::sortMuonsByPt(std::vector<int> muons) {
       muons[max] = tmp;
   }
   return muons;
+}
+
+TLorentzVector Higgs::GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection) {
+
+  float mass = p4jet.M();
+  float ptUnscaled = p4jet.Pt();
+  
+  // estimate the uncertainty
+  jecUnc_PF->setJetEta(p4jet.Eta());
+  jecUnc_PF->setJetPt(ptUnscaled);
+
+  int scaleEnergy = 0;
+  if(TString(ScaleDirection).Contains("Up")) scaleEnergy = 1.0;
+  if(TString(ScaleDirection).Contains("Down")) scaleEnergy = -1.0;
+
+  // apply the uncertainty
+  float pt = ptUnscaled + scaleEnergy*jecUnc_PF->getUncertainty(true)*ptUnscaled;
+  float p = pt/fabs(sin(p4jet.Theta()));
+  float energy = sqrt(p*p+mass*mass);
+
+  TLorentzVector p4Scaled;
+  p4Scaled.SetPtEtaPhiE(pt,p4jet.Eta(),p4jet.Phi(),energy);
+
+  return p4Scaled;
 }

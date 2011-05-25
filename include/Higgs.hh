@@ -7,6 +7,7 @@
 
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/HiggsBase.h"
+#include "HiggsAnalysisTools/include/JetCorrectionUncertainty.h"
 // ROOT includes
 #include <TLorentzVector.h>
 #include <TVector3.h>
@@ -61,6 +62,7 @@ public:
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
   std::vector<int> sortMuonsByPt(std::vector<int> muons);
+  TLorentzVector GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 
@@ -71,6 +73,9 @@ private:
 
   std::string lastFile;
   std::vector<std::string> requiredTriggers;
+
+  JetCorrectionUncertainty *jecUnc_calo;
+  JetCorrectionUncertainty *jecUnc_PF;
 
 protected:
   //! the list of required triggers

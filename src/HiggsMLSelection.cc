@@ -83,6 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEE->addSwitch("asymmetricID");
   _selectionEE->addStringParameter("electronIDType");
   _selectionEE->addStringParameter("electronIDTypeLow");  
+  _selectionEE->addStringParameter("JESUncertainty");
 
   // cut based electron id or likelihood 
   TString selectionString(_selectionEE->getStringParameter("electronIDType"));
@@ -2034,13 +2035,18 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
 
   theLeadingJet[theChannel]=-1;   
 
+  TString JESUncertainty(_selectionEE->getStringParameter("JESUncertainty"));
+
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
     TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
+    TLorentzVector p4Jet(p3Jet, energyAK5PFPUcorrJet[j]);
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
     float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
+    if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) pt = (GetJESCorrected(p4Jet,JESUncertainty.Data())).Pt();
+
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
 
     // PF jet ID variables
@@ -2102,12 +2108,17 @@ int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<i
 
   int num=0;
 
+  TString JESUncertainty(_selectionEE->getStringParameter("JESUncertainty"));
+
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
     float uncorrEt = uncorrEnergyAK5PFPUcorrJet[j]*fabs(sin(thetaAK5PFPUcorrJet[j]));
     TLorentzVector p4Jet;
     p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFPUcorrJet[j],phiAK5PFPUcorrJet[j],uncorrEnergyAK5PFPUcorrJet[j]);
     TVector3 p3Jet = p4Jet.Vect();
+
+    TLorentzVector p4JESJet(p3Jet, uncorrEnergyAK5PFPUcorrJet[j]);
+    if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) uncorrEt = (GetJESCorrected(p4JESJet,JESUncertainty.Data())).Pt();
 
     if(_selectionEE->getSwitch("etaJetAcc")      && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;    
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
@@ -2159,10 +2170,17 @@ int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<i
 
 float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove ) {
 
+  TString JESUncertainty(_selectionEE->getStringParameter("JESUncertainty"));
+
   float output=-999;
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
     TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
+    // no threshold is applied here on pt. Not affected by JES uncertainties
+    TLorentzVector p4Jet(p3Jet, energyAK5PFPUcorrJet[j]);
+
+    float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
+    if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) pt = (GetJESCorrected(p4Jet,JESUncertainty.Data())).Pt();
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
