@@ -79,8 +79,16 @@ $(OUTLIB)CutBasedEleIDSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/Cu
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CutBasedEleIDSelector.o $<
 $(OUTLIB)CiCBasedEleSelector.o: $(INCLUDEDIRCOMMON)/EgammaAnalysisTools/src/CiCBasedEleSelector.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)CiCBasedEleSelector.o $<
-$(OUTLIB)Higgs.o: $(INCLUDEDIR)/src/Higgs.cc
+$(OUTLIB)Higgs.o: $(INCLUDEDIR)/src/Higgs.cc $(OUTLIB)JetCorrectionUncertainty.o
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)Higgs.o $<
+$(OUTLIB)JetCorrectorParameters.o: $(INCLUDEDIR)/src/JetCorrectorParameters.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetCorrectorParameters.o $<
+$(OUTLIB)SimpleJetCorrectionUncertainty.o: $(INCLUDEDIR)/src/SimpleJetCorrectionUncertainty.cc \
+	$(OUTLIB)JetCorrectorParameters.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)SimpleJetCorrectionUncertainty.o $<
+$(OUTLIB)JetCorrectionUncertainty.o: $(INCLUDEDIR)/src/JetCorrectionUncertainty.cc \
+	$(OUTLIB)SimpleJetCorrectionUncertainty.o
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)JetCorrectionUncertainty.o $<
 $(OUTLIB)HiggsSelection.o: $(INCLUDEDIR)/src/HiggsSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)HiggsSelection.o $<
 $(OUTLIB)HiggsMLSelection.o: $(INCLUDEDIR)/src/HiggsMLSelection.cc
