@@ -139,7 +139,8 @@ private:
   float m_mT2[1];
   float m_projectedMet[1];
   float m_metOptll[1];
-  float hardestLeptonPt[1], slowestLeptonPt[1];
+  float hardestLeptonPt[1],  slowestLeptonPt[1];
+  float hardestLeptonEta[1], slowestLeptonEta[1];
 
   //! fake rates                                                                     
   float m_minFakePt[5],  m_maxFakePt[5];

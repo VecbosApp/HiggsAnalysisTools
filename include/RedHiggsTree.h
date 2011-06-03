@@ -33,6 +33,13 @@ public:
   void fillAll(float met, float pfmet, float cmet, float projmet, 
 	       float dphi, float derre, float tmass, float mee, float max, float min, float deta, int nvtx,
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
+
+  void fillAll(float met, float pfmet, float cmet, float projmet, 
+	       float dphi, float derre, float tmass, float mee, 
+	       float max, float min, float maxEta, float minEta,
+	       float deta, int nvtx,
+	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
+
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex);
@@ -80,6 +87,8 @@ private:
   float myEleInvMass;
   float maxPtEle;  
   float minPtEle;  
+  float maxEtaEle;  
+  float minEtaEle;  
   float myDetaLeptons;
   int myNVtx;
   int myNjets;

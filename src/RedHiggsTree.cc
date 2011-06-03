@@ -31,6 +31,8 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("eleInvMass",          &myEleInvMass,          "eleInvMass/F");  
   myTree->Branch("maxPtEle",            &maxPtEle,              "maxPtEle/F");  
   myTree->Branch("minPtEle",            &minPtEle,              "minPtEle/F");  
+  myTree->Branch("maxEtaEle",           &maxEtaEle,             "maxEtaEle/F");  
+  myTree->Branch("minEtaEle",           &minEtaEle,             "minEtaEle/F");  
   myTree->Branch("detaLeptons",         &myDetaLeptons,         "detaLeptons/F");  
   myTree->Branch("nVtx",                &myNVtx,                "nVtx/I");
   myTree->Branch("finalLeptons",        &myFinalLeptons,        "finalLeptons/O");
@@ -164,6 +166,34 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
   myEleInvMass  = mee;
   maxPtEle      = max;
   minPtEle      = min;
+  myDetaLeptons = deta;
+  myNVtx        = nvtx;
+  myFinalLeptons = finalLeptons;
+  myJetVeto       = jetVeto;
+  myUncorrJetVeto = uncorrjetVeto;
+  myPreDeltaPhi = preDeltaPhi;
+  myFinalSelection = finalSelection;
+
+}
+
+void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet, 
+			   float dphi, float derre, float tmass, float mee, 
+			   float max, float min, float maxEta, float minEta, float deta, int nvtx,
+			   bool finalLeptons, bool jetVeto, bool uncorrjetVeto, bool preDeltaPhi, bool finalSelection)
+{
+
+  myMet         = met;
+  myPFMet       = pfmet;
+  myCaloMet     = cmet;
+  myProjectedMet = projmet;
+  myDeltaPhi    = dphi;
+  myDeltaR      = derre;
+  myTransvMass  = tmass;
+  myEleInvMass  = mee;
+  maxPtEle      = max;
+  minPtEle      = min;
+  maxEtaEle     = maxEta;
+  minEtaEle     = minEta;
   myDetaLeptons = deta;
   myNVtx        = nvtx;
   myFinalLeptons = finalLeptons;

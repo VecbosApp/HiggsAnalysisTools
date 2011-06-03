@@ -104,7 +104,7 @@ LeptonPlusFakeMLSelection_ME::LeptonPlusFakeMLSelection_ME(TTree *tree)
 
   // To read good run list!
   if (_selectionME->getSwitch("goodRunLS") && _selectionME->getSwitch("isData")) {
-    std::string goodRunJsonFile       = "config/json/certifiedLatinos_125s6.json";    // chiara
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -256,7 +256,7 @@ void LeptonPlusFakeMLSelection_ME::initialiseFakeRate() {
   m_fakeRateEE_err[3] = 0.00333565;
   m_fakeRateEE_err[4] = 0.0156841;
   */
-  
+
   /*
   // fake in the barrel from data (jet:50))
   m_fakeRateEB[0] = 0.130682;
@@ -297,6 +297,7 @@ void LeptonPlusFakeMLSelection_ME::Loop() {
   std::string reducedTreeNameME = _datasetName+"-datasetME.root";
   myOutTreeME = new RedHiggsTree(reducedTreeNameME.c_str());
   myOutTreeME->addMLVars();
+  myOutTreeME->addLatinos();
 
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
@@ -316,7 +317,7 @@ void LeptonPlusFakeMLSelection_ME::Loop() {
 
     // weight for the PU observed in 2011 data
     float tmpWeight = 1.;
-    if ( !_selectionME->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  // chiara
+    if ( !_selectionME->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  
 
     // Good Run selection
     if (_selectionME->getSwitch("isData") && _selectionME->getSwitch("goodRunLS") && !isGoodRunLS()) {
@@ -439,8 +440,8 @@ void LeptonPlusFakeMLSelection_ME::Loop() {
       float fakerateErr = getFakeRateError( theFakePt, isFakeBarrel );
       weight      = tmpWeight * fakerate / (1. - fakerate);
       weightError = tmpWeight * fakerateErr / ( (1. - fakerate)*(1. - fakerate) );
-      // weight      = tmpWeight * fakerate;
-      // weightError = tmpWeight * fakerateErr;
+      // weight      = tmpWeight;   // chiara: only to study real leptons contamination
+      // weightError = tmpWeight;   // chiara: only to study real leptons contamination
     } else {
       weight      = tmpWeight;
       weightError = tmpWeight;
@@ -519,18 +520,47 @@ void LeptonPlusFakeMLSelection_ME::Loop() {
     bool selUpToJetVetoME       = CutBasedHiggsSelectionME.outputUpToJetVeto();
     bool selUpToUncorrJetVetoME = CutBasedHiggsSelectionME.outputUpToUncorrJetVeto();
     bool selPreDeltaPhiME       = CutBasedHiggsSelectionME.outputPreDeltaPhi();
-    bool outputStep1            = CutBasedHiggsSelectionME.outputStep1();
+
+    bool outputStep0  = CutBasedHiggsSelectionME.outputStep0();
+    bool outputStep1  = CutBasedHiggsSelectionME.outputStep1();
+    bool outputStep2  = CutBasedHiggsSelectionME.outputStep2();
+    bool outputStep3  = CutBasedHiggsSelectionME.outputStep3();
+    bool outputStep4  = CutBasedHiggsSelectionME.outputStep4();
+    bool outputStep5  = CutBasedHiggsSelectionME.outputStep5();
+    bool outputStep6  = CutBasedHiggsSelectionME.outputStep6();
+    bool outputStep7  = CutBasedHiggsSelectionME.outputStep7();
+    bool outputStep8  = CutBasedHiggsSelectionME.outputStep8();
+    bool outputStep9  = CutBasedHiggsSelectionME.outputStep9();
+    bool outputStep10 = CutBasedHiggsSelectionME.outputStep10();
+    bool outputStep11 = CutBasedHiggsSelectionME.outputStep11();
+    bool outputStep12 = CutBasedHiggsSelectionME.outputStep12();
+    bool outputStep13 = CutBasedHiggsSelectionME.outputStep13();
+    bool outputStep14 = CutBasedHiggsSelectionME.outputStep14();
+    bool outputStep15 = CutBasedHiggsSelectionME.outputStep15();
+    bool outputStep16 = CutBasedHiggsSelectionME.outputStep16();
+    bool outputStep17 = CutBasedHiggsSelectionME.outputStep17();
+    bool outputStep18 = CutBasedHiggsSelectionME.outputStep18();
+    bool outputStep19 = CutBasedHiggsSelectionME.outputStep19();
+    bool outputStep20 = CutBasedHiggsSelectionME.outputStep20();
+    bool outputStep21 = CutBasedHiggsSelectionME.outputStep21();
+    bool outputStep22 = CutBasedHiggsSelectionME.outputStep22();
+    bool outputStep23 = CutBasedHiggsSelectionME.outputStep23();
+    bool outputStep24 = CutBasedHiggsSelectionME.outputStep24();
+
 
     // filling the tree
     myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
     myOutTreeME -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
-			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me], nPV,
+			   hardestLeptonPt[me], slowestLeptonPt[me], hardestLeptonEta[me], slowestLeptonEta[me],
+			   m_deltaEtaLeptons[me], nPV,
 			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);
 
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
+    myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 );
+
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
   
@@ -1034,6 +1064,18 @@ void LeptonPlusFakeMLSelection_ME::setKinematicsME(int myReal, int myFake) {
     m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myReal],pyMuon[myReal],pzMuon[myReal],energyMuon[myReal]);
     hardestLeptonPt[me] = GetPt(pxMuon[myReal],pyMuon[myReal]);
     slowestLeptonPt[me] = GetPt(pxEle[myFake], pyEle[myFake]);
+
+    if ( hardestLeptonPt[me] != GetPt(pxMuon[myReal],pyMuon[myReal]) ) {
+      cout << "this should not happen!!" << endl;
+      cout << "myReal = " << myReal << ", myFake = " << myFake << endl;
+      cout << "hardest PT = " << hardestLeptonPt[me] << endl;
+      cout << "slowest PT = " << slowestLeptonPt[me] << endl;
+      cout << "real PT = "    << GetPt(pxMuon[myReal],pyMuon[myReal]) << endl;
+      cout << "fake PT = "    << GetPt(pxEle[myFake],pyEle[myFake]) << endl;
+    }
+
+    hardestLeptonEta[me] = etaMuon[myReal];
+    slowestLeptonEta[me] = etaEle[myFake];
     m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
     m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
     m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
@@ -1065,6 +1107,8 @@ void LeptonPlusFakeMLSelection_ME::resetKinematics() {
     m_p3TKMET                   -> SetXYZ(0,0,0);
     hardestLeptonPt[theChannel]   = 0.;
     slowestLeptonPt[theChannel]   = 0.;
+    hardestLeptonEta[theChannel]  = 0.;
+    slowestLeptonEta[theChannel]  = 0.;
     m_mll[theChannel]             = 0.;
     m_deltaPhi[theChannel]        = 0.;
     m_deltaErre[theChannel]       = 0.;

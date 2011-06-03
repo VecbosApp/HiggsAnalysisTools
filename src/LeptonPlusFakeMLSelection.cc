@@ -104,7 +104,7 @@ LeptonPlusFakeMLSelection::LeptonPlusFakeMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/certifiedLatinos_125s6.json";    // chiara
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";         // chiara
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -298,6 +298,7 @@ void LeptonPlusFakeMLSelection::Loop() {
 
   if ( _selectionEE->getSwitch("isData")) myOutTreeEE->addRunInfos();
   myOutTreeEE->addMLVars();
+  myOutTreeEE->addLatinos();
 
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
@@ -424,6 +425,8 @@ void LeptonPlusFakeMLSelection::Loop() {
       float fakerateErr = getFakeRateError( theFakePt, isFakeBarrel );
       weight      = tmpWeight * fakerate / (1. - fakerate);
       weightError = tmpWeight * fakerateErr / ( (1. - fakerate)*(1. - fakerate) );
+      // weight      = tmpWeight;   // chiara: only to estimate real leptons contribution from MC
+      // weightError = tmpWeight;   // chiara: only to estimate real leptons contribution from MC
     } else {
       weight      = tmpWeight;
       weightError = tmpWeight;
@@ -503,16 +506,45 @@ void LeptonPlusFakeMLSelection::Loop() {
     bool selUpToJetVetoEE       = CutBasedHiggsSelectionEE.outputUpToJetVeto();
     bool selUpToUncorrJetVetoEE = CutBasedHiggsSelectionEE.outputUpToUncorrJetVeto();
     bool selPreDeltaPhiEE       = CutBasedHiggsSelectionEE.outputPreDeltaPhi();
-    bool outputStep1            = CutBasedHiggsSelectionEE.outputStep1();
+
+    bool outputStep0  = CutBasedHiggsSelectionEE.outputStep0();
+    bool outputStep1  = CutBasedHiggsSelectionEE.outputStep1();
+    bool outputStep2  = CutBasedHiggsSelectionEE.outputStep2();
+    bool outputStep3  = CutBasedHiggsSelectionEE.outputStep3();
+    bool outputStep4  = CutBasedHiggsSelectionEE.outputStep4();
+    bool outputStep5  = CutBasedHiggsSelectionEE.outputStep5();
+    bool outputStep6  = CutBasedHiggsSelectionEE.outputStep6();
+    bool outputStep7  = CutBasedHiggsSelectionEE.outputStep7();
+    bool outputStep8  = CutBasedHiggsSelectionEE.outputStep8();
+    bool outputStep9  = CutBasedHiggsSelectionEE.outputStep9();
+    bool outputStep10 = CutBasedHiggsSelectionEE.outputStep10();
+    bool outputStep11 = CutBasedHiggsSelectionEE.outputStep11();
+    bool outputStep12 = CutBasedHiggsSelectionEE.outputStep12();
+    bool outputStep13 = CutBasedHiggsSelectionEE.outputStep13();
+    bool outputStep14 = CutBasedHiggsSelectionEE.outputStep14();
+    bool outputStep15 = CutBasedHiggsSelectionEE.outputStep15();
+    bool outputStep16 = CutBasedHiggsSelectionEE.outputStep16();
+    bool outputStep17 = CutBasedHiggsSelectionEE.outputStep17();
+    bool outputStep18 = CutBasedHiggsSelectionEE.outputStep18();
+    bool outputStep19 = CutBasedHiggsSelectionEE.outputStep19();
+    bool outputStep20 = CutBasedHiggsSelectionEE.outputStep20();
+    bool outputStep21 = CutBasedHiggsSelectionEE.outputStep21();
+    bool outputStep22 = CutBasedHiggsSelectionEE.outputStep22();
+    bool outputStep23 = CutBasedHiggsSelectionEE.outputStep23();
+    bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
 
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
     
     myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
-			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nPV,
+			   hardestLeptonPt[ee], slowestLeptonPt[ee], hardestLeptonEta[ee], slowestLeptonEta[ee], 
+			   m_deltaEtaLeptons[ee], nPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+
+    myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 );
+
 
       
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -857,6 +889,8 @@ void LeptonPlusFakeMLSelection::setKinematicsEE(int myReal, int myFake) {
     eleCands[ee].push_back(myFake);
     hardestLeptonPt[ee] = TMath::Max(GetPt(pxEle[myReal],pyEle[myReal]),GetPt(pxEle[myFake],pyEle[myFake]));
     slowestLeptonPt[ee] = TMath::Min(GetPt(pxEle[myReal],pyEle[myReal]),GetPt(pxEle[myFake],pyEle[myFake]));
+    hardestLeptonEta[ee] = etaEle[myReal];
+    slowestLeptonEta[ee] = etaEle[myFake];
     m_p4LeptonMinus[ee] -> SetXYZT(pxEle[myReal], pyEle[myReal], pzEle[myReal], energyEle[myReal]);
     m_p4LeptonPlus[ee]  -> SetXYZT(pxEle[myFake],pyEle[myFake],pzEle[myFake],energyEle[myFake]);
     m_mll[ee]       = (*(m_p4LeptonMinus[ee]) + *(m_p4LeptonPlus[ee])).M();
@@ -892,6 +926,8 @@ void LeptonPlusFakeMLSelection::resetKinematics() {
     m_p3TKMET                   -> SetXYZ(0,0,0);
     hardestLeptonPt[theChannel]   = 0.;
     slowestLeptonPt[theChannel]   = 0.;
+    hardestLeptonEta[theChannel]  = 0.;
+    slowestLeptonEta[theChannel]  = 0.;
     m_mll[theChannel]             = 0.;
     m_deltaPhi[theChannel]        = 0.;
     m_deltaErre[theChannel]       = 0.;
