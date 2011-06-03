@@ -52,6 +52,8 @@ $(OUTLIB)HiggsBase.o: $(INCLUDEDIR)/src/HiggsBase.C \
 	$(INCLUDEDIR)/src/ZplusJetsSelection.cc \
 	$(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc \
 	$(INCLUDEDIR)/src/LeptonPlusFakeMLSelection.cc \
+	$(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_fullEE.cc \
+	$(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_fullME.cc \
 	$(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_ME.cc \
 	$(INCLUDEDIR)/src/HiggsVertexing.cpp \
 	$(INCLUDEDIR)/src/VertexTree.cc
@@ -124,6 +126,10 @@ $(OUTLIB)LeptonPlusFakeSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeSelection.o $<
 $(OUTLIB)LeptonPlusFakeMLSelection.o: $(INCLUDEDIR)/src/LeptonPlusFakeMLSelection.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeMLSelection.o $<
+$(OUTLIB)LeptonPlusFakeMLSelection_fullEE.o: $(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_fullEE.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeMLSelection_fullEE.o $<
+$(OUTLIB)LeptonPlusFakeMLSelection_fullME.o: $(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_fullME.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeMLSelection_fullME.o $<
 $(OUTLIB)LeptonPlusFakeMLSelection_ME.o: $(INCLUDEDIR)/src/LeptonPlusFakeMLSelection_ME.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)LeptonPlusFakeMLSelection_ME.o $<
 $(OUTLIB)HiggsVertexing.o: $(INCLUDEDIR)/src/HiggsVertexing.cpp
