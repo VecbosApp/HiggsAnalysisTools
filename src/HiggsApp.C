@@ -81,6 +81,12 @@
 #if Application == 20
 #include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection_ME.cc"
 #endif
+#if Application == 21
+#include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection_fullEE.cc"
+#endif
+#if Application == 22
+#include "HiggsAnalysisTools/src/LeptonPlusFakeMLSelection_fullME.cc"
+#endif
 
 int main(int argc, char* argv[]) {
 
@@ -420,6 +426,56 @@ int main(int argc, char* argv[]) {
 #if Application == 20
 
   LeptonPlusFakeMLSelection_ME lplusfake(theChain);
+  lplusfake.SetDatasetName(outputFileName);
+
+  std::vector<std::string> maskME, maskNotME;
+  
+  if(isMC) {
+    maskME.push_back("HLT_Mu5_Ele17_v2");
+    maskME.push_back("HLT_Mu25_v1");
+  } else {
+    TString DatasetName(dataset);
+    if(DatasetName.Contains("MuEG")) {
+      maskME.push_back("HLT_Mu8_Ele17_CaloIdL");
+      maskME.push_back("HLT_Mu17_Ele8_CaloIdL");
+      maskNotME.push_back("HLT_Mu24");
+    } else if(DatasetName.Contains("SingleMu")) {
+      maskME.push_back("HLT_Mu24");
+    }
+  }
+
+  lplusfake.setRequiredTriggers(maskME);
+  lplusfake.setNotRequiredTriggers(maskNotME);
+  lplusfake.Loop();
+  lplusfake.displayEfficiencies(outputFileName);
+
+#endif
+
+#if Application == 21
+
+  LeptonPlusFakeMLSelection_fullEE lplusfake(theChain);
+  lplusfake.SetDatasetName(outputFileName);
+
+  std::vector<std::string> maskEE, maskNotEE;
+  
+  if(isMC) {
+    maskEE.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+  } else {
+    TString DatasetName(dataset);
+    if(DatasetName.Contains("DoubleElectron")) {
+      maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
+    }
+  }
+
+  lplusfake.setRequiredTriggers(maskEE);
+  lplusfake.Loop();
+  lplusfake.displayEfficiencies(outputFileName);
+  
+#endif
+
+#if Application == 22
+
+  LeptonPlusFakeMLSelection_fullME lplusfake(theChain);
   lplusfake.SetDatasetName(outputFileName);
 
   std::vector<std::string> maskME, maskNotME;
