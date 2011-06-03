@@ -20,5 +20,7 @@
 //  18 = Higgs -> WW -> 2e2nu NOT cut and count
 //  19 = lepton + fake selection for W+jets estimation NOT cut and count - EE
 //  20 = lepton + fake selection for W+jets estimation NOT cut and count - ME
+//  21 = lepton + fake selection for W+jets estimation NOT cut and count - EE, method Oviedo+ETH+...
+//  22 = lepton + fake selection for W+jets estimation NOT cut and count - ME, method Oviedo+ETH+...
 
 #define Application 18
