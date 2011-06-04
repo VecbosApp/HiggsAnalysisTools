@@ -15,30 +15,29 @@ float nEv_endWW[4];
 float nEv_end0j[4];
 float nEv_end1j[4];
 
+float Rmm, Rmm_err, Ree, Ree_err;
+
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 void countEvents(int mass, const char* channel);
+void estimateRWWRegion();
 
 void estimateWW() {
 
   // constants
-  float eff_2b = 0.4983;
-  float eff_2b_err = 0.03; 
-  float eff_2b_softmu = 0.1677; // MC 
+  // constants
+  float eff_2b = 0.438;
+  float eff_2b_err = 0.069; 
+  float eff_1b_softmu = 0.053; // MC
 
   float eff_softmu_Z = 0.867;
 
-  float Rmm = 0.187398;
-  float Rmm_err = 0.00355062;
   float kmm = 0.592288;
   float kmm_err = 0.0139356;
-  float Ree = 0.152089;
-  float Ree_err = 0.00338336;
   float kee = 0.422092;
   float kee_err = 0.00874687;
-
 
   TFile *fileData = TFile::Open("results_data/merged/dataset_ll.root");
   TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
@@ -86,6 +85,7 @@ void estimateWW() {
   TH1F *btagMMHData = new TH1F("btagMMHData","",50,0,180);
   TH1F *btagEMHData = new TH1F("btagEMHData","",50,0,180);
   TH1F *btagMEHData = new TH1F("btagMEHData","",50,0,180);
+  TH1F *btagLLHData = new TH1F("btagLLHData","",50,0,180);
   TH1F *WjetsEEH = new TH1F("WjetsEEH","",50,0,180);
   TH1F *WjetsMEH = new TH1F("WjetsMEH","",50,0,180);
   TH1F *WjetsMMH = new TH1F("WjetsMMH","",50,0,180);
@@ -123,6 +123,7 @@ void estimateWW() {
   treeData->Project("btagMMHData","deltaPhi","eleInvMass>100 && jetVeto && bTagTrackCount>2.1 && finalstate==1");
   treeData->Project("btagEMHData","deltaPhi","eleInvMass>100 && jetVeto && bTagTrackCount>2.1 && finalstate==2");
   treeData->Project("btagMEHData","deltaPhi","eleInvMass>100 && jetVeto && bTagTrackCount>2.1 && finalstate==3");
+  treeData->Project("btagLLHData","deltaPhi","eleInvMass>100 && jetVeto && bTagTrackCount>2.1");
   treeWjets->Project("WjetsEEH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==0)*weight*puweight");
   treeWjets->Project("WjetsMEH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==3)*weight*puweight");
   treeWjets->Project("WjetsMMH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==1)*weight*puweight");
@@ -131,10 +132,10 @@ void estimateWW() {
   treeZjets->Project("ZmmjetsH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==1)*weight*puweight");
   treeZjets->Project("ZemjetsH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==2)*weight*puweight");
   treeZjets->Project("ZmejetsH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==3)*weight*puweight");
-  treeData->Project("neeInH","deltaPhi","eleInvMass>100 && eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0"); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nmmInH","deltaPhi","eleInvMass>100 && eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1"); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nemInH","deltaPhi","eleInvMass>100 && eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==2"); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nmeInH","deltaPhi","eleInvMass>100 && eleInvMass>12 && finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==3"); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("neeInH","deltaPhi","finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0"); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("nmmInH","deltaPhi","finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1"); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("nemInH","deltaPhi","finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==2"); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("nmeInH","deltaPhi","finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==3"); // missing softmu... not available in red trees... hopefully small contrib here
   treeDiBosons->Project("DiBosonsEEH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==0)*weight*puweight");
   treeDiBosons->Project("DiBosonsMMH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==1)*weight*puweight");
   treeDiBosons->Project("DiBosonsEMH","deltaPhi","(eleInvMass>100 && WWSel && finalstate==2)*weight*puweight");
@@ -143,6 +144,7 @@ void estimateWW() {
   ///// TOP ESTIMATION ///////
   float nTopOut = topEEH->Integral() + topMMH->Integral() + topEMH->Integral() + topMEH->Integral();
   float nTopOut_err = yieldErrPoisson(nTopOut,topEEH->GetEntries()+topMMH->GetEntries()+topMEH->GetEntries()+topEMH->GetEntries());
+  float eff_2b_softmu = 1 - pow(1-eff_1b_softmu,2);
 
   // top estimation from data (0-jet bin method)
   float nBTagTagOut_data_tot(0), nTopOutBTagVeto_data_tot(0);
@@ -185,8 +187,16 @@ void estimateWW() {
   nTopOutSoftMuVeto_data[me] = nTopOutBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
   nTopOutSoftMuVeto_data_err[me] = nTopOutBTagVeto_data_err * (1-eff_2b_softmu); 
 
-  float nTopOutSoftMuVeto_data_tot = nTopOutSoftMuVeto_data[ee] + nTopOutSoftMuVeto_data[mm] + nTopOutSoftMuVeto_data[em] + nTopOutSoftMuVeto_data[me];
-  float nTopOutSoftMuVeto_data_tot_err = quadrSum(nTopOutSoftMuVeto_data_err[ee],nTopOutSoftMuVeto_data_err[mm],nTopOutSoftMuVeto_data_err[em],nTopOutSoftMuVeto_data_err[me]);
+//   float nTopOutSoftMuVeto_data_tot = nTopOutSoftMuVeto_data[ee] + nTopOutSoftMuVeto_data[mm] + nTopOutSoftMuVeto_data[em] + nTopOutSoftMuVeto_data[me];
+//   float nTopOutSoftMuVeto_data_tot_err = quadrSum(nTopOutSoftMuVeto_data_err[ee],nTopOutSoftMuVeto_data_err[mm],nTopOutSoftMuVeto_data_err[em],nTopOutSoftMuVeto_data_err[me]);
+
+  // LL
+  nBTagTagOut_data = btagLLHData->Integral();
+  nTopOutBTagVeto_data = (nVeto(nBTagTagOut_data, eff_2b, eff_2b_err)).first;
+  nTopOutBTagVeto_data_err = (nVeto(nBTagTagOut_data, eff_2b, eff_2b_err)).second; 
+  float nTopOutSoftMuVeto_data_tot = nTopOutBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
+  float nTopOutSoftMuVeto_data_tot_err = nTopOutBTagVeto_data_err * (1-eff_2b_softmu); 
+
 
   std::cout << "TOP ESTIMATION..." << std::endl;
   std::cout << "Using eff_2b = " << eff_2b << " +/- " << eff_2b_err << std::endl;
@@ -231,6 +241,12 @@ void estimateWW() {
   
   // DY estimation /////
   std::cout << "DY ESTIMATION..." << std::endl;
+
+  estimateRWWRegion();
+  std::cout << "first calculate R WW region/on-peak" << std::endl;
+  std::cout << "Ree = " << Ree << " +/- " << Ree_err << std::endl;
+  std::cout << "Rmm = " << Rmm << " +/- " << Rmm_err << std::endl;
+
   float nZeejetsOut = ZeejetsH->Integral();
   float nZeejetsOut_err = yieldErrPoisson(nZeejetsOut,ZeejetsH->GetEntries());
   float nZmmjetsOut = ZmmjetsH->Integral();
@@ -635,3 +651,33 @@ void countEvents(int mass, const char *channel) {
   }
 }
 
+void estimateRWWRegion() {
+  TFile *fileZjets = TFile::Open("results/datasets_trees/Zjets_ll.root");
+  TTree *treeZjets = (TTree*)fileZjets->Get("T1");
+  TH1F *ZeejetsH_IN = new TH1F("ZeejetsH_IN","",50,0,180);
+  TH1F *ZmmjetsH_IN = new TH1F("ZmmjetsH_IN","",50,0,180);
+  TH1F *ZeejetsH_OUT = new TH1F("ZeejetsH_OUT","",50,0,180);
+  TH1F *ZmmjetsH_OUT = new TH1F("ZmmjetsH_OUT","",50,0,180);
+
+  treeZjets->Project("ZeejetsH_IN","deltaPhi","(finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight");
+  treeZjets->Project("ZmmjetsH_IN","deltaPhi","(finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight");
+  treeZjets->Project("ZeejetsH_OUT","deltaPhi","(finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && eleInvMass>100 && finalstate==0)*weight*puweight");
+  treeZjets->Project("ZmmjetsH_OUT","deltaPhi","(finalLeptons && pfMet>30 && projMet>35 && njets==0 && bTagTrackCount<2.1 && eleInvMass>100 && finalstate==1)*weight*puweight");
+
+  float nZmmjetsH_OUT = ZmmjetsH_OUT->Integral();
+  float nZmmjetsH_OUT_err = yieldErrPoisson(nZmmjetsH_OUT,ZmmjetsH_OUT->GetEntries());
+  float nZeejetsH_OUT = ZeejetsH_OUT->Integral();
+  float nZeejetsH_OUT_err = yieldErrPoisson(nZeejetsH_OUT,ZeejetsH_OUT->GetEntries());
+
+  float nZmmjetsH_IN = ZmmjetsH_IN->Integral();
+  float nZmmjetsH_IN_err = yieldErrPoisson(nZmmjetsH_IN,ZmmjetsH_IN->GetEntries());
+  float nZeejetsH_IN = ZeejetsH_IN->Integral();
+  float nZeejetsH_IN_err = yieldErrPoisson(nZeejetsH_IN,ZeejetsH_IN->GetEntries());
+
+  Rmm = nZmmjetsH_OUT/nZmmjetsH_IN;
+  Rmm_err = Rmm * quadrSum(nZmmjetsH_OUT_err/nZmmjetsH_OUT, nZmmjetsH_IN_err/nZmmjetsH_IN);
+
+  Ree = nZeejetsH_OUT/nZeejetsH_IN;
+  Ree_err = Ree * quadrSum(nZeejetsH_OUT_err/nZeejetsH_OUT, nZeejetsH_IN_err/nZeejetsH_IN);
+
+}
