@@ -69,6 +69,7 @@ public :
    Float_t         convRadiusEle[100];   //[nEle]
    Int_t           convTrackIndexEle[100];   //[nEle]
    Int_t           scPixChargeEle[100];   //[nEle]
+   Bool_t          hasMatchedConversionEle[100];   //[nEle]
    Int_t           classificationEle[100];   //[nEle]
    Int_t           standardClassificationEle[100];   //[nEle]
    Float_t         fbremEle[100];   //[nEle]
@@ -93,6 +94,45 @@ public :
    Int_t           eleIdCutsEle[100];   //[nEle]
    Float_t         eleIdLikelihoodEle[100];   //[nEle]
    Float_t         pflowMVAEle[100];   //[nEle]
+   Float_t         pfChargedIsoEle[100];   //[nEle]
+   Float_t         pfNeutralIsoEle[100];   //[nEle]
+   Float_t         pfPhotonIsoEle[100];   //[nEle]
+   Float_t         pfGenericChargedIsoEle[100];   //[nEle]
+   Float_t         pfGenericNeutralIsoEle[100];   //[nEle]
+   Float_t         pfGenericPhotonIsoEle[100];   //[nEle]
+   Float_t         pfGenericNoOverChargedIsoEle[100];   //[nEle]
+   Float_t         pfGenericNoOverNeutralIsoEle[100];   //[nEle]
+   Float_t         pfGenericNoOverPhotonIsoEle[100];   //[nEle]
+   Int_t           nPho;
+   Int_t           chargePho[100];   //[nPho]
+   Float_t         energyPho[100];   //[nPho]
+   Float_t         thetaPho[100];   //[nPho]
+   Float_t         etaPho[100];   //[nPho]
+   Float_t         phiPho[100];   //[nPho]
+   Float_t         pxPho[100];   //[nPho]
+   Float_t         pyPho[100];   //[nPho]
+   Float_t         pzPho[100];   //[nPho]
+   Float_t         vertexXPho[100];   //[nPho]
+   Float_t         vertexYPho[100];   //[nPho]
+   Float_t         vertexZPho[100];   //[nPho]
+   Int_t           fiducialFlagsPho[100];   //[nPho]
+   Int_t           recoFlagsPho[100];   //[nPho]
+   Int_t           superClusterIndexPho[100];   //[nPho]
+   Int_t           PFsuperClusterIndexPho[100];   //[nPho]
+   Float_t         hOverEPho[100];   //[nPho]
+   Float_t         dr03TkSumPtPho[100];   //[nPho]
+   Float_t         dr03HollowTkSumPtPho[100];   //[nPho]
+   Float_t         dr03EcalRecHitSumEtPho[100];   //[nPho]
+   Float_t         dr03HcalTowerSumEtPho[100];   //[nPho]
+   Float_t         dr04TkSumPtPho[100];   //[nPho]
+   Float_t         dr04HollowTkSumPtPho[100];   //[nPho]
+   Float_t         dr04EcalRecHitSumEtPho[100];   //[nPho]
+   Float_t         dr04HcalTowerSumEtPho[100];   //[nPho]
+   Float_t         chargedHadronIsoPho[100];   //[nPho]
+   Float_t         neutralHadronIsoPho[100];   //[nPho]
+   Float_t         photonIsoPho[100];   //[nPho]
+   Int_t           hasPixelSeedPho[100];   //[nPho]
+   Bool_t          hasMatchedConversionPho[100];   //[nPho]
    Int_t           nSC;
    Int_t           nBCSC[100];   //[nSC]
    Int_t           nCrystalsSC[100];   //[nSC]
@@ -586,6 +626,7 @@ public :
    TBranch        *b_convRadiusEle;   //!
    TBranch        *b_convTrackIndexEle;   //!
    TBranch        *b_scPixChargeEle;   //!
+   TBranch        *b_hasMatchedConversionEle;   //!
    TBranch        *b_classificationEle;   //!
    TBranch        *b_standardClassificationEle;   //!
    TBranch        *b_fbremEle;   //!
@@ -610,6 +651,45 @@ public :
    TBranch        *b_eleIdCutsEle;   //!
    TBranch        *b_eleIdLikelihoodEle;   //!
    TBranch        *b_pflowMVAEle;   //!
+   TBranch        *b_pfChargedIsoEle;   //!
+   TBranch        *b_pfNeutralIsoEle;   //!
+   TBranch        *b_pfPhotonIsoEle;   //!
+   TBranch        *b_pfGenericChargedIsoEle;   //!
+   TBranch        *b_pfGenericNeutralIsoEle;   //!
+   TBranch        *b_pfGenericPhotonIsoEle;   //!
+   TBranch        *b_pfGenericNoOverChargedIsoEle;   //!
+   TBranch        *b_pfGenericNoOverNeutralIsoEle;   //!
+   TBranch        *b_pfGenericNoOverPhotonIsoEle;   //!
+   TBranch        *b_nPho;   //!
+   TBranch        *b_chargePho;   //!
+   TBranch        *b_energyPho;   //!
+   TBranch        *b_thetaPho;   //!
+   TBranch        *b_etaPho;   //!
+   TBranch        *b_phiPho;   //!
+   TBranch        *b_pxPho;   //!
+   TBranch        *b_pyPho;   //!
+   TBranch        *b_pzPho;   //!
+   TBranch        *b_vertexXPho;   //!
+   TBranch        *b_vertexYPho;   //!
+   TBranch        *b_vertexZPho;   //!
+   TBranch        *b_fiducialFlagsPho;   //!
+   TBranch        *b_recoFlagsPho;   //!
+   TBranch        *b_superClusterIndexPho;   //!
+   TBranch        *b_PFsuperClusterIndexPho;   //!
+   TBranch        *b_hOverEPho;   //!
+   TBranch        *b_dr03TkSumPtPho;   //!
+   TBranch        *b_dr03HollowTkSumPtPho;   //!
+   TBranch        *b_dr03EcalRecHitSumEtPho;   //!
+   TBranch        *b_dr03HcalTowerSumEtPho;   //!
+   TBranch        *b_dr04TkSumPtPho;   //!
+   TBranch        *b_dr04HollowTkSumPtPho;   //!
+   TBranch        *b_dr04EcalRecHitSumEtPho;   //!
+   TBranch        *b_dr04HcalTowerSumEtPho;   //!
+   TBranch        *b_chargedHadronIsoPho;   //!
+   TBranch        *b_neutralHadronIsoPho;   //!
+   TBranch        *b_photonIsoPho;   //!
+   TBranch        *b_hasPixelSeedPho;   //!
+   TBranch        *b_hasMatchedConversionPho;   //!
    TBranch        *b_nSC;   //!
    TBranch        *b_nBCSC;   //!
    TBranch        *b_nCrystalsSC;   //!
@@ -1172,6 +1252,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("convRadiusEle", convRadiusEle, &b_convRadiusEle);
    fChain->SetBranchAddress("convTrackIndexEle", convTrackIndexEle, &b_convTrackIndexEle);
    fChain->SetBranchAddress("scPixChargeEle", scPixChargeEle, &b_scPixChargeEle);
+   fChain->SetBranchAddress("hasMatchedConversionEle", hasMatchedConversionEle, &b_hasMatchedConversionEle);
    fChain->SetBranchAddress("classificationEle", classificationEle, &b_classificationEle);
    fChain->SetBranchAddress("standardClassificationEle", standardClassificationEle, &b_standardClassificationEle);
    fChain->SetBranchAddress("fbremEle", fbremEle, &b_fbremEle);
@@ -1196,6 +1277,45 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("eleIdCutsEle", eleIdCutsEle, &b_eleIdCutsEle);
    fChain->SetBranchAddress("eleIdLikelihoodEle", eleIdLikelihoodEle, &b_eleIdLikelihoodEle);
    fChain->SetBranchAddress("pflowMVAEle", pflowMVAEle, &b_pflowMVAEle);
+   fChain->SetBranchAddress("pfChargedIsoEle", pfChargedIsoEle, &b_pfChargedIsoEle);
+   fChain->SetBranchAddress("pfNeutralIsoEle", pfNeutralIsoEle, &b_pfNeutralIsoEle);
+   fChain->SetBranchAddress("pfPhotonIsoEle", pfPhotonIsoEle, &b_pfPhotonIsoEle);
+   fChain->SetBranchAddress("pfGenericChargedIsoEle", pfGenericChargedIsoEle, &b_pfGenericChargedIsoEle);
+   fChain->SetBranchAddress("pfGenericNeutralIsoEle", pfGenericNeutralIsoEle, &b_pfGenericNeutralIsoEle);
+   fChain->SetBranchAddress("pfGenericPhotonIsoEle", pfGenericPhotonIsoEle, &b_pfGenericPhotonIsoEle);
+   fChain->SetBranchAddress("pfGenericNoOverChargedIsoEle", pfGenericNoOverChargedIsoEle, &b_pfGenericNoOverChargedIsoEle);
+   fChain->SetBranchAddress("pfGenericNoOverNeutralIsoEle", pfGenericNoOverNeutralIsoEle, &b_pfGenericNoOverNeutralIsoEle);
+   fChain->SetBranchAddress("pfGenericNoOverPhotonIsoEle", pfGenericNoOverPhotonIsoEle, &b_pfGenericNoOverPhotonIsoEle);
+   fChain->SetBranchAddress("nPho", &nPho, &b_nPho);
+   fChain->SetBranchAddress("chargePho", chargePho, &b_chargePho);
+   fChain->SetBranchAddress("energyPho", energyPho, &b_energyPho);
+   fChain->SetBranchAddress("thetaPho", thetaPho, &b_thetaPho);
+   fChain->SetBranchAddress("etaPho", etaPho, &b_etaPho);
+   fChain->SetBranchAddress("phiPho", phiPho, &b_phiPho);
+   fChain->SetBranchAddress("pxPho", pxPho, &b_pxPho);
+   fChain->SetBranchAddress("pyPho", pyPho, &b_pyPho);
+   fChain->SetBranchAddress("pzPho", pzPho, &b_pzPho);
+   fChain->SetBranchAddress("vertexXPho", vertexXPho, &b_vertexXPho);
+   fChain->SetBranchAddress("vertexYPho", vertexYPho, &b_vertexYPho);
+   fChain->SetBranchAddress("vertexZPho", vertexZPho, &b_vertexZPho);
+   fChain->SetBranchAddress("fiducialFlagsPho", fiducialFlagsPho, &b_fiducialFlagsPho);
+   fChain->SetBranchAddress("recoFlagsPho", recoFlagsPho, &b_recoFlagsPho);
+   fChain->SetBranchAddress("superClusterIndexPho", superClusterIndexPho, &b_superClusterIndexPho);
+   fChain->SetBranchAddress("PFsuperClusterIndexPho", PFsuperClusterIndexPho, &b_PFsuperClusterIndexPho);
+   fChain->SetBranchAddress("hOverEPho", hOverEPho, &b_hOverEPho);
+   fChain->SetBranchAddress("dr03TkSumPtPho", dr03TkSumPtPho, &b_dr03TkSumPtPho);
+   fChain->SetBranchAddress("dr03HollowTkSumPtPho", dr03HollowTkSumPtPho, &b_dr03HollowTkSumPtPho);
+   fChain->SetBranchAddress("dr03EcalRecHitSumEtPho", dr03EcalRecHitSumEtPho, &b_dr03EcalRecHitSumEtPho);
+   fChain->SetBranchAddress("dr03HcalTowerSumEtPho", dr03HcalTowerSumEtPho, &b_dr03HcalTowerSumEtPho);
+   fChain->SetBranchAddress("dr04TkSumPtPho", dr04TkSumPtPho, &b_dr04TkSumPtPho);
+   fChain->SetBranchAddress("dr04HollowTkSumPtPho", dr04HollowTkSumPtPho, &b_dr04HollowTkSumPtPho);
+   fChain->SetBranchAddress("dr04EcalRecHitSumEtPho", dr04EcalRecHitSumEtPho, &b_dr04EcalRecHitSumEtPho);
+   fChain->SetBranchAddress("dr04HcalTowerSumEtPho", dr04HcalTowerSumEtPho, &b_dr04HcalTowerSumEtPho);
+   fChain->SetBranchAddress("chargedHadronIsoPho", chargedHadronIsoPho, &b_chargedHadronIsoPho);
+   fChain->SetBranchAddress("neutralHadronIsoPho", neutralHadronIsoPho, &b_neutralHadronIsoPho);
+   fChain->SetBranchAddress("photonIsoPho", photonIsoPho, &b_photonIsoPho);
+   fChain->SetBranchAddress("hasPixelSeedPho", hasPixelSeedPho, &b_hasPixelSeedPho);
+   fChain->SetBranchAddress("hasMatchedConversionPho", hasMatchedConversionPho, &b_hasMatchedConversionPho);
    fChain->SetBranchAddress("nSC", &nSC, &b_nSC);
    fChain->SetBranchAddress("nBCSC", nBCSC, &b_nBCSC);
    fChain->SetBranchAddress("nCrystalsSC", nCrystalsSC, &b_nCrystalsSC);
