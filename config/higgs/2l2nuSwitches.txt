@@ -8,6 +8,7 @@ preselection		1
 maxPtLepton		1
 minPtLepton		1
 leptonD0                1
+electronDz              1
 electronIP		1
 muonIPhighPT		1
 muonIPlowPT		1

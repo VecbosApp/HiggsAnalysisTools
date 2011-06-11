@@ -4,6 +4,7 @@ muonIPhighPT		-0.020          0.020
 muonIPlowPT		-0.010          0.010
 muonDz			-0.100		0.100
 electronIP		-0.030		0.030
+electronDz              -0.100          0.100
 muGlobalIso             -10000          0.15
 muTrackerIso            -10000          10000
 muHcalIso               -10000          10000
