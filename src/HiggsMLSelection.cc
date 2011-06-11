@@ -1364,8 +1364,8 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
     if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=15) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisPt<15)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
     if (!theElectronID) continue;
@@ -1373,8 +1373,8 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     // further requests if we apply the smurf ID and pT<15
     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
-      if ( thisPt<15  ) {
-	if ( fbremEle[thisEle]>0.15 || ((fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95)) ) continue;
+      if ( thisPt<20  ) {
+	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;
       }
     }
     
@@ -2327,8 +2327,8 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
       isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=15) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
-      if(pt<15)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
+      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
     
