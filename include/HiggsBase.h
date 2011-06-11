@@ -103,6 +103,7 @@ public :
    Float_t         pfGenericNoOverChargedIsoEle[100];   //[nEle]
    Float_t         pfGenericNoOverNeutralIsoEle[100];   //[nEle]
    Float_t         pfGenericNoOverPhotonIsoEle[100];   //[nEle]
+   Float_t         pfCombinedIsoEle[100];   //[nEle]
    Int_t           nPho;
    Int_t           chargePho[100];   //[nPho]
    Float_t         energyPho[100];   //[nPho]
@@ -369,6 +370,16 @@ public :
    Float_t         hoEt05Muon[100];   //[nMuon]
    Float_t         nTrk05Muon[100];   //[nMuon]
    Float_t         nJets05Muon[100];   //[nMuon]
+   Float_t         pfChargedIsoMuon[100];   //[nMuon]
+   Float_t         pfNeutralIsoMuon[100];   //[nMuon]
+   Float_t         pfPhotonIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericChargedIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericNeutralIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericPhotonIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericNoOverChargedIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericNoOverNeutralIsoMuon[100];   //[nMuon]
+   Float_t         pfGenericNoOverPhotonIsoMuon[100];   //[nMuon]
+   Float_t         pfCombinedIsoMuon[100];   //[nMuon]
    Float_t         EcalExpDepoMuon[100];   //[nMuon]
    Float_t         HcalExpDepoMuon[100];   //[nMuon]
    Float_t         HoExpDepoMuon[100];   //[nMuon]
@@ -661,6 +672,7 @@ public :
    TBranch        *b_pfGenericNoOverChargedIsoEle;   //!
    TBranch        *b_pfGenericNoOverNeutralIsoEle;   //!
    TBranch        *b_pfGenericNoOverPhotonIsoEle;   //!
+   TBranch        *b_pfCombinedIsoEle;   //!
    TBranch        *b_nPho;   //!
    TBranch        *b_chargePho;   //!
    TBranch        *b_energyPho;   //!
@@ -922,6 +934,16 @@ public :
    TBranch        *b_hoEt05Muon;   //!
    TBranch        *b_nTrk05Muon;   //!
    TBranch        *b_nJets05Muon;   //!
+   TBranch        *b_pfChargedIsoMuon;   //!
+   TBranch        *b_pfNeutralIsoMuon;   //!
+   TBranch        *b_pfPhotonIsoMuon;   //!
+   TBranch        *b_pfGenericChargedIsoMuon;   //!
+   TBranch        *b_pfGenericNeutralIsoMuon;   //!
+   TBranch        *b_pfGenericPhotonIsoMuon;   //!
+   TBranch        *b_pfGenericNoOverChargedIsoMuon;   //!
+   TBranch        *b_pfGenericNoOverNeutralIsoMuon;   //!
+   TBranch        *b_pfGenericNoOverPhotonIsoMuon;   //!
+   TBranch        *b_pfCombinedIsoMuon;   //!
    TBranch        *b_EcalExpDepoMuon;   //!
    TBranch        *b_HcalExpDepoMuon;   //!
    TBranch        *b_HoExpDepoMuon;   //!
@@ -1287,6 +1309,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("pfGenericNoOverChargedIsoEle", pfGenericNoOverChargedIsoEle, &b_pfGenericNoOverChargedIsoEle);
    fChain->SetBranchAddress("pfGenericNoOverNeutralIsoEle", pfGenericNoOverNeutralIsoEle, &b_pfGenericNoOverNeutralIsoEle);
    fChain->SetBranchAddress("pfGenericNoOverPhotonIsoEle", pfGenericNoOverPhotonIsoEle, &b_pfGenericNoOverPhotonIsoEle);
+   fChain->SetBranchAddress("pfCombinedIsoEle", pfCombinedIsoEle, &b_pfCombinedIsoEle);
    fChain->SetBranchAddress("nPho", &nPho, &b_nPho);
    fChain->SetBranchAddress("chargePho", chargePho, &b_chargePho);
    fChain->SetBranchAddress("energyPho", energyPho, &b_energyPho);
@@ -1548,6 +1571,16 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("hoEt05Muon", hoEt05Muon, &b_hoEt05Muon);
    fChain->SetBranchAddress("nTrk05Muon", nTrk05Muon, &b_nTrk05Muon);
    fChain->SetBranchAddress("nJets05Muon", nJets05Muon, &b_nJets05Muon);
+   fChain->SetBranchAddress("pfChargedIsoMuon", pfChargedIsoMuon, &b_pfChargedIsoMuon);
+   fChain->SetBranchAddress("pfNeutralIsoMuon", pfNeutralIsoMuon, &b_pfNeutralIsoMuon);
+   fChain->SetBranchAddress("pfPhotonIsoMuon", pfPhotonIsoMuon, &b_pfPhotonIsoMuon);
+   fChain->SetBranchAddress("pfGenericChargedIsoMuon", pfGenericChargedIsoMuon, &b_pfGenericChargedIsoMuon);
+   fChain->SetBranchAddress("pfGenericNeutralIsoMuon", pfGenericNeutralIsoMuon, &b_pfGenericNeutralIsoMuon);
+   fChain->SetBranchAddress("pfGenericPhotonIsoMuon", pfGenericPhotonIsoMuon, &b_pfGenericPhotonIsoMuon);
+   fChain->SetBranchAddress("pfGenericNoOverChargedIsoMuon", pfGenericNoOverChargedIsoMuon, &b_pfGenericNoOverChargedIsoMuon);
+   fChain->SetBranchAddress("pfGenericNoOverNeutralIsoMuon", pfGenericNoOverNeutralIsoMuon, &b_pfGenericNoOverNeutralIsoMuon);
+   fChain->SetBranchAddress("pfGenericNoOverPhotonIsoMuon", pfGenericNoOverPhotonIsoMuon, &b_pfGenericNoOverPhotonIsoMuon);
+   fChain->SetBranchAddress("pfCombinedIsoMuon", pfCombinedIsoMuon, &b_pfCombinedIsoMuon);
    fChain->SetBranchAddress("EcalExpDepoMuon", EcalExpDepoMuon, &b_EcalExpDepoMuon);
    fChain->SetBranchAddress("HcalExpDepoMuon", HcalExpDepoMuon, &b_HcalExpDepoMuon);
    fChain->SetBranchAddress("HoExpDepoMuon", HoExpDepoMuon, &b_HoExpDepoMuon);
