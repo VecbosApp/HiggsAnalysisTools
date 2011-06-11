@@ -544,7 +544,7 @@ void HiggsMLSelection::Loop() {
     float evtKfactor = 1.0;
     
     // weight for the PU observed in 2011 data
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
+    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) {
       evtKfactor = getkFactor("Higgs");
@@ -1564,11 +1564,12 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu
     float thisPt = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
 
     // fixme: diverso da prima: rimuovevo il secondo leptone....
-    float muonTrackerForGlobal = sumPt03Muon[thisMu];
-    float muonEcalForGlobal    = emEt03Muon[thisMu];
-    float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
-    float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float theRelMuonIso        = theMuonGlobalSum/thisPt; 
+//     float muonTrackerForGlobal = sumPt03Muon[thisMu];
+//     float muonEcalForGlobal    = emEt03Muon[thisMu];
+//     float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
+//     float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
+//     float theRelMuonIso        = theMuonGlobalSum/thisPt; 
+    float theRelMuonIso = pfCombinedIsoMuon[thisMu]/thisPt;
     if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",theRelMuonIso)) continue;  
 
     float thisCharge = chargeMuon[thisMu];
@@ -2004,7 +2005,7 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
   else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
   thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
-  thisCutBasedID->SetCombinedPFIsolation( (pfGenericChargedIsoEle[eleIndex] + pfGenericNeutralIsoEle[eleIndex] + pfGenericPhotonIsoEle[eleIndex]) / pt );
+  thisCutBasedID->SetCombinedPFIsolation( (pfCombinedIsoEle[eleIndex]) / pt );
   thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
   thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
   thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
@@ -2296,8 +2297,9 @@ int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
     float dxy = transvImpactParTrack[track];
     if(dxy > 0.100) continue;   
 
-    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float isoSumRel = isoSumAbs / pt;
+    //    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    //    float isoSumRel = isoSumAbs / pt;
+    float isoSumRel = pfCombinedIsoMuon[i] / pt;
     if(pt>20 || isoSumRel<0.1) continue;
     
     num++;
@@ -2366,8 +2368,9 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     bool theId = true;
     isMuonID(i,&theId);
     if(!theId) continue;
-    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float isoSumRel = isoSumAbs / ptMu;
+//     float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+//     float isoSumRel = isoSumAbs / ptMu;
+    float isoSumRel = pfCombinedIsoMuon[i] / ptMu;
     if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
 
     int track = trackIndexMuon[i];
@@ -2417,7 +2420,8 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     float combinedIso = 0.0;
     if ( fabs(myEta[i])<1.476 ) combinedIso = dr03TkSumPtEle[eleIndex] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
     else combinedIso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
-    myCombinedIso[i] = ( (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / myPt[i] );
+    //    myCombinedIso[i] = ( (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / myPt[i] );
+    myCombinedIso[i] = pfCombinedIsoEle[eleIndex] / myPt[i];
     myCharge[i] = chargeEle[eleIndex];
     int gsf = gsfTrackIndexEle[eleIndex];
     myMissHits[i] = expInnerLayersGsfTrack[gsf];
