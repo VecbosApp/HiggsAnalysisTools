@@ -629,7 +629,7 @@ void HiggsMLSelection::Loop() {
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
       float thisMinPt = TMath::Min(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
-      if (thisMaxPt>20 && thisMinPt>15) m_channel[ee] = true;    // fixme: hardcoded
+      if (thisMaxPt>20 && thisMinPt>10) m_channel[ee] = true;    // fixme: hardcoded
     }
 
     if (thePreMuonPlus > -1 && thePreMuonMinus > -1) {
@@ -645,7 +645,7 @@ void HiggsMLSelection::Loop() {
     if ( thePreElectronME > -1 && thePreMuonME > -1 ) {
       float thisMaxPt  = GetPt(pxMuon[thePreMuonME],pyMuon[thePreMuonME]);
       float thisMinPt  = GetPt(pxEle[thePreElectronME],pyEle[thePreElectronME]);
-      if (thisMaxPt>20 && thisMinPt>15) m_channel[me] = true;    // fixme: hardcoded
+      if (thisMaxPt>20 && thisMinPt>10) m_channel[me] = true;    // fixme: hardcoded
     }
     
     if (_verbose) {
@@ -842,7 +842,7 @@ void HiggsMLSelection::Loop() {
 
     CutBasedHiggsSelectionEE.SetHighElePt(hardestLeptonPt[ee]); 
     CutBasedHiggsSelectionEE.SetLowElePt(slowestLeptonPt[ee]);  
-    CutBasedHiggsSelectionEE.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT cut only on electrons
+    CutBasedHiggsSelectionEE.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT cut only on electrons
 
     CutBasedHiggsSelectionEE.SetNJets(njets[ee]);
     CutBasedHiggsSelectionEE.SetNUncorrJets(nuncorrjets[ee]);
@@ -1186,7 +1186,7 @@ void HiggsMLSelection::Loop() {
 
     CutBasedHiggsSelectionME.SetHighElePt(hardestLeptonPt[me]); 
     CutBasedHiggsSelectionME.SetLowElePt(slowestLeptonPt[me]);  
-    CutBasedHiggsSelectionME.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT only on electrons
+    CutBasedHiggsSelectionME.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
 
     CutBasedHiggsSelectionME.SetNJets(njets[me]);
     CutBasedHiggsSelectionME.SetNUncorrJets(nuncorrjets[me]);
@@ -1355,8 +1355,8 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
     if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisPt>=15) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisPt<15)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
     if (!theElectronID) continue;
@@ -1975,9 +1975,11 @@ void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput
   if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
   else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
   thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
+  thisCutBasedID->SetCombinedPFIsolation( (pfGenericChargedIsoEle[eleIndex] + pfGenericNeutralIsoEle[eleIndex] + pfGenericPhotonIsoEle[eleIndex]) / pt );
   thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
   thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
   thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
+  thisCutBasedID->SetHasMatchedConversion ( hasMatchedConversionEle[eleIndex] );
 
   // ECAL cleaning variables
   thisCutBasedID->m_cleaner->SetE1(e1);
