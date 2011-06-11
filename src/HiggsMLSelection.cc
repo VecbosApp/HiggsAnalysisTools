@@ -1359,7 +1359,15 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     }
 
     if (!theElectronID) continue;
-
+    
+    // further requests if we apply the smurf ID and pT<15
+    TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
+    if( stringIdLow.Contains("Smurf") ) {
+      if ( thisPt<15  ) {
+	if ( fbremEle[thisEle]>0.15 || ((fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95)) ) continue;
+      }
+    }
+    
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
@@ -2299,6 +2307,15 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
       if(pt<15)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
+    
+    // further requests if we apply the smurf ID and pT<15
+    TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
+    if( stringIdLow.Contains("Smurf") ) {
+      float pt = GetPt(pxEle[i],pyEle[i]);
+      if ( pt<15  ) {
+	if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+      }
+    }
 
     int track = gsfTrackIndexEle[i];
     float d3dEle = impactPar3DGsfTrack[track];
