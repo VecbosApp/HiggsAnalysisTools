@@ -1569,8 +1569,9 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu
 //     float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
 //     float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
 //     float theRelMuonIso        = theMuonGlobalSum/thisPt; 
-    float theRelMuonIso = pfCombinedIsoMuon[thisMu]/thisPt;
-    if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",theRelMuonIso)) continue;  
+//    float theRelMuonIso = pfCombinedIsoMuon[thisMu]/thisPt;
+    //    if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",theRelMuonIso)) continue;  
+    if( ! isPFIsolatedMuon(thisMu) ) continue;
 
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
@@ -2216,6 +2217,9 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
+    // hardcoded
+    if(pt < 7.0) continue;
+
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
     float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
@@ -2370,8 +2374,9 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     if(!theId) continue;
 //     float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
 //     float isoSumRel = isoSumAbs / ptMu;
-    float isoSumRel = pfCombinedIsoMuon[i] / ptMu;
-    if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
+//    float isoSumRel = pfCombinedIsoMuon[i] / ptMu;
+//    if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
+    if( ! isPFIsolatedMuon(i) ) continue; 
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
@@ -2641,3 +2646,13 @@ void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& re
   else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
 }
 
+bool HiggsMLSelection::isPFIsolatedMuon(int muonIndex) {
+  float eta = etaMuon[muonIndex];
+  float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
+  float iso = pfCombinedIsoMuon[muonIndex]/pt;
+  if( pt>=20. && fabs(eta)<1.479 ) return (iso < 0.13);
+  if( pt>=20. && fabs(eta)>=1.479 ) return (iso < 0.09);
+  if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
+  if( pt<20. && fabs(eta)>=1.479 ) return (iso < 0.05);
+  return true;
+}
