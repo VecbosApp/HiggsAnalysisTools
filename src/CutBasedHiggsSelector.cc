@@ -125,6 +125,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addSwitch("convRej");
   _selection->addCut("muGlobalIso");
   _selection->addCut("electronIP");
+  _selection->addCut("electronDz");
   _selection->addCut("muonIPhighPT");
   _selection->addCut("muonIPlowPT");
   _selection->addCut("muonDz");
