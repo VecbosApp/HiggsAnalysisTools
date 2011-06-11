@@ -338,6 +338,7 @@ public :
    Float_t         pxChMetPV[100];   //[nPV]
    Float_t         pyChMetPV[100];   //[nPV]
    Float_t         pzChMetPV[100];   //[nPV]
+   Int_t           isFakePV[100];  // [nPV]
    Int_t           nMuon;
    Int_t           chargeMuon[100];   //[nMuon]
    Float_t         energyMuon[100];   //[nMuon]

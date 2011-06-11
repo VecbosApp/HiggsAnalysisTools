@@ -597,7 +597,17 @@ void HiggsMLSelection::Loop() {
     // myTriggerTree->store();
 
 
-
+    
+    // -------------------------------------------------------------
+    // vertex selection - we only consider the first vertex of the list ( = highest sumPT^2)
+    bool isGoodVertex = true;
+    if (nPV<1) isGoodVertex = false;
+    float rhoVtx = sqrt(PVxPV[0]*PVxPV[0] + PVyPV[0]*PVyPV[0]);
+    if ( isFakePV[0] )       isGoodVertex = false;
+    if ( ndofPV[0]<4 )       isGoodVertex = false;
+    if ( fabs(PVzPV[0])>24.) isGoodVertex = false;
+    if ( rhoVtx>2 )          isGoodVertex = false; 
+    
 
     // -------------------------------------------------------------
     
@@ -628,23 +638,23 @@ void HiggsMLSelection::Loop() {
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
       float thisMinPt = TMath::Min(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
-      if (thisMaxPt>20 && thisMinPt>10) m_channel[ee] = true;    // fixme: hardcoded
+      if (isGoodVertex && thisMaxPt>20 && thisMinPt>10) m_channel[ee] = true;    // fixme: hardcoded
     }
 
     if (thePreMuonPlus > -1 && thePreMuonMinus > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxMuon[thePreMuonMinus],pyMuon[thePreMuonMinus]),GetPt(pxMuon[thePreMuonPlus],pyMuon[thePreMuonPlus]));
-      if (thisMaxPt>20) m_channel[mm] = true;    // fixme: hardcoded
+      if (isGoodVertex && thisMaxPt>20) m_channel[mm] = true;    // fixme: hardcoded
     }
 
     if ( thePreElectronEM > -1 && thePreMuonEM > -1 ) {
       float thisMaxPt = GetPt(pxEle[thePreElectronEM],pyEle[thePreElectronEM]);
-      if (thisMaxPt>20) m_channel[em] = true;    // fixme: hardcoded
+      if (isGoodVertex && thisMaxPt>20) m_channel[em] = true;    // fixme: hardcoded
     }
 
     if ( thePreElectronME > -1 && thePreMuonME > -1 ) {
       float thisMaxPt  = GetPt(pxMuon[thePreMuonME],pyMuon[thePreMuonME]);
       float thisMinPt  = GetPt(pxEle[thePreElectronME],pyEle[thePreElectronME]);
-      if (thisMaxPt>20 && thisMinPt>10) m_channel[me] = true;    // fixme: hardcoded
+      if (isGoodVertex && thisMaxPt>20 && thisMinPt>10) m_channel[me] = true;    // fixme: hardcoded
     }
     
     if (_verbose) {
@@ -768,7 +778,7 @@ void HiggsMLSelection::Loop() {
     
     // -------------------------------------------------------------    
     // look for PV in the event (there is always at least 1 PV)
-    m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
+    // m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
     
     int njets[4], nuncorrjets[4];
     float dphiLLJ[4];
@@ -1583,7 +1593,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
     float dxyMuon = transvImpactParTrack[ctfMuon];
-    float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];   
+    float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];   
     if (_selectionEE->getSwitch("muonIP") && (!_selectionEE->passCut("muonIP",dxyMuon)) ) continue;   
     if (_selectionEE->getSwitch("muonDz") && (!_selectionEE->passCut("muonDz",dzMuon)) )  continue;   
 
@@ -2346,7 +2356,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
-    float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
+    float dz  = PVzPV[0] - trackVzTrack[track];  
     if(_selectionEE->getSwitch("muonIP") && !_selectionEE->passCut("muonIP",dxy)) continue;
     if(_selectionEE->getSwitch("muonDz") && !_selectionEE->passCut("muonDz",dz))  continue;  
 
