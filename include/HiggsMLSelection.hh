@@ -122,6 +122,8 @@ private:
   bool reloadTriggerMask();
   //! get the trigger answer depending on the channel
   bool hasPassedHLT(int channel);
+  //! hardcoded muon isolation
+  bool isPFIsolatedMuon(int muonIndex);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
