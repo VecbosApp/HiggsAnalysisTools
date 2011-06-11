@@ -1465,8 +1465,12 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> co
     int thisEle = convEle[iEle];
 
     int gsfTrack = gsfTrackIndexEle[thisEle]; 
-    float d3dEle = impactPar3DGsfTrack[gsfTrack];
-    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;   
+    // float d3dEle = impactPar3DGsfTrack[gsfTrack];
+    // if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;   
+    float dxyEle = transvImpactParGsfTrack[gsfTrack];
+    float dzEle  = PVzPV[0] - trackVzGsfTrack[gsfTrack];   
+    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",dxyEle)) ) continue;
+    if (_selectionEE->getSwitch("electronDz") && (!_selectionEE->passCut("electronDz",dzEle)) ) continue;
 
     float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
     float thisCharge = chargeEle[thisEle];
@@ -2336,8 +2340,12 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     }
 
     int track = gsfTrackIndexEle[i];
-    float d3dEle = impactPar3DGsfTrack[track];
-    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;    
+    // float d3dEle = impactPar3DGsfTrack[track];
+    // if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;    
+    float dxyEle = transvImpactParGsfTrack[track];
+    float dzEle  = PVzPV[0] - trackVzGsfTrack[track];   
+    if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",dxyEle)) ) continue;
+    if (_selectionEE->getSwitch("electronDz") && (!_selectionEE->passCut("electronDz",dzEle)) ) continue;
 
     numEle++;
   }
