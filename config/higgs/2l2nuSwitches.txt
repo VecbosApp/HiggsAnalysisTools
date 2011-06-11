@@ -1,6 +1,6 @@
 isData                  0
 goodRunLS               0
-asymmetricID		0
+asymmetricID		1
 MCtruth			0   
 apply_kFactor		1  
 trigger			1    
@@ -39,7 +39,7 @@ nExtraLeptons           1
 deltaPhi		1
 deltaPhiLLJet           1
 higgsMassRel            1
-electronIDType          LHLoose
-electronIDTypeLow	LHLoose
+electronIDType          LHLoosePFIso
+electronIDTypeLow	LHTightPFIso
 JESUncertainty          No
 
