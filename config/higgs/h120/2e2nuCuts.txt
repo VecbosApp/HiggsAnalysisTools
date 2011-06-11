@@ -1,5 +1,5 @@
 maxPtLepton             20              10000
-minPtLepton             15              10000
+minPtLepton             10              10000
 muonIP			-0.010          0.010
 muonDz			-0.050		0.050
 electronIP		-0.030		0.030
