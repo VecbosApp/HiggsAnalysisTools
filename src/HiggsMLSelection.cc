@@ -121,7 +121,6 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    // std::string goodRunJsonFile       = "config/json/certifiedLatinos_125s6.json";
     std::string goodRunJsonFile       = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
@@ -2296,8 +2295,8 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
       isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
-      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
+      if(pt>=15) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      if(pt<15)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
 
