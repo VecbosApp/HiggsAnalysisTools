@@ -1590,14 +1590,22 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
   for(int iMu=0; iMu<isoMu.size(); iMu++) {
 
     int thisMu = isoMu[iMu];
+
+    float thisPt = GetPt(pxMuon[thisMu],pyMuon[thisMu]);    
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
     float dxyMuon = transvImpactParTrack[ctfMuon];
     float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];   
-    if (_selectionEE->getSwitch("muonIP") && (!_selectionEE->passCut("muonIP",dxyMuon)) ) continue;   
+
+    if (thisPt>20) {   // hardcoded
+      if (_selectionEE->getSwitch("muonIPhighPT") && (!_selectionEE->passCut("muonIPhighPT",dxyMuon)) ) continue;   
+    } 
+    if (thisPt<20) {   // hardcoded
+      if (_selectionEE->getSwitch("muonIPlowPT")  && (!_selectionEE->passCut("muonIPlowPT",dxyMuon)) ) continue;   
+    }
     if (_selectionEE->getSwitch("muonDz") && (!_selectionEE->passCut("muonDz",dzMuon)) )  continue;   
 
-    float thisPt     = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
+
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
@@ -2357,8 +2365,14 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
     float dz  = PVzPV[0] - trackVzTrack[track];  
-    if(_selectionEE->getSwitch("muonIP") && !_selectionEE->passCut("muonIP",dxy)) continue;
-    if(_selectionEE->getSwitch("muonDz") && !_selectionEE->passCut("muonDz",dz))  continue;  
+
+    if (ptMu>20) {   // hardcoded
+      if (_selectionEE->getSwitch("muonIPhighPT") && (!_selectionEE->passCut("muonIPhighPT",dxy)) ) continue;   
+    } 
+    if (ptMu<20) {   // hardcoded
+      if (_selectionEE->getSwitch("muonIPlowPT")  && (!_selectionEE->passCut("muonIPlowPT",dxy)) ) continue;   
+    }
+    if (_selectionEE->getSwitch("muonDz") && (!_selectionEE->passCut("muonDz",dz)) )  continue;   
 
     numMu++;
   }
