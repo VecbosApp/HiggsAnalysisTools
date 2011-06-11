@@ -6,7 +6,7 @@ hcalIso         0
 sigmaEtaEta	1
 dphiIn		1
 deta		1
-hOverE		0
+hOverE		1
 distConv        0
 dcotConv        0
 matchedConv     1
