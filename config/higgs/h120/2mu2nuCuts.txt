@@ -30,3 +30,5 @@ etaMuonAcc		-2.4		2.4
 ptMuonAcc		10		10000
 etUncorrJetAcc          25              10000
 higgsMassRel            0.5             1.1
+higgsMassRel0j          70.             120.
+higgsMassRel1j          20.             120.
