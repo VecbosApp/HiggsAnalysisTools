@@ -2252,7 +2252,8 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
     // hardcoded
-    if(pt < 7.0) continue;
+    float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
+    if(rawpt < 7.0) continue;
 
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
