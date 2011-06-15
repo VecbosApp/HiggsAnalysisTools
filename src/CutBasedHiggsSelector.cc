@@ -153,31 +153,32 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
 
   globalCounter = new Counters();
   globalCounter->SetTitle(theTitle);
-  globalCounter->AddVar("event");
-  globalCounter->AddVar("MCtruth");
-  globalCounter->AddVar("trigger");
-  globalCounter->AddVar("preselected");
-  globalCounter->AddVar("leptonId");
-  globalCounter->AddVar("leptonIso");
-  globalCounter->AddVar("convRej");
-  globalCounter->AddVar("leptonD0");       
-  globalCounter->AddVar("looseMET");
-  globalCounter->AddVar("mll");
-  globalCounter->AddVar("mllZPeak");
-  globalCounter->AddVar("tightMETandPrMET");
-  globalCounter->AddVar("metOverPtLL");
-  globalCounter->AddVar("zeroJets");
-  globalCounter->AddVar("nSoftMuons");
-  globalCounter->AddVar("nExtraLeptons");
-  globalCounter->AddVar("bTagVeto");
-  globalCounter->AddVar("mll2");
-  globalCounter->AddVar("maxPtLepton");
-  globalCounter->AddVar("minPtLepton");
-  globalCounter->AddVar("deltaPhi");
-  globalCounter->AddVar("higgsMassRel");
-  globalCounter->AddVar("final");
-  globalCounter->AddVar("oneJet");
-  globalCounter->AddVar("gt1Jets");
+  globalCounter->AddVar("event"); // 0
+  globalCounter->AddVar("MCtruth"); // 1
+  globalCounter->AddVar("trigger"); // 2
+  globalCounter->AddVar("preselected"); // 3
+  globalCounter->AddVar("leptonId"); // 4
+  globalCounter->AddVar("leptonIso"); // 5
+  globalCounter->AddVar("convRej"); // 6
+  globalCounter->AddVar("leptonD0"); // 7   
+  globalCounter->AddVar("looseMET"); // 8
+  globalCounter->AddVar("mll"); // 9
+  globalCounter->AddVar("mllZPeak"); // 10
+  globalCounter->AddVar("tightMETandPrMET"); // 11
+  globalCounter->AddVar("metOverPtLL"); // 12
+  globalCounter->AddVar("zeroJets"); // 13
+  globalCounter->AddVar("nSoftMuons"); // 14
+  globalCounter->AddVar("nExtraLeptons"); // 15
+  globalCounter->AddVar("bTagVeto"); // 16
+  globalCounter->AddVar("mll2"); // 17
+  globalCounter->AddVar("maxPtLepton"); // 18
+  globalCounter->AddVar("minPtLepton"); // 19
+  globalCounter->AddVar("deltaPhi"); // 20 
+  globalCounter->AddVar("higgsMassRel0j"); // 21
+  globalCounter->AddVar("higgsMassRel1j"); // 22
+  globalCounter->AddVar("final"); // 23
+  globalCounter->AddVar("oneJet"); // 24
+  globalCounter->AddVar("gt1Jets"); // 25
 }
 
 bool CutBasedHiggsSelector::output() {
@@ -361,7 +362,7 @@ bool CutBasedHiggsSelector::output() {
 		  
 		  if (!_selection->getSwitch("higgsMassRel0j") || 
 		      (_selection->getSwitch("higgsMassRel0j") && _selection->passCut("higgsMassRel0j", m_WWInvMass))) {
-		    theCounter->IncrVar("higgsMassRel",m_weight);
+		    theCounter->IncrVar("higgsMassRel0j",m_weight);
 		    theCounter->IncrVar("final",m_weight);
 		    m_step17 = true;
 
@@ -400,6 +401,7 @@ bool CutBasedHiggsSelector::output() {
     m_step23bis = true;
 
     if (_selection->getSwitch("higgsMassRel1j") && !_selection->passCut("higgsMassRel1j", m_WWInvMass)) return false;
+    theCounter->IncrVar("higgsMassRel1j",m_weight);
     m_step24 = true;
 
     if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
