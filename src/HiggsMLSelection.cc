@@ -580,7 +580,7 @@ void HiggsMLSelection::Loop() {
     
     
     // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    reloadTriggerMask();
+    reloadTriggerMask(runNumber);
     //    bool passedHLT = (_selectionEE->getSwitch("isData")) ? hasPassedHLT() : true;
     bool passedHLT[4];
     passedHLT[ee] = hasPassedHLT(ee);
@@ -606,7 +606,6 @@ void HiggsMLSelection::Loop() {
     if ( fabs(PVzPV[0])>24.) isGoodVertex = false;
     if ( rhoVtx>2 )          isGoodVertex = false; 
     
-
     // -------------------------------------------------------------
     
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
@@ -631,7 +630,7 @@ void HiggsMLSelection::Loop() {
     m_channel[mm] = false;
     m_channel[em] = false;
     m_channel[me] = false;
-    
+
     // at this level the SELECTED channel should have pT > 10 and > 20. So far, at least 2 leptons with pT >20 and 10 in the event
     if (thePreElectron > -1 && thePrePositron > -1) {
       float thisMaxPt = TMath::Max(GetPt(pxEle[thePreElectron],pyEle[thePreElectron]),GetPt(pxEle[thePrePositron],pyEle[thePrePositron]));
@@ -2576,18 +2575,19 @@ float HiggsMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
 
 
 /// specific for HWW that has multiple channels with different HLT requirements
-bool HiggsMLSelection::reloadTriggerMask()
+bool HiggsMLSelection::reloadTriggerMask(int runN)
 {
   std::vector<int> triggerMask;
 
   // load the triggers required for EE
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersEE.begin();fIter!=requiredTriggersEE.end();++fIter)
     {   
+      std::string pathName = getHLTPathForRun(runN,*fIter);
       for(unsigned int i=0; i<nameHLT->size(); i++)
         {
           //if( !strcmp ((*fIter).c_str(), nameHLT->at(i).c_str() ) )
           // nameHLT[i] has ..._vXXX
-          if(nameHLT->at(i).find(*fIter) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
               triggerMask.push_back( indexHLT[i] ) ;
               break;
@@ -2601,9 +2601,10 @@ bool HiggsMLSelection::reloadTriggerMask()
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersMM.begin();fIter!=requiredTriggersMM.end();++fIter)
     {   
       //      std::cout << "For MM required: " << *fIter << std::endl;
+      std::string pathName = getHLTPathForRun(runN,*fIter);
       for(unsigned int i=0; i<nameHLT->size(); i++)
         {
-          if(nameHLT->at(i).find(*fIter) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
               triggerMask.push_back( indexHLT[i] ) ;
               break;
@@ -2617,9 +2618,10 @@ bool HiggsMLSelection::reloadTriggerMask()
   for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersMM.begin();fIter!=notRequiredTriggersMM.end();++fIter)
     {   
       //      std::cout << "For MM not required: " << *fIter << std::endl;
+      std::string pathName = getHLTPathForRun(runN,*fIter);
       for(unsigned int i=0; i<nameHLT->size(); i++)
         {
-          if(nameHLT->at(i).find(*fIter) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
               triggerMask.push_back( indexHLT[i] ) ;
               break;
@@ -2633,9 +2635,10 @@ bool HiggsMLSelection::reloadTriggerMask()
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersEM.begin();fIter!=requiredTriggersEM.end();++fIter)
     {   
       //      std::cout << "For EM required: " << *fIter << std::endl;
+      std::string pathName = getHLTPathForRun(runN,*fIter);
       for(unsigned int i=0; i<nameHLT->size(); i++)
         {
-          if(nameHLT->at(i).find(*fIter) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
               triggerMask.push_back( indexHLT[i] ) ;
               break;
@@ -2649,9 +2652,10 @@ bool HiggsMLSelection::reloadTriggerMask()
   for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersEM.begin();fIter!=notRequiredTriggersEM.end();++fIter)
     {   
       //      std::cout << "For EM not required: " << *fIter << std::endl;
+      std::string pathName = getHLTPathForRun(runN,*fIter);
       for(unsigned int i=0; i<nameHLT->size(); i++)
         {
-          if(nameHLT->at(i).find(*fIter) != string::npos)
+          if(nameHLT->at(i).find(pathName) != string::npos)
             {
               triggerMask.push_back( indexHLT[i] ) ;
               break;
@@ -2689,6 +2693,32 @@ void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& re
   else if(channel==mm) notRequiredTriggersMM=reqTriggers;
   else if(channel==em) notRequiredTriggersEM=reqTriggers;
   else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
+}
+
+std::string HiggsMLSelection::getHLTPathForRun(int runN, std::string fullname) {
+  TString fullName = TString(fullname.c_str());
+  TObjArray* selectionTokens = fullName.Tokenize(":");
+  if (selectionTokens->GetEntries()!=2) {
+    std::cout << "Wrong trigger strings " << selectionTokens->GetEntries() << std::endl;
+    return std::string("NOPATH");
+  }
+  TString RunRange =((TObjString*)(*selectionTokens)[0])->GetString();
+  TString HLTPathName =((TObjString*)(*selectionTokens)[1])->GetString();
+  
+  TObjArray* runs = RunRange.Tokenize("-");
+  if (runs->GetEntries()!=2) {
+    std::cout << "Wrong trigger run range strings " << runs->GetEntries() << std::endl;
+    return std::string("NOPATH");    
+  }
+  
+  const char *minStr = (((TObjString*)(*runs)[0])->GetString()).Data();
+  const char *maxStr = (((TObjString*)(*runs)[1])->GetString()).Data();
+
+  int min = atoi(minStr);
+  int max = atoi(maxStr);
+
+  if(runN>=min && runN<=max) return std::string(HLTPathName.Data());
+  else return std::string("NOPATH");
 }
 
 bool HiggsMLSelection::isPFIsolatedMuon(int muonIndex) {

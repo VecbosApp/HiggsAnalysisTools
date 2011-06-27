@@ -367,25 +367,39 @@ int main(int argc, char* argv[]) {
 //   htoww.setRequiredTriggers(mask);
   
   if(isMC) {
-    maskEE.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
-    maskMM.push_back("HLT_DoubleMu5_v1");
-    maskMM.push_back("HLT_Mu25_v1");
-    maskEM.push_back("HLT_Mu5_Ele17_v2");
-    maskEM.push_back("HLT_Mu25_v1");
+    maskEE.push_back("1-1:HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+    maskMM.push_back("1-1:HLT_DoubleMu5_v1");
+    maskMM.push_back("1-1:HLT_Mu25_v1");
+    maskEM.push_back("1-1:HLT_Mu5_Ele17_v2");
+    maskEM.push_back("1-1:HLT_Mu25_v1");
   } else {
     TString DatasetName(dataset);
     if(DatasetName.Contains("DoubleElectron")) {
-      maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
+      maskEE.push_back("1-999999:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
     } else if(DatasetName.Contains("DoubleMu")) {
-      maskMM.push_back("HLT_DoubleMu7");
-      maskNotMM.push_back("HLT_Mu24");
+      maskMM.push_back("1-164237:HLT_DoubleMu7_v");
+      maskMM.push_back("165085-999999:HLT_Mu13_Mu8_v");
+      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
+      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
+      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
+      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("MuEG")) {
-      maskEM.push_back("HLT_Mu8_Ele17_CaloIdL");
-      maskEM.push_back("HLT_Mu17_Ele8_CaloIdL");
-      maskNotEM.push_back("HLT_Mu24");
+      maskEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
+      maskEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
+      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
+      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
+      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("SingleMu")) {
-      maskMM.push_back("HLT_Mu24");
-      maskEM.push_back("HLT_Mu24");
+      maskMM.push_back("1-163261:HLT_Mu15_v");
+      maskMM.push_back("163262-164237:HLT_Mu24_v");
+      maskMM.push_back("165085-999999:HLT_Mu30_v");
+      maskMM.push_back("163262-999999:HLT_IsoMu17_v");
+
+      maskEM.push_back("1-163261:HLT_Mu15_v");
+      maskEM.push_back("163262-164237:HLT_Mu24_v");
+      maskEM.push_back("165085-999999:HLT_Mu30_v");
+      maskEM.push_back("163262-999999:HLT_IsoMu17_v");
     }
   }
 
