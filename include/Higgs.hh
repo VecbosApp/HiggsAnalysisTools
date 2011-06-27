@@ -40,8 +40,10 @@ public:
   bool reloadTriggerMask(bool newVersion=false);
   /// set the list of required trigger to produce the bitmask
   void setRequiredTriggers(const std::vector<std::string>& reqTriggers);
-  //check if the event passed HLT. To be called per event
+  /// check if the event passed HLT. To be called per event
   bool hasPassedHLT();
+  /// get the required HLT path given the current run
+  std::string getHLTPathForRun(int runN, std::string fullname);
   //get the value of the requested bits
   std::vector<int> getHLTOutput();
 

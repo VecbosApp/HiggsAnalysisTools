@@ -2695,32 +2695,6 @@ void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& re
   else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
 }
 
-std::string HiggsMLSelection::getHLTPathForRun(int runN, std::string fullname) {
-  TString fullName = TString(fullname.c_str());
-  TObjArray* selectionTokens = fullName.Tokenize(":");
-  if (selectionTokens->GetEntries()!=2) {
-    std::cout << "Wrong trigger strings " << selectionTokens->GetEntries() << std::endl;
-    return std::string("NOPATH");
-  }
-  TString RunRange =((TObjString*)(*selectionTokens)[0])->GetString();
-  TString HLTPathName =((TObjString*)(*selectionTokens)[1])->GetString();
-  
-  TObjArray* runs = RunRange.Tokenize("-");
-  if (runs->GetEntries()!=2) {
-    std::cout << "Wrong trigger run range strings " << runs->GetEntries() << std::endl;
-    return std::string("NOPATH");    
-  }
-  
-  const char *minStr = (((TObjString*)(*runs)[0])->GetString()).Data();
-  const char *maxStr = (((TObjString*)(*runs)[1])->GetString()).Data();
-
-  int min = atoi(minStr);
-  int max = atoi(maxStr);
-
-  if(runN>=min && runN<=max) return std::string(HLTPathName.Data());
-  else return std::string("NOPATH");
-}
-
 bool HiggsMLSelection::isPFIsolatedMuon(int muonIndex) {
   float eta = etaMuon[muonIndex];
   float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);

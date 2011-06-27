@@ -122,8 +122,6 @@ private:
   bool reloadTriggerMask(int runN);
   //! get the trigger answer depending on the channel
   bool hasPassedHLT(int channel);
-  //! get the required HLT path given the current run
-  std::string getHLTPathForRun(int runN, std::string fullname);
   //! hardcoded muon isolation
   bool isPFIsolatedMuon(int muonIndex);
 
