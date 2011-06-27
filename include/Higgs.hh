@@ -63,6 +63,8 @@ public:
   std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
   std::vector<int> sortMuonsByPt(std::vector<int> muons);
   TLorentzVector GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection);
+  //! comput the PF MET with charged PFcandidates = -ptL1 -ptL2 - sum_i(ptChPFcand_i)
+  TVector3 pfChargedMet(TVector3 lep1, TVector3 lep2);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 

@@ -250,15 +250,15 @@ bool Higgs::isPFJetID(float eta, float neutralHadFrac, float neutralEmFraction, 
     break;
   case loose:
     if(neutralHadFrac>=0.99 || neutralEmFraction>=0.99 || nConstituents<=1) return false;
-    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    if(fabs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
     break;
   case medium:
     if(neutralHadFrac>=0.95 || neutralEmFraction>=0.95 || nConstituents<=1) return false;
-    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    if(fabs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
     break;
   case tight:
     if(neutralHadFrac>=0.90 || neutralEmFraction>=0.90 || nConstituents<=1) return false;
-    if(abs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
+    if(fabs(eta)<2.4 && (chargedHadFraction==0 || chargedMultiplicity==0 || chargedEmFraction>=0.99) ) return false;
     break;
   default:
     std::cout << "Jet::isPFJetID(nt WP). Requested wrong Working point. Available are loose, medium, tight." << std::endl;
@@ -379,4 +379,27 @@ TLorentzVector Higgs::GetJESCorrected(TLorentzVector p4jet, const char *ScaleDir
   p4Scaled.SetPtEtaPhiE(pt,p4jet.Eta(),p4jet.Phi(),energy);
 
   return p4Scaled;
+}
+
+TVector3 Higgs::pfChargedMet(TVector3 lep1, TVector3 lep2) {
+
+  float chMetP3x = pxPFChMet[0];
+  float chMetP3y = pyPFChMet[0];
+
+  // charged PF MET has been computed with all the PF cands (inverted -p)
+  // first remove the contribution in dR = 0.1 to avoid double counting
+  for(int i=0; i<nReducedPFCand; i++) {
+    TVector3 pfCandP3(pxReducedPFCand[i],pyReducedPFCand[i],pzReducedPFCand[i]);
+    if(pfCandP3.DeltaR(lep1)<=0.1 || pfCandP3.DeltaR(lep2)<=0.1) {
+      chMetP3x += pxReducedPFCand[i];
+      chMetP3y += pyReducedPFCand[i];
+    }
+  }
+
+  // then add back the RECO leptons
+  chMetP3x -= (lep1.Px() + lep2.Px());
+  chMetP3y -= (lep1.Py() + lep2.Py());
+  
+  return TVector3(chMetP3x,chMetP3y,0.0);
+
 }
