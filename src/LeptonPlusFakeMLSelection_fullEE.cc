@@ -593,6 +593,12 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
       is0tight = true;
     }   
     
+    // to be sure: I assumed above that tight => loose. If not true, I discard the event....
+    if ( (thePositron>-1 && !isDenomFake(thePositron)) || (theElectron>-1 && !isDenomFake(theElectron)) ) {
+      theReal = -1;
+      theFake = -1;
+    } 
+
     // sanity check
     if ( (is0tight && is1tight) || (is0tight && is2tight) || (is1tight && is2tight) ) cout << "questo non puo' succedere mai" << endl;
 
