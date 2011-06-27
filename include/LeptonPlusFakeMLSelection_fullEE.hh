@@ -99,7 +99,7 @@ private:
   //! for the two leptons, find the closest one to MET in phi. if(deltaPhi(lepton-MET)<pi/2) projectedMET = MET * sin(deltaPhi(lepton-MET)); else projectedMET = MET
   float GetProjectedMet(TVector3 p1, TVector3 p2);
   //! reload the trigger mask_s_ (one per channel)
-  bool reloadTriggerMask();
+  bool reloadTriggerMask(int runN);
   //! get the trigger answer depending on the channel
   bool hasPassedHLT();
 

@@ -477,7 +477,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     
     
     // IMPORTANT: FOR DATA RELOAD THE TRIGGER MASK PER FILE WHICH IS SUPPOSED TO CONTAIN UNIFORM CONDITIONS X FILE
-    reloadTriggerMask();
+    reloadTriggerMask(runNumber);
     bool passedHLT[1];
     passedHLT[ee] = hasPassedHLT();
 
@@ -1941,16 +1941,14 @@ float LeptonPlusFakeMLSelection_fullEE::GetProjectedMet(TVector3 p1, TVector3 p2
 }
 
 /// specific for HWW that has multiple channels with different HLT requirements
-bool LeptonPlusFakeMLSelection_fullEE::reloadTriggerMask() {
+bool LeptonPlusFakeMLSelection_fullEE::reloadTriggerMask(int runN) {
 
   std::vector<int> triggerMask;
   // load the triggers required for EE
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersEE.begin();fIter!=requiredTriggersEE.end();++fIter) {
-    //      std::cout << "For EE required: " << *fIter << std::endl;
+    std::string pathName = getHLTPathForRun(runN,*fIter);
     for(unsigned int i=0; i<nameHLT->size(); i++) {
-      //if( !strcmp ((*fIter).c_str(), nameHLT->at(i).c_str() ) )
-      // nameHLT[i] has ..._vXXX
-      if(nameHLT->at(i).find(*fIter) != string::npos)
+      if(nameHLT->at(i).find(pathName) != string::npos)
 	{
 	  triggerMask.push_back( indexHLT[i] ) ;
 	  break;
