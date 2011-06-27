@@ -128,7 +128,6 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
     m_p4LeptonPlus[theChannel]  = new TLorentzVector(0.,0.,0.,0.);
     m_p4LeptonMinus[theChannel] = new TLorentzVector(0.,0.,0.,0.);
     m_p3PFMET = new TVector3(0.,0.,0.);
-    m_p3TKMET = new TVector3(0.,0.,0.);
   }    
 
   // b-veto event variables
@@ -143,7 +142,6 @@ LeptonPlusFakeMLSelection_fullEE::~LeptonPlusFakeMLSelection_fullEE(){
     delete m_p4LeptonMinus[theChannel];
   }
   delete m_p3PFMET;
-  delete m_p3TKMET;
   
   delete _selectionEE;
   delete _selectionEE_FF;
@@ -607,7 +605,6 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // MET is an event variable. Independent o the channel        
     m_p3PFMET->SetXYZ(pxPFMet[0],pyPFMet[0],pzPFMet[0]);             // the one associated to the 0th vertex      
-    m_p3TKMET->SetXYZ(pxChMetPV[0],pyChMetPV[0],pzChMetPV[0]);       //            "           "
     m_theMET = m_p3PFMET->Pt();
 
     setKinematicsEE(theReal, theFake);
@@ -805,7 +802,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP); 
     
-    myOutTreeEE -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+    myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]),
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
 			   hardestLeptonPt[ee], slowestLeptonPt[ee], hardestLeptonEta[ee], slowestLeptonEta[ee], 
 			   m_deltaEtaLeptons[ee], nPV,
@@ -1415,6 +1412,7 @@ void LeptonPlusFakeMLSelection_fullEE::setKinematicsEE(int myReal, int myFake) {
     m_metOptll[ee] = m_theMET / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
     m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
+    m_chMet[ee] = pfChargedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect()).Pt();
   }
   
 }
@@ -1435,7 +1433,6 @@ void LeptonPlusFakeMLSelection_fullEE::resetKinematics() {
     m_p4LeptonMinus[theChannel] -> SetXYZT(0,0,0,0);                                                        
     m_p4LeptonPlus[theChannel]  -> SetXYZT(0,0,0,0);
     m_p3PFMET                   -> SetXYZ(0,0,0);
-    m_p3TKMET                   -> SetXYZ(0,0,0);
     hardestLeptonPt[theChannel]   = 0.;
     slowestLeptonPt[theChannel]   = 0.;
     hardestLeptonEta[theChannel]  = 0.;
@@ -1449,6 +1446,7 @@ void LeptonPlusFakeMLSelection_fullEE::resetKinematics() {
     m_metOptll[theChannel]        = 0.;
     m_mT2[theChannel]             = 0.;
     m_projectedMet[theChannel]    = 0.;
+    m_chMet[theChannel]           = 0.;
   }
 }
 
@@ -1519,7 +1517,6 @@ void LeptonPlusFakeMLSelection_fullEE::isEleID(int eleIndex, bool *eleIdOutput, 
   thisCutBasedID->SetEOverPout( eopout );
   thisCutBasedID->SetEOverPin( eop );
   thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
-  thisCutBasedID->SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
   thisCutBasedID->SetLikelihood( eleIdLikelihoodEle[eleIndex] );
   thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
   thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
@@ -1598,17 +1595,17 @@ int LeptonPlusFakeMLSelection_fullEE::numJets( std::vector<int> eleToRemove, std
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
     float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
-    if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
+    // if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -1639,13 +1636,15 @@ int LeptonPlusFakeMLSelection_fullEE::numJets( std::vector<int> eleToRemove, std
     }
     if(foundMatch) continue;
 
-    m_goodJets.push_back(j);
-    num++;
-    
     if(pt>ETMax) {
       theLeadingJet[theChannel] = j;
       ETMax = pt;
     }
+    
+    if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
+
+    m_goodJets.push_back(j);
+    num++;
 
   }
 
@@ -1668,14 +1667,14 @@ int LeptonPlusFakeMLSelection_fullEE::numUncorrJets( std::vector<int> eleToRemov
     if(_selectionEE->getSwitch("etUncorrJetAcc") && !_selectionEE->passCut("etUncorrJetAcc", uncorrEt))   continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -1731,14 +1730,14 @@ float LeptonPlusFakeMLSelection_fullEE::bVetoJets( std::vector<int> eleToRemove,
     if(rawpt < 7.0) continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -1926,13 +1925,17 @@ float LeptonPlusFakeMLSelection_fullEE::GetProjectedMet(TVector3 p1, TVector3 p2
   if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * sin(deltaphi_pf);
   else projMET_pf = m_p3PFMET->Mag();
 
-  // calculate with TKMET                                                
+  // calculate with TKMET                                                                                                                                  
+  TVector3 p3tkMet = pfChargedMet(p1,p2);
+
   float projMET_tk = 0.0;
-  float deltaPhi1_tk = fabs(p1.DeltaPhi(*m_p3TKMET));
-  float deltaPhi2_tk = fabs(p2.DeltaPhi(*m_p3TKMET));
+  float deltaPhi1_tk = fabs(p1.DeltaPhi(p3tkMet));
+  float deltaPhi2_tk = fabs(p2.DeltaPhi(p3tkMet));
+
   float deltaphi_tk = TMath::Min(deltaPhi1_tk,deltaPhi2_tk);
-  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = m_p3TKMET->Mag() * sin(deltaphi_tk);
-  else projMET_tk = m_p3TKMET->Mag();
+
+  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = p3tkMet.Mag() * sin(deltaphi_tk);
+  else projMET_tk = p3tkMet.Mag();
 
   return TMath::Min(projMET_pf,projMET_tk);
 }
