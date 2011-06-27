@@ -851,6 +851,7 @@ public :
    TBranch        *b_pxChMetPV;   //!
    TBranch        *b_pyChMetPV;   //!
    TBranch        *b_pzChMetPV;   //!
+   TBranch        *b_isFakePV;   //!
    TBranch        *b_nMuon;   //!
    TBranch        *b_chargeMuon;   //!
    TBranch        *b_energyMuon;   //!
@@ -1454,6 +1455,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("pxChMetPV", pxChMetPV, &b_pxChMetPV);
    fChain->SetBranchAddress("pyChMetPV", pyChMetPV, &b_pyChMetPV);
    fChain->SetBranchAddress("pzChMetPV", pzChMetPV, &b_pzChMetPV);
+   fChain->SetBranchAddress("isFakePV", isFakePV, &b_isFakePV);
    fChain->SetBranchAddress("nMuon", &nMuon, &b_nMuon);
    fChain->SetBranchAddress("chargeMuon", chargeMuon, &b_chargeMuon);
    fChain->SetBranchAddress("energyMuon", energyMuon, &b_energyMuon);
