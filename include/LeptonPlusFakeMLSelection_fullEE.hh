@@ -82,6 +82,8 @@ private:
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! returns the output of the custom cut electron ID with WPXX
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
+  //! PF isolation for muons (depending on pT)
+  bool isPFIsolatedMuon(int muonIndex);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
   //! search for the hardest lepton vertex
@@ -107,10 +109,16 @@ private:
   ElectronLikelihood *LH;
 
   //! to evaluate full selection efficiency
-  Selection *_selectionEE1;
-  Selection *_selectionErrEE1;
-  CutBasedHiggsSelector CutBasedHiggsSelectionEE1;
-  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionEE1;
+  Selection *_selectionEE,     *_selectionEE_FF;
+  Selection *_selectionErrEE,  *_selectionErrEE_FF;
+  Selection *_selectionStatEE, *_selectionStatEE_FF;
+
+  CutBasedHiggsSelector CutBasedHiggsSelectionEE;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE;
+  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionEE;
+  CutBasedHiggsSelector CutBasedHiggsSelectionEE_FF;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE_FF;
+  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionEE_FF;
 
   //! be verbose during runtime
   bool _verbose;
@@ -173,7 +181,7 @@ private:
   std::vector<int> m_goodJets;
 
   //! reduced tree for event selection (on at least 2leptons events)
-  RedHiggsTree *myOutTreeEE1;
+  RedHiggsTree *myOutTreeEE;
 
   //! new variables
   int _massVal;

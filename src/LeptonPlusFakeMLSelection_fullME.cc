@@ -47,13 +47,27 @@ LeptonPlusFakeMLSelection_fullME::LeptonPlusFakeMLSelection_fullME(TTree *tree)
     }
   }
   
-  // selection efficiencies
+  // selection efficiencies: counters
   std::string fileCutsME     = higgsConfigDirMass + "emu2nuCuts.txt";
   std::string fileSwitchesME = higgsConfigDir + "2l2nuSwitches.txt";
-  CutBasedHiggsSelectionME.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION EVENT COUNTER ME"); 
-  CutBasedHiggsErrorsSelectionME.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION ERRORS ME");
-  _selectionME = CutBasedHiggsSelectionME.GetSelection();
-  _selectionErrME = CutBasedHiggsErrorsSelectionME.GetSelection();
+  CutBasedHiggsSelectionME.   Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION EVENT COUNTER ME FP"); 
+  CutBasedHiggsSelectionME_FF.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION EVENT COUNTER ME FF");
+
+  // selection efficiencies: stat errors due to number of events
+  CutBasedHiggsSelectionStatME.Configure   (fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION STAT ERRORS ME FP");
+  CutBasedHiggsSelectionStatME_FF.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION STAT ERRORS ME FF");
+
+  // selection efficiencies: stat errors due to fake rate 
+  CutBasedHiggsErrorsSelectionME.Configure   (fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION FAKE ERRORS ME");
+  CutBasedHiggsErrorsSelectionME_FF.Configure(fileCutsME.c_str(),fileSwitchesME.c_str(),"FULL SELECTION FAKE ERRORS ME FF");
+
+  // taking the selection                                                                                                                                                    
+  _selectionME        = CutBasedHiggsSelectionME.GetSelection();
+  _selectionME_FF     = CutBasedHiggsSelectionME_FF.GetSelection();
+  _selectionStatME    = CutBasedHiggsSelectionStatME.GetSelection();
+  _selectionStatME_FF = CutBasedHiggsSelectionStatME_FF.GetSelection();
+  _selectionErrME     = CutBasedHiggsErrorsSelectionME.GetSelection();
+  _selectionErrME_FF  = CutBasedHiggsErrorsSelectionME_FF.GetSelection();
 
   //  extra selection efficiencies  - to be put here not to pass the full list of leptons to the preselection class
   _selectionME->addCut("etaElectronAcc");    
@@ -134,167 +148,245 @@ LeptonPlusFakeMLSelection_fullME::~LeptonPlusFakeMLSelection_fullME(){
   delete m_p3TKMET;  
   
   delete _selectionME;
-  
+  delete _selectionME_FF;
+  delete _selectionErrME;
+  delete _selectionErrME_FF;
+  delete _selectionStatME;
+  delete _selectionStatME_FF;
+
   myOutTreeME -> save();
 }
 
-void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() { 
+// chiara
+void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() {
 
   // binning                                      
-  m_minFakePt[0] = 10.;   m_maxFakePt[0] = 15.;
-  m_minFakePt[1] = 15.;   m_maxFakePt[1] = 20.;
-  m_minFakePt[2] = 20.;   m_maxFakePt[2] = 25.;
-  m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
-  m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
+  m_eleMinFakePt[0] = 10.;   m_eleMaxFakePt[0] = 15.;              
+  m_eleMinFakePt[1] = 15.;   m_eleMaxFakePt[1] = 20.;
+  m_eleMinFakePt[2] = 20.;   m_eleMaxFakePt[2] = 25.;
+  m_eleMinFakePt[3] = 25.;   m_eleMaxFakePt[3] = 50.;
+  m_eleMinFakePt[4] = 50.;   m_eleMaxFakePt[4] = 10000.;
 
   /*
-  // fake in the barrel from QCD MC                                  
-  m_fakeRateEB[0] = 0.31852;
-  m_fakeRateEB[1] = 0.0815463;
-  m_fakeRateEB[2] = 0.0707214;
-  m_fakeRateEB[3] = 0.0588124;
-  m_fakeRateEB[4] = 0.0458273;
-
-  m_fakeRateEB_err[0] = 0.00598496;
-  m_fakeRateEB_err[1] = 0.00467256;
-  m_fakeRateEB_err[2] = 0.00381354;
-  m_fakeRateEB_err[3] = 0.00335443;
-  m_fakeRateEB_err[4] = 0.0120015;
-
-  // fake in the endcap from QCD MC                                                                     
-  m_fakeRateEE[0] = 0.208365;
-  m_fakeRateEE[1] = 0.0621581;
-  m_fakeRateEE[2] = 0.0546968; 
-  m_fakeRateEE[3] = 0.0522816; 
-  m_fakeRateEE[4] = 0.0515749;
-
-  m_fakeRateEE_err[0] = 0.00714442;
-  m_fakeRateEE_err[1] = 0.00411465;
-  m_fakeRateEE_err[2] = 0.00314477;
-  m_fakeRateEE_err[3] = 0.00299393;
-  m_fakeRateEE_err[4] = 0.0142672;
+  // fake in the barrel from Smurf selection, QCD
+  m_eleFakeRateEB[0] = 0.00154351;
+  m_eleFakeRateEB[1] = 0.00145805;   
+  m_eleFakeRateEB[2] = 0.0111048;  
+  m_eleFakeRateEB[3] = 0.0120757; 
+  m_eleFakeRateEB[4] = 0.0163262;
+  
+  m_eleFakeRateEB_err[0] = 0.000558265;
+  m_eleFakeRateEB_err[1] = 0.000357493;
+  m_eleFakeRateEB_err[2] = 0.00101031; 
+  m_eleFakeRateEB_err[3] = 0.00101347;
+  m_eleFakeRateEB_err[4] = 0.00456665;
+  
+  // fake in the endcap from Smurf selection, QCD
+  m_eleFakeRateEE[0] = 0.00149395;
+  m_eleFakeRateEE[1] = 0.00230214;
+  m_eleFakeRateEE[2] = 0.0127027;
+  m_eleFakeRateEE[3] = 0.0136544;
+  m_eleFakeRateEE[4] = 0.0163247;
+  
+  m_eleFakeRateEE_err[0] = 0.000509235; 
+  m_eleFakeRateEE_err[1] = 0.000404248;
+  m_eleFakeRateEE_err[2] = 0.000981551;
+  m_eleFakeRateEE_err[3] = 0.00100148;
+  m_eleFakeRateEE_err[4] = 0.00537643;
   */
 
-  // fake in the barrel from data (jet:30)) - with EWK subtraction (apart from bin0, where no EWK removal)
-  m_fakeRateEB[0] = 0.170909;
-  m_fakeRateEB[1] = 0.126939;
-  m_fakeRateEB[2] = 0.0829306;
-  m_fakeRateEB[3] = 0.0804465;
-  m_fakeRateEB[4] = 0.0993018;
+  // fake in the barrel from Smurf selection, ET>30
+  m_eleFakeRateEB[0] = 0.00832695;  // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEB[1] = 0.00907589;  // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEB[2] = 0.0140018;   // " " 
+  m_eleFakeRateEB[3] = 0.0136831;   // " " 
+  m_eleFakeRateEB[4] = 0.0140156;   // " " 
 
-  m_fakeRateEB_err[0] = 0.00926705;
-  m_fakeRateEB_err[1] = 0.00916318;
-  m_fakeRateEB_err[2] = 0.00703008;
-  m_fakeRateEB_err[3] = 0.00687927;
-  m_fakeRateEB_err[4] = 0.0285547;
+  m_eleFakeRateEB_err[0] = 0.00140527;
+  m_eleFakeRateEB_err[1] = 0.00107052;
+  m_eleFakeRateEB_err[2] = 0.00129764;
+  m_eleFakeRateEB_err[3] = 0.00116528;
+  m_eleFakeRateEB_err[4] = 0.00385747;
 
-  // fake in the endcap from data (jet:30) - with EWK subtraction (apart from bin0, where no EWK removal)
-  m_fakeRateEE[0] = 0.136997;
-  m_fakeRateEE[1] = 0.0628376;
-  m_fakeRateEE[2] = 0.0559572;
-  m_fakeRateEE[3] = 0.0441833;
-  m_fakeRateEE[4] = 0.0255683;
-
-  m_fakeRateEE_err[0] = 0.009566;
-  m_fakeRateEE_err[1] = 0.00691408;
-  m_fakeRateEE_err[2] = 0.00498304;
-  m_fakeRateEE_err[3] = 0.00418404;
-  m_fakeRateEE_err[4] = 0.01372;
+  // fake in the endcap from Smurf selection, ET>30
+  m_eleFakeRateEE[0] = 0.00322436;  // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEE[1] = 0.0050205;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEE[2] = 0.0108465;   // " " 
+  m_eleFakeRateEE[3] = 0.00940649;  // " " 
+  m_eleFakeRateEE[4] = 0.0163363;   // " " 
+  
+  m_eleFakeRateEE_err[0] = 0.000972436;
+  m_eleFakeRateEE_err[1] = 0.000892635;
+  m_eleFakeRateEE_err[2] = 0.0011173;
+  m_eleFakeRateEE_err[3] = 0.000971426;
+  m_eleFakeRateEE_err[4] = 0.00557363;
 
   /*
-  // fake in the barrel from data (jet:15)) - no EWK subtraction
-  m_fakeRateEB[0] = 0.176334; 
-  m_fakeRateEB[1] = 0.13883;
-  m_fakeRateEB[2] = 0.105588;
-  m_fakeRateEB[3] = 0.0916634;
-  m_fakeRateEB[4] = 0.114754;
+  // fake in the barrel from Smurf selection, ET>15
+  m_eleFakeRateEB[0] = 0.0139881;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEB[1] = 0.0142939;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEB[2] = 0.0229292;    // " " 
+  m_eleFakeRateEB[3] = 0.0167388;
+  m_eleFakeRateEB[4] = 0.014033;
+
+  m_eleFakeRateEB_err[0] = 0.000822471;
+  m_eleFakeRateEB_err[1] = 0.000839656;
+  m_eleFakeRateEB_err[2] = 0.00120164;
+  m_eleFakeRateEB_err[3] = 0.00111492;
+  m_eleFakeRateEB_err[4] = 0.00376642;
+
+  // fake in the endcap from Smurf selection, ET>15
+  m_eleFakeRateEE[0] = 0.00536005;   // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEE[1] = 0.00617585;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEE[2] = 0.0153299;    // " " 
+  m_eleFakeRateEE[3] = 0.011276;
+  m_eleFakeRateEE[4] = 0.015083;
   
-  m_fakeRateEB_err[0] = 0.00382773;
-  m_fakeRateEB_err[1] = 0.00532204;
-  m_fakeRateEB_err[2] = 0.00503719;
-  m_fakeRateEB_err[3] = 0.00573555;
-  m_fakeRateEB_err[4] = 0.028856;
-
-  // fake in the endcap from data (jet:15)
-  m_fakeRateEE[0] = 0.138302;
-  m_fakeRateEE[1] = 0.0695556;
-  m_fakeRateEE[2] = 0.0601607;
-  m_fakeRateEE[3] = 0.0486044;
-  m_fakeRateEE[4] = 0.0357143;
-
-  m_fakeRateEE_err[0] = 0.00379404;
-  m_fakeRateEE_err[1] = 0.00379232;
-  m_fakeRateEE_err[2] = 0.00310862;
-  m_fakeRateEE_err[3] = 0.00333565;
-  m_fakeRateEE_err[4] = 0.0156841;
+  m_eleFakeRateEE_err[0] = 0.000538545;
+  m_eleFakeRateEE_err[1] = 0.000566034;
+  m_eleFakeRateEE_err[2] = 0.00088218;
+  m_eleFakeRateEE_err[3] = 0.000863319;
+  m_eleFakeRateEE_err[4] = 0.00521618;
   */
 
   /*
-  // fake in the barrel from data (jet:50))
-  m_fakeRateEB[0] = 0.130682;
-  m_fakeRateEB[1] = 0.101523;
-  m_fakeRateEB[2] = 0.0920502;
-  m_fakeRateEB[3] = 0.0910973;
-  m_fakeRateEB[4] = 0.0804598;
+  // fake in the barrel from Smurf selection, ET>50
+  m_eleFakeRateEB[0] = 0.00196092;
+  m_eleFakeRateEB[1] = 0.00217957;
+  m_eleFakeRateEB[2] = 0.0112285;
+  m_eleFakeRateEB[3] = 0.00758858;
+  m_eleFakeRateEB[4] = 0.00936297;
+
+  m_eleFakeRateEB_err[0] = 0.00198052;
+  m_eleFakeRateEB_err[1] = 0.00130578;
+  m_eleFakeRateEB_err[2] = 0.00239751;
+  m_eleFakeRateEB_err[3] = 0.00130281;
+  m_eleFakeRateEB_err[4] = 0.00335611;
+
+  // fake in the endcap from Smurf selection, ET>50
+  m_eleFakeRateEE[0] = 0.00258585;
+  m_eleFakeRateEE[1] = 0.00439881;
+  m_eleFakeRateEE[2] = 0.00564385;
+  m_eleFakeRateEE[3] = 0.00496651;
+  m_eleFakeRateEE[4] = 0.0193293;
   
-  m_fakeRateEB_err[0] = 0.0254063;
-  m_fakeRateEB_err[1] = 0.021518;
-  m_fakeRateEB_err[2] = 0.0187001;
-  m_fakeRateEB_err[3] = 0.013093;
-  m_fakeRateEB_err[4] = 0.0291619;
-
-  // fake in the endcap from data (jet:50)
-  m_fakeRateEE[0] = 0.104575;
-  m_fakeRateEE[1] = 0.0753425;
-  m_fakeRateEE[2] = 0.0536913;
-  m_fakeRateEE[3] = 0.0351438;
-  m_fakeRateEE[4] = 0.0222222;
-
-  m_fakeRateEE_err[0] = 0.0247391;
-  m_fakeRateEE_err[1] = 0.0218441;
-  m_fakeRateEE_err[2] = 0.0130575;
-  m_fakeRateEE_err[3] = 0.00735984;
-  m_fakeRateEE_err[4] = 0.0155379;
+  m_eleFakeRateEE_err[0] = 0.00258838;
+  m_eleFakeRateEE_err[1] = 0.00221489;
+  m_eleFakeRateEE_err[2] = 0.00188719;
+  m_eleFakeRateEE_err[3] = 0.00123241;
+  m_eleFakeRateEE_err[4] = 0.00689591;
   */
 }
 
-// numbers from Emanuele
+// numbers from Emanuele - ~150 / pb
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronPromptRate() {
 
   // binning                                      
-  m_minPromptPt[0] = 10.;   m_maxPromptPt[0] = 15.;
-  m_minPromptPt[1] = 15.;   m_maxPromptPt[1] = 20.;
-  m_minPromptPt[2] = 20.;   m_maxPromptPt[2] = 25.;
-  m_minPromptPt[3] = 25.;   m_maxPromptPt[3] = 50.;
-  m_minPromptPt[4] = 50.;   m_maxPromptPt[4] = 10000.;
+  m_eleMinPromptPt[0] = 10.;   m_eleMaxPromptPt[0] = 15.;                    
+  m_eleMinPromptPt[1] = 15.;   m_eleMaxPromptPt[1] = 20.;
+  m_eleMinPromptPt[2] = 20.;   m_eleMaxPromptPt[2] = 25.;
+  m_eleMinPromptPt[3] = 25.;   m_eleMaxPromptPt[3] = 50.;
+  m_eleMinPromptPt[4] = 50.;   m_eleMaxPromptPt[4] = 10000.;
 
   // prompt in the barrel
-  m_promptRateEB[0] = 0.917;
-  m_promptRateEB[1] = 0.887;
-  m_promptRateEB[2] = 0.911;
-  m_promptRateEB[3] = 0.94380;
-  m_promptRateEB[4] = 0.962;
+  m_elePromptRateEB[0] = 0.917;     
+  m_elePromptRateEB[1] = 0.887;
+  m_elePromptRateEB[2] = 0.911;
+  m_elePromptRateEB[3] = 0.94380;
+  m_elePromptRateEB[4] = 0.962;
   
-  m_promptRateEB_err[0] = 0.018;
-  m_promptRateEB_err[1] = 0.009;
-  m_promptRateEB_err[2] = 0.005;
-  m_promptRateEB_err[3] = 0.00003;
-  m_promptRateEB_err[4] = 0.002;
+  m_elePromptRateEB_err[0] = 0.018;
+  m_elePromptRateEB_err[1] = 0.009;
+  m_elePromptRateEB_err[2] = 0.005;
+  m_elePromptRateEB_err[3] = 0.00003;
+  m_elePromptRateEB_err[4] = 0.002;
   
   // prompt in the endcap
-  m_promptRateEE[0] = 0.851;
-  m_promptRateEE[1] = 0.817;
-  m_promptRateEE[2] = 0.8546;
-  m_promptRateEE[3] = 0.9114;
-  m_promptRateEE[4] = 0.9482;
+  m_elePromptRateEE[0] = 0.851;
+  m_elePromptRateEE[1] = 0.817;
+  m_elePromptRateEE[2] = 0.8546;
+  m_elePromptRateEE[3] = 0.9114;
+  m_elePromptRateEE[4] = 0.9482;
 
-  m_promptRateEE_err[0] = 0.021;
-  m_promptRateEE_err[1] = 0.011;
-  m_promptRateEE_err[2] = 0.0077;
-  m_promptRateEE_err[3] = 0.0009;
-  m_promptRateEE_err[4] = 0.0041;
+  m_elePromptRateEE_err[0] = 0.021;
+  m_elePromptRateEE_err[1] = 0.011;
+  m_elePromptRateEE_err[2] = 0.0077;
+  m_elePromptRateEE_err[3] = 0.0009;
+  m_elePromptRateEE_err[4] = 0.0041;
 }
 
+void LeptonPlusFakeMLSelection_fullME::initialiseMuonFakeRate() {
+
+  // binning                                      
+  m_muonMinFakePt[0] = 10.;   m_muonMaxFakePt[0] = 15.;                
+  m_muonMinFakePt[1] = 15.;   m_muonMaxFakePt[1] = 20.;
+  m_muonMinFakePt[2] = 20.;   m_muonMaxFakePt[2] = 25.;
+  m_muonMinFakePt[3] = 25.;   m_muonMaxFakePt[3] = 50.;
+  m_muonMinFakePt[4] = 50.;   m_muonMaxFakePt[4] = 10000.;
+
+  // fake rate for muons - barrel
+  m_muonFakeRateEB[0] = 0.124862;
+  m_muonFakeRateEB[1] = 0.0851988;
+  m_muonFakeRateEB[2] = 0.124773; 
+  m_muonFakeRateEB[3] = 0.0882528; 
+  m_muonFakeRateEB[4] = 0.0256791;   
+  
+  m_muonFakeRateEB_err[0] = 0.00264137;
+  m_muonFakeRateEB_err[1] = 0.00549935;
+  m_muonFakeRateEB_err[2] = 0.0146199;
+  m_muonFakeRateEB_err[3] = 0.0166693;
+  m_muonFakeRateEB_err[4] = 0.0756251;
+  
+  // fake rate for muons - endcap
+  m_muonFakeRateEE[0] = 0.166006;
+  m_muonFakeRateEE[1] = 0.12626;
+  m_muonFakeRateEE[2] = 0.174822;
+  m_muonFakeRateEE[3] = 0.134711;    
+  m_muonFakeRateEE[4] = 0.318523;
+  
+  m_muonFakeRateEE_err[0] = 0.00561667;
+  m_muonFakeRateEE_err[1] = 0.0140856;
+  m_muonFakeRateEE_err[2] = 0.0334133;
+  m_muonFakeRateEE_err[3] = 0.0535601;
+  m_muonFakeRateEE_err[4] = 0.;
+}
+
+void LeptonPlusFakeMLSelection_fullME::initialiseMuonPromptRate() {
+
+  // binning                                      
+  m_muonMinPromptPt[0] = 10.;   m_muonMaxPromptPt[0] = 15.;               
+  m_muonMinPromptPt[1] = 15.;   m_muonMaxPromptPt[1] = 20.;
+  m_muonMinPromptPt[2] = 20.;   m_muonMaxPromptPt[2] = 25.;
+  m_muonMinPromptPt[3] = 25.;   m_muonMaxPromptPt[3] = 50.;
+  m_muonMinPromptPt[4] = 50.;   m_muonMaxPromptPt[4] = 10000.;
+
+
+  // prompt in the barrel
+  m_muonPromptRateEB[0] = 0.750083;  
+  m_muonPromptRateEB[1] = 0.796289; 
+  m_muonPromptRateEB[2] = 0.891641; 
+  m_muonPromptRateEB[3] = 0.931356; 
+  m_muonPromptRateEB[4] = 0.98458;    
+  
+  m_muonPromptRateEB_err[0] = 0.00762918;
+  m_muonPromptRateEB_err[1] = 0.00711569;
+  m_muonPromptRateEB_err[2] = 0.00669801;
+  m_muonPromptRateEB_err[3] = 0.00433128;
+  m_muonPromptRateEB_err[4] = 0.00536175;
+  
+  // prompt in the endcap
+  m_muonPromptRateEE[0] = 0.756677; 
+  m_muonPromptRateEE[1] = 0.807518; 
+  m_muonPromptRateEE[2] = 0.878232;
+  m_muonPromptRateEE[3] = 0.91396;   
+  m_muonPromptRateEE[4] = 0.976088;
+
+  m_muonPromptRateEE_err[0] = 0.0117427;
+  m_muonPromptRateEE_err[1] = 0.0106653;
+  m_muonPromptRateEE_err[2] = 0.0117499;
+  m_muonPromptRateEE_err[3] = 0.00741766;
+  m_muonPromptRateEE_err[4] = 0.0110794;
+}
 
 void LeptonPlusFakeMLSelection_fullME::Loop() {
 
@@ -303,6 +395,9 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
   
   initialiseElectronFakeRate(); 
   initialiseElectronPromptRate();
+
+  initialiseMuonFakeRate();    
+  initialiseMuonPromptRate();  
 
   // kinematics reduced tree
   std::string reducedTreeNameME = _datasetName+"-datasetME.root";
@@ -353,7 +448,17 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
 
     // -------------------------------------------------------------
-    
+    // vertex selection - we only consider the first vertex of the list ( = highest sumPT^2)
+    bool isGoodVertex = true;
+    if (nPV<1) isGoodVertex = false;
+    float rhoVtx = sqrt(PVxPV[0]*PVxPV[0] + PVyPV[0]*PVyPV[0]);
+    if ( isFakePV[0] )       isGoodVertex = false;
+    if ( ndofPV[0]<4 )       isGoodVertex = false;
+    if ( fabs(PVzPV[0])>24.) isGoodVertex = false;
+    if ( rhoVtx>2 )          isGoodVertex = false; 
+
+
+    // -------------------------------------------------------------
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
     std::pair<int,int> thePreElectrons      = getBestElectronPair_acceptance();
     std::pair<int,int> thePreMuons          = getBestMuonPair_acceptance();
@@ -368,7 +473,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     if ( thePreElectronME > -1 && thePreMuonME > -1 ) {
       float thisMaxPt  = GetPt(pxMuon[thePreMuonME],pyMuon[thePreMuonME]);
       float thisMinPt  = GetPt(pxEle[thePreElectronME],pyEle[thePreElectronME]);
-      if (thisMaxPt>20 && thisMinPt>15) m_channel[me] = true;    // fixme: hardcoded
+      if (isGoodVertex && thisMaxPt>20 && thisMinPt>10) m_channel[me] = true;    // fixme: hardcoded
     }
     
     if (_verbose) {
@@ -410,7 +515,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     std::pair<int,int> theBestIpMuon = getBestMuonPair_ip(_isolMuonsAll);     
 
     // muons passing the denominator definition                          
-    std::pair<int,int> theBestDenomMuon = getBestMuonPair_denominator();  
+    std::pair<int,int> theBestDenomMuon = getBestMuonPair_denominator();    
 
 
     // -------------------------------------------------------------
@@ -433,7 +538,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     
     // -------------------------------------------------------------
-    // the two highest pT electron and muon at this point are those I use for my analysis since they passed the full lepton selection          
+    // the two highest pT electron and muon at this point are those I use for my analysis since they passed the full lepton selection  
     int theMuon     = theBestIpMuonEle.first;
     int theElectron = theBestIpMuonEle.second;
 
@@ -442,36 +547,52 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     bool is1tight = false;
     bool is2tight = false;
 
-    // here I have two candidates with opposite sign passing the tight selection: is N2T                               
-    // I already know the muon has the highest pT
+    bool isRealMu = false;
+
+    // here I have two candidates with opposite sign passing the tight selection: is N2T 
     if (theMuon>-1 && theElectron>-1) {
-      theReal = theMuon;
-      theFake = theElectron;
+      theReal  = theMuon;
+      theFake  = theElectron;
       is2tight = true;
+      isRealMu = true;
     }
 
     // here I have only 1 candidate passing the tight selection: is N1T              
-    // I'd skip cases where the mu is not passing tight id and electron is passing
-    // this I do since I assume the real one is the highest pT one ( = the mu in this case )
     if (theMuon>-1 && theElectron<0) {
-      theReal = theMuon;
-      theFake = getBestEleDenominator(theReal);  
+      theReal  = theMuon;
+      theFake  = getBestEleDenominator(theReal);    
       is1tight = true;
+      isRealMu = true;
+    }
+    if (theElectron>-1 && theMuon<0) {
+      theReal  = theElectron;
+      theFake  = getBestMuDenominator(theReal);   
+      is1tight = true;
+      isRealMu = false;
     }
 
     // here I have zero candidates passing the tight selection: is N0T              
     if (theMuon<0 && theElectron<0) {
-      theReal = theBestDenomMuonEle.first;      // muon is real
-      theFake = theBestDenomMuonEle.second;     // electron is fake
+      theReal  = theBestDenomMuonEle.first;        
+      theFake  = theBestDenomMuonEle.second;     
       is0tight = true;
+      isRealMu = true;
     }
 
+    // to be sure: I assumed above that tight => loose. If not true, I discard the event....
+    // chiara: controlla che con questo dia risultati come prima
+    if ( (theElectron>-1 && !isEleDenomFake(theElectron)) || (theMuon>-1 && !isMuonDenomFake(theMuon)) ) {
+      theReal = -1;
+      theFake = -1;
+    } 
+    
     // sanity check
     if ( (is0tight && is1tight) || (is0tight && is2tight) || (is1tight && is2tight) ) cout << "questo non puo' succedere mai" << endl;
     
     // set of kinematics: : now I've all the final leptons 
     resetKinematics();
-    
+
+
     // MET is an event variable. Independent o the channel
     m_p3PFMET->SetXYZ(pxPFMet[0],pyPFMet[0],pzPFMet[0]);
     m_p3TKMET->SetXYZ(pxChMetPV[0],pyChMetPV[0],pzChMetPV[0]); // the one associated to the 0th vertex
@@ -479,12 +600,25 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     setKinematicsME(theReal, theFake);
 
-    // weight with the Fake -> L2 probability                
-    // with the assumption done above my fake is always the electron: I do not need the muon fake
-    float theFakePt    = GetPt(pxEle[theFake],pyEle[theFake]);
+    // weight with the Fake / Prompt -> L2 probability                
+    float theFakePt, theRealPt;
     bool  isFakeBarrel = false;
-    if ( fabs(etaEle[theFake])<1.476 ) isFakeBarrel = true;  
-    
+    bool  isRealBarrel = false;
+
+    if (isRealMu) { 
+      theFakePt = GetPt(pxEle[theFake],pyEle[theFake]);
+      theRealPt = GetPt(pxMuon[theReal],pyMuon[theReal]);
+      if ( fabs(etaEle[theFake])<1.476 ) isFakeBarrel = true;  
+      if ( fabs(etaMuon[theReal])<1.5 )  isRealBarrel = true;
+    }
+
+    if (!isRealMu) {
+      theFakePt = GetPt(pxMuon[theFake],pyMuon[theFake]);
+      theRealPt = GetPt(pxEle[theReal],pyEle[theReal]);
+      if ( fabs(etaMuon[theFake])<1.5 )  isFakeBarrel = true;  
+      if ( fabs(etaEle[theReal])<1.476 ) isRealBarrel = true;
+    }
+
     // do both F-P and F-F analysis
     float weightFP       = 1.;      
     float weightErrorFP  = 1.;
@@ -492,10 +626,45 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     float weightErrorFF  = 1.;
 
     if ( theFake>-1 && theReal>-1) { 
-      float fakerate      = getFakeRate( theFakePt, isFakeBarrel );
-      float fakerateErr   = getFakeRateError( theFakePt, isFakeBarrel );
-      float promptrate    = getPromptRate( theFakePt, isFakeBarrel );           
-      float promptrateErr = getPromptRateError( theFakePt, isFakeBarrel );      
+      
+      float fakerate1, fakerateErr1, promptrate1, promptrateErr1;
+      float fakerate2, fakerateErr2, promptrate2, promptrateErr2;
+
+      if (isRealMu) {
+	fakerate1      = getElectronFakeRate( theFakePt, isFakeBarrel );
+	fakerateErr1   = getElectronFakeRateError( theFakePt, isFakeBarrel );
+	promptrate1    = getElectronPromptRate( theFakePt, isFakeBarrel );           
+	promptrateErr1 = getElectronPromptRateError( theFakePt, isFakeBarrel );      
+	
+	fakerate2      = getMuonFakeRate( theRealPt, isRealBarrel );
+	fakerateErr2   = getMuonFakeRateError( theRealPt, isRealBarrel );
+	promptrate2    = getMuonPromptRate( theRealPt, isRealBarrel );
+	promptrateErr2 = getMuonPromptRateError( theRealPt, isRealBarrel );
+      }
+
+      if (!isRealMu) {
+	fakerate1      = getMuonFakeRate( theFakePt, isFakeBarrel );
+	fakerateErr1   = getMuonFakeRateError( theFakePt, isFakeBarrel );
+	promptrate1    = getMuonPromptRate( theFakePt, isFakeBarrel );           
+	promptrateErr1 = getMuonPromptRateError( theFakePt, isFakeBarrel );      
+	
+	fakerate2      = getElectronFakeRate( theRealPt, isRealBarrel );
+	fakerateErr2   = getElectronFakeRateError( theRealPt, isRealBarrel );
+	promptrate2    = getElectronPromptRate( theRealPt, isRealBarrel );
+	promptrateErr2 = getElectronPromptRateError( theRealPt, isRealBarrel );
+      }
+
+      /*
+      cout << "-----------------------------" << endl;
+      cout << endl;
+      cout << is0tight << " " << is1tight << " " << is2tight << " " << isRealMu << endl;
+      cout << endl;
+      cout << fakerate1   << " " << fakerateErr1   << endl;
+      cout << fakerate2   << " " << fakerateErr2   << endl;
+      cout << promptrate1 << " " << promptrateErr1 << endl;
+      cout << promptrate2 << " " << promptrateErr2 << endl;
+      cout << endl;
+      */
 
       float thisPartWeightFP    = 1.;
       float thisPartWeightErrFP = 1.;
@@ -503,54 +672,36 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
       float thisPartWeightErrFF = 1.;
       
       if (is0tight) {
-	// for F-P
-	thisPartWeightFP = (fakerate*promptrate) * ( ( -2.*fakerate*promptrate) / ( (promptrate - fakerate)*(promptrate - fakerate) ) );
-	float d1F = (4*fakerate*pow(promptrate,3)) / ( pow((fakerate-promptrate),3) );
-	float d1P = (4*promptrate*pow(fakerate,3)) / ( pow((fakerate-promptrate),3) );
-	thisPartWeightErrFP = sqrt(d1F*fakerateErr*d1F*fakerateErr + d1P*promptrateErr*d1P*promptrateErr);
-	
-	// for F-F
-	thisPartWeightFF = (fakerate*fakerate) * ( (promptrate*promptrate) / ( (promptrate - fakerate)*(promptrate - fakerate) ) );
-	float d2F = -(2*fakerate*pow(promptrate,3)) / ( pow((fakerate-promptrate),3) );
-	float d2P =  (2*promptrate*pow(fakerate,3)) / ( pow((fakerate-promptrate),3) );
-	thisPartWeightErrFF = sqrt(d2F*fakerateErr*d2F*fakerateErr + d2P*promptrateErr*d2P*promptrateErr);
+	float myFactor = 1/((promptrate1-fakerate1)*(promptrate2-fakerate2));
+        // for F-P 
+        thisPartWeightFP = -( fakerate1*promptrate2*promptrate1*fakerate2 + fakerate2*promptrate1*promptrate2*fakerate1 )*myFactor;
+        // for F-F
+        thisPartWeightFF = ( promptrate1*promptrate2*fakerate1*fakerate2 )*myFactor;
       }
-
-       if (is1tight) {
-	// for F-P
-	thisPartWeightFP = (fakerate*promptrate) * (( fakerate*(1.-promptrate) + promptrate*(1.-fakerate) ) / ( (promptrate - fakerate)*(promptrate - fakerate) ));
-	float d1F = ((promptrate*promptrate)*(-promptrate + fakerate*(-3+4*promptrate))) / ( pow((fakerate-promptrate),3) );
-	float d1P = ((fakerate*fakerate)*(fakerate + promptrate*(3-4*fakerate))) / ( pow((fakerate-promptrate),3) );
-	thisPartWeightErrFP = sqrt(d1F*fakerateErr*d1F*fakerateErr + d1P*promptrateErr*d1P*promptrateErr);
-
-	// for F-F 
-	thisPartWeightFF = (fakerate*fakerate) * ( (-promptrate*(1.-promptrate)) / ( (promptrate - fakerate)*(promptrate - fakerate) ) );
-	float d2F = (2*fakerate*(promptrate-1)*pow(promptrate,2))/( pow((fakerate-promptrate),3) );
-	float d2P = (fakerate*fakerate*(fakerate+promptrate-2*fakerate*promptrate)) / ( pow((fakerate-promptrate),3) );
-	thisPartWeightErrFF = sqrt(d2F*fakerateErr*d2F*fakerateErr + d2P*promptrateErr*d2P*promptrateErr);
-       }
-       
-       if (is2tight) {
-	 // for F-P
-	 thisPartWeightFP    = (fakerate*promptrate) * (( -2*(1.-promptrate)*(1.-fakerate) ) / ( (promptrate - fakerate)*(promptrate - fakerate) ));
-	 float d1P = -( 2*(fakerate-1)*fakerate*(-promptrate + fakerate*(-1 + 2*promptrate))) / ( pow((fakerate-promptrate),3) );
-	 float d1F =  ( 2*(promptrate-1)*promptrate*(-promptrate + fakerate*(-1 + 2*promptrate))) / ( pow((fakerate-promptrate),3) );
-	 thisPartWeightErrFP = sqrt(d1F*fakerateErr*d1F*fakerateErr + d1P*promptrateErr*d1P*promptrateErr);
-	 
-	 // for F-F
-	 thisPartWeightFF    = (fakerate*fakerate) * ( ( (1.-promptrate)*(1.-promptrate) ) / ( (promptrate - fakerate)*(promptrate - fakerate) ) );
-	 float d2F = -(2*fakerate*(promptrate-1)*(promptrate-1)*promptrate) / ( pow((fakerate-promptrate),3) );
-	 float d2P =  (2*(fakerate-1)*pow(fakerate,2)*(promptrate-1)) / ( pow((fakerate-promptrate),3) ); 
-	 thisPartWeightErrFF = sqrt(d2F*fakerateErr*d2F*fakerateErr + d2P*promptrateErr*d2P*promptrateErr);
-       }
-
-       // for F-P
-       weightFP      = tmpWeight * thisPartWeightFP;
-       weightErrorFP = tmpWeight * thisPartWeightErrFP;   
-       // for F-F
-       weightFF      = tmpWeight * thisPartWeightFF;
-       weightErrorFF = tmpWeight * thisPartWeightErrFF;   
-       
+      
+      if (is1tight) {
+        double myFactor = 1/((promptrate1-fakerate1)*(promptrate2-fakerate2));
+        // for F-P
+        thisPartWeightFP = ( fakerate1*(1-promptrate2)*promptrate1*fakerate2 + promptrate1*(1-fakerate2)*fakerate1*promptrate2 )*myFactor;
+        // for F-F
+        thisPartWeightFF = -( promptrate1*(1-promptrate2)*fakerate1*fakerate2 )*myFactor;
+      }
+      
+      if (is2tight) {
+	double myFactor = 1/((promptrate1-fakerate1)*(promptrate2-fakerate2));
+        // for F-P 
+        thisPartWeightFP = -( (promptrate2*fakerate1*(1-promptrate1)*(1-fakerate2)) + (promptrate1*fakerate2*(1-promptrate2)*(1-fakerate1)) )*myFactor;
+        // for F-F
+        thisPartWeightFF = ( fakerate1*fakerate2*(1-promptrate1)*(1-promptrate2) )*myFactor;
+      }
+      
+      // for F-P
+      weightFP      = tmpWeight * thisPartWeightFP;
+      weightErrorFP = tmpWeight * thisPartWeightErrFP;   
+      // for F-F
+      weightFF      = tmpWeight * thisPartWeightFF;
+      weightErrorFF = tmpWeight * thisPartWeightErrFF;   
+      
     } else {
       
       weightFP      = tmpWeight;
@@ -560,9 +711,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     }
 
     // -------------------------------------------------------------    
-    // look for PV in the event (there is always at least 1 PV)
-    m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
-    
     int njets[1], nuncorrjets[1];
     float dphiLLJ[1], btag[1];
     int nsoftmu[1],nextraleptons[1];
@@ -586,12 +734,12 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     }
 
 
+
+
+
     // ---------------------------------------
-    // ME
-    // float forStatErr = weightFP*weightFP;                  // chiara: this is to estimate the statistical error
-    // CutBasedHiggsSelectionME.SetWeight(forStatErr);        // chiara: this is to estimate the statistical error
-    CutBasedHiggsSelectionME.SetWeight(weightFP);             // chiara: this is to estimate FP               
-    // CutBasedHiggsSelectionME.SetWeight(weightFF);          // chiara: this is to estimate FF               
+    // filling counter for FP ( = W+jets)      
+    CutBasedHiggsSelectionME.SetWeight(weightFP);             
     CutBasedHiggsSelectionME.SetMcTruth(1);
     CutBasedHiggsSelectionME.SetHLT(passedHLT[me]);               
     CutBasedHiggsSelectionME.SetIsChannel(m_channel[me]);     
@@ -614,7 +762,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     CutBasedHiggsSelectionME.SetHighElePt(hardestLeptonPt[me]); 
     CutBasedHiggsSelectionME.SetLowElePt(slowestLeptonPt[me]);  
-    CutBasedHiggsSelectionME.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT only on electrons
+    CutBasedHiggsSelectionME.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
 
     CutBasedHiggsSelectionME.SetNJets(njets[me]);
     CutBasedHiggsSelectionME.SetNUncorrJets(nuncorrjets[me]);
@@ -628,7 +776,8 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
     CutBasedHiggsSelectionME.SetInvMass(m_mll[me]);
     CutBasedHiggsSelectionME.SetDetaLeptons(m_deltaEtaLeptons[me]);
-    CutBasedHiggsSelectionME.SetWWInvMass(2.*m_transvMass[me]/_massVal);
+    // CutBasedHiggsSelectionME.SetWWInvMass(2.*m_transvMass[me]/_massVal);
+    CutBasedHiggsSelectionME.SetWWInvMass(m_transvMass[me]);
 
     bool isSelectedME           = CutBasedHiggsSelectionME.output();    
     bool selUpToFinalLeptonsME  = CutBasedHiggsSelectionME.outputUpToFinalLeptons();
@@ -636,6 +785,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     bool selUpToUncorrJetVetoME = CutBasedHiggsSelectionME.outputUpToUncorrJetVeto();
     bool selPreDeltaPhiME       = CutBasedHiggsSelectionME.outputPreDeltaPhi();
 
+    // latinos
     bool outputStep0  = CutBasedHiggsSelectionME.outputStep0();
     bool outputStep1  = CutBasedHiggsSelectionME.outputStep1();
     bool outputStep2  = CutBasedHiggsSelectionME.outputStep2();
@@ -664,8 +814,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
 
     // filling the tree
-    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);   // chiara
-    // myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFF);
+    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);  
 
     myOutTreeME -> fillAll(GetPt(pxTCMet[0],pyTCMet[0]), GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
@@ -680,9 +829,134 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
     
-     // for errors                
-    CutBasedHiggsErrorsSelectionME.SetWeight(weightErrorFP);      // chiara               
-    // CutBasedHiggsErrorsSelectionME.SetWeight(weightErrorFF);   // chiara               
+
+
+
+
+    // ----------------------------------------------------------------
+    // filling counter for FF ( = QCD)      
+    CutBasedHiggsSelectionME_FF.SetWeight(weightFF);   
+    CutBasedHiggsSelectionME_FF.SetMcTruth(1);
+    CutBasedHiggsSelectionME_FF.SetHLT(passedHLT[me]);               
+    CutBasedHiggsSelectionME_FF.SetIsChannel(m_channel[me]);   
+    CutBasedHiggsSelectionME_FF.SetElectronId(theReal);
+    CutBasedHiggsSelectionME_FF.SetPositronId(theFake);
+    CutBasedHiggsSelectionME_FF.SetElectronIsolation(theReal);
+    CutBasedHiggsSelectionME_FF.SetPositronIsolation(theFake);
+    CutBasedHiggsSelectionME_FF.SetElectronConvRejection(theReal);
+    CutBasedHiggsSelectionME_FF.SetPositronConvRejection(theFake);
+    CutBasedHiggsSelectionME_FF.SetElectronIp(theReal);
+    CutBasedHiggsSelectionME_FF.SetPositronIp(theFake);
+    thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
+    if (thisMaxPtIpME<20)   { 
+      CutBasedHiggsSelectionME_FF.SetElectronIp(-1);
+      CutBasedHiggsSelectionME_FF.SetPositronIp(-1);
+    }
+    CutBasedHiggsSelectionME_FF.SetHighElePt(hardestLeptonPt[me]); 
+    CutBasedHiggsSelectionME_FF.SetLowElePt(slowestLeptonPt[me]);  
+    CutBasedHiggsSelectionME_FF.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
+    CutBasedHiggsSelectionME_FF.SetNJets(njets[me]);
+    CutBasedHiggsSelectionME_FF.SetNUncorrJets(nuncorrjets[me]);
+    CutBasedHiggsSelectionME_FF.SetBTagJets(btag[me]);
+    CutBasedHiggsSelectionME_FF.SetNSoftMuons(nsoftmu[me]);
+    CutBasedHiggsSelectionME_FF.SetNExtraLeptons(nextraleptons[me]);
+    CutBasedHiggsSelectionME_FF.SetMet(m_theMET);					
+    CutBasedHiggsSelectionME_FF.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsSelectionME_FF.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsSelectionME_FF.SetDeltaPhiLLJet(dphiLLJ[me]);   
+    CutBasedHiggsSelectionME_FF.SetDeltaPhi(m_deltaPhi[me]);
+    CutBasedHiggsSelectionME_FF.SetInvMass(m_mll[me]);
+    CutBasedHiggsSelectionME_FF.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionME.SetWWInvMass(m_transvMass[me]);
+    bool isSelectedME_FF = CutBasedHiggsSelectionME_FF.output();
+
+
+
+    // ----------------------------------------------------------------
+    // filling counters for statistical errors due to data / mc - FP      
+    float forStatErrFP = weightFP*weightFP;
+    CutBasedHiggsSelectionStatME.SetWeight(forStatErrFP);
+    CutBasedHiggsSelectionStatME.SetMcTruth(1);
+    CutBasedHiggsSelectionStatME.SetHLT(passedHLT[me]);               
+    CutBasedHiggsSelectionStatME.SetIsChannel(m_channel[me]);   
+    CutBasedHiggsSelectionStatME.SetElectronId(theReal);
+    CutBasedHiggsSelectionStatME.SetPositronId(theFake);
+    CutBasedHiggsSelectionStatME.SetElectronIsolation(theReal);
+    CutBasedHiggsSelectionStatME.SetPositronIsolation(theFake);
+    CutBasedHiggsSelectionStatME.SetElectronConvRejection(theReal);
+    CutBasedHiggsSelectionStatME.SetPositronConvRejection(theFake);
+    CutBasedHiggsSelectionStatME.SetElectronIp(theReal);
+    CutBasedHiggsSelectionStatME.SetPositronIp(theFake);
+    thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
+    if (thisMaxPtIpME<20)   { 
+      CutBasedHiggsSelectionStatME.SetElectronIp(-1);
+      CutBasedHiggsSelectionStatME.SetPositronIp(-1);
+    }
+    CutBasedHiggsSelectionStatME.SetHighElePt(hardestLeptonPt[me]); 
+    CutBasedHiggsSelectionStatME.SetLowElePt(slowestLeptonPt[me]);  
+    CutBasedHiggsSelectionStatME.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
+    CutBasedHiggsSelectionStatME.SetNJets(njets[me]);
+    CutBasedHiggsSelectionStatME.SetNUncorrJets(nuncorrjets[me]);
+    CutBasedHiggsSelectionStatME.SetBTagJets(btag[me]);
+    CutBasedHiggsSelectionStatME.SetNSoftMuons(nsoftmu[me]);
+    CutBasedHiggsSelectionStatME.SetNExtraLeptons(nextraleptons[me]);
+    CutBasedHiggsSelectionStatME.SetMet(m_theMET);					
+    CutBasedHiggsSelectionStatME.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsSelectionStatME.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsSelectionStatME.SetDeltaPhiLLJet(dphiLLJ[me]);   
+    CutBasedHiggsSelectionStatME.SetDeltaPhi(m_deltaPhi[me]);
+    CutBasedHiggsSelectionStatME.SetInvMass(m_mll[me]);
+    CutBasedHiggsSelectionStatME.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionStatME.SetWWInvMass(m_transvMass[me]);
+    bool isSelectedStatME = CutBasedHiggsSelectionStatME.output();
+
+
+
+
+
+    // ----------------------------------------------------------------
+    // filling counters for statistical errors due to data / mc - FF      
+    float forStatErrFF = weightFF*weightFF;
+    CutBasedHiggsSelectionStatME_FF.SetWeight(forStatErrFF);
+    CutBasedHiggsSelectionStatME_FF.SetMcTruth(1);
+    CutBasedHiggsSelectionStatME_FF.SetHLT(passedHLT[me]);               
+    CutBasedHiggsSelectionStatME_FF.SetIsChannel(m_channel[me]);   
+    CutBasedHiggsSelectionStatME_FF.SetElectronId(theReal);
+    CutBasedHiggsSelectionStatME_FF.SetPositronId(theFake);
+    CutBasedHiggsSelectionStatME_FF.SetElectronIsolation(theReal);
+    CutBasedHiggsSelectionStatME_FF.SetPositronIsolation(theFake);
+    CutBasedHiggsSelectionStatME_FF.SetElectronConvRejection(theReal);
+    CutBasedHiggsSelectionStatME_FF.SetPositronConvRejection(theFake);
+    CutBasedHiggsSelectionStatME_FF.SetElectronIp(theReal);
+    CutBasedHiggsSelectionStatME_FF.SetPositronIp(theFake);
+    thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
+    if (thisMaxPtIpME<20)   { 
+      CutBasedHiggsSelectionStatME_FF.SetElectronIp(-1);
+      CutBasedHiggsSelectionStatME_FF.SetPositronIp(-1);
+    }
+    CutBasedHiggsSelectionStatME_FF.SetHighElePt(hardestLeptonPt[me]); 
+    CutBasedHiggsSelectionStatME_FF.SetLowElePt(slowestLeptonPt[me]);  
+    CutBasedHiggsSelectionStatME_FF.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
+    CutBasedHiggsSelectionStatME_FF.SetNJets(njets[me]);
+    CutBasedHiggsSelectionStatME_FF.SetNUncorrJets(nuncorrjets[me]);
+    CutBasedHiggsSelectionStatME_FF.SetBTagJets(btag[me]);
+    CutBasedHiggsSelectionStatME_FF.SetNSoftMuons(nsoftmu[me]);
+    CutBasedHiggsSelectionStatME_FF.SetNExtraLeptons(nextraleptons[me]);
+    CutBasedHiggsSelectionStatME_FF.SetMet(m_theMET);					
+    CutBasedHiggsSelectionStatME_FF.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsSelectionStatME_FF.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsSelectionStatME_FF.SetDeltaPhiLLJet(dphiLLJ[me]);   
+    CutBasedHiggsSelectionStatME_FF.SetDeltaPhi(m_deltaPhi[me]);
+    CutBasedHiggsSelectionStatME_FF.SetInvMass(m_mll[me]);
+    CutBasedHiggsSelectionStatME_FF.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionStatME_FF.SetWWInvMass(m_transvMass[me]);
+    bool isSelectedStatME_FF = CutBasedHiggsSelectionStatME_FF.output();
+
+
+
+    // ----------------------------------------------------------------------------------------                                                                              
+    // to compute statistical errors due to fake rate - FP                                          
+    CutBasedHiggsErrorsSelectionME.SetWeight(weightErrorFP);
     CutBasedHiggsErrorsSelectionME.SetMcTruth(1);
     CutBasedHiggsErrorsSelectionME.SetHLT(passedHLT[me]);               
     CutBasedHiggsErrorsSelectionME.SetIsChannel(m_channel[me]);   
@@ -694,17 +968,14 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     CutBasedHiggsErrorsSelectionME.SetPositronConvRejection(theFake);
     CutBasedHiggsErrorsSelectionME.SetElectronIp(theReal);
     CutBasedHiggsErrorsSelectionME.SetPositronIp(theFake);
-
-    // checking if the highest pT lepton at the end has pT>20. MU is the hardest in ME
     thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
     if (thisMaxPtIpME<20)   { 
       CutBasedHiggsErrorsSelectionME.SetElectronIp(-1);
       CutBasedHiggsErrorsSelectionME.SetPositronIp(-1);
     }
-
     CutBasedHiggsErrorsSelectionME.SetHighElePt(hardestLeptonPt[me]); 
     CutBasedHiggsErrorsSelectionME.SetLowElePt(slowestLeptonPt[me]);  
-    CutBasedHiggsErrorsSelectionME.SetExtraSlowLeptonPTCut(15.0); // enforce the min pT only on electrons
+    CutBasedHiggsErrorsSelectionME.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
     CutBasedHiggsErrorsSelectionME.SetNJets(njets[me]);
     CutBasedHiggsErrorsSelectionME.SetNUncorrJets(nuncorrjets[me]);
     CutBasedHiggsErrorsSelectionME.SetBTagJets(btag[me]);
@@ -717,8 +988,47 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     CutBasedHiggsErrorsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
     CutBasedHiggsErrorsSelectionME.SetInvMass(m_mll[me]);
     CutBasedHiggsErrorsSelectionME.SetDetaLeptons(m_deltaEtaLeptons[me]);
-    CutBasedHiggsErrorsSelectionME.SetWWInvMass(2.*m_transvMass[me]/_massVal);
+    CutBasedHiggsSelectionME.SetWWInvMass(m_transvMass[me]);
     bool isSelectedErrorME = CutBasedHiggsErrorsSelectionME.output();
+
+
+
+    // ----------------------------------------------------------------------------------------                                                                              
+    // to compute statistical errors due to fake rate - FF                                        
+    CutBasedHiggsErrorsSelectionME_FF.SetWeight(weightErrorFF);
+    CutBasedHiggsErrorsSelectionME_FF.SetMcTruth(1);
+    CutBasedHiggsErrorsSelectionME_FF.SetHLT(passedHLT[me]);               
+    CutBasedHiggsErrorsSelectionME_FF.SetIsChannel(m_channel[me]);   
+    CutBasedHiggsErrorsSelectionME_FF.SetElectronId(theReal);
+    CutBasedHiggsErrorsSelectionME_FF.SetPositronId(theFake);
+    CutBasedHiggsErrorsSelectionME_FF.SetElectronIsolation(theReal);
+    CutBasedHiggsErrorsSelectionME_FF.SetPositronIsolation(theFake);
+    CutBasedHiggsErrorsSelectionME_FF.SetElectronConvRejection(theReal);
+    CutBasedHiggsErrorsSelectionME_FF.SetPositronConvRejection(theFake);
+    CutBasedHiggsErrorsSelectionME_FF.SetElectronIp(theReal);
+    CutBasedHiggsErrorsSelectionME_FF.SetPositronIp(theFake);
+    thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
+    if (thisMaxPtIpME<20)   { 
+      CutBasedHiggsErrorsSelectionME_FF.SetElectronIp(-1);
+      CutBasedHiggsErrorsSelectionME_FF.SetPositronIp(-1);
+    }
+    CutBasedHiggsErrorsSelectionME_FF.SetHighElePt(hardestLeptonPt[me]); 
+    CutBasedHiggsErrorsSelectionME_FF.SetLowElePt(slowestLeptonPt[me]);  
+    CutBasedHiggsErrorsSelectionME_FF.SetExtraSlowLeptonPTCut(10.0); // enforce the min pT only on electrons
+    CutBasedHiggsErrorsSelectionME_FF.SetNJets(njets[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetNUncorrJets(nuncorrjets[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetBTagJets(btag[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetNSoftMuons(nsoftmu[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetNExtraLeptons(nextraleptons[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetMet(m_theMET);					
+    CutBasedHiggsErrorsSelectionME_FF.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetDeltaPhiLLJet(dphiLLJ[me]);   
+    CutBasedHiggsErrorsSelectionME_FF.SetDeltaPhi(m_deltaPhi[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetInvMass(m_mll[me]);
+    CutBasedHiggsErrorsSelectionME_FF.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionME_FF.SetWWInvMass(m_transvMass[me]);
+    bool isSelectedErrorME_FF = CutBasedHiggsErrorsSelectionME_FF.output();
   }
 }
 
@@ -730,11 +1040,26 @@ void LeptonPlusFakeMLSelection_fullME::displayEfficiencies(std::string datasetNa
   }
   
   std::cout << "--------------------------------" << std::endl;
-  std::cout << "=== RATE ESTIMATED FROM FAKE RATE FOR ME SELECTION ===: " << std::endl;
+  std::cout << "=== RATE ESTIMATED FROM FAKE RATE FOR PF SELECTION ===: " << std::endl;
   CutBasedHiggsSelectionME.displayEfficiencies(datasetName);
 
-  std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM FAKE RATE FOR ME SELECTION ===" << std::endl;
+  std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM FAKE RATE FOR PF SELECTION ===" << std::endl;
   CutBasedHiggsErrorsSelectionME.displayEfficiencies(datasetName);
+
+  std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM STATISTICS FOR PF SELECTION ===" << std::endl;
+  CutBasedHiggsSelectionStatME.displayEfficiencies(datasetName);
+
+  std::cout << "--------------------------------" << std::endl;
+  std::cout << "=== RATE ESTIMATED FROM FAKE RATE FOR FF SELECTION ===: " << std::endl;
+  CutBasedHiggsSelectionME_FF.displayEfficiencies(datasetName);
+
+  std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM FAKE RATE FOR FF SELECTION ===" << std::endl;
+  CutBasedHiggsErrorsSelectionME_FF.displayEfficiencies(datasetName);
+
+  std::cout << "=== RATE UNCERTAINTY ESTIMATED FROM STATISTICS FOR FF SELECTION ===" << std::endl;
+  CutBasedHiggsSelectionStatME_FF.displayEfficiencies(datasetName);
+  std::cout << "--------------------------------" << std::endl;
+
 
   // simple cuts based or like based ele id
   if (!_selectionME->getSwitch("asymmetricID")) {
@@ -800,6 +1125,14 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_id( std
     }
 
     if (!theElectronID) continue;
+
+    // further requests if we apply the smurf ID and pT<20
+    TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
+    if( stringIdLow.Contains("Smurf") ) {
+      if ( thisPt<20  ) {
+	if ( fbremEle[iEle]<0.15 && !(fabs(etaEle[iEle])<1.0 && eSuperClusterOverPEle[iEle]>0.95) ) continue;  // hardcoded
+      }
+    }
 
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
@@ -881,21 +1214,25 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_ip( std
   int theLep2 = -1;
   float maxPtLep1 = -1000.;
   float maxPtLep2 = -1000.;
-
+  
   _ipEleAll.clear();
 
   for (int iEle=0; iEle<convEle.size(); iEle++) {
     int thisEle = convEle[iEle];
 
     int gsfTrack = gsfTrackIndexEle[thisEle]; 
-    float d3dEle = impactPar3DGsfTrack[gsfTrack];
-    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) continue;   
+    // float d3dEle = impactPar3DGsfTrack[gsfTrack];
+    // if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) continue;   
+    float dxyEle = transvImpactParGsfTrack[gsfTrack];
+    float dzEle  = PVzPV[0] - trackVzGsfTrack[gsfTrack];   
+    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",dxyEle)) ) continue;
+    if (_selectionME->getSwitch("electronDz") && (!_selectionME->passCut("electronDz",dzEle)) )  continue;
 
     float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
+    
     _ipEleAll.push_back(thisEle);  
   }
   _ipEleAll = sortElectronsByPt(_ipEleAll);
@@ -1004,19 +1341,20 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_isol( std::
   float maxPtLep2 = -1000.;
    
   _isolMuonsAll.clear();
-
+  
   for(int iMu=0; iMu<idMu.size(); iMu++) {
-
+    
     int thisMu   = idMu[iMu];
     float thisPt = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
 
     // fixme: diverso da prima: rimuovevo il secondo leptone....
-    float muonTrackerForGlobal = sumPt03Muon[thisMu];
-    float muonEcalForGlobal    = emEt03Muon[thisMu];
-    float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
-    float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float theRelMuonIso        = theMuonGlobalSum/thisPt; 
-    if(_selectionME->getSwitch("muGlobalIso") && !_selectionME->passCut("muGlobalIso",theRelMuonIso)) continue;  
+    // float muonTrackerForGlobal = sumPt03Muon[thisMu];
+    // float muonEcalForGlobal    = emEt03Muon[thisMu];
+    // float muonHcalForGlobal    = hadEt03Muon[thisMu]; 
+    // float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
+    // float theRelMuonIso        = theMuonGlobalSum/thisPt; 
+    // if(_selectionME->getSwitch("muGlobalIso") && !_selectionME->passCut("muGlobalIso",theRelMuonIso)) continue;  
+    if( ! isPFIsolatedMuon(thisMu) ) continue;
 
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
@@ -1041,18 +1379,26 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_ip( std::ve
   for(int iMu=0; iMu<isoMu.size(); iMu++) {
 
     int thisMu = isoMu[iMu];
+
+    float thisPt = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
     float dxyMuon = transvImpactParTrack[ctfMuon];
     float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];   
-    if (_selectionME->getSwitch("muonIP") && (!_selectionME->passCut("muonIP",dxyMuon)) ) continue;   
+    // if (_selectionME->getSwitch("muonIP") && (!_selectionME->passCut("muonIP",dxyMuon)) ) continue;   
+    // if (_selectionME->getSwitch("muonDz") && (!_selectionME->passCut("muonDz",dzMuon)) )  continue;   
+    if (thisPt>20)    // hardcoded
+      if (_selectionME->getSwitch("muonIPhighPT") && (!_selectionME->passCut("muonIPhighPT",dxyMuon)) ) continue;   
+    
+    if (thisPt<20)    // hardcoded
+      if (_selectionME->getSwitch("muonIPlowPT")  && (!_selectionME->passCut("muonIPlowPT",dxyMuon)) ) continue;   
+    
     if (_selectionME->getSwitch("muonDz") && (!_selectionME->passCut("muonDz",dzMuon)) )  continue;   
 
-    float thisPt     = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
-
+    
     _ipMuonsAll.push_back(thisMu);   
   }
   _ipMuonsAll = sortMuonsByPt(_ipMuonsAll);
@@ -1109,12 +1455,12 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonElePair(std::vec
   return std::make_pair(theMuonA,theEle); 
 }
 
-int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // this requires not only denom ok, but NOT tight!
+int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // this requires not only denom ok, but also NOT tight!
   
   int theFake=-1;
   
   float maxPtFake=-1000.;
-
+  
   float theRealPt = GetPt(pxMuon[realMuon],pyMuon[realMuon]);    
 
   for(int iele=0; iele<nEle; iele++) {
@@ -1125,7 +1471,7 @@ int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // 
 
     if (thisElePt>theRealPt) continue;
 
-    bool isGoodDenom = isEleDenomFake(iele);
+    bool isGoodDenom = isEleDenomFake(iele);   
     if (!isGoodDenom) continue;
     
     // removing candidates passing the tight selection
@@ -1138,11 +1484,21 @@ int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // 
       if (thisElePt<20)  isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
     if (!theElectronID)      isTight = false;
+    TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
+    if( stringIdLow.Contains("Smurf") ) {
+      if ( thisElePt<20  ) {
+	if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
+      }
+    }
     if (!theElectronIsol)    isTight = false; 
     if (!theElectronConvRej) isTight = false;
     int gsfTrack = gsfTrackIndexEle[iele]; 
-    float d3dEle = impactPar3DGsfTrack[gsfTrack];
-    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) isTight = false;
+    // float d3dEle = impactPar3DGsfTrack[gsfTrack];
+    // if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) isTight = false;
+    float dxyEle = transvImpactParGsfTrack[gsfTrack];
+    float dzEle  = PVzPV[0] - trackVzGsfTrack[gsfTrack];   
+    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",dxyEle)) ) isTight = false;
+    if (_selectionME->getSwitch("electronDz") && (!_selectionME->passCut("electronDz",dzEle)) )  isTight = false;
     if (isTight) continue;
 
     if( thisElePt > maxPtFake ) { maxPtFake = thisElePt; theFake=iele; }
@@ -1157,47 +1513,74 @@ bool LeptonPlusFakeMLSelection_fullME::isEleDenomFake(int theEle) {
   bool isGoodDenom = true;
   TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
   
-  // acceptance	   
-  if( fabs(p3Ele.Eta()) > 2.5 ) isGoodDenom = false;
-  if( p3Ele.Pt() < 15. )        isGoodDenom = false;   
+  // acceptance	         
+  if( p3Ele.Eta() > 2.5 ) isGoodDenom = false;
+  if( p3Ele.Pt() < 10. )  isGoodDenom = false;    
   
-  // only ecal driven                        
+  // taking the supercluster     
+  int sc;
   bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
-  if(!ecalDriven) isGoodDenom = false;
+  if( ecalDriven) sc = superClusterIndexEle[theEle];
+  if(!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
+  if ( sc < 0 ) isGoodDenom = false;
   
-  // barrel or endcap       
+  // barrel or endcap 
   bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
   
-  // isolation                                
-  float combinedIso;
-  if (isEleEB)  combinedIso = dr03TkSumPtEle[theEle] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[theEle]-1.0) + dr03HcalTowerSumEtFullConeEle[theEle];
-  if (!isEleEB) combinedIso = dr03TkSumPtEle[theEle] + dr03EcalRecHitSumEtEle[theEle] + dr03HcalTowerSumEtFullConeEle[theEle];
-  float corrCombinedIso = (combinedIso - rhoFastjet*TMath::Pi()*0.3*0.3) / p3Ele.Pt();
-  if ( corrCombinedIso>0.15 ) isGoodDenom = false;
-  
-  // H/E                                                
-  bool isBarrelEle;
-  if ( fabs(etaEle[theEle]) <  1.479 ) isBarrelEle = true;
-  if ( fabs(etaEle[theEle]) >= 1.479 ) isBarrelEle = false;
-  if ( isBarrelEle && hOverEEle[theEle]>0.15) isGoodDenom = false;
-  if (!isBarrelEle && hOverEEle[theEle]>0.10) isGoodDenom = false;
-  
-  // sigmaIetaIeta                                              
+  // isolation 
+  float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
+  float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
+  if(ecalIsol>0.2) isGoodDenom = false;
+  if(hcalIsol>0.2) isGoodDenom = false;
+
+  // H/E 
+  if ( isEleEB && hOverEEle[theEle]>0.15) isGoodDenom = false;
+  if (!isEleEB && hOverEEle[theEle]>0.10) isGoodDenom = false;
+
+  // sigmaIetaIeta 
   bool isBarrelSc;
-  int sc = superClusterIndexEle[theEle];
-  if ( sc < 0 ) isGoodDenom = false;
   if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
   if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
-  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.014 ) isGoodDenom = false;
-  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.035 ) isGoodDenom = false;
-  
-  // spikes                                                         
+  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.013 ) isGoodDenom = false;
+  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.034 ) isGoodDenom = false;
+
+  // spikes
   float theE1 = eMaxSC[sc];
   float theE4SwissCross = e4SwissCrossSC[sc];
   float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
   if (theSpikeSC>0.95) isGoodDenom = false;
-  
+
   return isGoodDenom;
+}
+
+int LeptonPlusFakeMLSelection_fullME::getBestMuDenominator(int realEle) {  // this requires not only denom ok, but also NOT tight!
+  
+  int theFake=-1;
+  
+  float maxPtFake=-1000.;
+  
+  float theRealPt = GetPt(pxEle[realEle],pyEle[realEle]);    
+
+  for(int imu=0; imu<nMuon; imu++) {
+    
+    float thisMuPt = GetPt(pxMuon[imu],pyMuon[imu]);    
+    
+    if (chargeEle[realEle]*chargeMuon[imu]>0) continue;
+
+    if (theRealPt>thisMuPt) continue;
+
+    bool isGoodDenom = isMuonDenomFake(imu);   
+    if (!isGoodDenom) continue;
+
+    // removing candidates passing the tight selection
+    bool isTight = true;
+    isMuonID(imu, &isTight);
+    if (isTight) continue;
+
+    if( thisMuPt > maxPtFake ) { maxPtFake = thisMuPt; theFake=imu; }
+  }
+  
+  return theFake;
 }
 
 bool LeptonPlusFakeMLSelection_fullME::isMuonDenomFake(int theMuon) {
@@ -1209,30 +1592,32 @@ bool LeptonPlusFakeMLSelection_fullME::isMuonDenomFake(int theMuon) {
   if( fabs(p3Muon.Eta()) > 2.5 ) isGoodDenom = false;
   if( p3Muon.Pt() < 10. )        isGoodDenom = false;
 
+  // muonID
+  bool isTight = true;
+  isMuonID(theMuon, &isTight);
+  if (!isTight) isGoodDenom = false;
+  
   // isolation
-  float muonTrackerForGlobal = sumPt03Muon[theMuon];
-  float muonEcalForGlobal    = emEt03Muon[theMuon];
-  float muonHcalForGlobal    = hadEt03Muon[theMuon]; 
-  float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
-  float theRelMuonIso        = theMuonGlobalSum/p3Muon.Pt();
-  if (theRelMuonIso > 1. ) isGoodDenom = false;
-
+  float thePFMuonIso = pfCombinedIsoMuon[theMuon]/p3Muon.Pt();
+  if ( thePFMuonIso > 0.4 ) isGoodDenom = false;
+  
   // IP
   int ctfMuon   = trackIndexMuon[theMuon]; 
   float dxyMuon = transvImpactParTrack[ctfMuon];
   float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];  
   if (fabs(dxyMuon)>0.1 ) isGoodDenom = false;
+  if (fabs(dzMuon)>0.1  ) isGoodDenom = false;
   
   return isGoodDenom;
 }
 
-float LeptonPlusFakeMLSelection_fullME::getFakeRate( float fakePt, bool isFakeBarrel ) {
-
+float LeptonPlusFakeMLSelection_fullME::getElectronFakeRate( float fakePt, bool isFakeBarrel ) {
+  
   for (int theBin = 0; theBin<7; theBin++) {
     
-    if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m_fakeRateEE[theBin];
+    if( fakePt >= m_eleMinFakePt[theBin] && fakePt < m_eleMaxFakePt[theBin] ) {
+      if ( isFakeBarrel) return m_eleFakeRateEB[theBin];
+      if (!isFakeBarrel) return m_eleFakeRateEE[theBin];
     }
   }
   
@@ -1240,25 +1625,25 @@ float LeptonPlusFakeMLSelection_fullME::getFakeRate( float fakePt, bool isFakeBa
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullME::getFakeRateError( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullME::getElectronFakeRateError( float fakePt, bool isFakeBarrel ) {
   
   for (int theBin = 0; theBin < 7; theBin++) {
-    if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return m_fakeRateEE_err[theBin];
+    if( fakePt >= m_eleMinFakePt[theBin] && fakePt < m_eleMaxFakePt[theBin] ) {
+      if (isFakeBarrel)  return m_eleFakeRateEB_err[theBin];
+      if (!isFakeBarrel) return m_eleFakeRateEE_err[theBin];
     }
   }
   
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullME::getPromptRate( float promptPt, bool isPromptBarrel ) {
+float LeptonPlusFakeMLSelection_fullME::getElectronPromptRate( float promptPt, bool isPromptBarrel ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
     
-    if( promptPt >= m_minPromptPt[theBin] && promptPt < m_maxPromptPt[theBin] ) {
-      if (isPromptBarrel)  return m_promptRateEB[theBin];
-      if (!isPromptBarrel) return m_promptRateEE[theBin];
+    if( promptPt >= m_eleMinPromptPt[theBin] && promptPt < m_eleMaxPromptPt[theBin] ) {
+      if (isPromptBarrel)  return m_elePromptRateEB[theBin];
+      if (!isPromptBarrel) return m_elePromptRateEE[theBin];
     }
   }
   
@@ -1266,12 +1651,64 @@ float LeptonPlusFakeMLSelection_fullME::getPromptRate( float promptPt, bool isPr
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullME::getPromptRateError( float promptPt, bool isPromptBarrel ) {
+float LeptonPlusFakeMLSelection_fullME::getElectronPromptRateError( float promptPt, bool isPromptBarrel ) {
 
   for (int theBin = 0; theBin < 7; theBin++) {
-    if( promptPt >= m_minPromptPt[theBin] && promptPt < m_maxPromptPt[theBin] ) {
-      if (isPromptBarrel)  return m_promptRateEB_err[theBin];
-      if (!isPromptBarrel) return m_promptRateEE_err[theBin];
+    if( promptPt >= m_eleMinPromptPt[theBin] && promptPt < m_eleMaxPromptPt[theBin] ) {
+      if (isPromptBarrel)  return m_elePromptRateEB_err[theBin];
+      if (!isPromptBarrel) return m_elePromptRateEE_err[theBin];
+    }
+  }
+
+  return -1.;
+}
+
+float LeptonPlusFakeMLSelection_fullME::getMuonFakeRate( float fakePt, bool isFakeBarrel ) {
+  
+  for (int theBin = 0; theBin<7; theBin++) {
+    
+    if( fakePt >= m_muonMinFakePt[theBin] && fakePt < m_muonMaxFakePt[theBin] ) {
+      if ( isFakeBarrel) return m_muonFakeRateEB[theBin];
+      if (!isFakeBarrel) return m_muonFakeRateEE[theBin];
+    }
+  }
+  
+  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  return -1.;
+}
+
+float LeptonPlusFakeMLSelection_fullME::getMuonFakeRateError( float fakePt, bool isFakeBarrel ) {
+  
+  for (int theBin = 0; theBin < 7; theBin++) {
+    if( fakePt >= m_muonMinFakePt[theBin] && fakePt < m_muonMaxFakePt[theBin] ) {
+      if (isFakeBarrel)  return m_muonFakeRateEB_err[theBin];
+      if (!isFakeBarrel) return m_muonFakeRateEE_err[theBin];
+    }
+  }
+  
+  return -1.;
+}
+
+float LeptonPlusFakeMLSelection_fullME::getMuonPromptRate( float promptPt, bool isPromptBarrel ) {
+
+  for (int theBin = 0; theBin<7; theBin++) {
+    
+    if( promptPt >= m_muonMinPromptPt[theBin] && promptPt < m_muonMaxPromptPt[theBin] ) {
+      if (isPromptBarrel)  return m_muonPromptRateEB[theBin];
+      if (!isPromptBarrel) return m_muonPromptRateEE[theBin];
+    }
+  }
+  
+  std::cout << "BIG ERROR: promptPt = " << promptPt << endl;
+  return -1.;
+}
+
+float LeptonPlusFakeMLSelection_fullME::getMuonPromptRateError( float promptPt, bool isPromptBarrel ) {
+
+  for (int theBin = 0; theBin < 7; theBin++) {
+    if( promptPt >= m_muonMinPromptPt[theBin] && promptPt < m_muonMaxPromptPt[theBin] ) {
+      if (isPromptBarrel)  return m_muonPromptRateEB_err[theBin];
+      if (!isPromptBarrel) return m_muonPromptRateEE_err[theBin];
     }
   }
 
@@ -1305,7 +1742,10 @@ void LeptonPlusFakeMLSelection_fullME::setKinematicsME(int myReal, int myFake) {
     m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
     m_deltaEtaLeptons[me] = etaEle[myFake]-etaEle[myReal];
     m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-    m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
+    // usual definition
+    m_transvMass[me] = sqrt( 2.*(m_dilepPt[me].Pt())*(m_p3PFMET->Pt())*(1- cos(m_p3PFMET->DeltaPhi(m_dilepPt[me]))) );
+    // chris' variable
+    // m_transvMass[me]    = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
     m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
     m_mT2[me]           = 0.;
     m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
@@ -1411,7 +1851,6 @@ void LeptonPlusFakeMLSelection_fullME::isEleID(int eleIndex, bool *eleIdOutput, 
   thisCutBasedID->SetEOverPin( eop );
   thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
   thisCutBasedID->SetEgammaCutBasedID ( anaUtils.electronIdVal(eleIdCutsEle[eleIndex],eleIdLoose) );
-  //  thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
   thisCutBasedID->SetLikelihood( eleIdLikelihoodEle[eleIndex] );
   thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
   thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
@@ -1421,9 +1860,11 @@ void LeptonPlusFakeMLSelection_fullME::isEleID(int eleIndex, bool *eleIdOutput, 
   if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
   else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
   thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
+  thisCutBasedID->SetCombinedPFIsolation( (pfCombinedIsoEle[eleIndex]) / pt );
   thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
   thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
   thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
+  thisCutBasedID->SetHasMatchedConversion ( hasMatchedConversionEle[eleIndex] );
 
   // ECAL cleaning variables
   thisCutBasedID->m_cleaner->SetE1(e1);
@@ -1609,6 +2050,10 @@ float LeptonPlusFakeMLSelection_fullME::bVetoJets( std::vector<int> eleToRemove,
 
     if(_selectionME->getSwitch("etaJetAcc") && !_selectionME->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
 
+    // hardcoded
+    float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
+    if(rawpt < 7.0) continue;
+
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
     float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/energyAK5PFPUcorrJet[j];
@@ -1675,21 +2120,26 @@ int LeptonPlusFakeMLSelection_fullME::numSoftMuons(std::vector<int> muonToRemove
       if(i==muonToRemove[muSel]) isSelMuon=true;
     }
     if(isSelMuon) continue;
-
+    
     float pt = GetPt(pxMuon[i],pyMuon[i]);
     if(pt < 3.0) continue;
-
+    
     Utils anaUtils;
     if(!anaUtils.muonIdVal(muonIdMuon[i],AllTrackerMuons) || !anaUtils.muonIdVal(muonIdMuon[i],TMLastStationTight)) continue;
        
     int track = trackIndexMuon[i];
     if(trackValidHitsTrack[track]<=10) continue;
 
-    float dxy = transvImpactParTrack[track];
-    if(dxy > 0.100) continue;   
+    // float dxy = transvImpactParTrack[track];
+    // if(dxy > 0.100) continue;   
+    float dxyMuon= transvImpactParTrack[track];
+    float dzMuon = fabs(PVzPV[0] - trackVzTrack[track]);   
+    if(dxyMuon > 0.200) continue;     // hardcoded  
+    if(dzMuon  > 0.100) continue;     // hardcoded  
 
-    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float isoSumRel = isoSumAbs / pt;
+    // float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    // float isoSumRel = isoSumAbs / pt;
+    float isoSumRel = pfCombinedIsoMuon[i] / pt;
     if(pt>20 || isoSumRel<0.1) continue;
     
     num++;
@@ -1722,9 +2172,22 @@ int LeptonPlusFakeMLSelection_fullME::numExtraLeptons( std::vector<int> eleToRem
     }
     if(!theId || !theIso || !theConvRej) continue;
 
+    // further requests if we apply the smurf ID and pT<15
+    TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
+    if( stringIdLow.Contains("Smurf") ) {
+      float pt = GetPt(pxEle[i],pyEle[i]);
+      if ( pt<20  ) {
+	if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+      }
+    }
+
     int track = gsfTrackIndexEle[i];
-    float d3dEle = impactPar3DGsfTrack[track];
-    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) continue;    
+    // float d3dEle = impactPar3DGsfTrack[track];
+    // if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",d3dEle)) ) continue;    
+    float dxyEle = transvImpactParGsfTrack[track];
+    float dzEle  = PVzPV[0] - trackVzGsfTrack[track];   
+    if (_selectionME->getSwitch("electronIP") && (!_selectionME->passCut("electronIP",dxyEle)) ) continue;
+    if (_selectionME->getSwitch("electronDz") && (!_selectionME->passCut("electronDz",dzEle)) ) continue;
 
     numEle++;
   }
@@ -1745,32 +2208,26 @@ int LeptonPlusFakeMLSelection_fullME::numExtraLeptons( std::vector<int> eleToRem
     bool theId = true;
     isMuonID(i,&theId);
     if(!theId) continue;
-    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    float isoSumRel = isoSumAbs / ptMu;
-    if(_selectionME->getSwitch("muGlobalIso") && !_selectionME->passCut("muGlobalIso",isoSumRel)) continue;
+    //float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    //float isoSumRel = isoSumAbs / ptMu;
+    //if(_selectionME->getSwitch("muGlobalIso") && !_selectionME->passCut("muGlobalIso",isoSumRel)) continue;
+    if( ! isPFIsolatedMuon(i) ) continue; 
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
     float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
-    if(_selectionME->getSwitch("muonIP") && !_selectionME->passCut("muonIP",dxy)) continue;
-    if(_selectionME->getSwitch("muonDz") && !_selectionME->passCut("muonDz",dz))  continue;  
+    //if(_selectionME->getSwitch("muonIP") && !_selectionME->passCut("muonIP",dxy)) continue;
+    //if(_selectionME->getSwitch("muonDz") && !_selectionME->passCut("muonDz",dz))  continue;  
+    if (ptMu>20)   // hardcoded
+      if (_selectionME->getSwitch("muonIPhighPT") && (!_selectionME->passCut("muonIPhighPT",dxy)) ) continue;   
+    if (ptMu<20)    // hardcoded
+      if (_selectionME->getSwitch("muonIPlowPT")  && (!_selectionME->passCut("muonIPlowPT",dxy)) ) continue;   
+    if (_selectionME->getSwitch("muonDz") && (!_selectionME->passCut("muonDz",dz)) )  continue;   
 
     numMu++;
   }
   
   return numEle + numMu;
-}
-
-int LeptonPlusFakeMLSelection_fullME::getPV() {
-  int hardestPV = -1;
-  float sumPtMax = 0.0;
-  for(int v=0; v<nPV; v++) {
-    if(SumPtPV[v] > sumPtMax) {
-      sumPtMax = SumPtPV[v];
-      hardestPV = v;
-    }
-  }
-  return hardestPV;
 }
 
 float LeptonPlusFakeMLSelection_fullME::GetProjectedMet(TVector3 p1, TVector3 p2) {
@@ -1842,3 +2299,13 @@ void LeptonPlusFakeMLSelection_fullME::setNotRequiredTriggers(const std::vector<
   notRequiredTriggersME=reqTriggers;
 }
 
+bool LeptonPlusFakeMLSelection_fullME::isPFIsolatedMuon(int muonIndex) {
+  float eta = etaMuon[muonIndex];
+  float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
+  float iso = pfCombinedIsoMuon[muonIndex]/pt;
+  if( pt>=20. && fabs(eta)<1.479 ) return (iso < 0.13);
+  if( pt>=20. && fabs(eta)>=1.479 ) return (iso < 0.09);
+  if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
+  if( pt<20. && fabs(eta)>=1.479 ) return (iso < 0.05);
+  return true;
+}

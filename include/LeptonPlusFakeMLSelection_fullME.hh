@@ -58,18 +58,29 @@ private:
   //! get the two hardest ele-muon with opposite charge
   std::pair<int,int> getBestMuonElePair(std::vector<int> electrons, std::vector<int> muons);
 
-  //! fake rates initialization
+  //! fake rates initialization for electrons
   void initialiseElectronFakeRate();
-  float getFakeRate( float fakePt, bool isEB );
-  float getFakeRateError( float fakePt, bool isEE );
+  float getElectronFakeRate( float fakePt, bool isEB );
+  float getElectronFakeRateError( float fakePt, bool isEE );
 
-  //! prompt rates initialization
+  //! prompt rates initialization for electrons
   void initialiseElectronPromptRate();
-  float getPromptRate( float fakePt, bool isEB );
-  float getPromptRateError( float fakePt, bool isEE );
+  float getElectronPromptRate( float fakePt, bool isEB );
+  float getElectronPromptRateError( float fakePt, bool isEE );
+
+  //! fake rates initialization for muons
+  void initialiseMuonFakeRate();
+  float getMuonFakeRate( float fakePt, bool isEB );
+  float getMuonFakeRateError( float fakePt, bool isEE );
+
+  //! prompt rates initialization for muons
+  void initialiseMuonPromptRate();
+  float getMuonPromptRate( float fakePt, bool isEB );
+  float getMuonPromptRateError( float fakePt, bool isEE );
 
   //! fake related selection
   int getBestEleDenominator(int realMuon);
+  int getBestMuDenominator(int realEle);
   bool isEleDenomFake(int theEle);
   bool isMuonDenomFake(int theMuon);
 
@@ -94,6 +105,8 @@ private:
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
+  //! retrns the pT dependent isolation 
+  bool isPFIsolatedMuon(int muonIndex);
   //! search for the hardest lepton vertex
   int getPV();
   //! methods for the jet veto: track quality
@@ -115,11 +128,17 @@ private:
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
   ElectronLikelihood *LH;
+
   //! to evaluate full selection efficiency
-  Selection *_selectionME;
-  Selection *_selectionErrME;
+  Selection *_selectionME,     *_selectionME_FF;
+  Selection *_selectionStatME, *_selectionStatME_FF;
+  Selection *_selectionErrME,  *_selectionErrME_FF;
   CutBasedHiggsSelector CutBasedHiggsSelectionME;
+  CutBasedHiggsSelector CutBasedHiggsSelectionME_FF;
   CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME;
+  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME_FF;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatME;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatME_FF;
 
   //! be verbose during runtime
   bool _verbose;
@@ -157,15 +176,25 @@ private:
   float hardestLeptonPt[1], slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
   
-  //! fake rates                             
-  float m_minFakePt[5],  m_maxFakePt[5];
-  float m_fakeRateEB[5], m_fakeRateEB_err[5];
-  float m_fakeRateEE[5], m_fakeRateEE_err[5];
+  //! electron fake rates                             
+  float m_eleMinFakePt[5],  m_eleMaxFakePt[5];
+  float m_eleFakeRateEB[5], m_eleFakeRateEB_err[5];
+  float m_eleFakeRateEE[5], m_eleFakeRateEE_err[5];
 
-  //! prompt rates                             
-  float m_minPromptPt[5],  m_maxPromptPt[5];
-  float m_promptRateEB[5], m_promptRateEB_err[5];
-  float m_promptRateEE[5], m_promptRateEE_err[5];
+  //! electron prompt rates                             
+  float m_eleMinPromptPt[5],  m_eleMaxPromptPt[5];
+  float m_elePromptRateEB[5], m_elePromptRateEB_err[5];
+  float m_elePromptRateEE[5], m_elePromptRateEE_err[5];
+
+  //! muon fake rates                             
+  float m_muonMinFakePt[5],  m_muonMaxFakePt[5];
+  float m_muonFakeRateEB[5], m_muonFakeRateEB_err[5];
+  float m_muonFakeRateEE[5], m_muonFakeRateEE_err[5];
+
+  //! muon prompt rates                             
+  float m_muonMinPromptPt[5],  m_muonMaxPromptPt[5];
+  float m_muonPromptRateEB[5], m_muonPromptRateEB_err[5];
+  float m_muonPromptRateEE[5], m_muonPromptRateEE_err[5];
 
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
