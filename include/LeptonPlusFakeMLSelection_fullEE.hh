@@ -141,7 +141,7 @@ private:
   int theLeadingJet[1];
   std::vector<int> eleCands[1], muCands[1];
   TLorentzVector *m_p4LeptonPlus[1], *m_p4LeptonMinus[1];
-  TVector3 *m_p3PFMET, *m_p3TKMET;
+  TVector3 *m_p3PFMET;
   float m_theMET;
 
   TVector3 m_dilepPt[1];
@@ -152,6 +152,7 @@ private:
   float m_transvMass[1];
   float m_mT2[1];
   float m_projectedMet[1];
+  float m_chMet[1];
   float m_metOptll[1];
   float hardestLeptonPt[1],  slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
