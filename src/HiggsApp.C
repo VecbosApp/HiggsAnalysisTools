@@ -471,14 +471,14 @@ int main(int argc, char* argv[]) {
   lplusfake.SetDatasetName(outputFileName);
 
   std::vector<std::string> maskEE, maskNotEE;
-  
+
   if(isMC) {
-    maskEE.push_back("HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
+    maskEE.push_back("1-1:HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
   } else {
     TString DatasetName(dataset);
     if(DatasetName.Contains("DoubleElectron")) {
-      maskEE.push_back("HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL");
-    }
+      maskEE.push_back("1-999999:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
+    } 
   }
 
   lplusfake.setRequiredTriggers(maskEE);
@@ -494,17 +494,24 @@ int main(int argc, char* argv[]) {
 
   std::vector<std::string> maskME, maskNotME;
   
-  if(isMC) {
-    maskME.push_back("HLT_Mu5_Ele17_v2");
-    maskME.push_back("HLT_Mu25_v1");
-  } else {
+ if(isMC) {
+   maskME.push_back("1-1:HLT_Mu5_Ele17_v2");
+   maskME.push_back("1-1:HLT_Mu25_v1");
+ } else {
     TString DatasetName(dataset);
     if(DatasetName.Contains("MuEG")) {
-      maskME.push_back("HLT_Mu8_Ele17_CaloIdL");
-      maskME.push_back("HLT_Mu17_Ele8_CaloIdL");
-      maskNotME.push_back("HLT_Mu24");
+      maskME.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
+      maskME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
+      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
+      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
+      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("SingleMu")) {
-      maskME.push_back("HLT_Mu24");
+
+      maskME.push_back("1-163261:HLT_Mu15_v");
+      maskME.push_back("163262-164237:HLT_Mu24_v");
+      maskME.push_back("165085-999999:HLT_Mu30_v");
+      maskME.push_back("163262-999999:HLT_IsoMu17_v");
     }
   }
 
