@@ -16,58 +16,58 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nE
 
 using namespace std;
 
-enum { ee=0, mm=1, em=2, me=3 };
+enum { ee=0, mm=1, em=2, me=3, ll=4 };
 
-string fullSelCuts[25];
+string fullSelCuts[26];
 
-int UseCuts[4][25];
+int UseCuts[4][26];
 
-float H_fullSel[25];
-float Wj_fullSel[25];
-float ttj_fullSel[25];
-float SingleTop_fullSel[25];
-float Zj_fullSel[25];
-float WW_fullSel[25];
-float ZZ_fullSel[25];
-float WZ_fullSel[25];
-float Wgamma_fullSel[25];
-float QCDem_fullSel[25];
-float QCDbc_fullSel[25];
-float Photj_fullSel[25];
-float QCDmu_fullSel[25];
-float ttbar_fullSel[25];
-float data_fullSel[25];
+float H_fullSel[26];
+float Wj_fullSel[26];
+float ttj_fullSel[26];
+float SingleTop_fullSel[26];
+float Zj_fullSel[26];
+float WW_fullSel[26];
+float ZZ_fullSel[26];
+float WZ_fullSel[26];
+float Wgamma_fullSel[26];
+float QCDem_fullSel[26];
+float QCDbc_fullSel[26];
+float Photj_fullSel[26];
+float QCDmu_fullSel[26];
+float ttbar_fullSel[26];
+float data_fullSel[26];
 
-float H_fullSel_err[25];
-float Wj_fullSel_err[25];
-float ttj_fullSel_err[25];
-float SingleTop_fullSel_err[25];
-float Zj_fullSel_err[25];
-float WW_fullSel_err[25];
-float ZZ_fullSel_err[25];
-float WZ_fullSel_err[25];
-float Wgamma_fullSel_err[25];
-float QCDem_fullSel_err[25];
-float QCDbc_fullSel_err[25];
-float Photj_fullSel_err[25];
-float QCDmu_fullSel_err[25];
-float ttbar_fullSel_err[25];
-float data_fullSel_err[25];
+float H_fullSel_err[26];
+float Wj_fullSel_err[26];
+float ttj_fullSel_err[26];
+float SingleTop_fullSel_err[26];
+float Zj_fullSel_err[26];
+float WW_fullSel_err[26];
+float ZZ_fullSel_err[26];
+float WZ_fullSel_err[26];
+float Wgamma_fullSel_err[26];
+float QCDem_fullSel_err[26];
+float QCDbc_fullSel_err[26];
+float Photj_fullSel_err[26];
+float QCDmu_fullSel_err[26];
+float ttbar_fullSel_err[26];
+float data_fullSel_err[26];
 
-float H_eff_fullSel[25];
-float Wj_eff_fullSel[25];
-float ttj_eff_fullSel[25];
-float SingleTop_eff_fullSel[25];
-float Zj_eff_fullSel[25];
-float WW_eff_fullSel[25];
-float ZZ_eff_fullSel[25];
-float WZ_eff_fullSel[25];
-float Wgamma_eff_fullSel[25];
-float QCDem_eff_fullSel[25];
-float QCDbc_eff_fullSel[25];
-float Photj_eff_fullSel[25];
-float QCDmu_eff_fullSel[25];
-float ttbar_eff_fullSel[25];
+float H_eff_fullSel[26];
+float Wj_eff_fullSel[26];
+float ttj_eff_fullSel[26];
+float SingleTop_eff_fullSel[26];
+float Zj_eff_fullSel[26];
+float WW_eff_fullSel[26];
+float ZZ_eff_fullSel[26];
+float WZ_eff_fullSel[26];
+float Wgamma_eff_fullSel[26];
+float QCDem_eff_fullSel[26];
+float QCDbc_eff_fullSel[26];
+float Photj_eff_fullSel[26];
+float QCDmu_eff_fullSel[26];
+float ttbar_eff_fullSel[26];
 
 float H_finaleff_fullSel;    
 float Wj_finaleff_fullSel;
@@ -108,6 +108,7 @@ float WW_final[4][3];
 float ZZ_final[4][3];
 float WZ_final[4][3];
 float Wgamma_final[4][3];
+float bkg_final[4][3];
 float H_final_err[4][3];
 float Wj_final_err[4][3];
 float ttj_final_err[4][3];
@@ -117,6 +118,7 @@ float WW_final_err[4][3];
 float ZZ_final_err[4][3];
 float WZ_final_err[4][3];
 float Wgamma_final_err[4][3];
+float bkg_final_err[4][3];
 float data_final[4][3];
 
 // xsections
@@ -124,15 +126,17 @@ std::map<int,float> Higgs_xsec_masses, vbfHiggs_xsec_masses;
 
 float Wgamma_xsec      = 165.;      // Madgraph VPhoton+jets
 float Wlnu_xsec        = 31314.;     // madgraph 
+//float Wlnu_xsec        = 31314. * 0.00111; // PYTHIA + filter on second jet x filter efficiency 
 //float Wlnu_xsec        = 31314./3. * 0.742;  // pythia
-float ZjetsLoMass_xsec = 3457./3.;           // pythia <20
-float ZjetsHiMass_xsec = 4998./3.;           // pythia >20
+float ZjetsLoMass_xsec = 3457.;            // pythia <20
+float ZjetsHiMass_xsec = 4998./3.;         // pythia >20
 float TTjets_xsec      = 157.5;
 float ggWW_xsec        = 0.1538; // gg->WW->4l
 float WW_xsec          = 4.513968; // WW_2l2nu PYTHIA
 float WZ_xsec          = 0.599442; // WZ_3l
 //float ZZ_xsec = 0.25252; // ZZ_2l2nu
-float ZZ_xsec = 7.67; // inclusive
+float ZZ_xsec = 5.9*1.3; // inclusive 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
+
 float TTbar_xsec = 157.5;
 
 // here xsec = x-sec * filter_eff (pb)
@@ -254,7 +258,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir_mc[1000];                  
-    sprintf(dir_mc,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH%d/Spring11_V2/",exampleHiggsMass);
+    sprintf(dir_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/",exampleHiggsMass);
 
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
@@ -270,19 +274,19 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2/OptimMH%d/Data7TeVHWW",exampleHiggsMass);
     cout << "dir_data = " << dir_data << endl;
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir_mc)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
     chains_fullSel[2]->Add(TString(dir_mc)+TString("/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[3]->Add(TString(dir_mc)+TString("/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[4]->Add(TString(dir_mc)+TString("/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
+    chains_fullSel[4]->Add(TString(dir_mc)+TString("/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));       
     chains_fullSel[5]->Add(TString(dir_mc)+TString("/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[6]->Add(TString(dir_mc)+TString("/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[7]->Add(TString(dir_mc)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[8]->Add(TString(dir_mc)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
-    // chains_fullSel[8]->Add(TString(dir_mc)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
+    chains_fullSel[7]->Add(TString(dir_mc)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));       
+    // chains_fullSel[8]->Add(TString(dir_mc)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    chains_fullSel[8]->Add(TString(dir_mc)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
     chains_fullSel[9]->Add(TString(dir_mc)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir_mc)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir_mc)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
@@ -292,6 +296,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[15]->Add(TString(dir_mc)+TString("TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[16]->Add(TString(dir_mc)+TString("WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));
     //    chains_fullSel[16]->Add(TString(dir_mc)+TString("WToENu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    chains_fullSel[16]->Add(TString(dir_mc)+TString("WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root"));
     chains_fullSel[17]->Add(TString(dir_mc)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // not used when using madgraph inclusive W+jets
     chains_fullSel[18]->Add(TString(dir_mc)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // "  "
     chains_fullSel[19]->Add(TString(dir_mc)+TString(HiggsSample_2L2Nu));       
@@ -318,7 +323,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir[1000];                  
-    sprintf(dir,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/MC2011_LHLoose_V13/OptimMH%d/Spring11_V2/",mass);
+    sprintf(dir,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/",mass);
 
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
@@ -334,18 +339,18 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc24_2/emanuele/data/Higgs4.1.X/Data2011_LHLoose_V13/OptimMH%d/Data7TeV/",mass);
+    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2/OptimMH%d/Data7TeVHWW/",mass);
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
     chains_fullSel[2]->Add(TString(dir)+TString("/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[3]->Add(TString(dir)+TString("/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[4]->Add(TString(dir)+TString("/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root"));       
+    chains_fullSel[4]->Add(TString(dir)+TString("/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));       
     chains_fullSel[5]->Add(TString(dir)+TString("/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
     chains_fullSel[6]->Add(TString(dir)+TString("/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[7]->Add(TString(dir)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root"));       
-    chains_fullSel[8]->Add(TString(dir)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
-    // chains_fullSel[8]->Add(TString(dir)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
+    chains_fullSel[7]->Add(TString(dir)+TString("/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));       
+    // chains_fullSel[8]->Add(TString(dir)+TString("/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    chains_fullSel[8]->Add(TString(dir)+TString("/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"));
     chains_fullSel[9]->Add(TString(dir)+TString("/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root"));
     chains_fullSel[10]->Add(TString(dir)+TString("/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root"));
     chains_fullSel[11]->Add(TString(dir)+TString("/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root"));
@@ -355,6 +360,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     chains_fullSel[15]->Add(TString(dir)+TString("TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root"));
     chains_fullSel[16]->Add(TString(dir)+TString("WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));
     //    chains_fullSel[16]->Add(TString(dir)+TString("WToENu_TuneZ2_7TeV-pythia6/*Counters.root"));
+    chains_fullSel[16]->Add(TString(dir)+TString("WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root"));
     chains_fullSel[17]->Add(TString(dir)+TString("WToMuNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // not used when using madgraph inclusive W+jets
     chains_fullSel[18]->Add(TString(dir)+TString("WToTauNu_TuneZ2_7TeV-pythia6/*Counters.rootXXX")); // "  "
     // signal
@@ -375,19 +381,19 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
     }
   }
 
-  float nFullSelTot[25][23];
+  float nFullSelTot[26][23];
 
   for(int isample=0; isample<23; isample++) {
-    for(int icut=0; icut<25; icut++) { nFullSelTot[icut][isample] = 0.0; }
+    for(int icut=0; icut<26; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
   
   // full selection
-  int nCutsAnaFull = 25;
+  int nCutsAnaFull = 26;
   for(int isample=0; isample<23; isample++) {
 
     // List of branches    
     Int_t           nCutsFull;
-    Float_t         nSelFull[25];   //[nCuts]
+    Float_t         nSelFull[26];   //[nCuts]
     TBranch        *b_nCutsFull;   //!
     TBranch        *b_nSelFull;    //!
     chains_fullSel[isample]->SetBranchAddress("nCuts", &nCutsFull, &b_nCutsFull);
@@ -563,7 +569,11 @@ void setupCuts() {
     for(int i=0; i<25; i++) {
       UseCuts[ichan][i] = 1;
     }
+    UseCuts[ichan][22] = 0;
+    UseCuts[ichan][23] = 0;
+    UseCuts[ichan][24] = 0;
   }
+
 
   fullSelCuts[0]="event";
   fullSelCuts[1]="MCtruth";
@@ -573,23 +583,24 @@ void setupCuts() {
   fullSelCuts[5]="e/$\\mu$ isolation";
   fullSelCuts[6]="conv. rej.";
   fullSelCuts[7]="e/$\\mu$ d0";
-  fullSelCuts[8]="extra lepton veto";
-  fullSelCuts[9]="$MET>20$ GeV";
-  fullSelCuts[10]="$m_{ll}$";
-  fullSelCuts[11]="$|m_{ll}-m_Z|>15$ GeV";
-  fullSelCuts[12]="proj. MET";
-  fullSelCuts[13]="MET/$p_T^{ll}$";
-  fullSelCuts[14]="jet veto";
-  fullSelCuts[15]="$\\mu^{soft}$ veto";
+  fullSelCuts[8]="$MET>20$ GeV";
+  fullSelCuts[9]="$m_{ll}$";
+  fullSelCuts[10]="$|m_{ll}-m_Z|>15$ GeV";
+  fullSelCuts[11]="proj. MET";
+  fullSelCuts[12]="MET/$p_T^{ll}$";
+  fullSelCuts[13]="jet veto";
+  fullSelCuts[14]="$\\mu^{soft}$ veto";
+  fullSelCuts[15]="extra lepton veto";
   fullSelCuts[16]="anti b-tag";
   fullSelCuts[17]="$m_{ll}2$";
   fullSelCuts[18]="sel $p_T^{max}$";
   fullSelCuts[19]="sel $p_T^{min}$";
-  fullSelCuts[20]="$\\gamma^*M_{R}^{*}$";
-  fullSelCuts[21]="$\\Delta \\phi$";
-  fullSelCuts[22]="final";
-  fullSelCuts[23]="1 jets";
-  fullSelCuts[24]="$>1$ jets";
+  fullSelCuts[20]="$\\Delta \\phi$";
+  fullSelCuts[21]="$M_T$";
+  fullSelCuts[22]="$M_T$ (1jet)";
+  fullSelCuts[23]="final";
+  fullSelCuts[24]="1 jets";
+  fullSelCuts[25]="$>1$ jets";
 }
 
 
@@ -614,27 +625,19 @@ void printLatex(float lumi, const char* finalstate) {
   textfile.open(namefile, ios_base::app);
   textfile.precision(2);
   
-  textfile << "\\begin{sidewaystable}[p]" << endl
+  textfile << "\\begin{table}[p]" << endl
            << "\\begin{tiny}" << endl
            << "\\begin{center}" << endl;
-  // if QCD is considered
-  //   if(!strcmp(finalstate,"EE")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  //   if(!strcmp(finalstate,"EM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  //   if(!strcmp(finalstate,"MM")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  //   if(!strcmp(finalstate,"ME")) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
-  textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
+  textfile << "\\begin{tabular}{|c|c|c|c|c|c|}" << endl;
   textfile << "\\hline" << endl;
-  // if QCD is considered
-  //   if(!strcmp(finalstate,"EE")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
-  //   if(!strcmp(finalstate,"EM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) & QCD(e.m.) & QCD(b,c) & $\\gamma$+jets \t\\\\" << endl;
-  //   if(!strcmp(finalstate,"MM")) textfile << "selection & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ & QCD($\\mu$) \t\\\\" << endl;
-  textfile << "selection & data & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ \t\\\\" << endl;
+  //  textfile << "selection & data & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ \t\\\\" << endl;
+  textfile << "selection & data & H(WW) & W$(l\\nu)$+jets & $t\\bar{t}$ & single t \t\\\\" << endl;
   textfile << "\\hline" << endl; 
     
   textfile << "\\hline"        << endl;
   textfile << "\\hline"        << endl;
     
-  for(int icut=0; icut<25; icut++) {
+  for(int icut=0; icut<26; icut++) {
 
     if(!strcmp(finalstate,"EE")) {
       if(!UseCuts[ee][icut]) continue;
@@ -656,124 +659,44 @@ void printLatex(float lumi, const char* finalstate) {
              << H_fullSel[icut]      << " (" << 100. * H_eff_fullSel[icut]   << "\\%)" << "\t&\t"
              << Wj_fullSel[icut]     << " (" << 100. * Wj_eff_fullSel[icut]  << "\\%)" << "\t&\t"
              << ttj_fullSel[icut]    << " (" << 100. * ttj_eff_fullSel[icut] << "\\%)" << "\t&\t"
-             << SingleTop_fullSel[icut]    << " (" << 100. * SingleTop_eff_fullSel[icut] << "\\%)" << "\t&\t"
-             << Zj_fullSel[icut]     << " (" << 100. * Zj_eff_fullSel[icut]  << "\\%)" << "\t&\t"
-             << WW_fullSel[icut]     << " (" << 100. * WW_eff_fullSel[icut]  << "\\%)" << "\t&\t"
-             << ZZ_fullSel[icut]     << " (" << 100. * ZZ_eff_fullSel[icut]     << "\\%)" << "\t&\t"
-             << WZ_fullSel[icut]     << " (" << 100. * WZ_eff_fullSel[icut]     << "\\%)" << "\t&\t"
-             << Wgamma_fullSel[icut] << " (" << 100. * Wgamma_eff_fullSel[icut] << "\\%)" << "\t";
-    //     if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[icut]   << " (" << 100. * QCDmu_eff_fullSel[icut]  << "\\%)";
-    //     if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[icut]   << " (" << 100. * QCDmu_eff_fullSel[icut]  << "\\%)" << "\t&\t";
-    //     if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-    //       textfile << QCDem_fullSel[icut]  << " (" << 100. * QCDem_eff_fullSel[icut]  << "\\%)" << "\t&\t"
-    //                << QCDbc_fullSel[icut]  << " (" << 100. * QCDbc_eff_fullSel[icut]  << "\\%)" << "\t&\t"
-    //                << Photj_fullSel[icut]  << " (" << 100. * Photj_eff_fullSel[icut]  << "\\%)";
-    //     }
+             << SingleTop_fullSel[icut]    << " (" << 100. * SingleTop_eff_fullSel[icut] << "\\%)" << "\t";
     textfile << "\t\\\\" << endl;
   }
     
   textfile << "\\hline" << endl;
 
   textfile << "total fullselection " << "\t&\t"
-           << data_fullSel[22]   << "\t&\t"
-           << H_fullSel[22]      << " (" << 100. * H_finaleff_fullSel  << "\\%)"     << "\t&\t"
-           << Wj_fullSel[22]     << " (" << 100. * Wj_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << ttj_fullSel[22]    << " (" << 100. * ttj_finaleff_fullSel << "\\%)"    << "\t&\t"
-           << SingleTop_fullSel[22]    << " (" << 100. * SingleTop_finaleff_fullSel << "\\%)"    << "\t&\t"
-           << Zj_fullSel[22]     << " (" << 100. * Zj_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << WW_fullSel[22]     << " (" << 100. * WW_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << ZZ_fullSel[22]     << " (" << 100. * ZZ_finaleff_fullSel << "\\%)"     << "\t&\t"
-           << WZ_fullSel[22]     << " (" << 100. * WZ_finaleff_fullSel << "\\%)"   << "\t&\t"
-           << Wgamma_fullSel[22] << " (" << 100. * Wgamma_finaleff_fullSel << "\\%)" << "\t";
-  //   if(!strcmp(finalstate,"MM")) textfile << " ( " << 100 * QCDmu_finaleff_fullSel << "\\%)";
-  //   if(!strcmp(finalstate,"EM")) textfile << " ( " << 100 * QCDmu_finaleff_fullSel << "\\%)" << "\t&\t";
-  //   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-  //     textfile << QCDem_fullSel[22]  << " (" << 100. * QCDem_finaleff_fullSel << "\\%)" << "\t&\t"
-  //              << QCDbc_fullSel[22]  << " (" << 100. * QCDbc_finaleff_fullSel << "\\%)" << "\t&\t"
-  //              << Photj_fullSel[22]  << " (" << 100. * Photj_finaleff_fullSel << "\\%)";
-  //   }
+           << data_fullSel[23]   << "\t&\t"
+           << H_fullSel[23]      << " (" << 100. * H_finaleff_fullSel  << "\\%)"     << "\t&\t"
+           << Wj_fullSel[23]     << " (" << 100. * Wj_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << ttj_fullSel[23]    << " (" << 100. * ttj_finaleff_fullSel << "\\%)"    << "\t&\t"
+           << SingleTop_fullSel[23]    << " (" << 100. * SingleTop_finaleff_fullSel << "\\%)"    << "\t";
   textfile << "\t\\\\" << endl;
     
   textfile << "\\hline" << endl;
     
-  textfile << "total " << "\t&\t"
-           << data_fullSel[22]   << "\t&\t"
-           << H_fullSel[22]      << " (" << 100. * H_finaleff   << "\\%)"    << "\t&\t"
-           << Wj_fullSel[22]     << " (" << 100. * Wj_finaleff  << "\\%)"    << "\t&\t"
-           << ttj_fullSel[22]    << " (" << 100. * ttj_finaleff << "\\%)"    << "\t&\t"
-           << SingleTop_fullSel[22]    << " (" << 100. * SingleTop_finaleff << "\\%)"    << "\t&\t"
-           << Zj_fullSel[22]     << " (" << 100. * Zj_finaleff << "\\%)"     << "\t&\t"
-           << WW_fullSel[22]     << " (" << 100. * WW_finaleff << "\\%)"     << "\t&\t"
-           << ZZ_fullSel[22]     << " (" << 100. * ZZ_finaleff << "\\%)"     << "\t&\t"
-           << WZ_fullSel[22]     << " (" << 100. * WZ_finaleff << "\\%)"     << "\t&\t"
-           << Wgamma_fullSel[22] << " (" << 100. * Wgamma_finaleff << "\\%)" << "\t";
-  //   if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[22] << " (" << 100. * QCDmu_finaleff << "\\%)";
-  //   if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[22] << " (" << 100. * QCDmu_finaleff << "\\%)" << "\t&\t";
-  //   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-  //     textfile << QCDem_fullSel[22]  << " (" << 100. * QCDem_finaleff << "\\%)" << "\t&\t"
-  //              << QCDbc_fullSel[22]  << " (" << 100. * QCDbc_finaleff << "\\%)" << "\t&\t"
-  //              << Photj_fullSel[22]  << " (" << 100. * Photj_finaleff << "\\%)";
-  //   }
-  textfile << "\t\\\\" << endl;
-    
   textfile << "0 jets bin " << "\t&\t"
-           << data_fullSel[22]   << "\t&\t"
-           << H_fullSel[22]      << "\t&\t"
-           << Wj_fullSel[22]     << "\t&\t"
-           << ttj_fullSel[22]    << "\t&\t"
-           << SingleTop_fullSel[22]    << "\t&\t"
-           << Zj_fullSel[22]     << "\t&\t"
-           << WW_fullSel[22]     << "\t&\t"
-           << ZZ_fullSel[22]     << "\t&\t"
-           << WZ_fullSel[22]     << "\t&\t"
-           << Wgamma_fullSel[22] << "\t";
-  //   if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[22];
-  //   if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[22] << "\t&\t";
-  //   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-  //     textfile << QCDem_fullSel[22]  << "\t&\t"
-  //              << QCDbc_fullSel[22]  << "\t&\t"
-  //              << Photj_fullSel[22];
-  //   }
-  textfile << "\t\\\\" << endl;
-
-  textfile << "1 jets bin " << "\t&\t"
            << data_fullSel[23]   << "\t&\t"
            << H_fullSel[23]      << "\t&\t"
            << Wj_fullSel[23]     << "\t&\t"
            << ttj_fullSel[23]    << "\t&\t"
-           << SingleTop_fullSel[23]    << "\t&\t"
-           << Zj_fullSel[23]     << "\t&\t"
-           << WW_fullSel[23]     << "\t&\t"
-           << ZZ_fullSel[23]   << "\t&\t"
-           << WZ_fullSel[23]   << "\t&\t"
-           << Wgamma_fullSel[23] << "\t";
-  //   if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[23];
-  //   if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[23] << "\t&\t";
-  //   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-  //     textfile << QCDem_fullSel[23]  << "\t&\t"
-  //              << QCDbc_fullSel[23]  << "\t&\t"
-  //              << Photj_fullSel[23];
-  //   }
+           << SingleTop_fullSel[23]    << "\t";
   textfile << "\t\\\\" << endl;
-    
-  textfile << "$>1$ jets bin " << "\t&\t"
+
+  textfile << "1 jets bin " << "\t&\t"
            << data_fullSel[24]   << "\t&\t"
            << H_fullSel[24]      << "\t&\t"
            << Wj_fullSel[24]     << "\t&\t"
            << ttj_fullSel[24]    << "\t&\t"
-           << SingleTop_fullSel[24]    << "\t&\t"
-           << Zj_fullSel[24]     << "\t&\t"
-           << WW_fullSel[24]     << "\t&\t"
-           << ZZ_fullSel[24]   << "\t&\t"
-           << WZ_fullSel[24]   << "\t&\t"
-           << Wgamma_fullSel[24] << "\t";
-  //   if(!strcmp(finalstate,"MM")) textfile << QCDmu_fullSel[24];
-  //   if(!strcmp(finalstate,"EM")) textfile << QCDmu_fullSel[24] << "\t&\t";
-  //   if(!strcmp(finalstate,"EE") || !strcmp(finalstate,"EM")) {
-  //     textfile << QCDem_fullSel[24]  << "\t&\t"
-  //              << QCDbc_fullSel[24]  << "\t&\t"
-  //              << Photj_fullSel[24];
-  //   }
+           << SingleTop_fullSel[24]    << "\t";
+  textfile << "\t\\\\" << endl;
+    
+  textfile << "$>1$ jets bin " << "\t&\t"
+           << data_fullSel[25]   << "\t&\t"
+           << H_fullSel[25]      << "\t&\t"
+           << Wj_fullSel[25]     << "\t&\t"
+           << ttj_fullSel[25]    << "\t&\t"
+           << SingleTop_fullSel[25]    << "\t";
   textfile << "\t\\\\" << endl;
     
   textfile << "\\hline" << endl
@@ -782,7 +705,93 @@ void printLatex(float lumi, const char* finalstate) {
            << "\\end{tiny}" << endl
            << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Breakdown of signal and backgrounds events in "
            << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
-           << "\\end{sidewaystable}" << endl;
+           << "\\end{table}" << endl;
+
+
+
+  textfile << "\\begin{table}[p]" << endl
+           << "\\begin{tiny}" << endl
+           << "\\begin{center}" << endl;
+  textfile << "\\begin{tabular}{|c|c|c|c|c|c|}" << endl;
+  textfile << "\\hline" << endl;
+  textfile << "selection & Z$(ll)$+jets & WW & ZZ & WZ & W$\\gamma$ \t\\\\" << endl;
+  textfile << "\\hline" << endl; 
+    
+  textfile << "\\hline"        << endl;
+  textfile << "\\hline"        << endl;
+    
+  for(int icut=0; icut<26; icut++) {
+
+    if(!strcmp(finalstate,"EE")) {
+      if(!UseCuts[ee][icut]) continue;
+    }
+    if(!strcmp(finalstate,"MM")) {
+      if(!UseCuts[mm][icut]) continue;
+    }
+    if(!strcmp(finalstate,"EM")) {
+      if(!UseCuts[em][icut]) continue;
+    }
+    if(!strcmp(finalstate,"ME")) {
+      if(!UseCuts[me][icut]) continue;
+    }
+
+    textfile << fullSelCuts[icut] << "\t&\t";
+      
+    textfile << fixed
+             << Zj_fullSel[icut]     << " (" << 100. * Zj_eff_fullSel[icut]  << "\\%)" << "\t&\t"
+             << WW_fullSel[icut]     << " (" << 100. * WW_eff_fullSel[icut]  << "\\%)" << "\t&\t"
+             << ZZ_fullSel[icut]     << " (" << 100. * ZZ_eff_fullSel[icut]     << "\\%)" << "\t&\t"
+             << WZ_fullSel[icut]     << " (" << 100. * WZ_eff_fullSel[icut]     << "\\%)" << "\t&\t"
+             << Wgamma_fullSel[icut] << " (" << 100. * Wgamma_eff_fullSel[icut] << "\\%)" << "\t";
+    textfile << "\t\\\\" << endl;
+  }
+    
+  textfile << "\\hline" << endl;
+
+  textfile << "total fullselection " << "\t&\t"
+           << Zj_fullSel[23]     << " (" << 100. * Zj_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << WW_fullSel[23]     << " (" << 100. * WW_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << ZZ_fullSel[23]     << " (" << 100. * ZZ_finaleff_fullSel << "\\%)"     << "\t&\t"
+           << WZ_fullSel[23]     << " (" << 100. * WZ_finaleff_fullSel << "\\%)"   << "\t&\t"
+           << Wgamma_fullSel[23] << " (" << 100. * Wgamma_finaleff_fullSel << "\\%)" << "\t";
+  textfile << "\t\\\\" << endl;
+    
+  textfile << "\\hline" << endl;
+    
+  textfile << "0 jets bin " << "\t&\t"
+           << Zj_fullSel[23]     << "\t&\t"
+           << WW_fullSel[23]     << "\t&\t"
+           << ZZ_fullSel[23]     << "\t&\t"
+           << WZ_fullSel[23]     << "\t&\t"
+           << Wgamma_fullSel[23] << "\t";
+  textfile << "\t\\\\" << endl;
+
+  textfile << "1 jets bin " << "\t&\t"
+           << Zj_fullSel[24]     << "\t&\t"
+           << WW_fullSel[24]     << "\t&\t"
+           << ZZ_fullSel[24]   << "\t&\t"
+           << WZ_fullSel[24]   << "\t&\t"
+           << Wgamma_fullSel[24] << "\t";
+  textfile << "\t\\\\" << endl;
+    
+  textfile << "$>1$ jets bin " << "\t&\t"
+           << Zj_fullSel[25]     << "\t&\t"
+           << WW_fullSel[25]     << "\t&\t"
+           << ZZ_fullSel[25]   << "\t&\t"
+           << WZ_fullSel[25]   << "\t&\t"
+           << Wgamma_fullSel[25] << "\t";
+  textfile << "\t\\\\" << endl;
+    
+  textfile << "\\hline" << endl
+           << "\\end{tabular}" << endl
+           << "\\end{center}" << endl
+           << "\\end{tiny}" << endl
+           << "\\caption{Higgs $m_H$ = " << exampleHiggsMass << " GeV/c$^2$. Breakdown of signal and backgrounds events in "
+           << lumi << " $pb^{-1}$ for " << finalstate << " final state.} " << endl 
+           << "\\end{table}" << endl;
+
+  textfile << "\\clearpage\n\n\n" << endl;
+
   }
   // assign the final yields
   int channel=-1;
@@ -794,9 +803,9 @@ void printLatex(float lumi, const char* finalstate) {
   for(int jet=0; jet<3; ++jet) {
     
     int step;
-    if(jet==0) step = 22;
-    else if(jet==1) step = 23;
-    else if(jet==2) step = 24;
+    if(jet==0) step = 23;
+    else if(jet==1) step = 24;
+    else if(jet==2) step = 25;
     else {
       std::cout << "WRONG JET BIN. Stopping now." << std::endl;
     }
@@ -811,6 +820,9 @@ void printLatex(float lumi, const char* finalstate) {
     ZZ_final[channel][jet] = ZZ_fullSel[step];
     WZ_final[channel][jet] = WZ_fullSel[step];
     Wgamma_final[channel][jet] = Wgamma_fullSel[step];
+    bkg_final[channel][jet] = Wj_final[channel][jet] + ttj_final[channel][jet] + SingleTop_final[channel][jet]+
+      Zj_final[channel][jet] + WW_final[channel][jet] + ZZ_final[channel][jet] + WZ_final[channel][jet] + 
+      WZ_final[channel][jet] + WZ_final[channel][jet]; // Wgamma is in madgraph W+j
 
     H_final_err[channel][jet] = H_fullSel_err[step];
     Wj_final_err[channel][jet] = Wj_fullSel_err[step];
@@ -821,6 +833,8 @@ void printLatex(float lumi, const char* finalstate) {
     ZZ_final_err[channel][jet] = ZZ_fullSel_err[step];
     WZ_final_err[channel][jet] = WZ_fullSel_err[step];
     Wgamma_final_err[channel][jet] = Wgamma_fullSel_err[step];
+    bkg_final_err[channel][jet] = sqrt(pow(WW_final_err[channel][jet],2)+pow(WZ_final_err[channel][jet],2)+pow(ZZ_final_err[channel][jet],2)+
+                                       pow(Zj_final_err[channel][jet],2)+pow(Wj_final_err[channel][jet],2)+pow(ttj_final_err[channel][jet],2)+pow(SingleTop_final_err[channel][jet],2));
 
   }
 
@@ -836,21 +850,24 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   textfile.open(namefile, ios_base::app);
   textfile.precision(2);
 
-  std::string channelName[4][3];
+  std::string channelName[5][3];
   channelName[mm][0] = "$\\mu\\mu$ 0 j";
   channelName[ee][0] = "$ee$ 0 j";
   channelName[em][0] = "$e\\mu$ 0 j";
   channelName[me][0] = "$\\mu e$ 0 j";
+  channelName[ll][0] = "$\\ell\\ell$ 0 j";
 
   channelName[mm][1] = "$\\mu\\mu$ 1 j";
   channelName[ee][1] = "$ee$ 1 j";
   channelName[em][1] = "$e\\mu$ 1 j";
   channelName[me][1] = "$\\mu e$ 1 j";
+  channelName[ll][0] = "$\\ell\\ell$ 1 j";
 
   channelName[mm][2] = "$\\mu\\mu$ 2 j";
   channelName[ee][2] = "$ee$ 2 j";
   channelName[em][2] = "$e\\mu$ 2 j";
   channelName[me][2] = "$\\mu e$ 2 j";
+  channelName[ll][2] = "$\\ell\\ell$ 0 j";
 
   for(int jet=0; jet<3; ++jet) {
 
@@ -886,15 +903,17 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
            << endl;
   textfile << "\\hline" << endl; 
 
-  textfile << "final state & W+jets & W+$\\gamma$ & $t\\bar t$ & single $t$ & data \t\\\\" << endl;
+  //  textfile << "final state & W+jets & W+$\\gamma$ & $t\\bar t$ & single $t$ & data \t\\\\" << endl;
+  textfile << "final state & W+jets & $t\\bar t$ & single $t$ & all bkg & data \t\\\\" << endl;
   textfile << "\\hline" << endl; 
   for(int ichan=0; ichan<4; ++ichan) {
     textfile << channelName[ichan][jet] << "\t&\t";
     textfile << fixed 
              << Wj_final[ichan][jet] << "$\\pm$" << Wj_final_err[ichan][jet] << "\t&\t"
-             << Wgamma_final[ichan][jet] << "$\\pm$" << Wgamma_final_err[ichan][jet] << "\t&\t"
+      //     << Wgamma_final[ichan][jet] << "$\\pm$" << Wgamma_final_err[ichan][jet] << "\t&\t"
              << ttj_final[ichan][jet] << "$\\pm$" << ttj_final_err[ichan][jet] << "\t&\t"
              << SingleTop_final[ichan][jet] << "$\\pm$" << SingleTop_final_err[ichan][jet] << "\t&\t"
+             << bkg_final[ichan][jet] << "$\\pm$" << bkg_final_err[ichan][jet] << "\t&\t"
              << data_final[ichan][jet] << "\t\\\\"
              << endl;
   }
@@ -902,12 +921,14 @@ void printShortBkgSummary(float lumiEE, float lumiMM, float lumiEM) {
   textfile << fixed
            << Wj_final[mm][jet]     + Wj_final[ee][jet]     + Wj_final[em][jet]     + Wj_final[me][jet]      << "$\\pm$" 
            << sqrt(pow(Wj_final_err[mm][jet],2)     + pow(Wj_final_err[ee][jet],2)     + pow(Wj_final_err[em][jet],2)     + pow(Wj_final_err[me][jet],2) ) << "\t&\t"
-           << Wgamma_final[mm][jet] + Wgamma_final[ee][jet] + Wgamma_final[em][jet] + Wgamma_final[me][jet]  << "$\\pm$" 
-           << sqrt(pow(Wgamma_final_err[mm][jet],2) + pow(Wgamma_final_err[ee][jet],2) + pow(Wgamma_final_err[em][jet],2) + pow(Wgamma_final_err[me][jet],2)) <<  "\t&\t"
+    //     << Wgamma_final[mm][jet] + Wgamma_final[ee][jet] + Wgamma_final[em][jet] + Wgamma_final[me][jet]  << "$\\pm$" 
+    //     << sqrt(pow(Wgamma_final_err[mm][jet],2) + pow(Wgamma_final_err[ee][jet],2) + pow(Wgamma_final_err[em][jet],2) + pow(Wgamma_final_err[me][jet],2)) <<  "\t&\t"
            << ttj_final[mm][jet]    + ttj_final[ee][jet]    + ttj_final[em][jet]    + ttj_final[me][jet] << "$\\pm$"
            << sqrt(pow(ttj_final_err[mm][jet],2) + pow(ttj_final_err[ee][jet],2) + pow(ttj_final_err[em][jet],2) + pow(ttj_final_err[me][jet],2)) << "\t&\t"
            << SingleTop_final[mm][jet] + SingleTop_final[ee][jet] + SingleTop_final[em][jet] + SingleTop_final[me][jet] << "$\\pm$"
            << sqrt(pow(SingleTop_final_err[mm][jet],2) + pow(SingleTop_final_err[ee][jet],2) + pow(SingleTop_final_err[em][jet],2) + pow(SingleTop_final_err[me][jet],2)) << "\t&\t"
+           << bkg_final[mm][jet] + bkg_final[ee][jet] + bkg_final[em][jet] + bkg_final[me][jet] << "$\\pm$"
+           << sqrt(pow(bkg_final_err[mm][jet],2) + pow(bkg_final_err[ee][jet],2) + pow(bkg_final_err[em][jet],2) + pow(bkg_final_err[me][jet],2)) << "\t&\t"
            << data_final[mm][jet] + data_final[ee][jet] + data_final[em][jet]  + data_final[me][jet]  << "\t\\\\"
            << endl;
   textfile << "\\hline" << endl
@@ -1013,7 +1034,7 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
     }
   }
 
-  std::string channelName[4][3];
+  std::string channelName[5][3];
   channelName[mm][0] = "$\\mu\\mu$ 0 j";
   channelName[ee][0] = "$ee$ 0 j";
   channelName[em][0] = "$e\\mu$ 0 j";
@@ -1063,9 +1084,9 @@ void printSuperSummary(float lumiEE, float lumiMM, float lumiEM, int massset) {
         if(ichan==me) computeYields(lumiEM,"ME");
 
         int step;
-        if(jet==0) step = 22;
-        else if(jet==1) step = 23;
-        else if(jet==2) step = 24;
+        if(jet==0) step = 23;
+        else if(jet==1) step = 24;
+        else if(jet==2) step = 25;
         else {
           std::cout << "WRONG JET BIN. Stopping now." << std::endl;
         }
