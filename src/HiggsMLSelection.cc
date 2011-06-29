@@ -934,15 +934,18 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-    myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
-                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-                                   (GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py())) ? 
-                                   m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() :
-                                   m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
-                                   (GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py())) ? 
-                                   m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz() :
-                                   m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() );
-      
+    if ( GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py()) ) {
+      myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
+				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz()); 
+    } else { 
+      myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
+				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() );
+    }
+
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
 
@@ -1051,14 +1054,19 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
-    myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
-                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-                                   (GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py())) ? 
-                                   m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() :
-                                   m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
-                                   (GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py())) ? 
-                                   m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz() :
-                                   m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() );
+
+
+    if ( GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py()) ) {
+      myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
+				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz()); 
+    } else { 
+      myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
+				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() );
+    }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeMM -> store();
@@ -1175,14 +1183,17 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
-    myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
-                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-                                   (GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py())) ? 
-                                   m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() :
-                                   m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
-                                   (GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py())) ? 
-                                   m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz() :
-                                   m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() );
+    if ( GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py()) ) {
+      myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
+				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz()); 
+    } else { 
+      myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
+				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() );
+    }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEM -> store();
@@ -1299,15 +1310,18 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
-    myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
-                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-                                   (GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py())) ? 
-                                   m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() :
-                                   m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
-                                   (GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py())) ? 
-                                   m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz() :
-                                   m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() );
-    
+    if ( GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py()) ) {
+      myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
+				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz()); 
+    } else { 
+      myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
+				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
+				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() );
+    }
+
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
 
