@@ -100,6 +100,21 @@ void RedHiggsTree::addLatinos() {
 
 }
 
+void RedHiggsTree::addKinematics() {
+  myTree->Branch("pxTkMet", &myPxTkMet, "pxTkMet/F");
+  myTree->Branch("pyTkMet", &myPyTkMet, "pyTkMet/F");
+  myTree->Branch("pzTkMet", &myPzTkMet, "pzTkMet/F");
+  myTree->Branch("pxLeadJet", &myPxLeadJet, "pxLeadJet/F");
+  myTree->Branch("pyLeadJet", &myPyLeadJet, "pyLeadJet/F");
+  myTree->Branch("pzLeadJet", &myPzLeadJet, "pzLeadJet/F");
+  myTree->Branch("pxL1", &myPxL1, "pxL1/F");
+  myTree->Branch("pyL1", &myPyL1, "pyL1/F");
+  myTree->Branch("pzL1", &myPzL1, "pzL1/F");
+  myTree->Branch("pxL2", &myPxL2, "pxL2/F");
+  myTree->Branch("pyL2", &myPyL2, "pyL2/F");
+  myTree->Branch("pzL2", &myPzL2, "pzL2/F");
+}
+
 void RedHiggsTree::addKFactor() {
   
   myTree->Branch("KFactor",       &myKFactor,      "KFactor/F");
@@ -245,6 +260,24 @@ void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool
   mySteps[23] = s23;
   mySteps[24] = s24;
 
+}
+
+void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
+                                  float pxLeadJet, float pyLeadJet, float pzLeadJet,
+                                  float pxL1, float pyL1, float pzL1,
+                                  float pxL2, float pyL2, float pzL2) {
+  myPxTkMet = pxTkMet;
+  myPyTkMet = pyTkMet;
+  myPzTkMet = pzTkMet;
+  myPxLeadJet = pxLeadJet;
+  myPyLeadJet = pyLeadJet;
+  myPzLeadJet = pzLeadJet;
+  myPxL1 = pxL1;
+  myPyL1 = pyL1;
+  myPzL1 = pzL1;
+  myPxL2 = pxL2;
+  myPyL2 = pyL2;
+  myPzL2 = pzL2;
 }
 
 void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],

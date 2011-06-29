@@ -28,6 +28,8 @@ public:
   void addRunInfos();
   //! add latinos
   void addLatinos();
+  //! add kinematics
+  void addKinematics();
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
@@ -39,6 +41,12 @@ public:
 	       float max, float min, float maxEta, float minEta,
 	       float deta, int nvtx,
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
+
+  void fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
+                      float pxLeadJet, float pyLeadJet, float pzLeadJet,
+                      float pxL1, float pyL1, float pzL1,
+                      float pxL2, float pyL2, float pzL2);
+                      
 
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
@@ -110,6 +118,10 @@ private:
   float myGenHPt;
   float myLeadingJetPt;
   int myRun, myLS, myEvent;
+  float myPxTkMet, myPyTkMet, myPzTkMet;
+  float myPxLeadJet, myPyLeadJet, myPzLeadJet;
+  float myPxL1, myPyL1, myPzL1;
+  float myPxL2, myPyL2, myPzL2;
 
   // latinos
   bool mySteps[25];

@@ -492,6 +492,11 @@ void HiggsMLSelection::Loop() {
   myOutTreeEM->addLatinos();
   myOutTreeME->addLatinos();
 
+  myOutTreeEE->addKinematics();
+  myOutTreeMM->addKinematics();
+  myOutTreeEM->addKinematics();
+  myOutTreeME->addKinematics();
+
   myOutTreeEE->addElectronInfos();
   myOutTreeEM->addElectronInfos();
   myOutTreeME->addElectronInfos();
@@ -906,8 +911,8 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    int theLJ  = theLeadingJet[ee];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      int theLJ  = theLeadingJet[ee];
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeEE->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
     }
@@ -929,7 +934,14 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-
+    myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
+                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+                                   (GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py())) ? 
+                                   m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() :
+                                   m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
+                                   (GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py())) ? 
+                                   m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz() :
+                                   m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() );
       
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEE -> store();
@@ -1023,9 +1035,9 @@ void HiggsMLSelection::Loop() {
     // filling the tree
     if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
     myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
-
+    
+    theLJ  = theLeadingJet[mm];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      int theLJ  = theLeadingJet[mm];
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeMM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
     }
@@ -1038,6 +1050,15 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+
+    myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
+                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+                                   (GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py())) ? 
+                                   m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() :
+                                   m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
+                                   (GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py())) ? 
+                                   m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz() :
+                                   m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() );
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeMM -> store();
@@ -1134,8 +1155,8 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    theLJ  = theLeadingJet[em];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      int theLJ  = theLeadingJet[em];
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeEM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
     }
@@ -1153,6 +1174,15 @@ void HiggsMLSelection::Loop() {
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+
+    myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
+                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+                                   (GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py())) ? 
+                                   m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() :
+                                   m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
+                                   (GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py())) ? 
+                                   m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz() :
+                                   m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() );
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeEM -> store();
@@ -1249,8 +1279,8 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight);
 
+    theLJ  = theLeadingJet[me];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      int theLJ  = theLeadingJet[me];
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeME->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
     }
@@ -1268,6 +1298,15 @@ void HiggsMLSelection::Loop() {
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+
+    myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
+                                   pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+                                   (GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py())) ? 
+                                   m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() :
+                                   m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
+                                   (GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py())) ? 
+                                   m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz() :
+                                   m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() );
     
     // dumping final tree, only if there are 2 leptons in the acceptance
     if(outputStep1) myOutTreeME -> store();
@@ -1688,7 +1727,9 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_metOptll[ee] = m_theMET / m_dilepPt[ee].Pt();
     m_mT2[ee] = 0.;
     m_projectedMet[ee] = GetProjectedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
-    m_chMet[ee] = pfChargedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect()).Pt();
+    m_p3TKMET[ee] = pfChargedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
+    m_chMet[ee] = (m_p3TKMET[ee]).Pt();
+    
   }
 
 }
@@ -1715,7 +1756,8 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_metOptll[mm]        = m_theMET / m_dilepPt[mm].Pt();
     m_mT2[mm]             = 0.;
     m_projectedMet[mm]    = GetProjectedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
-    m_chMet[mm] = pfChargedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect()).Pt();
+    m_p3TKMET[mm] = pfChargedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
+    m_chMet[mm] = (m_p3TKMET[mm]).Pt();
   }
 
 }
@@ -1746,7 +1788,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_metOptll[em]      = m_theMET / m_dilepPt[em].Pt();
       m_mT2[em]           = 0.;
       m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
-      m_chMet[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect()).Pt();
+      m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+      m_chMet[em] = (m_p3TKMET[em]).Pt();
 
     } else {
       eleCands[me].push_back(myEle);
@@ -1767,7 +1810,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
       m_mT2[me]           = 0.;
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-      m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+      m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_chMet[me] = (m_p3TKMET[me]).Pt();
     }
   }
   
@@ -1795,7 +1839,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_metOptll[em]      = m_theMET / m_dilepPt[em].Pt();
       m_mT2[em]           = 0.;
       m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
-      m_chMet[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect()).Pt();
+      m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+      m_chMet[em] = (m_p3TKMET[em]).Pt();
 
     } else {
       eleCands[me].push_back(myPosi);
@@ -1816,7 +1861,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
       m_mT2[me]           = 0.;
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-      m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+      m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_chMet[me] = (m_p3TKMET[me]).Pt();
     }
   }
   
@@ -1857,7 +1903,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_metOptll[em]      = m_theMET / m_dilepPt[em].Pt();
         m_mT2[em]           = 0.;
         m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
-        m_chMet[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect()).Pt();
+        m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+        m_chMet[em] = (m_p3TKMET[em]).Pt();
 
       } else {
         eleCands[me].push_back(myPosi);
@@ -1878,7 +1925,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
         m_mT2[me]           = 0.;
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-        m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+        m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+        m_chMet[me] = (m_p3TKMET[me]).Pt();
       }
 
     } else {
@@ -1904,8 +1952,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_metOptll[em]      = m_theMET / m_dilepPt[em].Pt();
         m_mT2[em]           = 0.;
         m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
-        m_chMet[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect()).Pt();
-
+        m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
+        m_chMet[em] = (m_p3TKMET[em]).Pt();
       } else {
         eleCands[me].push_back(myEle);
         muCands[me].push_back(myMuPlus);
@@ -1925,7 +1973,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
         m_mT2[me]           = 0.;
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-        m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+        m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+        m_chMet[me] = (m_p3TKMET[me]).Pt();
       }
     }
   }

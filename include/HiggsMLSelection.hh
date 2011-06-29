@@ -167,6 +167,7 @@ private:
   std::vector<int> eleCands[4], muCands[4];
   TLorentzVector *m_p4LeptonPlus[4], *m_p4LeptonMinus[4];
   TVector3 *m_p3PFMET;
+  TVector3 m_p3TKMET[4];
   float m_theMET;
 
   TVector3 m_dilepPt[4];
