@@ -26,35 +26,36 @@ void countEvents(int mH=160) {
     chains[isample] = new TChain(nametree);
   }
 
-  chains[0]->Add("results/Spring11_V2/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[0]->Add("results/Spring11_V5HWW/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  //chains[0]->Add("results/Spring11_V5HWW/WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root");
 
-  chains[1]->Add("results/Spring11_V2/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[2]->Add("results/Spring11_V2/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[3]->Add("results/Spring11_V2/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[1]->Add("results/Spring11_V5HWW/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[2]->Add("results/Spring11_V5HWW/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[3]->Add("results/Spring11_V5HWW/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[4]->Add("results/Spring11_V2/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[5]->Add("results/Spring11_V2/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[6]->Add("results/Spring11_V2/DYToTauTau_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[4]->Add("results/Spring11_V5HWW/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[5]->Add("results/Spring11_V5HWW/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[6]->Add("results/Spring11_V5HWW/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[7]->Add("results/Spring11_V2/ToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains[8]->Add("results/Spring11_V2/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains[9]->Add("results/Spring11_V2/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  chains[7]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  chains[8]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  chains[9]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[10]->Add("results/Spring11_V2/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[10]->Add("results/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  TString hSample("results/Spring11_V2/GluGluToHToWWTo2L2Nu_M-");
+  TString hSample("results/Spring11_V5HWW/GluGluToHToWWTo2L2Nu_M-");
   char mass[5];
   sprintf(mass,"%d",mH);
   hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
 
   chains[11]->Add(hSample.Data());
 
-  chains[12]->Add("results/Spring11_V2/PhotonVJets_7TeV-madgraph/*Counters.root");
-  //  chains[13]->Add("results/Spring11_V2/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
-  chains[13]->Add("results/Spring11_V2/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"); // MADGRAPH sample
-  chains[14]->Add("results/Spring11_V2/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[15]->Add("results/Spring11_V2/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[16]->Add("results/Spring11_V2/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[12]->Add("results/Spring11_V5HWW/PhotonVJets_7TeV-madgraph/*Counters.root");
+  //  chains[13]->Add("results/Spring11_V5HWW/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
+  chains[13]->Add("results/Spring11_V5HWW/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"); // MADGRAPH sample
+  chains[14]->Add("results/Spring11_V5HWW/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[15]->Add("results/Spring11_V5HWW/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[16]->Add("results/Spring11_V5HWW/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
   cout << "chains added. " << endl;
 
@@ -108,10 +109,11 @@ void countEvents(int mH=160) {
   Higgs_xsec_masses.insert(std::make_pair(600,0.019184*4./9.));
 
   std::vector<float> sampleXsec;
-  sampleXsec.push_back(31314.);
-  sampleXsec.push_back(3457./3.);
-  sampleXsec.push_back(3457./3.);
-  sampleXsec.push_back(3457./3.);
+  sampleXsec.push_back(31314.); // madgraph
+  // sampleXsec.push_back(31314. * 0.00111); // PYTHIA BIG filtered
+  sampleXsec.push_back(3457.);
+  sampleXsec.push_back(3457.);
+  sampleXsec.push_back(3457.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
@@ -121,10 +123,10 @@ void countEvents(int mH=160) {
   sampleXsec.push_back(157.5);
   sampleXsec.push_back(Higgs_xsec_masses[mH]);
   sampleXsec.push_back(165.);
-  sampleXsec.push_back(4.50347);
+  sampleXsec.push_back(4.513968);
   sampleXsec.push_back(0.1538);
   sampleXsec.push_back(0.599442);
-  sampleXsec.push_back(7.67); // 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
+  sampleXsec.push_back(5.9*1.3); // 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
 
   std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " pb " << std::endl;
 
