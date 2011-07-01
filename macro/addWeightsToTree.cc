@@ -131,6 +131,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Int_t         i_finalSelection;
     Int_t         i_promptDecay;
     Int_t         i_WWSel;
+    Int_t         i_WWSel1j;
 
     // the selected final state: ee=0, mm=1, em=2
     treeNew->Branch("finalstate", &finalstate, "finalstate/I");
@@ -158,6 +159,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("preDeltaPhi", &i_preDeltaPhi, "preDeltaPhi/I");
     treeNew->Branch("finalSelection", &i_finalSelection, "finalSelection/I");
     treeNew->Branch("WWSel", &i_WWSel, "WWSel/I");
+    treeNew->Branch("WWSel1j", &i_WWSel1j, "WWSel1j/I");
     treeNew->Branch("KFactor", &KFactor, "KFactor/F");
     treeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
     treeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
@@ -235,6 +237,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
       i_WWSel = (step[13]) ? 1 : 0;
+      i_WWSel1j = (step[19] && njets==1) ? 1 : 0;
 
       consecevent = (float)j;
       treeNew->Fill();
