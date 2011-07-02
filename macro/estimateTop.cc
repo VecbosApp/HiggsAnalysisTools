@@ -15,25 +15,35 @@ float nEv_endWW[4];
 float nEv_end0j[4];
 float nEv_end1j[4];
 
-float usedLumi = 184.;
-float wantedLumi = 192.;
+float usedLumi = 932.;
+float wantedLumi = 932.;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 void countEvents(int mass, const char* channel);
 
-void estimateTop() {
+void estimateTop(int njets) {
 
   // constants
-  float eff_2b = 0.438;
-  float eff_2b_err = 0.069; 
-  float eff_1b_softmu = 0.053; // MC
+  float eff_2b[2] = { 0.533, 0.639 };
+  float eff_2b_err[2] = { 0.060, 0.080 }; 
+  //  float eff_1b_softmu = 0.159; // Data, Gio, 2 jets: 0.159 +/- 0.010 
+
+  char njcut[30];
+  sprintf(njcut, "njets==%d", njets);
+  char wwselcut[30];
+  if(njets==0) sprintf(wwselcut,"WWSel");
+  else if(njets==1) sprintf(wwselcut,"WWSel1j");
+  else {
+    std::cout << "Jet bin must be 0/1" << std::endl;
+    return;
+  }
 
   // scale factors for the backgrounds
-  float WWDataOverMC = 85./64.; // estimation 150/pb
-  float DYDataOverMC = 22.0/11.4; // estimation 190/pb 
-  float WjDataTot[4] = {4.49, 6.65, 7.53, 10.16};
+  float WWDataOverMC = 1.01; // estimation 815/pb, 0j
+  float DYDataOverMC = 5.2; // estimation 932/pb, 0j 
+  float WjDataTot[4] = { 17.38 *wantedLumi/815., 15.23 * wantedLumi/710., 45.18 * wantedLumi/710., 23.6 * wantedLumi/815. };
 
   TFile *fileData = TFile::Open("results_data/merged/dataset_ll.root");
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
@@ -57,9 +67,6 @@ void estimateTop() {
   TH1F *btagHDataEM = new TH1F("btagHDataEM","",50,0,180);
   TH1F *btagHDataME = new TH1F("btagHDataME","",50,0,180);
 
-  // thses for the ll estimate
-  TH1F *btagHDataLL = new TH1F("btagHDataLL","",50,0,180);
-
   // backgrounds in the tagged region
   TH1F *btagWWHLL = new TH1F("btagWWHLL","",50,0,180);
   TH1F *btagDYHLL = new TH1F("btagDYHLL","",50,0,180);
@@ -75,37 +82,36 @@ void estimateTop() {
   // WW background after CJV (used with the mistag rate)
   TH1F *btagWWAllHLL = new TH1F("btagWWAllHLL","",50,0,180);
 
-  treeTop->Project("topHLL","deltaPhi","WWSel*weight*puweight");
-  treeData->Project("btagHDataLL","deltaPhi","jetVeto && bTagTrackCount>2.1");
+  treeTop->Project("topHEE","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==0)*weight*puweight")).Data());
+  treeTop->Project("topHMM","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==1)*weight*puweight")).Data());
+  treeTop->Project("topHEM","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==2)*weight*puweight")).Data());
+  treeTop->Project("topHME","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==3)*weight*puweight")).Data());
 
-  treeTop->Project("topHEE","deltaPhi","(WWSel && finalstate==0)*weight*puweight");
-  treeTop->Project("topHMM","deltaPhi","(WWSel && finalstate==1)*weight*puweight");
-  treeTop->Project("topHEM","deltaPhi","(WWSel && finalstate==2)*weight*puweight");
-  treeTop->Project("topHME","deltaPhi","(WWSel && finalstate==3)*weight*puweight");
-  treeData->Project("btagHDataEE","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==0");
-  treeData->Project("btagHDataMM","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==1");
-  treeData->Project("btagHDataEM","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==2");
-  treeData->Project("btagHDataME","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==3");
+  treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
+  treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
+  treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
+  treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
 
-  treeWW->Project("btagWWHLL","deltaPhi","(jetVeto && bTagTrackCount>2.1)*weight*puweight");
-  treeDY->Project("btagDYHLL","deltaPhi","(jetVeto && bTagTrackCount>2.1)*weight*puweight");
+  treeWW->Project("btagWWHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data()); // add the soft mu when available
+  treeDY->Project("btagDYHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data());
 
-  treeWW->Project("btagWWAllHLL","deltaPhi","(jetVeto)*weight*puweight");
+  treeWW->Project("btagWWAllHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15)*weight*puweight")).Data());
 
-  treeWj->Project("btagWjHEE","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==0");
-  treeWj->Project("btagWjHMM","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==1");
-  treeWj->Project("btagWjHEM","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==2");
-  treeWj->Project("btagWjHME","deltaPhi","jetVeto && bTagTrackCount>2.1 && finalstate==3");
-  treeWj->Project("CJVWjHEE","deltaPhi","bTagTrackCount>2.1 && finalstate==0");
-  treeWj->Project("CJVWjHMM","deltaPhi","bTagTrackCount>2.1 && finalstate==1");
-  treeWj->Project("CJVWjHEM","deltaPhi","bTagTrackCount>2.1 && finalstate==2");
-  treeWj->Project("CJVWjHME","deltaPhi","bTagTrackCount>2.1 && finalstate==3");
-  
+  treeWj->Project("btagWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==0")).Data());
+  treeWj->Project("btagWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==1")).Data());
+  treeWj->Project("btagWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==2")).Data());
+  treeWj->Project("btagWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==3")).Data());
+
+  treeWj->Project("CJVWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0")).Data());
+  treeWj->Project("CJVWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1")).Data());
+  treeWj->Project("CJVWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==2")).Data());
+  treeWj->Project("CJVWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==3")).Data());
+
   // backgrounds in the tagged region (inclusive)
-  float effBtagWj[4] = { btagWjHEE->Integral()/CJVWjHEE->Integral(), 
-                         btagWjHMM->Integral()/CJVWjHMM->Integral(),
-                         btagWjHEM->Integral()/CJVWjHEM->Integral(),
-                         btagWjHME->Integral()/CJVWjHME->Integral() };
+  float effBtagWj[4] = { (CJVWjHEE->Integral()>0) ? btagWjHEE->Integral()/CJVWjHEE->Integral() : 0.0, 
+                         (CJVWjHEE->Integral()>0) ? btagWjHMM->Integral()/CJVWjHMM->Integral() : 0.0,
+                         (CJVWjHEE->Integral()>0) ? btagWjHEM->Integral()/CJVWjHEM->Integral() : 0.0,
+                         (CJVWjHEE->Integral()>0) ? btagWjHME->Integral()/CJVWjHME->Integral() : 0.0 };
 
   float WW_tot = btagWWHLL->Integral() * WWDataOverMC;
   float WW_tot_err = yieldErrPoisson(WW_tot,btagWWHLL->Integral());
@@ -164,14 +170,14 @@ void estimateTop() {
   // top estimation from data (0-jet bin method)
   float nTopData[4];
   float nTopData_err[4];
-  float eff_2b_softmu = 1 - pow(1-eff_1b_softmu,2);
+  //  float eff_2b_softmu = 1 - pow(1-eff_1b_softmu,2);
 
   // EE
   float nBTagTag_data = btagHDataEE->Integral();
-  float nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
-  float nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
-  float nTopSoftMuVeto_data = nTopBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
-  float nTopSoftMuVeto_data_err = nTopBTagVeto_data_err * (1-eff_2b_softmu); 
+  float nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
+  float nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  float nTopSoftMuVeto_data = nTopBTagVeto_data; //* (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's). Now included in eff_2b
+  float nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
   std::cout << "Tagged events in data: " << "EE = " << nBTagTag_data << std::endl;
 
@@ -180,10 +186,10 @@ void estimateTop() {
 
   // MM
   nBTagTag_data = btagHDataMM->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
-  nTopSoftMuVeto_data = nTopBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
-  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err * (1-eff_2b_softmu); 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopSoftMuVeto_data = nTopBTagVeto_data; //  * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
+  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
   std::cout << "Tagged events in data: " << "MM = " << nBTagTag_data << std::endl;
 
@@ -192,10 +198,10 @@ void estimateTop() {
 
   // EM
   nBTagTag_data = btagHDataEM->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
-  nTopSoftMuVeto_data = nTopBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
-  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err * (1-eff_2b_softmu); 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
+  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
   std::cout << "Tagged events in data: " << "EM = " << nBTagTag_data << std::endl;
 
@@ -204,14 +210,15 @@ void estimateTop() {
 
   // ME
   nBTagTag_data = btagHDataME->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
-  nTopSoftMuVeto_data = nTopBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
-  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err * (1-eff_2b_softmu); 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
+  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
   std::cout << "Tagged events in data: " << "ME = " << nBTagTag_data << std::endl;
 
   float nBTagTag_data_tot =  btagHDataEE->Integral() +  btagHDataMM->Integral() +  btagHDataEM->Integral() +  btagHDataME->Integral();
+  std::cout << "Tagged events in data: " << "TOT = " << nBTagTag_data_tot << std::endl;
 
   nTopData[me] = nTopSoftMuVeto_data;
   nTopData_err[me] = nTopSoftMuVeto_data_err;
@@ -222,12 +229,12 @@ void estimateTop() {
   //   float nTopData_tot_err = quadrSum(nTopData_err[ee],nTopData_err[mm],nTopData_err[em],nTopData_err[me]);
 
   // LL
-  nBTagTag_data = btagHDataLL->Integral() - tagBkg_tot;
+  nBTagTag_data = nBTagTag_data_tot - tagBkg_tot;
   std::cout << "number of tagged events after bkg subtraction = " << nBTagTag_data << std::endl;
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
-  nTopSoftMuVeto_data = nTopBTagVeto_data * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
-  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err * (1-eff_2b_softmu); 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
+  nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
   float nTopData_tot = nTopSoftMuVeto_data;
   float nTopData_tot_err = nTopSoftMuVeto_data_err;
@@ -338,11 +345,11 @@ void estimateTop() {
       if(icha==me) sprintf(channelName,"ME");
       
       // for Giovanni
-      float alpha_0j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b)/eff_2b * (1-eff_2b_softmu) * eff_0j;
-      float alpha_0j_err = alpha_0j * quadrSum(eff_2b_err/pow(eff_2b,2), eff_0j_err/eff_0j); // assuming no err on softmu
+      float alpha_0j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b[njets])/eff_2b[njets] * eff_0j;
+      float alpha_0j_err = alpha_0j * quadrSum(eff_2b_err[njets]/pow(eff_2b[njets],2), eff_0j_err/eff_0j); // assuming no err on softmu
 
-      float alpha_1j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b)/eff_2b * (1-eff_2b_softmu) * eff_1j;
-      float alpha_1j_err = alpha_1j * quadrSum(eff_2b_err/pow(eff_2b,2), eff_1j_err/eff_1j); // assuming no err on softmu
+      float alpha_1j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b[njets])/eff_2b[njets] * eff_1j;
+      float alpha_1j_err = alpha_1j * quadrSum(eff_2b_err[njets]/pow(eff_2b[njets],2), eff_1j_err/eff_1j); // assuming no err on softmu
 
       cardfile[icha][0] << mass 
                         << "\t" << nBTagTag_data_tot << "\t" << alpha_0j
@@ -467,13 +474,13 @@ void countEvents(int mass, const char *channel) {
 
   // assume that the final selection efficiency is the same for all the top samples and use average of it
   char file_mc[1000];
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.1.X/MCSynchWP80SmurfxWP70Smurf_V3/OptimMH%d/Spring11_V3/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.1.X/MCSynchWP80SmurfxWP70Smurf_V3/OptimMH%d/Spring11_V3/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.1.X/MCSynchWP80SmurfxWP70Smurf_V3/OptimMH%d/Spring11_V3/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.1.X/MCSynchWP80SmurfxWP70Smurf_V3/OptimMH%d/Spring11_V3/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
   //  cout << "reading tree " << nametree << " from file " << file_mc << endl;    
   
