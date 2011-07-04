@@ -179,6 +179,7 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("final"); // 23
   globalCounter->AddVar("oneJet"); // 24
   globalCounter->AddVar("gt1Jets"); // 25
+  globalCounter->AddVar("WW1jet"); // 26 -> WW level for 1jet bin
 }
 
 bool CutBasedHiggsSelector::output() {
@@ -225,6 +226,7 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("final");
       processCounter->AddVar("oneJet");
       processCounter->AddVar("gt1Jets");
+      processCounter->AddVar("WW1jet"); // 26 -> WW level for 1jet bin
       multiProcessCounter.insert( std::make_pair(m_processID,processCounter) );      
     }
 
@@ -386,6 +388,7 @@ bool CutBasedHiggsSelector::output() {
 
     if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
     m_step20 = true;
+    theCounter->IncrVar("WW1jet");
 
     if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
     m_step21 = true;
