@@ -388,7 +388,7 @@ bool CutBasedHiggsSelector::output() {
 
     if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
     m_step20 = true;
-    theCounter->IncrVar("WW1jet");
+    theCounter->IncrVar("WW1jet",m_weight);
 
     if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
     m_step21 = true;
