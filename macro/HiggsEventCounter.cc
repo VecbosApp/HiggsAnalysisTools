@@ -126,7 +126,7 @@ void countEvents(int mH=160) {
   sampleXsec.push_back(4.513968);
   sampleXsec.push_back(0.1538);
   sampleXsec.push_back(0.599442);
-  sampleXsec.push_back(5.9*1.3); // 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
+  sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor.
 
   std::cout << "For mH = " << mH << " GeV found xsec x BR = " << Higgs_xsec_masses[mH] << " pb " << std::endl;
 
