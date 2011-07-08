@@ -135,7 +135,7 @@ float ggWW_xsec        = 0.1538; // gg->WW->4l
 float WW_xsec          = 4.513968; // WW_2l2nu PYTHIA
 float WZ_xsec          = 0.599442; // WZ_3l
 //float ZZ_xsec = 0.25252; // ZZ_2l2nu
-float ZZ_xsec = 5.9*1.3; // inclusive 5.9*1.3 is to consider the ratio (m_LL>12/m_LL>40) https://twiki.cern.ch/twiki/bin/viewauth/CMS/TopDileptonRefAnalysis2010Pass6
+float ZZ_xsec = 7.41; // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor.
 
 float TTbar_xsec = 157.5;
 
@@ -258,7 +258,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir_mc[1000];                  
-    sprintf(dir_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/",exampleHiggsMass);
+    sprintf(dir_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V3/OptimMH%d/Spring11_V5HWW/",exampleHiggsMass);
 
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",exampleHiggsMass);
@@ -274,7 +274,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2/OptimMH%d/Data7TeVHWW",exampleHiggsMass);
+    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2xxxx/OptimMH%d/Data7TeVHWW",exampleHiggsMass);
     cout << "dir_data = " << dir_data << endl;
 
     // backgrounds
@@ -323,7 +323,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // mc
     char dir[1000];                  
-    sprintf(dir,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/",mass);
+    sprintf(dir,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V3/OptimMH%d/Spring11_V5HWW/",mass);
 
     char HiggsSample_2L2Nu[500];
     sprintf(HiggsSample_2L2Nu,"GluGluToHToWWTo2L2Nu_M-%d_7TeV-powheg-pythia6/*Counters.root",mass);
@@ -339,7 +339,7 @@ void computeYields(float lumi, const char* finalstate, int mass=0) {
 
     // data
     char dir_data[1000]; 
-    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2/OptimMH%d/Data7TeVHWW/",mass);
+    sprintf(dir_data,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/Data2011_Merged_V2xxxxxx/OptimMH%d/Data7TeVHWW/",mass);
 
     // backgrounds
     chains_fullSel[1]->Add(TString(dir)+TString("/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root"));       
