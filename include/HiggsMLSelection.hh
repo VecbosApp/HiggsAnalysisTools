@@ -180,7 +180,8 @@ private:
   float m_projectedMet[4], m_chMet[4];
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
-  
+  float leadJetBtag[4];
+
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
   float m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags; 

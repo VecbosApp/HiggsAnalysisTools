@@ -165,7 +165,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("mll"); // 9
   globalCounter->AddVar("mllZPeak"); // 10
   globalCounter->AddVar("tightMETandPrMET"); // 11
-  globalCounter->AddVar("metOverPtLL"); // 12
+  //  globalCounter->AddVar("metOverPtLL"); // 12
+  globalCounter->AddVar("deltaPhiLLJet"); // 12
   globalCounter->AddVar("zeroJets"); // 13
   globalCounter->AddVar("nSoftMuons"); // 14
   globalCounter->AddVar("nExtraLeptons"); // 15
@@ -212,7 +213,8 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("mll");
       processCounter->AddVar("mllZPeak");
       processCounter->AddVar("tightMETandPrMET");
-      processCounter->AddVar("metOverPtLL");
+      //      processCounter->AddVar("metOverPtLL");
+      processCounter->AddVar("deltaPhiLLJet");
       processCounter->AddVar("zeroJets");
       processCounter->AddVar("nSoftMuons");
       processCounter->AddVar("nExtraLeptons");
@@ -316,9 +318,13 @@ bool CutBasedHiggsSelector::output() {
   if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
   theCounter->IncrVar("tightMETandPrMET",m_weight);
 
-  if (_selection->getSwitch("metOverPtLL") && !_selection->passCut("metOverPtLL",m_metOverPtLL)) return false;
-  theCounter->IncrVar("metOverPtLL",m_weight);
+  if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
+  theCounter->IncrVar("deltaPhiLLJet",m_weight);
   m_step9 = true;
+
+//   if (_selection->getSwitch("metOverPtLL") && !_selection->passCut("metOverPtLL",m_metOverPtLL)) return false;
+//   theCounter->IncrVar("metOverPtLL",m_weight);
+//   m_step9 = true;
 
   if (m_nJets==0) {
     theCounter->IncrVar("zeroJets",m_weight);
@@ -438,8 +444,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("mll","looseMET");
       theCounter->Draw("mllZPeak","mll");
       theCounter->Draw("tightMETandPrMET","mllZPeak");
-      theCounter->Draw("metOverPtLL","tightMETandPrMET");
-      theCounter->Draw("zeroJets","metOverPtLL");
+      theCounter->Draw("deltaPhiLLJet","tightMETandPrMET");
+      theCounter->Draw("zeroJets","deltaPhiLLJet");
       theCounter->Draw("nSoftMuons","zeroJets");
       theCounter->Draw("nExtraLeptons","nSoftMuons");
       theCounter->Draw("bTagVeto","nExtraLeptons");
@@ -470,8 +476,8 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("mll","looseMET");
     globalCounter->Draw("mllZPeak","mll");
     globalCounter->Draw("tightMETandPrMET","mllZPeak");
-    globalCounter->Draw("metOverPtLL","tightMETandPrMET");
-    globalCounter->Draw("zeroJets","metOverPtLL");
+    globalCounter->Draw("deltaPhiLLJet","tightMETandPrMET");
+    globalCounter->Draw("zeroJets","deltaPhiLLJet");
     globalCounter->Draw("nSoftMuons","zeroJets");
     globalCounter->Draw("nExtraLeptons","nSoftMuons");
     globalCounter->Draw("bTagVeto","nExtraLeptons");

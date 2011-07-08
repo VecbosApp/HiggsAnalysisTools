@@ -57,6 +57,7 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("bTagImpPar",          &myBTagImpPar,          "bTagImpPar/F");
   myTree->Branch("bTagSecVertex",       &myBTagSecVertex,       "bTagSecVertex/F");
   myTree->Branch("nSoftMu",             &myNSoftMu,             "nSoftMu/I");
+  myTree->Branch("leadingJetBTagTrackCount", &myLeadingJetBTagTrackCount,    "leadingJetBTagTrackCount/F");
 }
 
 void RedHiggsTree::addElectronInfos() {
@@ -221,7 +222,7 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
 }
 
 void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
-                              float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu) {
+                              float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu, float leadJetBTagSecVertex) {
 
   myNjets   = njets;
   myNuncorrjets = nuncorrjets;
@@ -231,6 +232,7 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
   myBTagImpPar = bTagImpPar;
   myBTagSecVertex = bTagSecVertex;
   myNSoftMu = nsoftmu;
+  myLeadingJetBTagTrackCount = leadJetBTagSecVertex;
 
 }
 
