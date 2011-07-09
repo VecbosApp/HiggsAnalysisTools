@@ -76,6 +76,7 @@ private:
   float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! in the 1-jet bin, deltaphi between ll system and leading jet
   float deltaPhiLLJet(int ichan);
+  float deltaPhiLLJet15(int ichan);
   //! count the soft muons
   int numSoftMuons(std::vector<int> muonToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
@@ -170,7 +171,6 @@ private:
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
   float m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags; 
-  int m_closestPV;
   
   int _theGenEle, _theGenPos;
   int _theGenMuMinus, _theGenMuPlus;

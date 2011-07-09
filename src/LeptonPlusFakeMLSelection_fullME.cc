@@ -118,7 +118,8 @@ LeptonPlusFakeMLSelection_fullME::LeptonPlusFakeMLSelection_fullME(TTree *tree)
 
   // To read good run list!
   if (_selectionME->getSwitch("goodRunLS") && _selectionME->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";   // chiara
+    // std::string goodRunJsonFile = "config/json/goodCollisions2011.json";   // chiara
+    std::string goodRunJsonFile = "config/json/goodCollisions2011_preapproval_184pb.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -193,7 +194,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() {
   m_eleFakeRateEE_err[4] = 0.00537643;
   */
 
-  // fake in the barrel from Smurf selection, ET>30
+  // fake in the barrel from Smurf selection, ET>30 - preapproval
   m_eleFakeRateEB[0] = 0.00832695;  // here we subtract W and Z with lumi corresponding to HTLT8
   m_eleFakeRateEB[1] = 0.00907589;  // here we subtract W and Z with lumi corresponding to HTLT17
   m_eleFakeRateEB[2] = 0.0140018;   // " " 
@@ -220,7 +221,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() {
   m_eleFakeRateEE_err[4] = 0.00557363;
 
   /*
-  // fake in the barrel from Smurf selection, ET>15
+  // fake in the barrel from Smurf selection, ET>15 - preapproval
   m_eleFakeRateEB[0] = 0.0139881;    // here we subtract W and Z with lumi corresponding to HTLT8
   m_eleFakeRateEB[1] = 0.0142939;    // here we subtract W and Z with lumi corresponding to HTLT17
   m_eleFakeRateEB[2] = 0.0229292;    // " " 
@@ -248,7 +249,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() {
   */
 
   /*
-  // fake in the barrel from Smurf selection, ET>50
+  // fake in the barrel from Smurf selection, ET>50 - preapproval
   m_eleFakeRateEB[0] = 0.00196092;
   m_eleFakeRateEB[1] = 0.00217957;
   m_eleFakeRateEB[2] = 0.0112285;
@@ -273,6 +274,90 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate() {
   m_eleFakeRateEE_err[2] = 0.00188719;
   m_eleFakeRateEE_err[3] = 0.00123241;
   m_eleFakeRateEE_err[4] = 0.00689591;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - reload data
+  m_eleFakeRateEB[0] = 0.0102082;  // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEB[1] = 0.00987117;  // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEB[2] = 0.0143144;   // " " 
+  m_eleFakeRateEB[3] = 0.021369;    // " " 
+  m_eleFakeRateEB[4] = 0.037645;    // " " 
+
+  m_eleFakeRateEB_err[0] = 0.0014854;
+  m_eleFakeRateEB_err[1] = 0.000987673;
+  m_eleFakeRateEB_err[2] = 0.00109593;
+  m_eleFakeRateEB_err[3] = 0.00118491;
+  m_eleFakeRateEB_err[4] = 0.00482677;
+
+  // fake in the endcap from Smurf selection, ET>30
+  m_eleFakeRateEE[0] = 0.00544529;   // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEE[1] = 0.00449079;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEE[2] = 0.0126886;    // " " 
+  m_eleFakeRateEE[3] = 0.0134189;    // " " 
+  m_eleFakeRateEE[4] = 0.0268533;    // " " 
+  
+  m_eleFakeRateEE_err[0] = 0.00124773;
+  m_eleFakeRateEE_err[1] = 0.000745923;
+  m_eleFakeRateEE_err[2] = 0.00101717;
+  m_eleFakeRateEE_err[3] = 0.000960516;
+  m_eleFakeRateEE_err[4] = 0.00519112;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>15 - reload data
+  m_eleFakeRateEB[0] = 0.0147219;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEB[1] = 0.0158012;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEB[2] = 0.023767;    // " " 
+  m_eleFakeRateEB[3] = 0.0243626;
+  m_eleFakeRateEB[4] = 0.0362545;
+
+  m_eleFakeRateEB_err[0] = 0.000790785;
+  m_eleFakeRateEB_err[1] = 0.000771168;
+  m_eleFakeRateEB_err[2] = 0.0010088;
+  m_eleFakeRateEB_err[3] = 0.0010908;
+  m_eleFakeRateEB_err[4] = 0.00463505;
+
+  // fake in the endcap from Smurf selection, ET>15
+  m_eleFakeRateEE[0] = 0.00664606;   // here we subtract W and Z with lumi corresponding to HTLT8
+  m_eleFakeRateEE[1] = 0.00672225;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_eleFakeRateEE[2] = 0.0164524;    // " " 
+  m_eleFakeRateEE[3] = 0.0156047;
+  m_eleFakeRateEE[4] = 0.0314016;
+  
+  m_eleFakeRateEE_err[0] = 0.000563178;
+  m_eleFakeRateEE_err[1] = 0.000520685;
+  m_eleFakeRateEE_err[2] = 0.000761078;
+  m_eleFakeRateEE_err[3] = 0.000836938;
+  m_eleFakeRateEE_err[4] = 0.00540732;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - reload data
+  m_eleFakeRateEB[0] = 0.00676363;
+  m_eleFakeRateEB[1] = 0.00625157;
+  m_eleFakeRateEB[2] = 0.00739142;
+  m_eleFakeRateEB[3] = 0.0158586;
+  m_eleFakeRateEB[4] = 0.103161;
+
+  m_eleFakeRateEB_err[0] = 0.0033832;
+  m_eleFakeRateEB_err[1] = 0.00191269;
+  m_eleFakeRateEB_err[2] = 0.00166955;
+  m_eleFakeRateEB_err[3] = 0.00155065;
+  m_eleFakeRateEB_err[4] = 0.00478085;
+
+  // fake in the endcap from Smurf selection, ET>50
+  m_eleFakeRateEE[0] = 0.00469145;
+  m_eleFakeRateEE[1] = 0.00494514;
+  m_eleFakeRateEE[2] = 0.00942838;
+  m_eleFakeRateEE[3] = 0.00731023;
+  m_eleFakeRateEE[4] = 0.0195129;
+  
+  m_eleFakeRateEE_err[0] = 0.00331484;
+  m_eleFakeRateEE_err[1] = 0.0020356;
+  m_eleFakeRateEE_err[2] = 0.00205686;
+  m_eleFakeRateEE_err[3] = 0.00122186;
+  m_eleFakeRateEE_err[4] = 0.00507672;
   */
 }
 
@@ -322,6 +407,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseMuonFakeRate() {
   m_muonMinFakePt[3] = 25.;   m_muonMaxFakePt[3] = 50.;
   m_muonMinFakePt[4] = 50.;   m_muonMaxFakePt[4] = 10000.;
 
+  // prima versione alicia - preapproval
   // fake rate for muons - barrel
   m_muonFakeRateEB[0] = 0.124862;
   m_muonFakeRateEB[1] = 0.0851988;
@@ -347,6 +433,34 @@ void LeptonPlusFakeMLSelection_fullME::initialiseMuonFakeRate() {
   m_muonFakeRateEE_err[2] = 0.0334133;
   m_muonFakeRateEE_err[3] = 0.0535601;
   m_muonFakeRateEE_err[4] = 0.;
+
+  /*
+  // fake rate for muons - barrel - from alicia, after data reload
+  m_muonFakeRateEB[0] = 0.152975;
+  m_muonFakeRateEB[1] = 0.0644646; 
+  m_muonFakeRateEB[2] = 0.116864;
+  m_muonFakeRateEB[3] = 0.09465;
+  m_muonFakeRateEB[4] = 0.09465;   // same as bin 3 for lack of stat
+  
+  m_muonFakeRateEB_err[0] = 0.0046946;
+  m_muonFakeRateEB_err[1] = 0.00819688;
+  m_muonFakeRateEB_err[2] = 0.0263734;
+  m_muonFakeRateEB_err[3] = 0.00306994;
+  m_muonFakeRateEB_err[4] = 0.00306994;  // same as bin 3 for lack of stat
+  
+  // fake rate for muons - endcap
+  m_muonFakeRateEE[0] = 0.204003;
+  m_muonFakeRateEE[1] = 0.122972;
+  m_muonFakeRateEE[2] = 0.117841;
+  m_muonFakeRateEE[3] = 0.111075;  
+  m_muonFakeRateEE[4] = 0.111075;         // same as bin 3 for lack of stat
+  
+  m_muonFakeRateEE_err[0] = 0.0103921;
+  m_muonFakeRateEE_err[1] = 0.026894;
+  m_muonFakeRateEE_err[2] = 0.0536566;
+  m_muonFakeRateEE_err[3] = 0.00752111;
+  m_muonFakeRateEE_err[4] = 0.00752111;    // same as bin 3 for lack of stat
+  */
 }
 
 void LeptonPlusFakeMLSelection_fullME::initialiseMuonPromptRate() {
@@ -358,7 +472,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseMuonPromptRate() {
   m_muonMinPromptPt[3] = 25.;   m_muonMaxPromptPt[3] = 50.;
   m_muonMinPromptPt[4] = 50.;   m_muonMaxPromptPt[4] = 10000.;
 
-
+  // prima versione alicia, preapproval
   // prompt in the barrel
   m_muonPromptRateEB[0] = 0.750083;  
   m_muonPromptRateEB[1] = 0.796289; 
@@ -384,6 +498,35 @@ void LeptonPlusFakeMLSelection_fullME::initialiseMuonPromptRate() {
   m_muonPromptRateEE_err[2] = 0.0117499;
   m_muonPromptRateEE_err[3] = 0.00741766;
   m_muonPromptRateEE_err[4] = 0.0110794;
+
+  /*
+  // from alicia, after reload
+  // prompt in the barrel
+  m_muonPromptRateEB[0] = 0.734599;
+  m_muonPromptRateEB[1] = 0.774214;
+  m_muonPromptRateEB[2] = 0.924569;
+  m_muonPromptRateEB[3] = 0.967389;
+  m_muonPromptRateEB[4] = 0.985592;
+  
+  m_muonPromptRateEB_err[0] = 0.0154873;
+  m_muonPromptRateEB_err[1] = 0.00878414;
+  m_muonPromptRateEB_err[2] = 0.00355919;
+  m_muonPromptRateEB_err[3] = 0.000701585;
+  m_muonPromptRateEB_err[4] = 0.00427943;
+  
+  // prompt in the endcap
+  m_muonPromptRateEE[0] = 0.767497; 
+  m_muonPromptRateEE[1] = 0.795068;
+  m_muonPromptRateEE[2] = 0.91416;
+  m_muonPromptRateEE[3] = 0.953666; 
+  m_muonPromptRateEE[4] = 0.978846;
+
+  m_muonPromptRateEE_err[0] = 0.0152784;
+  m_muonPromptRateEE_err[1] = 0.010384;
+  m_muonPromptRateEE_err[2] = 0.00509949;
+  m_muonPromptRateEE_err[3] = 0.00136944;
+  m_muonPromptRateEE_err[4] = 0.00977621;
+  */
 }
 
 void LeptonPlusFakeMLSelection_fullME::Loop() {
@@ -578,7 +721,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     }
 
     // to be sure: I assumed above that tight => loose. If not true, I discard the event....
-    // chiara: controlla che con questo dia risultati come prima
     if ( (theElectron>-1 && !isEleDenomFake(theElectron)) || (theMuon>-1 && !isMuonDenomFake(theMuon)) ) {
       theReal = -1;
       theFake = -1;
@@ -811,7 +953,10 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
 
     // filling the tree
-    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);  
+
+    float forStatErrFP_tree = weightFP*weightFP; 
+    // myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);   // chiara                                                                        
+    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, forStatErrFP_tree); 
 
     myOutTreeME -> fillAll(m_chMet[me], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
@@ -819,7 +964,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 			   m_deltaEtaLeptons[me], nPV,
 			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);
 
-    myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+    myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 999);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 );
     
@@ -1381,7 +1526,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_ip( std::ve
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
     float dxyMuon = transvImpactParTrack[ctfMuon];
-    float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];   
+    float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];   
     // if (_selectionME->getSwitch("muonIP") && (!_selectionME->passCut("muonIP",dxyMuon)) ) continue;   
     // if (_selectionME->getSwitch("muonDz") && (!_selectionME->passCut("muonDz",dzMuon)) )  continue;   
     if (thisPt>20)    // hardcoded
@@ -1596,14 +1741,14 @@ bool LeptonPlusFakeMLSelection_fullME::isMuonDenomFake(int theMuon) {
   
   // isolation
   float thePFMuonIso = pfCombinedIsoMuon[theMuon]/p3Muon.Pt();
-  if ( thePFMuonIso > 0.4 ) isGoodDenom = false;
+  if ( thePFMuonIso > 1.0 ) isGoodDenom = false;
   
   // IP
   int ctfMuon   = trackIndexMuon[theMuon]; 
   float dxyMuon = transvImpactParTrack[ctfMuon];
-  float dzMuon  = PVzPV[m_closestPV] - trackVzTrack[ctfMuon];  
-  if (fabs(dxyMuon)>0.1 ) isGoodDenom = false;
-  if (fabs(dzMuon)>0.1  ) isGoodDenom = false;
+  float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];  
+  if (fabs(dxyMuon)>0.4 ) isGoodDenom = false;
+  if (fabs(dzMuon)>0.4  ) isGoodDenom = false;
   
   return isGoodDenom;
 }
@@ -2213,7 +2358,7 @@ int LeptonPlusFakeMLSelection_fullME::numExtraLeptons( std::vector<int> eleToRem
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
-    float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
+    float dz  = PVzPV[0] - trackVzTrack[track];  
     //if(_selectionME->getSwitch("muonIP") && !_selectionME->passCut("muonIP",dxy)) continue;
     //if(_selectionME->getSwitch("muonDz") && !_selectionME->passCut("muonDz",dz))  continue;  
     if (ptMu>20)   // hardcoded

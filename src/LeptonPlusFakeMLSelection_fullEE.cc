@@ -119,6 +119,8 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
     std::string goodRunJsonFile = "config/json/goodCollisions2011.json";         // chiara
+    // std::string goodRunJsonFile = "config/json/goodCollisions2011_815pb.json";
+    // std::string goodRunJsonFile = "config/json/goodCollisions2011_preapproval_184pb.json"; 
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -303,7 +305,8 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.00537643;
   */
 
-  // fake in the barrel from Smurf selection, ET>30
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - preapproval
   m_fakeRateEB[0] = 0.00832695;  // here we subtract W and Z with lumi corresponding to HTLT8
   m_fakeRateEB[1] = 0.00907589;  // here we subtract W and Z with lumi corresponding to HTLT17
   m_fakeRateEB[2] = 0.0140018;   // " " 
@@ -328,9 +331,10 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.0011173;
   m_fakeRateEE_err[3] = 0.000971426;
   m_fakeRateEE_err[4] = 0.00557363;
+  */
 
   /*
-  // fake in the barrel from Smurf selection, ET>15
+  // fake in the barrel from Smurf selection, ET>15 - preapproval
   m_fakeRateEB[0] = 0.0139881;    // here we subtract W and Z with lumi corresponding to HTLT8
   m_fakeRateEB[1] = 0.0142939;    // here we subtract W and Z with lumi corresponding to HTLT17
   m_fakeRateEB[2] = 0.0229292;    // " " 
@@ -358,7 +362,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   */
 
   /*
-  // fake in the barrel from Smurf selection, ET>50
+  // fake in the barrel from Smurf selection, ET>50 - preapproval
   m_fakeRateEB[0] = 0.00196092;
   m_fakeRateEB[1] = 0.00217957;
   m_fakeRateEB[2] = 0.0112285;
@@ -383,6 +387,256 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00188719;
   m_fakeRateEE_err[3] = 0.00123241;
   m_fakeRateEE_err[4] = 0.00689591;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - reload data
+  m_fakeRateEB[0] = 0.0102082;  // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.00987117;  // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.0143144;   // " " 
+  m_fakeRateEB[3] = 0.021369;    // " " 
+  m_fakeRateEB[4] = 0.037645;    // " " 
+
+  m_fakeRateEB_err[0] = 0.0014854;
+  m_fakeRateEB_err[1] = 0.000987673;
+  m_fakeRateEB_err[2] = 0.00109593;
+  m_fakeRateEB_err[3] = 0.00118491;
+  m_fakeRateEB_err[4] = 0.00482677;
+
+  // fake in the endcap from Smurf selection, ET>30
+  m_fakeRateEE[0] = 0.00544529;   // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEE[1] = 0.00449079;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEE[2] = 0.0126886;    // " " 
+  m_fakeRateEE[3] = 0.0134189;    // " " 
+  m_fakeRateEE[4] = 0.0268533;    // " " 
+  
+  m_fakeRateEE_err[0] = 0.00124773;
+  m_fakeRateEE_err[1] = 0.000745923;
+  m_fakeRateEE_err[2] = 0.00101717;
+  m_fakeRateEE_err[3] = 0.000960516;
+  m_fakeRateEE_err[4] = 0.00519112;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>15 - reload data
+  m_fakeRateEB[0] = 0.0147219;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0158012;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.023767;    // " " 
+  m_fakeRateEB[3] = 0.0243626;
+  m_fakeRateEB[4] = 0.0362545;
+
+  m_fakeRateEB_err[0] = 0.000790785;
+  m_fakeRateEB_err[1] = 0.000771168;
+  m_fakeRateEB_err[2] = 0.0010088;
+  m_fakeRateEB_err[3] = 0.0010908;
+  m_fakeRateEB_err[4] = 0.00463505;
+
+  // fake in the endcap from Smurf selection, ET>15
+  m_fakeRateEE[0] = 0.00664606;   // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEE[1] = 0.00672225;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEE[2] = 0.0164524;    // " " 
+  m_fakeRateEE[3] = 0.0156047;
+  m_fakeRateEE[4] = 0.0314016;
+  
+  m_fakeRateEE_err[0] = 0.000563178;
+  m_fakeRateEE_err[1] = 0.000520685;
+  m_fakeRateEE_err[2] = 0.000761078;
+  m_fakeRateEE_err[3] = 0.000836938;
+  m_fakeRateEE_err[4] = 0.00540732;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - reload data
+  m_fakeRateEB[0] = 0.00676363;
+  m_fakeRateEB[1] = 0.00625157;
+  m_fakeRateEB[2] = 0.00739142;
+  m_fakeRateEB[3] = 0.0158586;
+  m_fakeRateEB[4] = 0.103161;
+
+  m_fakeRateEB_err[0] = 0.0033832;
+  m_fakeRateEB_err[1] = 0.00191269;
+  m_fakeRateEB_err[2] = 0.00166955;
+  m_fakeRateEB_err[3] = 0.00155065;
+  m_fakeRateEB_err[4] = 0.00478085;
+
+  // fake in the endcap from Smurf selection, ET>50
+  m_fakeRateEE[0] = 0.00469145;
+  m_fakeRateEE[1] = 0.00494514;
+  m_fakeRateEE[2] = 0.00942838;
+  m_fakeRateEE[3] = 0.00731023;
+  m_fakeRateEE[4] = 0.0195129;
+  
+  m_fakeRateEE_err[0] = 0.00331484;
+  m_fakeRateEE_err[1] = 0.0020356;
+  m_fakeRateEE_err[2] = 0.00205686;
+  m_fakeRateEE_err[3] = 0.00122186;
+  m_fakeRateEE_err[4] = 0.00507672;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEB[0] = 0.0233102;             // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0228776;             // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.0286583; 
+  m_fakeRateEB[3] = 0.0286404; 
+  m_fakeRateEB[4] = 0.0286404;
+
+  m_fakeRateEB_err[0] = 0.00408153;
+  m_fakeRateEB_err[1] = 0.00259395; 
+  m_fakeRateEB_err[2] = 0.00255165; 
+  m_fakeRateEB_err[3] = 0.00218472;
+  m_fakeRateEB_err[4] = 0.00651507;
+
+  // fake in the endcap from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEE[0] = 0.00891958;
+  m_fakeRateEE[1] = 0.00637156; 
+  m_fakeRateEE[2] = 0.0190356;   
+  m_fakeRateEE[3] = 0.0169942;   
+  m_fakeRateEE[4] = 0.00851625; 
+  
+  m_fakeRateEE_err[0] = 0.00246589;
+  m_fakeRateEE_err[1] = 0.00125996;
+  m_fakeRateEE_err[2] = 0.00176485;
+  m_fakeRateEE_err[3] = 0.00154134;
+  m_fakeRateEE_err[4] = 0.00461072;
+  */
+
+  // fake in the barrel from Smurf selection, ET>15 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEB[0] = 0.0266235;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0283521;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.0424546;
+  m_fakeRateEB[3] = 0.032;
+  m_fakeRateEB[4] = 0.0283229;
+
+  m_fakeRateEB_err[0] = 0.00170774;
+  m_fakeRateEB_err[1] = 0.00159436;
+  m_fakeRateEB_err[2] = 0.00205016;
+  m_fakeRateEB_err[3] = 0.00192502;
+  m_fakeRateEB_err[4] = 0.00633842;
+
+  // fake in the endcap from Smurf selection, ET>15 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEE[0] = 0.00884286;
+  m_fakeRateEE[1] = 0.00867477;
+  m_fakeRateEE[2] = 0.0229016;
+  m_fakeRateEE[3] = 0.0194833;
+  m_fakeRateEE[4] = 0.0118488;
+
+  m_fakeRateEE_err[0] = 0.000929927;
+  m_fakeRateEE_err[1] = 0.000788934;
+  m_fakeRateEE_err[2] = 0.00121196;
+  m_fakeRateEE_err[3] = 0.00128971;
+  m_fakeRateEE_err[4] = 0.00519483;
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEB[0] = 0.0195017;                    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0188862;                    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.0198113; 
+  m_fakeRateEB[3] = 0.0238938; 
+  m_fakeRateEB[4] = 0.0231442; 
+
+  m_fakeRateEB_err[0] = 0.011181;
+  m_fakeRateEB_err[1] = 0.00632307;
+  m_fakeRateEB_err[2] = 0.00512458;
+  m_fakeRateEB_err[3] = 0.00332577;
+  m_fakeRateEB_err[4] = 0.00645679;
+
+  // fake in the endcap from Smurf selection, ET>50 - 2nd reload data, no V3 - with trackerIso
+  m_fakeRateEE[0] = 0.00951807;    // get zero: take as the second point....
+  m_fakeRateEE[1] = 0.00951807; 
+  m_fakeRateEE[2] = 0.0160567; 
+  m_fakeRateEE[3] = 0.00775816; 
+  m_fakeRateEE[4] = 0.00224677;
+  
+  m_fakeRateEE_err[0] = 0.00427152;  // get zero: take as the second point....
+  m_fakeRateEE_err[1] = 0.00427152;
+  m_fakeRateEE_err[2] = 0.00412894;
+  m_fakeRateEE_err[3] = 0.00192864;
+  m_fakeRateEE_err[4] = 0.00274471;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 
+  m_fakeRateEB[0] = 0.0101893;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0102828;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.0134321;    // " " 
+  m_fakeRateEB[3] = 0.0152031;    // " " 
+  m_fakeRateEB[4] = 0.0200641;    // " " 
+
+  m_fakeRateEB_err[0] = 0.00176851;
+  m_fakeRateEB_err[1] = 0.0011509;
+  m_fakeRateEB_err[2] = 0.0012004;
+  m_fakeRateEB_err[3] = 0.00116094;
+  m_fakeRateEB_err[4] = 0.0044668;
+
+  // fake in the endcap from Smurf selection, ET>30 - - 2nd reload data, no V3
+  m_fakeRateEE[0] = 0.00578883;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEE[1] = 0.00413558;   // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEE[2] = 0.0125048;    // " " 
+  m_fakeRateEE[3] = 0.0115268;    // " " 
+  m_fakeRateEE[4] = 0.00635594;   // " " 
+  
+  m_fakeRateEE_err[0] = 0.00154445;
+  m_fakeRateEE_err[1] = 0.000803071; 
+  m_fakeRateEE_err[2] = 0.00114334;  
+  m_fakeRateEE_err[3] = 0.00104401;  
+  m_fakeRateEE_err[4] = 0.00344487;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>15 - 2nd reload data, no V3 
+  m_fakeRateEB[0] = 0.0145963;    // here we subtract W and Z with lumi corresponding to HTLT8
+  m_fakeRateEB[1] = 0.0155965;    // here we subtract W and Z with lumi corresponding to HTLT17
+  m_fakeRateEB[2] = 0.023254;     // " " 
+  m_fakeRateEB[3] = 0.0185549;
+  m_fakeRateEB[4] = 0.0199621;
+
+  m_fakeRateEB_err[0] = 0.000934166;
+  m_fakeRateEB_err[1] = 0.000874301;
+  m_fakeRateEB_err[2] = 0.00112867;	
+  m_fakeRateEB_err[3] = 0.00110349;	
+  m_fakeRateEB_err[4] = 0.00437519;
+
+  // fake in the endcap from Smurf selection, ET>15 - 2nd reload data, no V3
+  m_fakeRateEE[0] = 0.0065361;
+  m_fakeRateEE[1] = 0.00653904;
+  m_fakeRateEE[2] = 0.0164086; 
+  m_fakeRateEE[3] = 0.0141345; 
+  m_fakeRateEE[4] = 0.00898949;
+  
+  m_fakeRateEE_err[0] = 0.000666206;
+  m_fakeRateEE_err[1] = 0.000576412; 
+  m_fakeRateEE_err[2] = 0.000863836; 
+  m_fakeRateEE_err[3] = 0.000927878; 
+  m_fakeRateEE_err[4] = 0.00394694;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - 2nd reload data, no V3 
+  m_fakeRateEB[0] = 0.0072232;
+  m_fakeRateEB[1] = 0.0065888; 
+  m_fakeRateEB[2] = 0.00722197;
+  m_fakeRateEB[3] = 0.0107414;
+  m_fakeRateEB[4] = 0.0160311;
+  
+  m_fakeRateEB_err[0] = 0.00416716;
+  m_fakeRateEB_err[1] = 0.0022197;
+  m_fakeRateEB_err[2] = 0.00188006;
+  m_fakeRateEB_err[3] = 0.00149042;
+  m_fakeRateEB_err[4] = 0.00431983;
+
+  // fake in the endcap from Smurf selection, ET>50 - 2nd reload data, no V3
+  m_fakeRateEE[0] = 0.00337793;
+  m_fakeRateEE[1] = 0.00528983;
+  m_fakeRateEE[2] = 0.00876994;
+  m_fakeRateEE[3] = 0.00465043;
+  m_fakeRateEE[4] = 0.0016205;
+  
+  m_fakeRateEE_err[0] = 0.00337831;
+  m_fakeRateEE_err[1] = 0.00237903;
+  m_fakeRateEE_err[2] = 0.0022635;
+  m_fakeRateEE_err[3] = 0.00115789;
+  m_fakeRateEE_err[4] = 0.00198027;
   */
 }
 
@@ -706,7 +960,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // -------------------------------------------------------------    
     int njets[1], nuncorrjets[1];
-    float dphiLLJ[1], btag[1];
+    float dphiLLJ[1], dphiLLJ15[1], btag[1];
     int nsoftmu[1],nextraleptons[1];
     for(int ichan=0; ichan<1; ichan++) {
 
@@ -716,6 +970,9 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
       // if 1-jet bin, use deltaphi(ll-jet)
       dphiLLJ[ichan] = deltaPhiLLJet(ichan);   
+
+      // if 1-jet bin, use deltaphi(ll-jet)
+      // dphiLLJ15[ichan] = deltaPhiLLJet15(ichan);     
       
       // b veto
       btag[ichan] = bVetoJets(eleCands[ichan],muCands[ichan]);
@@ -762,6 +1019,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
+    // CutBasedHiggsSelectionEE.SetDeltaPhiLLJet15(dphiLLJ15[ee]);   
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -800,7 +1058,9 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     bool outputStep23 = CutBasedHiggsSelectionEE.outputStep23();
     bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
 
-    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP); 
+    // float forStatErrFP_tree = weightFP*weightFP;                    
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);   // chiara
+    // myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, forStatErrFP_tree); 
     
     myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]),
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
@@ -808,7 +1068,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 			   m_deltaEtaLeptons[ee], nPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
     
-    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags);
+    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 999);
     
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 );
     
@@ -849,6 +1109,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsSelectionEE_FF.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionEE_FF.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE_FF.SetDeltaPhiLLJet(dphiLLJ[ee]);
+    // CutBasedHiggsSelectionEE_FF.SetDeltaPhiLLJet15(dphiLLJ15[ee]);
     CutBasedHiggsSelectionEE_FF.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE_FF.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionEE_FF.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -887,6 +1148,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsSelectionStatEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionStatEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionStatEE.SetDeltaPhiLLJet(dphiLLJ[ee]);
+    // CutBasedHiggsSelectionStatEE.SetDeltaPhiLLJet15(dphiLLJ15[ee]);
     CutBasedHiggsSelectionStatEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionStatEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionStatEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -925,6 +1187,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsSelectionStatEE_FF.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionStatEE_FF.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionStatEE_FF.SetDeltaPhiLLJet(dphiLLJ[ee]);
+    // CutBasedHiggsSelectionStatEE_FF.SetDeltaPhiLLJet15(dphiLLJ15[ee]);
     CutBasedHiggsSelectionStatEE_FF.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionStatEE_FF.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionStatEE_FF.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -962,6 +1225,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsErrorsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsErrorsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);
+    // CutBasedHiggsErrorsSelectionEE.SetDeltaPhiLLJet15(dphiLLJ15[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsErrorsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsErrorsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -999,6 +1263,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     CutBasedHiggsErrorsSelectionEE_FF.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsErrorsSelectionEE_FF.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsErrorsSelectionEE_FF.SetDeltaPhiLLJet(dphiLLJ[ee]);
+    // CutBasedHiggsErrorsSelectionEE_FF.SetDeltaPhiLLJet15(dphiLLJ15[ee]);
     CutBasedHiggsErrorsSelectionEE_FF.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsErrorsSelectionEE_FF.SetInvMass(m_mll[ee]);
     CutBasedHiggsErrorsSelectionEE_FF.SetDetaLeptons(m_deltaEtaLeptons[ee]);
@@ -1313,8 +1578,10 @@ bool LeptonPlusFakeMLSelection_fullEE::isDenomFake(int theEle) {
   // isolation 
   float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
   float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
+  // float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 // chiara, new
   if(ecalIsol>0.2) isGoodDenom = false;
   if(hcalIsol>0.2) isGoodDenom = false;
+  // if(trackerIsol>0.2) isGoodDenom = false;                                 // chiara, new
 
   // H/E 
   if ( isEleEB && hOverEEle[theEle]>0.15) isGoodDenom = false;
@@ -1784,6 +2051,19 @@ float LeptonPlusFakeMLSelection_fullEE::deltaPhiLLJet(int ichan) {
   } else return -999.;
 }
 
+float LeptonPlusFakeMLSelection_fullEE::deltaPhiLLJet15(int ichan) {   
+  
+  int myLeadingJet = theLeadingJet[ichan];
+
+  if(myLeadingJet > -1) {
+    TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);    
+    float leadJetPT = leadingJetP3.Pt();
+    if ( leadJetPT > 15. ) {
+      return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));                           
+    }
+  } else return -999.;
+}
+
 int LeptonPlusFakeMLSelection_fullEE::numSoftMuons(std::vector<int> muonToRemove) {
 
   int num = 0;
@@ -1887,7 +2167,7 @@ int LeptonPlusFakeMLSelection_fullEE::numExtraLeptons( std::vector<int> eleToRem
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
-    float dz  = PVzPV[m_closestPV] - trackVzTrack[track];  
+    float dz  = PVzPV[0] - trackVzTrack[track];  
     // if(_selectionEE->getSwitch("muonIP") && !_selectionEE->passCut("muonIP",dxy)) continue;
     // if(_selectionEE->getSwitch("muonDz") && !_selectionEE->passCut("muonDz",dz))  continue;  
     if (ptMu>20)    // hardcoded
