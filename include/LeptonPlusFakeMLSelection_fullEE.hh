@@ -56,8 +56,8 @@ private:
 
   //! prompt rates initialization                                         
   void initialisePromptRate();
-  float getPromptRate( float fakePt, bool isEB );
-  float getPromptRateError( float fakePt, bool isEE );
+  float getPromptRate( float promptPt, float promptEta );
+  float getPromptRateError( float promptPt, float promptEta );
 
   //! fake related selection                
   int getBestDenominator(int realEle);
@@ -157,7 +157,8 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1],  slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
-
+  float leadJetBtag[1];
+  
   //! fake rates                                                                     
   float m_minFakePt[5],  m_maxFakePt[5];
   float m_fakeRateEB[5], m_fakeRateEB_err[5];
@@ -167,6 +168,7 @@ private:
   float m_minPromptPt[5],  m_maxPromptPt[5];
   float m_promptRateEB[5], m_promptRateEB_err[5];
   float m_promptRateEE[5], m_promptRateEE_err[5];
+  float m_promptRateCr[5], m_promptRateCr_err[5];
 
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;

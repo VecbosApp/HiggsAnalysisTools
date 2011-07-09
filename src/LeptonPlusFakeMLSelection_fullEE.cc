@@ -118,9 +118,10 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";         // chiara
+    // std::string goodRunJsonFile = "config/json/goodCollisions2011.json";         // chiara
     // std::string goodRunJsonFile = "config/json/goodCollisions2011_815pb.json";
     // std::string goodRunJsonFile = "config/json/goodCollisions2011_preapproval_184pb.json"; 
+    std::string goodRunJsonFile = "config/json/Cert_EPSFINAL_May10ReReco_v2_PromptReco_160404_167913_JSON.txt";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -473,7 +474,6 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.00507672;
   */
 
-  /*
   // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso
   m_fakeRateEB[0] = 0.0233102;             // here we subtract W and Z with lumi corresponding to HTLT8
   m_fakeRateEB[1] = 0.0228776;             // here we subtract W and Z with lumi corresponding to HTLT17
@@ -499,8 +499,8 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00176485;
   m_fakeRateEE_err[3] = 0.00154134;
   m_fakeRateEE_err[4] = 0.00461072;
-  */
 
+  /*
   // fake in the barrel from Smurf selection, ET>15 - 2nd reload data, no V3 - with trackerIso
   m_fakeRateEB[0] = 0.0266235;    // here we subtract W and Z with lumi corresponding to HTLT8
   m_fakeRateEB[1] = 0.0283521;    // here we subtract W and Z with lumi corresponding to HTLT17
@@ -526,6 +526,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00121196;
   m_fakeRateEE_err[3] = 0.00128971;
   m_fakeRateEE_err[4] = 0.00519483;
+  */
 
   /*
   // fake in the barrel from Smurf selection, ET>50 - 2nd reload data, no V3 - with trackerIso
@@ -554,7 +555,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[3] = 0.00192864;
   m_fakeRateEE_err[4] = 0.00274471;
   */
-
+  
   /*
   // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 
   m_fakeRateEB[0] = 0.0101893;    // here we subtract W and Z with lumi corresponding to HTLT8
@@ -640,7 +641,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   */
 }
 
-// numbers provided by Emanuele, ~150/pb
+// provided by Emanuele
 void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
   
   // binning                                      
@@ -650,6 +651,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
   m_minPromptPt[3] = 25.;   m_maxPromptPt[3] = 50.;
   m_minPromptPt[4] = 50.;   m_maxPromptPt[4] = 10000.;
 
+  /* Latinos' selection (like loose), ~150/pb 
   // prompt in the barrel
   m_promptRateEB[0] = 0.917;
   m_promptRateEB[1] = 0.887;
@@ -675,6 +677,47 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
   m_promptRateEE_err[2] = 0.0077;
   m_promptRateEE_err[3] = 0.0009;
   m_promptRateEE_err[4] = 0.0041;
+  */
+
+  // after merging with smurf; ~815/pb
+  // prompt in the barrel
+  m_promptRateEB[0] = 0.54;
+  m_promptRateEB[1] = 0.67;
+  m_promptRateEB[2] = 0.77;
+  m_promptRateEB[3] = 0.86;
+  m_promptRateEB[4] = 0.88;
+  
+  m_promptRateEB_err[0] = 0.03;
+  m_promptRateEB_err[1] = 0.02;
+  m_promptRateEB_err[2] = 0.01;
+  m_promptRateEB_err[3] = 0.01;
+  m_promptRateEB_err[4] = 0.06;
+
+  // prompt in the crack
+  m_promptRateCr[0] = 0.34;   // no stat; same as in the endcap
+  m_promptRateCr[1] = 0.48;
+  m_promptRateCr[2] = 0.53;
+  m_promptRateCr[3] = 0.70;
+  m_promptRateCr[4] = 0.77;
+  
+  m_promptRateCr_err[0] = 0.50;
+  m_promptRateCr_err[1] = 0.06;
+  m_promptRateCr_err[2] = 0.04;
+  m_promptRateCr_err[3] = 0.01;
+  m_promptRateCr_err[4] = 0.02;
+  
+  // prompt in the endcap
+  m_promptRateEE[0] = 0.34;
+  m_promptRateEE[1] = 0.49;
+  m_promptRateEE[2] = 0.61;
+  m_promptRateEE[3] = 0.74;
+  m_promptRateEE[4] = 0.80;
+
+  m_promptRateEE_err[0] = 0.22;
+  m_promptRateEE_err[1] = 0.02;
+  m_promptRateEE_err[2] = 0.01;
+  m_promptRateEE_err[3] = 0.01;
+  m_promptRateEE_err[4] = 0.01;
 }
 
 void LeptonPlusFakeMLSelection_fullEE::Loop() {
@@ -881,13 +924,13 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     if ( theFake>-1 && theReal>-1) {
       float fakerate1      = getFakeRate( theFakePt, isFakeBarrel );
       float fakerateErr1   = getFakeRateError( theFakePt, isFakeBarrel );
-      float promptrate1    = getPromptRate( theFakePt, isFakeBarrel );
-      float promptrateErr1 = getPromptRateError( theFakePt, isFakeBarrel );
+      float promptrate1    = getPromptRate( theFakePt, etaEle[theFake] );
+      float promptrateErr1 = getPromptRateError( theFakePt, etaEle[theFake] );
       // 
       float fakerate2      = getFakeRate( theRealPt, isRealBarrel );
       float fakerateErr2   = getFakeRateError( theRealPt, isRealBarrel );
-      float promptrate2    = getPromptRate( theRealPt, isRealBarrel );
-      float promptrateErr2 = getPromptRateError( theRealPt, isRealBarrel );
+      float promptrate2    = getPromptRate( theRealPt, etaEle[theReal] );
+      float promptrateErr2 = getPromptRateError( theRealPt, etaEle[theReal] );
       
       float thisPartWeightFP    = 1.;
       float thisPartWeightErrFP = 1.;
@@ -1058,9 +1101,8 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     bool outputStep23 = CutBasedHiggsSelectionEE.outputStep23();
     bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
 
-    // float forStatErrFP_tree = weightFP*weightFP;                    
-    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP);   // chiara
-    // myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, forStatErrFP_tree); 
+    float forStatErrFP_tree = weightFP*weightFP;                    
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weightFP, forStatErrFP_tree);   
     
     myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]),
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
@@ -1068,7 +1110,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 			   m_deltaEtaLeptons[ee], nPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
     
-    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 999);
+    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 999, leadJetBtag[ee]);
     
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 );
     
@@ -1578,10 +1620,10 @@ bool LeptonPlusFakeMLSelection_fullEE::isDenomFake(int theEle) {
   // isolation 
   float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
   float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
-  // float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 // chiara, new
+  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 // chiara, new
   if(ecalIsol>0.2) isGoodDenom = false;
   if(hcalIsol>0.2) isGoodDenom = false;
-  // if(trackerIsol>0.2) isGoodDenom = false;                                 // chiara, new
+  if(trackerIsol>0.2) isGoodDenom = false;                                 // chiara, new
 
   // H/E 
   if ( isEleEB && hOverEEle[theEle]>0.15) isGoodDenom = false;
@@ -1629,13 +1671,14 @@ float LeptonPlusFakeMLSelection_fullEE::getFakeRateError( float fakePt, bool isF
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getPromptRate( float promptPt, bool isPromptBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getPromptRate( float promptPt, float promptEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
 
     if( promptPt >= m_minPromptPt[theBin] && promptPt < m_maxPromptPt[theBin] ) {
-      if (isPromptBarrel)  return m_promptRateEB[theBin];
-      if (!isPromptBarrel) return m_promptRateEE[theBin];
+      if (fabs(promptEta)<1.4442)  return m_promptRateEB[theBin];
+      if (fabs(promptEta)>1.566)   return m_promptRateEE[theBin];
+      if (fabs(promptEta)<1.566 && fabs(promptEta)>1.4442)   return m_promptRateCr[theBin];
     }
   }
 
@@ -1643,12 +1686,13 @@ float LeptonPlusFakeMLSelection_fullEE::getPromptRate( float promptPt, bool isPr
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getPromptRateError( float promptPt, bool isPromptBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getPromptRateError( float promptPt, float promptEta ) {
 
   for (int theBin = 0; theBin < 7; theBin++) {
     if( promptPt >= m_minPromptPt[theBin] && promptPt < m_maxPromptPt[theBin] ) {
-      if (isPromptBarrel)  return m_promptRateEB_err[theBin];
-      if (!isPromptBarrel) return m_promptRateEE_err[theBin];
+      if (fabs(promptEta)<1.4442)  return m_promptRateEB_err[theBin];
+      if (fabs(promptEta)>1.566)   return m_promptRateEE_err[theBin];
+      if (fabs(promptEta)<1.566 && fabs(promptEta)>1.4442)   return m_promptRateCr_err[theBin];
     }
   }
 
@@ -1905,6 +1949,7 @@ int LeptonPlusFakeMLSelection_fullEE::numJets( std::vector<int> eleToRemove, std
 
     if(pt>ETMax) {
       theLeadingJet[theChannel] = j;
+      leadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
       ETMax = pt;
     }
     
@@ -2044,10 +2089,13 @@ float LeptonPlusFakeMLSelection_fullEE::bVetoJets( std::vector<int> eleToRemove,
 float LeptonPlusFakeMLSelection_fullEE::deltaPhiLLJet(int ichan) {   
   
   int myLeadingJet = theLeadingJet[ichan];
-
+  
   if(myLeadingJet > -1) {
     TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);    
-    return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));                           
+    if(leadingJetP3.Pt()>15.0) 
+      return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));  // hardcoded
+    else 
+      return 0.0;
   } else return -999.;
 }
 
