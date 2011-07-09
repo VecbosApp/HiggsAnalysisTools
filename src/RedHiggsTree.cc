@@ -21,6 +21,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("ls",                  &myLS,                  "ls/I");
   myTree->Branch("event",               &myEvent,               "event/I");
   myTree->Branch("puweight",            &myPUWeight,            "puweight/F");
+  myTree->Branch("puweightst",          &myPUWeightSt,          "puweightst/F");
   myTree->Branch("met",                 &myMet,                 "met/F");  
   myTree->Branch("pfMet",               &myPFMet,               "pfMet/F");  
   myTree->Branch("caloMet",             &myCaloMet,             "caloMet/F");  
@@ -361,7 +362,15 @@ void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight) {
   myLS = lumi;
   myEvent = event;
   myPUWeight = puweight;
+}
 
+void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, float puwst) {
+
+  myRun = run;
+  myLS = lumi;
+  myEvent = event;
+  myPUWeight = puweight;
+  myPUWeightSt = puwst;
 }
 
 

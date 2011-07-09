@@ -68,6 +68,7 @@ public:
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! fill the run,lumi, event number
   void fillRunInfos(int run, int lumi, int event, float puweight);
+  void fillRunInfos(int run, int lumi, int event, float puweight, float puwst);   // used in fake estimate
   //! latinos 
   void fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24);
@@ -116,7 +117,7 @@ private:
   double myWeight;
   double myProcesId;
   float myLumi;
-  float myKFactor, myPUWeight;
+  float myKFactor, myPUWeight, myPUWeightSt;
   float myGenHPt;
   float myLeadingJetPt;
   int myRun, myLS, myEvent;
