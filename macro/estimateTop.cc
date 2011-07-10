@@ -15,8 +15,8 @@ float nEv_endWW[4];
 float nEv_end0j[4];
 float nEv_end1j[4];
 
-float usedLumi = 932.;
-float wantedLumi = 932.;
+float usedLumi = 1098.;
+float wantedLumi = 1098.;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
@@ -42,8 +42,8 @@ void estimateTop(int njets) {
 
   // scale factors for the backgrounds
   float WWDataOverMC = 1.01; // estimation 815/pb, 0j
-  float DYDataOverMC = 5.2; // estimation 932/pb, 0j 
-  float WjDataTot[4] = { 17.38 *wantedLumi/815., 15.23 * wantedLumi/710., 45.18 * wantedLumi/710., 23.6 * wantedLumi/815. };
+  float DYDataOverMC = 2.0; // estimation 1.1fb-1, 0j 
+  float WjDataTot[4] = { 10.6, 15.23 * wantedLumi/710., 25.4, 15.5 };
 
   TFile *fileData = TFile::Open("results_data/merged/dataset_ll.root");
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
@@ -87,31 +87,39 @@ void estimateTop(int njets) {
   treeTop->Project("topHEM","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==2)*weight*puweight")).Data());
   treeTop->Project("topHME","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==3)*weight*puweight")).Data());
 
-  treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
-  treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
-  treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
-  treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
+  if(njets==0) {
+    treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
+  } else {
+    // temporary: needed the soft IP btag for all the other except the leading
+    treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
+  }
 
-  treeWW->Project("btagWWHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data()); // add the soft mu when available
-  treeDY->Project("btagDYHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data());
+  treeWW->Project("btagWWHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data()); // add the soft mu when available
+  treeDY->Project("btagDYHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data());
 
-  treeWW->Project("btagWWAllHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>35) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15)*weight*puweight")).Data());
+  treeWW->Project("btagWWAllHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15)*weight*puweight")).Data());
 
-  treeWj->Project("btagWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==0")).Data());
-  treeWj->Project("btagWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==1")).Data());
+  treeWj->Project("btagWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==0")).Data());
+  treeWj->Project("btagWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==1")).Data());
   treeWj->Project("btagWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==2")).Data());
   treeWj->Project("btagWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==3")).Data());
 
-  treeWj->Project("CJVWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0")).Data());
-  treeWj->Project("CJVWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>35 && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1")).Data());
+  treeWj->Project("CJVWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0")).Data());
+  treeWj->Project("CJVWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1")).Data());
   treeWj->Project("CJVWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==2")).Data());
   treeWj->Project("CJVWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==3")).Data());
 
   // backgrounds in the tagged region (inclusive)
   float effBtagWj[4] = { (CJVWjHEE->Integral()>0) ? btagWjHEE->Integral()/CJVWjHEE->Integral() : 0.0, 
-                         (CJVWjHEE->Integral()>0) ? btagWjHMM->Integral()/CJVWjHMM->Integral() : 0.0,
-                         (CJVWjHEE->Integral()>0) ? btagWjHEM->Integral()/CJVWjHEM->Integral() : 0.0,
-                         (CJVWjHEE->Integral()>0) ? btagWjHME->Integral()/CJVWjHME->Integral() : 0.0 };
+                         (CJVWjHMM->Integral()>0) ? btagWjHMM->Integral()/CJVWjHMM->Integral() : 0.0,
+                         (CJVWjHEM->Integral()>0) ? btagWjHEM->Integral()/CJVWjHEM->Integral() : 0.0,
+                         (CJVWjHME->Integral()>0) ? btagWjHME->Integral()/CJVWjHME->Integral() : 0.0 };
 
   float WW_tot = btagWWHLL->Integral() * WWDataOverMC;
   float WW_tot_err = yieldErrPoisson(WW_tot,btagWWHLL->Integral());
