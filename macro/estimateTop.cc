@@ -482,13 +482,13 @@ void countEvents(int mass, const char *channel) {
 
   // assume that the final selection efficiency is the same for all the top samples and use average of it
   char file_mc[1000];
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V1/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root",mass);  
+  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root",mass);  
   theChain->Add(file_mc);
   //  cout << "reading tree " << nametree << " from file " << file_mc << endl;    
   
