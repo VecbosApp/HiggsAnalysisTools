@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include <math.h>
+#include "massDependentCuts.cc"
 
 enum { ee=0, mm=1, em=2, me=3 };
 
@@ -19,8 +20,21 @@ float nEv_end1j[4];
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK, float nZV);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
+void estimateDY(int njets, bool useDataRk, TString addCutIn="", TString addCutOut="");
 
-void estimateDY(int njets, bool useDataRk) {
+void estimateDYMassDependent(int njets, bool useDataRk) {
+
+  int mH[18] = {115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0; i<18;i++) {
+    std::cout << "mH = " << mH[i] << std::endl;
+    TString addCutIn = higgsCuts(mH[i],false);
+    TString addCutOut = higgsCuts(mH[i],true);
+    estimateDY(njets,useDataRk,addCutIn,addCutOut);
+  }
+  
+}
+
+void estimateDY(int njets, bool useDataRk, TString addCutIn, TString addCutOut) {
 
   // constants
   //  float eff_softmu_Z = 0.867;
@@ -71,30 +85,30 @@ void estimateDY(int njets, bool useDataRk) {
   TH1F *nemLooseInHData = new TH1F("nemLooseInHData","",50,0,180);
   TH1F *nemLooseOutHData = new TH1F("nemLooseOutHData","",50,0,180);  
 
-  treeZjets->Project("ZeejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("ZmmjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==1)*weight*puweight")).Data());
-  treeZjets->Project("ZemjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==2)*weight*puweight")).Data());
-  treeZjets->Project("ZmejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==3)*weight*puweight")).Data());
+  treeZjets->Project("ZeejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==0)*weight*puweight")).Data());
+  treeZjets->Project("ZmmjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==1)*weight*puweight")).Data());
+  treeZjets->Project("ZemjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==2)*weight*puweight")).Data());
+  treeZjets->Project("ZmejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==3)*weight*puweight")).Data());
 
-  treeZjets->Project("neeLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("neeLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)>15 && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("nmmLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
-  treeZjets->Project("nmmLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)>15 && finalstate==1)*weight*puweight")).Data());
+  treeZjets->Project("neeLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
+  treeZjets->Project("neeLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)>15 && finalstate==0)*weight*puweight")).Data());
+  treeZjets->Project("nmmLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
+  treeZjets->Project("nmmLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)>15 && finalstate==1)*weight*puweight")).Data());
 
-  treeData->Project("neeLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==0)")).Data());
-  treeData->Project("neeLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0)")).Data());
-  treeData->Project("nmmLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==1)")).Data());
-  treeData->Project("nmmLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1)")).Data());
-  treeData->Project("nemLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3))")).Data());
-  treeData->Project("nemLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (finalstate==2 || finalstate==3))")).Data());
+  treeData->Project("neeLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==0)")).Data());
+  treeData->Project("neeLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0)")).Data());
+  treeData->Project("nmmLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==1)")).Data());
+  treeData->Project("nmmLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1)")).Data());
+  treeData->Project("nemLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3))")).Data());
+  treeData->Project("nemLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (finalstate==2 || finalstate==3))")).Data());
 
   // contribution under the peak
-  treeOthers->Project("OthersEEH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
-  treeOthers->Project("OthersMMH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
+  treeOthers->Project("OthersEEH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
+  treeOthers->Project("OthersMMH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
   
-  treeData->Project("neeInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nmmInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nemInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3)")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("neeInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==0")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("nmmInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && finalstate==1")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("nemInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3)")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
 
   // R and k estimations
   float R[2], R_err[2], k[2], k_err[2];
@@ -126,6 +140,7 @@ void estimateDY(int njets, bool useDataRk) {
   k_data[mm] = sqrt((nmmLooseInHData->Integral()-0.5*nemLooseInHData->Integral()) / (neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral()));
   k_data_err[mm] = 0.01; // from other studies
 
+  if(addCutIn==TString("")) {
   std::cout << "My estimation of R and k (MC): " << std::endl;
   std::cout << "Number of events in MC to estimate R (not reweighted): " << std::endl;
   std::cout << "Zee (out/in) = " <<  neeLooseOutH->GetEntries() << " / " << neeLooseInH->GetEntries() << std::endl;
@@ -145,9 +160,8 @@ void estimateDY(int njets, bool useDataRk) {
   std::cout << "ke = " << k_data[ee] << " +/- " <<  k_data_err[ee] << std::endl;
   std::cout << "km = " << k_data[mm] << " +/- " <<  k_data_err[mm] << std::endl;
   std::cout << "--------------------------" << std::endl;
-
+  }
   // DY estimation /////
-  std::cout << "DY ESTIMATION..." << std::endl;
   float nZeejetsMC = ZeejetsH->Integral();
   float nZeejetsMC_err = yieldErrPoisson(nZeejetsMC,ZeejetsH->GetEntries());
   float nZmmjetsMC = ZmmjetsH->Integral();
@@ -178,6 +192,8 @@ void estimateDY(int njets, bool useDataRk) {
   float nmmIn = nmmInH->Integral();
   float nemIn = (nemInH->Integral());
 
+  if(addCutIn==TString("")) {
+  std::cout << "DY ESTIMATION..." << std::endl;
   std::cout << "Events under the peak in data (no subtraction): " << std::endl;
   std::cout << "ee = " << neeIn << std::endl;
   std::cout << "mm = " << nmmIn << std::endl;
@@ -187,6 +203,7 @@ void estimateDY(int njets, bool useDataRk) {
   std::cout << "ee = " << nOthers[ee] << " +/- " << nOthers_err[ee] << " (stat)" << std::endl;
   std::cout << "mm = " << nOthers[mm] << " +/- " << nOthers_err[mm] << " (stat)" << std::endl;
   std::cout << "------------------------------------------------" << std::endl;
+  }
 
   // ee and mm from data
   float neeExp, neeExp_err, nmmExp, nmmExp_err;
@@ -206,6 +223,7 @@ void estimateDY(int njets, bool useDataRk) {
   float nemmeExp = nZemjetsMC+nZmejetsMC;
   float nemmeExp_err = quadrSum(nZemjetsMC_err,nZmejetsMC_err);
 
+  if(addCutIn==TString("")) {
   std::cout << "Number of DY->ll events at W+W- level: " << std::endl;
   std::cout << "neeIn = "  << neeIn << "\tnmmIn = "  << nmmIn << "\tnemIn = " << nemIn << std::endl;
   std::cout << "nEE MC = " << nZeejetsMC  << " +/- " << nZeejetsMC_err
@@ -216,6 +234,12 @@ void estimateDY(int njets, bool useDataRk) {
 
   std::cout << "END DY ESTIMATION." << std::endl;
   ////////// END DY ///////////
+  } else {
+    // short printout
+    std::cout << "mode\t" << "nIn\t" << "n(OF)\t" << "R\t" << "n(DY) meas." << std::endl;
+    std::cout << "ee:\t" << neeIn << "\t" << nOthers[ee] << "\t" << R_data[ee] << " +/- " << R_data_err[ee] << "\t" <<  neeExp << " +/- " << neeExp_err << std::endl;
+    std::cout << "mm:\t" << nmmIn << "\t" << nOthers[mm] << "\t" << R_data[mm] << " +/- " << R_data_err[mm] << "\t" <<  nmmExp << " +/- " << nmmExp_err << std::endl;
+  }
 
 }
 
