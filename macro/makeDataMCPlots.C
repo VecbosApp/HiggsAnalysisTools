@@ -36,10 +36,10 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   TString species[NSPECIES];
   species[0]="Data";
-  if(signalFactor==1) species[1]="H160";
+  if(signalFactor==1) species[1]="H130";
   else {
     char scaleF[10];
-    sprintf(scaleF,"%dxH160",signalFactor);
+    sprintf(scaleF,"%dxH130",signalFactor);
     species[1]=TString(scaleF);
   }
   species[2]="Wjets";
@@ -54,9 +54,9 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   //  scalefactor_datadriven[2] = "2.07"; // if the MC tree is used
   scalefactor_datadriven[2] = "1.586"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
   scalefactor_datadriven[3] = "1.0"; // taken from MC
-  scalefactor_datadriven[4] = "1.67";
-  scalefactor_datadriven[5] = "5.2";
-  scalefactor_datadriven[6] = "1.06";
+  scalefactor_datadriven[4] = "1.83";
+  scalefactor_datadriven[5] = "2.0";
+  scalefactor_datadriven[6] = "0.965";
 
   Color_t colors[NSPECIES];
   colors[0]=kBlack;
@@ -88,7 +88,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   // chiara, da sistemare
   TString files[NSPECIES];
   files[0]="results_data/merged/dataset_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees/H160_"+TString(finalstate)+".root";  
+  files[1]="results/datasets_trees/H130_"+TString(finalstate)+".root";  
   //  files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
   files[2]="results_data/merged/dataset_fake_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees/others_"+TString(finalstate)+".root";
@@ -106,7 +106,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   TString variables[NVARIABLES];
   variables[0]="pfMet";
   variables[1]="projMet";
-  variables[2]="gammaStMRSt";
+  variables[2]="transvMass";
   variables[3]="eleInvMass";
   variables[4]="maxPtEle";
   variables[5]="minPtEle";
@@ -129,9 +129,9 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   nbins[0]=50;
   nbins[1]=50;
   nbins[2]=50;
-  nbins[3]=50;
-  nbins[4]=50;
-  nbins[5]=50;
+  nbins[3]=80;
+  nbins[4]=60;
+  nbins[5]=40;
   nbins[6]=50;
   nbins[7]=7;
   nbins[8]=20;
@@ -146,9 +146,9 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   range[1][1]=150.;
   // gamma*MR*
   range[2][0]=0.;
-  range[2][1]=300.;
+  range[2][1]=250.;
   // mll
-  range[3][0]=20.;
+  range[3][0]=0.;
   range[3][1]=200.;
   // max pt
   range[4][0]=0.;
