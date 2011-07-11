@@ -36,10 +36,10 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
 
   TString species[NSPECIES];
   species[0]="Data";
-  if(signalFactor==1) species[1]="H120";
+  if(signalFactor==1) species[1]="H130";
   else {
     char scaleF[10];
-    sprintf(scaleF,"%dxH120",signalFactor);
+    sprintf(scaleF,"%dxH130",signalFactor);
     species[1]=TString(scaleF);
   }
   species[2]="Wjets";
@@ -82,7 +82,7 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   // chiara, da sistemare
   TString files[NSPECIES];
   files[0]="results_data/merged/dataset_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees/H120_"+TString(finalstate)+".root";  
+  files[1]="results/datasets_trees/H130_"+TString(finalstate)+".root";  
   files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees/others_"+TString(finalstate)+".root";
   files[4]="results/datasets_trees/top_"+TString(finalstate)+".root";
@@ -119,13 +119,13 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   units[8]="";
 
   int nbins[NVARIABLES];
-  nbins[0]=60;
-  nbins[1]=60;
-  nbins[2]=60;
-  nbins[3]=60;
+  nbins[0]=50;
+  nbins[1]=50;
+  nbins[2]=50;
+  nbins[3]=80;
   nbins[4]=60;
-  nbins[5]=60;
-  nbins[6]=40;
+  nbins[5]=40;
+  nbins[6]=50;
   nbins[7]=7;
   nbins[8]=20;
 
@@ -133,19 +133,19 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   float range[NVARIABLES][2]; // 8 variables, min, max
   // met
   range[0][0]=0.;
-  range[0][1]=300.;
+  range[0][1]=150.;
   // projected met
   range[1][0]=0.;
-  range[1][1]=300.;
+  range[1][1]=150.;
   // gamma*MR*
   range[2][0]=0.;
-  range[2][1]=400.;
+  range[2][1]=250.;
   // mll
-  range[3][0]=20.;
-  range[3][1]=300.;
+  range[3][0]=0.;
+  range[3][1]=200.;
   // max pt
   range[4][0]=0.;
-  range[4][1]=200.;
+  range[4][1]=150.;
   // min pt
   range[5][0]=0.;
   range[5][1]=100.;
@@ -187,7 +187,7 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
   }
 
   TString cut[NCUTS];
-  cut[0]="(finalLeptons*(eleInvMass>20)*minPtEle>20)*";
+  cut[0]="(finalLeptons*(eleInvMass>20))*";
   cut[1]="(WWSel)*";
   cut[2]="(preDeltaPhi)*";
 
