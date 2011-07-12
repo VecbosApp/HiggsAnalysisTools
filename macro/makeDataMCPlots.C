@@ -16,7 +16,8 @@
 
 #define NSPECIES 7
 #define NVARIABLES 9
-#define NCUTS 3
+#define NCUTS 5
+#define JETBINS 2
 
 void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
 {
@@ -48,15 +49,24 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   species[5]="Zjets";
   species[6]="WW";
 
-  TString scalefactor_datadriven[NSPECIES];
-  scalefactor_datadriven[0] = "1";
-  scalefactor_datadriven[1] = "1";
+  TString scalefactor_datadriven[NSPECIES][JETBINS];
+  scalefactor_datadriven[0][0] = "1";
+  scalefactor_datadriven[1][0] = "1";
   //  scalefactor_datadriven[2] = "2.07"; // if the MC tree is used
-  scalefactor_datadriven[2] = "1.586"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
-  scalefactor_datadriven[3] = "1.0"; // taken from MC
-  scalefactor_datadriven[4] = "1.83";
-  scalefactor_datadriven[5] = "2.0";
-  scalefactor_datadriven[6] = "0.965";
+  scalefactor_datadriven[2][0] = "2.69"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
+  scalefactor_datadriven[3][0] = "1.0"; // taken from MC
+  scalefactor_datadriven[4][0] = "1.83";
+  scalefactor_datadriven[5][0] = "2.0";
+  scalefactor_datadriven[6][0] = "1.05";
+
+  scalefactor_datadriven[0][1] = "1";
+  scalefactor_datadriven[1][1] = "1";
+  //  scalefactor_datadriven[2] = "2.07"; // if the MC tree is used
+  scalefactor_datadriven[2][1] = "2.69"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
+  scalefactor_datadriven[3][1] = "1.0"; // taken from MC
+  scalefactor_datadriven[4][1] = "1.17";
+  scalefactor_datadriven[5][1] = "1.0";
+  scalefactor_datadriven[6][1] = "1.2";
 
   Color_t colors[NSPECIES];
   colors[0]=kBlack;
@@ -194,9 +204,11 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   }
 
   TString cut[NCUTS];
-  cut[0]="(finalLeptons*(eleInvMass>20))*";
+  cut[0]="(finalLeptons)*";
   cut[1]="(WWSel)*";
-  cut[2]="(preDeltaPhi)*";
+  cut[2]="(WWSel1j)*";
+  cut[3]="(step[17] && njets==0)*"; // final 0j
+  cut[4]="(step[24] && njets==1)*"; // final 1j
 
   char lumistr[5];
   sprintf(lumistr,"%.1f",lumi);
@@ -232,10 +244,13 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 		  std::cout << "Species " << i << " Tree not found" << std::endl;
 		  return;
 		}
+              int jetbin = -1;
+              if(j==1 || j==3) jetbin = 0;
+              if(j==2 || j==4) jetbin = 1;
               if(i>0) {
                 if(j>0) { // scalefactors are valid from WW level on
-                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight*")+scalefactor_datadriven[i]);
-                  else T1[i]->Project(histoName,variables[z],cut[j]+TString("puweight*")+scalefactor_datadriven[i]); // W+jets uses the FR data weight only
+                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight*")+scalefactor_datadriven[i][jetbin]);
+                  else T1[i]->Project(histoName,variables[z],cut[j]+TString("puweight*")+scalefactor_datadriven[i][jetbin]); // W+jets uses the FR data weight only
                 } else {
                   if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight"));
                   else T1[i]->Project(histoName,variables[z],cut[j]+TString("puweight")); // W+jets uses the FR data weight only
@@ -264,7 +279,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
  	  c1->SetLogy(0);
 
-          (j == 0 || z == 7) ? myPlot.Draw() : myPlot.Draw(2);
+          (j == 0) ? myPlot.Draw() : myPlot.Draw(2);
 
           c1->GetFrame()->DrawClone();
 
