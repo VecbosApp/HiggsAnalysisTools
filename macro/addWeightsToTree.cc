@@ -7,6 +7,10 @@
 
 using namespace std;
 
+int fullFormat = 1;
+
+void setReducedFormat() { fullFormat = 0; }
+
 void addWeights(const char* filename, float weight, int finalstate) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << weight << endl;
@@ -51,7 +55,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Bool_t          uncorrJetVeto;
     Bool_t          preDeltaPhi;
     Bool_t          finalSelection;
-    Bool_t          step[24];
+    Bool_t          step[25];
     Float_t         KFactor;
     Bool_t          promptDecay;
     Float_t         maxPtLh;
@@ -225,30 +229,32 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeNew->Branch("see2", &see_2, "see2/F");
     treeNew->Branch("matched2", &matched_2, "matched2/I");
     treeNew->Branch("expCosDphi", &expCosDphi, "expCosDphi/F");
-    treeNew->Branch("step", step, "step/O");
-    treeNew->Branch("pxTkMet", &pxTkMet, "pxTkMet/F");
-    treeNew->Branch("pyTkMet", &pyTkMet, "pyTkMet/F");
-    treeNew->Branch("pzTkMet", &pzTkMet, "pzTkMet/F");
-    treeNew->Branch("pxLeadJet", &pxLeadJet, "pxLeadJet/F");
-    treeNew->Branch("pyLeadJet", &pyLeadJet, "pyLeadJet/F");
-    treeNew->Branch("pzLeadJet", &pzLeadJet, "pzLeadJet/F");
-    treeNew->Branch("pxL1", &pxL1, "pxL1/F");
-    treeNew->Branch("pyL1", &pyL1, "pyL1/F");
-    treeNew->Branch("pzL1", &pzL1, "pzL1/F");
-    treeNew->Branch("pxL2", &pxL2, "pxL2/F");
-    treeNew->Branch("pyL2", &pyL2, "pyL2/F");
-    treeNew->Branch("pzL2", &pzL2, "pzL2/F");
-    treeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
-    treeNew->Branch("deltaPhi_LL_MET", &deltaPhi_LL_MET, "deltaPhi_LL_MET/F");
-    treeNew->Branch("deltaPhi_LL_JET", &deltaPhi_LL_JET, "deltaPhi_LL_JET/F");
-    treeNew->Branch("deltaPhi_MET_JET", &deltaPhi_MET_JET, "deltaPhi_MET_JET/F");
-    treeNew->Branch("dileptonPt", &dileptonPt, "dileptonPt/F");
-    treeNew->Branch("leadingJetPt", &leadingJetPt, "leadingJetPt/F");
-    treeNew->Branch("L1eta", &L1eta, "L1eta/F");
-    treeNew->Branch("L1phi", &L1phi, "L1phi/F");
-    treeNew->Branch("L2eta", &L2eta, "L2eta/F");
-    treeNew->Branch("L2phi", &L2phi, "L2phi/F");
-    treeNew->Branch("nSoftMu", &nSoftMu, "nSoftMu/I");
+    treeNew->Branch("step", step, "step[25]/O");
+    if(fullFormat) {
+      treeNew->Branch("pxTkMet", &pxTkMet, "pxTkMet/F");
+      treeNew->Branch("pyTkMet", &pyTkMet, "pyTkMet/F");
+      treeNew->Branch("pzTkMet", &pzTkMet, "pzTkMet/F");
+      treeNew->Branch("pxLeadJet", &pxLeadJet, "pxLeadJet/F");
+      treeNew->Branch("pyLeadJet", &pyLeadJet, "pyLeadJet/F");
+      treeNew->Branch("pzLeadJet", &pzLeadJet, "pzLeadJet/F");
+      treeNew->Branch("pxL1", &pxL1, "pxL1/F");
+      treeNew->Branch("pyL1", &pyL1, "pyL1/F");
+      treeNew->Branch("pzL1", &pzL1, "pzL1/F");
+      treeNew->Branch("pxL2", &pxL2, "pxL2/F");
+      treeNew->Branch("pyL2", &pyL2, "pyL2/F");
+      treeNew->Branch("pzL2", &pzL2, "pzL2/F");
+      treeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
+      treeNew->Branch("deltaPhi_LL_MET", &deltaPhi_LL_MET, "deltaPhi_LL_MET/F");
+      treeNew->Branch("deltaPhi_LL_JET", &deltaPhi_LL_JET, "deltaPhi_LL_JET/F");
+      treeNew->Branch("deltaPhi_MET_JET", &deltaPhi_MET_JET, "deltaPhi_MET_JET/F");
+      treeNew->Branch("dileptonPt", &dileptonPt, "dileptonPt/F");
+      treeNew->Branch("leadingJetPt", &leadingJetPt, "leadingJetPt/F");
+      treeNew->Branch("L1eta", &L1eta, "L1eta/F");
+      treeNew->Branch("L1phi", &L1phi, "L1phi/F");
+      treeNew->Branch("L2eta", &L2eta, "L2eta/F");
+      treeNew->Branch("L2phi", &L2phi, "L2phi/F");
+      treeNew->Branch("nSoftMu", &nSoftMu, "nSoftMu/I");
+    }
 
     float jetcat = 0;
     treeNew->Branch("jetcat", &jetcat,  "jetcat/F");
@@ -302,7 +308,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       i_WWSel = (step[13]) ? 1 : 0;
       i_WWSel1j = (step[19] && njets==1) ? 1 : 0;
 
-      if (finalLeptons) {
+      if (finalLeptons && fullFormat) {
         TVector3 TV_L1( pxL1, pyL1, pzL1 );
         TVector3 TV_L2( pxL2, pyL2, pzL2 );
         TVector3 TV_L1p2 = TV_L1 + TV_L2;
