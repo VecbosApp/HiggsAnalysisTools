@@ -281,7 +281,9 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
  	  c1->SetLogy(0);
 
-          (j == 0) ? myPlot.Draw() : myPlot.Draw(2);
+          if(j == 0) myPlot.Draw();
+          else if(j == 1) myPlot.Draw(2);
+          else  myPlot.Draw(4);
 
           c1->GetFrame()->DrawClone();
 
