@@ -22,7 +22,8 @@
 void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
 {
   gROOT->SetStyle("Plain");
-  gROOT->ProcessLine(".x tdrstyle.C");
+  //  gROOT->ProcessLine(".x tdrstyle.C");
+  gROOT->ProcessLine(".x scripts/LatinoStyle.C");
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);  // Show overflow, underflow + SumOfWeights 
   gStyle->SetOptFit(111110); 
@@ -263,6 +264,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
           myPlot.setLumi(lumi);
           myPlot.setLabel((xaxisLabel[z]).Data());
           myPlot.setUnits((units[z]).Data());
+          myPlot.setMass(130);
           myPlot.setMCHist(iHWW,     histos[1][j][z]);
           myPlot.setMCHist(iWJets,   histos[2][j][z]);
           myPlot.setMCHist(iWZ,      histos[3][j][z]);
