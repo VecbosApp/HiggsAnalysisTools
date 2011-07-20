@@ -9,23 +9,23 @@
 
 using namespace std;
 
-string fullSelCuts[25];
+string fullSelCuts[27];
 
-int UseCuts[25];
+int UseCuts[27];
 
-float Wj_fullSel[25];
-float WjF_fullSel[25];
-float data1_fullSel[25];
-float data2_fullSel[25];
-float data3_fullSel[25];
+float Wj_fullSel[27];
+float WjF_fullSel[27];
+float data1_fullSel[27];
+float data2_fullSel[27];
+float data3_fullSel[27];
 
-float Wj_eff_fullSel[25];
-float WjF_eff_fullSel[25];
+float Wj_eff_fullSel[27];
+float WjF_eff_fullSel[27];
 
 float Wj_finaleff_fullSel;
 float WjF_finaleff_fullSel;
 
-// xsections
+// x-sections
 float Wjets_xsec = 31314.;  // madgraph 
 
 string sampleNames[5];
@@ -35,11 +35,11 @@ void computeYields(float lumi) {
   TChain *chains_fullSel[5];  
   for(int isample=0; isample<5; isample++) {
     char fullsel_treename[500];
-    // sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_EE");
-    sprintf(fullsel_treename,"FULL_SELECTION_ERRORS_EE");
+    sprintf(fullsel_treename,"FULL_SELECTION_EVENT_COUNTER_EE_FP");
+    // sprintf(fullsel_treename,"FULL_SELECTION_STAT_ERRORS_EE_FP");
     chains_fullSel[isample] = new TChain(fullsel_treename);
   }
-
+  
   // samples name
   sampleNames[0] = "Wjets - nominal";
   sampleNames[1] = "Wjets - from fake";
@@ -49,25 +49,37 @@ void computeYields(float lumi) {
 
   // mc
   chains_fullSel[0]->Add("results_nominalWjets/*Counters.root");
-  chains_fullSel[1]->Add("results_wjetsFromFake/*Counters.root");
-  // data
-  chains_fullSel[2]->Add("results_data_nominal/*Counters.root");
-  chains_fullSel[3]->Add("results_data_syst15/*Counters.root");
-  chains_fullSel[4]->Add("results_data_syst50/*Counters.root");
 
+  // closure ee
+  chains_fullSel[1]->Add("results_closure_EE/*Counters.root");
+  // chains_fullSel[1]->Add("results_closure_EE/*Counters.root");
+  
+  // data ee
+  chains_fullSel[2]->Add("results_data_30/*Counters.root");
+  chains_fullSel[3]->Add("results_data_15/*Counters.root");
+  chains_fullSel[4]->Add("results_data_50/*Counters.root");
+
+  // data me
+  // chains_fullSel[2]->Add("results_data_ME_MueG_30/*Counters.root");
+  // chains_fullSel[2]->Add("results_data_ME_SingleMu_30/*Counters.root");
+  // chains_fullSel[3]->Add("results_data_ME_MueG_15/*Counters.root");
+  // chains_fullSel[3]->Add("results_data_ME_SingleMu_15/*Counters.root");
+  // chains_fullSel[4]->Add("results_data_ME_MueG_50/*Counters.root");
+  // chains_fullSel[4]->Add("results_data_ME_SingleMu_50/*Counters.root");
+  
   // initialization
-  float nFullSelTot[25][5];
+  float nFullSelTot[27][5];
   for(int isample=0; isample<5; isample++) {
-    for(int icut=0; icut<25; icut++) { nFullSelTot[icut][isample] = 0.0; }
+    for(int icut=0; icut<27; icut++) { nFullSelTot[icut][isample] = 0.0; }
   }
   
   // full selection
-  int nCutsAnaFull = 25;
+  int nCutsAnaFull = 27;
   for(int isample=0; isample<5; isample++) {
 
     // List of branches    
     Int_t     nCutsFull;
-    Float_t   nSelFull[25];   //[nCuts]
+    Float_t   nSelFull[27];   //[nCuts]
     TBranch   *b_nCutsFull;   //!
     TBranch   *b_nSelFull;    //!
     chains_fullSel[isample]->SetBranchAddress("nCuts", &nCutsFull, &b_nCutsFull);
@@ -85,8 +97,8 @@ void computeYields(float lumi) {
   for(int icut=0; icut<nCutsAnaFull; icut++) {
 
     // numbers
-    if(nFullSelTot[0][0]>0) Wj_fullSel[icut]   = lumi * Wjets_xsec * nFullSelTot[icut][0]/nFullSelTot[0][0];
-    if(nFullSelTot[0][1]>0) WjF_fullSel[icut]  = lumi * Wjets_xsec * nFullSelTot[icut][1]/nFullSelTot[0][1];
+    if(nFullSelTot[0][0]>0) Wj_fullSel[icut]  = lumi * Wjets_xsec * nFullSelTot[icut][0]/nFullSelTot[0][0];
+    if(nFullSelTot[0][1]>0) WjF_fullSel[icut] = lumi * Wjets_xsec * nFullSelTot[icut][1]/nFullSelTot[0][1];
     data1_fullSel[icut] = nFullSelTot[icut][2];
     data2_fullSel[icut] = nFullSelTot[icut][3];
     data3_fullSel[icut] = nFullSelTot[icut][4];
@@ -94,7 +106,7 @@ void computeYields(float lumi) {
     // efficiencies
     if(icut>0 && nFullSelTot[icut-1][0]>0) Wj_eff_fullSel[icut]  = nFullSelTot[icut][0]/nFullSelTot[icut-1][0];
     else Wj_eff_fullSel[icut] = 0.0;
-
+    
     if(icut>0 && nFullSelTot[icut-1][1]>0) WjF_eff_fullSel[icut] = nFullSelTot[icut][1]/nFullSelTot[icut-1][1];
     else WjF_eff_fullSel[icut] = 0.0;
 
@@ -117,7 +129,7 @@ void computeYields(float lumi) {
 
 void setupCuts() {
   
-  for(int i=0; i<25; i++) UseCuts[i] = 1;
+  for(int i=0; i<27; i++) UseCuts[i] = 1;
   
   fullSelCuts[0]="event";
   fullSelCuts[1]="MCtruth";
@@ -127,23 +139,25 @@ void setupCuts() {
   fullSelCuts[5]="e/$\\mu$ isolation";
   fullSelCuts[6]="conv. rej.";
   fullSelCuts[7]="e/$\\mu$ d0";
-  fullSelCuts[8]="extra lepton veto";
-  fullSelCuts[9]="$MET>20$ GeV";
-  fullSelCuts[10]="$m_{ll}$";
-  fullSelCuts[11]="$|m_{ll}-m_Z|>15$ GeV";
-  fullSelCuts[12]="proj. MET";
-  fullSelCuts[13]="MET/$p_T^{ll}$";
-  fullSelCuts[14]="jet veto";
-  fullSelCuts[15]="$\\mu^{soft}$ veto";
+  fullSelCuts[8]="$MET>20$ GeV";
+  fullSelCuts[9]="$m_{ll}$";
+  fullSelCuts[10]="$|m_{ll}-m_Z|>15$ GeV";
+  fullSelCuts[11]="proj. MET";
+  fullSelCuts[12]="MET/$p_T^{ll}$";
+  fullSelCuts[13]="jet veto";
+  fullSelCuts[14]="$\\mu^{soft}$ veto";
+  fullSelCuts[15]="extra lepton veto";
   fullSelCuts[16]="anti b-tag";
   fullSelCuts[17]="$m_{ll}2$";
   fullSelCuts[18]="sel $p_T^{max}$";
   fullSelCuts[19]="sel $p_T^{min}$";
-  fullSelCuts[20]="$\\gamma^*M_{R}^{*}$";
-  fullSelCuts[21]="$\\Delta \\phi$";
-  fullSelCuts[22]="final";
-  fullSelCuts[23]="1 jets";
-  fullSelCuts[24]="$>1$ jets";
+  fullSelCuts[20]="$\\Delta \\phi$";
+  fullSelCuts[21]="$M_T$";
+  fullSelCuts[22]="$M_T$ (1jet)";
+  fullSelCuts[23]="final";
+  fullSelCuts[24]="1 jets";
+  fullSelCuts[25]="$>1$ jets";
+  fullSelCuts[26]="WW, 1 jet bin";
 }
 
 
@@ -177,7 +191,7 @@ void printLatex(float lumi) {
   textfile << "\\hline" << endl;
   textfile << "\\hline" << endl;
   
-  for(int icut=0; icut<25; icut++) {
+  for(int icut=0; icut<27; icut++) {
 
     if(!UseCuts[icut]) continue;
     
@@ -195,11 +209,21 @@ void printLatex(float lumi) {
   textfile << "\\hline" << endl;
   
   textfile << "total fullselection " << "\t&\t"
-           << data1_fullSel[22]    << "\t&\t"
-           << data2_fullSel[22]    << "\t&\t"
-           << data3_fullSel[22]    << "\t&\t"
-           << Wj_fullSel[22]       << " (" << 100. * Wj_finaleff_fullSel     << "\\%)" << "\t&\t"
-           << WjF_fullSel[22]      << " (" << 100. * WjF_finaleff_fullSel    << "\\%)" << "\t";
+           << data1_fullSel[21]    << "\t&\t"
+           << data2_fullSel[21]    << "\t&\t"
+           << data3_fullSel[21]    << "\t&\t"
+           << Wj_fullSel[21]       << " (" << 100. * Wj_finaleff_fullSel     << "\\%)" << "\t&\t"
+           << WjF_fullSel[21]      << " (" << 100. * WjF_finaleff_fullSel    << "\\%)" << "\t";
+  textfile << "\t\\\\"  << endl;
+  textfile << "\\hline" << endl;
+  textfile << "\t\\\\"  << endl;
+
+  textfile << "WW level, 1 jet bin " << "\t&\t"
+           << data1_fullSel[26]      << "\t&\t"
+           << data2_fullSel[26]      << "\t&\t"
+           << data3_fullSel[26]      << "\t&\t"
+           << Wj_fullSel[26]         << " (" << 100. * Wj_finaleff_fullSel     << "\\%)" << "\t&\t"
+           << WjF_fullSel[26]        << " (" << 100. * WjF_finaleff_fullSel    << "\\%)" << "\t";
   textfile << "\t\\\\"  << endl;
   textfile << "\\hline" << endl;
   textfile << "\t\\\\"  << endl;
