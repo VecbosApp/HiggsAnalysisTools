@@ -166,13 +166,13 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
   m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
 
-  /*
+  /* // with likelihood
   // fake in the barrel from QCD MC                                  
   m_fakeRateEB[0] = 0.31852;
   m_fakeRateEB[1] = 0.0815463;
   m_fakeRateEB[2] = 0.0707214;
   m_fakeRateEB[3] = 0.0588124;
-  m_fakeRateEB[4] = 0.0458273;ID->SetCombinedPFIsolation( (pfCombinedIsoEle[el
+  m_fakeRateEB[4] = 0.0458273;
 
   m_fakeRateEB_err[0] = 0.00598496;
   m_fakeRateEB_err[1] = 0.00467256;
@@ -194,7 +194,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.0142672;
   */
 
-  /*
+  /* // with likelihood
   // fake in the barrel from data (jet:30)) - with EWK subtraction (apart from bin0, where no EWK removal)
   m_fakeRateEB[0] = 0.170909;
   m_fakeRateEB[1] = 0.126939;
@@ -222,7 +222,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.01372;
   */
 
-  /*
+  /* // with likelihood
   // fake in the barrel from data (jet:15)) - no EWK subtraction
   m_fakeRateEB[0] = 0.176334; 
   m_fakeRateEB[1] = 0.13883;
@@ -250,7 +250,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[4] = 0.0156841;
   */
 
-  /*
+  /* // with likelihood
   // fake in the barrel from data (jet:50))
   m_fakeRateEB[0] = 0.130682;
   m_fakeRateEB[1] = 0.101523;
@@ -638,6 +638,34 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.0022635;
   m_fakeRateEE_err[3] = 0.00115789;
   m_fakeRateEE_err[4] = 0.00198027;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, QCD MC for closure test - with tracker isol
+  m_fakeRateEB[0] = 0.00359893;
+  m_fakeRateEB[1] = 0.00275184;
+  m_fakeRateEB[2] = 0.0173932;  
+  m_fakeRateEB[3] = 0.0165974; 
+  m_fakeRateEB[4] = 0.0211642;
+
+  m_fakeRateEB_err[0] = 0.00134385;
+  m_fakeRateEB_err[1] = 0.00067887;
+  m_fakeRateEB_err[2] = 0.00158386;
+  m_fakeRateEB_err[3] = 0.00139134;
+  m_fakeRateEB_err[4] = 0.00590532;
+  
+  // fake in the endcap from Smurf selection, QCD MC for closure test - with tracker isol
+  m_fakeRateEE[0] = 0.00313591;
+  m_fakeRateEE[1] = 0.00422497;
+  m_fakeRateEE[2] = 0.0202999;
+  m_fakeRateEE[3] = 0.0200145;
+  m_fakeRateEE[4] = 0.0219996;
+  
+  m_fakeRateEE_err[0] = 0.00107218;
+  m_fakeRateEE_err[1] = 0.000751817;
+  m_fakeRateEE_err[2] = 0.00157554;
+  m_fakeRateEE_err[3] = 0.00147239;
+  m_fakeRateEE_err[4] = 0.00725615;  
   */
 }
 
