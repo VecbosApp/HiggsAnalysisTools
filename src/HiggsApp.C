@@ -379,9 +379,17 @@ int main(int argc, char* argv[]) {
     } else if(DatasetName.Contains("DoubleMu")) {
       maskMM.push_back("1-164237:HLT_DoubleMu7_v");
       maskMM.push_back("165085-999999:HLT_Mu13_Mu8_v");
+      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
+      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
+      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
+      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("MuEG")) {
       maskEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      // maskNotEM.push_back("1-163261:HLT_Mu15_v");
+      // maskNotEM.push_back("163262-164237:HLT_Mu24_v");
+      // maskNotEM.push_back("165085-999999:HLT_Mu30_v");
+      // maskNotEM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("SingleMu")) {
       maskMM.push_back("1-163261:HLT_Mu15_v");
       maskMM.push_back("163262-164237:HLT_Mu24_v");
@@ -468,7 +476,7 @@ int main(int argc, char* argv[]) {
   LeptonPlusFakeMLSelection_fullEE lplusfake(theChain);
   lplusfake.SetDatasetName(outputFileName);
 
-  std::vector<std::string> maskEE, maskNotEE;
+  std::vector<std::string> maskEE;
 
   if(isMC) {
     maskEE.push_back("1-1:HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
@@ -478,7 +486,7 @@ int main(int argc, char* argv[]) {
       maskEE.push_back("1-999999:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
     } 
   }
-
+  
   lplusfake.setRequiredTriggers(maskEE);
   lplusfake.Loop();
   lplusfake.displayEfficiencies(outputFileName);
@@ -492,24 +500,22 @@ int main(int argc, char* argv[]) {
 
   std::vector<std::string> maskME, maskNotME;
   
- if(isMC) {
-   maskME.push_back("1-1:HLT_Mu5_Ele17_v2");
-   maskME.push_back("1-1:HLT_Mu25_v1");
- } else {
+  if(isMC) {
+    maskME.push_back("1-1:HLT_Mu5_Ele17_v2");
+    maskME.push_back("1-1:HLT_Mu25_v1");
+  } else {
     TString DatasetName(dataset);
+    
     if(DatasetName.Contains("MuEG")) {
       maskME.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
-      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
-      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
-      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
-      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("SingleMu")) {
-
       maskME.push_back("1-163261:HLT_Mu15_v");
       maskME.push_back("163262-164237:HLT_Mu24_v");
       maskME.push_back("165085-999999:HLT_Mu30_v");
       maskME.push_back("163262-999999:HLT_IsoMu17_v");
+      maskNotME.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
+      maskNotME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
     }
   }
 
