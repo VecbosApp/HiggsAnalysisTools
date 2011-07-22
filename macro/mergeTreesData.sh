@@ -5,13 +5,19 @@
 mkdir -p results_data/merged
 
 echo "Now merging EE datasets..."
-hadd results_data/merged/dataset_ee.root results_data/Data7TeV/DoubleElectron/*datasetEE.root
+hadd results_data/merged/dataset_DoubleElectron_ee.root results_data/Data7TeVHWW/DoubleElectron/*datasetEE.root
 
 echo "Now merging MM datasets..."
-hadd results_data/merged/dataset_mm.root results_data/Data7TeV/DoubleMu/*datasetMM.root results_data/Data7TeV/SingleMu/*datasetMM.root
+hadd results_data/merged/dataset_DoubleMu_mm.root results_data/Data7TeVHWW/DoubleMu/*datasetMM.root 
+hadd results_data/merged/dataset_SingleMu_mm.root results_data/Data7TeVHWW/SingleMu/*datasetMM.root
 
 echo "Now merging EM datasets..."
-hadd results_data/merged/dataset_em.root results_data/Data7TeV/MuEG/*datasetEM.root  results_data/Data7TeV/SingleMu/*datasetEM.root
+hadd results_data/merged/dataset_MuEG_em.root results_data/Data7TeVHWW/MuEG/*datasetEM.root 
+hadd results_data/merged/dataset_SingleMu_em.root results_data/Data7TeVHWW/SingleMu/*datasetEM.root 
+hadd results_data/merged/dataset_SingleElectron_em.root results_data/Data7TeVHWW/SingleElectron/*datasetEM.root
 
 echo "Now merging ME datasets..."
-hadd results_data/merged/dataset_me.root results_data/Data7TeV/MuEG/*datasetME.root results_data/Data7TeV/SingleMu/*datasetME.root
+hadd results_data/merged/dataset_MuEG_me.root results_data/Data7TeVHWW/MuEG/*datasetME.root 
+hadd results_data/merged/dataset_SingleMu_me.root results_data/Data7TeVHWW/SingleMu/*datasetME.root 
+hadd results_data/merged/dataset_SingleElectron_me.root results_data/Data7TeVHWW/SingleElectron/*datasetME.root
+
