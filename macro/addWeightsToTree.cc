@@ -11,7 +11,7 @@ int fullFormat = 1;
 
 void setReducedFormat() { fullFormat = 0; }
 
-void addWeights(const char* filename, float weight, int finalstate) {
+void addWeights(const char* filename, float weight, int processId, int finalstate) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << weight << endl;
 
@@ -56,6 +56,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Bool_t          preDeltaPhi;
     Bool_t          finalSelection;
     Bool_t          step[25];
+    Bool_t          hlt;
     Float_t         KFactor;
     Bool_t          promptDecay;
     Float_t         maxPtLh;
@@ -94,6 +95,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     treeOrig->SetBranchAddress("lumi", &lumi);
     treeOrig->SetBranchAddress("event", &event);
     treeOrig->SetBranchAddress("puweight", &puweight);
+    treeOrig->SetBranchAddress("hlt", &hlt);
     treeOrig->SetBranchAddress("met", &met);  // default MET is tcMET for WW
     treeOrig->SetBranchAddress("pfMet", &pfMet);
     treeOrig->SetBranchAddress("caloMet", &caloMet);
@@ -165,6 +167,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
     Int_t         i_promptDecay;
     Int_t         i_WWSel;
     Int_t         i_WWSel1j;
+    Int_t         i_hlt;
     float deltaPhi_LL;    
     float deltaPhi_LL_MET;
     float deltaPhi_LL_JET;
@@ -177,12 +180,16 @@ void addWeights(const char* filename, float weight, int finalstate) {
     // the selected final state: ee=0, mm=1, em=2
     treeNew->Branch("finalstate", &finalstate, "finalstate/I");
 
+    // one integer containing the process identifier (for MC, 0 for data)
+    treeNew->Branch("process", &processId, "process/I");
+
     // copy branches
     treeNew->Branch("run", &run, "run/I");
     treeNew->Branch("lumi", &lumi, "lumi/I");
     treeNew->Branch("event", &event, "event/I");
     treeNew->Branch("puweight", &puweight, "puweight/F");
     treeNew->Branch("met", &met, "met/F");  // default MET is tcMET for WW
+    treeNew->Branch("hlt", &i_hlt, "hlt/I");
     treeNew->Branch("pfMet", &pfMet, "pfMet/F");
     treeNew->Branch("caloMet", &caloMet, "caloMet/F");
     treeNew->Branch("projMet", &projMet, "projMet/F");
@@ -307,6 +314,7 @@ void addWeights(const char* filename, float weight, int finalstate) {
       i_promptDecay = (promptDecay) ? 1 : 0;
       i_WWSel = (step[13]) ? 1 : 0;
       i_WWSel1j = (step[19] && njets==1) ? 1 : 0;
+      i_hlt = (hlt) ? 1 : 0;
 
       if (finalLeptons && fullFormat) {
         TVector3 TV_L1( pxL1, pyL1, pzL1 );
@@ -338,7 +346,13 @@ void addWeights(const char* filename, float weight, int finalstate) {
       } 
 
       consecevent = (float)j;
-      treeNew->Fill();
+      if(finalLeptons) {
+        if(processId>0) { // MC
+          treeNew->Fill();
+        } else { // data: apply the trigger only for the single lepton trigger datasets
+          if((processId==-1) || (processId==-2 && hlt)) treeNew->Fill();
+        }
+      }
       j++;
       //    }
     }
