@@ -28,7 +28,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   gStyle->SetOptStat(0);  // Show overflow, underflow + SumOfWeights 
   gStyle->SetOptFit(111110); 
   gStyle->SetOptFile(1); 
-  gStyle->SetOptTitle(0); 
+  //  gStyle->SetOptTitle(0); 
   
   gStyle->SetMarkerStyle(20);
   gStyle->SetMarkerSize(1.0);
@@ -53,8 +53,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   TString scalefactor_datadriven[NSPECIES][JETBINS];
   scalefactor_datadriven[0][0] = "1";
   scalefactor_datadriven[1][0] = "1";
-  //  scalefactor_datadriven[2] = "2.07"; // if the MC tree is used
   scalefactor_datadriven[2][0] = "2.69"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
+  //scalefactor_datadriven[2][0] = "0.45"; // for ee+mm only
   scalefactor_datadriven[3][0] = "1.0"; // taken from MC
   scalefactor_datadriven[4][0] = "1.83";
   scalefactor_datadriven[5][0] = "2.0";
@@ -62,8 +62,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   scalefactor_datadriven[0][1] = "1";
   scalefactor_datadriven[1][1] = "1";
-  //  scalefactor_datadriven[2] = "2.07"; // if the MC tree is used
   scalefactor_datadriven[2][1] = "2.69"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
+  // scalefactor_datadriven[2][1] = "0.45"; // for ee+mm only 
   scalefactor_datadriven[3][1] = "1.0"; // taken from MC
   scalefactor_datadriven[4][1] = "1.17";
   scalefactor_datadriven[5][1] = "1.0";
@@ -98,10 +98,10 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   // chiara, da sistemare
   TString files[NSPECIES];
-  files[0]="results_data/merged/dataset_"+TString(finalstate)+".root";  
+  files[0]="results_data/datasets_trees/dataset_"+TString(finalstate)+".root";  
   files[1]="results/datasets_trees/H130_"+TString(finalstate)+".root";  
   //  files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
-  files[2]="results_data/merged/dataset_fake_"+TString(finalstate)+".root";
+  files[2]="results_data/datasets_trees/dataset_fake_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees/others_"+TString(finalstate)+".root";
   files[4]="results/datasets_trees/top_"+TString(finalstate)+".root";
   files[5]="results/datasets_trees/Zjets_"+TString(finalstate)+".root";
@@ -179,12 +179,12 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   TString xaxisLabel[NVARIABLES];
   xaxisLabel[0]="PFMET";
-  xaxisLabel[1]="min(pr.PFMET,prTKMET)";
-  xaxisLabel[2]="m_{T}";
+  xaxisLabel[1]="projected E_{T}^{miss}";
+  xaxisLabel[2]="m_{T}^{ll E_{T}^{miss}}";
   xaxisLabel[3]="m_{ll}";
-  xaxisLabel[4]="p_{T}^{max}";
-  xaxisLabel[5]="p_{T}^{min}";
-  xaxisLabel[6]="#Delta #phi";
+  xaxisLabel[4]="p_{T}^{l,max}";
+  xaxisLabel[5]="p_{T}^{l,min}";
+  xaxisLabel[6]="#Delta #phi_{ll}";
   xaxisLabel[7]="n jets";
   xaxisLabel[8]="n vtx (DA)";
 
@@ -210,6 +210,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   cut[2]="(WWSel1j)*";
   cut[3]="(step[17] && njets==0)*"; // final 0j
   cut[4]="(step[24] && njets==1)*"; // final 1j
+  //  cut[5]="(step[8] && njets==1 && projMet>30 && bTagTrackCount<2.1 && nSoftMu==0)*"; // WW 1j, relaxed MET
 
   char lumistr[5];
   sprintf(lumistr,"%.1f",lumi);
@@ -247,7 +248,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 		}
               int jetbin = -1;
               if(j==1 || j==3) jetbin = 0;
-              if(j==2 || j==4) jetbin = 1;
+              if(j==2 || j==4 || j == 5) jetbin = 1;
               if(i>0) {
                 if(j>0) { // scalefactors are valid from WW level on
                   if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight*")+scalefactor_datadriven[i][jetbin]);
@@ -262,6 +263,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
           
           LatinoPlot myPlot;
           myPlot.setLumi(lumi);
+          myPlot.addLabel("");
           myPlot.setLabel((xaxisLabel[z]).Data());
           myPlot.setUnits((units[z]).Data());
           myPlot.setMass(130);
@@ -281,9 +283,10 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
  	  c1->SetLogy(0);
 
-          if(j == 0) myPlot.Draw();
-          else if(j == 1) myPlot.Draw(2);
-          else  myPlot.Draw(4);
+          if(j == 0 || z == 7) myPlot.Draw();
+          else myPlot.Draw(2);
+          //          else if(j == 1) myPlot.Draw(2);
+          //          else  myPlot.Draw(4);
 
           c1->GetFrame()->DrawClone();
 
