@@ -63,10 +63,14 @@ void estimateWjets(int njets, TString addCut) {
   //  float nEM, nMM, 
 
   std::cout.precision(2);
-  std::cout << "\t" << nEE << " +/- " << nEE_err_stat << " (stat) " << " +/- " << nEE_err_syst << " (syst)    [ +/- " << quadrSum(nEE_err_stat,nEE_err_syst) << " (tot) ]";
-  std::cout << "\t" << nME << " +/- " << nME_err_stat << " (stat) " << " +/- " << nME_err_syst << " (syst)    [ +/- " << quadrSum(nME_err_stat,nME_err_syst) << " (tot) ]";
+//   std::cout << "\t" << nEE << " +/- " << nEE_err_stat << " (stat) " << " +/- " << nEE_err_syst << " (syst)    [ +/- " << quadrSum(nEE_err_stat,nEE_err_syst) << " (tot) ]";
+//   std::cout << "\t" << nME << " +/- " << nME_err_stat << " (stat) " << " +/- " << nME_err_syst << " (syst)    [ +/- " << quadrSum(nME_err_stat,nME_err_syst) << " (tot) ]";
   //  std::cout << "em:\t" << nEM << " +/- " << nEM_err_stat << " (stat) " << " +/- " << nEM_err_syst << " (syst)    [ +/- " << quadrSum(nEM_err_stat,nEM_err_syst) << " (tot) ]" << std::endl;
   //  std::cout << "mm:\t" << nMM << " +/- " << nMM_err_stat << " (stat) " << " +/- " << nMM_err_syst << " (syst)    [ +/- " << quadrSum(nMM_err_stat,nMM_err_syst) << " (tot) ]" << std::endl;
+
+  std::cout << "\t" << nEE << " +/- " << quadrSum(nEE_err_stat,nEE_err_syst) << " (tot)";
+  std::cout << "\t" << nME << " +/- " << quadrSum(nME_err_stat,nME_err_syst) << " (tot)";
+
   std::cout << std::endl;
 }  
 
