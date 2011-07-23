@@ -21,12 +21,12 @@
 void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
 {
   gROOT->SetStyle("Plain");
-  gROOT->ProcessLine(".x tdrstyle.C");
+  gROOT->ProcessLine(".x scripts/LatinoStyle.C");
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);  // Show overflow, underflow + SumOfWeights 
   gStyle->SetOptFit(111110); 
   gStyle->SetOptFile(1); 
-  gStyle->SetOptTitle(0); 
+  //  gStyle->SetOptTitle(0); 
   
   gStyle->SetMarkerStyle(20);
   gStyle->SetMarkerSize(1.0);
@@ -233,6 +233,7 @@ void makeMCPlots(const char *finalstate, float lumi, bool blindData=false, int s
           
           LatinoPlot myPlot;
           myPlot.setLumi(lumi);
+          myPlot.addLabel("");
           myPlot.setLabel((xaxisLabel[z]).Data());
           myPlot.setUnits((units[z]).Data());
           myPlot.setMCHist(iHWW,     histos[1][j][z]);
