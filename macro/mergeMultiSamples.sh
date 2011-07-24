@@ -6,10 +6,13 @@ mkdir -p results/datasets_trees
 
 echo "Now merging species for ee..."
 # signal is always a species per se
-cp results/merged/H*_ee.root results/datasets_trees
+for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
+do
+  hadd results/datasets_trees/H$i\_ee.root results/merged/ggH$i\2L2Nu_ee.root results/merged/ggH$i\LNuTauNu_ee.root results/merged/qqH$i\2L2Nu_ee.root results/merged/qqH$i\LNuTauNu_ee.root
+done
 
 # WW is a species per se
-cp results/merged/WW_ee.root results/datasets_trees
+hadd results/datasets_trees/WW_ee.root results/merged/WW_ee.root results/merged/ggWW_ee.root
 
 # Wjets is a species per se
 cp results/merged/Wjets_ee.root results/datasets_trees/Wjets_ee.root
@@ -26,10 +29,13 @@ hadd results/datasets_trees/others_ee.root results/merged/WZ_ee.root results/mer
 
 echo "Now merging species for mm..."
 # signal is always a species per se
-cp results/merged/H*_mm.root results/datasets_trees
+for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
+do
+  hadd results/datasets_trees/H$i\_mm.root results/merged/ggH$i\2L2Nu_mm.root results/merged/ggH$i\LNuTauNu_mm.root results/merged/qqH$i\2L2Nu_mm.root results/merged/qqH$i\LNuTauNu_mm.root
+done
 
 # WW is a species per se
-cp results/merged/WW_mm.root results/datasets_trees
+hadd results/datasets_trees/WW_mm.root results/merged/WW_mm.root results/merged/ggWW_mm.root
 
 # Wjets is a species per se
 cp results/merged/Wjets_mm.root results/datasets_trees/Wjets_mm.root
@@ -46,10 +52,13 @@ hadd results/datasets_trees/others_mm.root results/merged/WZ_mm.root results/mer
 
 echo "Now merging species for em..."
 # signal is always a species per se
-cp results/merged/H*_em.root results/datasets_trees
+for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
+do
+  hadd results/datasets_trees/H$i\_em.root results/merged/ggH$i\2L2Nu_em.root results/merged/ggH$i\LNuTauNu_em.root results/merged/qqH$i\2L2Nu_em.root results/merged/qqH$i\LNuTauNu_em.root
+done
 
 # WW is a species per se
-cp results/merged/WW_em.root results/datasets_trees
+hadd results/datasets_trees/WW_em.root results/merged/WW_em.root results/merged/ggWW_em.root
 
 # Wjets is a species per se
 cp results/merged/Wjets_em.root results/datasets_trees/Wjets_em.root
@@ -67,10 +76,13 @@ hadd results/datasets_trees/others_em.root results/merged/WZ_em.root results/mer
 
 echo "Now merging species for me..."
 # signal is always a species per se
-cp results/merged/H*_me.root results/datasets_trees
+for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
+do
+  hadd results/datasets_trees/H$i\_me.root results/merged/ggH$i\2L2Nu_me.root results/merged/ggH$i\LNuTauNu_me.root results/merged/qqH$i\2L2Nu_me.root results/merged/qqH$i\LNuTauNu_me.root
+done
 
 # WW is a species per se
-cp results/merged/WW_me.root results/datasets_trees
+hadd results/datasets_trees/WW_me.root results/merged/WW_me.root results/merged/ggWW_me.root
 
 # Wjets is a species per se
 cp results/merged/Wjets_me.root results/datasets_trees/Wjets_me.root
