@@ -5,28 +5,27 @@ echo "===> STARTING... <==="
 
 echo "MERGING TREES STEP..."
 chmod u+x ./mergeTreesData.sh
-./mergeTreesData.sh eg
-./mergeTreesData.sh mu
+./mergeTreesData.sh
 echo "MERGING TREES STEP DONE."
 
 echo "WEIGHTING TREES STEP..."
-chmod u+x ./weightTrees.sh
+chmod u+x ./weightTreesData.sh
 ./weightTreesData.sh
 echo "MERGING TREES STEP DONE."
 
-echo "DECOUPLE EG/MU DATASETS FOR EMU..."
-chmod u+x ./decouplePDs.sh
-./decouplePDs.sh
-echo "DECOUPLING EG/MU DATASETS FOR EMU DONE."
+echo "MERGING MULTIPLE DATASETS IN THE SAME FINAL STATE..."
+chmod u+x ./mergeMultiSamplesDATA.sh
+./mergeMultiSamplesDATA.sh
+echo "MERGING MULTIPLE DATASETS IN THE SAME FINAL STATE DONE."
 
 echo "MERGING FINAL STATES..."
 chmod u+x ./mergeFinalStates.sh
 ./mergeFinalStates.sh
 echo "MERGING FINAL STATES DONE."
 
-echo "CREATING ROODATASETS FOR THE FIT..."
-chmod u+x createFitDatasetsData.sh
-./createFitDatasetsData.sh
-echo "CREATING ROODATASETS FOR THE FIT DONE."
+#echo "CREATING ROODATASETS FOR THE FIT..."
+#chmod u+x createFitDatasetsData.sh
+#./createFitDatasetsData.sh
+#echo "CREATING ROODATASETS FOR THE FIT DONE."
 
 echo "===> VERY DONE. <==="
