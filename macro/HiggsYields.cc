@@ -21,9 +21,16 @@ void printLatex() {
 
   textfile << "\\documentclass{article}" << endl;
   textfile << "\\setlength\\textheight{9.8in}" << endl;
-  textfile << "\\usepackage{rotating}" << endl;
+  textfile << "\\usepackage{fullpage}" << endl;
   textfile << "\\begin{document}" << endl << endl;
   textfile << "\\section{Yields for 0 jet}" << endl;
+
+  textfile << "\\subsection{Yields at WW selection level}" << std::endl;
+  std::cout << "Evaluating yields at WW selection level" << std::endl;
+  HiggsYields(-1, 0);
+
+  textfile.open("yields.tex", ios_base::app);
+  textfile << "\\subsection{Yields at full H selection level}" << std::endl;
 
   int mH[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int i=0; i<17;i++) {
@@ -31,14 +38,21 @@ void printLatex() {
     HiggsYields(mH[i], 0);
   }
 
-  textfile << endl << endl;
+  textfile.open("yields.tex", ios_base::app);
   textfile << "\\cleardoublepage" << endl << endl;
   textfile << "\\section{Yields for 1 jet}" << endl;
+  textfile << "\\subsection{Yields at WW selection level}" << std::endl;
+  std::cout << "Evaluating yields at WW selection level" << std::endl;
+  HiggsYields(-1, 1);
+
+  textfile.open("yields.tex", ios_base::app);
+  textfile << "\\subsection{Yields at full H selection level}" << std::endl;
   for(int i=0; i<17;i++) {
     std::cout << "mH = " << mH[i] << "\t1 jet" << std::endl;
     HiggsYields(mH[i], 1);
   }
 
+  textfile.open("yields.tex", ios_base::app);
   textfile << "\\end{document}" << endl << endl;
 
 }
@@ -54,12 +68,12 @@ void HiggsYields(int mH, int njets) {
   sampleName.push_back("single t");
   sampleName.push_back("W+jets");
   sampleName.push_back("WZ+ZZ");
-  sampleName.push_back("gg$\\to$ WW");
   sampleName.push_back("qq$\\to$ WW");
+  sampleName.push_back("gg$\\to$ WW");
   char mass[10];
   sprintf(mass,"H%d",mH);
-  sampleName.push_back(std::string(mass));
-
+  if(mH!=-1) sampleName.push_back(std::string(mass));
+  else  sampleName.push_back("H130"); // take one mass as example
 
   // open files
   TFile *fileZj = TFile::Open("results/datasets_trees/Zjets_ll.root");
@@ -71,7 +85,8 @@ void HiggsYields(int mH, int njets) {
   TFile *fileggWW = TFile::Open("results/datasets_trees/WW_ll.root");
 
   char signalFile[200];
-  sprintf(signalFile, "results/datasets_trees/H%d_ll.root", mH);
+  if(mH!=-1) sprintf(signalFile, "results/datasets_trees/H%d_ll.root", mH);
+  else sprintf(signalFile, "results/datasets_trees/H130_ll.root"); // take one mass as example
   TFile *fileH = TFile::Open(signalFile);
 
   // get trees
@@ -106,15 +121,19 @@ void HiggsYields(int mH, int njets) {
     return;
   }
 
+  TString higgsMassDependentCut;
+  if(mH==-1) higgsMassDependentCut = TString("1"); // i.e. give the yields at WW level
+  else higgsMassDependentCut = higgsCuts(mH,true);
+
   for(int isample=0; isample<(int)trees.size(); isample++) {
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsCuts(mH,true)+TString(" && finalstate==0)*weight*puweight");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsCuts(mH,true)+TString(" && finalstate==1)*weight*puweight");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsCuts(mH,true)+TString(" && finalstate==2)*weight*puweight");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsCuts(mH,true)+TString(" && finalstate==3)*weight*puweight");
-    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsCuts(mH,true)+TString(")*weight*puweight");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==0)*weight*puweight");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==1)*weight*puweight");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==2)*weight*puweight");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==3)*weight*puweight");
+    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*weight*puweight");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
@@ -152,7 +171,8 @@ void HiggsYields(int mH, int njets) {
   
   ofstream textfile;
   textfile.open("yields.tex", ios_base::app);
-  textfile.precision(2);
+  if(mH==-1) textfile.precision(3);
+  else textfile.precision(2);
   textfile << "\\begin{table}[p]" << endl
            << "\\begin{center}" << endl;
   textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}" << endl;
@@ -171,7 +191,7 @@ void HiggsYields(int mH, int njets) {
   chanName.push_back("ee");
   chanName.push_back("$\\mu\\mu$");
   chanName.push_back("e$\\mu$");
-  chanName.push_back("$\\mu$ e");
+  chanName.push_back("$\\mu$e");
   chanName.push_back("all");
 
   // yields
@@ -192,9 +212,10 @@ void HiggsYields(int mH, int njets) {
 
   // trailer
   textfile << "\\hline" << endl
-           << "\\end{tabular}" << endl
-           << "\\caption{Higgs $m_H$ = " << mH << " GeV/c$^2$, " << njets << " jet.}" << std::endl
-           << "\\end{center}" << endl
+           << "\\end{tabular}" << endl;
+  if(mH==-1) textfile << "\\caption{WW selection level, " << njets << " jet.}" << std::endl;
+  else textfile << "\\caption{Higgs $m_H$ = " << mH << " GeV/c$^2$, " << njets << " jet.}" << std::endl;
+  textfile << "\\end{center}" << endl
            << "\\end{table}" << endl;
 
   delete histo;
