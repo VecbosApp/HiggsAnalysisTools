@@ -319,6 +319,19 @@ double Higgs::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
   return temp;
 }
 
+//
+// This is 'M_{T}^{R}', the guy that should be used in the numerator of 'R' or 'R*'
+//
+double Higgs::CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met){
+
+  double temp = met.Mag()*(ja.Pt()+jb.Pt()) - met.Dot(ja.Vect()+jb.Vect());
+  temp /= 2.;
+
+  temp = sqrt(temp);
+
+  return temp;
+}
+
 std::vector<int> Higgs::sortElectronsByPt(std::vector<int> electrons) {
   int tmp;
   int max;

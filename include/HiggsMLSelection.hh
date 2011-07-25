@@ -176,6 +176,7 @@ private:
   float m_deltaEtaLeptons[4];
   float m_mll[4];
   float m_transvMass[4];
+  float m_MTR[4], m_MR[4], m_GammaMR[4];
   float m_mT2[4];
   float m_projectedMet[4], m_chMet[4];
   float m_metOptll[4];

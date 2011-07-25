@@ -21,6 +21,7 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree->Branch("ls",                  &myLS,                  "ls/I");
   myTree->Branch("event",               &myEvent,               "event/I");
   myTree->Branch("puweight",            &myPUWeight,            "puweight/F");
+  myTree->Branch("hlt",                 &myHLT,                 "hlt/O");
   myTree->Branch("puweightst",          &myPUWeightSt,          "puweightst/F");
   myTree->Branch("met",                 &myMet,                 "met/F");  
   myTree->Branch("pfMet",               &myPFMet,               "pfMet/F");  
@@ -101,6 +102,12 @@ void RedHiggsTree::addLatinos() {
 
   myTree->Branch("step",              mySteps,              "step[25]/O"); 
 
+}
+
+void RedHiggsTree::addRazor() {
+  myTree->Branch("mtr",  &myMTR,  "mtr/F");
+  myTree->Branch("mr",  &myMR,  "mr/F");
+  myTree->Branch("gammamr", &myGammaMR, "gammamr/F");
 }
 
 void RedHiggsTree::addKinematics() {
@@ -267,6 +274,12 @@ void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool
 
 }
 
+void RedHiggsTree::fillRazor(float MTR, float mR, float gammaMR) {
+  myMTR = MTR;
+  myMR = mR;
+  myGammaMR = gammaMR;
+}
+
 void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxLeadJet, float pyLeadJet, float pzLeadJet,
                                   float pxL1, float pyL1, float pzL1,
@@ -356,21 +369,15 @@ void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool si
 
 }
 
-void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight) {
-
-  myRun = run;
-  myLS = lumi;
-  myEvent = event;
-  myPUWeight = puweight;
-}
-
-void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, float puwst) {
+void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, float puwst, bool HLT) {
 
   myRun = run;
   myLS = lumi;
   myEvent = event;
   myPUWeight = puweight;
   myPUWeightSt = puwst;
+  myHLT = HLT;
+
 }
 
 

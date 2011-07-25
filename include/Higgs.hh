@@ -60,6 +60,7 @@ public:
   // get the PFjet ID
   bool isPFJetID(float eta, float nHFrac, float nEmFrac, int nConst, float chHFrac, float chMult, float chEmFrac, int WP);
   //! Chris kinematic variables
+  double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   double CalcMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
