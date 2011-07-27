@@ -119,7 +119,7 @@ void countEvents() {
   sampleName.push_back("results/merged/Ztautau_Hi_ee.root");
 
   sampleName.push_back("results/merged/SingleTop_sChannel_ee.root");
-  sampleName.push_back("esults/merged/SingleTop_tChannel_ee.root");
+  sampleName.push_back("results/merged/SingleTop_tChannel_ee.root");
   sampleName.push_back("results/merged/SingleTop_tWChannel_ee.root");
 
   sampleName.push_back("results/merged/TTbar_ee.root");
