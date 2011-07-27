@@ -33,19 +33,19 @@ void countEvents() {
     TChain *sigChains[4];
     for(int i=0; i<4; i++) sigChains[i] = new TChain(nametree);
 
-    TString hSample("results/Spring11_V5HWW/GluGluToHToWWTo2L2Nu_M-");
+    TString hSample("results/Summer11_V1/GluGluToHToWWTo2L2Nu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[0]->Add(hSample.Data());
     
-    hSample = TString("results/Spring11_V5HWW/GluGluToHToWWToLNuTauNu_M-");
+    hSample = TString("results/Summer11_V1/GluGluToHToWWToLNuTauNu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[1]->Add(hSample.Data());
     
-    hSample = TString("results/Spring11_V5HWW/VBF_HToWWTo2L2Nu_M-");
+    hSample = TString("results/Summer11_V1/VBF_HToWWTo2L2Nu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[2]->Add(hSample.Data());
     
-    hSample = TString("results/Spring11_V5HWW/VBF_HToWWToLNuTauNu_M-");
+    hSample = TString("results/Summer11_V1/VBF_HToWWToLNuTauNu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[3]->Add(hSample.Data());
 
@@ -59,30 +59,36 @@ void countEvents() {
     chains[isample] = new TChain(nametree);
   }
 
-  chains[0]->Add("results/Spring11_V5HWW/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
-  //chains[0]->Add("results/Spring11_V5HWW/WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root");
+  chains[0]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  //chains[0]->Add("results/Summer11_V1/WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root");
 
-  chains[1]->Add("results/Spring11_V5HWW/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[2]->Add("results/Spring11_V5HWW/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[3]->Add("results/Spring11_V5HWW/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[1]->Add("results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[2]->Add("results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[3]->Add("results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[4]->Add("results/Spring11_V5HWW/DYToEE_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[5]->Add("results/Spring11_V5HWW/DYToMuMu_M-20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[6]->Add("results/Spring11_V5HWW/DYToTauTau_M-20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[4]->Add("results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[5]->Add("results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[6]->Add("results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*Counters.root");
 
-  chains[7]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  chains[8]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  chains[9]->Add("results/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  // madgraph samples
+  //  chains[7]->Add("results/Summer11_V1/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  //  chains[8]->Add("results/Summer11_V1/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  //  chains[9]->Add("results/Summer11_V1/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[10]->Add("results/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[7]->Add("results/Summer11_V1/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[8]->Add("results/Summer11_V1/T_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[8]->Add("results/Summer11_V1/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[9]->Add("results/Summer11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
+  chains[9]->Add("results/Summer11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
 
+  chains[10]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[11]->Add("results/Spring11_V5HWW/PhotonVJets_7TeV-madgraph/*Counters.root");
-  //  chains[11]->Add("results/Spring11_V5HWW/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
-  chains[12]->Add("results/Spring11_V5HWW/VVJetsTo4L_TuneD6T_7TeV-madgraph-tauola-WWFilter/*Counters.root"); // MADGRAPH sample
-  chains[13]->Add("results/Spring11_V5HWW/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[14]->Add("results/Spring11_V5HWW/WZTo3LNu_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[15]->Add("results/Spring11_V5HWW/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[11]->Add("results/Summer11_V1/GVJets_7TeV-madgraph/*Counters.root");
+  //  chains[11]->Add("results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
+  chains[12]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // MADGRAPH sample
+  chains[13]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[14]->Add("results/Summer11_V1/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
+  chains[15]->Add("results/Summer11_V1/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
 
   cout << "chains added. " << endl;
@@ -203,9 +209,17 @@ void countEvents() {
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
-  sampleXsec.push_back(4.21 * (0.1080*3));
-  sampleXsec.push_back(64.6 * (0.1080*3));
-  sampleXsec.push_back(10.6);
+
+  // Madgraph single top
+  //   sampleXsec.push_back(4.21 * (0.1080*3));
+  //   sampleXsec.push_back(64.6 * (0.1080*3));
+  //   sampleXsec.push_back(10.6);
+
+  // powheg samples. Xsecs taken from PREP: http://cms.cern.ch/iCMS/prep/requestmanagement?pwg=TOP&campid=Summer11
+  sampleXsec.push_back(2.341 + 1.265);
+  sampleXsec.push_back(3.572 + 1.843);
+  sampleXsec.push_back(7.46 + 7.466);
+
   sampleXsec.push_back(157.5);
   sampleXsec.push_back(165.);
   sampleXsec.push_back(4.513968);
