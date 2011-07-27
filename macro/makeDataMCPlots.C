@@ -11,15 +11,16 @@
 #include "TLegend.h"
 #include "TPaveText.h"
 #include "scripts/LatinoPlot.C"
+#include "massDependentCuts.cc"
 
 #include <iostream>
 
 #define NSPECIES 7
-#define NVARIABLES 9
-#define NCUTS 5
+#define NVARIABLES 11
+#define NCUTS 7
 #define JETBINS 2
 
-void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
+void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
 {
   gROOT->SetStyle("Plain");
   //  gROOT->ProcessLine(".x tdrstyle.C");
@@ -38,10 +39,14 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   TString species[NSPECIES];
   species[0]="Data";
-  if(signalFactor==1) species[1]="H130";
+  if(signalFactor==1) {
+    char mass[10];
+    sprintf(mass,"H%d",mH);
+    species[1]=TString(mass);
+  }
   else {
     char scaleF[10];
-    sprintf(scaleF,"%dxH130",signalFactor);
+    sprintf(scaleF,"%dxH%d",signalFactor,mH);
     species[1]=TString(scaleF);
   }
   species[2]="Wjets";
@@ -98,8 +103,10 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
 
   // chiara, da sistemare
   TString files[NSPECIES];
+  char mass[10];
+  sprintf(mass,"%d",mH);
   files[0]="results_data/datasets_trees/dataset_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees/H130_"+TString(finalstate)+".root";  
+  files[1]="results/datasets_trees/H"+TString(mass)+"_"+TString(finalstate)+".root";  
   //  files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
   files[2]="results_data/datasets_trees/dataset_fake_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees/others_"+TString(finalstate)+".root";
@@ -124,6 +131,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   variables[6]="deltaPhi";
   variables[7]="njets";
   variables[8]="nVtx";
+  variables[9]="R";
+  variables[10]="dgammamr";
 
   TString units[NVARIABLES];
   units[0]="GeV";
@@ -135,6 +144,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   units[6]="#circ";
   units[7]="";
   units[8]="";
+  units[9]="";
+  units[10]="GeV/c^{2}";
 
   int nbins[NVARIABLES];
   nbins[0]=50;
@@ -146,7 +157,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   nbins[6]=50;
   nbins[7]=7;
   nbins[8]=20;
-
+  nbins[9]=50;
+  nbins[10]=50;
 
   float range[NVARIABLES][2]; // 8 variables, min, max
   // met
@@ -155,7 +167,7 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   // projected met
   range[1][0]=0.;
   range[1][1]=150.;
-  // gamma*MR*
+  // MT
   range[2][0]=0.;
   range[2][1]=250.;
   // mll
@@ -176,6 +188,12 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   // nvtx
   range[8][0]=1.;
   range[8][1]=21.;
+  // R
+  range[9][0]=0.;
+  range[9][1]=10.;
+  // mR
+  range[10][0]=0.;
+  range[10][1]=250.;
 
   TString xaxisLabel[NVARIABLES];
   xaxisLabel[0]="PFMET";
@@ -187,6 +205,8 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
   xaxisLabel[6]="#Delta #phi_{ll}";
   xaxisLabel[7]="n jets";
   xaxisLabel[8]="n vtx (DA)";
+  xaxisLabel[9]="R";
+  xaxisLabel[10]="2 * #gamma^{*}M_{R}^{*}";
 
   TString binSize[NVARIABLES];
 
@@ -204,13 +224,16 @@ void makeDataMCPlots(const char *finalstate, float lumi, bool blindData=false, i
     }
   }
 
+  TString HCut = higgsCuts(mH,true);
+
   TString cut[NCUTS];
   cut[0]="(finalLeptons)*";
   cut[1]="(WWSel)*";
   cut[2]="(WWSel1j)*";
-  cut[3]="(step[17] && njets==0)*"; // final 0j
-  cut[4]="(step[24] && njets==1)*"; // final 1j
-  //  cut[5]="(step[8] && njets==1 && projMet>30 && bTagTrackCount<2.1 && nSoftMu==0)*"; // WW 1j, relaxed MET
+  cut[3]="(WWSel &&"+HCut+" && njets==0)*"; // final 0j
+  cut[4]="(WWSel1j &&"+HCut+" && njets==1)*"; // final 1j
+  cut[5]="(step[8] && njets==0 && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15)*"; // WW 0j, relaxed MET, Z veto, top veto
+  cut[6]="(step[8] && njets==1 && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15)*"; // WW 1j, relaxed MET, Z veto, top veto
 
   char lumistr[5];
   sprintf(lumistr,"%.1f",lumi);
