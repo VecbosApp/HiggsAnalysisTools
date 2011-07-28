@@ -110,9 +110,9 @@ private:
   ElectronLikelihood *LH;
 
   //! to evaluate full selection efficiency
-  Selection *_selectionEE,     *_selectionEE_FF;
+  Selection *_selectionEE,     *_selectionEE_FF,     *_selectionEE_PP;     
+  Selection *_selectionStatEE, *_selectionStatEE_FF, *_selectionStatEE_PP;
   Selection *_selectionErrEE,  *_selectionErrEE_FF;
-  Selection *_selectionStatEE, *_selectionStatEE_FF;
 
   CutBasedHiggsSelector CutBasedHiggsSelectionEE;
   CutBasedHiggsSelector CutBasedHiggsSelectionStatEE;
@@ -120,6 +120,8 @@ private:
   CutBasedHiggsSelector CutBasedHiggsSelectionEE_FF;
   CutBasedHiggsSelector CutBasedHiggsSelectionStatEE_FF;
   CutBasedHiggsSelector CutBasedHiggsErrorsSelectionEE_FF;
+  CutBasedHiggsSelector CutBasedHiggsSelectionEE_PP;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE_PP;
 
   //! be verbose during runtime
   bool _verbose;
@@ -151,6 +153,7 @@ private:
   float m_deltaEtaLeptons[1];
   float m_mll[1];
   float m_transvMass[1];
+  float m_GammaMR[1], m_MR[1], m_MTR[1];
   float m_mT2[1];
   float m_projectedMet[1];
   float m_chMet[1];

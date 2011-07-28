@@ -65,8 +65,8 @@ private:
 
   //! prompt rates initialization for electrons
   void initialiseElectronPromptRate();
-  float getElectronPromptRate( float fakePt, bool isEB );
-  float getElectronPromptRateError( float fakePt, bool isEE );
+  float getElectronPromptRate( float fakePt, float fakeEta );
+  float getElectronPromptRateError( float fakePt, float fakeEta );
 
   //! fake rates initialization for muons
   void initialiseMuonFakeRate();
@@ -130,15 +130,17 @@ private:
   ElectronLikelihood *LH;
 
   //! to evaluate full selection efficiency
-  Selection *_selectionME,     *_selectionME_FF;
-  Selection *_selectionStatME, *_selectionStatME_FF;
+  Selection *_selectionME, *_selectionME_FF, *_selectionME_PP;
+  Selection *_selectionStatME, *_selectionStatME_FF, *_selectionStatME_PP;
   Selection *_selectionErrME,  *_selectionErrME_FF;
   CutBasedHiggsSelector CutBasedHiggsSelectionME;
   CutBasedHiggsSelector CutBasedHiggsSelectionME_FF;
+  CutBasedHiggsSelector CutBasedHiggsSelectionME_PP;
   CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME;
   CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME_FF;
   CutBasedHiggsSelector CutBasedHiggsSelectionStatME;
   CutBasedHiggsSelector CutBasedHiggsSelectionStatME_FF;
+  CutBasedHiggsSelector CutBasedHiggsSelectionStatME_PP;
 
   //! be verbose during runtime
   bool _verbose;
@@ -170,12 +172,14 @@ private:
   float m_deltaEtaLeptons[1];
   float m_mll[1];
   float m_transvMass[1];
+  float m_MTR[1], m_MR[1], m_GammaMR[1];
   float m_mT2[1];
   float m_projectedMet[1];
   float m_chMet[1];
   float m_metOptll[1];
   float hardestLeptonPt[1], slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
+  float leadJetBtag[1];
   
   //! electron fake rates                             
   float m_eleMinFakePt[5],  m_eleMaxFakePt[5];
@@ -186,6 +190,7 @@ private:
   float m_eleMinPromptPt[5],  m_eleMaxPromptPt[5];
   float m_elePromptRateEB[5], m_elePromptRateEB_err[5];
   float m_elePromptRateEE[5], m_elePromptRateEE_err[5];
+  float m_elePromptRateCr[5], m_elePromptRateCr_err[5];
 
   //! muon fake rates                             
   float m_muonMinFakePt[5],  m_muonMaxFakePt[5];
