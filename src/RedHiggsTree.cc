@@ -110,6 +110,13 @@ void RedHiggsTree::addRazor() {
   myTree->Branch("gammamr", &myGammaMR, "gammamr/F");
 }
 
+void RedHiggsTree::addFake() {
+  
+  myTree->Branch("tight",      &myTight,      "tight/I");
+  myTree->Branch("puweightst", &myPUWeightSt, "puweightst/F");
+}
+
+
 void RedHiggsTree::addKinematics() {
   myTree->Branch("pxTkMet", &myPxTkMet, "pxTkMet/F");
   myTree->Branch("pyTkMet", &myPyTkMet, "pyTkMet/F");
@@ -279,6 +286,13 @@ void RedHiggsTree::fillRazor(float MTR, float mR, float gammaMR) {
   myMR = mR;
   myGammaMR = gammaMR;
 }
+
+void RedHiggsTree::fillFake(int ntigh, float puwst ) {
+
+  myTight      = ntigh;
+  myPUWeightSt = puwst;
+}
+
 
 void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxLeadJet, float pyLeadJet, float pzLeadJet,
