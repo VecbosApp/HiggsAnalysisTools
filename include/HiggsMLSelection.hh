@@ -164,6 +164,7 @@ private:
   int thePreElectron,  thePrePositron, thePreElectronME, thePreElectronEM;
   int thePreMuonMinus, thePreMuonPlus, thePreMuonME, thePreMuonEM;
   int theLeadingJet[4];
+  int theSecondJet[4];
   std::vector<int> eleCands[4], muCands[4];
   TLorentzVector *m_p4LeptonPlus[4], *m_p4LeptonMinus[4];
   TVector3 *m_p3PFMET;

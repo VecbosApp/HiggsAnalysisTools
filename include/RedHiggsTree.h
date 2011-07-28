@@ -32,6 +32,8 @@ public:
   void addKinematics();
   //! add razor variables
   void addRazor();
+  //! add variables for W+jets
+  void addFake();
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
@@ -46,10 +48,13 @@ public:
 
   void fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                       float pxLeadJet, float pyLeadJet, float pzLeadJet,
+                      float pxSecJet, float pySecJet, float pzSecJet,
                       float pxL1, float pyL1, float pzL1,
                       float pxL2, float pyL2, float pzL2);
                   
   void fillRazor(float MTR, float mR, float gammaMR);
+
+  void fillFake(int ntigh, float puwst );
 
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
@@ -120,24 +125,24 @@ private:
   double myWeight;
   double myProcesId;
   float myLumi;
-  float myKFactor, myPUWeight, myPUWeightSt;
+  float myKFactor, myPUWeight;
   float myGenHPt;
   float myLeadingJetPt;
   int myRun, myLS, myEvent;
   float myPxTkMet, myPyTkMet, myPzTkMet;
   float myPxLeadJet, myPyLeadJet, myPzLeadJet;
+  float myPxSecondJet, myPySecondJet, myPzSecondJet;
   float myPxL1, myPyL1, myPzL1;
   float myPxL2, myPyL2, myPzL2;
 
   float myMTR, myMR, myGammaMR;
+  
+  //! for W+jets
+  int myTight;
+  float myPUWeightSt;
 
   // latinos
   bool mySteps[25];
-/*   bool myStep1,  myStep2,  myStep3,  myStep4,  myStep5; */
-/*   bool myStep6,  myStep7,  myStep8,  myStep9,  myStep10; */
-/*   bool myStep11, myStep12, myStep13, myStep14, myStep15; */
-/*   bool myStep16, myStep17, myStep18, myStep19, myStep20; */
-/*   bool myStep21, myStep22, myStep23, myStep24; */
 
   // electron variables
   int myRecoflag[2];

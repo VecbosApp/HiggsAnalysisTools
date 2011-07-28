@@ -124,6 +124,9 @@ void RedHiggsTree::addKinematics() {
   myTree->Branch("pxLeadJet", &myPxLeadJet, "pxLeadJet/F");
   myTree->Branch("pyLeadJet", &myPyLeadJet, "pyLeadJet/F");
   myTree->Branch("pzLeadJet", &myPzLeadJet, "pzLeadJet/F");
+  myTree->Branch("pxSecondJet", &myPxSecondJet, "pxSecondJet/F");
+  myTree->Branch("pySecondJet", &myPySecondJet, "pySecondJet/F");
+  myTree->Branch("pzSecondJet", &myPzSecondJet, "pzSecondJet/F");
   myTree->Branch("pxL1", &myPxL1, "pxL1/F");
   myTree->Branch("pyL1", &myPyL1, "pyL1/F");
   myTree->Branch("pzL1", &myPzL1, "pzL1/F");
@@ -296,6 +299,7 @@ void RedHiggsTree::fillFake(int ntigh, float puwst ) {
 
 void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxLeadJet, float pyLeadJet, float pzLeadJet,
+                                  float pxSecJet, float pySecJet, float pzSecJet,
                                   float pxL1, float pyL1, float pzL1,
                                   float pxL2, float pyL2, float pzL2) {
   myPxTkMet = pxTkMet;
@@ -304,6 +308,9 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
   myPxLeadJet = pxLeadJet;
   myPyLeadJet = pyLeadJet;
   myPzLeadJet = pzLeadJet;
+  myPxSecondJet = pxSecJet;
+  myPySecondJet = pySecJet;
+  myPzSecondJet = pzSecJet;
   myPxL1 = pxL1;
   myPyL1 = pyL1;
   myPzL1 = pzL1;

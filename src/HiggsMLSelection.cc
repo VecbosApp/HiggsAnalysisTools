@@ -121,7 +121,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile       = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -160,7 +160,6 @@ HiggsMLSelection::~HiggsMLSelection(){
   myOutTreeEM -> save();
   myOutTreeME -> save();
 
-  //  myTriggerTree -> save();
   myEleIdTree   -> save();
 }
 
@@ -459,10 +458,6 @@ void HiggsMLSelection::Loop() {
   myOutTreeEM = new RedHiggsTree(reducedTreeNameEM.c_str());
   myOutTreeME = new RedHiggsTree(reducedTreeNameME.c_str());
 
-  //  myOutTreeEE->addHLTElectronsInfos();
-  //  myOutTreeMM->addHLTMuonsInfos();
-  //  myOutTreeEM->addHLTElectronsInfos(); myOutTreeEM->addHLTMuonsInfos();
-
   if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
     myOutTreeEE->addKFactor();
     myOutTreeMM->addKFactor();
@@ -505,10 +500,6 @@ void HiggsMLSelection::Loop() {
   myOutTreeMM->addRazor();
   myOutTreeEM->addRazor();
   myOutTreeME->addRazor();
-
-  // trigger reduced tree
-  //  std::string reducedTriggerTreeName = _datasetName+"-trigger.root";
-  //  myTriggerTree = new RedTriggerTree(reducedTriggerTreeName.c_str());
 
   // eleId reduced tree
   std::string reducedEleIdTreeName = _datasetName+"-eleId.root";
@@ -598,14 +589,6 @@ void HiggsMLSelection::Loop() {
     passedHLT[em] = hasPassedHLT(em);
     passedHLT[me] = hasPassedHLT(em); // same triggers for em and me
 
-    // trigger tree
-    // myTriggerTree->fillMcTruth(decayEE,decayMM,decayEM,promptEE,promptMM,promptEM);
-    // myTriggerTree->fillHLTElectrons( firedTrg[m_requiredTriggers[0]] );
-    // myTriggerTree->fillHLTMuons( firedTrg[m_requiredTriggers[1]] );
-    // myTriggerTree->store();
-
-
-    
     // -------------------------------------------------------------
     // vertex selection - we only consider the first vertex of the list ( = highest sumPT^2)
     bool isGoodVertex = true;
@@ -917,15 +900,12 @@ void HiggsMLSelection::Loop() {
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[ee]);
 
     int theLJ  = theLeadingJet[ee];
+    int theSJ  = theSecondJet[ee];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeEE->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
     }
 
-    //       myOutTreeEE -> fillHLTElectrons( firedTrg[m_requiredTriggers[0]], 
-    // 				       firedTrg[m_requiredTriggers[1]],
-    // 				       (firedTrg[m_requiredTriggers[0]] || firedTrg[m_requiredTriggers[1]]) );
-    
     myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
 			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nPV,
@@ -944,11 +924,13 @@ void HiggsMLSelection::Loop() {
     if ( GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py()) ) {
       myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz()); 
     } else { 
       myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() );
     }
@@ -1047,6 +1029,7 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[mm]);
     
     theLJ  = theLeadingJet[mm];
+    theSJ  = theSecondJet[mm];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeMM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
@@ -1066,11 +1049,13 @@ void HiggsMLSelection::Loop() {
     if ( GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py()) ) {
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz()); 
     } else { 
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() );
     }
@@ -1171,6 +1156,7 @@ void HiggsMLSelection::Loop() {
     myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[em]);
 
     theLJ  = theLeadingJet[em];
+    theSJ  = theSecondJet[em];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeEM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
@@ -1195,11 +1181,13 @@ void HiggsMLSelection::Loop() {
     if ( GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py()) ) {
       myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz()); 
     } else { 
       myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() );
     }
@@ -1300,6 +1288,7 @@ void HiggsMLSelection::Loop() {
     myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[me]);
 
     theLJ  = theLeadingJet[me];
+    theSJ  = theSecondJet[me];
     if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
       float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
       myOutTreeME->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
@@ -1324,11 +1313,13 @@ void HiggsMLSelection::Loop() {
     if ( GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py()) ) {
       myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz()); 
     } else { 
       myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
+				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() );
     }
@@ -2192,14 +2183,15 @@ void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
   if (sign>=0.1) *muonIdOutput = false;
 }
 
-
 int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) {
 
   int num=0;
   m_goodJets.clear();
   float ETMax=0.;
+  float ETMax2=0.;
 
   theLeadingJet[theChannel]=-1;   
+  theSecondJet[theChannel]=-1;   
 
   TString JESUncertainty(_selectionEE->getStringParameter("JESUncertainty"));
 
@@ -2254,10 +2246,18 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     }
     if(foundMatch) continue;
 
-    if(pt>ETMax) {
+    if ( pt>ETMax2 && pt>ETMax ) {
+
+      theSecondJet[theChannel] = theLeadingJet[theChannel];
+      ETMax2 = ETMax;
+
       theLeadingJet[theChannel] = j;
       leadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
       ETMax = pt;
+
+    } else if ( pt>ETMax2 && pt<ETMax ) {
+      theSecondJet[theChannel] = j;
+      ETMax2 = pt;
     }
 
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
