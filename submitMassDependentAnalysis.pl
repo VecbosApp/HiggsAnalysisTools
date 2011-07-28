@@ -68,7 +68,7 @@ system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WWTo2L2Nu_TuneZ2_7TeV
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WZTo3LNu_TuneZ2_7TeV_pythia6_tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 GVJets_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
-system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZZtoAnything_TuneZ2_7TeV-pythia6-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZZ_TuneZ2_7TeV_pythia6_tauola 15 HiggsApp 8nh $prefix 1");
 print  "done with dibosons.\n";
 
 print "\nDONE WITH MASS $mass GeV\n";
