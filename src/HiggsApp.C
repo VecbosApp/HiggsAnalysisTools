@@ -395,7 +395,7 @@ int main(int argc, char* argv[]) {
       maskMM.push_back("163262-164237:HLT_Mu24_v");
       maskMM.push_back("165085-166967:HLT_Mu30_v");
       maskMM.push_back("163262-166967:HLT_IsoMu17_v");
-      maskMM.push_back("67039-999999:HLT_IsoMu20_eta2p1_v");
+      maskMM.push_back("167039-999999:HLT_IsoMu20_eta2p1_v");
       maskNotMM.push_back("1-164237:HLT_DoubleMu7_v");
       maskNotMM.push_back("165085-999999:HLT_Mu13_Mu8_v");
 
@@ -403,9 +403,20 @@ int main(int argc, char* argv[]) {
       maskEM.push_back("163262-164237:HLT_Mu24_v");
       maskEM.push_back("165085-999999:HLT_Mu30_v");
       maskEM.push_back("163262-999999:HLT_IsoMu17_v");
+      maskEM.push_back("167039-999999:HLT_IsoMu20_eta2p1_v");
       maskNotEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+    } else if(DatasetName.Contains("SingleElectron")) {
+      maskEE.push_back("1-164237:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEE.push_back("165085-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEE.push_back("166968-999999:HLT_Ele52_CaloIdVT_TrkIdT_v");
+      maskNotEE.push_back("1-999999:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
 
+      maskEM.push_back("1-164237:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEM.push_back("165085-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEM.push_back("166968-999999:HLT_Ele52_CaloIdVT_TrkIdT_v");
+      maskNotEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
+      maskNotEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
     }
   }
 
@@ -413,6 +424,7 @@ int main(int argc, char* argv[]) {
   htoww.setRequiredTriggers(maskMM,1);
   htoww.setRequiredTriggers(maskEM,2);
 
+  htoww.setNotRequiredTriggers(maskNotEE,0);
   htoww.setNotRequiredTriggers(maskNotMM,1);
   htoww.setNotRequiredTriggers(maskNotEM,2);
 
