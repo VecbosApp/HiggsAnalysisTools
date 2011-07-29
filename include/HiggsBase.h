@@ -41,9 +41,9 @@ public :
    Int_t           mothMc[101];   //[nMc]
    Int_t           statusMc[101];   //[nMc]
    Int_t           nTrg;
-   Int_t           firedTrg[100];   //[nTrg]
+   Int_t           firedTrg[5000];   //[nTrg]
    Int_t           nHLT;
-   Int_t           indexHLT[1000];   //[nHLT]
+   Int_t           indexHLT[5000];   //[nHLT]
    std::vector<std::string>  *nameHLT;
    Int_t           nEle;
    Int_t           chargeEle[100];   //[nEle]
