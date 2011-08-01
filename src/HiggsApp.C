@@ -360,12 +360,6 @@ int main(int argc, char* argv[]) {
   std::vector<std::string> maskEE, maskMM, maskEM;
   std::vector<std::string> maskNotEE, maskNotMM, maskNotEM;
   
-//   mask.push_back("HLT_Ele17_SW_TightCaloEleId_Ele8HE_L1R_v2");
-//   mask.push_back("HLT_Mu5_Ele17_v2");
-//   mask.push_back("HLT_DoubleMu5_v1");
-
-//   htoww.setRequiredTriggers(mask);
-  
   if(isMC) {
     maskEE.push_back("1-1:HLT_Ele17_SW_TighterEleIdIsol_L1R_v3");
     maskMM.push_back("1-1:HLT_DoubleMu5_v1");
@@ -379,17 +373,9 @@ int main(int argc, char* argv[]) {
     } else if(DatasetName.Contains("DoubleMu")) {
       maskMM.push_back("1-164237:HLT_DoubleMu7_v");
       maskMM.push_back("165085-999999:HLT_Mu13_Mu8_v");
-      // maskNotMM.push_back("1-163261:HLT_Mu15_v");
-      // maskNotMM.push_back("163262-164237:HLT_Mu24_v");
-      // maskNotMM.push_back("165085-999999:HLT_Mu30_v");
-      // maskNotMM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("MuEG")) {
       maskEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
-      // maskNotEM.push_back("1-163261:HLT_Mu15_v");
-      // maskNotEM.push_back("163262-164237:HLT_Mu24_v");
-      // maskNotEM.push_back("165085-999999:HLT_Mu30_v");
-      // maskNotEM.push_back("163262-999999:HLT_IsoMu17_v");
     } else if(DatasetName.Contains("SingleMu")) {
       maskMM.push_back("1-163261:HLT_Mu15_v");
       maskMM.push_back("163262-164237:HLT_Mu24_v");
