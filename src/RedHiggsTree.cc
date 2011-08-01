@@ -62,6 +62,16 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("leadingJetBTagTrackCount", &myLeadingJetBTagTrackCount,    "leadingJetBTagTrackCount/F");
 }
 
+void RedHiggsTree::addSystematics() {
+  
+  myTree->Branch("scEnergy", myScEnergy, "scEnergy[2]/F");
+  myTree->Branch("R9", myR9, "R9[2]/F");
+  myTree->Branch("eneL1",  &myEneL1,  "eneL1/F");
+  myTree->Branch("eneL2",  &myEneL2, " eneL2/F");
+  myTree->Branch("typeL1", &myTypeL1, "typeL1/I");
+  myTree->Branch("typeL2", &myTypeL2, "typeL2/I");
+}
+
 void RedHiggsTree::addElectronInfos() {
   
   myTree->Branch("recoflag", myRecoflag, "recoflag[2]/I");
@@ -318,6 +328,20 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
   myPyL2 = pyL2;
   myPzL2 = pzL2;
 }
+
+void RedHiggsTree::fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2) {
+
+  for(int i=0; i<2; i++) {
+    myScEnergy[i] = scE[i];
+    myR9[i] = r9[i];
+  }
+
+  myEneL1  = ene1;
+  myEneL2  = ene2;
+  myTypeL1 = ty1;
+  myTypeL2 = ty2;
+}
+
 
 void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                                  int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],

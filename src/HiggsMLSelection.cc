@@ -496,6 +496,10 @@ void HiggsMLSelection::Loop() {
   myOutTreeEM->addElectronInfos();
   myOutTreeME->addElectronInfos();
 
+  myOutTreeEE->addSystematics();
+  myOutTreeEM->addSystematics();
+  myOutTreeME->addSystematics();
+
   myOutTreeEE->addRazor();
   myOutTreeMM->addRazor();
   myOutTreeEM->addRazor();
@@ -927,12 +931,14 @@ void HiggsMLSelection::Loop() {
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz()); 
+      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[ee], m_p4LeptonMinusEnergy[ee], m_p4PlusType[ee], m_p4MinusType[ee] );
     } else { 
       myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz() );
+      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[ee], m_p4LeptonPlusEnergy[ee], m_p4MinusType[ee], m_p4PlusType[ee] );
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1184,12 +1190,14 @@ void HiggsMLSelection::Loop() {
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz()); 
+      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[em], m_p4LeptonMinusEnergy[em], m_p4PlusType[em], m_p4MinusType[em] );
     } else { 
       myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz() );
+      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[em], m_p4LeptonPlusEnergy[em], m_p4MinusType[em], m_p4PlusType[em] );
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1303,7 +1311,7 @@ void HiggsMLSelection::Loop() {
     myOutTreeME -> fillElectrons( myRecoflag, myPt, myEta, myPhi,
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
-
+    
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, nsoftmu[me], leadJetBtag[me]);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
@@ -1316,12 +1324,14 @@ void HiggsMLSelection::Loop() {
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz()); 
+      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[me], m_p4LeptonMinusEnergy[me], m_p4PlusType[me], m_p4MinusType[me] );
     } else { 
       myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz() );
+      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[me], m_p4LeptonPlusEnergy[me], m_p4MinusType[me], m_p4PlusType[me] );
     }
 
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1729,6 +1739,10 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     slowestLeptonPt[ee] = TMath::Min(GetPt(pxEle[myEle],pyEle[myEle]),GetPt(pxEle[myPosi],pyEle[myPosi]));
     m_p4LeptonMinus[ee] -> SetXYZT(pxEle[myEle], pyEle[myEle], pzEle[myEle], energyEle[myEle]);
     m_p4LeptonPlus[ee]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+    m_p4LeptonMinusEnergy[ee] = energyEle[myEle];
+    m_p4LeptonPlusEnergy[ee]  = energyEle[myPosi];
+    m_p4MinusType[ee] = 0;
+    m_p4PlusType[ee]  = 0;
     m_mll[ee]       = (*(m_p4LeptonMinus[ee]) + *(m_p4LeptonPlus[ee])).M();
     m_deltaPhi[ee]  = fabs(180./TMath::Pi() * m_p4LeptonMinus[ee]->Vect().DeltaPhi(m_p4LeptonPlus[ee]->Vect()));
     m_deltaErre[ee] = m_p4LeptonMinus[ee]->Vect().DeltaR(m_p4LeptonPlus[ee]->Vect());
@@ -1762,6 +1776,10 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     slowestLeptonPt[mm] = TMath::Min(GetPt(pxMuon[myMuPlus],pyMuon[myMuPlus]),GetPt(pxMuon[myMuMinus],pyMuon[myMuMinus]));
     m_p4LeptonMinus[mm] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
     m_p4LeptonPlus[mm]  -> SetXYZT(pxMuon[myMuPlus], pyMuon[myMuPlus], pzMuon[myMuPlus], energyMuon[myMuPlus]);
+    m_p4LeptonMinusEnergy[mm] = energyMuon[myMuMinus];
+    m_p4LeptonPlusEnergy[mm]  = energyMuon[myMuPlus];
+    m_p4MinusType[mm] = 1;
+    m_p4PlusType[mm]  = 1;
     m_mll[mm]             = (*(m_p4LeptonMinus[mm]) + *(m_p4LeptonPlus[mm])).M();
     m_deltaPhi[mm]        = fabs(180./TMath::Pi() * m_p4LeptonMinus[mm]->Vect().DeltaPhi(m_p4LeptonPlus[mm]->Vect()));
     m_deltaErre[mm]       = m_p4LeptonMinus[mm]->Vect().DeltaR(m_p4LeptonPlus[mm]->Vect());
@@ -1794,6 +1812,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       muCands[em].push_back(myMuPlus);
       m_p4LeptonMinus[em] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
       m_p4LeptonPlus[em]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+      m_p4LeptonMinusEnergy[em] = energyEle[myEle];
+      m_p4LeptonPlusEnergy[em]  = energyMuon[myMuPlus];
+      m_p4MinusType[em] = 0;
+      m_p4PlusType[em]  = 1;
       hardestLeptonPt[em] = ptE;
       slowestLeptonPt[em] = ptM;
       m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
@@ -1818,6 +1840,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       muCands[me].push_back(myMuPlus);
       m_p4LeptonMinus[me] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
       m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+      m_p4LeptonMinusEnergy[me] = energyEle[myEle];
+      m_p4LeptonPlusEnergy[me]  = energyMuon[myMuPlus];
+      m_p4MinusType[me] = 0;
+      m_p4PlusType[me]  = 1;
       hardestLeptonPt[me] = ptM;
       slowestLeptonPt[me] = ptE;
       m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
@@ -1849,6 +1875,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       muCands[em].push_back(myMuMinus);
       m_p4LeptonMinus[em] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
       m_p4LeptonPlus[em]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+      m_p4LeptonMinusEnergy[em] = energyMuon[myMuMinus];
+      m_p4LeptonPlusEnergy[em]  = energyEle[myPosi];
+      m_p4MinusType[em] = 1;
+      m_p4PlusType[em]  = 0;
       hardestLeptonPt[em] = ptE;
       slowestLeptonPt[em] = ptM;
       m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
@@ -1873,6 +1903,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       muCands[me].push_back(myMuMinus);
       m_p4LeptonMinus[me] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
       m_p4LeptonPlus[me]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+      m_p4LeptonMinusEnergy[me] = energyMuon[myMuMinus];
+      m_p4LeptonPlusEnergy[me]  = energyEle[myPosi];
+      m_p4MinusType[me] = 1;
+      m_p4PlusType[me]  = 0;
       hardestLeptonPt[me] = ptM;
       slowestLeptonPt[me] = ptE;
       m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
@@ -1917,6 +1951,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         muCands[em].push_back(myMuMinus);
         m_p4LeptonMinus[em] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
         m_p4LeptonPlus[em]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+	m_p4LeptonMinusEnergy[em] = energyMuon[myMuMinus];
+	m_p4LeptonPlusEnergy[em]  = energyEle[myPosi];
+	m_p4MinusType[em] = 1;
+	m_p4PlusType[em]  = 0;
         hardestLeptonPt[em] = ptE;
         slowestLeptonPt[em] = ptM;
         m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
@@ -1941,6 +1979,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         muCands[me].push_back(myMuMinus);
 	m_p4LeptonMinus[me] -> SetXYZT(pxMuon[myMuMinus],pyMuon[myMuMinus],pzMuon[myMuMinus],energyMuon[myMuMinus]);
         m_p4LeptonPlus[me]  -> SetXYZT(pxEle[myPosi],pyEle[myPosi],pzEle[myPosi],energyEle[myPosi]);
+	m_p4LeptonMinusEnergy[me] = energyMuon[myMuMinus];
+	m_p4LeptonPlusEnergy[me]  = energyEle[myPosi];
+	m_p4MinusType[me] = 1;
+	m_p4PlusType[me]  = 0;
         hardestLeptonPt[me] = ptM;
         slowestLeptonPt[me] = ptE;
         m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
@@ -1970,6 +2012,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         muCands[em].push_back(myMuPlus);
         m_p4LeptonMinus[em] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
         m_p4LeptonPlus[em]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+	m_p4LeptonMinusEnergy[em] = energyEle[myEle];
+	m_p4LeptonPlusEnergy[em]  = energyMuon[myMuPlus];
+	m_p4MinusType[em] = 0;
+	m_p4PlusType[em]  = 1;
         hardestLeptonPt[em] = ptE;
         slowestLeptonPt[em] = ptM;
         m_mll[em]           = (*(m_p4LeptonMinus[em]) + *(m_p4LeptonPlus[em])).M();
@@ -1993,6 +2039,10 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         muCands[me].push_back(myMuPlus);
         m_p4LeptonMinus[me] -> SetXYZT(pxEle[myEle],pyEle[myEle],pzEle[myEle],energyEle[myEle]);
         m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myMuPlus],pyMuon[myMuPlus],pzMuon[myMuPlus],energyMuon[myMuPlus]);
+	m_p4LeptonMinusEnergy[me] = energyEle[myEle];
+	m_p4LeptonPlusEnergy[me]  = energyMuon[myMuPlus];
+	m_p4MinusType[me] = 0;
+	m_p4PlusType[me]  = 1;
         hardestLeptonPt[me] = ptM;
         slowestLeptonPt[me] = ptE;
         m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
@@ -2537,6 +2587,8 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
 
 void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
 
+  Utils anaUtils;
+
   int selectedElectrons[2];
   selectedElectrons[0] = hard;
   selectedElectrons[1] = slow; 
@@ -2553,6 +2605,18 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     myDphi[i] = deltaPhiAtVtxEle[eleIndex];
     myHoe[i] = hOverEEle[eleIndex];
     int sc = superClusterIndexEle[eleIndex];
+    bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
+    if(ecaldriven) {
+      mySCEnergy[i] = energySC[sc];
+      if (fabs(etaEle[eleIndex])<1.479) {
+	myR9[i] = e3x3SC[sc]/rawEnergySC[sc];
+      } else {
+	myR9[i] = e3x3SC[sc]/(rawEnergySC[sc]+esEnergySC[sc]);
+      }
+    } else {
+      myR9[i] = -1000.;
+      mySCEnergy[i] = -1000.;
+    }
     mySee[i] = SigmaiEiE(eleIndex);
     mySpp[i] = SigmaiPiP(eleIndex);
     myEop[i] = eSuperClusterOverPEle[eleIndex];

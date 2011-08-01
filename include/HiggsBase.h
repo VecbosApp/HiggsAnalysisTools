@@ -137,6 +137,7 @@ public :
    Int_t           nBCSC[100];   //[nSC]
    Int_t           nCrystalsSC[100];   //[nSC]
    Float_t         rawEnergySC[100];   //[nSC]
+   Float_t         esEnergySC[100];   //[nSC]
    Float_t         energySC[100];   //[nSC]
    Float_t         etaSC[100];   //[nSC]
    Float_t         thetaSC[100];   //[nSC]
@@ -672,6 +673,7 @@ public :
    TBranch        *b_nBCSC;   //!
    TBranch        *b_nCrystalsSC;   //!
    TBranch        *b_rawEnergySC;   //!
+   TBranch        *b_esEnergySC;   //!
    TBranch        *b_energySC;   //!
    TBranch        *b_etaSC;   //!
    TBranch        *b_thetaSC;   //!
@@ -1276,6 +1278,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("nBCSC", nBCSC, &b_nBCSC);
    fChain->SetBranchAddress("nCrystalsSC", nCrystalsSC, &b_nCrystalsSC);
    fChain->SetBranchAddress("rawEnergySC", rawEnergySC, &b_rawEnergySC);
+   fChain->SetBranchAddress("esEnergySC", esEnergySC, &b_esEnergySC);
    fChain->SetBranchAddress("energySC", energySC, &b_energySC);
    fChain->SetBranchAddress("etaSC", etaSC, &b_etaSC);
    fChain->SetBranchAddress("thetaSC", thetaSC, &b_thetaSC);

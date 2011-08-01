@@ -34,6 +34,9 @@ public:
   void addRazor();
   //! add variables for W+jets
   void addFake();
+  //! add variables to study shape systematics
+  void addSystematics();
+
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
@@ -51,6 +54,8 @@ public:
                       float pxSecJet, float pySecJet, float pzSecJet,
                       float pxL1, float pyL1, float pzL1,
                       float pxL2, float pyL2, float pzL2);
+  
+  void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2); 
                   
   void fillRazor(float MTR, float mR, float gammaMR);
 
@@ -134,6 +139,8 @@ private:
   float myPxSecondJet, myPySecondJet, myPzSecondJet;
   float myPxL1, myPyL1, myPzL1;
   float myPxL2, myPyL2, myPzL2;
+  float myEneL1, myEneL2;
+  int myTypeL1, myTypeL2;
 
   float myMTR, myMR, myGammaMR;
   
@@ -154,6 +161,7 @@ private:
   int myMissHits[2];
   float myDist[2], myDcot[2];
   float myLh[2];
+  float myScEnergy[2], myR9[2];
   int myMatched[2];
 
   TFile* myFile;

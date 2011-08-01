@@ -167,6 +167,9 @@ private:
   int theSecondJet[4];
   std::vector<int> eleCands[4], muCands[4];
   TLorentzVector *m_p4LeptonPlus[4], *m_p4LeptonMinus[4];
+  float m_p4LeptonMinusEnergy[4], m_p4LeptonPlusEnergy[4];
+  int m_p4PlusType[4], m_p4MinusType[4];
+
   TVector3 *m_p3PFMET;
   TVector3 m_p3TKMET[4];
   float m_theMET;
@@ -217,6 +220,7 @@ private:
   int myClassification[2], myNBremClusters[2];
   float myDeta[2], myDphi[2], myHoe[2], mySee[2], mySpp[2], myEop[2], myFbrem[2];
   float myTrackerIso[2], myHcalIso[2], myEcalJIso[2], myEcalGTIso[2], myCombinedIso[2];
+  float myR9[2], mySCEnergy[2];
   int myCharge[2];
   int myMissHits[2];
   float myDist[2], myDcot[2];
