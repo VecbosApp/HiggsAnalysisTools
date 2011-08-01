@@ -9,7 +9,7 @@ using namespace std;
 
 int fullFormat = 1;
 
-void setReducedFormat() { fullFormat = 0; }
+void setReducedFormat() { fullFormat = 1; }
 
 void addWeights(const char* filename, float weight, int processId, int finalstate) {
 
@@ -36,7 +36,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     // add also a branch with jet category (1 for njets=0, -1 for njets=1: useful for the fit)
     // and a branch with float final selection bool (for roofit)
     Int_t           run;
-    Int_t           lumi;
+    // Int_t           lumi;
     Int_t           event;
     Float_t         puweight;
     Float_t         met;
@@ -59,8 +59,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Bool_t          hlt;
     Float_t         KFactor;
     Bool_t          promptDecay;
-    Float_t         maxPtLh;
-    Float_t         minPtLh;
+    // Float_t         maxPtLh;
+    // Float_t         minPtLh;
     Int_t           njets;
     Int_t           nuncorrjets;
     Int_t           nVtx;
@@ -83,6 +83,9 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Float_t         pxLeadJet;
     Float_t         pyLeadJet;
     Float_t         pzLeadJet;
+    Float_t         pxSecondJet;
+    Float_t         pySecondJet;
+    Float_t         pzSecondJet;
     Float_t         pxL1;
     Float_t         pyL1;
     Float_t         pzL1;
@@ -92,7 +95,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Int_t           nSoftMu;
 
     treeOrig->SetBranchAddress("run", &run);
-    treeOrig->SetBranchAddress("lumi", &lumi);
+    // treeOrig->SetBranchAddress("lumi", &lumi);
     treeOrig->SetBranchAddress("event", &event);
     treeOrig->SetBranchAddress("puweight", &puweight);
     treeOrig->SetBranchAddress("hlt", &hlt);
@@ -116,8 +119,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("step", step);
     treeOrig->SetBranchAddress("KFactor", &KFactor);
     treeOrig->SetBranchAddress("promptDecay", &promptDecay);
-    treeOrig->SetBranchAddress("maxPtLh", &maxPtLh);
-    treeOrig->SetBranchAddress("minPtLh", &minPtLh);
+    // treeOrig->SetBranchAddress("maxPtLh", &maxPtLh);
+    // treeOrig->SetBranchAddress("minPtLh", &minPtLh);
     treeOrig->SetBranchAddress("njets", &njets);
     treeOrig->SetBranchAddress("nuncorrjets", &nuncorrjets);
     treeOrig->SetBranchAddress("dxyEVT", &dxyEVT);
@@ -139,6 +142,9 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("pxLeadJet", &pxLeadJet);
     treeOrig->SetBranchAddress("pyLeadJet", &pyLeadJet);
     treeOrig->SetBranchAddress("pzLeadJet", &pzLeadJet);
+    treeOrig->SetBranchAddress("pxSecondJet", &pxSecondJet);
+    treeOrig->SetBranchAddress("pySecondJet", &pySecondJet);
+    treeOrig->SetBranchAddress("pzSecondJet", &pzSecondJet);
     treeOrig->SetBranchAddress("pxL1", &pxL1);
     treeOrig->SetBranchAddress("pyL1", &pyL1);
     treeOrig->SetBranchAddress("pzL1", &pzL1);
@@ -170,9 +176,14 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Int_t         i_hlt;
     float deltaPhi_LL;    
     float deltaPhi_LL_MET;
-    float deltaPhi_LL_JET;
-    float deltaPhi_MET_JET;
+    float deltaPhi_LLJ1_MET;
+    float deltaPhi_LL_JET1;
+    float deltaPhi_LL_JET2;
+    float deltaPhi_MET_JET1;
+    float deltaPhi_MET_JET2;
+    float deltaPhi_LL_JJ;
     float leadingJetPt;
+    float secondJetPt;
     float L1eta, L1phi;
     float L2eta, L2phi;
     float dileptonPt;
@@ -185,7 +196,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
 
     // copy branches
     treeNew->Branch("run", &run, "run/I");
-    treeNew->Branch("lumi", &lumi, "lumi/I");
+    // treeNew->Branch("lumi", &lumi, "lumi/I");
     treeNew->Branch("event", &event, "event/I");
     treeNew->Branch("puweight", &puweight, "puweight/F");
     treeNew->Branch("met", &met, "met/F");  // default MET is tcMET for WW
@@ -211,8 +222,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeNew->Branch("WWSel1j", &i_WWSel1j, "WWSel1j/I");
     treeNew->Branch("KFactor", &KFactor, "KFactor/F");
     treeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
-    treeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
-    treeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
+    // treeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
+    // treeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
     treeNew->Branch("njets", &njets, "njets/I");
     treeNew->Branch("nuncorrjets", &nuncorrjets, "nuncorrjets/I");
     treeNew->Branch("dxyEVT", &dxyEVT, "dxyEVT/F");
@@ -244,6 +255,9 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       treeNew->Branch("pxLeadJet", &pxLeadJet, "pxLeadJet/F");
       treeNew->Branch("pyLeadJet", &pyLeadJet, "pyLeadJet/F");
       treeNew->Branch("pzLeadJet", &pzLeadJet, "pzLeadJet/F");
+      treeNew->Branch("pxSecondJet", &pxSecondJet, "pxSecondJet/F");
+      treeNew->Branch("pySecondJet", &pySecondJet, "pySecondJet/F");
+      treeNew->Branch("pzSecondJet", &pzSecondJet, "pzSecondJet/F");
       treeNew->Branch("pxL1", &pxL1, "pxL1/F");
       treeNew->Branch("pyL1", &pyL1, "pyL1/F");
       treeNew->Branch("pzL1", &pzL1, "pzL1/F");
@@ -252,10 +266,15 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       treeNew->Branch("pzL2", &pzL2, "pzL2/F");
       treeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
       treeNew->Branch("deltaPhi_LL_MET", &deltaPhi_LL_MET, "deltaPhi_LL_MET/F");
-      treeNew->Branch("deltaPhi_LL_JET", &deltaPhi_LL_JET, "deltaPhi_LL_JET/F");
-      treeNew->Branch("deltaPhi_MET_JET", &deltaPhi_MET_JET, "deltaPhi_MET_JET/F");
+      treeNew->Branch("deltaPhi_LLJ1_MET", &deltaPhi_LLJ1_MET, "deltaPhi_LLJ1_MET/F");
+      treeNew->Branch("deltaPhi_LL_JET1", &deltaPhi_LL_JET1, "deltaPhi_LL_JET1/F");
+      treeNew->Branch("deltaPhi_LL_JET2", &deltaPhi_LL_JET2, "deltaPhi_LL_JET2/F");
+      treeNew->Branch("deltaPhi_MET_JET1", &deltaPhi_MET_JET1, "deltaPhi_MET_JET1/F");
+      treeNew->Branch("deltaPhi_MET_JET2", &deltaPhi_MET_JET2, "deltaPhi_MET_JET2/F");
+      treeNew->Branch("deltaPhi_LL_JJ", &deltaPhi_LL_JJ, "deltaPhi_LL_JJ/F");
       treeNew->Branch("dileptonPt", &dileptonPt, "dileptonPt/F");
       treeNew->Branch("leadingJetPt", &leadingJetPt, "leadingJetPt/F");
+      treeNew->Branch("secondJetPt", &secondJetPt, "secondJetPt/F");
       treeNew->Branch("L1eta", &L1eta, "L1eta/F");
       treeNew->Branch("L1phi", &L1phi, "L1phi/F");
       treeNew->Branch("L2eta", &L2eta, "L2eta/F");
@@ -317,17 +336,25 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       i_hlt = (hlt) ? 1 : 0;
 
       if (finalLeptons && fullFormat) {
+        TVector3 TV_met( pxTkMet, pyTkMet, pzTkMet );
         TVector3 TV_L1( pxL1, pyL1, pzL1 );
         TVector3 TV_L2( pxL2, pyL2, pzL2 );
         TVector3 TV_L1p2 = TV_L1 + TV_L2;
-        TVector3 TV_met( pxTkMet, pyTkMet, pzTkMet );
-        TVector3 TV_jet( pxLeadJet, pyLeadJet, pzLeadJet );
-        deltaPhi_LL     = (180./3.14) * TV_L1.DeltaPhi(TV_L2);
-        deltaPhi_LL_MET = (180./3.14) * TV_met.DeltaPhi(TV_L1p2);
-        deltaPhi_LL_JET = (180./3.14) * TV_jet.DeltaPhi(TV_L1p2);
-        deltaPhi_MET_JET = (180./3.14) * TV_jet.DeltaPhi(TV_met);
+        TVector3 TV_jet1( pxLeadJet,   pyLeadJet,   pzLeadJet );
+        TVector3 TV_jet2( pxSecondJet, pySecondJet, pzSecondJet );
+        TVector3 TV_J1p2  = TV_jet1 + TV_jet2;
+        TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
+        deltaPhi_LL       = (180./3.14) * TV_L1.DeltaPhi(TV_L2);
+        deltaPhi_LL_MET   = (180./3.14) * TV_met.DeltaPhi(TV_L1p2);
+        deltaPhi_LLJ1_MET = (180./3.14) * TV_met.DeltaPhi(TV_L12pJ1);   
+        deltaPhi_LL_JET1  = (180./3.14) * TV_jet1.DeltaPhi(TV_L1p2);
+        deltaPhi_LL_JET2  = (180./3.14) * TV_jet2.DeltaPhi(TV_L1p2);
+        deltaPhi_MET_JET1 = (180./3.14) * TV_jet1.DeltaPhi(TV_met);
+        deltaPhi_MET_JET2 = (180./3.14) * TV_jet2.DeltaPhi(TV_met);
+	deltaPhi_LL_JJ    = (180./3.14) * TV_L1p2.DeltaPhi(TV_J1p2);
         leadingJetPt = sqrt(pxLeadJet*pxLeadJet + pyLeadJet*pyLeadJet);
-        dileptonPt = TV_L1p2.Pt();
+        secondJetPt  = sqrt(pxSecondJet*pxSecondJet + pySecondJet*pySecondJet);
+        dileptonPt   = TV_L1p2.Pt();
         L1eta = TV_L1.Eta();
         L2eta = TV_L2.Eta();
         L1phi = TV_L1.Phi();
@@ -339,9 +366,14 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
         L2phi = 100.;
         deltaPhi_LL = -9999.;
         deltaPhi_LL_MET = -9999.;
-        deltaPhi_LL_JET = -9999.;
-        deltaPhi_MET_JET = -9999.;
+        deltaPhi_LLJ1_MET = -9999.;
+        deltaPhi_LL_JET1 = -9999.;
+        deltaPhi_LL_JET2 = -9999.;
+        deltaPhi_MET_JET1 = -9999.;
+        deltaPhi_MET_JET2 = -9999.;
+	deltaPhi_LL_JJ = -9999.;	
         leadingJetPt = -9999.;
+        secondJetPt = -9999.;
         dileptonPt = -9999.;
       } 
 
