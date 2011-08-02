@@ -377,19 +377,31 @@ int main(int argc, char* argv[]) {
       maskEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
     } else if(DatasetName.Contains("SingleMu")) {
-      maskMM.push_back("1-163261:HLT_Mu15_v");
-      maskMM.push_back("163262-164237:HLT_Mu24_v");
-      maskMM.push_back("165085-166967:HLT_Mu30_v");
-      maskMM.push_back("163262-166967:HLT_IsoMu17_v");
-      maskMM.push_back("167039-999999:HLT_IsoMu20_eta2p1_v");
+      maskMM.push_back("1-163261:HLT_Mu15_v2");
+      maskMM.push_back("163262-164237:HLT_Mu24_v2");
+      maskMM.push_back("163262-164237:HLT_IsoMu17_v6");
+      maskMM.push_back("165085-165888:HLT_Mu30_v3");
+      maskMM.push_back("165085-165888:HLT_IsoMu17_v8");
+      maskMM.push_back("165900-167043:HLT_Mu30_v3");
+      maskMM.push_back("165900-167043:HLT_IsoMu17_v9");
+      maskMM.push_back("167044-170053:HLT_Mu30_v5");
+      maskMM.push_back("167044-170053:HLT_IsoMu17_eta2p1_v1");
+      maskMM.push_back("170054-999999:HLT_Mu30_v7");
+      maskMM.push_back("170054-999999:HLT_IsoMu20_v8");
       maskNotMM.push_back("1-164237:HLT_DoubleMu7_v");
       maskNotMM.push_back("165085-999999:HLT_Mu13_Mu8_v");
 
-      maskEM.push_back("1-163261:HLT_Mu15_v");
-      maskEM.push_back("163262-164237:HLT_Mu24_v");
-      maskEM.push_back("165085-999999:HLT_Mu30_v");
-      maskEM.push_back("163262-999999:HLT_IsoMu17_v");
-      maskEM.push_back("167039-999999:HLT_IsoMu20_eta2p1_v");
+      maskEM.push_back("1-163261:HLT_Mu15_v2");
+      maskEM.push_back("163262-164237:HLT_Mu24_v2");
+      maskEM.push_back("163262-164237:HLT_IsoMu17_v6");
+      maskEM.push_back("165085-165888:HLT_Mu30_v3");
+      maskEM.push_back("165085-165888:HLT_IsoMu17_v8");
+      maskEM.push_back("165900-167043:HLT_Mu30_v3");
+      maskEM.push_back("165900-167043:HLT_IsoMu17_v9");
+      maskEM.push_back("167044-170053:HLT_Mu30_v5");
+      maskEM.push_back("167044-170053:HLT_IsoMu17_eta2p1_v1");
+      maskEM.push_back("170054-999999:HLT_Mu30_v7");
+      maskEM.push_back("170054-999999:HLT_IsoMu20_v8");
       maskNotEM.push_back("1-999999:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotEM.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
     } else if(DatasetName.Contains("SingleElectron")) {
