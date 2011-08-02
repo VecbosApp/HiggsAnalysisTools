@@ -85,6 +85,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Float_t         dphi[2];
     Float_t         hoe[2];
     Float_t         see[2];
+    Float_t         scEnergy[2];
+    Float_t         R9[2];
     Int_t           matched[2];
     Float_t         pxTkMet;
     Float_t         pyTkMet;
@@ -101,6 +103,10 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Float_t         pxL2;
     Float_t         pyL2;
     Float_t         pzL2;
+    Float_t         eneL1;
+    Float_t         eneL2;
+    Int_t           typeL1;
+    Int_t           typeL2;
     Int_t           nSoftMu;
     Float_t         mtr;
     Float_t         mr;
@@ -147,6 +153,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("dphi", dphi);
     treeOrig->SetBranchAddress("hoe", hoe);
     treeOrig->SetBranchAddress("see", see);
+    treeOrig->SetBranchAddress("scEnergy", scEnergy);
+    treeOrig->SetBranchAddress("R9", R9);
     treeOrig->SetBranchAddress("matched", matched);
     treeOrig->SetBranchAddress("pxTkMet", &pxTkMet);
     treeOrig->SetBranchAddress("pyTkMet", &pyTkMet);
@@ -163,18 +171,24 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("pxL2", &pxL2);
     treeOrig->SetBranchAddress("pyL2", &pyL2);
     treeOrig->SetBranchAddress("pzL2", &pzL2);
+    treeOrig->SetBranchAddress("eneL1", &eneL1);
+    treeOrig->SetBranchAddress("eneL2", &eneL2);
+    treeOrig->SetBranchAddress("typeL1", &typeL1);
+    treeOrig->SetBranchAddress("typeL2", &typeL2);
     treeOrig->SetBranchAddress("nSoftMu", &nSoftMu);
     treeOrig->SetBranchAddress("mtr", &mtr);
     treeOrig->SetBranchAddress("mr", &mr);
     treeOrig->SetBranchAddress("gammamr", &gammamr);
 
     // 
-    Float_t pt_1,   pt_2;
-    Float_t eta_1,  eta_2;
-    Float_t deta_1, deta_2;
-    Float_t dphi_1, dphi_2;
-    Float_t hoe_1,  hoe_2;
-    Float_t see_1,  see_2;
+    Float_t pt_1,       pt_2;
+    Float_t eta_1,      eta_2;
+    Float_t deta_1,     deta_2;
+    Float_t dphi_1,     dphi_2;
+    Float_t hoe_1,      hoe_2;
+    Float_t see_1,      see_2;
+    Float_t R9_1,       R9_2;
+    Float_t scEnergy_1, scEnergy_2;
     Int_t   matched_1,  matched_2;
 
     // convert the booleans into integers (to insert in RooDataset)
@@ -257,6 +271,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     theTreeNew->Branch("dphi1", &dphi_1, "dphi1/F");
     theTreeNew->Branch("hoe1", &hoe_1, "hoe1/F");
     theTreeNew->Branch("see1", &see_1, "see1/F");
+    theTreeNew->Branch("R91", &R9_1, "R91/F");
+    theTreeNew->Branch("scEnergy1", &scEnergy_1, "scEnergy1/F");
     theTreeNew->Branch("matched1", &matched_1, "matched1/I");
     theTreeNew->Branch("pt2", &pt_2, "pt2/F");
     theTreeNew->Branch("eta2", &eta_2, "eta2/F");
@@ -264,6 +280,8 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     theTreeNew->Branch("dphi2", &dphi_2, "dphi2/F");
     theTreeNew->Branch("hoe2", &hoe_2, "hoe2/F");
     theTreeNew->Branch("see2", &see_2, "see2/F");
+    theTreeNew->Branch("R92", &R9_2, "R92/F");
+    theTreeNew->Branch("scEnergy2", &scEnergy_2, "scEnergy2/F");
     theTreeNew->Branch("matched2", &matched_2, "matched2/I");
     theTreeNew->Branch("step", step, "step[25]/O");
     theTreeNew->Branch("mtr", &mtr, "mtr/F");
@@ -283,9 +301,13 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       theTreeNew->Branch("pxL1", &pxL1, "pxL1/F");
       theTreeNew->Branch("pyL1", &pyL1, "pyL1/F");
       theTreeNew->Branch("pzL1", &pzL1, "pzL1/F");
+      theTreeNew->Branch("eneL1",  &eneL1,  "eneL1/F");
+      theTreeNew->Branch("typeL1", &typeL1, "typeL1/I");
       theTreeNew->Branch("pxL2", &pxL2, "pxL2/F");
       theTreeNew->Branch("pyL2", &pyL2, "pyL2/F");
       theTreeNew->Branch("pzL2", &pzL2, "pzL2/F");
+      theTreeNew->Branch("eneL2",  &eneL2,  "eneL2/F");
+      theTreeNew->Branch("typeL2", &typeL2, "typeL2/I");
       theTreeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
       theTreeNew->Branch("deltaPhi_LL_MET", &deltaPhi_LL_MET, "deltaPhi_LL_MET/F");
       theTreeNew->Branch("deltaPhi_LLJ1_MET", &deltaPhi_LLJ1_MET, "deltaPhi_LLJ1_MET/F");
@@ -320,20 +342,24 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       else if(njets==1) jetcat = -1;
       else jetcat = -2;
 
-      pt_1      = pt[0];
-      eta_1     = eta[0];
-      deta_1    = deta[0];
-      dphi_1    = dphi[0];
-      hoe_1     = hoe[0];
-      see_1     = see[0];
-      matched_1 = matched[0];
-      pt_2      = pt[1];
-      eta_2     = eta[1];
-      deta_2    = deta[1];
-      dphi_2    = dphi[1];
-      hoe_2     = hoe[1];
-      see_2     = see[1];
-      matched_2 = matched[1];
+      pt_1       = pt[0];
+      eta_1      = eta[0];
+      deta_1     = deta[0];
+      dphi_1     = dphi[0];
+      hoe_1      = hoe[0];
+      see_1      = see[0];
+      scEnergy_1 = scEnergy[0];
+      R9_1       = R9[0];
+      matched_1  = matched[0];
+      pt_2       = pt[1];
+      eta_2      = eta[1];
+      deta_2     = deta[1];
+      dphi_2     = dphi[1];
+      hoe_2      = hoe[1];
+      see_2      = see[1];
+      scEnergy_2 = scEnergy[1];
+      R9_2       = R9[1];
+      matched_2  = matched[1];
       R = mtr/mr;
       dgammamr = 2*gammamr;
 
@@ -426,7 +452,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
         } else { // data: apply the trigger only for the single lepton trigger datasets
           if((processId==-1) || (processId==-2 && hlt)) {
             treeNew->Fill();
-            if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
+	    if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
           }
         }
       }
