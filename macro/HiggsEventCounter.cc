@@ -88,7 +88,7 @@ void countEvents() {
   chains[12]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // MADGRAPH sample
   chains[13]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
   chains[14]->Add("results/Summer11_V1/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
-  chains[15]->Add("results/Summer11_V1/ZZtoAnything_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[15]->Add("results/Summer11_V1/ZZ_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
 
 
   cout << "chains added. " << endl;
@@ -326,6 +326,7 @@ void countEvents() {
   std::ofstream weightsFile;
   weightsFile.open("weightTrees.sh");
   weightsFile << "#! /bin/sh\n\n" << std::endl;
+  weightsFile << "mkdir -p results/merged_skim" << std::endl;
   weightsFile << "lumiEE=$1" << std::endl;
   weightsFile << "lumiMM=$2" << std::endl;
   weightsFile << "lumiEM=$3" << std::endl;
