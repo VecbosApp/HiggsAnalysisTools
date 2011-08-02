@@ -497,6 +497,7 @@ void HiggsMLSelection::Loop() {
   myOutTreeME->addElectronInfos();
 
   myOutTreeEE->addSystematics();
+  myOutTreeMM->addSystematics();
   myOutTreeEM->addSystematics();
   myOutTreeME->addSystematics();
 
@@ -1053,17 +1054,27 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
 
     if ( GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py()) ) {
+      
+      float dummyV[2];
+      for (int ii=0; ii<2; ii++) dummyV[ii] = -999.;
+
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz()); 
+      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonPlusEnergy[mm], m_p4LeptonMinusEnergy[mm], m_p4PlusType[mm], m_p4MinusType[mm] );
     } else { 
+
+      float dummyV[2];
+      for (int ii=0; ii<2; ii++) dummyV[ii] = -999.;
+
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
 				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
 				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz() );
+      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonMinusEnergy[mm], m_p4LeptonPlusEnergy[mm], m_p4MinusType[mm], m_p4PlusType[mm] );
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
