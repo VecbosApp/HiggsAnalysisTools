@@ -5,6 +5,8 @@
 
 # usage: ./weightTreesData.sh
 
+mkdir -p results_data/merged_skim
+
 echo "Adding weights..."
 root -l -b <<EOF
 
