@@ -18,11 +18,13 @@ echo "MERGING TREES STEP DONE."
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION..."
 chmod u+x ./mergeMultiSamples.sh
 ./mergeMultiSamples.sh
+./mergeMultiSamplesSkim.sh
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION DONE."
 
 echo "MERGING FINAL STATES..."
 chmod u+x ./mergeFinalStates.sh
 ./mergeFinalStates.sh
+./mergeFinalStatesSkim.sh
 echo "MERGING FINAL STATES DONE."
 
 #echo "CREATING FIT ROODATASETS STEP..."
