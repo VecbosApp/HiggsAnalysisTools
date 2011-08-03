@@ -60,6 +60,7 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("bTagSecVertex",       &myBTagSecVertex,       "bTagSecVertex/F");
   myTree->Branch("nSoftMu",             &myNSoftMu,             "nSoftMu/I");
   myTree->Branch("leadingJetBTagTrackCount", &myLeadingJetBTagTrackCount,    "leadingJetBTagTrackCount/F");
+  myTree->Branch("subleadingJetBTagTrackCount", &mySubleadingJetBTagTrackCount,    "subleadingJetBTagTrackCount/F");
 }
 
 void RedHiggsTree::addSystematics() {
@@ -143,6 +144,13 @@ void RedHiggsTree::addKinematics() {
   myTree->Branch("pxL2", &myPxL2, "pxL2/F");
   myTree->Branch("pyL2", &myPyL2, "pyL2/F");
   myTree->Branch("pzL2", &myPzL2, "pzL2/F");
+
+  myJetsSum = 0;
+  myUncorrJetsSum = 0;
+  myPfMet = 0;
+  myTree->Branch("sumJetsV4", "TLorentzVector", &myJetsSum);
+  myTree->Branch("uncorrSumJetsV4", "TLorentzVector", &myUncorrJetsSum);
+  myTree->Branch("pfmetV", "TVector3", &myPfMet);
 }
 
 void RedHiggsTree::addKFactor() {
@@ -250,7 +258,7 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
 }
 
 void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
-                              float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu, float leadJetBTagSecVertex) {
+                              float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount) {
 
   myNjets   = njets;
   myNuncorrjets = nuncorrjets;
@@ -260,7 +268,8 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
   myBTagImpPar = bTagImpPar;
   myBTagSecVertex = bTagSecVertex;
   myNSoftMu = nsoftmu;
-  myLeadingJetBTagTrackCount = leadJetBTagSecVertex;
+  myLeadingJetBTagTrackCount = leadJetBTagTrackCount;
+  mySubleadingJetBTagTrackCount = subleadJetBTagTrackCount;
 
 }
 
@@ -311,7 +320,8 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxLeadJet, float pyLeadJet, float pzLeadJet,
                                   float pxSecJet, float pySecJet, float pzSecJet,
                                   float pxL1, float pyL1, float pzL1,
-                                  float pxL2, float pyL2, float pzL2) {
+                                  float pxL2, float pyL2, float pzL2,
+                                  TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet) {
   myPxTkMet = pxTkMet;
   myPyTkMet = pyTkMet;
   myPzTkMet = pzTkMet;
@@ -327,6 +337,10 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
   myPxL2 = pxL2;
   myPyL2 = pyL2;
   myPzL2 = pzL2;
+  myJetsSum = jetSum;
+  myUncorrJetsSum = uncorrJetSum;
+  myPfMet = pfmet;
+
 }
 
 void RedHiggsTree::fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2) {
