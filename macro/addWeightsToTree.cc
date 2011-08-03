@@ -2,6 +2,7 @@
 #include <TTree.h>
 #include <TBranch.h>
 #include <TMath.h>
+#include <TLorentzVector.h>
 #include <TVector3.h>
 #include <iostream>
 
@@ -79,6 +80,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Float_t         bTagImpPar;
     Float_t         bTagSecVertex;
     Float_t         leadingJetBTagTrackCount;
+    Float_t         subleadingJetBTagTrackCount;
     Float_t         pt[2];
     Float_t         eta[2];
     Float_t         deta[2];
@@ -111,6 +113,10 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     Float_t         mtr;
     Float_t         mr;
     Float_t         gammamr;
+
+    TLorentzVector *sumJetsV4 = 0;
+    TLorentzVector *uncorrSumJetsV4 = 0;
+    TVector3        *pfmetV = 0;
 
     treeOrig->SetBranchAddress("run", &run);
     // treeOrig->SetBranchAddress("lumi", &lumi);
@@ -147,6 +153,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("bTagImpPar", &bTagImpPar);
     treeOrig->SetBranchAddress("bTagSecVertex", &bTagSecVertex);
     treeOrig->SetBranchAddress("leadingJetBTagTrackCount", &leadingJetBTagTrackCount);
+    treeOrig->SetBranchAddress("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("pt", pt);
     treeOrig->SetBranchAddress("eta", eta);
     treeOrig->SetBranchAddress("deta", deta);
@@ -179,6 +186,9 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     treeOrig->SetBranchAddress("mtr", &mtr);
     treeOrig->SetBranchAddress("mr", &mr);
     treeOrig->SetBranchAddress("gammamr", &gammamr);
+    treeOrig->SetBranchAddress("sumJetsV4", &sumJetsV4);
+    treeOrig->SetBranchAddress("uncorrSumJetsV4", &uncorrSumJetsV4);
+    treeOrig->SetBranchAddress("pfmetV", &pfmetV);
 
     // 
     Float_t pt_1,       pt_2;
@@ -265,6 +275,7 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
     theTreeNew->Branch("bTagImpPar", &bTagImpPar, "bTagImpPar/F");
     theTreeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
     theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
+    theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
     theTreeNew->Branch("pt1", &pt_1, "pt1/F");
     theTreeNew->Branch("eta1", &eta_1, "eta1/F");
     theTreeNew->Branch("deta1", &deta_1, "deta1/F");
@@ -324,6 +335,9 @@ void addWeights(const char* filename, float weight, int processId, int finalstat
       theTreeNew->Branch("L2eta", &L2eta, "L2eta/F");
       theTreeNew->Branch("L2phi", &L2phi, "L2phi/F");
       theTreeNew->Branch("nSoftMu", &nSoftMu, "nSoftMu/I");
+      theTreeNew->Branch("sumJetsV4", "TLorentzVector", &sumJetsV4);
+      theTreeNew->Branch("uncorrSumJetsV4", "TLorentzVector", &uncorrSumJetsV4);
+      theTreeNew->Branch("pfmetV", "TVector3", &pfmetV);
     }
 
     theTreeNew->Branch("jetcat", &jetcat,  "jetcat/F");
