@@ -73,9 +73,9 @@ private:
 
   //! count jet multiplicity
   int numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) ;
-  int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
+  int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
   //! give the highest b-tag of calojets in the event
-  float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
+  float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
   //! in the 1-jet bin, deltaphi between ll system and leading jet
   float deltaPhiLLJet(int ichan);
   //! count the soft muons
@@ -173,6 +173,7 @@ private:
   TVector3 *m_p3PFMET;
   TVector3 m_p3TKMET[4];
   float m_theMET;
+  TLorentzVector *m_jetsSum[4], *m_uncorrJetsSum[4];
 
   TVector3 m_dilepPt[4];
   float m_deltaPhi[4];
@@ -185,7 +186,7 @@ private:
   float m_projectedMet[4], m_chMet[4];
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
-  float leadJetBtag[4];
+  float leadJetBtag[4], subLeadJetsMaxBtag[4];
 
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;

@@ -1,5 +1,9 @@
 #ifndef RedHiggsTree_h
 #define RedHiggsTree_h
+
+#include "TLorentzVector.h"
+#include "TVector3.h"
+
 class TFile;
 class TTree;
 
@@ -53,7 +57,8 @@ public:
                       float pxLeadJet, float pyLeadJet, float pzLeadJet,
                       float pxSecJet, float pySecJet, float pzSecJet,
                       float pxL1, float pyL1, float pzL1,
-                      float pxL2, float pyL2, float pzL2);
+                      float pxL2, float pyL2, float pzL2,
+                      TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet);
   
   void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2); 
                   
@@ -63,7 +68,7 @@ public:
 
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
-                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagSecVertex);
+                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount);
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                      int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
@@ -121,7 +126,7 @@ private:
   float myBTagImpPar;
   float myBTagSecVertex;
   int myNSoftMu;
-  float myLeadingJetBTagTrackCount;
+  float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myUncorrJetVeto;
@@ -144,6 +149,9 @@ private:
 
   float myMTR, myMR, myGammaMR;
   
+  TLorentzVector *myJetsSum, *myUncorrJetsSum;
+  TVector3 *myPfMet;
+
   //! for W+jets
   int myTight;
   float myPUWeightSt;
