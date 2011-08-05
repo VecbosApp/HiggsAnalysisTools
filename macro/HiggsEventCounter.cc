@@ -341,12 +341,12 @@ void countEvents() {
     std::vector<double> massId = signalProcId[imass];
     for(int i=0; i<4; i++) {
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
-      weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,0);" << std::endl;
+      weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1);" << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, " << sampleProcessId[isample] << " ,0);" << std::endl;
+    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, " << sampleProcessId[isample] << " ,1);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
   
@@ -362,14 +362,14 @@ void countEvents() {
       cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH[imass][i] << endl;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameMM = massSampleName[i].ReplaceAll("_ee","_mm");
-      weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,1);" << std::endl;
+      weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0);" << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameMM = sampleName[isample].ReplaceAll("_ee","_mm");
-    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, " << sampleProcessId[isample] << " ,1);" << std::endl;
+    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, " << sampleProcessId[isample] << " ,0);" << std::endl;
   }
   weightsFile << ".q\n\nEOF\n" << std::endl;
 
