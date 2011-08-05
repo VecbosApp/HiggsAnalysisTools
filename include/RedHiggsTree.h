@@ -54,13 +54,15 @@ public:
 	       bool finalLeptons, bool jetVeto, bool uncorrJetVeto, bool preDeltaPhi, bool finalSelection);
 
   void fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
-                      float pxLeadJet, float pyLeadJet, float pzLeadJet,
-                      float pxSecJet, float pySecJet, float pzSecJet,
+                      float pxLeadJet[3], float pyLeadJet[3], float pzLeadJet[3],
+                      float pxSecJet[3], float pySecJet[3], float pzSecJet[3],
                       float pxL1, float pyL1, float pzL1,
                       float pxL2, float pyL2, float pzL2,
+                      int ch[2], float lh[2], float iso[2],
                       TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet);
   
-  void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2); 
+  void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2,
+                       TVector3 *metFromJets, TVector3 *pfMetUp, TVector3 *pfMetDown, float mtUp, float mtDown); 
                   
   void fillRazor(float MTR, float mR, float gammaMR);
 
@@ -68,7 +70,7 @@ public:
 
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
-                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount);
+                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount, int numExtraLep);
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                      int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
@@ -127,6 +129,7 @@ private:
   float myBTagSecVertex;
   int myNSoftMu;
   float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount;
+  float myNumExtraLep;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myUncorrJetVeto;
@@ -140,8 +143,8 @@ private:
   float myLeadingJetPt;
   int myRun, myLS, myEvent;
   float myPxTkMet, myPyTkMet, myPzTkMet;
-  float myPxLeadJet, myPyLeadJet, myPzLeadJet;
-  float myPxSecondJet, myPySecondJet, myPzSecondJet;
+  float myPxLeadJet[3], myPyLeadJet[3], myPzLeadJet[3];
+  float myPxSecondJet[3], myPySecondJet[3], myPzSecondJet[3];
   float myPxL1, myPyL1, myPzL1;
   float myPxL2, myPyL2, myPzL2;
   float myEneL1, myEneL2;
@@ -171,6 +174,12 @@ private:
   float myLh[2];
   float myScEnergy[2], myR9[2];
   int myMatched[2];
+  TVector3 *myMetFromJets, *myPfMetUp, *myPfMetDown;
+  float myMtUp, myMtDown;
+
+  // lepton variables
+  int myLepCharge[2];
+  float myIso[2], myEleLh[2];
 
   TFile* myFile;
   TTree* myTree;
