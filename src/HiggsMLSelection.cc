@@ -560,10 +560,7 @@ void HiggsMLSelection::Loop() {
     // weight for the PU observed in 2011 data
     if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
 
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) {
-      evtKfactor = getkFactor("Higgs");
-      weight *= evtKfactor;
-    }
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
     // look to the MC truth decay tree 
     // bool decayEE = findMcTree("HtoWWto2e2nu");
