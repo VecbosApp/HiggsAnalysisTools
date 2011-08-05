@@ -128,6 +128,9 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // kinematics
   m_p3PFMET = new TVector3(0.,0.,0.);
+  m_metFromJets = new TVector3(0.,0.,0.);
+  m_pfMetJESUp = new TVector3(0.,0.,0.);
+  m_pfMetJESDown = new TVector3(0.,0.,0.);
   for(int theChannel=0; theChannel<4; theChannel++) {
     m_p4LeptonPlus[theChannel]  = new TLorentzVector(0.,0.,0.,0.);
     m_p4LeptonMinus[theChannel] = new TLorentzVector(0.,0.,0.,0.);
@@ -153,6 +156,9 @@ HiggsMLSelection::~HiggsMLSelection(){
     delete m_uncorrJetsSum[theChannel];
   }
   delete m_p3PFMET;  
+  delete m_metFromJets;
+  delete m_pfMetJESUp;
+  delete m_pfMetJESDown;
 
   delete _selectionEE;
   delete _selectionMM;
@@ -781,6 +787,7 @@ void HiggsMLSelection::Loop() {
     float dphiLLJ[4];
     float btag[4];
     int nsoftmu[4],nextraleptons[4];
+    float jesMtUp[4], jesMtDown[4];
     for(int ichan=0; ichan<4; ichan++) {
 
       // jet counter
@@ -798,6 +805,11 @@ void HiggsMLSelection::Loop() {
 
       // extra lepton counter
       nextraleptons[ichan] = numExtraLeptons(eleCands[ichan],muCands[ichan]);
+
+      // calculate the smeared MET/MT // activate only when doing systematics, otherwise very slow
+//       JESPfMet(eleCands[ichan],muCands[ichan]);
+//       jesMtUp[ichan] = (transvMassJES(ichan)).first;
+//       jesMtDown[ichan] = (transvMassJES(ichan)).second;
     }
 
     float genPtHiggs = -1.;
@@ -805,7 +817,7 @@ void HiggsMLSelection::Loop() {
       for(int imc=2;imc<10;imc++) {
         if(idMc[imc]==25 && statusMc[imc]==3) genPtHiggs = pMc[imc]*fabs(sin(thetaMc[imc]));
       }}
-    
+    float kfW = ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) ? evtKfactor : 1.0;
 
     // ---------------------------------------
     // filling counters for the different final states
@@ -909,10 +921,9 @@ void HiggsMLSelection::Loop() {
 
     int theLJ  = theLeadingJet[ee];
     int theSJ  = theSecondJet[ee];
-    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
-      myOutTreeEE->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
-    }
+
+    float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+    myOutTreeEE->fillKFactor(kfW, genPtHiggs, ptLJ);
 
     myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
@@ -920,7 +931,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[ee], leadJetBtag[ee], subLeadJetsMaxBtag[ee]);
+                              nsoftmu[ee], leadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee]);
 
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -930,22 +941,29 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
+    std::vector<TLorentzVector> jesLJ = GetJetJesPcomponent(theLJ);
+    std::vector<TLorentzVector> jesSJ = GetJetJesPcomponent(theSJ);
+    float pxLJEE[3] = { jesLJ[0].Px(), jesLJ[1].Px(), jesLJ[2].Px() };   float pyLJEE[3] = { jesLJ[0].Py(), jesLJ[1].Py(), jesLJ[2].Py() };   float pzLJEE[3] = { jesLJ[0].Pz(), jesLJ[1].Pz(), jesLJ[2].Pz() };
+    float pxSJEE[3] = { jesSJ[0].Px(), jesSJ[1].Px(), jesSJ[2].Px() };   float pySJEE[3] = { jesSJ[0].Py(), jesSJ[1].Py(), jesSJ[2].Py() };   float pzSJEE[3] = { jesSJ[0].Pz(), jesSJ[1].Pz(), jesSJ[2].Pz() };
+
     if ( GetPt(m_p4LeptonPlus[ee]->Px(),m_p4LeptonPlus[ee]->Py()) > GetPt(m_p4LeptonMinus[ee]->Px(),m_p4LeptonMinus[ee]->Py()) ) {
       myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
+                                     m_chEE, m_lhEE, m_isoEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET); 
-      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[ee], m_p4LeptonMinusEnergy[ee], m_p4PlusType[ee], m_p4MinusType[ee] );
+      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[ee], m_p4LeptonMinusEnergy[ee], m_p4PlusType[ee], m_p4MinusType[ee],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
     } else { 
       myOutTreeEE -> fillKinematics( m_p3TKMET[ee].Px(), m_p3TKMET[ee].Py(), m_p3TKMET[ee].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
+                                     m_chEE, m_lhEE, m_isoEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET);
-      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[ee], m_p4LeptonPlusEnergy[ee], m_p4MinusType[ee], m_p4PlusType[ee] );
+      myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[ee], m_p4LeptonPlusEnergy[ee], m_p4MinusType[ee], m_p4PlusType[ee],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1043,10 +1061,8 @@ void HiggsMLSelection::Loop() {
     
     theLJ  = theLeadingJet[mm];
     theSJ  = theSecondJet[mm];
-    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
-      myOutTreeMM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
-    }
+    ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+    myOutTreeMM->fillKFactor(kfW, genPtHiggs, ptLJ);
 
     myOutTreeMM -> fillAll(m_chMet[mm], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[mm], m_deltaPhi[mm], m_deltaErre[mm], m_transvMass[mm], m_mll[mm], 
@@ -1054,11 +1070,16 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[mm], leadJetBtag[mm], subLeadJetsMaxBtag[mm]);
+                              nsoftmu[mm], leadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm]);
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
+
+    jesLJ = GetJetJesPcomponent(theLJ);
+    jesSJ = GetJetJesPcomponent(theSJ);
+    float pxLJMM[3] = { jesLJ[0].Px(), jesLJ[1].Px(), jesLJ[2].Px() };   float pyLJMM[3] = { jesLJ[0].Py(), jesLJ[1].Py(), jesLJ[2].Py() };   float pzLJMM[3] = { jesLJ[0].Pz(), jesLJ[1].Pz(), jesLJ[2].Pz() };
+    float pxSJMM[3] = { jesSJ[0].Px(), jesSJ[1].Px(), jesSJ[2].Px() };   float pySJMM[3] = { jesSJ[0].Py(), jesSJ[1].Py(), jesSJ[2].Py() };   float pzSJMM[3] = { jesSJ[0].Pz(), jesSJ[1].Pz(), jesSJ[2].Pz() };
 
     if ( GetPt(m_p4LeptonPlus[mm]->Px(),m_p4LeptonPlus[mm]->Py()) > GetPt(m_p4LeptonMinus[mm]->Px(),m_p4LeptonMinus[mm]->Py()) ) {
       
@@ -1066,24 +1087,26 @@ void HiggsMLSelection::Loop() {
       for (int ii=0; ii<2; ii++) dummyV[ii] = -999.;
 
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
+                                     m_chMM, m_lhMM, m_isoMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET); 
-      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonPlusEnergy[mm], m_p4LeptonMinusEnergy[mm], m_p4PlusType[mm], m_p4MinusType[mm] );
+      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonPlusEnergy[mm], m_p4LeptonMinusEnergy[mm], m_p4PlusType[mm], m_p4MinusType[mm],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm]);
     } else { 
 
       float dummyV[2];
       for (int ii=0; ii<2; ii++) dummyV[ii] = -999.;
 
       myOutTreeMM -> fillKinematics( m_p3TKMET[mm].Px(), m_p3TKMET[mm].Py(), m_p3TKMET[mm].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
+                                     m_chMM, m_lhMM, m_isoMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET);
-      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonMinusEnergy[mm], m_p4LeptonPlusEnergy[mm], m_p4MinusType[mm], m_p4PlusType[mm] );
+      myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonMinusEnergy[mm], m_p4LeptonPlusEnergy[mm], m_p4MinusType[mm], m_p4PlusType[mm],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm] );
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1183,10 +1206,8 @@ void HiggsMLSelection::Loop() {
 
     theLJ  = theLeadingJet[em];
     theSJ  = theSecondJet[em];
-    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
-      myOutTreeEM->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
-    }
+    ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+    myOutTreeEM->fillKFactor(kfW, genPtHiggs, ptLJ);
 
     myOutTreeEM -> fillAll(m_chMet[em], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[em], m_deltaPhi[em], m_deltaErre[em], m_transvMass[em], m_mll[em], 
@@ -1199,28 +1220,35 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[em], leadJetBtag[em], subLeadJetsMaxBtag[em]);
+                              nsoftmu[em], leadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em]);
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
     myOutTreeEM -> fillRazor(m_MTR[em], m_MR[em], m_GammaMR[em]);
 
+    jesLJ = GetJetJesPcomponent(theLJ);
+    jesSJ = GetJetJesPcomponent(theSJ);
+    float pxLJEM[3] = { jesLJ[0].Px(), jesLJ[1].Px(), jesLJ[2].Px() };   float pyLJEM[3] = { jesLJ[0].Py(), jesLJ[1].Py(), jesLJ[2].Py() };   float pzLJEM[3] = { jesLJ[0].Pz(), jesLJ[1].Pz(), jesLJ[2].Pz() };
+    float pxSJEM[3] = { jesSJ[0].Px(), jesSJ[1].Px(), jesSJ[2].Px() };   float pySJEM[3] = { jesSJ[0].Py(), jesSJ[1].Py(), jesSJ[2].Py() };   float pzSJEM[3] = { jesSJ[0].Pz(), jesSJ[1].Pz(), jesSJ[2].Pz() };
+
     if ( GetPt(m_p4LeptonPlus[em]->Px(),m_p4LeptonPlus[em]->Py()) > GetPt(m_p4LeptonMinus[em]->Px(),m_p4LeptonMinus[em]->Py()) ) {
       myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
+                                     m_chEM, m_lhEM, m_isoEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET); 
-      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[em], m_p4LeptonMinusEnergy[em], m_p4PlusType[em], m_p4MinusType[em] );
+      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[em], m_p4LeptonMinusEnergy[em], m_p4PlusType[em], m_p4MinusType[em],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
     } else { 
       myOutTreeEM -> fillKinematics( m_p3TKMET[em].Px(), m_p3TKMET[em].Py(), m_p3TKMET[em].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
+                                     m_chEM, m_lhEM, m_isoEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET);
-      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[em], m_p4LeptonPlusEnergy[em], m_p4MinusType[em], m_p4PlusType[em] );
+      myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[em], m_p4LeptonPlusEnergy[em], m_p4MinusType[em], m_p4PlusType[em],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
     }
     
     // dumping final tree, only if there are 2 leptons in the acceptance
@@ -1320,10 +1348,8 @@ void HiggsMLSelection::Loop() {
 
     theLJ  = theLeadingJet[me];
     theSJ  = theSecondJet[me];
-    if ( !_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor") ) {
-      float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
-      myOutTreeME->fillKFactor(evtKfactor, genPtHiggs, ptLJ);
-    }
+    ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
+    myOutTreeME->fillKFactor(kfW, genPtHiggs, ptLJ);
 
     myOutTreeME -> fillAll(m_chMet[me], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
@@ -1336,28 +1362,35 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[me], leadJetBtag[me], subLeadJetsMaxBtag[me]);
+                              nsoftmu[me], leadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me]);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
     myOutTreeME -> fillRazor(m_MTR[me], m_MR[me], m_GammaMR[me]);
 
+    jesLJ = GetJetJesPcomponent(theLJ);
+    jesSJ = GetJetJesPcomponent(theSJ);
+    float pxLJME[3] = { jesLJ[0].Px(), jesLJ[1].Px(), jesLJ[2].Px() };   float pyLJME[3] = { jesLJ[0].Py(), jesLJ[1].Py(), jesLJ[2].Py() };   float pzLJME[3] = { jesLJ[0].Pz(), jesLJ[1].Pz(), jesLJ[2].Pz() };
+    float pxSJME[3] = { jesSJ[0].Px(), jesSJ[1].Px(), jesSJ[2].Px() };   float pySJME[3] = { jesSJ[0].Py(), jesSJ[1].Py(), jesSJ[2].Py() };   float pzSJME[3] = { jesSJ[0].Pz(), jesSJ[1].Pz(), jesSJ[2].Pz() };
+
     if ( GetPt(m_p4LeptonPlus[me]->Px(),m_p4LeptonPlus[me]->Py()) > GetPt(m_p4LeptonMinus[me]->Px(),m_p4LeptonMinus[me]->Py()) ) {
       myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
+                                     m_chME, m_lhME, m_isoME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET); 
-      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[me], m_p4LeptonMinusEnergy[me], m_p4PlusType[me], m_p4MinusType[me] );
+      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[me], m_p4LeptonMinusEnergy[me], m_p4PlusType[me], m_p4MinusType[me],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
     } else { 
       myOutTreeME -> fillKinematics( m_p3TKMET[me].Px(), m_p3TKMET[me].Py(), m_p3TKMET[me].Pz(),
-				     pxAK5PFPUcorrJet[theLJ], pyAK5PFPUcorrJet[theLJ], pzAK5PFPUcorrJet[theLJ],
-				     pxAK5PFPUcorrJet[theSJ], pyAK5PFPUcorrJet[theSJ], pzAK5PFPUcorrJet[theSJ],
+                                     pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
+                                     m_chME, m_lhME, m_isoME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET);
-      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[me], m_p4LeptonPlusEnergy[me], m_p4MinusType[me], m_p4PlusType[me] );
+      myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[me], m_p4LeptonPlusEnergy[me], m_p4MinusType[me], m_p4PlusType[me],
+                                      m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
     }
 
 
@@ -1789,6 +1822,18 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_p3TKMET[ee] = pfChargedMet(m_p4LeptonMinus[ee]->Vect(),m_p4LeptonPlus[ee]->Vect());
     m_chMet[ee] = (m_p3TKMET[ee]).Pt();
     
+    int lead(-1), sublead(-1);
+    if(m_p4LeptonMinus[ee]->Pt() >= m_p4LeptonPlus[ee]->Pt()) {
+      lead = myEle; sublead = myPosi;
+    } else {
+      lead = myPosi; sublead = myEle;
+    }
+    m_chEE[0] = chargeEle[lead];
+    m_chEE[1] = chargeEle[sublead];
+    m_isoEE[0] = pfCombinedIsoEle[lead] / hardestLeptonPt[ee];
+    m_isoEE[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[ee];
+    m_lhEE[0] = eleIdLikelihoodEle[lead];
+    m_lhEE[1] = eleIdLikelihoodEle[sublead];    
   }
 
 }
@@ -1823,6 +1868,19 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_projectedMet[mm]    = GetProjectedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
     m_p3TKMET[mm] = pfChargedMet(m_p4LeptonMinus[mm]->Vect(),m_p4LeptonPlus[mm]->Vect());
     m_chMet[mm] = (m_p3TKMET[mm]).Pt();
+
+    int lead(-1), sublead(-1);
+    if(m_p4LeptonMinus[mm]->Pt() >= m_p4LeptonPlus[mm]->Pt()) {
+      lead = myMuMinus; sublead = myMuPlus;
+    } else {
+      lead = myMuPlus; sublead = myMuMinus;
+    }
+    m_chMM[0] = chargeMuon[lead];
+    m_chMM[1] = chargeMuon[sublead];
+    m_isoMM[0] = pfCombinedIsoMuon[lead] / hardestLeptonPt[mm];
+    m_isoMM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[mm];
+    m_lhMM[0] = -999.;
+    m_lhMM[1] = -999.;
   }
 
 }
@@ -1862,6 +1920,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
       m_chMet[em] = (m_p3TKMET[em]).Pt();
 
+      int lead = myEle;
+      int sublead = myMuPlus;
+      m_chEM[0] = chargeEle[lead];
+      m_chEM[1] = chargeMuon[sublead];
+      m_isoEM[0] = pfCombinedIsoEle[lead] / hardestLeptonPt[em];
+      m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
+      m_lhEM[0] = eleIdLikelihoodEle[lead];
+      m_lhEM[1] = -999.;
+
     } else {
       eleCands[me].push_back(myEle);
       muCands[me].push_back(myMuPlus);
@@ -1889,6 +1956,16 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
       m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
       m_chMet[me] = (m_p3TKMET[me]).Pt();
+
+      int lead = myMuPlus;
+      int sublead = myEle;
+      m_chME[0] = chargeMuon[lead];
+      m_chME[1] = chargeEle[sublead];
+      m_isoME[0] = pfCombinedIsoMuon[lead] / hardestLeptonPt[me];
+      m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
+      m_lhME[0] = -999.;
+      m_lhME[1] = eleIdLikelihoodEle[sublead];
+
     }
   }
   
@@ -1925,6 +2002,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
       m_chMet[em] = (m_p3TKMET[em]).Pt();
 
+      int lead = myPosi;
+      int sublead = myMuMinus;
+      m_chEM[0] = chargeEle[lead];
+      m_chEM[1] = chargeMuon[sublead];
+      m_isoEM[0] = pfCombinedIsoEle[lead] / hardestLeptonPt[em];
+      m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
+      m_lhEM[0] = eleIdLikelihoodEle[lead];
+      m_lhEM[1] = -999.;
+
     } else {
       eleCands[me].push_back(myPosi);
       muCands[me].push_back(myMuMinus);
@@ -1952,6 +2038,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
       m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
       m_chMet[me] = (m_p3TKMET[me]).Pt();
+
+      int lead = myMuMinus;
+      int sublead = myPosi;
+      m_chME[0] = chargeMuon[lead];
+      m_chME[1] = chargeEle[sublead];
+      m_isoME[0] = pfCombinedIsoMuon[lead] / hardestLeptonPt[me];
+      m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
+      m_lhME[0] = -999.;
+      m_lhME[1] = eleIdLikelihoodEle[sublead];
     }
   }
   
@@ -2001,6 +2096,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
         m_chMet[em] = (m_p3TKMET[em]).Pt();
 
+        int lead = myPosi;
+        int sublead = myMuMinus;
+        m_chEM[0] = chargeEle[lead];
+        m_chEM[1] = chargeMuon[sublead];
+        m_isoEM[0] = pfCombinedIsoEle[lead] / hardestLeptonPt[em];
+        m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
+        m_lhEM[0] = eleIdLikelihoodEle[lead];
+        m_lhEM[1] = -999.;
+
       } else {
         eleCands[me].push_back(myPosi);
         muCands[me].push_back(myMuMinus);
@@ -2028,6 +2132,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
         m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
         m_chMet[me] = (m_p3TKMET[me]).Pt();
+
+        int lead = myMuMinus;
+        int sublead = myPosi;
+        m_chME[0] = chargeMuon[lead];
+        m_chME[1] = chargeEle[sublead];
+        m_isoME[0] = pfCombinedIsoMuon[lead] / hardestLeptonPt[me];
+        m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
+        m_lhME[0] = -999.;
+        m_lhME[1] = eleIdLikelihoodEle[sublead];
       }
 
     } else {
@@ -2061,6 +2174,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_projectedMet[em]  = GetProjectedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
         m_p3TKMET[em] = pfChargedMet(m_p4LeptonMinus[em]->Vect(),m_p4LeptonPlus[em]->Vect());
         m_chMet[em] = (m_p3TKMET[em]).Pt();
+
+        int lead = myEle;
+        int sublead = myMuPlus;
+        m_chEM[0] = chargeEle[lead];
+        m_chEM[1] = chargeMuon[sublead];
+        m_isoEM[0] = pfCombinedIsoEle[lead] / hardestLeptonPt[em];
+        m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
+        m_lhEM[0] = eleIdLikelihoodEle[lead];
+        m_lhEM[1] = -999.;
       } else {
         eleCands[me].push_back(myEle);
         muCands[me].push_back(myMuPlus);
@@ -2088,6 +2210,15 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
         m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
         m_chMet[me] = (m_p3TKMET[me]).Pt();
+
+        int lead = myMuPlus;
+        int sublead = myEle;
+        m_chME[0] = chargeMuon[lead];
+        m_chME[1] = chargeEle[sublead];
+        m_isoME[0] = pfCombinedIsoMuon[lead] / hardestLeptonPt[me];
+        m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
+        m_lhME[0] = -999.;
+        m_lhME[1] = eleIdLikelihoodEle[sublead];
       }
     }
   }
@@ -2902,4 +3033,150 @@ bool HiggsMLSelection::isPFIsolatedMuon(int muonIndex) {
   if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
   if( pt<20. && fabs(eta)>=1.479 ) return (iso < 0.05);
   return true;
+}
+
+void HiggsMLSelection::JESPfMet( std::vector<int> eleToRemove, std::vector<int> muonToRemove) {
+
+  TLorentzVector jetSumNom, jetSumUp, jetSumDown;
+  jetSumUp.SetXYZT(0.,0.,0.,0);
+  jetSumDown.SetXYZT(0.,0.,0.,0);
+
+  for(int j=0;j<nAK5PFPUcorrJet;j++) {
+
+    TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
+    TLorentzVector p4Jet(p3Jet, energyAK5PFPUcorrJet[j]);
+    float pt = p4Jet.Pt();
+
+    if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+
+
+    TLorentzVector p4JetUp = GetJESCorrected(p4Jet,"Up");
+    float ptUp = p4JetUp.Pt();
+    float energyUp = p4JetUp.E();
+
+    TLorentzVector p4JetDown = GetJESCorrected(p4Jet,"Down");
+    float ptDown = p4JetDown.Pt();
+    float energyDown = p4JetDown.E();
+
+    TLorentzVector p4JetJesUp, p4JetJesDown;
+    p4JetJesUp.SetPtEtaPhiE(ptUp,p4Jet.Eta(),p4Jet.Phi(),energyUp);
+    p4JetJesDown.SetPtEtaPhiE(ptDown,p4Jet.Eta(),p4Jet.Phi(),energyDown);
+
+    // PF jet ID variables
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
+      photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
+      HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    
+    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+    
+    bool foundMatch = false;
+
+    // check if the electrons falls into the jet
+    for(int i=0; i<(int)eleToRemove.size(); i++) {
+      int ele = eleToRemove[i];
+      if ( ele > -1 ) {
+        TVector3 p3Ele(pxEle[ele],pyEle[ele],pzEle[ele]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Ele ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+    if(foundMatch) continue;
+
+    // check if the muons falls into the jet
+    for(int i=0; i<(int)muonToRemove.size(); i++) {
+      int mu = muonToRemove[i];
+      if ( mu > -1 ) {
+        TVector3 p3Muon(pxMuon[mu],pyMuon[mu],pzMuon[mu]);
+        float deltaR =  fabs( p3Jet.DeltaR( p3Muon ) );
+        H_deltaRcorr -> Fill(deltaR);
+        // taking from ee config file, but jets veto is the same for all the channels
+        if(_selectionEE->getSwitch("jetConeWidth") && _selectionEE->passCut("jetConeWidth",deltaR)) foundMatch=true;
+      }
+    }
+    if(foundMatch) continue;
+
+    if(pt>5.0) {
+      jetSumNom += p4Jet;
+      jetSumUp += p4JetJesUp;
+      jetSumDown += p4JetJesDown;
+    }
+
+  }
+
+  // add back the electron and muon candidates, with their calibrations
+  TVector3 electronSum, muonSum;
+  electronSum.SetXYZ(0,0,0);
+  muonSum.SetXYZ(0,0,0);
+  for(int i=0; i<(int)eleToRemove.size(); i++) {
+    int ele = eleToRemove[i];
+    if ( ele > -1 ) {
+      TVector3 p3Ele(pxEle[ele],pyEle[ele],pzEle[ele]);
+      electronSum += p3Ele;
+    }
+  }
+
+  // check if the muons falls into the jet
+  for(int i=0; i<(int)muonToRemove.size(); i++) {
+    int mu = muonToRemove[i];
+    if ( mu > -1 ) {
+      TVector3 p3Muon(pxMuon[mu],pyMuon[mu],pzMuon[mu]);
+      muonSum += p3Muon;
+    }
+  }
+
+  TVector3 metFromJetsNom = jetSumNom.Vect() + electronSum + muonSum; 
+  TVector3 metFromJetsUp = jetSumUp.Vect() + electronSum + muonSum; 
+  TVector3 metFromJetsDown = jetSumDown.Vect() + electronSum + muonSum; 
+
+  TVector3 diffUp = metFromJetsUp - metFromJetsNom;
+  TVector3 diffDown = metFromJetsDown - metFromJetsNom;
+
+  *m_metFromJets = metFromJetsNom;
+  *m_pfMetJESUp = *m_p3PFMET + diffUp;
+  *m_pfMetJESDown = *m_p3PFMET + diffDown;
+
+}
+
+std::pair<float,float> HiggsMLSelection::transvMassJES(int theChannel) {
+
+  float mTUp = sqrt( 2.*(m_dilepPt[theChannel].Pt())*(m_pfMetJESUp->Pt())*(1- cos(m_pfMetJESUp->DeltaPhi(m_dilepPt[theChannel]))) );
+  float mTDown = sqrt( 2.*(m_dilepPt[theChannel].Pt())*(m_pfMetJESDown->Pt())*(1- cos(m_pfMetJESDown->DeltaPhi(m_dilepPt[theChannel]))) );
+  return std::make_pair(mTUp,mTDown);
+
+}
+
+std::vector<TLorentzVector> HiggsMLSelection::GetJetJesPcomponent(int jet) {
+
+  // [nom/+1s/-1s]
+
+  TLorentzVector JP4(pxAK5PFPUcorrJet[jet],pyAK5PFPUcorrJet[jet],pzAK5PFPUcorrJet[jet],energyAK5PFPUcorrJet[jet]);
+
+  if(JP4.Pt()<=0) {
+    TLorentzVector up(0,0,0,0);
+    TLorentzVector down(0,0,0,0);
+    std::vector<TLorentzVector> zero;
+    zero.push_back(JP4);
+    zero.push_back(up);
+    zero.push_back(down);    
+    return zero;
+  }
+
+  TLorentzVector LJP4JesUp = GetJESCorrected(JP4,"Up");
+  TLorentzVector LJP4JesDown = GetJESCorrected(JP4,"Down");
+
+  std::vector<TLorentzVector> jes;
+  jes.push_back(JP4);
+  jes.push_back(LJP4JesUp);
+  jes.push_back(LJP4JesDown);
+
+  return jes;
+
 }
