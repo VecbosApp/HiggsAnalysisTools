@@ -19,9 +19,9 @@ Higgs::Higgs(TTree *tree) : HiggsBase(tree)
 
   //initialize the JES objects for calo and PF
   jecUnc_calo = 
-    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/START38_V13_AK5Calo_Uncertainty.txt");
+    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/GR_R_42_V19_AK5Calo_Uncertainty.txt");
   jecUnc_PF = 
-    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/START38_V13_AK5PF_Uncertainty.txt");
+    (JetCorrectionUncertainty*) new JetCorrectionUncertainty("data/JES/GR_R_42_V19_AK5PF_Uncertainty.txt");
 
 }
 
