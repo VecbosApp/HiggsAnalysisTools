@@ -74,6 +74,12 @@ private:
   //! count jet multiplicity
   int numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) ;
   int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
+  //! calculate the Up/Down smeared met applying JES uncertainties
+  void JESPfMet( std::vector<int> eleToRemove, std::vector<int> muonToRemove);
+  //! calculate the Up/Down smeared MT
+  std::pair<float,float> transvMassJES(int theChannel);
+  //! calculate each component of a jet 3-momentum for: 0=nominal,1=JES up,2=JES down. Components are: 0/1/2 = x/y/z
+  std::vector<TLorentzVector> GetJetJesPcomponent(int jet);
   //! give the highest b-tag of calojets in the event
   float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
   //! in the 1-jet bin, deltaphi between ll system and leading jet
@@ -171,6 +177,7 @@ private:
   int m_p4PlusType[4], m_p4MinusType[4];
 
   TVector3 *m_p3PFMET;
+  TVector3 *m_metFromJets, *m_pfMetJESUp, *m_pfMetJESDown;
   TVector3 m_p3TKMET[4];
   float m_theMET;
   TLorentzVector *m_jetsSum[4], *m_uncorrJetsSum[4];
@@ -187,6 +194,10 @@ private:
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subLeadJetsMaxBtag[4];
+
+  int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
+  float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];
+  float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
 
   //! B-Veto event variables
   float m_maxDxyEvt, m_maxDszEvt;
