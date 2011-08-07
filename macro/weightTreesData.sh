@@ -12,9 +12,9 @@ root -l -b <<EOF
 
 .L addWeightsToTree.cc+
 
-addWeights("results_data/merged/dataset_DoubleElectron_ee.root", 1.0, -1, 0);
-addWeights("results_data/merged/dataset_DoubleMu_mm.root", 1.0, -1, 1);
-addWeights("results_data/merged/dataset_SingleMu_mm.root", 1.0, -2, 1);
+addWeights("results_data/merged/dataset_DoubleElectron_ee.root", 1.0, -1, 1);
+addWeights("results_data/merged/dataset_DoubleMu_mm.root", 1.0, -1, 0);
+addWeights("results_data/merged/dataset_SingleMu_mm.root", 1.0, -2, 0);
 addWeights("results_data/merged/dataset_MuEG_em.root", 1.0, -1, 2);
 addWeights("results_data/merged/dataset_SingleMu_em.root", 1.0, -2, 2);
 addWeights("results_data/merged/dataset_SingleElectron_em.root", 1.0, -2, 2);
