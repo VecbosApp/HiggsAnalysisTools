@@ -548,14 +548,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         jetpt2 = -9999.;
         dileptonPt = -9999.;
       } 
-
       consecevent = (float)j;
       if(finalLeptons) {
         if(processId>0) { // MC
           treeNew->Fill();
           if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
-        } else { // data: apply the trigger only for the single lepton trigger datasets
-          if((processId==-1) || (processId==-2 && hlt)) {
+        } else { // data: apply the trigger 
+          if(hlt) {
             treeNew->Fill();
 	    if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
           }
