@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <math.h>
+#include "massDependentCuts.cc"
 
 enum { ee=0, mm=1, em=2, me=3 };
 
@@ -15,8 +16,9 @@ float nEv_endWW[4];
 float nEv_end0j[4];
 float nEv_end1j[4];
 
-float usedLumi = 1098.;
-float wantedLumi = 1098.;
+float usedLumi = 1.091;
+float wantedLumi = 1.091;
+float scaleFactorLumi = wantedLumi/usedLumi;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
@@ -26,9 +28,8 @@ void countEvents(int mass, const char* channel);
 void estimateTop(int njets) {
 
   // constants
-  float eff_2b[2] = { 0.533, 0.639 };
-  float eff_2b_err[2] = { 0.060, 0.080 }; 
-  //  float eff_1b_softmu = 0.159; // Data, Gio, 2 jets: 0.159 +/- 0.010 
+  float eff_2b[2] = { 0.520, 0.66 };
+  float eff_2b_err[2] = { 0.080, 0.020 }; 
 
   char njcut[30];
   sprintf(njcut, "njets==%d", njets);
@@ -41,11 +42,20 @@ void estimateTop(int njets) {
   }
 
   // scale factors for the backgrounds
-  float WWDataOverMC = 1.01; // estimation 815/pb, 0j
-  float DYDataOverMC = 2.0; // estimation 1.1fb-1, 0j 
-  float WjDataTot[4] = { 10.6, 15.23 * wantedLumi/710., 25.4, 15.5 };
+  float WWDataOverMC[2] = {1.2, 1.3} ; // estimation 1.1 fb-1 
+  float DYDataOverMC[2] = {3.0, 8.0}; // estimation 1.1 fb-1, 0j 
+  float WjDataTot[4][2]; // [icha][jetbin]
+  WjDataTot[ee][0] = 10.6;
+  WjDataTot[mm][0] = 12.1;
+  WjDataTot[em][0] = 72.9;
+  WjDataTot[me][0] = 39.7;
+  WjDataTot[ee][1] = 5.0;
+  WjDataTot[mm][1] = 6.1;
+  WjDataTot[em][1] = 26.4;
+  WjDataTot[me][1] = 12.8;
+  
 
-  TFile *fileData = TFile::Open("results_data/merged/dataset_ll.root");
+  TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
   TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileDY = TFile::Open("results/datasets_trees/Zjets_ll.root");
@@ -82,38 +92,37 @@ void estimateTop(int njets) {
   // WW background after CJV (used with the mistag rate)
   TH1F *btagWWAllHLL = new TH1F("btagWWAllHLL","",50,0,180);
 
-  treeTop->Project("topHEE","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==0)*weight*puweight")).Data());
-  treeTop->Project("topHMM","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==1)*weight*puweight")).Data());
-  treeTop->Project("topHEM","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==2)*weight*puweight")).Data());
-  treeTop->Project("topHME","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && finalstate==3)*weight*puweight")).Data());
+  treeTop->Project("topHEE","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==1)*baseW*puW")).Data());
+  treeTop->Project("topHMM","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==0)*baseW*puW")).Data());
+  treeTop->Project("topHEM","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==2)*baseW*puW")).Data());
+  treeTop->Project("topHME","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==3)*baseW*puW")).Data());
 
   if(njets==0) {
-    treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (bTagTrackCount>2.1 || nSoftMu>0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==1")).Data());
+    treeData->Project("btagHDataMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==0")).Data());
+    treeData->Project("btagHDataEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==2")).Data());
+    treeData->Project("btagHDataME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==3")).Data());
   } else {
-    // temporary: needed the soft IP btag for all the other except the leading
-    treeData->Project("btagHDataEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==0")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==1")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==2")).Data()); // count the top tagged events: sue btag + softmu
-    treeData->Project("btagHDataME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && (leadingJetBTagTrackCount>2.1 && nSoftMu==0) && finalstate==3")).Data()); // count the top tagged events: sue btag + softmu
+    treeData->Project("btagHDataEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && channel==1")).Data());
+    treeData->Project("btagHDataMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && channel==0")).Data());
+    treeData->Project("btagHDataEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && channel==2")).Data());
+    treeData->Project("btagHDataME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && channel==3")).Data());
   }
 
-  treeWW->Project("btagWWHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data()); // add the soft mu when available
-  treeDY->Project("btagDYHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1)*weight*puweight")).Data());
+  treeWW->Project("btagWWHLL","dphill",(TString("(finalLeptons && met>20 && ((channel<2 && mpmet>40 && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15)) || (channel>=2 && mpmet>20)) && ")+TString(njcut)+TString( " && mll>12 && zveto && !bveto)*baseW*puW")).Data());
+  treeDY->Project("btagDYHLL","dphill",(TString("(finalLeptons && met>20 && ((channel<2 && mpmet>40 && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15)) || (channel>=2 && mpmet>20)) && ")+TString(njcut)+TString( " && mll>12 && zveto && !bveto)*baseW*puW")).Data());
 
-  treeWW->Project("btagWWAllHLL","deltaPhi",(TString("(finalLeptons && pfMet>20 && ((finalstate<2 && projMet>40 && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15)) || (finalstate>=2 && projMet>20)) && ")+TString(njcut)+TString( " && eleInvMass>12 && abs(eleInvMass-91.1876)>15)*weight*puweight")).Data());
+  treeWW->Project("btagWWAllHLL","dphill",(TString("(finalLeptons && met>20 && ((channel<2 && mpmet>40 && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15)) || (channel>=2 && mpmet>20)) && ")+TString(njcut)+TString( " && mll>12 && zveto)*baseW*puW")).Data());
 
-  treeWj->Project("btagWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==0")).Data());
-  treeWj->Project("btagWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && bTagTrackCount>2.1 && finalstate==1")).Data());
-  treeWj->Project("btagWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==2")).Data());
-  treeWj->Project("btagWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && bTagTrackCount>2.1 && finalstate==3")).Data());
+  treeWj->Project("btagWjHEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==1")).Data());
+  treeWj->Project("btagWjHMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==0")).Data());
+  treeWj->Project("btagWjHEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==2")).Data());
+  treeWj->Project("btagWjHME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==3")).Data());
 
-  treeWj->Project("CJVWjHEE","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0")).Data());
-  treeWj->Project("CJVWjHMM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>40 && ")+TString(njcut)+TString( " && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1")).Data());
-  treeWj->Project("CJVWjHEM","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==2")).Data());
-  treeWj->Project("CJVWjHME","deltaPhi",(TString("finalLeptons && pfMet>20 && projMet>20 && ")+TString(njcut)+TString( " && eleInvMass>12 && finalstate==3")).Data());
+  treeWj->Project("CJVWjHEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && channel==1")).Data());
+  treeWj->Project("CJVWjHMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && channel==0")).Data());
+  treeWj->Project("CJVWjHEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && channel==2")).Data());
+  treeWj->Project("CJVWjHME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && channel==3")).Data());
 
   // backgrounds in the tagged region (inclusive)
   float effBtagWj[4] = { (CJVWjHEE->Integral()>0) ? btagWjHEE->Integral()/CJVWjHEE->Integral() : 0.0, 
@@ -121,17 +130,17 @@ void estimateTop(int njets) {
                          (CJVWjHEM->Integral()>0) ? btagWjHEM->Integral()/CJVWjHEM->Integral() : 0.0,
                          (CJVWjHME->Integral()>0) ? btagWjHME->Integral()/CJVWjHME->Integral() : 0.0 };
 
-  float WW_tot = btagWWHLL->Integral() * WWDataOverMC;
-  float WW_tot_err = yieldErrPoisson(WW_tot,btagWWHLL->Integral());
-  float DY_tot = btagDYHLL->Integral() * DYDataOverMC;
-  float DY_tot_err = yieldErrPoisson(DY_tot,btagDYHLL->Integral());
-  float Wjets_tot = WjDataTot[ee] * effBtagWj[ee] + WjDataTot[mm] * effBtagWj[mm] +
-    WjDataTot[em] * effBtagWj[em] + WjDataTot[me] * effBtagWj[me];
-  float Wjets_tot_err = 0.5 * Wjets_tot; // approximation
+  float WW_tot = wantedLumi * btagWWHLL->Integral() * WWDataOverMC[njets];
+  float WW_tot_err = wantedLumi * yieldErrPoisson(WW_tot,btagWWHLL->Integral());
+  float DY_tot = wantedLumi * btagDYHLL->Integral() * DYDataOverMC[njets];
+  float DY_tot_err = wantedLumi * yieldErrPoisson(DY_tot,btagDYHLL->Integral());
+  float Wjets_tot = WjDataTot[ee][njets] * effBtagWj[ee] + WjDataTot[mm][njets] * effBtagWj[mm] +
+    WjDataTot[em][njets] * effBtagWj[em] + WjDataTot[me][njets] * effBtagWj[me];
+  float Wjets_tot_err = 0.40 * Wjets_tot; // approximation
 
   // as x-check use the WW(all) x mistag rate from data
-  float WW_befTag = btagWWAllHLL->Integral() * WWDataOverMC;
-  float WW_befTag_err =  yieldErrPoisson(WW_befTag,btagWWAllHLL->Integral());
+  float WW_befTag = wantedLumi * btagWWAllHLL->Integral() * WWDataOverMC[njets];
+  float WW_befTag_err =  wantedLumi * yieldErrPoisson(WW_befTag,btagWWAllHLL->Integral());
   float mistagR_MC = WW_tot / WW_befTag;
   float mistagR_SF = 1.1; // from BTV-11-001
   float mistagR_SF_err = 0.11;
@@ -154,14 +163,14 @@ void estimateTop(int njets) {
   float nTopMC[4];
   float nTopMC_err[4];
   
-  nTopMC[ee] = topHEE->Integral();
-  nTopMC_err[ee] = yieldErrPoisson(nTopMC[ee],topHEE->GetEntries());
-  nTopMC[mm] = topHMM->Integral();
-  nTopMC_err[mm] = yieldErrPoisson(nTopMC[mm],topHMM->GetEntries());
-  nTopMC[em] = topHEM->Integral();
-  nTopMC_err[em] = yieldErrPoisson(nTopMC[em],topHEM->GetEntries());
-  nTopMC[me] = topHME->Integral();
-  nTopMC_err[me] = yieldErrPoisson(nTopMC[me],topHME->GetEntries());
+  nTopMC[ee] = wantedLumi * topHEE->Integral();
+  nTopMC_err[ee] = wantedLumi * yieldErrPoisson(nTopMC[ee],topHEE->GetEntries());
+  nTopMC[mm] = wantedLumi * topHMM->Integral();
+  nTopMC_err[mm] = wantedLumi * yieldErrPoisson(nTopMC[mm],topHMM->GetEntries());
+  nTopMC[em] = wantedLumi * topHEM->Integral();
+  nTopMC_err[em] = wantedLumi * yieldErrPoisson(nTopMC[em],topHEM->GetEntries());
+  nTopMC[me] = wantedLumi * topHME->Integral();
+  nTopMC_err[me] = wantedLumi * yieldErrPoisson(nTopMC[me],topHME->GetEntries());
   
   float nTopMC_tot = nTopMC[ee] + nTopMC[mm] + nTopMC[em] + nTopMC[me];
   float nTopMC_tot_err = quadrSum(nTopMC_err[ee],nTopMC_err[mm],nTopMC_err[em],nTopMC_err[me]);
@@ -283,17 +292,15 @@ void estimateTop(int njets) {
   tablefile4.precision(2);
 
   // these are for limits
-  ofstream cardfile[4][2]; //[cha][jetbin]
+  ofstream cardfile[4]; //[cha]
   for(int icha=0; icha<4; icha++) {
-    for(int j=0; j<2; j++) {
-      char fileName[2];
-      if(icha==ee) sprintf(fileName,"TopCard_ee_%dj.txt",j);
-      if(icha==mm) sprintf(fileName,"TopCard_mm_%dj.txt",j);
-      if(icha==em) sprintf(fileName,"TopCard_em_%dj.txt",j);
-      if(icha==me) sprintf(fileName,"TopCard_me_%dj.txt",j);
-      cardfile[icha][j].open(fileName, ios_base::trunc);
-      cardfile[icha][j].precision(2);
-    }
+    char fileName[2];
+    if(icha==ee) sprintf(fileName,"TopCard_ee_%dj.txt",njets);
+    if(icha==mm) sprintf(fileName,"TopCard_mm_%dj.txt",njets);
+    if(icha==em) sprintf(fileName,"TopCard_em_%dj.txt",njets);
+    if(icha==me) sprintf(fileName,"TopCard_me_%dj.txt",njets);
+    cardfile[icha].open(fileName, ios_base::trunc);
+    cardfile[icha].precision(2);
   }
     
 
@@ -304,47 +311,50 @@ void estimateTop(int njets) {
     
     int mass = masses[i];
 
-    countEvents(mass,"EE");
-    countEvents(mass,"MM");
-    countEvents(mass,"EM");
-    countEvents(mass,"ME");
+    TString higgsMassDependentCut = higgsCuts(mass,true);
 
-    float nTopData_HiggsSel_0j[4], nTopData_HiggsSel_1j[4];
-    float nTopData_HiggsSel_0j_err[4], nTopData_HiggsSel_1j_err[4];
+    float eff[4], eff_err[4];
+    TString HCut[4];
 
-    float nTopMC_HiggsSel_0j[4],  nTopMC_HiggsSel_1j[4];
-    float nTopMC_HiggsSel_0j_err[4], nTopMC_HiggsSel_1j_err[4];
+    // calculate 0 jet mass dependent effciencies
+    HCut[ee] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*kfW");
+    HCut[mm] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*kfW");
+    HCut[em] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*kfW");
+    HCut[me] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*kfW");
+    
+    treeTop->Project("topHEE","dphill",HCut[ee]);
+    treeTop->Project("topHMM","dphill",HCut[mm]);
+    treeTop->Project("topHEM","dphill",HCut[em]);
+    treeTop->Project("topHME","dphill",HCut[me]);
+    
+    std::vector<TH1F*> TopFin;
+    TopFin.push_back(topHEE);
+    TopFin.push_back(topHMM);
+    TopFin.push_back(topHEM);
+    TopFin.push_back(topHME);
+
+    for(int icha=0; icha<4; icha++) {
+      eff[icha] = TopFin[icha]->Integral() / nTopMC[icha];
+      eff_err[icha] = eff[icha] * quadrSum(yieldErrPoisson(TopFin[icha]->Integral(),TopFin[icha]->GetEntries())/TopFin[icha]->Integral(),
+                                           nTopMC_err[icha]/nTopMC[icha] );
+    }
+
+    float nTopData_HiggsSel[4], nTopData_HiggsSel_err[4];
+    float nTopMC_HiggsSel[4], nTopMC_HiggsSel_err[4];
 
     for(int icha=0;icha<4;icha++) {
-      float eff_0j = (nEv_endWW[icha]==0) ? 0. : nEv_end0j[icha]/nEv_endWW[icha];
-      float eff_0j_err = (nEv_endWW[icha]==0) ? 0. : sqrt(eff_0j*(1-eff_0j)/nEv_endWW[icha]);
-      float effErrRel = (eff_0j==0) ? 0. : eff_0j_err/eff_0j;
+      float effErrRel = (eff[icha]==0) ? 0. : eff_err[icha]/eff[icha];
     
       // this is the correct esztimation for when we have sufficient stat
       // nTopData_HiggsSel_0j[icha] = nTopData[icha] * eff_0j;
       // float topDataErrRel = (nTopData[icha]==0) ? 0. : nTopData_err[icha]/nTopData[icha];
       // nTopData_HiggsSel_0j_err[icha] = nTopData_HiggsSel_0j[icha] * quadrSum(topDataErrRel,effErrRel);
-      nTopData_HiggsSel_0j[icha] = nTopData_tot * frac[icha] * eff_0j;
-      nTopData_HiggsSel_0j_err[icha] = nTopData_HiggsSel_0j[icha] * quadrSum(nTopData_tot_err/nTopData_tot,eff_0j_err/eff_0j);
+      nTopData_HiggsSel[icha] = nTopData_tot * frac[icha] * eff[icha];
+      nTopData_HiggsSel_err[icha] = nTopData_HiggsSel[icha] * quadrSum(nTopData_tot_err/nTopData_tot,eff_err[icha]/eff[icha]);
 
-      nTopMC_HiggsSel_0j[icha] = nTopMC[icha] * eff_0j;
+      nTopMC_HiggsSel[icha] = nTopMC[icha] * eff[icha];
       float topMCErrRel = (nTopMC[icha]==0) ? 0. : nTopMC_err[icha]/nTopMC[icha];
-      nTopMC_HiggsSel_0j_err[icha] = nTopMC_HiggsSel_0j[icha] * quadrSum(topMCErrRel,effErrRel);
-
-      float eff_1j = nEv_end1j[icha]/nEv_endWW[icha];
-      float eff_1j_err = sqrt(eff_1j*(1-eff_1j)/nEv_endWW[icha]);
-      effErrRel = (eff_1j==0) ? 0. : eff_1j_err/eff_1j;
-
-      // this is the correct esztimation for when we have sufficient stat
-      // nTopData_HiggsSel_1j[icha] = nTopData[icha] * eff_1j;
-      // topDataErrRel = (nTopData[icha]==0) ? 0. : nTopData_err[icha]/nTopData[icha];
-      // nTopData_HiggsSel_1j_err[icha] = nTopData_HiggsSel_1j[icha] * quadrSum(topDataErrRel,effErrRel);
-      nTopData_HiggsSel_1j[icha] = nTopData_tot * frac[icha] * eff_1j;
-      nTopData_HiggsSel_1j_err[icha] =  nTopData_HiggsSel_1j[icha] * quadrSum(nTopData_tot_err/nTopData_tot,eff_1j_err/eff_1j);      
-
-      nTopMC_HiggsSel_1j[icha] = nTopMC[icha] * eff_1j;
-      topMCErrRel = (nTopMC[icha]==0) ? 0. : nTopMC_err[icha]/nTopMC[icha];
-      nTopMC_HiggsSel_1j_err[icha] = nTopMC_HiggsSel_1j[icha] * quadrSum(topMCErrRel,effErrRel);
+      nTopMC_HiggsSel_err[icha] = nTopMC_HiggsSel[icha] * quadrSum(topMCErrRel,effErrRel);
 
       char channelName[2];
       if(icha==ee) sprintf(channelName,"EE");
@@ -353,95 +363,66 @@ void estimateTop(int njets) {
       if(icha==me) sprintf(channelName,"ME");
       
       // for Giovanni
-      float alpha_0j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b[njets])/eff_2b[njets] * eff_0j;
-      float alpha_0j_err = alpha_0j * quadrSum(eff_2b_err[njets]/pow(eff_2b[njets],2), eff_0j_err/eff_0j); // assuming no err on softmu
+      float alpha = nTopData_HiggsSel[icha] / nBTagTag_data_tot;
+      float alpha_err = alpha * nTopData_HiggsSel_err[icha] / nTopData_HiggsSel[icha];
 
-      float alpha_1j = wantedLumi/usedLumi * frac[icha] * (1-eff_2b[njets])/eff_2b[njets] * eff_1j;
-      float alpha_1j_err = alpha_1j * quadrSum(eff_2b_err[njets]/pow(eff_2b[njets],2), eff_1j_err/eff_1j); // assuming no err on softmu
-
-      cardfile[icha][0] << mass 
-                        << "\t" << nBTagTag_data_tot << "\t" << alpha_0j
-                        << "\t" <<  alpha_0j_err 
-                        << std::endl;
-
-      cardfile[icha][1] << mass 
-                        << "\t" << nBTagTag_data_tot << "\t" << alpha_1j
-                        << "\t" <<  alpha_1j_err 
-                        << std::endl;
+      cardfile[icha] << mass 
+                     << "\t" << nBTagTag_data_tot << "\t" << alpha
+                     << "\t" <<  alpha_err 
+                     << std::endl;
 
       ///////////////
 
       textfile << channelName << ": Higgs Mass = " << mass 
-               << "\tdata 0 jet = " << wantedLumi/usedLumi * nTopData_HiggsSel_0j[icha] << " +/- " << nTopData_HiggsSel_0j_err[icha] 
-               << "\tdata 1 jet = " << wantedLumi/usedLumi * nTopData_HiggsSel_1j[icha] << " +/- " << nTopData_HiggsSel_1j_err[icha] 
-               << "\tMC 0 jet = " << wantedLumi/usedLumi * nTopMC_HiggsSel_0j[icha] << " +/- " << nTopMC_HiggsSel_0j_err[icha] 
-               << "\tMC 1 jet = " << wantedLumi/usedLumi * nTopMC_HiggsSel_1j[icha] << " +/- " << nTopMC_HiggsSel_1j_err[icha]
+               << "\tdata jet = " << scaleFactorLumi * nTopData_HiggsSel[icha] << " +/- " << nTopData_HiggsSel_err[icha] 
+               << "\tMC jet = " << scaleFactorLumi * nTopMC_HiggsSel[icha] << " +/- " << nTopMC_HiggsSel_err[icha] 
                << std::endl;
     }
 
     // summary table for limits
     if (i==0) { 
-      tablefile1 << "# zero jets bin data" << endl;
+      tablefile1 << "# " << njets << " jets bin data" << endl;
       tablefile1 << "# \t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile1 << mass 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_0j[1] << " +/- " <<  nTopData_HiggsSel_0j_err[1] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_0j[3] << " +/- " <<  nTopData_HiggsSel_0j_err[3] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_0j[2] << " +/- " <<  nTopData_HiggsSel_0j_err[2] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_0j[0] << " +/- " <<  nTopData_HiggsSel_0j_err[0] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[1] << " +/- " <<  nTopData_HiggsSel_err[1] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[3] << " +/- " <<  nTopData_HiggsSel_err[3] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[2] << " +/- " <<  nTopData_HiggsSel_err[2] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[0] << " +/- " <<  nTopData_HiggsSel_err[0] 
 	       << std::endl;
     
     if (i==0) { 
-      tablefile2 << "#one jet bin data" << endl;
-      tablefile2 << "#\t mumu \t mue \t emu \t ee" << endl;
-    }
-    tablefile2 << mass 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_1j[1] << " +/- " <<  nTopData_HiggsSel_1j_err[1] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_1j[3] << " +/- " <<  nTopData_HiggsSel_1j_err[3] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_1j[2] << " +/- " <<  nTopData_HiggsSel_1j_err[2] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopData_HiggsSel_1j[0] << " +/- " <<  nTopData_HiggsSel_1j_err[0] 
-	       << std::endl;
-
-    if (i==0) { 
-      tablefile3 << "# zero jets bin MC" << endl;
+      tablefile3 << "# " << njets << " jets bin MC" << endl;
       tablefile3 << "# \t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile3 << mass 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_0j[1] << " +/- " <<  nTopMC_HiggsSel_0j_err[1] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_0j[3] << " +/- " <<  nTopMC_HiggsSel_0j_err[3] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_0j[2] << " +/- " <<  nTopMC_HiggsSel_0j_err[2] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_0j[0] << " +/- " <<  nTopMC_HiggsSel_0j_err[0] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[1] << " +/- " <<  nTopMC_HiggsSel_err[1] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[3] << " +/- " <<  nTopMC_HiggsSel_err[3] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[2] << " +/- " <<  nTopMC_HiggsSel_err[2] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[0] << " +/- " <<  nTopMC_HiggsSel_err[0] 
 	       << std::endl;
     
     if (i==0) { 
-      tablefile4 << "#one jet bin MC" << endl;
+      tablefile4 << "# " << njets << " jet bin MC" << endl;
       tablefile4 << "#\t mumu \t mue \t emu \t ee" << endl;
     }
     tablefile4 << mass 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_1j[1] << " +/- " <<  nTopMC_HiggsSel_1j_err[1] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_1j[3] << " +/- " <<  nTopMC_HiggsSel_1j_err[3] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_1j[2] << " +/- " <<  nTopMC_HiggsSel_1j_err[2] 
-	       << " " << "\t\t" << wantedLumi/usedLumi * nTopMC_HiggsSel_1j[0] << " +/- " <<  nTopMC_HiggsSel_1j_err[0] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[1] << " +/- " <<  nTopMC_HiggsSel_err[1] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[3] << " +/- " <<  nTopMC_HiggsSel_err[3] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[2] << " +/- " <<  nTopMC_HiggsSel_err[2] 
+	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[0] << " +/- " <<  nTopMC_HiggsSel_err[0] 
 	       << std::endl;
 
-    float nTopData_HiggsSel_0j_Tot = nTopData_HiggsSel_0j[ee] + nTopData_HiggsSel_0j[mm] + nTopData_HiggsSel_0j[em] + nTopData_HiggsSel_0j[me];
-    float nTopData_HiggsSel_0j_Tot_err = quadrSum(nTopData_HiggsSel_0j_err[ee],nTopData_HiggsSel_0j_err[mm],nTopData_HiggsSel_0j_err[em],nTopData_HiggsSel_0j_err[me]);
+    float nTopData_HiggsSel_Tot = nTopData_HiggsSel[ee] + nTopData_HiggsSel[mm] + nTopData_HiggsSel[em] + nTopData_HiggsSel[me];
+    float nTopData_HiggsSel_Tot_err = quadrSum(nTopData_HiggsSel_err[ee],nTopData_HiggsSel_err[mm],nTopData_HiggsSel_err[em],nTopData_HiggsSel_err[me]);
 
-    float nTopMC_HiggsSel_0j_Tot = nTopMC_HiggsSel_0j[ee] + nTopMC_HiggsSel_0j[mm] + nTopMC_HiggsSel_0j[em] + nTopMC_HiggsSel_0j[me];
-    float nTopMC_HiggsSel_0j_Tot_err = quadrSum(nTopMC_HiggsSel_0j_err[ee],nTopMC_HiggsSel_0j_err[mm],nTopMC_HiggsSel_0j_err[em],nTopMC_HiggsSel_0j_err[me]);
+    float nTopMC_HiggsSel_Tot = nTopMC_HiggsSel[ee] + nTopMC_HiggsSel[mm] + nTopMC_HiggsSel[em] + nTopMC_HiggsSel[me];
+    float nTopMC_HiggsSel_Tot_err = quadrSum(nTopMC_HiggsSel_err[ee],nTopMC_HiggsSel_err[mm],nTopMC_HiggsSel_err[em],nTopMC_HiggsSel_err[me]);
 
-    float nTopData_HiggsSel_1j_Tot = nTopData_HiggsSel_1j[ee] + nTopData_HiggsSel_1j[mm] + nTopData_HiggsSel_1j[em] + nTopData_HiggsSel_1j[me];
-    float nTopData_HiggsSel_1j_Tot_err = quadrSum(nTopData_HiggsSel_1j_err[ee],nTopData_HiggsSel_1j_err[mm],nTopData_HiggsSel_1j_err[em],nTopData_HiggsSel_1j_err[me]);
-
-    float nTopMC_HiggsSel_1j_Tot = nTopMC_HiggsSel_1j[ee] + nTopMC_HiggsSel_1j[mm] + nTopMC_HiggsSel_1j[em] + nTopMC_HiggsSel_1j[me];
-    float nTopMC_HiggsSel_1j_Tot_err = quadrSum(nTopMC_HiggsSel_1j_err[ee],nTopMC_HiggsSel_1j_err[mm],nTopMC_HiggsSel_1j_err[em],nTopMC_HiggsSel_1j_err[me]);
-    
     textfile.precision(2);
     textfile << "\t===>> TOTAL: Higgs Mass = " << mass 
-             << "\tdata 0 jet = " << wantedLumi/usedLumi * nTopData_HiggsSel_0j_Tot << " +/- " << nTopData_HiggsSel_0j_Tot_err 
-             << "\tdata 1 jet = " << wantedLumi/usedLumi * nTopData_HiggsSel_1j_Tot << " +/- " << nTopData_HiggsSel_1j_Tot_err
-             << "\tMC 0 jet = " << wantedLumi/usedLumi * nTopMC_HiggsSel_0j_Tot << " +/- " << nTopMC_HiggsSel_0j_Tot_err 
-             << "\tMC 1 jet = " << wantedLumi/usedLumi * nTopMC_HiggsSel_1j_Tot << " +/- " << nTopMC_HiggsSel_1j_Tot_err
+             << "\tdata = " << scaleFactorLumi * nTopData_HiggsSel_Tot << " +/- " << nTopData_HiggsSel_Tot_err 
+             << "\tMC = " << scaleFactorLumi * nTopMC_HiggsSel_Tot << " +/- " << nTopMC_HiggsSel_Tot_err 
              << std::endl;
 
   }
