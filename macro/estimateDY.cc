@@ -20,21 +20,37 @@ float nEv_end1j[4];
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK, float nZV);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
-void estimateDY(int njets, bool useDataRk, TString addCutIn="1", TString addCutOut="1");
+void estimateDY(int mass, int njets, bool useDataRk, TString addCutIn="1", TString addCutOut="1");
 
 void estimateDYMassDependent(int njets, bool useDataRk) {
+
+  std::cout << "===> ESTIMATION AT WW LEVEL <===" << std::endl;
+  estimateDY(0,njets,useDataRk);
+
+  // these are for limits
+  ofstream cardfile[2][2]; //[cha][jetbin]
+  for(int icha=0; icha<2; icha++) {
+    for(int j=0; j<2; j++) {
+      char fileName[50];
+      if(icha==ee) sprintf(fileName,"DYCard_ee_%dj.txt",j);
+      if(icha==mm) sprintf(fileName,"DYCard_mm_%dj.txt",j);
+      cardfile[icha][j].open(fileName, ios_base::trunc);
+      cardfile[icha][j].precision(3);
+    }
+  }
 
   int mH[18] = {115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int i=0; i<18;i++) {
     std::cout << "mH = " << mH[i] << std::endl;
     TString addCutIn = higgsCuts(mH[i],false);
     TString addCutOut = higgsCuts(mH[i],true);
-    estimateDY(njets,useDataRk,addCutIn,addCutOut);
+    estimateDY(mH[i],njets,useDataRk,addCutIn,addCutOut);
   }
+  std::cout << "DONE." << std::endl;
   
 }
 
-void estimateDY(int njets, bool useDataRk, TString addCutIn, TString addCutOut) {
+void estimateDY(int mass, int njets, bool useDataRk, TString addCutIn, TString addCutOut) {
 
   // constants
   //  float eff_softmu_Z = 0.867;
@@ -50,7 +66,7 @@ void estimateDY(int njets, bool useDataRk, TString addCutIn, TString addCutOut) 
     return;
   }
 
-  TFile *fileData  = TFile::Open("results_data/merged/dataset_ll.root");
+  TFile *fileData  = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileZjets = TFile::Open("results/datasets_trees/Zjets_ll.root");
   TFile *fileOthers = TFile::Open("results/datasets_trees/others_ll.root");
 
@@ -85,30 +101,30 @@ void estimateDY(int njets, bool useDataRk, TString addCutIn, TString addCutOut) 
   TH1F *nemLooseInHData = new TH1F("nemLooseInHData","",50,0,180);
   TH1F *nemLooseOutHData = new TH1F("nemLooseOutHData","",50,0,180);  
 
-  treeZjets->Project("ZeejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("ZmmjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==1)*weight*puweight")).Data());
-  treeZjets->Project("ZemjetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==2)*weight*puweight")).Data());
-  treeZjets->Project("ZmejetsH","deltaPhi",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && finalstate==3)*weight*puweight")).Data());
+  treeZjets->Project("ZeejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("ZmmjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==0)*baseW*puW")).Data());
+  treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==2)*baseW*puW")).Data());
+  treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==3)*baseW*puW")).Data());
 
-  treeZjets->Project("neeLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("neeLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)>15 && finalstate==0)*weight*puweight")).Data());
-  treeZjets->Project("nmmLooseInH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
-  treeZjets->Project("nmmLooseOutH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)>15 && finalstate==1)*weight*puweight")).Data());
+  treeZjets->Project("neeLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("neeLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && !zveto && channel==0)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && zveto && channel==0)*baseW*puW")).Data());
 
-  treeData->Project("neeLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==0)")).Data());
-  treeData->Project("neeLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==0)")).Data());
-  treeData->Project("nmmLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && finalstate==1)")).Data());
-  treeData->Project("nmmLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && finalstate==1)")).Data());
-  treeData->Project("nemLooseInHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3))")).Data());
-  treeData->Project("nemLooseOutHData","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bTagTrackCount<2.1 && nSoftMu==0 && eleInvMass>12 && abs(eleInvMass-91.1876)>15 && (finalstate==2 || finalstate==3))")).Data());
+  treeData->Project("neeLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && channel==1)")).Data());
+  treeData->Project("neeLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && channel==1)")).Data());
+  treeData->Project("nmmLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && channel==0)")).Data());
+  treeData->Project("nmmLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && channel==0)")).Data());
+  treeData->Project("nemLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && (channel==2 || channel==3))")).Data());
+  treeData->Project("nemLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && (channel==2 || channel==3))")).Data());
   
   // contribution under the peak
-  treeOthers->Project("OthersEEH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==0)*weight*puweight")).Data());
-  treeOthers->Project("OthersMMH","deltaPhi",(TString("(finalLeptons && pfMet>20 && projMet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==1)*weight*puweight")).Data());
+  treeOthers->Project("OthersEEH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeOthers->Project("OthersMMH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && bveto && !zveto && channel==0)*baseW*puW")).Data());
   
-  treeData->Project("neeInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==0")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nmmInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && finalstate==1")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
-  treeData->Project("nemInH","deltaPhi",(TString("eleInvMass>12 && finalLeptons && pfMet>20 && projMet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((leadingJetPt>15 && abs(deltaPhi_LL_JET)<165) || leadingJetPt<=15) && bTagTrackCount<2.1 && nSoftMu==0 && abs(eleInvMass-91.1876)<15 && (finalstate==2 || finalstate==3)")).Data()); // missing softmu... not available in red trees... hopefully small contrib here
+  treeData->Project("neeInH","dphill",(TString("mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && bveto && !zveto && channel==1")).Data()); 
+  treeData->Project("nmmInH","dphill",(TString("mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && bveto && !zveto && channel==0")).Data());
+  treeData->Project("nemInH","dphill",(TString("mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && bveto && !zveto && (channel==2 || channel==3)")).Data());
 
   // R and k estimations
   float R[2], R_err[2], k[2], k_err[2];
@@ -239,6 +255,33 @@ void estimateDY(int njets, bool useDataRk, TString addCutIn, TString addCutOut) 
     std::cout << "mode\t" << "nIn\t" << "n(OF)\t" << "R\t" << "n(DY) meas." << std::endl;
     std::cout << "ee:\t" << neeIn << "\t" << nOthers[ee] << "\t" << R_data[ee] << " +/- " << R_data_err[ee] << "\t" <<  neeExp << " +/- " << neeExp_err << std::endl;
     std::cout << "mm:\t" << nmmIn << "\t" << nOthers[mm] << "\t" << R_data[mm] << " +/- " << R_data_err[mm] << "\t" <<  nmmExp << " +/- " << nmmExp_err << std::endl;
+
+    // for the datacards
+    float alpha[2], alpha_err[2];
+    alpha[ee] = neeExp / neeIn;
+    alpha_err[ee] = alpha[ee] * neeExp_err/neeExp;
+
+    alpha[mm] = nmmExp / nmmIn;
+    alpha_err[mm] = alpha[mm] * nmmExp_err/nmmExp;
+
+    ofstream cardfile;
+    char fileName[50];
+
+    sprintf(fileName,"DYCard_ee_%dj.txt",njets);
+    cardfile.open(fileName, ios_base::app);
+    cardfile << mass
+             << "\t" << neeIn << "\t" << alpha[ee]
+             << "\t" << alpha_err[ee]
+             << std::endl;
+    cardfile.close();
+
+    sprintf(fileName,"DYCard_mm_%dj.txt",njets);
+    cardfile.open(fileName, ios_base::app);
+    cardfile << mass
+             << "\t" << nmmIn << "\t" << alpha[mm]
+             << "\t" << alpha_err[mm]
+             << std::endl;
+    cardfile.close();
   }
 
 }
