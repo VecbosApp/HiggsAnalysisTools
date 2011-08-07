@@ -11,10 +11,10 @@ using namespace std;
 enum { ee=0, mm=1, em=2, me=3, ll=4 };
 
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
-void HiggsYields(int mH, int njets, bool showData);
-void printLatex(bool showData);
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData);
+void printLatex(float lumiInInvFb, bool showData);
 
-void printLatex(bool showData) {
+void printLatex(float lumiInInvFb, bool showData) {
 
   ofstream textfile;
   textfile.open("yields.tex", ios_base::trunc);
@@ -27,7 +27,7 @@ void printLatex(bool showData) {
 
   textfile << "\\subsection{Yields at WW selection level}" << std::endl;
   std::cout << "Evaluating yields at WW selection level" << std::endl;
-  HiggsYields(-1, 0, showData);
+  HiggsYields(-1, 0, lumiInInvFb, showData);
 
   textfile.open("yields.tex", ios_base::app);
   textfile << "\\subsection{Yields at full H selection level}" << std::endl;
@@ -35,7 +35,7 @@ void printLatex(bool showData) {
   int mH[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int i=0; i<17;i++) {
     std::cout << "mH = " << mH[i] << "\t0 jet" << std::endl;
-    HiggsYields(mH[i], 0, showData);
+    HiggsYields(mH[i], 0, lumiInInvFb, showData);
   }
   textfile.close();
 
@@ -45,13 +45,13 @@ void printLatex(bool showData) {
   textfile2 << "\\section{Yields for 1 jet}" << endl;
   textfile2 << "\\subsection{Yields at WW selection level}" << std::endl;
   std::cout << "Evaluating yields at WW selection level" << std::endl;
-  HiggsYields(-1, 1, showData);
+  HiggsYields(-1, 1, lumiInInvFb, showData);
 
   textfile2.open("yields.tex", ios_base::app);
   textfile2 << "\\subsection{Yields at full H selection level}" << std::endl;
   for(int i=0; i<17;i++) {
     std::cout << "mH = " << mH[i] << "\t1 jet" << std::endl;
-    HiggsYields(mH[i], 1, showData);
+    HiggsYields(mH[i], 1, lumiInInvFb, showData);
   }
   textfile2.close();
 
@@ -61,7 +61,7 @@ void printLatex(bool showData) {
 
 }
 
-void HiggsYields(int mH, int njets, bool showData) {
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
 
   std::vector<std::vector<double> > yields;
   std::vector<std::vector<double> > yields_err;
@@ -88,18 +88,18 @@ void HiggsYields(int mH, int njets, bool showData) {
   else  sampleName.push_back("H130"); // take one mass as example
 
   // open files
-  TFile *fileZj = TFile::Open("results/datasets_trees/Zjets_ll.root");
-  TFile *fileTTbar = TFile::Open("results/datasets_trees/top_ll.root");
-  TFile *fileSingleTop = TFile::Open("results/datasets_trees/top_ll.root");
-  TFile *fileWj = TFile::Open("results/datasets_trees/Wjets_ll.root");
-  TFile *fileOthers = TFile::Open("results/datasets_trees/others_ll.root");
-  TFile *fileqqWW = TFile::Open("results/datasets_trees/WW_ll.root");
-  TFile *fileggWW = TFile::Open("results/datasets_trees/WW_ll.root");
-  TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
+  TFile *fileZj = TFile::Open("results/datasets_trees_skim/Zjets_ll.root");
+  TFile *fileTTbar = TFile::Open("results/datasets_trees_skim/top_ll.root");
+  TFile *fileSingleTop = TFile::Open("results/datasets_trees_skim/top_ll.root");
+  TFile *fileWj = TFile::Open("results/datasets_trees_skim/Wjets_ll.root");
+  TFile *fileOthers = TFile::Open("results/datasets_trees_skim/others_ll.root");
+  TFile *fileqqWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
+  TFile *fileggWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
+  TFile *fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
 
   char signalFile[200];
-  if(mH!=-1) sprintf(signalFile, "results/datasets_trees/H%d_ll.root", mH);
-  else sprintf(signalFile, "results/datasets_trees/H130_ll.root"); // take one mass as example
+  if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
+  else sprintf(signalFile, "results/datasets_trees_skim/H130_ll.root"); // take one mass as example
   TFile *fileH = TFile::Open(signalFile);
 
   // get trees
@@ -143,11 +143,11 @@ void HiggsYields(int mH, int njets, bool showData) {
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==0)*weight*puweight");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==1)*weight*puweight");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==2)*weight*puweight");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==3)*weight*puweight");
-    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*weight*puweight");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*kfW");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*kfW");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*kfW");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*kfW");
+    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*baseW*puW*kfW");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
@@ -171,17 +171,17 @@ void HiggsYields(int mH, int njets, bool showData) {
 
       //      cout << "final cut = " << TheFinalCut.Data() << endl;
 
-      tree->Project("histo","deltaPhi",TheFinalCut);
+      tree->Project("histo","dphill",TheFinalCut);
       double yield = histo->Integral();
       double yield_err = yieldErrPoisson(yield,histo->GetEntries());
-      sampleYield.push_back(yield);
-      sampleYield_err.push_back(yield_err);
+       sampleYield.push_back(lumiInInvFb * yield);
+       sampleYield_err.push_back(lumiInInvFb * yield_err);
 
 
       // sum the backgrounds (signal is the last)
       if(isample != (int)trees.size()-1) {
-        yields_bkgtot[icha] += yield;
-        yields_bkgtot_err[icha] += yield_err * yield_err;
+        yields_bkgtot[icha] += lumiInInvFb * yield;
+        yields_bkgtot_err[icha] += lumiInInvFb * yield_err * lumiInInvFb * yield_err;
       }
     }
 
@@ -198,10 +198,10 @@ void HiggsYields(int mH, int njets, bool showData) {
   // data counting
   for(int icha=0; icha<5; icha++) {
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==0)");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==1)");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==2)");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && finalstate==3)");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)");
     TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")");
     
     cutChannel.push_back(HCut_ee);
@@ -210,7 +210,7 @@ void HiggsYields(int mH, int njets, bool showData) {
     cutChannel.push_back(HCut_me);
     cutChannel.push_back(HCut_all);
     
-    treeData->Project("histo","deltaPhi",cutChannel[icha]);
+    treeData->Project("histo","dphill",cutChannel[icha]);
     double yield = histo->Integral();
     yields_data[icha] = yield;
   }
@@ -219,9 +219,10 @@ void HiggsYields(int mH, int njets, bool showData) {
   textfile.open("yields.tex", ios_base::app);
   textfile.setf(ios::fixed,ios::floatfield);
   textfile.precision(1);
-  textfile << "\\begin{table}[p]" << endl
-           << "\\begin{small}" << endl
-           << "\\begin{center}" << endl;
+  textfile << "\\begin{table}[p]" << endl;
+  if(mH!=-1) textfile << "\\begin{small}" << endl;
+  else textfile << "\\begin{scriptsize}" << endl;
+  textfile << "\\begin{center}" << endl;
   if(showData) textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}" << endl;
   else textfile << "\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}" << endl;
   textfile << "\\hline" << endl;
@@ -267,9 +268,10 @@ void HiggsYields(int mH, int njets, bool showData) {
            << "\\end{tabular}" << endl;
   if(mH==-1) textfile << "\\caption{WW selection level, " << njets << " jet.}" << std::endl;
   else textfile << "\\caption{Higgs $m_H$ = " << mH << " GeV/c$^2$, " << njets << " jet.}" << std::endl;
-  textfile << "\\end{center}" << endl
-           << "\\end{small}" << endl
-           << "\\end{table}" << endl;
+  textfile << "\\end{center}" << endl;
+  if(mH!=-1) textfile << "\\end{small}" << endl;
+  else textfile << "\\end{scriptsize}" << endl;
+  textfile << "\\end{table}" << endl;
 
   delete histo;
 
