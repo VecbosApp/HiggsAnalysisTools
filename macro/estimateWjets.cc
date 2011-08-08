@@ -94,6 +94,15 @@ void estimateWjets(int njets) {
 
   for(int icha=0; icha<4; icha++) yield_WWSel_staterr[4][icha] = sqrt(yield_WWSel_staterr[4][icha]);
 
+  // total for all the channels
+  float yield_WWSel_tot = 0.;
+  float yield_WWSel_tot_err = 0.;
+  for(int icha=0; icha<4; icha++) {
+    yield_WWSel_tot += yield_WWSel[4][icha];
+    yield_WWSel_tot_err += pow(yield_WWSel_staterr[4][icha],2);
+  }
+  yield_WWSel_tot_err = sqrt(yield_WWSel_tot_err);
+
   std::vector<TString> labels;
   labels.push_back(TString("Barrel, 10 $\\leq p_{T} < $ 20 GeV"));
   labels.push_back(TString("Barrel, $p_{T} \\geq $ 20 GeV"));
@@ -204,6 +213,76 @@ void estimateWjets(int njets) {
               << std::endl;
 
   }
+
+
+  /// ===> compute !b-veto efficiency on W+jets 
+  // this is useful for W+jets contamination in the top-tagged control sample
+  // use a channel independent estimate
+  // for now only ee is done
+  TFile *fileEEAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
+  TFile *fileMMAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
+  TFile *fileEMAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
+  TFile *fileMEAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
+
+  TTree *treeEEAll = (TTree*)fileEEAll->Get("T1");
+  TTree *treeMMAll = (TTree*)fileMMAll->Get("T1");
+  TTree *treeEMAll = (TTree*)fileEMAll->Get("T1");
+  TTree *treeMEAll = (TTree*)fileMEAll->Get("T1");
+
+  trees.clear();
+  trees.push_back(treeEEAll);
+  trees.push_back(treeMMAll);
+  trees.push_back(treeEMAll);
+  trees.push_back(treeMEAll);
+
+
+  // yields at WW level: tagged events
+  float yield_WWSel_denom[4]; // [icha]
+  float yield_WWSel_denom_staterr[4]; // [icha]
+
+  float yield_WWSel_denom_tot = 0.;
+  float yield_WWSel_denom_tot_staterr = 0.;
+
+  float yield_WWSel_1jnum_tot = 0.;
+  float yield_WWSel_1jnum_tot_staterr = 0.;
+
+  TH1F *histo2 = new TH1F("histo2","",100,0.,180.); // for the denominator
+
+  for(int icha=0; icha<4; icha++) {
+    // step[9] is all before b-veto and njet cut 
+    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP");
+    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+    
+    trees[icha]->Project("histo2","dphill",fpCut);
+    yield_WWSel_denom[icha] = histo2->Integral();
+    yield_WWSel_denom_tot += yield_WWSel_denom[icha];
+    
+    trees[icha]->Project("histo2","dphill",fpCutStatErr);
+    yield_WWSel_denom_staterr[icha] = sqrt(histo2->Integral());
+    yield_WWSel_denom_tot_staterr += pow(yield_WWSel_denom_staterr[icha],2);
+
+    // as the tagged 1 jet bin
+    // for the 1 jet numerator: one event enter the top control region if the leading jet is btagged && all the rest are not 
+    fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightFP");
+    fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+
+    trees[icha]->Project("histo2","dphill",fpCut);
+    yield_WWSel_1jnum_tot += histo2->Integral();
+    
+    trees[icha]->Project("histo2","dphill",fpCutStatErr);
+    yield_WWSel_1jnum_tot_staterr += pow(histo2->Integral(),2);
+  }
+  
+  yield_WWSel_denom_tot_staterr = sqrt(yield_WWSel_denom_tot_staterr);
+  yield_WWSel_1jnum_tot_staterr = sqrt(yield_WWSel_1jnum_tot_staterr);
+
+  float numerator = 0;
+  if(njets==0) numerator = yield_WWSel_denom_tot - yield_WWSel_tot; // events that are btagged
+  else numerator = yield_WWSel_1jnum_tot_staterr;
+
+  float btageff = numerator / yield_WWSel_denom_tot;
+  float btageff_err = sqrt(btageff*(1-btageff)/yield_WWSel_denom_tot);
+  std::cout << "On the TF sample: btagging (IP + soft mu) efficiency = " << btageff << " +/- " << btageff_err << std::endl;
 
 }
 
