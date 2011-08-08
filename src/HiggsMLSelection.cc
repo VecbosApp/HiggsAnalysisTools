@@ -914,7 +914,7 @@ void HiggsMLSelection::Loop() {
 
     if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
 
-    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[ee]);
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[ee]);
 
     int theLJ  = theLeadingJet[ee];
     int theSJ  = theSecondJet[ee];
