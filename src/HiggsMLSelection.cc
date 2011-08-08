@@ -1054,7 +1054,7 @@ void HiggsMLSelection::Loop() {
 
     // filling the tree
     if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
-    myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[mm]);
+    myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[mm]);
     
     theLJ  = theLeadingJet[mm];
     theSJ  = theSecondJet[mm];
@@ -1199,7 +1199,7 @@ void HiggsMLSelection::Loop() {
     // filling the tree
     if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
 
-    myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[em]);
+    myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[em]);
 
     theLJ  = theLeadingJet[em];
     theSJ  = theSecondJet[em];
@@ -1341,7 +1341,7 @@ void HiggsMLSelection::Loop() {
     // filling the tree
     if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
 
-    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, 0., passedHLT[me]);
+    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[me]);
 
     theLJ  = theLeadingJet[me];
     theSJ  = theSecondJet[me];
