@@ -66,8 +66,7 @@ public:
                   
   void fillRazor(float MTR, float mR, float gammaMR);
 
-  void fillFake(int ntigh, float puwst );
-
+  void fillFake(int ntigh, float wfp, float wsfp, float wff, float wsff, float wpp, float wspp);
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount, int numExtraLep);
@@ -87,7 +86,7 @@ public:
   //! fill the HLT muons triggers informations
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! fill the run,lumi, event number
-  void fillRunInfos(int run, int lumi, int event, float puweight, float puwst, bool HLT);   // used in fake estimate
+  void fillRunInfos(int run, int lumi, int event, float puweight, bool HLT);   
   //! latinos 
   void fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24);
@@ -157,7 +156,9 @@ private:
 
   //! for W+jets
   int myTight;
-  float myPUWeightSt;
+  float myWeightFP, myWeightStatFP;
+  float myWeightFF, myWeightStatFF;
+  float myWeightPP, myWeightStatPP;
 
   // latinos
   bool mySteps[25];
