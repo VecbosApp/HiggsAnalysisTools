@@ -128,7 +128,7 @@ private:
   float myBTagSecVertex;
   int myNSoftMu;
   float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount;
-  float myNumExtraLep;
+  int  myNumExtraLep;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myUncorrJetVeto;
