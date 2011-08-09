@@ -11,14 +11,32 @@
 
 enum { ee=0, mm=1, em=2, me=3 };
 
-float usedLumi = 1.091;
-float wantedLumi = 1.091;
+float usedLumi = 1.14;
+float wantedLumi = 1.14;
 float scaleFactorLumi = wantedLumi/usedLumi;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 std::pair<float,float> estimateTopVetoEff(int njets);
+void estimateTop(int njets);
+
+void printLatex() {
+  std::cout << "=============================================================" << std::endl;
+  std::cout << "@@@@ ESTIMATION OF THE TOP BACKGROUND IN THE ZERO-JET BIN @@@" << std::endl;
+  std::cout << "=============================================================" << std::endl;
+  estimateTop(0);
+  std::cout << "DONE." << std::endl;
+  std::cout << "=============================================================" << std::endl << std::endl << std::endl;
+
+  std::cout << "=============================================================" << std::endl;
+  std::cout << "@@@@ ESTIMATION OF THE TOP BACKGROUND IN THE ONE-JET BIN @@@" << std::endl;
+  std::cout << "=============================================================" << std::endl;
+  estimateTop(1);
+  std::cout << "DONE." << std::endl;
+  std::cout << "=============================================================" << std::endl;
+
+}
 
 void estimateTop(int njets) {
 
@@ -244,25 +262,32 @@ void estimateTop(int njets) {
 //             << "*\tME = " << nTopMC[me] << " +/- " << nTopMC_err[me] << std::endl
             << "*\tTOT = " << wantedLumi/usedLumi * nTopMC_tot << " +/- " << nTopMC_tot_err << std::endl;
 
-  ofstream textfile;
-  textfile.open("TopYieldsData.txt", ios_base::trunc);
-  textfile.precision(2);
+  ofstream tablefileData;
+  char nameFile[100];
+  sprintf(nameFile,"TopYieldsData_ForTable_%dj.txt",njets);
+  tablefileData.open(nameFile, ios_base::trunc);
+  tablefileData.precision(2);
 
-  ofstream tablefile1;
-  tablefile1.open("TopYieldsData_ForTable_0j.txt", ios_base::trunc);
-  tablefile1.precision(2);
+  tablefileData << "\\begin{table}[p]" << endl;
+  tablefileData << "\\begin{small}" << endl;
+  tablefileData << "\\begin{center}" << endl;
+  tablefileData << "\\begin{tabular}{|c|c|c|c|c|c|}" << endl;
+  tablefileData << "\\hline" << endl;
+  tablefileData << "$m_{H}$ [GeV] \t & $\\mu\\mu$ \t & \t $\\mu$ e \t & \t e $\\mu$ \t & \t ee \t & \t $\\ell\\ell$ \\\\" << endl;
+  tablefileData << "\\hline" << endl;
 
-  ofstream tablefile2;
-  tablefile2.open("TopYieldsData_ForTable_1j.txt", ios_base::trunc);
-  tablefile2.precision(2);
+  ofstream tablefileMC;
+  sprintf(nameFile,"TopYieldsMC_ForTable_%dj.txt",njets);
+  tablefileMC.open(nameFile, ios_base::trunc);
+  tablefileMC.precision(2);
 
-  ofstream tablefile3;
-  tablefile3.open("TopYieldsMC_ForTable_0j.txt", ios_base::trunc);
-  tablefile3.precision(2);
-
-  ofstream tablefile4;
-  tablefile4.open("TopYieldsMC_ForTable_1j.txt", ios_base::trunc);
-  tablefile4.precision(2);
+  tablefileMC << "\\begin{table}[p]" << endl;
+  tablefileMC << "\\begin{small}" << endl;
+  tablefileMC << "\\begin{center}" << endl;
+  tablefileMC << "\\begin{tabular}{|c|c|c|c|c|c|}" << endl;
+  tablefileMC << "\\hline" << endl;
+  tablefileMC << "$m_{H}$ [GeV] \t & $\\mu\\mu$ \t & \t $\\mu$ e \t & \t e $\\mu$ \t & \t ee \t & \t $\\ell\\ell$ \\\\" << endl;
+  tablefileMC << "\\hline" << endl;
 
   // these are for limits
   ofstream cardfile[4]; //[cha]
@@ -346,61 +371,53 @@ void estimateTop(int njets) {
 
       ///////////////
 
-      textfile << channelName << ": Higgs Mass = " << mass 
-               << "\tdata jet = " << scaleFactorLumi * nTopData_HiggsSel[icha] << " +/- " << nTopData_HiggsSel_err[icha] 
-               << "\tMC jet = " << scaleFactorLumi * nTopMC_HiggsSel[icha] << " +/- " << nTopMC_HiggsSel_err[icha] 
-               << std::endl;
     }
 
     // summary table for limits
-    if (i==0) { 
-      tablefile1 << "# " << njets << " jets bin data" << endl;
-      tablefile1 << "# \t mumu \t mue \t emu \t ee" << endl;
+    float nTopData_HiggsSel_tot = 0;
+    float nTopData_HiggsSel_tot_err = 0;
+    float nTopMC_HiggsSel_tot = 0;
+    float nTopMC_HiggsSel_tot_err = 0;
+    for(int icha=0; icha<4; icha++) {
+      nTopData_HiggsSel_tot += nTopData_HiggsSel[icha];
+      nTopData_HiggsSel_tot_err += pow(nTopData_HiggsSel_err[icha],2);
+
+      nTopMC_HiggsSel_tot += nTopMC_HiggsSel[icha];
+      nTopMC_HiggsSel_tot_err += pow(nTopMC_HiggsSel_err[icha],2);
     }
-    tablefile1 << mass 
-	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[1] << " +/- " <<  nTopData_HiggsSel_err[1] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[3] << " +/- " <<  nTopData_HiggsSel_err[3] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[2] << " +/- " <<  nTopData_HiggsSel_err[2] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopData_HiggsSel[0] << " +/- " <<  nTopData_HiggsSel_err[0] 
-	       << std::endl;
+    nTopData_HiggsSel_tot_err = sqrt(nTopData_HiggsSel_tot_err);
+    nTopMC_HiggsSel_tot_err = sqrt(nTopMC_HiggsSel_tot_err);
+
+    tablefileData << mass 
+                  << "& \t\t" << nTopData_HiggsSel[1] << " $\\pm$ " <<  nTopData_HiggsSel_err[1] << "\t & \t"
+                  << "\t\t" << nTopData_HiggsSel[3] << " $\\pm$ " <<  nTopData_HiggsSel_err[3] << "\t & \t"
+                  << "\t\t" << nTopData_HiggsSel[2] << " $\\pm$ " <<  nTopData_HiggsSel_err[2] << "\t & \t"
+                  << "\t\t" << nTopData_HiggsSel[0] << " $\\pm$ " <<  nTopData_HiggsSel_err[0] << "\t & \t"
+                  << "\t\t" << nTopData_HiggsSel_tot << " $\\pm$ " << nTopData_HiggsSel_tot_err << "\t \\\\"
+                  << std::endl;
     
-    if (i==0) { 
-      tablefile3 << "# " << njets << " jets bin MC" << endl;
-      tablefile3 << "# \t mumu \t mue \t emu \t ee" << endl;
-    }
-    tablefile3 << mass 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[1] << " +/- " <<  nTopMC_HiggsSel_err[1] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[3] << " +/- " <<  nTopMC_HiggsSel_err[3] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[2] << " +/- " <<  nTopMC_HiggsSel_err[2] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[0] << " +/- " <<  nTopMC_HiggsSel_err[0] 
-	       << std::endl;
-    
-    if (i==0) { 
-      tablefile4 << "# " << njets << " jet bin MC" << endl;
-      tablefile4 << "#\t mumu \t mue \t emu \t ee" << endl;
-    }
-    tablefile4 << mass 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[1] << " +/- " <<  nTopMC_HiggsSel_err[1] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[3] << " +/- " <<  nTopMC_HiggsSel_err[3] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[2] << " +/- " <<  nTopMC_HiggsSel_err[2] 
-	       << " " << "\t\t" << scaleFactorLumi * nTopMC_HiggsSel[0] << " +/- " <<  nTopMC_HiggsSel_err[0] 
-	       << std::endl;
-
-    float nTopData_HiggsSel_Tot = nTopData_HiggsSel[ee] + nTopData_HiggsSel[mm] + nTopData_HiggsSel[em] + nTopData_HiggsSel[me];
-    float nTopData_HiggsSel_Tot_err = quadrSum(nTopData_HiggsSel_err[ee],nTopData_HiggsSel_err[mm],nTopData_HiggsSel_err[em],nTopData_HiggsSel_err[me]);
-
-    float nTopMC_HiggsSel_Tot = nTopMC_HiggsSel[ee] + nTopMC_HiggsSel[mm] + nTopMC_HiggsSel[em] + nTopMC_HiggsSel[me];
-    float nTopMC_HiggsSel_Tot_err = quadrSum(nTopMC_HiggsSel_err[ee],nTopMC_HiggsSel_err[mm],nTopMC_HiggsSel_err[em],nTopMC_HiggsSel_err[me]);
-
-    textfile.precision(2);
-    textfile << "\t===>> TOTAL: Higgs Mass = " << mass 
-             << "\tdata = " << scaleFactorLumi * nTopData_HiggsSel_Tot << " +/- " << nTopData_HiggsSel_Tot_err 
-             << "\tMC = " << scaleFactorLumi * nTopMC_HiggsSel_Tot << " +/- " << nTopMC_HiggsSel_Tot_err 
-             << std::endl;
-
+    tablefileMC << mass 
+                << "& \t\t" << nTopMC_HiggsSel[1] << " $\\pm$ " <<  nTopMC_HiggsSel_err[1] << "\t & \t"
+                << "\t\t" << nTopMC_HiggsSel[3] << " $\\pm$ " <<  nTopMC_HiggsSel_err[3] << "\t & \t"
+                << "\t\t" << nTopMC_HiggsSel[2] << " $\\pm$ " <<  nTopMC_HiggsSel_err[2] << "\t & \t"
+                << "\t\t" << nTopMC_HiggsSel[0] << " $\\pm$ " <<  nTopMC_HiggsSel_err[0] << "\t & \t"
+                << "\t\t" << nTopMC_HiggsSel_tot << " $\\pm$ " << nTopMC_HiggsSel_tot_err << "\t \\\\"
+                << std::endl;
   }
 
-  std::cout << "Full top yields in data in:  TopYieldsData.txt " << std::endl;
+  tablefileData << "\\hline" << endl;
+  tablefileData << "\\end{tabular}" << endl;
+  tablefileData << "\\caption{Top yields at Higgs selection level from data control sample in the " << njets << " jet bin.}" << std::endl;
+  tablefileData << "\\end{center}" << endl;
+  tablefileData << "\\end{small}" << endl;
+  tablefileData << "\\end{table}" << endl;
+
+  tablefileMC << "\\hline" << endl;
+  tablefileMC << "\\end{tabular}" << endl;
+  tablefileMC << "\\caption{Top yields at Higgs selection level as estimated in simulation in the " << njets << " jet bin.}" << std::endl;
+  tablefileMC << "\\end{center}" << endl;
+  tablefileMC << "\\end{small}" << endl;
+  tablefileMC << "\\end{table}" << endl;
 
 }
 
