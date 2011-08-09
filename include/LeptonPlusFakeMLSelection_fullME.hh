@@ -92,9 +92,11 @@ private:
 
   //! count jet multiplicity
   int numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) ;
-  int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
+  int numUncorrJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
+  //! calculate each component of a jet 3-momentum for: 0=nominal,1=JES up,2=JES down. Components are: 0/1/2 = x/y/z
+  std::vector<TLorentzVector> GetJetJesPcomponent(int jet);
   //! give the highest b-tag of calojets in the event
-  float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
+  float bVetoJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel );
   //! in the 1-jet bin, deltaphi between ll system and leading jet
   float deltaPhiLLJet(int ichan);
   //! count the soft muons
@@ -160,10 +162,12 @@ private:
   //! kinematics of the event
   int theReal,  theFake;
   int thePreElectronME,  thePreMuonME;
-  int theLeadingJet[1];
+  int theLeadingJet[1], theSecondJet[1];
   std::vector<int> eleCands[1], muCands[1];
   TLorentzVector *m_p4LeptonPlus[1], *m_p4LeptonMinus[1];
   TVector3 *m_p3PFMET;
+  TVector3 *m_metFromJets;
+  TVector3 m_p3TKMET[1];
   float m_theMET;
 
   TVector3 m_dilepPt[1];
@@ -179,7 +183,12 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1], slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
-  float leadJetBtag[1];
+  float leadJetBtag[1], subLeadJetsMaxBtag[1];
+  TLorentzVector *m_jetsSum[1], *m_uncorrJetsSum[1];
+
+  int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
+  float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];
+  float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
   
   //! electron fake rates                             
   float m_eleMinFakePt[5],  m_eleMaxFakePt[5];
