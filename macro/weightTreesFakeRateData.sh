@@ -5,6 +5,8 @@
 
 # usage: ./weightTreesData.sh
 
+mkdir results_data/merged_skim
+
 echo "Adding weights..."
 root -l -b <<EOF
 
@@ -12,10 +14,10 @@ root -l -b <<EOF
 
 addFRWeights();
 
-addWeights("results_data/merged/dataset_fakes_ee.root", 1.0, -1, 1);
-//addWeights("results_data/merged/dataset_fakes_mm.root", 1.0, -1, 0);
-//addWeights("results_data/merged/dataset_fakes_em.root", 1.0, -1, 2);
-//addWeights("results_data/merged/dataset_fakes_me.root", 1.0, -1, 3);
+addWeights("results_data/merged/dataset_fake_ee.root", 1.0, -1, 1);
+//addWeights("results_data/merged/dataset_fake_mm.root", 1.0, -1, 0);
+//addWeights("results_data/merged/dataset_fake_em.root", 1.0, -1, 2);
+addWeights("results_data/merged/dataset_fake_me.root", 1.0, -1, 3);
 
 .q
 
