@@ -11,11 +11,6 @@
 
 enum { ee=0, mm=1, em=2, me=3 };
 
-// numbers filled from counters
-float nEv_endWW[4];
-float nEv_end0j[4];
-float nEv_end1j[4];
-
 float usedLumi = 1.091;
 float wantedLumi = 1.091;
 float scaleFactorLumi = wantedLumi/usedLumi;
@@ -23,13 +18,14 @@ float scaleFactorLumi = wantedLumi/usedLumi;
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
-void countEvents(int mass, const char* channel);
+std::pair<float,float> estimateTopVetoEff(int njets);
 
 void estimateTop(int njets) {
 
   // constants
-  float eff_2b[2] = { 0.520, 0.66 };
-  float eff_2b_err[2] = { 0.080, 0.020 }; 
+  std::pair<float,float> efftag = estimateTopVetoEff(njets);
+  float eff_2b = efftag.first;
+  float eff_2b_err = efftag.second;
 
   char njcut[30];
   sprintf(njcut, "njets==%d", njets);
@@ -59,13 +55,11 @@ void estimateTop(int njets) {
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
   TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileDY = TFile::Open("results/datasets_trees/Zjets_ll.root");
-  TFile *fileWj = TFile::Open("results/datasets_trees/Wjets_ll.root");
 
   TTree *treeData = (TTree*)fileData->Get("T1");
   TTree *treeTop= (TTree*)fileTop->Get("T1");
   TTree *treeWW= (TTree*)fileWW->Get("T1");
   TTree *treeDY= (TTree*)fileDY->Get("T1");
-  TTree *treeWj= (TTree*)fileWj->Get("T1");
 
   // these used  for the channel-split estimates (not now)
   TH1F *topHEE = new TH1F("topHEE","",50,0,180);
@@ -80,14 +74,6 @@ void estimateTop(int njets) {
   // backgrounds in the tagged region
   TH1F *btagWWHLL = new TH1F("btagWWHLL","",50,0,180);
   TH1F *btagDYHLL = new TH1F("btagDYHLL","",50,0,180);
-  TH1F *CJVWjHEE = new TH1F("CJVWjHEE","",50,0,180);
-  TH1F *CJVWjHMM = new TH1F("CJVWjHMM","",50,0,180);
-  TH1F *CJVWjHEM = new TH1F("CJVWjHEM","",50,0,180);
-  TH1F *CJVWjHME = new TH1F("CJVWjHME","",50,0,180);
-  TH1F *btagWjHEE = new TH1F("btagWjHEE","",50,0,180);
-  TH1F *btagWjHMM = new TH1F("btagWjHMM","",50,0,180);
-  TH1F *btagWjHEM = new TH1F("btagWjHEM","",50,0,180);
-  TH1F *btagWjHME = new TH1F("btagWjHME","",50,0,180);
 
   // WW background after CJV (used with the mistag rate)
   TH1F *btagWWAllHLL = new TH1F("btagWWAllHLL","",50,0,180);
@@ -114,28 +100,15 @@ void estimateTop(int njets) {
 
   treeWW->Project("btagWWAllHLL","dphill",(TString("(finalLeptons && met>20 && ((channel<2 && mpmet>40 && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15)) || (channel>=2 && mpmet>20)) && ")+TString(njcut)+TString( " && mll>12 && zveto)*baseW*puW")).Data());
 
-  treeWj->Project("btagWjHEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==1")).Data());
-  treeWj->Project("btagWjHMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && !bveto && channel==0")).Data());
-  treeWj->Project("btagWjHEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==2")).Data());
-  treeWj->Project("btagWjHME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && !bveto && channel==3")).Data());
-
-  treeWj->Project("CJVWjHEE","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && channel==1")).Data());
-  treeWj->Project("CJVWjHMM","dphill",(TString("finalLeptons && met>20 && mpmet>40 && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && mll>12 && zveto && channel==0")).Data());
-  treeWj->Project("CJVWjHEM","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && channel==2")).Data());
-  treeWj->Project("CJVWjHME","dphill",(TString("finalLeptons && met>20 && mpmet>20 && ")+TString(njcut)+TString( " && mll>12 && channel==3")).Data());
-
-  // backgrounds in the tagged region (inclusive)
-  float effBtagWj[4] = { (CJVWjHEE->Integral()>0) ? btagWjHEE->Integral()/CJVWjHEE->Integral() : 0.0, 
-                         (CJVWjHMM->Integral()>0) ? btagWjHMM->Integral()/CJVWjHMM->Integral() : 0.0,
-                         (CJVWjHEM->Integral()>0) ? btagWjHEM->Integral()/CJVWjHEM->Integral() : 0.0,
-                         (CJVWjHME->Integral()>0) ? btagWjHME->Integral()/CJVWjHME->Integral() : 0.0 };
-
+  // backgrounds in the tagged region
+  // for W+jets estimated on data
+  float effBtagWj[2] = { 0.027, 0.0042 };
   float WW_tot = wantedLumi * btagWWHLL->Integral() * WWDataOverMC[njets];
   float WW_tot_err = wantedLumi * yieldErrPoisson(WW_tot,btagWWHLL->Integral());
   float DY_tot = wantedLumi * btagDYHLL->Integral() * DYDataOverMC[njets];
   float DY_tot_err = wantedLumi * yieldErrPoisson(DY_tot,btagDYHLL->Integral());
-  float Wjets_tot = WjDataTot[ee][njets] * effBtagWj[ee] + WjDataTot[mm][njets] * effBtagWj[mm] +
-    WjDataTot[em][njets] * effBtagWj[em] + WjDataTot[me][njets] * effBtagWj[me];
+  float Wjets_tot = effBtagWj[njets] * (WjDataTot[ee][njets] + WjDataTot[mm][njets] +
+                                        WjDataTot[em][njets] + WjDataTot[me][njets]);
   float Wjets_tot_err = 0.40 * Wjets_tot; // approximation
 
   // as x-check use the WW(all) x mistag rate from data
@@ -191,8 +164,8 @@ void estimateTop(int njets) {
 
   // EE
   float nBTagTag_data = btagHDataEE->Integral();
-  float nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
-  float nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  float nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
+  float nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
   float nTopSoftMuVeto_data = nTopBTagVeto_data; //* (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's). Now included in eff_2b
   float nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
@@ -203,8 +176,8 @@ void estimateTop(int njets) {
 
   // MM
   nBTagTag_data = btagHDataMM->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
   nTopSoftMuVeto_data = nTopBTagVeto_data; //  * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
   nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
@@ -215,8 +188,8 @@ void estimateTop(int njets) {
 
   // EM
   nBTagTag_data = btagHDataEM->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
   nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
   nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
@@ -227,8 +200,8 @@ void estimateTop(int njets) {
 
   // ME
   nBTagTag_data = btagHDataME->Integral();
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
   nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
   nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
@@ -248,8 +221,8 @@ void estimateTop(int njets) {
   // LL
   nBTagTag_data = nBTagTag_data_tot - tagBkg_tot;
   std::cout << "number of tagged events after bkg subtraction = " << nBTagTag_data << std::endl;
-  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).first;
-  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b[njets], eff_2b_err[njets])).second; 
+  nTopBTagVeto_data = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).first;
+  nTopBTagVeto_data_err = (nVeto(nBTagTag_data, eff_2b, eff_2b_err)).second; 
   nTopSoftMuVeto_data = nTopBTagVeto_data; // * (1-eff_2b_softmu); // efficiency of passing the soft muon veto (both the b's).
   nTopSoftMuVeto_data_err = nTopBTagVeto_data_err; // * (1-eff_2b_softmu); 
 
@@ -454,52 +427,81 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3,
   return sqrt(sum);
 }
 
-void countEvents(int mass, const char *channel) {
+std::pair<float,float> estimateTopVetoEff(int njets) {
 
-  // taking the EE or ME trees for the wanted mass
-  char nametree[200];
-  sprintf(nametree,"FULL_SELECTION_EVENT_COUNTER_%s",channel);  
-  TChain *theChain = new TChain(nametree);
+  TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
+  TTree *treeData = (TTree*)fileData->Get("T1");
 
-  // assume that the final selection efficiency is the same for all the top samples and use average of it
-  char file_mc[1000];
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root",mass);  
-  theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root",mass);  
-  theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root",mass);  
-  theChain->Add(file_mc);
-  sprintf(file_mc,"/cmsrm/pc21_2/emanuele/data/Higgs4.2.X/MC2011_Merged_V5/OptimMH%d/Spring11_V5HWW/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root",mass);  
-  theChain->Add(file_mc);
-  //  cout << "reading tree " << nametree << " from file " << file_mc << endl;    
-  
-  int theCha=-1;
-  if(TString(channel).Contains("EE")) theCha=ee;
-  if(TString(channel).Contains("MM")) theCha=mm;
-  if(TString(channel).Contains("EM")) theCha=em;
-  if(TString(channel).Contains("ME")) theCha=me;
 
-  // number of events at the wanted step of the selection
-  nEv_endWW[theCha] = 0.0;
-  nEv_end0j[theCha] = 0.0;
-  nEv_end1j[theCha] = 0.0;
+  // 0-jet bin method
+  if(njets==0) {
 
-  // reading the tree
-  Int_t    nCuts;
-  Float_t  nSel[25];   //[nCuts]                                      
-  TBranch  *b_nCuts;   
-  TBranch  *b_nSel;    
+    TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-  theChain->SetBranchAddress("nCuts", &nCuts, &b_nCuts);
-  theChain->SetBranchAddress("nSel", nSel, &b_nSel);
-  Long64_t nentries = theChain->GetEntries();
-  Long64_t nbytes = 0, nb = 0;
-  for (Long64_t jentry=0; jentry<nentries;jentry++) {
-    nb = theChain->GetEntry(jentry);   
-    nbytes    += nb;
-    nEv_endWW[theCha] += nSel[16];
-    nEv_end0j[theCha] += nSel[23];
-    nEv_end1j[theCha] += nSel[24];
+    treeData->Project("histo1","dphill","step[9] && njets==1 && leadingJetBTagTrackCount>2.1");
+    float Ncontrol = histo1->Integral();
+
+    treeData->Project("histo1","dphill","step[9] && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetBTagTrackCount>2.1 || nSoftMu>0)");
+    float Ncontrol_toptag = histo1->Integral();
+
+    float eff_softtoptag = Ncontrol_toptag / Ncontrol;
+    float eff_softtoptag_err = sqrt(eff_softtoptag * (1-eff_softtoptag)/Ncontrol);
+
+    // export to the 0-jet bin using the fraction of ttbar/single-t
+    TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
+    TTree *treeTop = (TTree*)fileTop->Get("T1");
+
+    TH1F *histo2 = new TH1F("histo2","",50,0,180);
+
+    treeTop->Project("histo2","dphill","(step[9] && njets==0)*baseW*puW");
+    float top_pretopveto = histo2->Integral();
+    
+    treeTop->Project("histo2","dphill","(step[9] && njets==0 && process==11)*baseW*puW");
+    float ttbar_pretopveto = histo2->Integral();
+
+    float fttbar = ttbar_pretopveto / top_pretopveto;
+    float fsinglet = 1.0 - fttbar;
+
+    float fttbar_over_singlet_err = 0.17; // generator uncertainty
+    float fttbar_err = 1.0/fttbar * fttbar_over_singlet_err;
+    float fsinglet_err = 1.0/fsinglet * fttbar_over_singlet_err;
+
+    // do the weighted average of the efficiency in ttbar and single-t
+    float eff2b_tt = 1 - pow(1 - eff_softtoptag, 2);
+    float eff2b_tt_err = 2 * (1-eff2b_tt) * eff_softtoptag_err;
+    
+    std::cout << "eff^{soft}_{top-tag} = " << eff_softtoptag << " +/- " << eff_softtoptag_err << std::endl;
+    std::cout << "eff_2b^{soft}_{top-tag} = " << eff2b_tt << " +/- " << eff2b_tt_err << std::endl;
+    std::cout << "f_{ttbar} = " << fttbar << " +/- " << fttbar_err << std::endl;
+    std::cout << "f_{singlet} = " << fsinglet << " +/- " << fsinglet_err << std::endl;
+    
+    float eff_0j = fttbar * eff2b_tt + fsinglet * eff_softtoptag;
+    float eff_0j_err = quadrSum( pow(fttbar_err,2)*pow(eff2b_tt,2) + pow(eff2b_tt_err,2)*pow(fttbar,2),
+                                 pow(fsinglet_err,2)*pow(eff_softtoptag,2) + pow(eff_softtoptag_err,2)*pow(fsinglet,2) );
+    
+    std::cout << "===> BIN-0: eff_0j = " << eff_0j << " +/- " << eff_0j_err << std::endl;
+
+    return std::make_pair(eff_0j,eff_0j_err);
+
+  } else if(njets==1) {
+
+    TH1F *histo1 = new TH1F("histo1","",50,0,180);
+
+    treeData->Project("histo1","dphill","step[9] && njets==2");
+    float Ncontrol = histo1->Integral();
+
+    treeData->Project("histo1","dphill","step[9] && njets==2 && leadingJetBTagTrackCount>2.1");
+    float Ncontrol_toptag = histo1->Integral();
+
+    float eff_softtoptag = Ncontrol_toptag / Ncontrol;
+    float eff_softtoptag_err = sqrt(eff_softtoptag * (1-eff_softtoptag)/Ncontrol);
+
+    std::cout << "===> BIN-1: eff_1j = " << eff_softtoptag << " +/- " << eff_softtoptag_err << std::endl;
+
+    return std::make_pair(eff_softtoptag,eff_softtoptag_err); 
   }
-}
 
+  std::cout << "ERROR: njets must be 0 or 1" << std::endl;
+  return std::make_pair(0,0);
+
+}
