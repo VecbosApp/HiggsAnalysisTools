@@ -479,7 +479,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
       i_WWSel = (step[13]) ? 1 : 0;
-      i_WWSel1j = (step[19] && njets==1) ? 1 : 0;
+      i_WWSel1j = (step[20] && njets==1) ? 1 : 0;
       i_hlt = (hlt) ? 1 : 0;
 
       zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
