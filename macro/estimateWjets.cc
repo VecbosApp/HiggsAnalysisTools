@@ -41,15 +41,18 @@ void estimateWjets(int njets) {
   
   char njetscut[20];
   sprintf(njetscut,"(njets==%d)",njets);
+  char wwLevelCut[20];
+  if(njets==0) sprintf(wwLevelCut,"WWSel");
+  if(njets==1) sprintf(wwLevelCut,"WWSel1j");
 
   float yield_WWSel[5][4]; // [bin][icha] bin = 5 => total
   float yield_WWSel_staterr[5][4]; // [bin][icha]
 
-  // for now only ee is done
-  TFile *fileEE = TFile::Open("results_data/datasets_trees_skim/dataset_fakes_ee.root");
-  TFile *fileMM = TFile::Open("results_data/datasets_trees_skim/dataset_fakes_ee.root");
-  TFile *fileEM = TFile::Open("results_data/datasets_trees_skim/dataset_fakes_ee.root");
-  TFile *fileME = TFile::Open("results_data/datasets_trees_skim/dataset_fakes_ee.root");
+  // for now only ee and me are done
+  TFile *fileEE = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileMM = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileEM = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileME = TFile::Open("results_data/merged/dataset_fake_me.root");
 
   TTree *treeEE = (TTree*)fileEE->Get("T1");
   TTree *treeMM = (TTree*)fileMM->Get("T1");
@@ -68,15 +71,14 @@ void estimateWjets(int njets) {
   for(int icha=0; icha<4; icha++) {
     for(int ibin=0; ibin<4; ibin++) {
       
-      TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-      TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
-
+      TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
+      TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[ibin][icha] = histo->Integral();
-
+      
       trees[icha]->Project("histo","dphill",fpCutStatErr);
       yield_WWSel_staterr[ibin][icha] = sqrt(histo->Integral());
-
     }
   }  
 
@@ -180,16 +182,16 @@ void estimateWjets(int njets) {
     
     // yields at WW level
     for(int icha=0; icha<4; icha++) {
-        TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-        TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
-        
-        trees[icha]->Project("histo","dphill",fpCut);
-        yield_WWSel[4][icha] = histo->Integral();
-        
-        trees[icha]->Project("histo","dphill",fpCutStatErr);
-        yield_WWSel_staterr[4][icha] = sqrt(histo->Integral());
+      TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
+      TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      
+      trees[icha]->Project("histo","dphill",fpCut);
+      yield_WWSel[4][icha] = histo->Integral();
+      
+      trees[icha]->Project("histo","dphill",fpCutStatErr);
+      yield_WWSel_staterr[4][icha] = sqrt(histo->Integral());
     }
-
+    
     // total for all the channels
     float yield_tot = 0.;
     float yield_tot_err = 0.;
@@ -219,10 +221,10 @@ void estimateWjets(int njets) {
   // this is useful for W+jets contamination in the top-tagged control sample
   // use a channel independent estimate
   // for now only ee is done
-  TFile *fileEEAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
-  TFile *fileMMAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
-  TFile *fileEMAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
-  TFile *fileMEAll = TFile::Open("results_data/datasets_trees/dataset_fakes_ee.root");
+  TFile *fileEEAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileMMAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileEMAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
+  TFile *fileMEAll = TFile::Open("results_data/merged/dataset_fake_me.root");
 
   TTree *treeEEAll = (TTree*)fileEEAll->Get("T1");
   TTree *treeMMAll = (TTree*)fileMMAll->Get("T1");
@@ -250,8 +252,8 @@ void estimateWjets(int njets) {
 
   for(int icha=0; icha<4; icha++) {
     // step[9] is all before b-veto and njet cut 
-    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");               // chiara: hlt non c'era
+    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt");    // chiara: hlt non c'era
     
     trees[icha]->Project("histo2","dphill",fpCut);
     yield_WWSel_denom[icha] = histo2->Integral();
@@ -263,8 +265,8 @@ void estimateWjets(int njets) {
 
     // as the tagged 1 jet bin
     // for the 1 jet numerator: one event enter the top control region if the leading jet is btagged && all the rest are not 
-    fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-    fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+    fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");
+    fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt");
 
     trees[icha]->Project("histo2","dphill",fpCut);
     yield_WWSel_1jnum_tot += histo2->Integral();
