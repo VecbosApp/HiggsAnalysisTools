@@ -292,9 +292,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("effW", &effW, "effW/F");
       theTreeNew->Branch("triggW", &triggW, "triggW/F");
       theTreeNew->Branch("met", &pfMet, "met/F");
-      theTreeNew->Branch("met2", &tkMET, "met2/F");
+      theTreeNew->Branch("met2", &tkMET, "met2/F");  
       theTreeNew->Branch("hlt", &i_hlt, "hlt/I");
-      theTreeNew->Branch("met", &pfMet, "met/F");
       theTreeNew->Branch("caloMet", &caloMet, "caloMet/F");
       theTreeNew->Branch("pmet", &pmet, "pmet/F");
       theTreeNew->Branch("pmet2", &pmet2, "pmet2/F");
@@ -508,9 +507,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         dphilmet1 = fabs(pfmetV->DeltaPhi(TV_L1));
         dphilmet2 = fabs(pfmetV->DeltaPhi(TV_L2));
 
-        tkMET = TV_tkmet.Pt();
+        tkMET = TV_tkmet.Pt();    
         pmet = GetProjectedMet(*pfmetV,TV_L1,TV_L2);
-        pmet2 = GetProjectedMet(tkMET,TV_L1,TV_L2);
+        pmet2 = GetProjectedMet(TV_tkmet,TV_L1,TV_L2);
 
         mtw1 = calcMT(*pfmetV,TV_L1);
         mtw2 = calcMT(*pfmetV,TV_L2);
