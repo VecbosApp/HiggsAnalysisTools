@@ -1,6 +1,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TBranch.h>
+#include <TH2F.h>
 #include <TMath.h>
 #include <TLorentzVector.h>
 #include <TVector3.h>
@@ -13,8 +14,9 @@ int FRWeights = 0;
 float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2);
 float calcMT(TVector3 met, TVector3 lepton);
 void addFRWeights() { FRWeights = 1;};
+float getOfflineEff(float pT, float eta, TH2F *myH);
 
-void addWeights(const char* filename, float baseW, int processId, int finalstate) {
+void addWeights(const char* filename, float baseW, int processId, int finalstate, int release) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << baseW << endl;
 
@@ -30,6 +32,19 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     return;
   }
 
+  // reading root files with electrons and muons efficiencies
+  TFile fileSFmuons41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Spring11_41X.root");
+  TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap");
+  // 
+  TFile fileSFmuons42("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Summer11_42X.root");
+  TH2F *histoSFmuons42 = (TH2F*)fileSFmuons42.Get("hScaleFactorMap");
+  //
+  TFile fileSFEle41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/EffSFs_ElectronSel_DataLP11_MCSpring11_41X.root");
+  TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF");
+  //
+  TFile fileSFEle42("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Electrons_vpvPlusExpo_OutputScaleFactorMap_Summer11_42X.root");
+  TH2F *histoSFele42 = (TH2F*)fileSFEle42.Get("hScaleFactorMap");
+  
   if ( treeOrig ) {
     int nentriesOrig = treeOrig->GetEntries();
 
@@ -272,7 +287,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     int zveto, bveto_ip, bveto_mu, bveto;
 
     // additional (dummy for the moment)
-    Float_t effW = 1.0;
+    Float_t effW   = 1.0;   
     Float_t triggW = 1.0;
 
     for(int i=0; i<(int)trees.size();i++) {
@@ -503,6 +518,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         TVector3 TV_jet2( pxSecondJet[0], pySecondJet[0], pzSecondJet[0] );
         deltaPhi_LL       = (180./3.14) * TV_L1.DeltaPhi(TV_L2);
         deltaPhi_LL_MET   = (180./3.14) * TV_tkmet.DeltaPhi(TV_L1p2);
+	float l1eta = TV_L1.Eta();
+	float l2eta = TV_L2.Eta();
+	float l1pt  = TV_L1.Pt();
+	float l2pt  = TV_L2.Pt();
 
         dphilmet1 = fabs(pfmetV->DeltaPhi(TV_L1));
         dphilmet2 = fabs(pfmetV->DeltaPhi(TV_L2));
@@ -513,6 +532,50 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
         mtw1 = calcMT(*pfmetV,TV_L1);
         mtw2 = calcMT(*pfmetV,TV_L2);
+
+	//  offline efficiency scale factors
+	Float_t eff1=1.; 
+	Float_t eff2=1.;
+	if (finalstate==0) {   // mm
+	  if (release==0) { 
+	    // cout << "finalstate==0" << endl;
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
+	  }
+	  else if (release==1) {
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);    
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);    
+	  }
+	}
+	else if (finalstate==1) { // ee
+	  // cout << "finalstate==1" << endl;
+	  if (release==0) { 
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+	  } else if (release==1) {
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	  }
+	} else if (finalstate==2) {  // em
+	  // cout << "finalstate==2" << endl;
+	  if (release==0) { 
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
+	  } else if (release==1) {
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);
+	  }
+	} else if (finalstate==3) {  // me
+	  // cout << "finalstate==3" << endl;
+	  if (release==0) { 
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+	  } else if (release==1) {
+	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	  }
+	} 
+	effW = eff1*eff2;
 
         if(TV_jet1.Pt()>15) {
           TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
@@ -622,3 +685,29 @@ float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2) {
 float calcMT(TVector3 met, TVector3 lepton) {
   return sqrt( 2.*(lepton.Pt())*(met.Pt())*( 1 - cos(met.DeltaPhi(lepton))) );
 }
+
+float getOfflineEff(float pT, float eta, TH2F *myH) {
+
+  float theEff=-1.;
+  
+  int numberOfBins = myH->GetNbinsX()*myH->GetNbinsY();
+  int   xBins = myH->GetXaxis()->GetNbins();
+  float xMin  = myH->GetXaxis()->GetBinLowEdge(1);
+  float xMax  = myH->GetXaxis()->GetBinUpEdge(xBins);
+  int   yBins = myH->GetYaxis()->GetNbins();
+  float yMin  = myH->GetYaxis()->GetBinLowEdge(1);
+  float yMax  = myH->GetYaxis()->GetBinUpEdge(yBins);
+  int theBin = myH->FindBin(pT, fabs(eta));
+  if (pT>xMin && pT<xMax && fabs(eta)>yMin && fabs(eta)<yMax) {
+    theEff = myH->GetBinContent(theBin);
+  } else {
+    theEff = 1.;
+    cout << "pT = " << pT << ", eta = " << eta << ": pT or eta out of histo bounds. Put SF = 1" << endl;
+  }
+
+  // cout << "pT = " << pT << ", eta = " << eta << ", eff = " << theEff << endl;
+
+  return theEff;
+}
+
+
