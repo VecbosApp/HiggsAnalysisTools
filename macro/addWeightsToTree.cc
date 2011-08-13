@@ -538,46 +538,50 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	//  offline efficiency scale factors
 	Float_t eff1=1.; 
 	Float_t eff2=1.;
-	if (finalstate==0) {   // mm
-	  if (release==0) { 
-	    // cout << "finalstate==0" << endl;
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
+	if (processId>0) { // MC => apply scale factors
+	  if (finalstate==0) {   // mm
+	    if (release==0) { 
+	      // cout << "finalstate==0" << endl;
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
+	    }
+	    else if (release==1) {
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);    
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);    
+	    }
 	  }
-	  else if (release==1) {
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);    
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);    
-	  }
+	  else if (finalstate==1) { // ee
+	    // cout << "finalstate==1" << endl;
+	    if (release==0) { 
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+	    } else if (release==1) {
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	    }
+	  } else if (finalstate==2) {  // em
+	    // cout << "finalstate==2" << endl;
+	    if (release==0) { 
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
+	    } else if (release==1) {
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);
+	    }
+	  } else if (finalstate==3) {  // me
+	    // cout << "finalstate==3" << endl;
+	    if (release==0) { 
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+	    } else if (release==1) {
+	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);
+	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	    }
+	  } 
+	  effW = eff1*eff2;
+	} else { // data
+	  effW = 1.;
 	}
-	else if (finalstate==1) { // ee
-	  // cout << "finalstate==1" << endl;
-	  if (release==0) { 
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
-	  } else if (release==1) {
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
-	  }
-	} else if (finalstate==2) {  // em
-	  // cout << "finalstate==2" << endl;
-	  if (release==0) { 
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
-	  } else if (release==1) {
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);
-	  }
-	} else if (finalstate==3) {  // me
-	  // cout << "finalstate==3" << endl;
-	  if (release==0) { 
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
-	  } else if (release==1) {
-	    eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
-	  }
-	} 
-	effW = eff1*eff2;
 
         if(TV_jet1.Pt()>15) {
           TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
