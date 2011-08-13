@@ -351,7 +351,6 @@ void countEvents() {
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     int release = 0;
-    if (isample>0 && isample<7) release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, " << sampleProcessId[isample] << " ,1, " << release << ");" << std::endl;
   }
@@ -376,7 +375,6 @@ void countEvents() {
   for(int isample=0; isample<NSAMPLES; isample++) {
     cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     int release = 0;
-    if (isample>0 && isample<7) release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameMM = sampleName[isample].ReplaceAll("_ee","_mm");
     weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, " << sampleProcessId[isample] << " ,0, " << release << ");" << std::endl;
@@ -402,7 +400,6 @@ void countEvents() {
   for(int isample=0; isample<NSAMPLES; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     int release = 0;
-    if (isample>0 && isample<7) release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_mm","_em");
     weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,2, " << release << ");" << std::endl;
@@ -428,7 +425,6 @@ void countEvents() {
   for(int isample=0; isample<NSAMPLES; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     int release = 0;
-    if (isample>0 && isample<7) release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_em","_me");
     weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,3, " << release << ");" << std::endl;
