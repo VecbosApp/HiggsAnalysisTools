@@ -73,6 +73,9 @@ void estimateWjets(int njets) {
       
       TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
       TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      // for MC closure test
+      // TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
+      // TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
       
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[ibin][icha] = histo->Integral();
@@ -184,6 +187,9 @@ void estimateWjets(int njets) {
     for(int icha=0; icha<4; icha++) {
       TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
       TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      // for MC closure test
+      // TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
+      // TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
       
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[4][icha] = histo->Integral();
@@ -252,8 +258,12 @@ void estimateWjets(int njets) {
 
   for(int icha=0; icha<4; icha++) {
     // step[9] is all before b-veto and njet cut 
-    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");               // chiara: hlt non c'era
-    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt");    // chiara: hlt non c'era
+
+    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");            
+    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt"); 
+    // for MC closure test
+    // TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW");               
+    // TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW");    
     
     trees[icha]->Project("histo2","dphill",fpCut);
     yield_WWSel_denom[icha] = histo2->Integral();
@@ -265,8 +275,12 @@ void estimateWjets(int njets) {
 
     // as the tagged 1 jet bin
     // for the 1 jet numerator: one event enter the top control region if the leading jet is btagged && all the rest are not 
+
     fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");
     fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt");
+    // for MC closure test
+    // fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW");
+    // fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW");
 
     trees[icha]->Project("histo2","dphill",fpCut);
     yield_WWSel_1jnum_tot += histo2->Integral();
