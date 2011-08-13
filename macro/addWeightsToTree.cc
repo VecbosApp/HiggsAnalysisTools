@@ -19,6 +19,8 @@ float getOfflineEff(float pT, float eta, TH2F *myH);
 void addWeights(const char* filename, float baseW, int processId, int finalstate, int release) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << baseW << endl;
+  if (release==0) cout << "Offline efficiency computed using 41X samples" << endl;
+  if (release==1) cout << "Offline efficiency computed using 42X samples" << endl;
 
   TFile *fileOrig = 0;
   TTree *treeOrig = 0;
