@@ -200,8 +200,12 @@ void countEvents() {
   sampleXsec.push_back(10.6);
   sampleXsec.push_back(157.5);
   sampleXsec.push_back(165.);
-  sampleXsec.push_back(4.513968);
-  sampleXsec.push_back(0.1538);
+  // s(NLO qqWW+ggWW) = 47 pb, [K. Ellis]
+  // gg/Tot = 0.0305
+  // sigma(qqWW) = 47*(1-0.0305) * 0.108*0.108*9 = 4.7833889
+  // sigma(ggWW) = 47*0.0305*0.108*0.108*9 = 0.150483
+  sampleXsec.push_back(4.7833889);
+  sampleXsec.push_back(0.150483);
   sampleXsec.push_back(0.599442);
   sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor.
 
