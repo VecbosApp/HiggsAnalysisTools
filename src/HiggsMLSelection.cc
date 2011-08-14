@@ -783,7 +783,7 @@ void HiggsMLSelection::Loop() {
     int njets[4], nuncorrjets[4];
     float dphiLLJ[4];
     float btag[4];
-    int nsoftmu[4],nextraleptons[4];
+    int nsoftmu[4], nsoftmunojets[4], nextraleptons[4];
     float jesMtUp[4], jesMtDown[4];
     for(int ichan=0; ichan<4; ichan++) {
 
@@ -798,7 +798,13 @@ void HiggsMLSelection::Loop() {
       btag[ichan] = bVetoJets(eleCands[ichan],muCands[ichan],ichan);
 
       // soft muon counter
-      nsoftmu[ichan] = numSoftMuons(muCands[ichan]);
+      // w/o jet cleaning (for the selection)
+      std::vector<int> emptyJets;
+      emptyJets.clear();
+      nsoftmu[ichan] = numSoftMuons(muCands[ichan],emptyJets);
+
+      // w jet cleaning (for the top estimation)
+      nsoftmunojets[ichan] = numSoftMuons(muCands[ichan],m_goodJets);
 
       // extra lepton counter
       nextraleptons[ichan] = numExtraLeptons(eleCands[ichan],muCands[ichan]);
@@ -928,7 +934,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[ee], leadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee]);
+                              nsoftmu[ee], leadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee]);
 
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1067,7 +1073,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[mm], leadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm]);
+                              nsoftmu[mm], leadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm]);
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1217,7 +1223,7 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[em], leadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em]);
+                              nsoftmu[em], leadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em]);
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1359,7 +1365,7 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[me], leadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me]);
+                              nsoftmu[me], leadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me]);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -2630,7 +2636,7 @@ float HiggsMLSelection::deltaPhiLLJet(int ichan) {
 
 }
 
-int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
+int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove) {
 
   int num = 0;
   for(int i=0; i<nMuon; ++i) {
@@ -2640,6 +2646,15 @@ int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove) {
       if(i==muonToRemove[muSel]) isSelMuon=true;
     }
     if(isSelMuon) continue;
+
+    bool isAroundGoodJet=false;
+    for(int jet=0; jet<(int)jetsToRemove.size(); jet++) {
+      int j = jetsToRemove[jet];
+      TVector3 p3Jet(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j],pzAK5PFPUcorrJet[j]);
+      TVector3 p3Muon(pxMuon[i],pyMuon[i],pzMuon[i]);
+      if(p3Jet.DeltaR(p3Muon)<0.5) isAroundGoodJet=true;
+    }
+    if(isAroundGoodJet) continue;
 
     float pt = GetPt(pxMuon[i],pyMuon[i]);
     if(pt < 3.0) continue;

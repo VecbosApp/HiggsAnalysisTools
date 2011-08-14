@@ -85,7 +85,7 @@ private:
   //! in the 1-jet bin, deltaphi between ll system and leading jet
   float deltaPhiLLJet(int ichan);
   //! count the soft muons
-  int numSoftMuons(std::vector<int> muonToRemove);
+  int numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! returns the output of the custom cut electron ID with WPXX
