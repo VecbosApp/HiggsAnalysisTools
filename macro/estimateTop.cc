@@ -109,13 +109,13 @@ void estimateTop(int njets) {
     treeDY->Project("btagDYHLL","dphill",(TString("(step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && !bveto)*baseW*puW")).Data());
     
   } else {
-    treeData->Project("btagHDataEE","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && channel==1")).Data());
-    treeData->Project("btagHDataMM","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && channel==0")).Data());
-    treeData->Project("btagHDataEM","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && channel==2")).Data());
-    treeData->Project("btagHDataME","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && channel==3")).Data());
+    treeData->Project("btagHDataEE","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==1")).Data());
+    treeData->Project("btagHDataMM","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==0")).Data());
+    treeData->Project("btagHDataEM","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==2")).Data());
+    treeData->Project("btagHDataME","dphill",(TString("step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==3")).Data());
 
-    treeWW->Project("btagWWHLL","dphill",(TString("(step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1)*baseW*puW")).Data());
-    treeDY->Project("btagDYHLL","dphill",(TString("(step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1)*baseW*puW")).Data());
+    treeWW->Project("btagWWHLL","dphill",(TString("(step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0)*baseW*puW")).Data());
+    treeDY->Project("btagDYHLL","dphill",(TString("(step[9] && nExtraLep==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0)*baseW*puW")).Data());
 
   }
 
@@ -269,6 +269,7 @@ void estimateTop(int njets) {
   char nameFile[100];
   sprintf(nameFile,"TopYieldsData_ForTable_%dj.txt",njets);
   tablefileData.open(nameFile, ios_base::trunc);
+  tablefileData.setf(ios::fixed,ios::floatfield);
   tablefileData.precision(2);
 
   tablefileData << "\\begin{table}[p]" << endl;
@@ -282,6 +283,7 @@ void estimateTop(int njets) {
   ofstream tablefileMC;
   sprintf(nameFile,"TopYieldsMC_ForTable_%dj.txt",njets);
   tablefileMC.open(nameFile, ios_base::trunc);
+  tablefileMC.setf(ios::fixed,ios::floatfield);
   tablefileMC.precision(2);
 
   tablefileMC << "\\begin{table}[p]" << endl;
@@ -301,7 +303,8 @@ void estimateTop(int njets) {
     if(icha==em) sprintf(fileName,"TopCard_em_%dj.txt",njets);
     if(icha==me) sprintf(fileName,"TopCard_me_%dj.txt",njets);
     cardfile[icha].open(fileName, ios_base::trunc);
-    cardfile[icha].precision(2);
+    cardfile[icha].setf(ios::fixed,ios::floatfield);
+    cardfile[icha].precision(5);
   }
     
 
