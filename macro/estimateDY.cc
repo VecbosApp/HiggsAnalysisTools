@@ -158,6 +158,10 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   TH1F *nmmInH = new TH1F("nmmInH","",50,0,180);
   TH1F *nemInH = new TH1F("nemInH","",50,0,180);
 
+  // to decide the cut for R
+  TH1F *neeCheckInH = new TH1F("neeCheckInH","",50,0,180);
+  TH1F *nmmCheckInH = new TH1F("nmmCheckInH","",50,0,180);
+
   // to estimate R and k
   TH1F *neeLooseInH = new TH1F("neeLooseInH","",50,0,180);
   TH1F *neeLooseOutH = new TH1F("neeLooseOutH","",50,0,180);
@@ -177,21 +181,30 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==2)*baseW*puW")).Data());
   treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==3)*baseW*puW")).Data());
 
-  treeZjets->Project("neeLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==1)*baseW*puW")).Data());
-  treeZjets->Project("neeLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && zveto && channel==1)*baseW*puW")).Data());
-  treeZjets->Project("nmmLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==0)*baseW*puW")).Data());
-  treeZjets->Project("nmmLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && zveto && channel==0)*baseW*puW")).Data());
+  // to choose between the last and the last-1 bin
+  treeZjets->Project("neeCheckInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("nmmCheckInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==0)*baseW*puW")).Data());
+  int forTheCheck = neeCheckInH->GetEntries() + nmmCheckInH->GetEntries();
+  char mpmetcut[30];
+  if(forTheCheck<40)  { std::cout << "less than 40 events: cutting at MET>30" << std::endl; sprintf(mpmetcut,"mpmet>30"); }
+  if(forTheCheck>=40) { std::cout << "more than 40 events: cutting at MET>40" << std::endl; sprintf(mpmetcut,"mpmet>40"); }
 
-  treeData->Project("neeLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && channel==1)")).Data());
-  treeData->Project("neeLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && channel==1)")).Data());
-  treeData->Project("nmmLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && channel==0)")).Data());
-  treeData->Project("nmmLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && channel==0)")).Data());
-  treeData->Project("nemLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && (channel==2 || channel==3))")).Data());
-  treeData->Project("nemLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && (channel==2 || channel==3))")).Data());
+  // nominal R computed with cut at 40 or 30 (according to the statistics)
+  treeZjets->Project("neeLooseInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("neeLooseOutH","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==0)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseOutH","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && zveto && channel==0)*baseW*puW")).Data());
+
+  treeData->Project("neeLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && channel==1)")).Data());
+  treeData->Project("neeLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && channel==1)")).Data());
+  treeData->Project("nmmLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && channel==0)")).Data());
+  treeData->Project("nmmLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && channel==0)")).Data());
+  treeData->Project("nemLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && !zveto && (channel==2 || channel==3))")).Data());
+  treeData->Project("nemLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && mll>12 && zveto && (channel==2 || channel==3))")).Data());
   
   // contribution under the peak
-  treeOthers->Project("OthersEEH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==1)*baseW*puW")).Data());
-  treeOthers->Project("OthersMMH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==0)*baseW*puW")).Data());
+  treeOthers->Project("OthersEEH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeOthers->Project("OthersMMH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==0)*baseW*puW")).Data());
   
   treeData->Project("neeInH","dphill",(TString("mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==1")).Data()); 
   treeData->Project("nmmInH","dphill",(TString("mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0  && bveto && !zveto && channel==0")).Data());
@@ -212,6 +225,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   k[mm] = sqrt(nmmLooseInH->Integral() / neeLooseInH->Integral());
   k_err[mm] = 0.01; // from other studies
 
+  cout << "from loose: cut 40 or 30 => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
+  cout << "from loose: cut 40 or 30 => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
+  cout << "from loose: cut 40 or 30 => Ree = "    << R[ee]  << ", Rmm = " << R[mm] << endl;
 
   // combine ee+mm because of low stat
   // R
@@ -259,16 +275,19 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   // k combined is 
   float kll_data = 0.5*(k_data[mm]+1.0/k_data[mm]);
 
-
-  // for the systematics: mpMET>40 in MC
-  treeZjets->Project("neeLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && !zveto && channel==1)*baseW*puW")).Data());
-  treeZjets->Project("neeLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && zveto && channel==1)*baseW*puW")).Data());
-  treeZjets->Project("nmmLooseInH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && !zveto && channel==0)*baseW*puW")).Data());
-  treeZjets->Project("nmmLooseOutH","dphill",(TString("(finalLeptons && met>20 && mpmet>40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && zveto && channel==0)*baseW*puW")).Data());
+  // for the systematics: mpMET>20 in MC
+  treeZjets->Project("neeLooseInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==0)*baseW*puW")).Data());
+  treeZjets->Project("neeLooseOutH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && zveto && channel==1)*baseW*puW")).Data());
+  treeZjets->Project("nmmLooseOutH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && zveto && channel==0)*baseW*puW")).Data());
 
   float R_interm[2];
   R_interm[ee] = (neeLooseOutH->Integral()) / (neeLooseInH->Integral());
   R_interm[mm] = (nmmLooseOutH->Integral()) / (nmmLooseInH->Integral());
+
+  cout << "from interm: cut 20 => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
+  cout << "from interm: cut 20 => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
+  cout << "from interm: cut 20 => Ree = " << R_interm[ee]  << ", Rmm = " << R_interm[mm] << endl;
 
   float Rll_interm = (neeLooseOutH->Integral() + nmmLooseOutH->Integral()) / (neeLooseInH->Integral() + nmmLooseInH->Integral());
 
@@ -280,12 +299,12 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   Rll_systerr = fabs(Rll - Rll_interm);
   Rll_toterr = quadrSum(Rll_err,Rll_systerr);
 
-  treeData->Project("neeLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && channel==1)")).Data());
-  treeData->Project("neeLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && channel==1)")).Data());
-  treeData->Project("nmmLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && channel==0)")).Data());
-  treeData->Project("nmmLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && channel==0)")).Data());
-  treeData->Project("nemLooseInHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && (channel==2 || channel==3))")).Data());
-  treeData->Project("nemLooseOutHData","dphill",(TString("(finalLeptons && met>20 && mpmet>30 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && (channel==2 || channel==3))")).Data());
+  treeData->Project("neeLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==1)")).Data());
+  treeData->Project("neeLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==1)")).Data());
+  treeData->Project("nmmLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==0)")).Data());
+  treeData->Project("nmmLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==0)")).Data());
+  treeData->Project("nemLooseInHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && (channel==2 || channel==3))")).Data());
+  treeData->Project("nemLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && (channel==2 || channel==3))")).Data());
 
   float R_data_interm[2];
   R_data_interm[ee] = (neeLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()) / (neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral());
