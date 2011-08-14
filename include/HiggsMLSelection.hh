@@ -193,7 +193,7 @@ private:
   float m_projectedMet[4], m_chMet[4];
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
-  float leadJetBtag[4], subLeadJetsMaxBtag[4];
+  float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
 
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
   float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];

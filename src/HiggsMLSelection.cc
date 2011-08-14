@@ -785,6 +785,14 @@ void HiggsMLSelection::Loop() {
     float btag[4];
     int nsoftmu[4], nsoftmunojets[4], nextraleptons[4];
     float jesMtUp[4], jesMtDown[4];
+
+    // initialize the btags for the leading and subleading jets to unphysical value
+    for(int ichan=0; ichan<4; ichan++) {
+      leadJetBtag[ichan] = -2000.;
+      subleadJetBtag[ichan] = -2000.;
+      subLeadJetsMaxBtag[ichan] = -2000.;
+    }
+
     for(int ichan=0; ichan<4; ichan++) {
 
       // jet counter
@@ -934,7 +942,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[ee], leadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee]);
+                              nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee]);
 
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1073,7 +1081,7 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[mm], leadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm]);
+                              nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm]);
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1223,7 +1231,7 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[em], leadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em]);
+                              nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em]);
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -1365,7 +1373,7 @@ void HiggsMLSelection::Loop() {
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[me], leadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me]);
+                              nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me]);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
 
@@ -2471,6 +2479,7 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
 
     } else if ( pt>ETMax2 && pt<ETMax ) {
       theSecondJet[theChannel] = j;
+      subleadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
       ETMax2 = pt;
     }
 

@@ -69,8 +69,9 @@ public:
   void fillFake(int ntigh, float wfp, float wsfp, float wff, float wsff, float wpp, float wspp);
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
-                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, float leadJetBTagTrackCount, float subleadJetBTagTrackCount, int numExtraLep, 
-                  int nSoftMuNoJets);
+                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, 
+                  float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount, 
+                  int numExtraLep, int nSoftMuNoJets);
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                      int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
@@ -128,7 +129,7 @@ private:
   float myBTagImpPar;
   float myBTagSecVertex;
   int myNSoftMu, myNSoftMuNoJets;
-  float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount;
+  float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount, mySubleadingJetsMaxBTagTrackCount;
   int  myNumExtraLep;
   bool myFinalLeptons;
   bool myJetVeto;
