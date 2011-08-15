@@ -58,21 +58,21 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   TString scalefactor_datadriven[NSPECIES][JETBINS];
   scalefactor_datadriven[0][0] = "1.";
   scalefactor_datadriven[1][0] = "1.";
-  scalefactor_datadriven[2][0] = "2.05"; // here the data are used directly
+  scalefactor_datadriven[2][0] = "1.0"; // here the data are used directly
   //  scalefactor_datadriven[2][0] = "1.0"; // if taken from MC
   scalefactor_datadriven[3][0] = "1."; // taken from MC, + scale factor
-  scalefactor_datadriven[4][0] = "1.12";
+  scalefactor_datadriven[4][0] = "1.5";
   scalefactor_datadriven[5][0] = "1.6";
-  scalefactor_datadriven[6][0] = "1.04";
+  scalefactor_datadriven[6][0] = "0.986";
 
   scalefactor_datadriven[0][1] = "1.";
   scalefactor_datadriven[1][1] = "1.";
-  scalefactor_datadriven[2][1] = "2.4"; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
+  scalefactor_datadriven[2][1] = "1."; // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
   // scalefactor_datadriven[2][1] = "1.0";
   scalefactor_datadriven[3][1] = "1."; // taken from MC + scalefactor
-  scalefactor_datadriven[4][1] = "1.45";
-  scalefactor_datadriven[5][1] = "3.5";
-  scalefactor_datadriven[6][1] = "0.962";
+  scalefactor_datadriven[4][1] = "1.21";
+  scalefactor_datadriven[5][1] = "2.3";
+  scalefactor_datadriven[6][1] = "1.22";
 
   Color_t colors[NSPECIES];
   colors[0]=kBlack;
@@ -107,7 +107,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   files[0]="results_data/datasets_trees_skim/dataset_"+TString(finalstate)+".root";  
   files[1]="results/datasets_trees_skim/H"+TString(mass)+"_"+TString(finalstate)+".root";  
   //files[2]="results/datasets_trees/Wjets_"+TString(finalstate)+".root";
-  files[2]="results_fake/allfake/merged_skim/dataset_fake_"+TString(finalstate)+".root";
+  files[2]="results_data/datasets_trees_fake/dataset_fake_"+TString(finalstate)+".root";
   files[3]="results/datasets_trees_skim/others_"+TString(finalstate)+".root";
   files[4]="results/datasets_trees_skim/top_"+TString(finalstate)+".root";
   files[5]="results/datasets_trees_skim/Zjets_"+TString(finalstate)+".root";
@@ -152,9 +152,9 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   nbins[0]=50;
   nbins[1]=50;
   nbins[2]=50;
-  nbins[3]=80;
-  nbins[4]=60;
-  nbins[5]=40;
+  nbins[3]=50;
+  nbins[4]=50;
+  nbins[5]=50;
   nbins[6]=50;
   nbins[7]=7;
   nbins[8]=20;
@@ -195,7 +195,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   range[9][1]=10.;
   // mR
   range[10][0]=0.;
-  range[10][1]=250.;
+  range[10][1]=300.;
   // delta phi LL-JJ
   range[11][0]=0.;
   range[11][1]=180.;
@@ -283,16 +283,16 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 		  return;
 		}
               int jetbin = -1;
-              if(j==1 || j==3) jetbin = 0;
-              if(j==2 || j==4 || j == 5) jetbin = 1;
+              if(j==0 || j==2) jetbin = 0;
+              if(j==1 || j==3) jetbin = 1;
               if(i>0) {
-                if(j>0) { // scalefactors are valid from WW level on
-                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*kfW*")+scalefactor_datadriven[i][jetbin]);
-                  else T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("puW*")+scalefactor_datadriven[i][jetbin]); // W+jets uses the FR data weight only
+                if(j>=0) { // scalefactors are valid from WW level on
+                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*kfW*effW*")+scalefactor_datadriven[i][jetbin]);
+                  else T1[i]->Project(histoName,variables[z],cut[j]+TString("weightFP*")+scalefactor_datadriven[i][jetbin]); // W+jets uses the FR data weight only
                   // else T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight*")+scalefactor_datadriven[i][jetbin]); // when usign Wjets MC
                 } else {
-                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*kfW"));
-                  else T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("puW")); // W+jets uses the FR data weight only
+                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*kfW*effW"));
+                  else T1[i]->Project(histoName,variables[z],cut[j]+TString("weightFP")); // W+jets uses the FR data weight only
                   // else T1[i]->Project(histoName,variables[z],cut[j]+TString("weight*puweight"));
                 }
               } else T1[i]->Project(histoName,variables[z],cut[j]+TString("1"));
@@ -304,7 +304,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
           myPlot.addLabel("");
           myPlot.setLabel((xaxisLabel[z]).Data());
           myPlot.setUnits((units[z]).Data());
-          myPlot.setMass(130);
+          myPlot.setMass(mH);
           myPlot.setMCHist(iHWW,     histos[1][j][z]);
           myPlot.setMCHist(iWJets,   histos[2][j][z]);
           myPlot.setMCHist(iWZ,      histos[3][j][z]);
