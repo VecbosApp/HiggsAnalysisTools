@@ -338,9 +338,12 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
       // signals at tghe end
       if(isample==8 || isample==9) samplename=isample-2;
 
-      txtfilefordatacard << mH << "\t\t" << njets << "\t\t" << sampleNameCard[samplename] 
-                         << "\t\t" << val[mm] << "\t\t" << val[em] << "\t\t" << val[me] << "\t\t" << val[ee] << std::endl; 
+      txtfilefordatacard << mH << "\t" << njets << "\t" << sampleNameCard[samplename] 
+                         << "\t" << val[mm] << "\t" << val[em] << "\t" << val[me] << "\t" << val[ee] << std::endl; 
     }
+    txtfilefordatacard.precision(0);
+    txtfilefordatacard << mH << "\t" << njets << "\t" << "data" 
+                       << "\t" << yields_data[mm] << "\t" << yields_data[em] << "\t" << yields_data[me] << "\t" << yields_data[ee] << std::endl;
   }
 
   delete histo;
