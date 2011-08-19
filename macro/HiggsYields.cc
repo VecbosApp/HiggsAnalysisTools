@@ -171,11 +171,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*kfW");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*kfW");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*kfW");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*kfW");
-    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*baseW*puW*kfW");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*effW*kfW");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*effW*kfW");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*effW*kfW");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*effW*kfW");
+    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*baseW*puW*effW*kfW");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
@@ -339,11 +339,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
       if(isample==8 || isample==9) samplename=isample-2;
 
       txtfilefordatacard << mH << "\t" << njets << "\t" << sampleNameCard[samplename] 
-                         << "\t" << val[mm] << "\t" << val[em] << "\t" << val[me] << "\t" << val[ee] << std::endl; 
+                         << "\t" << val[mm] << "\t" << val[me] << "\t" << val[em] << "\t" << val[ee] << std::endl; 
     }
     txtfilefordatacard.precision(0);
     txtfilefordatacard << mH << "\t" << njets << "\t" << "data" 
-                       << "\t" << yields_data[mm] << "\t" << yields_data[em] << "\t" << yields_data[me] << "\t" << yields_data[ee] << std::endl;
+                       << "\t" << yields_data[mm] << "\t" << yields_data[me] << "\t" << yields_data[em] << "\t" << yields_data[ee] << std::endl;
   }
 
   delete histo;
