@@ -403,7 +403,7 @@ void estimateWW() {
         nWWMC_HiggsSel_0j_err[icha][iproc] = usedLumi * yieldErrPoisson(nWWMC_HiggsSel_0j[icha][iproc], WWFin[icha]->GetEntries());
         
         nWWData_HiggsSel_0j[icha][iproc] = sf_0j * nWWMC_HiggsSel_0j[icha][iproc];
-        nWWData_HiggsSel_0j_err[icha][iproc] = sf_0j * nWWMC_HiggsSel_0j_err[icha][iproc];
+        nWWData_HiggsSel_0j_err[icha][iproc] = nWW_0j_Data_tot_err/nWW_0j_Data_tot * nWWData_HiggsSel_0j[icha][iproc];
       }
     }
 
@@ -440,7 +440,7 @@ void estimateWW() {
         nWWMC_HiggsSel_1j_err[icha][iproc] = usedLumi * yieldErrPoisson(nWWMC_HiggsSel_1j[icha][iproc], WWFin[icha]->GetEntries());
         
         nWWData_HiggsSel_1j[icha][iproc] = sf_1j * nWWMC_HiggsSel_1j[icha][iproc];
-        nWWData_HiggsSel_1j_err[icha][iproc] = sf_1j * nWWMC_HiggsSel_1j_err[icha][iproc];
+        nWWData_HiggsSel_1j_err[icha][iproc] = nWW_1j_Data_tot_err/nWW_1j_Data_tot * nWWData_HiggsSel_1j[icha][iproc];
       }
     }
 
