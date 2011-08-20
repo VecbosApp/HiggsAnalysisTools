@@ -156,16 +156,21 @@ void estimateTop(int njets) {
   ///// TOP ESTIMATION ///////
   float nTopMC[4];
   float nTopMC_err[4];
-  
+  float nTopEntries[4];
+
   nTopMC[ee] = wantedLumi * topHEE->Integral();
   nTopMC_err[ee] = wantedLumi * yieldErrPoisson(nTopMC[ee],topHEE->GetEntries());
+  nTopEntries[ee] = topHEE->GetEntries();
   nTopMC[mm] = wantedLumi * topHMM->Integral();
   nTopMC_err[mm] = wantedLumi * yieldErrPoisson(nTopMC[mm],topHMM->GetEntries());
+  nTopEntries[mm] = topHMM->GetEntries();
   nTopMC[em] = wantedLumi * topHEM->Integral();
   nTopMC_err[em] = wantedLumi * yieldErrPoisson(nTopMC[em],topHEM->GetEntries());
+  nTopEntries[em] = topHEM->GetEntries();
   nTopMC[me] = wantedLumi * topHME->Integral();
   nTopMC_err[me] = wantedLumi * yieldErrPoisson(nTopMC[me],topHME->GetEntries());
-  
+  nTopEntries[me] = topHME->GetEntries();
+
   float nTopMC_tot = nTopMC[ee] + nTopMC[mm] + nTopMC[em] + nTopMC[me];
   float nTopMC_tot_err = quadrSum(nTopMC_err[ee],nTopMC_err[mm],nTopMC_err[em],nTopMC_err[me]);
 
@@ -338,9 +343,11 @@ void estimateTop(int njets) {
     TopFin.push_back(topHME);
 
     for(int icha=0; icha<4; icha++) {
-      eff[icha] = TopFin[icha]->Integral() / nTopMC[icha];
-      eff_err[icha] = eff[icha] * quadrSum(yieldErrPoisson(TopFin[icha]->Integral(),TopFin[icha]->GetEntries())/TopFin[icha]->Integral(),
-                                           nTopMC_err[icha]/nTopMC[icha] );
+      eff[icha] = wantedLumi * TopFin[icha]->Integral() / nTopMC[icha];
+      eff_err[icha] = sqrt(eff[icha] * (1.0 - eff[icha]) / nTopEntries[icha]);
+//       eff_err[icha] = eff[icha] * quadrSum(yieldErrPoisson(wantedLumi * TopFin[icha]->Integral(),
+//                                                            TopFin[icha]->GetEntries())/(wantedLumi * TopFin[icha]->Integral()),
+//                                            nTopMC_err[icha]/nTopMC[icha] );
     }
 
     float nTopData_HiggsSel[4], nTopData_HiggsSel_err[4];
