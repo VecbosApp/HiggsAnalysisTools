@@ -185,15 +185,11 @@ for m in YieldTable.keys():
                 if c[-1] == "e" and thisch.has_key('WJet'):
                     nuisances.append(['CMS_fake_e', ['lnN'], {'WJet':thisch['WJet'][1]}])
                 if thisch.has_key('Vg'): nuisances.append(['CMS_fake_Vg', ['lnN'], {'Vg':2.0}])
-                for X in ['Top', 'WW']: # unique sideband, gamma + lnN
-                    if X == 'WW' and m >= 200: continue
-                    if X == 'Top' and j == 1:  continue
+                for X in ['Top', 'WW', 'ggWW']: # unique sideband, gamma + lnN
+                    if (X == 'WW' or X == 'ggWW') and m >= 200: continue
                     if thisch.has_key(X):
                         nuisances.append(['CMS_hww_%s_extr'%X, ['lnN'], {X:(1+thisch[X][3]/thisch[X][2])}])
                         nuisances.append(['CMS_hww_%s_stat'%X, ['gmN', int(thisch[X][1]*scalef)], {X:thisch[X][2]}])
-                if j == 1 and thisch.has_key('Top'):
-                    nuisances.append(['CMS_hww_Top1j_main', ['lnN'], {'Top':1.30}])
-                    nuisances.append(['CMS_hww_Top1j_%s'%c, ['lnN'], {'Top':thisch['Top'][1]}])
                 for X in ['DY']: # two sidebands, gamma + gmM
                     if thisch.has_key(X) and (c == 'ee' or c == 'mm'):
                         nuisances.append(['CMS_hww_%s%s%dj_extr'%(X,c,j), ['gmM'], {X:min(1.0,thisch[X][3]/thisch[X][2])}])
