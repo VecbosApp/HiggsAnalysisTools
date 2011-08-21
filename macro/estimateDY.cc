@@ -186,8 +186,8 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   treeZjets->Project("nmmCheckInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==0)*baseW*puW*effW")).Data());
   int forTheCheck = neeCheckInH->GetEntries() + nmmCheckInH->GetEntries();
   char mpmetcut[30];
-  if(forTheCheck<40)  { std::cout << "less than 40 events: cutting at MET>30" << std::endl; sprintf(mpmetcut,"mpmet>30"); }
-  if(forTheCheck>=40) { std::cout << "more than 40 events: cutting at MET>40" << std::endl; sprintf(mpmetcut,"mpmet>40"); }
+  if(forTheCheck<50)  { std::cout << "less than 40 events: cutting at MET>30" << std::endl; sprintf(mpmetcut,"mpmet>30"); }
+  if(forTheCheck>=50) { std::cout << "more than 40 events: cutting at MET>40" << std::endl; sprintf(mpmetcut,"mpmet>40"); }
 
   // nominal R computed with cut at 40 or 30 (according to the statistics)
   treeZjets->Project("neeLooseInH","dphill",(TString("(mll>12 && finalLeptons && met>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nExtraLep==0 && bveto && !zveto && channel==1)*baseW*puW*effW")).Data());
