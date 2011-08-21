@@ -131,7 +131,7 @@ for m in YieldTable.keys():
             # -- Luminosity ---------------------
             nuisances.append(['lumi',      ['lnN'], dict([(p,1.045) for p in MCBG])])
             # -- PDF ---------------------
-            nuisances.append(['pdf_gg',    ['lnN'], { 'ggH':ggH_pdfErrYR[m], 'ggWW':1.04 }])
+            nuisances.append(['pdf_gg',    ['lnN'], { 'ggH':ggH_pdfErrYR[m], 'ggWW':(1.0 if m < 200 else 1.04) }])
             nuisances.append(['pdf_qqbar', ['lnN'], { 'vbfH':vbfH_pdfErrYR[m], 'VV':1.04, 'WW':(1.0 if m < 200 else 1.04) }])
             # -- Theory ---------------------
             if j == 0:
