@@ -247,10 +247,10 @@ void estimateWjets(int njets) {
       tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
     }
     tablefile << mass 
-              << "\t\t" << yield_WWSel[4][1] << " +/- " <<  yield_WWSel_fullerr[4][1] 
-              << "\t\t" << yield_WWSel[4][3] << " +/- " <<  yield_WWSel_fullerr[4][3] 
-              << "\t\t" << yield_WWSel[4][2] << " +/- " <<  yield_WWSel_fullerr[4][2] 
-              << "\t\t" << yield_WWSel[4][0] << " +/- " <<  yield_WWSel_fullerr[4][0] 
+              << "\t\t" << yield_WWSel[4][1] << " +/- " <<  yield_WWSel_fullerr[1] 
+              << "\t\t" << yield_WWSel[4][3] << " +/- " <<  yield_WWSel_fullerr[3] 
+              << "\t\t" << yield_WWSel[4][2] << " +/- " <<  yield_WWSel_fullerr[2] 
+              << "\t\t" << yield_WWSel[4][0] << " +/- " <<  yield_WWSel_fullerr[0] 
               << "\t\t" << yield_tot << " +/- " <<  yield_tot_err  
               << std::endl;
 
