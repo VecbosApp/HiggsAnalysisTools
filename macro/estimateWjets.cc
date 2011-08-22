@@ -49,10 +49,10 @@ void estimateWjets(int njets) {
   float yield_WWSel_staterr[5][4]; // [bin][icha]
 
   // for now only ee and me are done
-  TFile *fileEE = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileMM = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileEM = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileME = TFile::Open("results_data/merged/dataset_fake_me.root");
+  TFile *fileEE = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
+  TFile *fileMM = TFile::Open("results_data/datasets_trees_fake/dataset_fake_mm.root");
+  TFile *fileEM = TFile::Open("results_data/datasets_trees_fake/dataset_fake_em.root");
+  TFile *fileME = TFile::Open("results_data/datasets_trees_fake/dataset_fake_me.root");
 
   TTree *treeEE = (TTree*)fileEE->Get("T1");
   TTree *treeMM = (TTree*)fileMM->Get("T1");
@@ -70,9 +70,15 @@ void estimateWjets(int njets) {
   // yields at WW level
   for(int icha=0; icha<4; icha++) {
     for(int ibin=0; ibin<4; ibin++) {
-      
-      TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
-      TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+
+      TString fpCut, fpCutStatErr;
+      if(icha==0 || icha==3) { // chiara has the hlt bit and WWSel to be applied
+        fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
+        fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      } else { // for mm, em HLT already applied
+        fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
+        fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+      }
       // for MC closure test
       // TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
       // TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
@@ -161,7 +167,7 @@ void estimateWjets(int njets) {
   }
   textfile << "\\hline" << endl;
   textfile << "\\end{tabular}" << endl;
-  textfile << "\\caption{W+jets yields in the $\\mu$e and $\\mu\\mu$ channels at WW selection level in the " 
+  textfile << "\\caption{W+jets yields in the e$\\mu$ and $\\mu\\mu$ channels at WW selection level in the " 
            << njets << " jet bin.}" << std::endl;
   textfile << "\\end{center}" << endl;
   textfile << "\\end{small}" << endl;
@@ -185,8 +191,14 @@ void estimateWjets(int njets) {
     
     // yields at WW level
     for(int icha=0; icha<4; icha++) {
-      TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
-      TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      TString fpCut, fpCutStatErr;
+      if(icha==0 || icha==3) { // chiara has the hlt bit
+        fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
+        fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
+      } else { // alicia has already applied WWSel + HLT
+        fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
+        fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
+      }
       // for MC closure test
       // TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
       // TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
@@ -227,10 +239,10 @@ void estimateWjets(int njets) {
   // this is useful for W+jets contamination in the top-tagged control sample
   // use a channel independent estimate
   // for now only ee is done
-  TFile *fileEEAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileMMAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileEMAll = TFile::Open("results_data/merged/dataset_fake_ee.root");
-  TFile *fileMEAll = TFile::Open("results_data/merged/dataset_fake_me.root");
+  TFile *fileEEAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
+  TFile *fileMMAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
+  TFile *fileEMAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
+  TFile *fileMEAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_me.root");
 
   TTree *treeEEAll = (TTree*)fileEEAll->Get("T1");
   TTree *treeMMAll = (TTree*)fileMMAll->Get("T1");
