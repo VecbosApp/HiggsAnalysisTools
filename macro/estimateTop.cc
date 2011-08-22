@@ -33,7 +33,6 @@ void printLatex() {
   estimateTop(1);
   std::cout << "DONE." << std::endl;
   std::cout << "=============================================================" << std::endl;
-
 }
 
 void estimateTop(int njets) {
@@ -55,27 +54,26 @@ void estimateTop(int njets) {
 
   // scale factors for the backgrounds
   float WWDataOverMC[2] = {1.2, 1.3} ; // estimation 1.1 fb-1 
-  float DYDataOverMC[2] = {1.6, 3.5}; // estimation 1.54 fb-1
-  float WjDataTot[4][2]; // [icha][jetbin]
-  WjDataTot[ee][0] = 22.30; // updated LP
+  float DYDataOverMC[2] = {2.2, 2.4};  // estimation 1.54 fb-1
+  float WjDataTot[4][2];     // [icha][jetbin]
+  WjDataTot[ee][0] = 22.30;  // updated LP
   WjDataTot[mm][0] = 13.15 ; // updated LP, EPS FR
-  WjDataTot[em][0] = 63.44; // updated LP, EPS FR
-  WjDataTot[me][0] = 50.4; // updated LP
-  WjDataTot[ee][1] = 8.1; // updated LP
-  WjDataTot[mm][1] = 8.25; // updated LP, EPS FR
-  WjDataTot[em][1] = 22.94; // updated LP, EPS FR
-  WjDataTot[me][1] = 13.8; // updated LP
+  WjDataTot[em][0] = 63.44;  // updated LP, EPS FR
+  WjDataTot[me][0] = 50.4;   // updated LP
+  WjDataTot[ee][1] = 8.1;    // updated LP
+  WjDataTot[mm][1] = 8.25;   // updated LP, EPS FR
+  WjDataTot[em][1] = 22.94;  // updated LP, EPS FR
+  WjDataTot[me][1] = 13.8;   // updated LP
   
-
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
-  TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
-  TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
-  TFile *fileDY = TFile::Open("results/datasets_trees/Zjets_ll.root");
+  TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
+  TFile *fileWW   = TFile::Open("results/datasets_trees/WW_ll.root");
+  TFile *fileDY   = TFile::Open("results/datasets_trees/Zjets_ll.root");
 
   TTree *treeData = (TTree*)fileData->Get("T1");
-  TTree *treeTop= (TTree*)fileTop->Get("T1");
-  TTree *treeWW= (TTree*)fileWW->Get("T1");
-  TTree *treeDY= (TTree*)fileDY->Get("T1");
+  TTree *treeTop  = (TTree*)fileTop->Get("T1");
+  TTree *treeWW   = (TTree*)fileWW->Get("T1");
+  TTree *treeDY   = (TTree*)fileDY->Get("T1");
 
   // these used  for the channel-split estimates (not now)
   TH1F *topHEE = new TH1F("topHEE","",50,0,180);
