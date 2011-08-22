@@ -48,6 +48,17 @@ void estimateWjets(int njets) {
   float yield_WWSel[5][4]; // [bin][icha] bin = 5 => total
   float yield_WWSel_staterr[5][4]; // [bin][icha]
 
+  // systematics
+  float percErr[4][2];
+  percErr[ee][0]=0.27;  // 0jets, ee
+  percErr[ee][1]=0.25;  
+  percErr[me][0]=0.31;  
+  percErr[me][1]=0.29;  
+  percErr[mm][0]=0.31;  
+  percErr[mm][1]=0.30;  
+  percErr[em][0]=0.37;  
+  percErr[em][1]=0.26;  
+
   // for now only ee and me are done
   TFile *fileEE = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
   TFile *fileMM = TFile::Open("results_data/datasets_trees_fake/dataset_fake_mm.root");
@@ -103,7 +114,16 @@ void estimateWjets(int njets) {
     }
   }
 
-  for(int icha=0; icha<4; icha++) yield_WWSel_staterr[4][icha] = sqrt(yield_WWSel_staterr[4][icha]);
+  float yield_WWSel_fullerr[4];    // [bin]
+  for(int icha=0; icha<4; icha++) { 
+    yield_WWSel_staterr[4][icha] = sqrt(yield_WWSel_staterr[4][icha]);
+    yield_WWSel_fullerr[icha] = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
+    cout << "channel " << icha 
+	 << ": val = "     << yield_WWSel[4][icha] 
+	 << ", statErr = " << yield_WWSel_staterr[4][icha] 
+	 << ", systErr = " << percErr[icha][njets]*yield_WWSel[4][icha]
+	 << ", totErr = "  << yield_WWSel_fullerr[icha] << endl;
+  }
 
   // total for all the channels
   float yield_WWSel_tot = 0.;
@@ -208,6 +228,8 @@ void estimateWjets(int njets) {
       
       trees[icha]->Project("histo","dphill",fpCutStatErr);
       yield_WWSel_staterr[4][icha] = sqrt(histo->Integral());
+
+      yield_WWSel_fullerr[icha] = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
     }
     
     // total for all the channels
@@ -225,10 +247,10 @@ void estimateWjets(int njets) {
       tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
     }
     tablefile << mass 
-              << "\t\t" << yield_WWSel[4][1] << " +/- " <<  yield_WWSel_staterr[4][1] 
-              << "\t\t" << yield_WWSel[4][3] << " +/- " <<  yield_WWSel_staterr[4][3] 
-              << "\t\t" << yield_WWSel[4][2] << " +/- " <<  yield_WWSel_staterr[4][2] 
-              << "\t\t" << yield_WWSel[4][0] << " +/- " <<  yield_WWSel_staterr[4][0] 
+              << "\t\t" << yield_WWSel[4][1] << " +/- " <<  yield_WWSel_fullerr[4][1] 
+              << "\t\t" << yield_WWSel[4][3] << " +/- " <<  yield_WWSel_fullerr[4][3] 
+              << "\t\t" << yield_WWSel[4][2] << " +/- " <<  yield_WWSel_fullerr[4][2] 
+              << "\t\t" << yield_WWSel[4][0] << " +/- " <<  yield_WWSel_fullerr[4][0] 
               << "\t\t" << yield_tot << " +/- " <<  yield_tot_err  
               << std::endl;
 
