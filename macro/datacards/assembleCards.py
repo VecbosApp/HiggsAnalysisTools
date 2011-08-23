@@ -11,7 +11,7 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 parser.add_option("-M", "--mc",      dest="mcYields", action="store_true", default=False, help="Use only MC-driven backgrounds");
 parser.add_option("-A", "--asimov",  dest="asimov",   action="store_true", default=False, help="Replace observation with expected outcome (always on if lumi != refLumi)");
-parser.add_option("-L", "--refLumi", dest="refLumi",  type="string", default="150pb", help="Luminosity of the inputs (XXXpb or XXXfb)");
+parser.add_option("-L", "--refLumi", dest="refLumi",  type="string", default="1.55fb", help="Luminosity of the inputs (XXXpb or XXXfb)");
 parser.add_option("-l", "--lumi",    dest="lumi",     type="string", default=None,    help="Output luminosity (by default equal to the reference one)");
 (options, args) = parser.parse_args()
 
@@ -188,8 +188,8 @@ for m in YieldTable.keys():
                 for X in ['Top', 'WW', 'ggWW']: # unique sideband, gamma + lnN
                     if (X == 'WW' or X == 'ggWW') and m >= 200: continue
                     if thisch.has_key(X):
-                        nuisances.append(['CMS_hww_%s_extr'%X, ['lnN'], {X:(1+thisch[X][3]/thisch[X][2])}])
-                        nuisances.append(['CMS_hww_%s_stat'%X, ['gmN', int(thisch[X][1]*scalef)], {X:thisch[X][2]}])
+                        nuisances.append(['CMS_hww_%s_%dj_extr'%(X,j), ['lnN'], {X:(1+thisch[X][3]/thisch[X][2])}])
+                        nuisances.append(['CMS_hww_%s_%dj_stat'%(X,j), ['gmN', int(thisch[X][1]*scalef)], {X:thisch[X][2]}])
                 for X in ['DY']: # two sidebands, gamma + gmM
                     if thisch.has_key(X) and (c == 'ee' or c == 'mm'):
                         nuisances.append(['CMS_hww_%s%s%dj_extr'%(X,c,j), ['gmM'], {X:min(1.0,thisch[X][3]/thisch[X][2])}])
