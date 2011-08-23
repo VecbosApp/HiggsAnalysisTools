@@ -11,10 +11,10 @@ using namespace std;
 enum { ee=0, mm=1, em=2, me=3, ll=4 };
 
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
-void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData);
-void printLatex(float lumiInInvFb, bool showData);
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates);
+void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates);
 
-void printLatex(float lumiInInvFb, bool showData) {
+void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
 
   ofstream txtfilefordatacard;
   txtfilefordatacard.open("mcyields.txt", ios_base::trunc);
@@ -30,7 +30,10 @@ void printLatex(float lumiInInvFb, bool showData) {
 
   textfile << "\\subsection{Yields at WW selection level}" << std::endl;
   std::cout << "Evaluating yields at WW selection level" << std::endl;
-  HiggsYields(-1, 0, lumiInInvFb, showData);
+  textfile << "Yields for an integrated luminosity $L_{int} = $ " << lumiInInvFb << " fb$^{-1}$." << std::endl;
+  if(addDataDrivenEstimates) textfile << "All the following yields are corrected by the data driven estimates, where possible. W+jets is taken from T+L sample on data." << std::endl;
+  else textfile << "All the following yields are pure MC estimates, without data-driven corrections" << std::endl;
+  HiggsYields(-1, 0, lumiInInvFb, showData, addDataDrivenEstimates);
 
   textfile.open("yields.tex", ios_base::app);
   textfile << "\\subsection{Yields at full H selection level}" << std::endl;
@@ -38,7 +41,7 @@ void printLatex(float lumiInInvFb, bool showData) {
   int mH[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int i=0; i<17;i++) {
     std::cout << "mH = " << mH[i] << "\t0 jet" << std::endl;
-    HiggsYields(mH[i], 0, lumiInInvFb, showData);
+    HiggsYields(mH[i], 0, lumiInInvFb, showData, addDataDrivenEstimates);
   }
   textfile.close();
 
@@ -48,13 +51,13 @@ void printLatex(float lumiInInvFb, bool showData) {
   textfile2 << "\\section{Yields for 1 jet}" << endl;
   textfile2 << "\\subsection{Yields at WW selection level}" << std::endl;
   std::cout << "Evaluating yields at WW selection level" << std::endl;
-  HiggsYields(-1, 1, lumiInInvFb, showData);
+  HiggsYields(-1, 1, lumiInInvFb, showData, addDataDrivenEstimates);
 
   textfile2.open("yields.tex", ios_base::app);
   textfile2 << "\\subsection{Yields at full H selection level}" << std::endl;
   for(int i=0; i<17;i++) {
     std::cout << "mH = " << mH[i] << "\t1 jet" << std::endl;
-    HiggsYields(mH[i], 1, lumiInInvFb, showData);
+    HiggsYields(mH[i], 1, lumiInInvFb, showData, addDataDrivenEstimates);
   }
   textfile2.close();
 
@@ -64,7 +67,7 @@ void printLatex(float lumiInInvFb, bool showData) {
 
 }
 
-void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
 
   std::vector<std::vector<double> > yields;
   std::vector<std::vector<double> > yields_err;
@@ -99,6 +102,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
   TFile *fileqqWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
   TFile *fileggWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
   TFile *fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
+  TFile *fileFake = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ll.root");
 
   char signalFile[200];
   if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
@@ -117,6 +121,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
   TTree* treeggH = (TTree*)fileH->Get("T1");
   TTree* treeqqH = (TTree*)fileH->Get("T1");
   TTree* treeData = (TTree*)fileData->Get("T1");
+  TTree* treeFake = (TTree*)fileFake->Get("T1");
 
   std::vector<TTree*> trees;
   trees.push_back(treeZj); // 0
@@ -130,26 +135,30 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
   trees.push_back(treeggH); // 8
   trees.push_back(treeqqH); // 9
 
-//   // evaluated with LP11 dataset (1.54 fb-1)
-//   std::vector<float> sfs_0j;
-//   sfs_0j.push_back(1.6); // 0
-//   sfs_0j.push_back(1.0); // 1
-//   sfs_0j.push_back(1.0); // 2
-//   sfs_0j.push_back(1.0); // 3
-//   sfs_0j.push_back(1.0); // 4
-//   sfs_0j.push_back(1.07); // 5
-//   sfs_0j.push_back(1.0); // 6
-//   sfs_0j.push_back(1.0); // 7
+   // evaluated with LP11 dataset (1.54 fb-1)
+   std::vector<float> sfs_0j;
+   sfs_0j.push_back(2.2); // 0
+   sfs_0j.push_back(1.63); // 1
+   sfs_0j.push_back(1.63); // 2
+   sfs_0j.push_back(1.0); // 3
+   sfs_0j.push_back(1.0); // 4
+   sfs_0j.push_back(0.99); // 5
+   sfs_0j.push_back(0.99); // 6
+   sfs_0j.push_back(1.0); // 7
+   sfs_0j.push_back(1.0); // 8
+   sfs_0j.push_back(1.0); // 9
 
-//   std::vector<float> sfs_1j;
-//   sfs_0j.push_back(3.5); // 0
-//   sfs_0j.push_back(1.3); // 1
-//   sfs_0j.push_back(1.3); // 2
-//   sfs_0j.push_back(1.0); // 3
-//   sfs_0j.push_back(1.0); // 4
-//   sfs_0j.push_back(1.07); // 5
-//   sfs_0j.push_back(1.0); // 6
-//   sfs_0j.push_back(1.0); // 7
+   std::vector<float> sfs_1j;
+   sfs_1j.push_back(2.4); // 0
+   sfs_1j.push_back(1.26); // 1
+   sfs_1j.push_back(1.26); // 2
+   sfs_1j.push_back(1.0); // 3
+   sfs_1j.push_back(1.0); // 4
+   sfs_1j.push_back(1.22); // 5
+   sfs_1j.push_back(1.22); // 6
+   sfs_1j.push_back(1.0); // 7
+   sfs_1j.push_back(1.0); // 8
+   sfs_1j.push_back(1.0); // 9
 
   TH1F *histo = new TH1F("histo","histo",100,0,180);
   
@@ -183,6 +192,35 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
     cutChannel.push_back(HCut_me);
     cutChannel.push_back(HCut_all);
 
+    // for W+jets val
+    std::vector<TString> cutChannelFake;
+    TString wwselcutFake = TString(njcut); // assume already skimmed WWlevel
+    HCut_ee = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*weightFP");
+    HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightFP");
+    HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightFP");
+    HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightFP");
+    HCut_all = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(")*weightFP");
+          
+    cutChannelFake.push_back(HCut_ee);
+    cutChannelFake.push_back(HCut_mm);
+    cutChannelFake.push_back(HCut_em);
+    cutChannelFake.push_back(HCut_me);
+    cutChannelFake.push_back(HCut_all);
+
+    // error (statistical only)
+    std::vector<TString> cutChannelFakeStatErr;
+    HCut_ee = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*weightStatFP");
+    HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightStatFP");
+    HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightStatFP");
+    HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightStatFP");
+    HCut_all = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(")*weightStatFP");
+
+    cutChannelFakeStatErr.push_back(HCut_ee);
+    cutChannelFakeStatErr.push_back(HCut_mm);
+    cutChannelFakeStatErr.push_back(HCut_em);
+    cutChannelFakeStatErr.push_back(HCut_me);
+    cutChannelFakeStatErr.push_back(HCut_all);
+    
     std::vector<double> sampleYield, sampleYield_err;
     for(int icha=0; icha<5; icha++) {
 
@@ -203,19 +241,56 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData) {
       //      cout << "final cut = " << TheFinalCut.Data() << endl;
 
       tree->Project("histo","dphill",TheFinalCut);
-      double yield = histo->Integral();
-      double yield_err = yieldErrPoisson(yield,histo->GetEntries());
-      sampleYield.push_back(lumiInInvFb * yield);
-      sampleYield_err.push_back(lumiInInvFb * yield_err);
+      double yield, yield_err;
+      if(!addDataDrivenEstimates) {
+        yield = histo->Integral();
+        yield_err = yieldErrPoisson(yield,histo->GetEntries());
+      } else {
+        if((isample==0 && icha>1) || ((isample==5 || isample==6) && mH>=200)) { 
+          // for em,me the Z+jets background is Z->tautau with real MET, so do not apply the SF used for Z->mumu/elel
+          // for WW, mH>=200 GeV, use pure MC
+          yield = histo->Integral();
+          yield_err = yieldErrPoisson(yield,histo->GetEntries());
+        } else if(isample==3) { // W+jets: take from T+F data tree
 
+          treeFake->Project("histo","dphill",cutChannelFake[icha]);
+          yield = histo->Integral();
+          
+          treeFake->Project("histo","dphill",cutChannelFakeStatErr[icha]);
+          yield_err = sqrt(histo->Integral());
+
+        } else {
+          std::vector<float> sfs;
+          if(njets==0) sfs = sfs_0j;
+          else if(njets==1) sfs = sfs_1j;
+          else {
+            std::cout << "ERROR: njets must be 0 or 1" << std::endl;
+            return;
+          }
+          yield = histo->Integral() * sfs[isample];
+          yield_err = yieldErrPoisson(yield,histo->GetEntries()) * sfs[isample];
+        }
+      }
+
+      if(addDataDrivenEstimates && isample==3) { // W+jets is absolute number from data
+        sampleYield.push_back(yield);
+        sampleYield_err.push_back(yield_err);
+      } else {
+        sampleYield.push_back(lumiInInvFb * yield);
+        sampleYield_err.push_back(lumiInInvFb * yield_err);
+      }
 
       // sum the backgrounds (signal is the last)
       if(isample < (int)trees.size()-3) {
-        yields_bkgtot[icha] += lumiInInvFb * yield;
-        yields_bkgtot_err[icha] += lumiInInvFb * yield_err * lumiInInvFb * yield_err;
+        if(addDataDrivenEstimates && isample==3) { // W+jets is absolute number from data
+          yields_bkgtot[icha] += yield;
+          yields_bkgtot_err[icha] += yield_err * yield_err;
+        } else {
+          yields_bkgtot[icha] += lumiInInvFb * yield;
+          yields_bkgtot_err[icha] += lumiInInvFb * yield_err * lumiInInvFb * yield_err;
+        }
       }
     }
-
     yields.push_back(sampleYield);
     yields_err.push_back(sampleYield_err);
 
