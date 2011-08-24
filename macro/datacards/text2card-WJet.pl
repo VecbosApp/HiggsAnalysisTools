@@ -1,6 +1,7 @@
 #! /usr/bin/perl
 use strict;
 use warnings;
+use List::Util qw[min max];
 my %collect = ();
 foreach my $file (glob("WJetsYieldsData_ForTable_[01]j.txt")) {
     my ($j) = ($file =~ /WJetsYieldsData_ForTable(_.j)\./);
@@ -12,7 +13,7 @@ foreach my $file (glob("WJetsYieldsData_ForTable_[01]j.txt")) {
         my @items = split(/\s+/, $_);
         my $mass = shift(@items);
         foreach my $i (0 .. $#columns) {
-            $collect{$columns[$i].$j} .=  sprintf('%s  %s  %s', $mass, $items[$i*3], $items[$i*3+2])."\n";
+            $collect{$columns[$i].$j} .=  sprintf('%s  %s  %s', $mass, max($items[$i*3],0), $items[$i*3+2])."\n";
         }
     }
     close FILE;
