@@ -119,7 +119,8 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
     // std::string goodRunJsonFile = "config/json/goodCollisions2011.json";         // chiara
     // std::string goodRunJsonFile = "config/json/goodCollisions2011_815pb.json";
     // std::string goodRunJsonFile = "config/json/goodCollisions2011_preapproval_184pb.json"; 
-    std::string goodRunJsonFile = "config/json/Cert_EPSFINAL_May10ReReco_v2_PromptReco_160404_167913_JSON.txt";
+    // std::string goodRunJsonFile = "config/json/Cert_EPSFINAL_May10ReReco_v2_PromptReco_160404_167913_JSON.txt";
+    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -165,231 +166,8 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
   m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
 
-  /* // with likelihood
-  // fake in the barrel from QCD MC                                  
-  m_fakeRateEB[0] = 0.31852;
-  m_fakeRateEB[1] = 0.0815463;
-  m_fakeRateEB[2] = 0.0707214;
-  m_fakeRateEB[3] = 0.0588124;
-  m_fakeRateEB[4] = 0.0458273;
-
-  m_fakeRateEB_err[0] = 0.00598496;
-  m_fakeRateEB_err[1] = 0.00467256;
-  m_fakeRateEB_err[2] = 0.00381354;
-  m_fakeRateEB_err[3] = 0.00335443;
-  m_fakeRateEB_err[4] = 0.0120015;
-
-  // fake in the endcap from QCD MC                                                                     
-  m_fakeRateEE[0] = 0.208365;
-  m_fakeRateEE[1] = 0.0621581;
-  m_fakeRateEE[2] = 0.0546968; 
-  m_fakeRateEE[3] = 0.0522816; 
-  m_fakeRateEE[4] = 0.0515749;
-
-  m_fakeRateEE_err[0] = 0.00714442;
-  m_fakeRateEE_err[1] = 0.00411465;
-  m_fakeRateEE_err[2] = 0.00314477;
-  m_fakeRateEE_err[3] = 0.00299393;
-  m_fakeRateEE_err[4] = 0.0142672;
-  */
-
-  /* // with likelihood
-  // fake in the barrel from data (jet:30)) - with EWK subtraction (apart from bin0, where no EWK removal)
-  m_fakeRateEB[0] = 0.170909;
-  m_fakeRateEB[1] = 0.126939;
-  m_fakeRateEB[2] = 0.0829306;
-  m_fakeRateEB[3] = 0.0804465;
-  m_fakeRateEB[4] = 0.0993018;
-
-  m_fakeRateEB_err[0] = 0.00926705;
-  m_fakeRateEB_err[1] = 0.00916318;
-  m_fakeRateEB_err[2] = 0.00703008;
-  m_fakeRateEB_err[3] = 0.00687927;
-  m_fakeRateEB_err[4] = 0.0285547;
-
-  // fake in the endcap from data (jet:30) - with EWK subtraction (apart from bin0, where no EWK removal)
-  m_fakeRateEE[0] = 0.136997;
-  m_fakeRateEE[1] = 0.0628376;
-  m_fakeRateEE[2] = 0.0559572;
-  m_fakeRateEE[3] = 0.0441833;
-  m_fakeRateEE[4] = 0.0255683;
-
-  m_fakeRateEE_err[0] = 0.009566;
-  m_fakeRateEE_err[1] = 0.00691408;
-  m_fakeRateEE_err[2] = 0.00498304;
-  m_fakeRateEE_err[3] = 0.00418404;
-  m_fakeRateEE_err[4] = 0.01372;
-  */
-
-  /* // with likelihood
-  // fake in the barrel from data (jet:15)) - no EWK subtraction
-  m_fakeRateEB[0] = 0.176334; 
-  m_fakeRateEB[1] = 0.13883;
-  m_fakeRateEB[2] = 0.105588;
-  m_fakeRateEB[3] = 0.0916634;
-  m_fakeRateEB[4] = 0.114754;
-  
-  m_fakeRateEB_err[0] = 0.00382773;
-  m_fakeRateEB_err[1] = 0.00532204;
-  m_fakeRateEB_err[2] = 0.00503719;
-  m_fakeRateEB_err[3] = 0.00573555;
-  m_fakeRateEB_err[4] = 0.028856;
-
-  // fake in the endcap from data (jet:15)
-  m_fakeRateEE[0] = 0.138302;
-  m_fakeRateEE[1] = 0.0695556;
-  m_fakeRateEE[2] = 0.0601607;
-  m_fakeRateEE[3] = 0.0486044;
-  m_fakeRateEE[4] = 0.0357143;
-
-  m_fakeRateEE_err[0] = 0.00379404;
-  m_fakeRateEE_err[1] = 0.00379232;
-  m_fakeRateEE_err[2] = 0.00310862;
-  m_fakeRateEE_err[3] = 0.00333565;
-  m_fakeRateEE_err[4] = 0.0156841;
-  */
-
-  /* // with likelihood
-  // fake in the barrel from data (jet:50))
-  m_fakeRateEB[0] = 0.130682;
-  m_fakeRateEB[1] = 0.101523;
-  m_fakeRateEB[2] = 0.0920502;
-  m_fakeRateEB[3] = 0.0910973;
-  m_fakeRateEB[4] = 0.0804598;
-  
-  m_fakeRateEB_err[0] = 0.0254063;
-  m_fakeRateEB_err[1] = 0.021518;
-  m_fakeRateEB_err[2] = 0.0187001;
-  m_fakeRateEB_err[3] = 0.013093;
-  m_fakeRateEB_err[4] = 0.0291619;
-
-  // fake in the endcap from data (jet:50)
-  m_fakeRateEE[0] = 0.104575;
-  m_fakeRateEE[1] = 0.0753425;
-  m_fakeRateEE[2] = 0.0536913;
-  m_fakeRateEE[3] = 0.0351438;
-  m_fakeRateEE[4] = 0.0222222;
-
-  m_fakeRateEE_err[0] = 0.0247391;
-  m_fakeRateEE_err[1] = 0.0218441;
-  m_fakeRateEE_err[2] = 0.0130575;
-  m_fakeRateEE_err[3] = 0.00735984;
-  m_fakeRateEE_err[4] = 0.0155379;
-  */
-
   /*
-  // fake in the barrel from Smurf selection, QCD
-  m_fakeRateEB[0] = 0.00154351;
-  m_fakeRateEB[1] = 0.00145805;   
-  m_fakeRateEB[2] = 0.0111048;  
-  m_fakeRateEB[3] = 0.0120757; 
-  m_fakeRateEB[4] = 0.0163262;
-  
-  m_fakeRateEB_err[0] = 0.000558265;
-  m_fakeRateEB_err[1] = 0.000357493;
-  m_fakeRateEB_err[2] = 0.00101031; 
-  m_fakeRateEB_err[3] = 0.00101347;
-  m_fakeRateEB_err[4] = 0.00456665;
-  
-  // fake in the endcap from Smurf selection, QCD
-  m_fakeRateEE[0] = 0.00149395;
-  m_fakeRateEE[1] = 0.00230214;
-  m_fakeRateEE[2] = 0.0127027;
-  m_fakeRateEE[3] = 0.0136544;
-  m_fakeRateEE[4] = 0.0163247;
-  
-  m_fakeRateEE_err[0] = 0.000509235; 
-  m_fakeRateEE_err[1] = 0.000404248;
-  m_fakeRateEE_err[2] = 0.000981551;
-  m_fakeRateEE_err[3] = 0.00100148;
-  m_fakeRateEE_err[4] = 0.00537643;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>30 - preapproval
-  m_fakeRateEB[0] = 0.00832695;  // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.00907589;  // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.0140018;   // " " 
-  m_fakeRateEB[3] = 0.0136831;   // " " 
-  m_fakeRateEB[4] = 0.0140156;   // " " 
-
-  m_fakeRateEB_err[0] = 0.00140527;
-  m_fakeRateEB_err[1] = 0.00107052;
-  m_fakeRateEB_err[2] = 0.00129764;
-  m_fakeRateEB_err[3] = 0.00116528;
-  m_fakeRateEB_err[4] = 0.00385747;
-
-  // fake in the endcap from Smurf selection, ET>30
-  m_fakeRateEE[0] = 0.00322436;  // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEE[1] = 0.0050205;   // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEE[2] = 0.0108465;   // " " 
-  m_fakeRateEE[3] = 0.00940649;  // " " 
-  m_fakeRateEE[4] = 0.0163363;   // " " 
-  
-  m_fakeRateEE_err[0] = 0.000972436;
-  m_fakeRateEE_err[1] = 0.000892635;
-  m_fakeRateEE_err[2] = 0.0011173;
-  m_fakeRateEE_err[3] = 0.000971426;
-  m_fakeRateEE_err[4] = 0.00557363;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>15 - preapproval
-  m_fakeRateEB[0] = 0.0139881;    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.0142939;    // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.0229292;    // " " 
-  m_fakeRateEB[3] = 0.0167388;
-  m_fakeRateEB[4] = 0.014033;
-
-  m_fakeRateEB_err[0] = 0.000822471;
-  m_fakeRateEB_err[1] = 0.000839656;
-  m_fakeRateEB_err[2] = 0.00120164;
-  m_fakeRateEB_err[3] = 0.00111492;
-  m_fakeRateEB_err[4] = 0.00376642;
-
-  // fake in the endcap from Smurf selection, ET>15
-  m_fakeRateEE[0] = 0.00536005;   // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEE[1] = 0.00617585;   // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEE[2] = 0.0153299;    // " " 
-  m_fakeRateEE[3] = 0.011276;
-  m_fakeRateEE[4] = 0.015083;
-  
-  m_fakeRateEE_err[0] = 0.000538545;
-  m_fakeRateEE_err[1] = 0.000566034;
-  m_fakeRateEE_err[2] = 0.00088218;
-  m_fakeRateEE_err[3] = 0.000863319;
-  m_fakeRateEE_err[4] = 0.00521618;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>50 - preapproval
-  m_fakeRateEB[0] = 0.00196092;
-  m_fakeRateEB[1] = 0.00217957;
-  m_fakeRateEB[2] = 0.0112285;
-  m_fakeRateEB[3] = 0.00758858;
-  m_fakeRateEB[4] = 0.00936297; 
-
-  m_fakeRateEB_err[0] = 0.00198052;
-  m_fakeRateEB_err[1] = 0.00130578;
-  m_fakeRateEB_err[2] = 0.00239751;
-  m_fakeRateEB_err[3] = 0.00130281;
-  m_fakeRateEB_err[4] = 0.00335611;
-
-  // fake in the endcap from Smurf selection, ET>50
-  m_fakeRateEE[0] = 0.00258585;
-  m_fakeRateEE[1] = 0.00439881;
-  m_fakeRateEE[2] = 0.00564385;
-  m_fakeRateEE[3] = 0.00496651;
-  m_fakeRateEE[4] = 0.0193293;
-  
-  m_fakeRateEE_err[0] = 0.00258838;
-  m_fakeRateEE_err[1] = 0.00221489;
-  m_fakeRateEE_err[2] = 0.00188719;
-  m_fakeRateEE_err[3] = 0.00123241;
-  m_fakeRateEE_err[4] = 0.00689591;
-  */
-
-  // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso
+  // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso (EPS)
   m_fakeRateEB[0] = 0.0233102;             // here we subtract W and Z with lumi corresponding to HTLT8
   m_fakeRateEB[1] = 0.0228776;             // here we subtract W and Z with lumi corresponding to HTLT17
   m_fakeRateEB[2] = 0.0286583; 
@@ -402,7 +180,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEB_err[3] = 0.00218472;
   m_fakeRateEB_err[4] = 0.00651507;
 
-  // fake in the endcap from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso
+  // fake in the endcap from Smurf selection, ET>30 - 2nd reload data, no V3 - with trackerIso (EPS)
   m_fakeRateEE[0] = 0.00891958;
   m_fakeRateEE[1] = 0.00637156; 
   m_fakeRateEE[2] = 0.0190356;   
@@ -414,149 +192,10 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[2] = 0.00176485;
   m_fakeRateEE_err[3] = 0.00154134;
   m_fakeRateEE_err[4] = 0.00461072;
-
-  /*
-  // fake in the barrel from Smurf selection, ET>15 - 2nd reload data, no V3 - with trackerIso
-  m_fakeRateEB[0] = 0.0266235;    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.0283521;    // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.0424546;
-  m_fakeRateEB[3] = 0.032;
-  m_fakeRateEB[4] = 0.0283229;
-
-  m_fakeRateEB_err[0] = 0.00170774;
-  m_fakeRateEB_err[1] = 0.00159436;
-  m_fakeRateEB_err[2] = 0.00205016;
-  m_fakeRateEB_err[3] = 0.00192502;
-  m_fakeRateEB_err[4] = 0.00633842;
-
-  // fake in the endcap from Smurf selection, ET>15 - 2nd reload data, no V3 - with trackerIso
-  m_fakeRateEE[0] = 0.00884286;
-  m_fakeRateEE[1] = 0.00867477;
-  m_fakeRateEE[2] = 0.0229016;
-  m_fakeRateEE[3] = 0.0194833;
-  m_fakeRateEE[4] = 0.0118488;
-
-  m_fakeRateEE_err[0] = 0.000929927;
-  m_fakeRateEE_err[1] = 0.000788934;
-  m_fakeRateEE_err[2] = 0.00121196;
-  m_fakeRateEE_err[3] = 0.00128971;
-  m_fakeRateEE_err[4] = 0.00519483;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>50 - 2nd reload data, no V3 - with trackerIso
-  m_fakeRateEB[0] = 0.0195017;                    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.0188862;                    // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.0198113; 
-  m_fakeRateEB[3] = 0.0238938; 
-  m_fakeRateEB[4] = 0.0231442; 
-
-  m_fakeRateEB_err[0] = 0.011181;
-  m_fakeRateEB_err[1] = 0.00632307;
-  m_fakeRateEB_err[2] = 0.00512458;
-  m_fakeRateEB_err[3] = 0.00332577;
-  m_fakeRateEB_err[4] = 0.00645679;
-
-  // fake in the endcap from Smurf selection, ET>50 - 2nd reload data, no V3 - with trackerIso
-  m_fakeRateEE[0] = 0.00951807;    // get zero: take as the second point....
-  m_fakeRateEE[1] = 0.00951807; 
-  m_fakeRateEE[2] = 0.0160567; 
-  m_fakeRateEE[3] = 0.00775816; 
-  m_fakeRateEE[4] = 0.00224677;
-  
-  m_fakeRateEE_err[0] = 0.00427152;  // get zero: take as the second point....
-  m_fakeRateEE_err[1] = 0.00427152;
-  m_fakeRateEE_err[2] = 0.00412894;
-  m_fakeRateEE_err[3] = 0.00192864;
-  m_fakeRateEE_err[4] = 0.00274471;
   */
   
   /*
-  // fake in the barrel from Smurf selection, ET>30 - 2nd reload data, no V3 
-  m_fakeRateEB[0] = 0.0101893;    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.0102828;    // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.0134321;    // " " 
-  m_fakeRateEB[3] = 0.0152031;    // " " 
-  m_fakeRateEB[4] = 0.0200641;    // " " 
-
-  m_fakeRateEB_err[0] = 0.00176851;
-  m_fakeRateEB_err[1] = 0.0011509;
-  m_fakeRateEB_err[2] = 0.0012004;
-  m_fakeRateEB_err[3] = 0.00116094;
-  m_fakeRateEB_err[4] = 0.0044668;
-
-  // fake in the endcap from Smurf selection, ET>30 - - 2nd reload data, no V3
-  m_fakeRateEE[0] = 0.00578883;    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEE[1] = 0.00413558;   // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEE[2] = 0.0125048;    // " " 
-  m_fakeRateEE[3] = 0.0115268;    // " " 
-  m_fakeRateEE[4] = 0.00635594;   // " " 
-  
-  m_fakeRateEE_err[0] = 0.00154445;
-  m_fakeRateEE_err[1] = 0.000803071; 
-  m_fakeRateEE_err[2] = 0.00114334;  
-  m_fakeRateEE_err[3] = 0.00104401;  
-  m_fakeRateEE_err[4] = 0.00344487;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>15 - 2nd reload data, no V3 
-  m_fakeRateEB[0] = 0.0145963;    // here we subtract W and Z with lumi corresponding to HTLT8
-  m_fakeRateEB[1] = 0.0155965;    // here we subtract W and Z with lumi corresponding to HTLT17
-  m_fakeRateEB[2] = 0.023254;     // " " 
-  m_fakeRateEB[3] = 0.0185549;
-  m_fakeRateEB[4] = 0.0199621;
-
-  m_fakeRateEB_err[0] = 0.000934166;
-  m_fakeRateEB_err[1] = 0.000874301;
-  m_fakeRateEB_err[2] = 0.00112867;	
-  m_fakeRateEB_err[3] = 0.00110349;	
-  m_fakeRateEB_err[4] = 0.00437519;
-
-  // fake in the endcap from Smurf selection, ET>15 - 2nd reload data, no V3
-  m_fakeRateEE[0] = 0.0065361;
-  m_fakeRateEE[1] = 0.00653904;
-  m_fakeRateEE[2] = 0.0164086; 
-  m_fakeRateEE[3] = 0.0141345; 
-  m_fakeRateEE[4] = 0.00898949;
-  
-  m_fakeRateEE_err[0] = 0.000666206;
-  m_fakeRateEE_err[1] = 0.000576412; 
-  m_fakeRateEE_err[2] = 0.000863836; 
-  m_fakeRateEE_err[3] = 0.000927878; 
-  m_fakeRateEE_err[4] = 0.00394694;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, ET>50 - 2nd reload data, no V3 
-  m_fakeRateEB[0] = 0.0072232;
-  m_fakeRateEB[1] = 0.0065888; 
-  m_fakeRateEB[2] = 0.00722197;
-  m_fakeRateEB[3] = 0.0107414;
-  m_fakeRateEB[4] = 0.0160311;
-  
-  m_fakeRateEB_err[0] = 0.00416716;
-  m_fakeRateEB_err[1] = 0.0022197;
-  m_fakeRateEB_err[2] = 0.00188006;
-  m_fakeRateEB_err[3] = 0.00149042;
-  m_fakeRateEB_err[4] = 0.00431983;
-
-  // fake in the endcap from Smurf selection, ET>50 - 2nd reload data, no V3
-  m_fakeRateEE[0] = 0.00337793;
-  m_fakeRateEE[1] = 0.00528983;
-  m_fakeRateEE[2] = 0.00876994;
-  m_fakeRateEE[3] = 0.00465043;
-  m_fakeRateEE[4] = 0.0016205;
-  
-  m_fakeRateEE_err[0] = 0.00337831;
-  m_fakeRateEE_err[1] = 0.00237903;
-  m_fakeRateEE_err[2] = 0.0022635;
-  m_fakeRateEE_err[3] = 0.00115789;
-  m_fakeRateEE_err[4] = 0.00198027;
-  */
-
-  /*
-  // fake in the barrel from Smurf selection, QCD MC for closure test - with tracker isol
+  // fake in the barrel from Smurf selection, QCD MC for closure test - with tracker isol (EPS)
   m_fakeRateEB[0] = 0.00359893;
   m_fakeRateEB[1] = 0.00275184;
   m_fakeRateEB[2] = 0.0173932;  
@@ -569,7 +208,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEB_err[3] = 0.00139134;
   m_fakeRateEB_err[4] = 0.00590532;
   
-  // fake in the endcap from Smurf selection, QCD MC for closure test - with tracker isol
+  // fake in the endcap from Smurf selection, QCD MC for closure test - with tracker isol (EPS)
   m_fakeRateEE[0] = 0.00313591;
   m_fakeRateEE[1] = 0.00422497;
   m_fakeRateEE[2] = 0.0202999;
@@ -582,10 +221,232 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate() {
   m_fakeRateEE_err[3] = 0.00147239;
   m_fakeRateEE_err[4] = 0.00725615;  
   */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>30 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0709721;  
+  m_fakeRateEB[1] = 0.0602194;
+  m_fakeRateEB[2] = 0.0961774;
+  m_fakeRateEB[3] = 0.0781231;
+  m_fakeRateEB[4] = 0.0742701;
+
+  m_fakeRateEB_err[0] = 0.00753615;  
+  m_fakeRateEB_err[1] = 0.00455991;
+  m_fakeRateEB_err[2] = 0.00521897;
+  m_fakeRateEB_err[3] = 0.00411953;
+  m_fakeRateEB_err[4] = 0.0129565;
+
+  // fake in the endcap from Smurf selection, ET>30 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0150749;    
+  m_fakeRateEE[1] = 0.0163316;
+  m_fakeRateEE[2] = 0.0448152;   
+  m_fakeRateEE[3] = 0.0401113;   
+  m_fakeRateEE[4] = 0.0289679;
+  
+  m_fakeRateEE_err[0] = 0.00312905;
+  m_fakeRateEE_err[1] = 0.00208095;
+  m_fakeRateEE_err[2] = 0.00273517;
+  m_fakeRateEE_err[3] = 0.0024019;
+  m_fakeRateEE_err[4] = 0.00844155;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>15 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0886537;   
+  m_fakeRateEB[1] = 0.0797813;
+  m_fakeRateEB[2] = 0.117802; 
+  m_fakeRateEB[3] = 0.0871194;
+  m_fakeRateEB[4] = 0.0769536;
+
+  m_fakeRateEB_err[0] = 0.00342374; 
+  m_fakeRateEB_err[1] = 0.00290197; 
+  m_fakeRateEB_err[2] = 0.00375583; 
+  m_fakeRateEB_err[3] = 0.00357522; 
+  m_fakeRateEB_err[4] = 0.0127707;
+
+  // fake in the endcap from Smurf selection, ET>15 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0204729;
+  m_fakeRateEE[1] = 0.0185901;
+  m_fakeRateEE[2] = 0.0526003;   
+  m_fakeRateEE[3] = 0.0443396;   
+  m_fakeRateEE[4] = 0.0314872; 
+  
+  m_fakeRateEE_err[0] = 0.00138694;
+  m_fakeRateEE_err[1] = 0.00117611;
+  m_fakeRateEE_err[2] = 0.00183164;
+  m_fakeRateEE_err[3] = 0.00197035;
+  m_fakeRateEE_err[4] = 0.00847713;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0577874;
+  m_fakeRateEB[1] = 0.0493845;
+  m_fakeRateEB[2] = 0.0858406;
+  m_fakeRateEB[3] = 0.0659176;
+  m_fakeRateEB[4] = 0.0690963;
+
+  m_fakeRateEB_err[0] = 0.0213123;
+  m_fakeRateEB_err[1] = 0.0110511;
+  m_fakeRateEB_err[2] = 0.0116607;
+  m_fakeRateEB_err[3] = 0.00636112;
+  m_fakeRateEB_err[4] = 0.0139332;
+
+  // fake in the endcap from Smurf selection, ET>50 - after EPS: all V1->V6 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0117469;
+  m_fakeRateEE[1] = 0.0192005;
+  m_fakeRateEE[2] = 0.0371307;  
+  m_fakeRateEE[3] = 0.0268188;  
+  m_fakeRateEE[4] = 0.018299;
+  
+  m_fakeRateEE_err[0] = 0.00828964;
+  m_fakeRateEE_err[1] = 0.00611778;
+  m_fakeRateEE_err[2] = 0.00620329;
+  m_fakeRateEE_err[3] = 0.0036283;
+  m_fakeRateEE_err[4] = 0.0076335; 
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, QCD for closure, ET>30 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.019106;
+  m_fakeRateEB[1] = 0.0138018;
+  m_fakeRateEB[2] = 0.0743516;
+  m_fakeRateEB[3] = 0.0621557;
+  m_fakeRateEB[4] = 0.0920799;
+
+  m_fakeRateEB_err[0] = 0.0070397;
+  m_fakeRateEB_err[1] = 0.00338596;
+  m_fakeRateEB_err[2] = 0.00656926;
+  m_fakeRateEB_err[3] = 0.00508687;
+  m_fakeRateEB_err[4] = 0.0247443;
+
+  // fake in the endcap from Smurf selection, QCD for closure, ET>30 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.010952;
+  m_fakeRateEE[1] = 0.0129353;
+  m_fakeRateEE[2] = 0.054481;
+  m_fakeRateEE[3] = 0.0511887;
+  m_fakeRateEE[4] = 0.0603386;
+  
+  m_fakeRateEE_err[0] = 0.00371267;
+  m_fakeRateEE_err[1] = 0.00229748;
+  m_fakeRateEE_err[2] = 0.00415571;
+  m_fakeRateEE_err[3] = 0.00370617;
+  m_fakeRateEE_err[4] = 0.0195938;
+  */
+
+  // fake in the barrel from Smurf selection, ET>30 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0706892;
+  m_fakeRateEB[1] = 0.0600548;
+  m_fakeRateEB[2] = 0.0967004;
+  m_fakeRateEB[3] = 0.0759246;
+  m_fakeRateEB[4] = 0.0757698;
+
+  m_fakeRateEB_err[0] = 0.00705514;
+  m_fakeRateEB_err[1] = 0.00436126;
+  m_fakeRateEB_err[2] = 0.00502058;
+  m_fakeRateEB_err[3] = 0.0039008;
+  m_fakeRateEB_err[4] = 0.0125631;
+
+  // fake in the endcap from Smurf selection, ET>30 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0169693;
+  m_fakeRateEE[1] = 0.0166916;
+  m_fakeRateEE[2] = 0.0455474;
+  m_fakeRateEE[3] = 0.0400856;
+  m_fakeRateEE[4] = 0.0268137;
+  
+  m_fakeRateEE_err[0] = 0.00313307;
+  m_fakeRateEE_err[1] = 0.00204691;
+  m_fakeRateEE_err[2] = 0.00266818;
+  m_fakeRateEE_err[3] = 0.00231222;
+  m_fakeRateEE_err[4] = 0.00789673;
+
+  /*
+  // fake in the barrel from Smurf selection, ET>15 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0865748;   
+  m_fakeRateEB[1] = 0.0801243;
+  m_fakeRateEB[2] = 0.119946; 
+  m_fakeRateEB[3] = 0.0862089;
+  m_fakeRateEB[4] = 0.0776998;
+
+  m_fakeRateEB_err[0] = 0.00315669;
+  m_fakeRateEB_err[1] = 0.00278899;
+  m_fakeRateEB_err[2] = 0.00364046;
+  m_fakeRateEB_err[3] = 0.00341243;
+  m_fakeRateEB_err[4] = 0.0123415;
+
+  // fake in the endcap from Smurf selection, ET>15 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0202091;
+  m_fakeRateEE[1] = 0.0192432;
+  m_fakeRateEE[2] = 0.0524854;
+  m_fakeRateEE[3] = 0.0438841;
+  m_fakeRateEE[4] = 0.0290847;
+  
+  m_fakeRateEE_err[0] = 0.00129619;
+  m_fakeRateEE_err[1] = 0.00115808;
+  m_fakeRateEE_err[2] = 0.00177128;
+  m_fakeRateEE_err[3] = 0.00188699;
+  m_fakeRateEE_err[4] = 0.00793065;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>50 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0743264;
+  m_fakeRateEB[1] = 0.0469011;
+  m_fakeRateEB[2] = 0.0864613;
+  m_fakeRateEB[3] = 0.0645644;
+  m_fakeRateEB[4] = 0.0701654;
+
+  m_fakeRateEB_err[0] = 0.0216452;
+  m_fakeRateEB_err[1] = 0.0102646;
+  m_fakeRateEB_err[2] = 0.0111009;
+  m_fakeRateEB_err[3] = 0.00602524;
+  m_fakeRateEB_err[4] = 0.0134291;
+
+  // fake in the endcap from Smurf selection, ET>50 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.0102727;
+  m_fakeRateEE[1] = 0.0202491;
+  m_fakeRateEE[2] = 0.0399345;
+  m_fakeRateEE[3] = 0.0287661;
+  m_fakeRateEE[4] = 0.016846;
+  
+  m_fakeRateEE_err[0] = 0.00725951;
+  m_fakeRateEE_err[1] = 0.00614674;
+  m_fakeRateEE_err[2] = 0.00622937;
+  m_fakeRateEE_err[3] = 0.00360473;
+  m_fakeRateEE_err[4] = 0.00710437;
+  */
+
+  /*
+  // fake in the barrel from Smurf selection, ET>35 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEB[0] = 0.0644588;
+  m_fakeRateEB[1] = 0.060191;
+  m_fakeRateEB[2] = 0.0861061;
+  m_fakeRateEB[3] = 0.0743572;
+  m_fakeRateEB[4] = 0.0770363;
+
+  m_fakeRateEB_err[0] = 0.00894102;
+  m_fakeRateEB_err[1] = 0.00558166;
+  m_fakeRateEB_err[2] = 0.00578445;
+  m_fakeRateEB_err[3] = 0.00428106;
+  m_fakeRateEB_err[4] = 0.0128063;
+
+  // fake in the endcap from Smurf selection, ET>35 - for LP: all V1->V7 - with tracker, dEta, dPhi
+  m_fakeRateEE[0] = 0.019932;
+  m_fakeRateEE[1] = 0.0177786; 
+  m_fakeRateEE[2] = 0.0420348;
+  m_fakeRateEE[3] = 0.035704;
+  m_fakeRateEE[4] = 0.0234422;
+  
+  m_fakeRateEE_err[0] = 0.00466236;
+  m_fakeRateEE_err[1] = 0.0027012;
+  m_fakeRateEE_err[2] = 0.00319567;
+  m_fakeRateEE_err[3] = 0.00247104;
+  m_fakeRateEE_err[4] = 0.00750109;
+  */
 }
 
-// provided by Emanuele
-void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
+// provided by Emanuele 
+void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() { // chiara
   
   // binning                                      
   m_minPromptPt[0] = 10.;   m_maxPromptPt[0] = 15.;
@@ -622,6 +483,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
   m_promptRateEE_err[4] = 0.0041;
   */
 
+  /* usato per EPS
   // after merging with smurf; ~815/pb
   // prompt in the barrel
   m_promptRateEB[0] = 0.54;
@@ -661,6 +523,47 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() {
   m_promptRateEE_err[2] = 0.01;
   m_promptRateEE_err[3] = 0.01;
   m_promptRateEE_err[4] = 0.01;
+  */
+
+  // after merging with smurf; denominator with deta, dphi and tracker iso. For LP
+  // prompt in the barrel
+  m_promptRateEB[0] = 0.69;
+  m_promptRateEB[1] = 0.77;
+  m_promptRateEB[2] = 0.83;
+  m_promptRateEB[3] = 0.89;
+  m_promptRateEB[4] = 0.91;
+  
+  m_promptRateEB_err[0] = 0.02;
+  m_promptRateEB_err[1] = 0.01;
+  m_promptRateEB_err[2] = 0.01;
+  m_promptRateEB_err[3] = 0.01;
+  m_promptRateEB_err[4] = 0.01;
+
+  // prompt in the crack
+  m_promptRateCr[0] = 0.51;  
+  m_promptRateCr[1] = 0.48;
+  m_promptRateCr[2] = 0.62;
+  m_promptRateCr[3] = 0.69;
+  m_promptRateCr[4] = 0.75;
+  
+  m_promptRateCr_err[0] = 0.09;
+  m_promptRateCr_err[1] = 0.04;
+  m_promptRateCr_err[2] = 0.02;
+  m_promptRateCr_err[3] = 0.01;
+  m_promptRateCr_err[4] = 0.02;
+  
+  // prompt in the endcap
+  m_promptRateEE[0] = 0.40;
+  m_promptRateEE[1] = 0.55;
+  m_promptRateEE[2] = 0.65;
+  m_promptRateEE[3] = 0.73;
+  m_promptRateEE[4] = 0.81;
+
+  m_promptRateEE_err[0] = 0.02;
+  m_promptRateEE_err[1] = 0.01;
+  m_promptRateEE_err[2] = 0.01;
+  m_promptRateEE_err[3] = 0.01;
+  m_promptRateEE_err[4] = 0.02;
 }
 
 void LeptonPlusFakeMLSelection_fullEE::Loop() {
@@ -1349,16 +1252,16 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_accepta
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
     /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = i; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = i;       
-      }
-*/
+    }
+    */
 
     _acceptEleAll.push_back(i);   
   }
@@ -1403,17 +1306,17 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_id( std
     // chiara
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-    /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    /*
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = thisEle; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = thisEle;       
-      }
+    }
     */
 
     _idEleAll.push_back(thisEle);  
@@ -1447,15 +1350,14 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_isol( s
     // chiara
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
     /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = thisEle; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = thisEle;       
     }
@@ -1492,15 +1394,14 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_conv( s
     // chiara
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
     /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = thisEle; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = thisEle;       
     }
@@ -1537,15 +1438,14 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_ip( std
     // chiara
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
     /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = thisEle; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = thisEle;       
     }
@@ -1579,15 +1479,14 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_denomin
     // chiara
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
-
     /*
     // only for same charge test  // chiara
-    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
+    if (thisCharge > 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){ 
       maxPtLep2 = maxPtLep1;
       maxPtLep1 = thisPt; 
       theLep2   = theLep1; 
       theLep1   = i; 
-    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+    } else if ( thisCharge > 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
       maxPtLep2 = thisPt; 
       theLep2   = i;       
     }
@@ -1612,7 +1511,7 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
     // chiara, for SS test
     if (chargeEle[iele]*chargeEle[realEle]>0) continue;
     // if (chargeEle[iele]*chargeEle[realEle]<0) continue;
-    // if (chargeEle[iele]>0) continue;
+    // if (chargeEle[iele]<0) continue;
     
     bool isGoodDenom = isDenomFake(iele);
     if (!isGoodDenom) continue;
@@ -1673,21 +1572,29 @@ bool LeptonPlusFakeMLSelection_fullEE::isDenomFake(int theEle) {
   // isolation 
   float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
   float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
-  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 // chiara, new
+  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 
   if(ecalIsol>0.2) isGoodDenom = false;
   if(hcalIsol>0.2) isGoodDenom = false;
-  if(trackerIsol>0.2) isGoodDenom = false;                                 // chiara, new
+  if(trackerIsol>0.2) isGoodDenom = false;                                 
 
   // H/E 
-  if ( isEleEB && hOverEEle[theEle]>0.15) isGoodDenom = false;
+  if ( isEleEB && hOverEEle[theEle]>0.12) isGoodDenom = false;  
   if (!isEleEB && hOverEEle[theEle]>0.10) isGoodDenom = false;
 
   // sigmaIetaIeta 
   bool isBarrelSc;
   if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
   if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
-  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.013 ) isGoodDenom = false;
-  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.034 ) isGoodDenom = false;
+  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.01 ) isGoodDenom = false;   
+  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.03 ) isGoodDenom = false;   
+
+  // deltaEta 
+  if ( isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.007) ) isGoodDenom = false;
+  if (!isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.009) ) isGoodDenom = false;
+
+  // deltaPhi 
+  if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) isGoodDenom = false;
+  if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) isGoodDenom = false;
 
   // spikes
   float theE1 = eMaxSC[sc];
