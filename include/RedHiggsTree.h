@@ -66,7 +66,12 @@ public:
                   
   void fillRazor(float MTR, float mR, float gammaMR);
 
-  void fillFake(int ntigh, float wfp, float wsfp, float wff, float wsff, float wpp, float wspp);
+  void fillFake(int ntigh, float wfp, float wsfp, 
+		float wfp15, float wsfp15, float wff15, float wsff15, float wpp15, float wspp15,
+		float wfp30, float wsfp30, float wff30, float wsff30, float wpp30, float wspp30,
+		float wfp35, float wsfp35, float wff35, float wsff35, float wpp35, float wspp35,
+		float wfp50, float wsfp50, float wff50, float wsff50, float wpp50, float wspp50,
+		float wfpQCD, float wsfpQCD, float wffQCD, float wsffQCD, float wppQCD, float wsppQCD);
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, 
@@ -159,8 +164,21 @@ private:
   //! for W+jets
   int myTight;
   float myWeightFP, myWeightStatFP;
-  float myWeightFF, myWeightStatFF;
-  float myWeightPP, myWeightStatPP;
+  float myWeightFP15, myWeightStatFP15;
+  float myWeightFF15, myWeightStatFF15;
+  float myWeightPP15, myWeightStatPP15;
+  float myWeightFP30, myWeightStatFP30;
+  float myWeightFF30, myWeightStatFF30;
+  float myWeightPP30, myWeightStatPP30;
+  float myWeightFP35, myWeightStatFP35;
+  float myWeightFF35, myWeightStatFF35;
+  float myWeightPP35, myWeightStatPP35;
+  float myWeightFP50, myWeightStatFP50;
+  float myWeightFF50, myWeightStatFF50;
+  float myWeightPP50, myWeightStatPP50;
+  float myWeightFPQCD, myWeightStatFPQCD;
+  float myWeightFFQCD, myWeightStatFFQCD;
+  float myWeightPPQCD, myWeightStatPPQCD;
 
   // latinos
   bool mySteps[25];

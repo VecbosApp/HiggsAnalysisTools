@@ -50,9 +50,22 @@ private:
   std::pair<int,int> getBestElectronPair_denominator();
 
   //! fake rates initialization                                         
-  void initialiseFakeRate();
-  float getFakeRate( float fakePt, bool isEB );
-  float getFakeRateError( float fakePt, bool isEE );
+  void initialiseFakeBinning();
+  void initialiseFakeRate15();
+  void initialiseFakeRate30();
+  void initialiseFakeRate35();
+  void initialiseFakeRate50();
+  void initialiseFakeRateQCD();
+  float getFakeRate15( float fakePt, bool isEB );
+  float getFakeRate30( float fakePt, bool isEB );
+  float getFakeRate35( float fakePt, bool isEB );
+  float getFakeRate50( float fakePt, bool isEB );
+  float getFakeRateQCD( float fakePt, bool isEB );
+  float getFakeRateError15( float fakePt, bool isEE );
+  float getFakeRateError30( float fakePt, bool isEE );
+  float getFakeRateError35( float fakePt, bool isEE );
+  float getFakeRateError50( float fakePt, bool isEE );
+  float getFakeRateErrorQCD( float fakePt, bool isEE );
 
   //! prompt rates initialization                                         
   void initialisePromptRate();
@@ -84,7 +97,7 @@ private:
   float deltaPhiLLJet(int ichan);
   float deltaPhiLLJet15(int ichan);
   //! count the soft muons
-  int numSoftMuons(std::vector<int> muonToRemove);
+  int numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! returns the output of the custom cut electron ID with WPXX
@@ -116,15 +129,8 @@ private:
   ElectronLikelihood *LH;
 
   //! to evaluate full selection efficiency
-  Selection *_selectionEE,     *_selectionEE_FF,     *_selectionEE_PP;     
-  Selection *_selectionStatEE, *_selectionStatEE_FF, *_selectionStatEE_PP;
-
+  Selection *_selectionEE;
   CutBasedHiggsSelector CutBasedHiggsSelectionEE;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE;
-  CutBasedHiggsSelector CutBasedHiggsSelectionEE_FF;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE_FF;
-  CutBasedHiggsSelector CutBasedHiggsSelectionEE_PP;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatEE_PP;
 
   //! be verbose during runtime
   bool _verbose;
@@ -166,15 +172,23 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1],  slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
-  float leadJetBtag[1], subLeadJetsMaxBtag[1];
+  float leadJetBtag[1], subleadJetBtag[1], subLeadJetsMaxBtag[1];
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
   float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
 
   //! fake rates                                                                     
-  float m_minFakePt[5],  m_maxFakePt[5];
-  float m_fakeRateEB[5], m_fakeRateEB_err[5];
-  float m_fakeRateEE[5], m_fakeRateEE_err[5];
+  float m_minFakePt[5],     m_maxFakePt[5];
+  float m15_fakeRateEB[5],  m15_fakeRateEB_err[5];
+  float m15_fakeRateEE[5],  m15_fakeRateEE_err[5];
+  float m30_fakeRateEB[5],  m30_fakeRateEB_err[5];
+  float m30_fakeRateEE[5],  m30_fakeRateEE_err[5];
+  float m35_fakeRateEB[5],  m35_fakeRateEB_err[5];
+  float m35_fakeRateEE[5],  m35_fakeRateEE_err[5];
+  float m50_fakeRateEB[5],  m50_fakeRateEB_err[5];
+  float m50_fakeRateEE[5],  m50_fakeRateEE_err[5];
+  float mQCD_fakeRateEB[5], mQCD_fakeRateEB_err[5];
+  float mQCD_fakeRateEE[5], mQCD_fakeRateEE_err[5];
 
   //! prompt rates                                                                     
   float m_minPromptPt[5],  m_maxPromptPt[5];

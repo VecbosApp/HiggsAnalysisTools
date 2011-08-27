@@ -137,10 +137,41 @@ void RedHiggsTree::addFake() {
   myTree->Branch("tight",        &myTight,        "tight/I");
   myTree->Branch("weightFP",     &myWeightFP,     "weightFP/F");
   myTree->Branch("weightStatFP", &myWeightStatFP, "weightStatFP/F");
-  myTree->Branch("weightFF",     &myWeightFF,     "weightFF/F");
-  myTree->Branch("weightStatFF", &myWeightStatFF, "weightStatFF/F");
-  myTree->Branch("weightPP",     &myWeightPP,     "weightPP/F");
-  myTree->Branch("weightStatPP", &myWeightStatPP, "weightStatPP/F");
+
+  myTree->Branch("weightFP15",     &myWeightFP15,     "weightFP15/F");
+  myTree->Branch("weightStatFP15", &myWeightStatFP15, "weightStatFP15/F");
+  myTree->Branch("weightFF15",     &myWeightFF15,     "weightFF15/F");
+  myTree->Branch("weightStatFF15", &myWeightStatFF15, "weightStatFF15/F");
+  myTree->Branch("weightPP15",     &myWeightPP15,     "weightPP15/F");
+  myTree->Branch("weightStatPP15", &myWeightStatPP15, "weightStatPP15/F");
+
+  myTree->Branch("weightFP30",     &myWeightFP30,     "weightFP30/F");
+  myTree->Branch("weightStatFP30", &myWeightStatFP30, "weightStatFP30/F");
+  myTree->Branch("weightFF30",     &myWeightFF30,     "weightFF30/F");
+  myTree->Branch("weightStatFF30", &myWeightStatFF30, "weightStatFF30/F");
+  myTree->Branch("weightPP30",     &myWeightPP30,     "weightPP30/F");
+  myTree->Branch("weightStatPP30", &myWeightStatPP30, "weightStatPP30/F");
+
+  myTree->Branch("weightFP35",     &myWeightFP35,     "weightFP35/F");
+  myTree->Branch("weightStatFP35", &myWeightStatFP35, "weightStatFP35/F");
+  myTree->Branch("weightFF35",     &myWeightFF35,     "weightFF35/F");
+  myTree->Branch("weightStatFF35", &myWeightStatFF35, "weightStatFF35/F");
+  myTree->Branch("weightPP35",     &myWeightPP35,     "weightPP35/F");
+  myTree->Branch("weightStatPP35", &myWeightStatPP35, "weightStatPP35/F");
+
+  myTree->Branch("weightFP50",     &myWeightFP50,     "weightFP50/F");
+  myTree->Branch("weightStatFP50", &myWeightStatFP50, "weightStatFP50/F");
+  myTree->Branch("weightFF50",     &myWeightFF50,     "weightFF50/F");
+  myTree->Branch("weightStatFF50", &myWeightStatFF50, "weightStatFF50/F");
+  myTree->Branch("weightPP50",     &myWeightPP50,     "weightPP50/F");
+  myTree->Branch("weightStatPP50", &myWeightStatPP50, "weightStatPP50/F");
+
+  myTree->Branch("weightFPQCD",     &myWeightFPQCD,     "weightFPQCD/F");
+  myTree->Branch("weightStatFPQCD", &myWeightStatFPQCD, "weightStatFPQCD/F");
+  myTree->Branch("weightFFQCD",     &myWeightFFQCD,     "weightFFQCD/F");
+  myTree->Branch("weightStatFFQCD", &myWeightStatFFQCD, "weightStatFFQCD/F");
+  myTree->Branch("weightPPQCD",     &myWeightPPQCD,     "weightPPQCD/F");
+  myTree->Branch("weightStatPPQCD", &myWeightStatPPQCD, "weightStatPPQCD/F");
 }
 
 
@@ -328,15 +359,51 @@ void RedHiggsTree::fillRazor(float MTR, float mR, float gammaMR) {
   myGammaMR = gammaMR;
 }
 
-void RedHiggsTree::fillFake(int ntigh, float wfp, float wsfp, float wff, float wsff, float wpp, float wspp) {
+void RedHiggsTree::fillFake(int ntigh, float wfp, float wsfp, 
+			    float wfp15, float wsfp15, float wff15, float wsff15, float wpp15, float wspp15,
+			    float wfp30, float wsfp30, float wff30, float wsff30, float wpp30, float wspp30,
+			    float wfp35, float wsfp35, float wff35, float wsff35, float wpp35, float wspp35,
+			    float wfp50, float wsfp50, float wff50, float wsff50, float wpp50, float wspp50,
+			    float wfpQCD, float wsfpQCD, float wffQCD, float wsffQCD, float wppQCD, float wsppQCD) {
   
   myTight        = ntigh;
   myWeightFP     = wfp;
   myWeightStatFP = wsfp;
-  myWeightFF     = wff;
-  myWeightStatFF = wsff;
-  myWeightPP     = wpp;
-  myWeightStatPP = wspp;
+  //
+  myWeightFP15     = wfp15;
+  myWeightStatFP15 = wsfp15;
+  myWeightFF15     = wff15;
+  myWeightStatFF15 = wsff15;
+  myWeightPP15     = wpp15;
+  myWeightStatPP15 = wspp15;
+  //
+  myWeightFP30     = wfp30;
+  myWeightStatFP30 = wsfp30;
+  myWeightFF30     = wff30;
+  myWeightStatFF30 = wsff30;
+  myWeightPP30     = wpp30;
+  myWeightStatPP30 = wspp30;
+  //
+  myWeightFP35     = wfp35;
+  myWeightStatFP35 = wsfp35;
+  myWeightFF35     = wff35;
+  myWeightStatFF35 = wsff35;
+  myWeightPP35     = wpp35;
+  myWeightStatPP35 = wspp35;
+  //
+  myWeightFP50     = wfp50;
+  myWeightStatFP50 = wsfp50;
+  myWeightFF50     = wff50;
+  myWeightStatFF50 = wsff50;
+  myWeightPP50     = wpp50;
+  myWeightStatPP50 = wspp50;
+  // 
+  myWeightFPQCD     = wfpQCD;
+  myWeightStatFPQCD = wsfpQCD;
+  myWeightFFQCD     = wffQCD;
+  myWeightStatFFQCD = wsffQCD;
+  myWeightPPQCD     = wppQCD;
+  myWeightStatPPQCD = wsppQCD;
 }
 
 
