@@ -53,17 +53,17 @@ void estimateTop(int njets) {
   }
 
   // scale factors for the backgrounds
-  float WWDataOverMC[2] = {1.2, 1.3} ; // estimation 1.1 fb-1 
+  float WWDataOverMC[2] = {1.02, 1.09} ; // estimation 1.1 fb-1 
   float DYDataOverMC[2] = {2.2, 2.4};  // estimation 1.54 fb-1
   float WjDataTot[4][2];     // [icha][jetbin]
-  WjDataTot[ee][0] = 22.30;  // updated LP
-  WjDataTot[mm][0] = 13.15 ; // updated LP, EPS FR
-  WjDataTot[em][0] = 63.44;  // updated LP, EPS FR
-  WjDataTot[me][0] = 50.4;   // updated LP
-  WjDataTot[ee][1] = 8.1;    // updated LP
-  WjDataTot[mm][1] = 8.25;   // updated LP, EPS FR
-  WjDataTot[em][1] = 22.94;  // updated LP, EPS FR
-  WjDataTot[me][1] = 13.8;   // updated LP
+  WjDataTot[ee][0] = 22.30; // updated LP
+  WjDataTot[mm][0] = 13.5 ; // updated LP
+  WjDataTot[em][0] = 63.4; // updated LP
+  WjDataTot[me][0] = 50.4; // updated LP
+  WjDataTot[ee][1] = 8.1; // updated LP
+  WjDataTot[mm][1] = 8.3; // updated LP
+  WjDataTot[em][1] = 22.9; // updated LP
+  WjDataTot[me][1] = 13.8; // updated LP
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
