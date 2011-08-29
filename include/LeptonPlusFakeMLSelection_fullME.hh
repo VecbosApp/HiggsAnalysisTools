@@ -59,9 +59,22 @@ private:
   std::pair<int,int> getBestMuonElePair(std::vector<int> electrons, std::vector<int> muons);
 
   //! fake rates initialization for electrons
-  void initialiseElectronFakeRate();
-  float getElectronFakeRate( float fakePt, bool isEB );
-  float getElectronFakeRateError( float fakePt, bool isEE );
+  void initialiseElectronFakeBinning();
+  void initialiseElectronFakeRate15();
+  void initialiseElectronFakeRate30();
+  void initialiseElectronFakeRate35();
+  void initialiseElectronFakeRate50();
+  void initialiseElectronFakeRateQCD();
+  float getElectronFakeRate15( float fakePt, bool isEB );
+  float getElectronFakeRate30( float fakePt, bool isEB );
+  float getElectronFakeRate35( float fakePt, bool isEB );
+  float getElectronFakeRate50( float fakePt, bool isEB );
+  float getElectronFakeRateQCD( float fakePt, bool isEB );
+  float getElectronFakeRateError15( float fakePt, bool isEE );
+  float getElectronFakeRateError30( float fakePt, bool isEE );
+  float getElectronFakeRateError35( float fakePt, bool isEE );
+  float getElectronFakeRateError50( float fakePt, bool isEE );
+  float getElectronFakeRateErrorQCD( float fakePt, bool isEE );
 
   //! prompt rates initialization for electrons
   void initialiseElectronPromptRate();
@@ -100,7 +113,7 @@ private:
   //! in the 1-jet bin, deltaphi between ll system and leading jet
   float deltaPhiLLJet(int ichan);
   //! count the soft muons
-  int numSoftMuons(std::vector<int> muonToRemove);
+  int numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
   //! returns the output of the custom cut electron ID with WPXX
@@ -132,17 +145,8 @@ private:
   ElectronLikelihood *LH;
 
   //! to evaluate full selection efficiency
-  Selection *_selectionME, *_selectionME_FF, *_selectionME_PP;
-  Selection *_selectionStatME, *_selectionStatME_FF, *_selectionStatME_PP;
-  Selection *_selectionErrME,  *_selectionErrME_FF;
+  Selection *_selectionME;
   CutBasedHiggsSelector CutBasedHiggsSelectionME;
-  CutBasedHiggsSelector CutBasedHiggsSelectionME_FF;
-  CutBasedHiggsSelector CutBasedHiggsSelectionME_PP;
-  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME;
-  CutBasedHiggsSelector CutBasedHiggsErrorsSelectionME_FF;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatME;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatME_FF;
-  CutBasedHiggsSelector CutBasedHiggsSelectionStatME_PP;
 
   //! be verbose during runtime
   bool _verbose;
@@ -183,7 +187,7 @@ private:
   float m_metOptll[1];
   float hardestLeptonPt[1], slowestLeptonPt[1];
   float hardestLeptonEta[1], slowestLeptonEta[1];
-  float leadJetBtag[1], subLeadJetsMaxBtag[1];
+  float leadJetBtag[1], subLeadJetsMaxBtag[1], subleadJetBtag[1];
   TLorentzVector *m_jetsSum[1], *m_uncorrJetsSum[1];
 
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
@@ -191,9 +195,17 @@ private:
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
   
   //! electron fake rates                             
-  float m_eleMinFakePt[5],  m_eleMaxFakePt[5];
-  float m_eleFakeRateEB[5], m_eleFakeRateEB_err[5];
-  float m_eleFakeRateEE[5], m_eleFakeRateEE_err[5];
+  float m_eleMinFakePt[5],     m_eleMaxFakePt[5];
+  float m15_eleFakeRateEB[5],  m15_eleFakeRateEB_err[5];
+  float m30_eleFakeRateEB[5],  m30_eleFakeRateEB_err[5];
+  float m35_eleFakeRateEB[5],  m35_eleFakeRateEB_err[5];
+  float m50_eleFakeRateEB[5],  m50_eleFakeRateEB_err[5];
+  float mQCD_eleFakeRateEB[5], mQCD_eleFakeRateEB_err[5];
+  float m15_eleFakeRateEE[5],  m15_eleFakeRateEE_err[5];
+  float m30_eleFakeRateEE[5],  m30_eleFakeRateEE_err[5];
+  float m35_eleFakeRateEE[5],  m35_eleFakeRateEE_err[5];
+  float m50_eleFakeRateEE[5],  m50_eleFakeRateEE_err[5];
+  float mQCD_eleFakeRateEE[5], mQCD_eleFakeRateEE_err[5];
 
   //! electron prompt rates                             
   float m_eleMinPromptPt[5],  m_eleMaxPromptPt[5];
