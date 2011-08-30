@@ -2325,8 +2325,8 @@ int LeptonPlusFakeMLSelection_fullME::numJets( std::vector<int> eleToRemove, std
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
     float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
-    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
-                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+    // if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+    //             chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch = false;
 
@@ -2409,8 +2409,8 @@ int LeptonPlusFakeMLSelection_fullME::numUncorrJets( std::vector<int> eleToRemov
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
     float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
-    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
-                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+    // if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+    //           chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch=false;
     // check if the electrons falls into the jet
@@ -2476,8 +2476,8 @@ float LeptonPlusFakeMLSelection_fullME::bVetoJets( std::vector<int> eleToRemove,
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
     float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
     
-    if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
-                  chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+    // if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
+    //           chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
 
     bool foundMatch=false;
     // check if the electrons falls into the jet
