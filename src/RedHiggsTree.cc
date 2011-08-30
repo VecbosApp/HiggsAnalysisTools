@@ -237,6 +237,15 @@ void RedHiggsTree::addRunInfos() {
   myTree->Branch("event", &myEvent, "event/I");
 }
 
+void RedHiggsTree::addMetStudies() {
+
+  myTree->Branch("projPFMet",        &myProjPFMet,        "projPFMet/F");
+  myTree->Branch("projPFChargedMet", &myProjPFChargedMet, "projPFChargedMet/F");
+  myTree->Branch("signPFMet",        &mySignPFMet,        "signPFMet/F");
+  myTree->Branch("signPFChargedMet", &mySignPFChargedMet, "signPFChargedMet/F");
+  myTree->Branch("mtrchargedMet",    &myMTRchargedMet,    "mtrchargedMet/F");
+}
+
 void RedHiggsTree::store()
 {
   myTree->Fill();
@@ -541,4 +550,11 @@ void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, bo
   myHLT = HLT;
 }
 
-
+void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha ) {
+  
+  myProjPFMet        = projPF;  
+  myProjPFChargedMet = projTk;  
+  mySignPFMet        = signPFMet;
+  mySignPFChargedMet = signChMet;
+  myMTRchargedMet    = m_MTRcha;
+}

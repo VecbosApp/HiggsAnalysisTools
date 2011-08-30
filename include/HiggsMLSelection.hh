@@ -124,6 +124,8 @@ private:
   float GetPt(float px, float py) { return TMath::Sqrt(px*px + py*py); }
   //! for the two leptons, find the closest one to MET in phi. if(deltaPhi(lepton-MET)<pi/2) projectedMET = MET * sin(deltaPhi(lepton-MET)); else projectedMET = MET
   float GetProjectedMet(TVector3 p1, TVector3 p2);
+  float GetProjectedPFMet(TVector3 p1, TVector3 p2);
+  float GetProjectedTkMet(TVector3 p1, TVector3 p2);
   //! reload the trigger mask_s_ (one per channel)
   bool reloadTriggerMask(int runN);
   //! get the trigger answer depending on the channel
@@ -188,9 +190,10 @@ private:
   float m_deltaEtaLeptons[4];
   float m_mll[4];
   float m_transvMass[4];
-  float m_MTR[4], m_MR[4], m_GammaMR[4];
+  float m_MTR[4], m_MTRcharged[4], m_MR[4], m_GammaMR[4];
   float m_mT2[4];
   float m_projectedMet[4], m_chMet[4];
+  float m_projectedPFMet[4], m_projectedTkMet[4];
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
