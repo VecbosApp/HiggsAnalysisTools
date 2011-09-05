@@ -203,9 +203,9 @@ void countEvents() {
   std::vector<float> sampleXsec;
   sampleXsec.push_back(31314.); // madgraph
   // sampleXsec.push_back(31314. * 0.00111); // PYTHIA BIG filtered
-  sampleXsec.push_back(3457.);
-  sampleXsec.push_back(3457.);
-  sampleXsec.push_back(3457.);
+  sampleXsec.push_back(3319.61); // sigma(powheg_nlo_10-20) * sigma(fewz_nnlo_20-inf)/sigma(powheg_nlo_20-inf)=3216*1666/1614 =  3319.61 pb
+  sampleXsec.push_back(3319.61);
+  sampleXsec.push_back(3319.61);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
   sampleXsec.push_back(4998./3.);
@@ -344,13 +344,13 @@ void countEvents() {
     std::vector<TString> massSampleName = signalSampleName[imass];
     std::vector<double> massId = signalProcId[imass];
     for(int i=0; i<4; i++) {
-      int release = 0;
+      int release = 1;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1, " << release << ");" << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
-    int release = 0;
+    int release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, " << sampleProcessId[isample] << " ,1, " << release << ");" << std::endl;
   }
@@ -366,7 +366,7 @@ void countEvents() {
     std::vector<double> massId = signalProcId[imass];
     for(int i=0; i<4; i++) {
       cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH[imass][i] << endl;
-      int release = 0;
+      int release = 1;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameMM = massSampleName[i].ReplaceAll("_ee","_mm");
       weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0, " << release << ");" << std::endl;
@@ -374,7 +374,7 @@ void countEvents() {
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
-    int release = 0;
+    int release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameMM = sampleName[isample].ReplaceAll("_ee","_mm");
     weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, " << sampleProcessId[isample] << " ,0, " << release << ");" << std::endl;
@@ -391,7 +391,7 @@ void countEvents() {
     std::vector<TString> massSampleName = signalSampleName[imass];
     std::vector<double> massId = signalProcId[imass];
     for(int i=0; i<4; i++) {
-      int release = 0;
+      int release = 1;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameEM = massSampleName[i].ReplaceAll("_ee","_em");
       weightsFile << "addWeights(\"" << massSampleNameEM.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,2, " << release << ");" << std::endl;
@@ -399,7 +399,7 @@ void countEvents() {
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
-    int release = 0;
+    int release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_mm","_em");
     weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,2, " << release << ");" << std::endl;
@@ -416,7 +416,7 @@ void countEvents() {
     std::vector<TString> massSampleName = signalSampleName[imass];
     std::vector<double> massId = signalProcId[imass];
     for(int i=0; i<4; i++) {
-      int release = 0;
+      int release = 1;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameME = massSampleName[i].ReplaceAll("_ee","_me");
       weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,3, " << release << ");" << std::endl;
@@ -424,7 +424,7 @@ void countEvents() {
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
-    int release = 0;
+    int release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_em","_me");
     weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,3, " << release << ");" << std::endl;
