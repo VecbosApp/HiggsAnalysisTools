@@ -5,24 +5,28 @@
 
 lumi=$1
 
+echo "COUNTING EVENTS PROCESSED IN MC..."
+root -b -l <<EOF
+.L HiggsEventCounter.cc+
+countEvents();
+.q
+EOF
+echo "COUNTING EVENTS PROCESSED IN MC DONE."
+
 echo "MERGING TREES STEP..."
-chmod u+x ./mergeTrees.sh
 ./mergeTrees.sh
 echo "MERGING TREES STEP DONE."
 
 echo "WEIGHTING TREES STEP..."
-chmod u+x ./weightTrees.sh
 ./weightTrees.sh $lumi $lumi $lumi
 echo "MERGING TREES STEP DONE."
 
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION..."
-chmod u+x ./mergeMultiSamples.sh
 ./mergeMultiSamples.sh
 ./mergeMultiSamplesSkim.sh
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION DONE."
 
 echo "MERGING FINAL STATES..."
-chmod u+x ./mergeFinalStates.sh
 ./mergeFinalStates.sh
 ./mergeFinalStatesSkim.sh
 echo "MERGING FINAL STATES DONE."
