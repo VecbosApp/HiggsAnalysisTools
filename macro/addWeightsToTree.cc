@@ -100,6 +100,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         bTagSecVertex;
     Float_t         leadingJetBTagTrackCount;
     Float_t         subleadingJetBTagTrackCount;
+    Float_t         subleadingJetsMaxBTagTrackCount;
     Float_t         pt[2];
     Float_t         eta[2];
     Float_t         deta[2];
@@ -129,6 +130,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Int_t           typeL1;
     Int_t           typeL2;
     Int_t           nSoftMu;
+    Int_t           nSoftMuNoJets;
     Float_t         mtr;
     Float_t         mr;
     Float_t         gammamr;
@@ -144,6 +146,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     TVector3        *pfmetV = 0;
     float pfmetX, pfmetY;
 
+    Float_t         signPFMet;
+    Float_t         signPFChargedMet;
+    Float_t         mtrchargedMet;
+
     // Fake rate weights (only for W+jets selection)
     Float_t         weightFP;
     Float_t         weightStatFP;
@@ -151,6 +157,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         weightStatFF;
     Float_t         weightPP;
     Float_t         weightStatPP;
+    Int_t           tight;
 
     treeOrig->SetBranchAddress("run", &run);
     treeOrig->SetBranchAddress("lumi", &lumi);
@@ -190,6 +197,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("bTagSecVertex", &bTagSecVertex);
     treeOrig->SetBranchAddress("leadingJetBTagTrackCount", &leadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount);
+    treeOrig->SetBranchAddress("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount);
     treeOrig->SetBranchAddress("pt", pt);
     treeOrig->SetBranchAddress("eta", eta);
     treeOrig->SetBranchAddress("deta", deta);
@@ -219,6 +227,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("typeL1", &typeL1);
     treeOrig->SetBranchAddress("typeL2", &typeL2);
     treeOrig->SetBranchAddress("nSoftMu", &nSoftMu);
+    treeOrig->SetBranchAddress("nSoftMuNoJets", &nSoftMuNoJets);
     treeOrig->SetBranchAddress("numExtraLep", &numExtraLep);
     treeOrig->SetBranchAddress("mtr", &mtr);
     treeOrig->SetBranchAddress("mr", &mr);
@@ -229,6 +238,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("ch", ch);
     treeOrig->SetBranchAddress("lh", lh);
     treeOrig->SetBranchAddress("iso", iso);
+    treeOrig->SetBranchAddress("signPFMet", &signPFMet);
+    treeOrig->SetBranchAddress("signPFChargedMet", &signPFChargedMet);
+    treeOrig->SetBranchAddress("mtrchargedMet", &mtrchargedMet);
     if(FRWeights) {
       treeOrig->SetBranchAddress("weightFP", &weightFP);
       treeOrig->SetBranchAddress("weightStatFP", &weightStatFP);
@@ -236,6 +248,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       treeOrig->SetBranchAddress("weightStatFF", &weightStatFF);
       treeOrig->SetBranchAddress("weightPP", &weightPP);
       treeOrig->SetBranchAddress("weightStatPP", &weightStatPP);
+      treeOrig->SetBranchAddress("tight", &tight);
     }
 
     // electron ID (only filled for electrons)
@@ -280,7 +293,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float L2eta, L2phi;
     float dileptonPt;
     float mtw1, mtw2;
-    float R;
+    float R, R2;
     float dgammamr;
     float jetcat = 0;
     float consecevent = -1;
@@ -351,6 +364,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
+      theTreeNew->Branch("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount, "subleadingJetsMaxBTagTrackCount/F");
       theTreeNew->Branch("step", step, "step[25]/O");
       theTreeNew->Branch("zveto", &zveto, "zveto/I");
       theTreeNew->Branch("bveto_ip", &bveto_ip, "bveto_ip/I");
@@ -360,6 +374,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("mr", &mr, "mr/F");
       theTreeNew->Branch("dgammamr", &dgammamr, "dgammamr/F");
       theTreeNew->Branch("R", &R, "R/F");
+      theTreeNew->Branch("metsign", &signPFMet, "metsign/F");
+      theTreeNew->Branch("met2sign", &signPFChargedMet, "met2sign/F");
+      theTreeNew->Branch("mtr2", &mtrchargedMet, "mtr2/F");
+      theTreeNew->Branch("R2", &R2, "R2/F");
       theTreeNew->Branch("pt1_eleid", &pt_1, "pt1_eleid/F");
       theTreeNew->Branch("eta1_eleid", &eta_1, "eta1_eleid/F");
       theTreeNew->Branch("deta1_eleid", &deta_1, "deta1_eleid/F");
@@ -415,6 +433,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("jeteta2", &jeteta2, "jeteta2/F");
       theTreeNew->Branch("jetphi2", &jetphi2, "jetphi2/F");
       theTreeNew->Branch("nSoftMu", &nSoftMu, "nSoftMu/I");
+      theTreeNew->Branch("nSoftMuNoJets", &nSoftMuNoJets, "nSoftMuNoJets/I");
       theTreeNew->Branch("nExtraLep", &numExtraLep, "nExtraLep/I");
       theTreeNew->Branch("sumJetsV4", "TLorentzVector", &sumJetsV4);
       theTreeNew->Branch("uncorrSumJetsV4", "TLorentzVector", &uncorrSumJetsV4);
@@ -476,6 +495,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       R9_2       = R9[1];
       matched_2  = matched[1];
       R = mtr/mr;
+      R2 = mtrchargedMet/mr;
       dgammamr = 2*gammamr;
 
       // consider only events with 0 or 1 jet
@@ -696,7 +716,7 @@ float getOfflineEff(float pT, float eta, TH2F *myH) {
 
   float theEff=-1.;
   
-  int numberOfBins = myH->GetNbinsX()*myH->GetNbinsY();
+  //  int numberOfBins = myH->GetNbinsX()*myH->GetNbinsY();
   int   xBins = myH->GetXaxis()->GetNbins();
   float xMin  = myH->GetXaxis()->GetBinLowEdge(1);
   float xMax  = myH->GetXaxis()->GetBinUpEdge(xBins);
@@ -708,7 +728,7 @@ float getOfflineEff(float pT, float eta, TH2F *myH) {
     theEff = myH->GetBinContent(theBin);
   } else {
     theEff = 1.;
-    cout << "pT = " << pT << ", eta = " << eta << ": pT or eta out of histo bounds. Put SF = 1" << endl;
+    //    cout << "pT = " << pT << ", eta = " << eta << ": pT or eta out of histo bounds. Put SF = 1" << endl;
   }
 
   // cout << "pT = " << pT << ", eta = " << eta << ", eff = " << theEff << endl;
