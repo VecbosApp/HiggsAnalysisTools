@@ -6,7 +6,7 @@ mkdir -p results_data/merged
 
 echo "Now merging EE datasets..."
 hadd results_data/merged/dataset_DoubleElectron_ee.root results_data/Data7TeVHWW/DoubleElectron/*datasetEE.root
-hadd results_data/merged/dataset_DoubleElectron_ee.root results_data/Data7TeVHWW/SingleElectron/*datasetEE.root
+hadd results_data/merged/dataset_SingleElectron_ee.root results_data/Data7TeVHWW/SingleElectron/*datasetEE.root
 
 echo "Now merging MM datasets..."
 hadd results_data/merged/dataset_DoubleMu_mm.root results_data/Data7TeVHWW/DoubleMu/*datasetMM.root 
