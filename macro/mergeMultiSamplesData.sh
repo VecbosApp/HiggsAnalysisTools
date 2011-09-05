@@ -2,7 +2,7 @@
 mkdir -p results_data/datasets_trees
 
 echo "now merging ee..."
-cp results_data/merged/dataset_DoubleElectron_ee.root results_data/datasets_trees/dataset_ee.root
+hadd results_data/datasets_trees/dataset_ee.root results_data/merged/dataset_DoubleElectron_ee.root results_data/merged/dataset_SingleElectron_ee.root 
 echo "done with ee."
 
 echo "now merging mm..."
