@@ -39,10 +39,12 @@ print MASSFILE "HiggsMass\t 120\n";
 
 print  "submitting top...\n";
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 T_TuneZ2_tW-channel-DS_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 Tbar_TuneZ2_tW-channel-DS_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 T_TuneZ2_t-channel_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 Tbar_TuneZ2_t-channel_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
-#system("python cmst3_submit_manyfilesperjob.py Summer11_V1 T_TuneZ2_s-channel_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1")
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 T_TuneZ2_s-channel_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 Tbar_TuneZ2_s-channel_7TeV-powheg-tauola 15 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 TTJets_TuneZ2_7TeV-madgraph-tauola 15 HiggsApp 8nh $prefix 1");
 print  "done with top.\n";
@@ -71,6 +73,28 @@ system("python cmst3_submit_manyfilesperjob.py Summer11_V1 GVJets_7TeV-madgraph 
 system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZZ_TuneZ2_7TeV_pythia6_tauola 15 HiggsApp 8nh $prefix 1");
 print  "done with dibosons.\n";
 
+sleep 600;
+
+print  "submitting W+gamma and Z+gamma...\n";
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WGToENuG_TuneZ2_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WGToMuNuG_TuneZ2_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WGToTauNuG_TuneZ2_7TeV-madgraph-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZGToEEG_TuneZ2_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZGToMuMuG_TuneZ2_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZGToTauTauG_TuneZ2_7TeV-madgraph-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 ZGToNuNuG_TuneZ2_7TeV-madgraph 15 HiggsApp 8nh $prefix 1");
+
+sleep 600;
+
+print  "submitting systematics samples...\n";
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 TT_TuneZ2_7TeV-pythia6-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WWTo2L2Nu_scaledown_CT10_7TeV-mcatnlo 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola 15 HiggsApp 8nh $prefix 1");
+system("python cmst3_submit_manyfilesperjob.py Summer11_V1 WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola 15 HiggsApp 8nh $prefix 1");
+
 print "\nDONE WITH MASS $mass GeV\n";
 print "<--------------------------\n";
     
+
+
