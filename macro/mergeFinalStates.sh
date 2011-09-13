@@ -14,4 +14,4 @@ hadd -f results/datasets_trees/top_ll.root results/datasets_trees/top_ee.root re
 hadd -f results/datasets_trees/Wjets_ll.root results/datasets_trees/Wjets_ee.root results/datasets_trees/Wjets_mm.root results/datasets_trees/Wjets_em.root results/datasets_trees/Wjets_me.root
 hadd -f results/datasets_trees/Zjets_ll.root results/datasets_trees/Zjets_ee.root results/datasets_trees/Zjets_mm.root results/datasets_trees/Zjets_em.root results/datasets_trees/Zjets_me.root
 hadd -f results/datasets_trees/others_ll.root results/datasets_trees/others_ee.root results/datasets_trees/others_mm.root results/datasets_trees/others_em.root results/datasets_trees/others_me.root
-hadd -f results_data/datasets_trees/dataset_ll.root results_data/datasets_trees/dataset_ee.root results_data/datasets_trees/dataset_mm.root results_data/datasets_trees/dataset_em.root results_data/datasets_trees/dataset_me.root
+
