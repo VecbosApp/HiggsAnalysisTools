@@ -24,7 +24,7 @@ hadd results/datasets_trees/Zjets_ee.root results/merged/Zee_*_ee.root results/m
 hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/merged/SingleTop_sChannel_ee.root results/merged/SingleTop_tChannel_ee.root results/merged/SingleTop_tWChannel_ee.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root
+hadd results/datasets_trees/others_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root results/merged/Vgamma_ee.root
 
 
 echo "Now merging species for mm..."
@@ -47,7 +47,7 @@ hadd results/datasets_trees/Zjets_mm.root results/merged/Zee_*_mm.root results/m
 hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/merged/SingleTop_sChannel_mm.root results/merged/SingleTop_tChannel_mm.root results/merged/SingleTop_tWChannel_mm.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root
+hadd results/datasets_trees/others_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root results/merged/Vgamma_mm.root
 
 
 echo "Now merging species for em..."
@@ -70,7 +70,7 @@ hadd results/datasets_trees/Zjets_em.root results/merged/Zee_*_em.root results/m
 hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/merged/SingleTop_sChannel_em.root results/merged/SingleTop_tChannel_em.root results/merged/SingleTop_tWChannel_em.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_em.root results/merged/WZ_em.root results/merged/ZZ_em.root
+hadd results/datasets_trees/others_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/Vgamma_em.root
 
 
 
@@ -94,6 +94,6 @@ hadd results/datasets_trees/Zjets_me.root results/merged/Zee_*_me.root results/m
 hadd results/datasets_trees/top_me.root results/merged/TTbar_me.root results/merged/SingleTop_sChannel_me.root results/merged/SingleTop_tChannel_me.root results/merged/SingleTop_tWChannel_me.root 
 
 # merging all other backgrounds
-hadd results/datasets_trees/others_me.root results/merged/WZ_me.root results/merged/ZZ_me.root
+hadd results/datasets_trees/others_me.root results/merged/WZ_me.root results/merged/ZZ_me.root results/merged/Vgamma_me.root
 
 
