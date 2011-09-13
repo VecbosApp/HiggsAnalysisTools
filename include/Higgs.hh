@@ -8,6 +8,7 @@
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/HiggsBase.h"
 #include "HiggsAnalysisTools/include/JetCorrectionUncertainty.h"
+#include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
 // ROOT includes
 #include <TLorentzVector.h>
 #include <TVector3.h>
@@ -68,6 +69,15 @@ public:
   TLorentzVector GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection);
   //! comput the PF MET with charged PFcandidates = -ptL1 -ptL2 - sum_i(ptChPFcand_i)
   TVector3 pfChargedMet(TVector3 lep1, TVector3 lep2);
+  // the lepton fakeable object definition
+  bool isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso);
+  bool isMuonDenomFake(int theMuon, bool *isDenomMuonID, bool *isDenomMuonIso);
+  //! returns the output of the custom muon ID
+  void isMuonID(int muonIndex, bool *muonIdOutput);
+  //! returns the output of the custom cut electron ID with WPXX
+  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
+  //! returns the output of the custom cut electron ID with WPXX && deominator selection
+  void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 

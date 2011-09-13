@@ -88,10 +88,6 @@ private:
   int numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
-  //! returns the output of the custom cut electron ID with WPXX
-  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
-  //! returns the output of the custom muon ID
-  void isMuonID(int muonIndex, bool *muonIdOutput);
   //! if the 2nd ele falls in deltaR from first, get its Pt in tracker
   float getSecondEleTkPt(TVector3 firstLepton, int second, float deltaR);
   //! if the 2nd muon falls in deltaR from first, get its Pt in tracker

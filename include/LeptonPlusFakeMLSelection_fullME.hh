@@ -94,8 +94,6 @@ private:
   //! fake related selection
   int getBestEleDenominator(int realMuon);
   int getBestMuDenominator(int realEle);
-  bool isEleDenomFake(int theEle);
-  bool isMuonDenomFake(int theMuon);
 
   //! set the 4 vectors, invariant mass, etc. after preselections and full selection
   void setKinematicsME(int myReal, int myFake);
@@ -116,10 +114,6 @@ private:
   int numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove);
   //! count the extra leptons (id, iso, d0,acceptance etc) with pt>10 GeV
   int numExtraLeptons( std::vector<int> eleToRemove, std::vector<int> muonToRemove );
-  //! returns the output of the custom cut electron ID with WPXX
-  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
-  //! returns the output of the custom muon ID
-  void isMuonID(int muonIndex, bool *muonIdOutput);
   //! retrns the pT dependent isolation 
   bool isPFIsolatedMuon(int muonIndex);
   //! search for the hardest lepton vertex

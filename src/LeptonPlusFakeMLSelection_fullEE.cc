@@ -104,7 +104,7 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
 
   // To read good run list!   // chiara
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -175,29 +175,56 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate15() {
 // fake from Smurf selection, ET>30 - for LP: all V1->V7 - with tracker, dEta, dPhi
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate30() {
 
-  m30_fakeRateEB[0] = 0.0706892;
-  m30_fakeRateEB[1] = 0.0600548;
-  m30_fakeRateEB[2] = 0.0967004;
-  m30_fakeRateEB[3] = 0.0759246;
-  m30_fakeRateEB[4] = 0.0757698;
+  // Smurf cut-based 
+//   m30_fakeRateEB[0] = 0.0706892;
+//   m30_fakeRateEB[1] = 0.0600548;
+//   m30_fakeRateEB[2] = 0.0967004;
+//   m30_fakeRateEB[3] = 0.0759246;
+//   m30_fakeRateEB[4] = 0.0757698;
 
-  m30_fakeRateEB_err[0] = 0.00705514;
-  m30_fakeRateEB_err[1] = 0.00436126;
-  m30_fakeRateEB_err[2] = 0.00502058;
-  m30_fakeRateEB_err[3] = 0.0039008;
-  m30_fakeRateEB_err[4] = 0.0125631;
+//   m30_fakeRateEB_err[0] = 0.00705514;
+//   m30_fakeRateEB_err[1] = 0.00436126;
+//   m30_fakeRateEB_err[2] = 0.00502058;
+//   m30_fakeRateEB_err[3] = 0.0039008;
+//   m30_fakeRateEB_err[4] = 0.0125631;
 
-  m30_fakeRateEE[0] = 0.0169693;
-  m30_fakeRateEE[1] = 0.0166916;
-  m30_fakeRateEE[2] = 0.0455474;
-  m30_fakeRateEE[3] = 0.0400856;
-  m30_fakeRateEE[4] = 0.0268137;
+//   m30_fakeRateEE[0] = 0.0169693;
+//   m30_fakeRateEE[1] = 0.0166916;
+//   m30_fakeRateEE[2] = 0.0455474;
+//   m30_fakeRateEE[3] = 0.0400856;
+//   m30_fakeRateEE[4] = 0.0268137;
   
-  m30_fakeRateEE_err[0] = 0.00313307;
-  m30_fakeRateEE_err[1] = 0.00204691;
-  m30_fakeRateEE_err[2] = 0.00266818;
-  m30_fakeRateEE_err[3] = 0.00231222;
-  m30_fakeRateEE_err[4] = 0.00789673;
+//   m30_fakeRateEE_err[0] = 0.00313307;
+//   m30_fakeRateEE_err[1] = 0.00204691;
+//   m30_fakeRateEE_err[2] = 0.00266818;
+//   m30_fakeRateEE_err[3] = 0.00231222;
+//   m30_fakeRateEE_err[4] = 0.00789673;
+  
+// LH based
+  m30_fakeRateEB[0] = 0.018937;
+  m30_fakeRateEB[1] = 0.0317367;
+  m30_fakeRateEB[2] = 0.0428001;
+  m30_fakeRateEB[3] = 0.0302811;
+  m30_fakeRateEB[4] = 0.0336609;
+  
+  m30_fakeRateEB_err[0] = 0.00381155;
+  m30_fakeRateEB_err[1] = 0.00326959;
+  m30_fakeRateEB_err[2] = 0.00350061;
+  m30_fakeRateEB_err[3] = 0.00256906;
+  m30_fakeRateEB_err[4] = 0.00868221;
+  
+  m30_fakeRateEE[0] = 0.0126018;
+  m30_fakeRateEE[1] = 0.0115;
+  m30_fakeRateEE[2] = 0.0120735;
+  m30_fakeRateEE[3] = 0.0115172;
+  m30_fakeRateEE[4] = 0.0128228;
+  
+  m30_fakeRateEE_err[0] = 0.0027483;
+  m30_fakeRateEE_err[1] = 0.00172705;
+  m30_fakeRateEE_err[2] = 0.0014194;
+  m30_fakeRateEE_err[3] = 0.00127924;
+  m30_fakeRateEE_err[4] = 0.00555369;
+
 }
 
 // fake from Smurf selection, ET>35 - for LP: all V1->V7 - with tracker, dEta, dPhi
@@ -554,7 +581,8 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     }   
     
     // to be sure: I assumed above that tight => loose. If not true, I discard the event....
-    if ( (thePositron>-1 && !isDenomFake(thePositron)) || (theElectron>-1 && !isDenomFake(theElectron)) ) {
+    bool denomId, denomIso;
+    if ( (thePositron>-1 && !isEleDenomFake(thePositron,&denomId,&denomIso)) || (theElectron>-1 && !isEleDenomFake(theElectron,&denomId,&denomIso)) ) {
       theReal = -1;
       theFake = -1;
     } 
@@ -1055,10 +1083,10 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_id( std
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisPt>=20) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
     if (!theElectronID) continue;
@@ -1110,7 +1138,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_isol( s
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     
     if (!theElectronIsol) continue;
     
@@ -1154,7 +1182,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_conv( s
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     
     if (!theElectronConvRej) continue;
 
@@ -1241,7 +1269,8 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_denomin
     TVector3 pLepton(pxEle[i],pyEle[i],pzEle[i]);
     float thisPt=pLepton.Pt();
 
-    bool isGoodDenom = isDenomFake(i);
+    bool denomId, denomIso;
+    bool isGoodDenom = isEleDenomFake(i,&denomId,&denomIso);
     if (!isGoodDenom) continue;
 
     float thisCharge = chargeEle[i];
@@ -1282,7 +1311,8 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
     // if (chargeEle[iele]*chargeEle[realEle]<0) continue;
     // if (chargeEle[iele]<0) continue;
     
-    bool isGoodDenom = isDenomFake(iele);
+    bool denomId, denomIso;
+    bool isGoodDenom = isEleDenomFake(iele,&denomId,&denomIso);
     if (!isGoodDenom) continue;
 
     float thisElePt = GetPt(pxEle[iele],pyEle[iele]);
@@ -1291,10 +1321,10 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
     bool isTight = true;
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisElePt>=20) isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisElePt<20)  isEleID(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisElePt>=20) isEleIDAndDenom(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisElePt<20)  isEleIDAndDenom(iele,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
     if (!theElectronID) isTight = false;
     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
@@ -1316,62 +1346,6 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
   }
 
   return theFake;
-}
-
-bool LeptonPlusFakeMLSelection_fullEE::isDenomFake(int theEle) {
-  
-  Utils anaUtils;
-  bool isGoodDenom = true;
-  TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
-  
-  // acceptance	         
-  if( p3Ele.Eta() > 2.5 ) isGoodDenom = false;
-  if( p3Ele.Pt() < 10. )  isGoodDenom = false;    
-  
-  // taking the supercluster     
-  int sc;
-  bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
-  if( ecalDriven) sc = superClusterIndexEle[theEle];
-  if(!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
-  if ( sc < 0 ) isGoodDenom = false;
-  
-  // barrel or endcap 
-  bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
-  
-  // isolation 
-  float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
-  float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
-  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                 
-  if(ecalIsol>0.2) isGoodDenom = false;
-  if(hcalIsol>0.2) isGoodDenom = false;
-  if(trackerIsol>0.2) isGoodDenom = false;                                 
-
-  // H/E 
-  if ( isEleEB && hOverEEle[theEle]>0.12) isGoodDenom = false;  
-  if (!isEleEB && hOverEEle[theEle]>0.10) isGoodDenom = false;
-
-  // sigmaIetaIeta 
-  bool isBarrelSc;
-  if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
-  if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
-  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.01 ) isGoodDenom = false;   
-  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.03 ) isGoodDenom = false;   
-
-  // deltaEta 
-  if ( isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.007) ) isGoodDenom = false;
-  if (!isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.009) ) isGoodDenom = false;
-
-  // deltaPhi 
-  if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) isGoodDenom = false;
-  if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) isGoodDenom = false;
-
-  // spikes
-  float theE1 = eMaxSC[sc];
-  float theE4SwissCross = e4SwissCrossSC[sc];
-  float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
-  if (theSpikeSC>0.95) isGoodDenom = false;
-
-  return isGoodDenom;
 }
 
 float LeptonPlusFakeMLSelection_fullEE::getFakeRate15( float fakePt, bool isFakeBarrel ) {
@@ -1613,135 +1587,6 @@ void LeptonPlusFakeMLSelection_fullEE::resetKinematics() {
     m_MR[theChannel]              = 0.;
     m_MTR[theChannel]             = 0.;
   }
-}
-
-
-
-void LeptonPlusFakeMLSelection_fullEE::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
-  
-  *eleIdOutput = *isolOutput = *convRejOutput = false;
-
-  Utils anaUtils;
-  int gsf = gsfTrackIndexEle[eleIndex];
-  float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
-
-  // if is ECAL driven, take the electron ID variables from the standard electron
-  // above all, take the ECAL supercluster instead of PF super cluster
-  float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
-  float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
-  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
-  HoE = hOverEEle[eleIndex];
-  deta = deltaEtaAtVtxEle[eleIndex];
-  dphiin = deltaPhiAtVtxEle[eleIndex];
-  dphiout = deltaPhiAtCaloEle[eleIndex];
-  fbrem = fbremEle[eleIndex];
-  eopout = eSeedOverPoutEle[eleIndex];
-  eop = eSuperClusterOverPEle[eleIndex];
-  if(ecaldriven) {
-    int sc = superClusterIndexEle[eleIndex];
-    s9s25 = e3x3SC[sc]/e5x5SC[sc];
-    see = sqrt(covIEtaIEtaSC[sc]);
-    spp = sqrt(covIPhiIPhiSC[sc]);
-    e1 = eMaxSC[sc];
-    e4SwissCross = e4SwissCrossSC[sc];
-    fidFlagSC = fiducialFlagsEle[eleIndex];
-    seedRecHitFlag = recoFlagSC[sc];
-    seedTime = timeSC[sc];
-    seedChi2 = chi2SC[sc];
-  } else {
-    int sc = PFsuperClusterIndexEle[eleIndex];
-    if(sc>-1) {
-      s9s25 = e3x3PFSC[sc]/e5x5PFSC[sc];
-      see = sqrt(covIEtaIEtaPFSC[sc]);
-      spp = sqrt(covIPhiIPhiPFSC[sc]);
-      e1 = eMaxSC[sc];
-      e4SwissCross = e4SwissCrossSC[sc];
-      fidFlagSC = fiducialFlagsEle[eleIndex];
-      seedRecHitFlag = recoFlagSC[sc];
-      seedTime = timeSC[sc];
-      seedChi2 = chi2SC[sc];
-    } else {
-      s9s25 = 999.;
-      see = 999.;
-      spp = 999.;
-    }
-  }
-
-
-  thisCutBasedID->SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
-  thisCutBasedID->SetRecoFlag(recoFlagsEle[eleIndex]);
-  thisCutBasedID->applyElectronIDOnPFlowElectrons(true);
-  thisCutBasedID->SetHOverE( HoE );
-  thisCutBasedID->SetS9S25( s9s25 );
-  thisCutBasedID->SetDEta( deta );
-  thisCutBasedID->SetDPhiIn( dphiin );
-  thisCutBasedID->SetDPhiOut( dphiout );
-  thisCutBasedID->SetBremFraction( fbrem );
-  thisCutBasedID->SetSigmaEtaEta( see );
-  thisCutBasedID->SetSigmaPhiPhi( spp );
-  thisCutBasedID->SetEOverPout( eopout );
-  thisCutBasedID->SetEOverPin( eop );
-  thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
-  thisCutBasedID->SetLikelihood( eleIdLikelihoodEle[eleIndex] );
-  thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
-  thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
-  thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
-  thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
-  float iso = 0.0;
-  if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
-  else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
-  thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
-  thisCutBasedID->SetCombinedPFIsolation( (pfCombinedIsoEle[eleIndex]) / pt );
-  thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
-  thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
-  thisCutBasedID->SetHasMatchedConversion ( hasMatchedConversionEle[eleIndex] );
-
-  // ECAL cleaning variables
-  thisCutBasedID->m_cleaner->SetE1(e1);
-  thisCutBasedID->m_cleaner->SetE4SwissCross(e4SwissCross);
-  thisCutBasedID->m_cleaner->SetFiducialFlag(fidFlagSC);
-  thisCutBasedID->m_cleaner->SetSeedFlag(seedRecHitFlag);
-  thisCutBasedID->m_cleaner->SetSeedTime(seedTime);
-  thisCutBasedID->m_cleaner->SetSeedChi2(seedChi2);
-
-  //  return egammaCutBasedID.output(); // class dependent result
-  *eleIdOutput = thisCutBasedID->outputNoClassEleId();
-  *isolOutput = thisCutBasedID->outputNoClassIso();
-  *convRejOutput = thisCutBasedID->outputNoClassConv();
-}
-
-void LeptonPlusFakeMLSelection_fullEE::isMuonID(int muonIndex, bool *muonIdOutput) {
-
-  *muonIdOutput = true;
-
-  Utils anaUtils; 
-  bool flagGlobalMu = false;
-  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
-    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
-    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
-       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
-       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
-  }
-
-  bool flagTrackerMu = false;
-  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
-       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
-
-  if(!(flagGlobalMu || flagTrackerMu)) {
-    *muonIdOutput = false;
-    return;
-  }
-    
-  int track = trackIndexMuon[muonIndex];
-
-  if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
-
-  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
-
-  float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
-  float sign = fabs(ptErrorTrack[track]/ptTrack);
-  if (sign>=0.1) *muonIdOutput = false;
 }
 
 
@@ -2055,11 +1900,11 @@ int LeptonPlusFakeMLSelection_fullEE::numExtraLeptons( std::vector<int> eleToRem
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
     if (!_selectionEE->getSwitch("asymmetricID")) 
-      isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
-      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
+      if(pt>=20) isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      if(pt<20)  isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
 

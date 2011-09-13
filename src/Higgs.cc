@@ -442,3 +442,242 @@ std::string Higgs::getHLTPathForRun(int runN, std::string fullname) {
   if(runN>=min && runN<=max) return std::string(HLTPathName.Data());
   else return std::string("NOPATH");
 }
+
+bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) {
+
+  Utils anaUtils;
+  bool isGoodDenom = true;
+  bool isGoodDenomID, isGoodDenomIso;
+  isGoodDenomID = isGoodDenomIso = true;
+  TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
+  
+  // acceptance	         
+  if( p3Ele.Eta() > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+  if( p3Ele.Pt() < 10. )  { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+  
+  // taking the supercluster     
+  int sc;
+  bool ecalDriven    = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
+  if( ecalDriven) sc = superClusterIndexEle[theEle];
+  if(!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
+  if ( sc < 0 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+  
+  // barrel or endcap 
+  bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
+  
+  // isolation
+  float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
+  float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
+  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                
+  if(ecalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
+  if(hcalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
+  if(trackerIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
+
+  // H/E 
+  if ( isEleEB && hOverEEle[theEle]>0.12) { isGoodDenom = false; isGoodDenomID = false; }
+  if (!isEleEB && hOverEEle[theEle]>0.10) { isGoodDenom = false; isGoodDenomID = false; }
+
+  // sigmaIetaIeta 
+  bool isBarrelSc;
+  if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
+  if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
+  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.01) { isGoodDenom = false; isGoodDenomID = false; }
+  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.03) { isGoodDenom = false; isGoodDenomID = false; }
+
+  // deltaEta
+  if ( isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.007) ) { isGoodDenom = false; isGoodDenomID = false; }
+  if (!isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.009) ) { isGoodDenom = false; isGoodDenomID = false; }
+
+  // deltaPhi
+  if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) { isGoodDenom = false; isGoodDenomID = false; }
+  if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) { isGoodDenom = false; isGoodDenomID = false; }
+
+  // spikes
+  float theE1 = eMaxSC[sc];
+  float theE4SwissCross = e4SwissCrossSC[sc];
+  float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
+  if (theSpikeSC>0.95) { isGoodDenom = false; isGoodDenomID = false; }
+
+  *isDenomEleID = isGoodDenomID;
+  *isDenomEleIso = isGoodDenomIso;
+
+  return isGoodDenom;
+}
+
+bool Higgs::isMuonDenomFake(int theMuon, bool *isDenomMuonID, bool *isDenomMuonIso) {
+
+  bool isGoodDenom = true;
+  bool isGoodDenomID, isGoodDenomIso;
+  isGoodDenomID = isGoodDenomIso = true;
+  TVector3 p3Muon(pxMuon[theMuon], pyMuon[theMuon], pzMuon[theMuon]);
+  
+  // acceptance	   
+  if( fabs(p3Muon.Eta()) > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+  if( p3Muon.Pt() < 10. )        { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+
+  // muonID
+  bool isTight = true;
+  isMuonID(theMuon, &isTight);
+  if (!isTight) { isGoodDenom = false; isGoodDenomID = false; }
+  
+  // isolation
+  float thePFMuonIso = pfCombinedIsoMuon[theMuon]/p3Muon.Pt();
+  if ( thePFMuonIso > 0.4 ) { isGoodDenom = false; isGoodDenomIso = false; }   // this is LM2; LM1 < 1.0
+  
+  // IP
+  int ctfMuon   = trackIndexMuon[theMuon]; 
+  float dxyMuon = transvImpactParTrack[ctfMuon];
+  float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];  
+  if (fabs(dxyMuon)>0.1 ) { isGoodDenom = false; isGoodDenomID = false; }     // this is LM2; LM1 < 0.1
+  if (fabs(dzMuon)>0.1  ) { isGoodDenom = false; isGoodDenomID = false; }     // this is LM2; LM1 < 0.1
+  
+  *isDenomMuonID = isGoodDenomID;
+  *isDenomMuonIso = isGoodDenomIso;
+
+  return isGoodDenom;
+}
+
+void Higgs::isMuonID(int muonIndex, bool *muonIdOutput) {
+
+  *muonIdOutput = true;
+
+  Utils anaUtils; 
+  bool flagGlobalMu = false;
+  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
+    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
+    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
+       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
+       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
+  }
+
+  bool flagTrackerMu = false;
+  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
+       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
+
+  if(!(flagGlobalMu || flagTrackerMu)) {
+    *muonIdOutput = false;
+    return;
+  }
+    
+  int track = trackIndexMuon[muonIndex];
+
+  if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
+
+  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
+
+  float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
+  float sign = fabs(ptErrorTrack[track]/ptTrack);
+  if (sign>=0.1) *muonIdOutput = false;
+}
+
+void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
+  
+  *eleIdOutput = *isolOutput = *convRejOutput = false;
+
+  Utils anaUtils;
+  int gsf = gsfTrackIndexEle[eleIndex];
+  float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
+
+  // if is ECAL driven, take the electron ID variables from the standard electron
+  // above all, take the ECAL supercluster instead of PF super cluster
+  float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
+  float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
+  HoE = hOverEEle[eleIndex];
+  deta = deltaEtaAtVtxEle[eleIndex];
+  dphiin = deltaPhiAtVtxEle[eleIndex];
+  dphiout = deltaPhiAtCaloEle[eleIndex];
+  fbrem = fbremEle[eleIndex];
+  eopout = eSeedOverPoutEle[eleIndex];
+  eop = eSuperClusterOverPEle[eleIndex];
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[eleIndex];
+    s9s25 = e3x3SC[sc]/e5x5SC[sc];
+    see = sqrt(covIEtaIEtaSC[sc]);
+    spp = sqrt(covIPhiIPhiSC[sc]);
+    e1 = eMaxSC[sc];
+    e4SwissCross = e4SwissCrossSC[sc];
+    fidFlagSC = fiducialFlagsEle[eleIndex];
+    seedRecHitFlag = recoFlagSC[sc];
+    seedTime = timeSC[sc];
+    seedChi2 = chi2SC[sc];
+  } else {
+    int sc = PFsuperClusterIndexEle[eleIndex];
+    if(sc>-1) {
+      s9s25 = e3x3PFSC[sc]/e5x5PFSC[sc];
+      see = sqrt(covIEtaIEtaPFSC[sc]);
+      spp = sqrt(covIPhiIPhiPFSC[sc]);
+      e1 = eMaxSC[sc];
+      e4SwissCross = e4SwissCrossSC[sc];
+      fidFlagSC = fiducialFlagsEle[eleIndex];
+      seedRecHitFlag = recoFlagSC[sc];
+      seedTime = timeSC[sc];
+      seedChi2 = chi2SC[sc];
+    } else {
+      s9s25 = 999.;
+      see = 999.;
+      spp = 999.;
+    }
+  }
+
+  
+  thisCutBasedID->SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
+  thisCutBasedID->SetRecoFlag(recoFlagsEle[eleIndex]);
+  thisCutBasedID->applyElectronIDOnPFlowElectrons(true);
+  thisCutBasedID->SetHOverE( HoE );
+  thisCutBasedID->SetS9S25( s9s25 );
+  thisCutBasedID->SetDEta( deta );
+  thisCutBasedID->SetDPhiIn( dphiin );
+  thisCutBasedID->SetDPhiOut( dphiout );
+  thisCutBasedID->SetBremFraction( fbrem );
+  thisCutBasedID->SetSigmaEtaEta( see );
+  thisCutBasedID->SetSigmaPhiPhi( spp );
+  thisCutBasedID->SetEOverPout( eopout );
+  thisCutBasedID->SetEOverPin( eop );
+  thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
+  //  thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
+  thisCutBasedID->SetLikelihood( eleIdLikelihoodEle[eleIndex] );
+  thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
+  thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
+  thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
+  thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
+  float iso = 0.0;
+  if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
+  else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
+  thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
+  thisCutBasedID->SetCombinedPFIsolation( (pfCombinedIsoEle[eleIndex]) / pt );
+  thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
+  thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
+  thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
+  thisCutBasedID->SetHasMatchedConversion ( hasMatchedConversionEle[eleIndex] );
+
+  // ECAL cleaning variables
+  thisCutBasedID->m_cleaner->SetE1(e1);
+  thisCutBasedID->m_cleaner->SetE4SwissCross(e4SwissCross);
+  thisCutBasedID->m_cleaner->SetFiducialFlag(fidFlagSC);
+  thisCutBasedID->m_cleaner->SetSeedFlag(seedRecHitFlag);
+  thisCutBasedID->m_cleaner->SetSeedTime(seedTime);
+  thisCutBasedID->m_cleaner->SetSeedChi2(seedChi2);
+
+  //  return egammaCutBasedID.output(); // class dependent result
+  *eleIdOutput = thisCutBasedID->outputNoClassEleId();
+  *isolOutput = thisCutBasedID->outputNoClassIso();
+  *convRejOutput = thisCutBasedID->outputNoClassConv();
+}
+
+void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
+
+  bool tightId, tightIso, tightConvRej;
+  tightId = tightIso = tightConvRej = true;
+  isEleID(eleIndex,&tightId,&tightIso,&tightConvRej,thisCutBasedID);
+
+  bool denomId, denomIso;
+  denomId = denomIso = true;
+  isEleDenomFake(eleIndex,&denomId,&denomIso);
+  
+  // denominator definition is only applied on ID (because different algorithm is used offline and in HLT)
+  *eleIdOutput = (tightId && denomId);
+  *isolOutput = tightIso;
+  *convRejOutput = tightConvRej;
+
+}

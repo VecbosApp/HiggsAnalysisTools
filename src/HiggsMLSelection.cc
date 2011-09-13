@@ -1511,10 +1511,10 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisPt<20)  isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisPt>=20) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+      if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
     if (!theElectronID) continue;
@@ -1553,7 +1553,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
 
     if (!theElectronIsol) continue;
     
@@ -1584,7 +1584,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleID(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
     
     if (!theElectronConvRej) continue;
 
@@ -2317,133 +2317,6 @@ void HiggsMLSelection::resetKinematics() {
 
 
 
-void HiggsMLSelection::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
-  
-  *eleIdOutput = *isolOutput = *convRejOutput = false;
-
-  Utils anaUtils;
-  int gsf = gsfTrackIndexEle[eleIndex];
-  float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
-
-  // if is ECAL driven, take the electron ID variables from the standard electron
-  // above all, take the ECAL supercluster instead of PF super cluster
-  float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
-  float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
-  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
-  HoE = hOverEEle[eleIndex];
-  deta = deltaEtaAtVtxEle[eleIndex];
-  dphiin = deltaPhiAtVtxEle[eleIndex];
-  dphiout = deltaPhiAtCaloEle[eleIndex];
-  fbrem = fbremEle[eleIndex];
-  eopout = eSeedOverPoutEle[eleIndex];
-  eop = eSuperClusterOverPEle[eleIndex];
-  if(ecaldriven) {
-    int sc = superClusterIndexEle[eleIndex];
-    s9s25 = e3x3SC[sc]/e5x5SC[sc];
-    see = sqrt(covIEtaIEtaSC[sc]);
-    spp = sqrt(covIPhiIPhiSC[sc]);
-    e1 = eMaxSC[sc];
-    e4SwissCross = e4SwissCrossSC[sc];
-    fidFlagSC = fiducialFlagsEle[eleIndex];
-    seedRecHitFlag = recoFlagSC[sc];
-    seedTime = timeSC[sc];
-    seedChi2 = chi2SC[sc];
-  } else {
-    int sc = PFsuperClusterIndexEle[eleIndex];
-    if(sc>-1) {
-      s9s25 = e3x3PFSC[sc]/e5x5PFSC[sc];
-      see = sqrt(covIEtaIEtaPFSC[sc]);
-      spp = sqrt(covIPhiIPhiPFSC[sc]);
-      e1 = eMaxSC[sc];
-      e4SwissCross = e4SwissCrossSC[sc];
-      fidFlagSC = fiducialFlagsEle[eleIndex];
-      seedRecHitFlag = recoFlagSC[sc];
-      seedTime = timeSC[sc];
-      seedChi2 = chi2SC[sc];
-    } else {
-      s9s25 = 999.;
-      see = 999.;
-      spp = 999.;
-    }
-  }
-
-
-  thisCutBasedID->SetEcalFiducialRegion( fiducialFlagsEle[eleIndex] );
-  thisCutBasedID->SetRecoFlag(recoFlagsEle[eleIndex]);
-  thisCutBasedID->applyElectronIDOnPFlowElectrons(true);
-  thisCutBasedID->SetHOverE( HoE );
-  thisCutBasedID->SetS9S25( s9s25 );
-  thisCutBasedID->SetDEta( deta );
-  thisCutBasedID->SetDPhiIn( dphiin );
-  thisCutBasedID->SetDPhiOut( dphiout );
-  thisCutBasedID->SetBremFraction( fbrem );
-  thisCutBasedID->SetSigmaEtaEta( see );
-  thisCutBasedID->SetSigmaPhiPhi( spp );
-  thisCutBasedID->SetEOverPout( eopout );
-  thisCutBasedID->SetEOverPin( eop );
-  thisCutBasedID->SetElectronClass ( classificationEle[eleIndex] );
-  //  thisCutBasedID->SetLikelihood( likelihoodRatio(eleIndex,*LH) );
-  thisCutBasedID->SetLikelihood( eleIdLikelihoodEle[eleIndex] );
-  thisCutBasedID->SetNBrem( nbremsEle[eleIndex] );
-  thisCutBasedID->SetEcalIsolation( (dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                
-  thisCutBasedID->SetTrkIsolation ( (dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );                        
-  thisCutBasedID->SetHcalIsolation( (dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3)/pt );         
-  float iso = 0.0;
-  if ( anaUtils.fiducialFlagECAL(fiducialFlagsEle[eleIndex],isEB) ) iso = dr03TkSumPtEle[eleIndex] + max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
-  else iso = dr03TkSumPtEle[eleIndex] + dr03EcalRecHitSumEtEle[eleIndex] + dr03HcalTowerSumEtFullConeEle[eleIndex];
-  thisCutBasedID->SetCombinedIsolation( (iso - rhoFastjet*TMath::Pi()*0.3*0.3) / pt );
-  thisCutBasedID->SetCombinedPFIsolation( (pfCombinedIsoEle[eleIndex]) / pt );
-  thisCutBasedID->SetMissingHits( expInnerLayersGsfTrack[gsf] );
-  thisCutBasedID->SetConvDist( fabs(convDistEle[eleIndex]) );
-  thisCutBasedID->SetConvDcot( fabs(convDcotEle[eleIndex]) );
-  thisCutBasedID->SetHasMatchedConversion ( hasMatchedConversionEle[eleIndex] );
-
-  // ECAL cleaning variables
-  thisCutBasedID->m_cleaner->SetE1(e1);
-  thisCutBasedID->m_cleaner->SetE4SwissCross(e4SwissCross);
-  thisCutBasedID->m_cleaner->SetFiducialFlag(fidFlagSC);
-  thisCutBasedID->m_cleaner->SetSeedFlag(seedRecHitFlag);
-  thisCutBasedID->m_cleaner->SetSeedTime(seedTime);
-  thisCutBasedID->m_cleaner->SetSeedChi2(seedChi2);
-
-  //  return egammaCutBasedID.output(); // class dependent result
-  *eleIdOutput = thisCutBasedID->outputNoClassEleId();
-  *isolOutput = thisCutBasedID->outputNoClassIso();
-  *convRejOutput = thisCutBasedID->outputNoClassConv();
-}
-
-void HiggsMLSelection::isMuonID(int muonIndex, bool *muonIdOutput) {
-
-  *muonIdOutput = true;
-
-  Utils anaUtils; 
-  bool flagGlobalMu = false;
-  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
-    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
-    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
-       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
-       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
-  }
-
-  bool flagTrackerMu = false;
-  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
-       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
-
-  if(!(flagGlobalMu || flagTrackerMu)) {
-    *muonIdOutput = false;
-    return;
-  }
-    
-  int track = trackIndexMuon[muonIndex];
-
-  if(trackValidHitsTrack[track]<=10) *muonIdOutput = false;
-
-  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
-
-  float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
-  float sign = fabs(ptErrorTrack[track]/ptTrack);
-  if (sign>=0.1) *muonIdOutput = false;
-}
 
 int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> muonToRemove, int theChannel) {
 
@@ -2749,11 +2622,11 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
     if (!_selectionEE->getSwitch("asymmetricID")) 
-      isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
-      if(pt<20)  isEleID(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
+      if(pt>=20) isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      if(pt<20)  isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
     }
     if(!theId || !theIso || !theConvRej) continue;
     
