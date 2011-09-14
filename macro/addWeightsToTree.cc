@@ -51,12 +51,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     int nentriesOrig = treeOrig->GetEntries();
 
     TFile *fileNew = TFile::Open(filename,"recreate");
-    TTree *treeNew = new TTree("T1","tree with only selected events");
+    TTree *treeNew = new TTree("latino","tree with only selected events");
 
     TString skimFile(filename);
     skimFile.ReplaceAll("merged","merged_skim");
     TFile *fileNewSkim = TFile::Open(skimFile.Data(),"recreate");
-    TTree *treeNewSkim = new TTree("T1","tree with only selected events");
+    TTree *treeNewSkim = new TTree("latino","tree with only selected events");
 
     std::vector<TTree*> trees; 
     trees.push_back(treeNew);
@@ -298,6 +298,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float jetcat = 0;
     float consecevent = -1;
 
+    // variables to be converted in float...
+    float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
+      f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_typeL1, f_typeL2, 
+      f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId;
+    float f_ch[2];
+    
+      
     // vetoes
     int zveto, bveto_ip, bveto_mu, bveto;
 
@@ -309,24 +316,25 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       TTree *theTreeNew = trees[i];
 
       // the selected final state: ee=0, mm=1, em=2
-      theTreeNew->Branch("channel", &finalstate, "channel/I");
+      theTreeNew->Branch("channel", &f_finalstate, "channel/F");
 
       // one integer containing the process identifier (for MC, 0 for data)
-      theTreeNew->Branch("process", &processId, "process/I");
+      theTreeNew->Branch("dataset", &f_processId, "dataset/F");
 
-      // copy branches
-      theTreeNew->Branch("run", &run, "run/I");
-      theTreeNew->Branch("lumi", &lumi, "lumi/I");
-      theTreeNew->Branch("event", &event, "event/I");
+
+      // Copys branches
+      theTreeNew->Branch("run", &f_run, "run/F");
+      theTreeNew->Branch("lumi", &f_lumi, "lumi/F");
+      theTreeNew->Branch("event", &f_event, "event/F");
       theTreeNew->Branch("puW", &puweight, "puW/F");
       theTreeNew->Branch("effW", &effW, "effW/F");
       theTreeNew->Branch("triggW", &triggW, "triggW/F");
-      theTreeNew->Branch("met", &pfMet, "met/F");
-      theTreeNew->Branch("met2", &tkMET, "met2/F");  
-      theTreeNew->Branch("hlt", &i_hlt, "hlt/I");
+      theTreeNew->Branch("pfmet", &pfMet, "pfmet/F");
+      theTreeNew->Branch("chmet", &tkMET, "chmet/F");  
+      theTreeNew->Branch("trigger", &f_hlt, "trigger/F");
       theTreeNew->Branch("caloMet", &caloMet, "caloMet/F");
-      theTreeNew->Branch("pmet", &pmet, "pmet/F");
-      theTreeNew->Branch("pmet2", &pmet2, "pmet2/F");
+      theTreeNew->Branch("ppfmet", &pmet, "ppfmet/F");
+      theTreeNew->Branch("pchmet", &pmet2, "pchmet/F");
       theTreeNew->Branch("mpmet", &projMet, "mpmet/F");
       theTreeNew->Branch("dphill", &deltaPhi, "dphill/F");
       theTreeNew->Branch("drll", &deltaR, "drll/F");
@@ -343,7 +351,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("eta2", &L2eta, "eta2/F");
       theTreeNew->Branch("phi2", &L2phi, "phi2/F");
       theTreeNew->Branch("detaLeptons", &detaLeptons, "detaLeptons/F");
-      theTreeNew->Branch("nvtx", &nVtx, "nvtx/I");
+      theTreeNew->Branch("nvtx", &f_nVtx, "nvtx/F");
       theTreeNew->Branch("finalLeptons", &i_finalLeptons, "finalLeptons/I");
       theTreeNew->Branch("jetVeto", &i_jetVeto, "jetVeto/I");
       theTreeNew->Branch("uncorrJetVeto", &i_uncorrJetVeto, "uncorrJetVeto/I");
@@ -355,28 +363,28 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
       // theTreeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
       // theTreeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
-      theTreeNew->Branch("njets", &njets, "njets/I");
-      theTreeNew->Branch("nuncorrjets", &nuncorrjets, "nuncorrjets/I");
+      theTreeNew->Branch("njets", &f_njets, "njets/F");
+      theTreeNew->Branch("nuncorrjets", &f_nuncorrjets, "nuncorrjets/F");
       theTreeNew->Branch("dxyEVT", &dxyEVT, "dxyEVT/F");
       theTreeNew->Branch("dszEVT", &dszEVT, "dszEVT/F");
-      theTreeNew->Branch("bTagTrackCount", &bTagTrackCount, "bTagTrackCount/F");
+      theTreeNew->Branch("softbdisc", &bTagTrackCount, "softbdisc/F");
       theTreeNew->Branch("bTagImpPar", &bTagImpPar, "bTagImpPar/F");
       theTreeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount, "subleadingJetsMaxBTagTrackCount/F");
       theTreeNew->Branch("step", step, "step[25]/O");
-      theTreeNew->Branch("zveto", &zveto, "zveto/I");
-      theTreeNew->Branch("bveto_ip", &bveto_ip, "bveto_ip/I");
-      theTreeNew->Branch("bveto_mu", &bveto_mu, "bveto_mu/I");
-      theTreeNew->Branch("bveto", &bveto, "bveto/I");
+      theTreeNew->Branch("zveto", &f_zveto, "zveto/F");
+      theTreeNew->Branch("bveto_ip", &f_bveto_ip, "bveto_ip/F");
+      theTreeNew->Branch("bveto_mu", &f_bveto_mu, "bveto_mu/F");
+      theTreeNew->Branch("bveto", &f_bveto, "bveto/F");
       theTreeNew->Branch("mtr", &mtr, "mtr/F");
       theTreeNew->Branch("mr", &mr, "mr/F");
-      theTreeNew->Branch("dgammamr", &dgammamr, "dgammamr/F");
+      theTreeNew->Branch("gammaMRstar", &dgammamr, "gammaMRstar/F");
       theTreeNew->Branch("R", &R, "R/F");
-      theTreeNew->Branch("metsign", &signPFMet, "metsign/F");
-      theTreeNew->Branch("met2sign", &signPFChargedMet, "met2sign/F");
-      theTreeNew->Branch("mtr2", &mtrchargedMet, "mtr2/F");
+      theTreeNew->Branch("pfmetsign", &signPFMet, "pfmetsign/F");
+      theTreeNew->Branch("chmetsign", &signPFChargedMet, "chmetsign/F");
+      theTreeNew->Branch("chmtr", &mtrchargedMet, "chmtr/F");
       theTreeNew->Branch("R2", &R2, "R2/F");
       theTreeNew->Branch("pt1_eleid", &pt_1, "pt1_eleid/F");
       theTreeNew->Branch("eta1_eleid", &eta_1, "eta1_eleid/F");
@@ -409,12 +417,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("pyL1", &pyL1, "pyL1/F");
       theTreeNew->Branch("pzL1", &pzL1, "pzL1/F");
       theTreeNew->Branch("eneL1",  &eneL1,  "eneL1/F");
-      theTreeNew->Branch("typeL1", &typeL1, "typeL1/I");
+      theTreeNew->Branch("typeL1", &f_typeL1, "typeL1/F");
       theTreeNew->Branch("pxL2", &pxL2, "pxL2/F");
       theTreeNew->Branch("pyL2", &pyL2, "pyL2/F");
       theTreeNew->Branch("pzL2", &pzL2, "pzL2/F");
       theTreeNew->Branch("eneL2",  &eneL2,  "eneL2/F");
-      theTreeNew->Branch("typeL2", &typeL2, "typeL2/I");
+      theTreeNew->Branch("typeL2", &f_typeL2, "typeL2/F");
       theTreeNew->Branch("dphilmet1", &dphilmet1, "dphilmet1/F");
       theTreeNew->Branch("dphilmet2", &dphilmet2, "dphilmet2/F");
       theTreeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
@@ -432,16 +440,16 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("jetpt2", &jetpt2, "jetpt2/F");
       theTreeNew->Branch("jeteta2", &jeteta2, "jeteta2/F");
       theTreeNew->Branch("jetphi2", &jetphi2, "jetphi2/F");
-      theTreeNew->Branch("nSoftMu", &nSoftMu, "nSoftMu/I");
-      theTreeNew->Branch("nSoftMuNoJets", &nSoftMuNoJets, "nSoftMuNoJets/I");
-      theTreeNew->Branch("nExtraLep", &numExtraLep, "nExtraLep/I");
+      theTreeNew->Branch("nSoftMu", &f_nSoftMu, "nSoftMu/I");
+      theTreeNew->Branch("nSoftMuNoJets", &f_nSoftMuNoJets, "nSoftMuNoJets/F");
+      theTreeNew->Branch("nextra", &f_numExtraLep, "nextra/F");
       theTreeNew->Branch("sumJetsV4", "TLorentzVector", &sumJetsV4);
       theTreeNew->Branch("uncorrSumJetsV4", "TLorentzVector", &uncorrSumJetsV4);
       theTreeNew->Branch("pfmetV", "TVector3", &pfmetV);
       theTreeNew->Branch("pfmetX", &pfmetX, "pfmetX/F");
       theTreeNew->Branch("pfmetY", &pfmetY, "pfmetY/F");
-      theTreeNew->Branch("ch1", &(ch[0]), "ch1/I");
-      theTreeNew->Branch("ch2", &(ch[1]), "ch2/I");
+      theTreeNew->Branch("ch1", &(f_ch[0]), "ch1/F");
+      theTreeNew->Branch("ch2", &(f_ch[1]), "ch2/F");
       theTreeNew->Branch("iso1", &(iso[0]), "iso1/F");
       theTreeNew->Branch("iso2", &(iso[1]), "iso2/F");
 
@@ -664,8 +672,31 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         dileptonPt = -9999.;
       } 
       consecevent = (float)j;
+      
+      // change the format of the integers -> float
+      f_run = (float)run;
+      f_lumi = (float)lumi;
+      f_event = (float)event;
+      f_hlt = (float)i_hlt;
+      f_nVtx = (float)nVtx;
+      f_njets = (float)njets;
+      f_nuncorrjets = (float)nuncorrjets;
+      f_zveto = (float)zveto;
+      f_bveto_ip = (float)bveto_ip;
+      f_bveto_mu = (float)bveto_mu;
+      f_bveto = (float)bveto;
+      f_typeL1 = (float)typeL1;
+      f_typeL2 = (float)typeL2;
+      f_nSoftMuNoJets = (float)nSoftMuNoJets;
+      f_nSoftMu = (float)nSoftMu;
+      f_numExtraLep = (float)numExtraLep;
+      f_ch[0] = (float)ch[0];
+      f_ch[1] = (float)ch[1];
+      f_finalstate = (float)finalstate;
+      f_processId = (float)processId;
+
       if(finalLeptons) {
-        if(processId>0) { // MC
+        if(processId < 100 || processId >= 1000 ) { // MC
           treeNew->Fill();
           if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
         } else { // data: apply the trigger 
