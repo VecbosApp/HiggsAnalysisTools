@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define NSAMPLES 16
+#define NSAMPLES 30
 
 using namespace std;
 
@@ -59,8 +59,8 @@ void countEvents() {
     chains[isample] = new TChain(nametree);
   }
 
+  // nominal sample first, then the systematics ones
   chains[0]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
-  //chains[0]->Add("results/Summer11_V1/WToLNu_TuneZ2_7TeV_pythia6_veryBIG/*Counters.root");
 
   chains[1]->Add("results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
   chains[2]->Add("results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
@@ -75,21 +75,35 @@ void countEvents() {
   //  chains[8]->Add("results/Summer11_V1/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
   //  chains[9]->Add("results/Summer11_V1/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[7]->Add("results/Summer11_V1/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[8]->Add("results/Summer11_V1/T_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[8]->Add("results/Summer11_V1/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[9]->Add("results/Summer11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
-  chains[9]->Add("results/Summer11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
+  chains[7]->Add("results/Summer11_V1/T_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[8]->Add("results/Summer11_V1/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[9]->Add("results/Summer11_V1/T_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[10]->Add("results/Summer11_V1/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[11]->Add("results/Summer11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
+  chains[12]->Add("results/Summer11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
 
-  chains[10]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[13]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[11]->Add("results/Summer11_V1/GVJets_7TeV-madgraph/*Counters.root");
-  //  chains[11]->Add("results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV-pythia6/*Counters.root"); // PYTHIA sample
-  chains[12]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // MADGRAPH sample
-  chains[13]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[14]->Add("results/Summer11_V1/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
-  chains[15]->Add("results/Summer11_V1/ZZ_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
+  chains[14]->Add("results/Summer11_V1/WGToENuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[15]->Add("results/Summer11_V1/WGToMuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[16]->Add("results/Summer11_V1/WGToTauNuG_TuneZ2_7TeV-madgraph/*Counters.root");
 
+  chains[17]->Add("results/Summer11_V1/ZGToEEG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[18]->Add("results/Summer11_V1/ZGToMuMuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[19]->Add("results/Summer11_V1/ZGToTauTauG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[20]->Add("results/Summer11_V1/ZGToNuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
+
+  chains[21]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
+  chains[22]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[23]->Add("results/Summer11_V1/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
+  chains[24]->Add("results/Summer11_V1/ZZ_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
+
+  // samples for systematics
+  chains[25]->Add("results/Summer11_V1/WWTo2L2Nu_CT10_7TeV-mcatnlo/*Counters.root"); // nominal MC@NLO sample
+  chains[26]->Add("results/Summer11_V1/WWTo2L2Nu_scaledown_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
+  chains[27]->Add("results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
+  chains[28]->Add("results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*Counters.root"); // PYTHIA sample 
+  chains[29]->Add("results/Summer11_V1/GVJets_7TeV-madgraph/*Counters.root"); // Vgamma inclusive
 
   cout << "chains added. " << endl;
 
@@ -118,18 +132,34 @@ void countEvents() {
   sampleName.push_back("results/merged/Zmm_Hi_ee.root");
   sampleName.push_back("results/merged/Ztautau_Hi_ee.root");
 
-  sampleName.push_back("results/merged/SingleTop_sChannel_ee.root");
-  sampleName.push_back("results/merged/SingleTop_tChannel_ee.root");
-  sampleName.push_back("results/merged/SingleTop_tWChannel_ee.root");
+  sampleName.push_back("results/merged/SingleT_sChannel_ee.root");
+  sampleName.push_back("results/merged/SingleTbar_sChannel_ee.root");
+  sampleName.push_back("results/merged/SingleT_tChannel_ee.root");
+  sampleName.push_back("results/merged/SingleTbar_tChannel_ee.root");
+  sampleName.push_back("results/merged/SingleT_tWChannel_ee.root");
+  sampleName.push_back("results/merged/SingleTbar_tWChannel_ee.root");
 
   sampleName.push_back("results/merged/TTbar_ee.root");
 
+  sampleName.push_back("results/merged/WGToENuG_ee.root");
+  sampleName.push_back("results/merged/WGToMuNuG_ee.root");
+  sampleName.push_back("results/merged/WGToTauNuG_ee.root");
 
-  sampleName.push_back("results/merged/Wgamma_ee.root");
+  sampleName.push_back("results/merged/ZGToEEG_ee.root");
+  sampleName.push_back("results/merged/ZGToMuMuG_ee.root");
+  sampleName.push_back("results/merged/ZGToTauTauG_ee.root");
+  sampleName.push_back("results/merged/ZGToNuNuG_ee.root");
+
   sampleName.push_back("results/merged/WW_ee.root");
   sampleName.push_back("results/merged/ggWW_ee.root");
   sampleName.push_back("results/merged/WZ_ee.root");
   sampleName.push_back("results/merged/ZZ_ee.root");
+
+  sampleName.push_back("results/merged/WW_mcatnlo_ee.root");
+  sampleName.push_back("results/merged/WW_mcatnlo_scaledown_ee.root");
+  sampleName.push_back("results/merged/WW_mcatnlo_scaleup_ee.root");
+  sampleName.push_back("results/merged/WW_pythia_ee.root");
+  sampleName.push_back("results/merged/Wgamma_inclusive_ee.root");
 
   std::map<int,float> ggHiggs_xsec;
   // samples are emu only
@@ -216,48 +246,81 @@ void countEvents() {
   //   sampleXsec.push_back(10.6);
 
   // powheg samples. Xsecs taken from PREP: http://cms.cern.ch/iCMS/prep/requestmanagement?pwg=TOP&campid=Summer11
-  sampleXsec.push_back(2.341 + 1.265);
-  sampleXsec.push_back(3.572 + 1.843);
-  sampleXsec.push_back(7.46 + 7.466);
+  sampleXsec.push_back(2.341);
+  sampleXsec.push_back(1.265);
 
-  sampleXsec.push_back(157.5);
-  sampleXsec.push_back(165.);
+  sampleXsec.push_back(3.572);
+  sampleXsec.push_back(1.843);
+
+  // prep says 7.46 pb. 7.87 is from Guillelmo
+  sampleXsec.push_back(7.87);
+  sampleXsec.push_back(7.87);
+
+  // Wgamma
+  sampleXsec.push_back(137.5 * 0.1080);
+  sampleXsec.push_back(137.5 * 0.1080);
+  sampleXsec.push_back(137.5 * 0.1080);
+
+  // Zgamma
+  sampleXsec.push_back(41.3 * 0.033658);
+  sampleXsec.push_back(41.3 * 0.033658);
+  sampleXsec.push_back(41.3 * 0.033658);
+  sampleXsec.push_back(41.3 * 0.020);
+
+  // WW
   // s(NLO qqWW+ggWW) = 47 pb, [K. Ellis]
   // gg/Tot = 0.0305
   // sigma(qqWW) = 47*(1-0.0305) * 0.108*0.108*9 = 4.7833889
   // sigma(ggWW) = 47*0.0305*0.108*0.108*9 = 0.150483
   sampleXsec.push_back(4.7833889);
   sampleXsec.push_back(0.150483);
-  sampleXsec.push_back(0.599442);
+  sampleXsec.push_back(18.2 * 3*0.1080 * 3*0.033658);
   sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor.
 
   std::vector<std::vector<double> > signalProcId;
   for(int imass=0; imass<17;imass++) {
     std::vector<double> massId;
-    massId.push_back(1001); // ggH->2L2Nu
-    massId.push_back(1002); // ggH->LNuTauNu
-    massId.push_back(1003); // qqH->2L2Nu
-    massId.push_back(1004); // qqH->LNuTauNu
+    massId.push_back(1000+mH[imass]); // ggH->2L2Nu
+    massId.push_back(2000+mH[imass]); // ggH->LNuTauNu
+    massId.push_back(4000+mH[imass]); // qqH->2L2Nu
+    massId.push_back(5000+mH[imass]); // qqH->LNuTauNu
     signalProcId.push_back(massId);
   }
 
-  std::vector<int> sampleProcessId;
-  sampleProcessId.push_back(1); // Wjets
-  sampleProcessId.push_back(2); // Z->ee [10-20]
-  sampleProcessId.push_back(3); // Z->mumu [10-20]
-  sampleProcessId.push_back(4); // Z->tautau [10-20]
-  sampleProcessId.push_back(5); // Z->ee [20-inf]
-  sampleProcessId.push_back(6); // Z->mumu [20-inf]
-  sampleProcessId.push_back(7); // Z->tautau [20-inf]
-  sampleProcessId.push_back(8); // t(s-cha) 
-  sampleProcessId.push_back(9); // t(t-cha)
-  sampleProcessId.push_back(10); // tW
-  sampleProcessId.push_back(11); // ttbar
-  sampleProcessId.push_back(12); // Vgamma
-  sampleProcessId.push_back(13); // qqWW
-  sampleProcessId.push_back(14); // ggWW
-  sampleProcessId.push_back(15); // WZ->3LNu
-  sampleProcessId.push_back(16); // ZZ->anything
+  std::vector<int> sampleProcessId; 
+  // ids are taken from: https://docs.google.com/spreadsheet/ccc?key=0Ankm0DuoD0h0dHRhV1VNSlV1NEdhNFdyOXh3eFpSMHc&hl=en_US#gid=31
+  sampleProcessId.push_back(80); // Wjets
+  sampleProcessId.push_back(33); // Z->ee [10-20]
+  sampleProcessId.push_back(34); // Z->mumu [10-20]
+  sampleProcessId.push_back(35); // Z->tautau [10-20]
+  sampleProcessId.push_back(30); // Z->ee [20-inf]
+  sampleProcessId.push_back(31); // Z->mumu [20-inf]
+  sampleProcessId.push_back(32); // Z->tautau [20-inf]
+  sampleProcessId.push_back(15); // t(s-cha) 
+  sampleProcessId.push_back(16); // tbar(s-cha) 
+  sampleProcessId.push_back(13); // t(t-cha)
+  sampleProcessId.push_back(14); // tbar(t-cha)
+  sampleProcessId.push_back(19); // tW
+  sampleProcessId.push_back(20); // tbarW
+  sampleProcessId.push_back(10); // ttbar
+  sampleProcessId.push_back(61); // Vgamma->enu
+  sampleProcessId.push_back(62); // Vgamma->munu
+  sampleProcessId.push_back(63); // Vgamma->taunu
+  sampleProcessId.push_back(64); // Zgamma->ee
+  sampleProcessId.push_back(65); // Zgamma->mumu
+  sampleProcessId.push_back(66); // Zgamma->tautau
+  sampleProcessId.push_back(67); // Zgamma->nunu
+
+  sampleProcessId.push_back(0); // qqWW Mad
+  sampleProcessId.push_back(1); // ggWW
+  sampleProcessId.push_back(74); // WZ->3LNu
+  sampleProcessId.push_back(71); // ZZ->anything
+
+  sampleProcessId.push_back(2); // qqWW MC@NLO nominal
+  sampleProcessId.push_back(4); // qqWW MC@NLO scaledown
+  sampleProcessId.push_back(3); // qqWW MC@NLO scaleup
+  sampleProcessId.push_back(6); // qqWW PYTHIA
+  sampleProcessId.push_back(81); // Vgamma madgraph inclusive
 
   float nEvH[17][4];
   for(int imass=0; imass<17; imass++) {
