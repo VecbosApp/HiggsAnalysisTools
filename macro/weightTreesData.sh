@@ -12,19 +12,19 @@ root -l -b <<EOF
 
 .L addWeightsToTree.cc+
 
-addWeights("results_data/merged/dataset_DoubleElectron_ee.root", 1.0, -1, 1, 1);
-addWeights("results_data/merged/dataset_SingleElectron_ee.root", 1.0, -2, 1, 1);
+addWeights("results_data/merged/dataset_DoubleElectron_ee.root", 1.0, 102, 1, 1);
+addWeights("results_data/merged/dataset_SingleElectron_ee.root", 1.0, 100, 1, 1);
 
-addWeights("results_data/merged/dataset_DoubleMu_mm.root", 1.0, -1, 0, 1);
-addWeights("results_data/merged/dataset_SingleMu_mm.root", 1.0, -2, 0, 1);
+addWeights("results_data/merged/dataset_DoubleMu_mm.root", 1.0, 103, 0, 1);
+addWeights("results_data/merged/dataset_SingleMu_mm.root", 1.0, 101, 0, 1);
 
-addWeights("results_data/merged/dataset_MuEG_em.root", 1.0, -1, 2, 1);
-addWeights("results_data/merged/dataset_SingleMu_em.root", 1.0, -2, 2, 1);
-addWeights("results_data/merged/dataset_SingleElectron_em.root", 1.0, -2, 2, 1);
+addWeights("results_data/merged/dataset_MuEG_em.root", 1.0, 104, 2, 1);
+addWeights("results_data/merged/dataset_SingleMu_em.root", 1.0, 101, 2, 1);
+addWeights("results_data/merged/dataset_SingleElectron_em.root", 1.0, 100, 2, 1);
 
-addWeights("results_data/merged/dataset_MuEG_me.root", 1.0, -1, 3, 1);
-addWeights("results_data/merged/dataset_SingleMu_me.root", 1.0, -2, 3, 1);
-addWeights("results_data/merged/dataset_SingleElectron_me.root", 1.0, -2, 3, 1);
+addWeights("results_data/merged/dataset_MuEG_me.root", 1.0, 104, 3, 1);
+addWeights("results_data/merged/dataset_SingleMu_me.root", 1.0, 101, 3, 1);
+addWeights("results_data/merged/dataset_SingleElectron_me.root", 1.0, 100, 3, 1);
 
 .q
 
