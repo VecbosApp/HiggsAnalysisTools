@@ -303,13 +303,13 @@ void countEvents() {
   sampleProcessId.push_back(19); // tW
   sampleProcessId.push_back(20); // tbarW
   sampleProcessId.push_back(10); // ttbar
-  sampleProcessId.push_back(61); // Vgamma->enu
-  sampleProcessId.push_back(62); // Vgamma->munu
-  sampleProcessId.push_back(63); // Vgamma->taunu
-  sampleProcessId.push_back(64); // Zgamma->ee
-  sampleProcessId.push_back(65); // Zgamma->mumu
-  sampleProcessId.push_back(66); // Zgamma->tautau
-  sampleProcessId.push_back(67); // Zgamma->nunu
+  sampleProcessId.push_back(82); // Vgamma->enu
+  sampleProcessId.push_back(83); // Vgamma->munu
+  sampleProcessId.push_back(84); // Vgamma->taunu
+  sampleProcessId.push_back(38); // Zgamma->ee
+  sampleProcessId.push_back(39); // Zgamma->mumu
+  sampleProcessId.push_back(40); // Zgamma->tautau
+  sampleProcessId.push_back(41); // Zgamma->nunu
 
   sampleProcessId.push_back(0); // qqWW Mad
   sampleProcessId.push_back(1); // ggWW
