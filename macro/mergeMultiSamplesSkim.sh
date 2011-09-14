@@ -21,7 +21,8 @@ cp results/merged_skim/Wjets_ee.root results/datasets_trees_skim/Wjets_ee.root
 hadd results/datasets_trees_skim/Zjets_ee.root results/merged_skim/Zee_*_ee.root results/merged_skim/Zmm_*_ee.root results/merged_skim/Ztautau_*_ee.root
 
 # merging ttbar and single t in a species
-hadd results/datasets_trees_skim/top_ee.root results/merged_skim/TTbar_ee.root results/merged_skim/SingleTop_sChannel_ee.root results/merged_skim/SingleTop_tChannel_ee.root results/merged_skim/SingleTop_tWChannel_ee.root 
+hadd results/datasets_trees_skim/top_ee.root results/merged_skim/TTbar_ee.root results/merged_skim/SingleT_tChannel_ee.root   results/merged_skim/SingleTbar_sChannel_ee.root \
+    results/merged_skim/SingleTbar_tWChannel_ee.root results/merged_skim/SingleT_tWChannel_ee.root  results/merged_skim/SingleTbar_tChannel_ee.root
 
 # merging all other backgrounds
 hadd results/datasets_trees_skim/others_ee.root results/merged_skim/WZ_ee.root results/merged_skim/ZZ_ee.root
@@ -44,7 +45,8 @@ cp results/merged_skim/Wjets_mm.root results/datasets_trees_skim/Wjets_mm.root
 hadd results/datasets_trees_skim/Zjets_mm.root results/merged_skim/Zee_*_mm.root results/merged_skim/Zmm_*_mm.root results/merged_skim/Ztautau_*_mm.root
 
 # merging ttbar and single t in a species
-hadd results/datasets_trees_skim/top_mm.root results/merged_skim/TTbar_mm.root results/merged_skim/SingleTop_sChannel_mm.root results/merged_skim/SingleTop_tChannel_mm.root results/merged_skim/SingleTop_tWChannel_mm.root 
+hadd results/datasets_trees_skim/top_mm.root results/merged_skim/TTbar_mm.root results/merged_skim/SingleT_tChannel_mm.root   results/merged_skim/SingleTbar_sChannel_mm.root \
+    results/merged_skim/SingleTbar_tWChannel_mm.root results/merged_skim/SingleT_tWChannel_mm.root  results/merged_skim/SingleTbar_tChannel_mm.root
 
 # merging all other backgrounds
 hadd results/datasets_trees_skim/others_mm.root results/merged_skim/WZ_mm.root results/merged_skim/ZZ_mm.root
@@ -67,7 +69,8 @@ cp results/merged_skim/Wjets_em.root results/datasets_trees_skim/Wjets_em.root
 hadd results/datasets_trees_skim/Zjets_em.root results/merged_skim/Zee_*_em.root results/merged_skim/Zmm_*_em.root results/merged_skim/Ztautau_*_em.root
 
 # merging ttbar and single t in a species
-hadd results/datasets_trees_skim/top_em.root results/merged_skim/TTbar_em.root results/merged_skim/SingleTop_sChannel_em.root results/merged_skim/SingleTop_tChannel_em.root results/merged_skim/SingleTop_tWChannel_em.root 
+hadd results/datasets_trees_skim/top_em.root results/merged_skim/TTbar_em.root results/merged_skim/SingleT_tChannel_em.root   results/merged_skim/SingleTbar_sChannel_em.root \
+    results/merged_skim/SingleTbar_tWChannel_em.root results/merged_skim/SingleT_tWChannel_em.root  results/merged_skim/SingleTbar_tChannel_em.root
 
 # merging all other backgrounds
 hadd results/datasets_trees_skim/others_em.root results/merged_skim/WZ_em.root results/merged_skim/ZZ_em.root
@@ -91,7 +94,8 @@ cp results/merged_skim/Wjets_me.root results/datasets_trees_skim/Wjets_me.root
 hadd results/datasets_trees_skim/Zjets_me.root results/merged_skim/Zee_*_me.root results/merged_skim/Zmm_*_me.root results/merged_skim/Ztautau_*_me.root
 
 # merging ttbar and single t in a species
-hadd results/datasets_trees_skim/top_me.root results/merged_skim/TTbar_me.root results/merged_skim/SingleTop_sChannel_me.root results/merged_skim/SingleTop_tChannel_me.root results/merged_skim/SingleTop_tWChannel_me.root 
+hadd results/datasets_trees_skim/top_me.root results/merged_skim/TTbar_me.root results/merged_skim/SingleT_tChannel_me.root   results/merged_skim/SingleTbar_sChannel_me.root \
+    results/merged_skim/SingleTbar_tWChannel_me.root results/merged_skim/SingleT_tWChannel_me.root  results/merged_skim/SingleTbar_tChannel_me.root
 
 # merging all other backgrounds
 hadd results/datasets_trees_skim/others_me.root results/merged_skim/WZ_me.root results/merged_skim/ZZ_me.root
