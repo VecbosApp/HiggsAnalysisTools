@@ -86,11 +86,11 @@ void countEvents() {
 
   chains[14]->Add("results/Summer11_V1/WGToENuG_TuneZ2_7TeV-madgraph/*Counters.root");
   chains[15]->Add("results/Summer11_V1/WGToMuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[16]->Add("results/Summer11_V1/WGToTauNuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[16]->Add("results/Summer11_V1/WGToTauNuG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
   chains[17]->Add("results/Summer11_V1/ZGToEEG_TuneZ2_7TeV-madgraph/*Counters.root");
   chains[18]->Add("results/Summer11_V1/ZGToMuMuG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[19]->Add("results/Summer11_V1/ZGToTauTauG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[19]->Add("results/Summer11_V1/ZGToTauTauG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
   chains[20]->Add("results/Summer11_V1/ZGToNuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
 
   chains[21]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
