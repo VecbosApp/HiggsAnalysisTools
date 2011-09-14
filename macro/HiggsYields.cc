@@ -102,7 +102,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileqqWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
   TFile *fileggWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
   TFile *fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
-  TFile *fileFake = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ll.root");
+  TFile *fileFake = TFile::Open("results_data/datasets_trees_fake_skim/dataset_fake_ll.root");
 
   char signalFile[200];
   if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
@@ -110,18 +110,18 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileH = TFile::Open(signalFile);
 
   // get trees
-  TTree* treeZj = (TTree*)fileZj->Get("T1");
-  TTree* treeTTbar = (TTree*)fileTTbar->Get("T1");
-  TTree* treeSingleTop = (TTree*)fileSingleTop->Get("T1");
-  TTree* treeWj = (TTree*)fileWj->Get("T1");
-  TTree* treeOthers = (TTree*)fileOthers->Get("T1");
-  TTree* treeqqWW = (TTree*)fileqqWW->Get("T1");
-  TTree* treeggWW = (TTree*)fileggWW->Get("T1");
-  TTree* treeH = (TTree*)fileH->Get("T1");
-  TTree* treeggH = (TTree*)fileH->Get("T1");
-  TTree* treeqqH = (TTree*)fileH->Get("T1");
-  TTree* treeData = (TTree*)fileData->Get("T1");
-  TTree* treeFake = (TTree*)fileFake->Get("T1");
+  TTree* treeZj = (TTree*)fileZj->Get("latino");
+  TTree* treeTTbar = (TTree*)fileTTbar->Get("latino");
+  TTree* treeSingleTop = (TTree*)fileSingleTop->Get("latino");
+  TTree* treeWj = (TTree*)fileWj->Get("latino");
+  TTree* treeOthers = (TTree*)fileOthers->Get("latino");
+  TTree* treeqqWW = (TTree*)fileqqWW->Get("latino");
+  TTree* treeggWW = (TTree*)fileggWW->Get("latino");
+  TTree* treeH = (TTree*)fileH->Get("latino");
+  TTree* treeggH = (TTree*)fileH->Get("latino");
+  TTree* treeqqH = (TTree*)fileH->Get("latino");
+  TTree* treeData = (TTree*)fileData->Get("latino");
+  TTree* treeFake = (TTree*)fileFake->Get("latino");
 
   std::vector<TTree*> trees;
   trees.push_back(treeZj); // 0
@@ -142,8 +142,8 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
    sfs_0j.push_back(1.63); // 2
    sfs_0j.push_back(1.0); // 3
    sfs_0j.push_back(1.0); // 4
-   sfs_0j.push_back(0.99); // 5
-   sfs_0j.push_back(0.99); // 6
+   sfs_0j.push_back(1.04); // 5
+   sfs_0j.push_back(1.04); // 6
    sfs_0j.push_back(1.0); // 7
    sfs_0j.push_back(1.0); // 8
    sfs_0j.push_back(1.0); // 9
@@ -154,8 +154,8 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
    sfs_1j.push_back(1.26); // 2
    sfs_1j.push_back(1.0); // 3
    sfs_1j.push_back(1.0); // 4
-   sfs_1j.push_back(1.22); // 5
-   sfs_1j.push_back(1.22); // 6
+   sfs_1j.push_back(1.28); // 5
+   sfs_1j.push_back(1.28); // 6
    sfs_1j.push_back(1.0); // 7
    sfs_1j.push_back(1.0); // 8
    sfs_1j.push_back(1.0); // 9
@@ -184,13 +184,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*effW*kfW");
     TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*effW*kfW");
     TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*effW*kfW");
-    TString HCut_all = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(")*baseW*puW*effW*kfW");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
     cutChannel.push_back(HCut_em);
     cutChannel.push_back(HCut_me);
-    cutChannel.push_back(HCut_all);
 
     // for W+jets val
     std::vector<TString> cutChannelFake;
@@ -199,13 +197,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightFP");
     HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightFP");
     HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightFP");
-    HCut_all = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(")*weightFP");
           
     cutChannelFake.push_back(HCut_ee);
     cutChannelFake.push_back(HCut_mm);
     cutChannelFake.push_back(HCut_em);
     cutChannelFake.push_back(HCut_me);
-    cutChannelFake.push_back(HCut_all);
 
     // error (statistical only)
     std::vector<TString> cutChannelFakeStatErr;
@@ -213,28 +209,26 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightStatFP");
     HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightStatFP");
     HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightStatFP");
-    HCut_all = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(")*weightStatFP");
 
     cutChannelFakeStatErr.push_back(HCut_ee);
     cutChannelFakeStatErr.push_back(HCut_mm);
     cutChannelFakeStatErr.push_back(HCut_em);
     cutChannelFakeStatErr.push_back(HCut_me);
-    cutChannelFakeStatErr.push_back(HCut_all);
     
     std::vector<double> sampleYield, sampleYield_err;
-    for(int icha=0; icha<5; icha++) {
+    for(int icha=0; icha<4; icha++) {
 
       // some ROOT file contains more than 1 bkg
       // split top / ttbar
       TString addCut=TString("");
-      if(isample==1) addCut = TString("*(process==11)");
-      if(isample==2) addCut = TString("*(process>=8 && process<=10)");
+      if(isample==1) addCut = TString("*(dataset==10)");
+      if(isample==2) addCut = TString("*(dataset>=13 && dataset<=20)");
       // split qqWW and ggWW
-      if(isample==5) addCut = TString("*(process==13)");
-      if(isample==6) addCut = TString("*(process==14)");
+      if(isample==5) addCut = TString("*(dataset==0)");
+      if(isample==6) addCut = TString("*(dataset==1)");
       // separate vbfH for the datacards 
-      if(isample==8) addCut = TString("*(process==1001 || process==1002)");
-      if(isample==9) addCut = TString("*(process==1003 || process==1004)");
+      if(isample==8) addCut = TString("*(dataset>1000 && dataset<3000)");
+      if(isample==9) addCut = TString("*(dataset>4000 && dataset<6000)");
 
       TString TheFinalCut = cutChannel[icha]+addCut;
 
@@ -296,9 +290,30 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
   }
 
-  // quadrature sum of the tot bkg error
+  // calculate the total of each sample
   for(int isample=0; isample<(int)trees.size(); isample++) {
-    yields_bkgtot_err[isample] = sqrt(yields_bkgtot_err[isample]);
+    // sum the 4 channels for each sample
+    std::vector<double> sampleYield = yields[isample];
+    std::vector<double> sampleYield_err = yields_err[isample];
+    double totSample = 0;
+    double totSample_err = 0;
+    for(int icha=0; icha<4; icha++) {
+      totSample += sampleYield[icha];
+      totSample_err += pow(sampleYield_err[icha], 2);
+    }
+    (yields[isample]).push_back(totSample);
+    (yields_err[isample]).push_back(sqrt(totSample_err));
+  }
+
+  // calculate the total background
+  for(int isample=0; isample<(int)trees.size()-3; isample++) {
+    yields_bkgtot[4] += (yields[isample])[4];
+    yields_bkgtot_err[4] += pow( ((yields_err[isample])[4]), 2);
+  }
+
+  // quadrature sum of the tot bkg error, including the smaple which is the sum of 4 channels
+  for(int icha=0; icha<5; icha++) {
+    yields_bkgtot_err[icha] = sqrt(yields_bkgtot_err[icha]);
   }
 
   // data counting
