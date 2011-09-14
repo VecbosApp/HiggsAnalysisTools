@@ -122,44 +122,44 @@ void countEvents() {
   }
 
   std::vector<TString> sampleName;
-  sampleName.push_back("results/merged/Wjets_ee.root");
+  sampleName.push_back("results/merged/Wjets_ee.root"); // 0
 
-  sampleName.push_back("results/merged/Zee_Lo_ee.root");
-  sampleName.push_back("results/merged/Zmm_Lo_ee.root");
-  sampleName.push_back("results/merged/Ztautau_Lo_ee.root");
+  sampleName.push_back("results/merged/Zee_Lo_ee.root"); // 1
+  sampleName.push_back("results/merged/Zmm_Lo_ee.root"); // 2
+  sampleName.push_back("results/merged/Ztautau_Lo_ee.root"); // 3
 
-  sampleName.push_back("results/merged/Zee_Hi_ee.root");
-  sampleName.push_back("results/merged/Zmm_Hi_ee.root");
-  sampleName.push_back("results/merged/Ztautau_Hi_ee.root");
+  sampleName.push_back("results/merged/Zee_Hi_ee.root"); // 4 
+  sampleName.push_back("results/merged/Zmm_Hi_ee.root"); // 5 
+  sampleName.push_back("results/merged/Ztautau_Hi_ee.root"); // 6
 
-  sampleName.push_back("results/merged/SingleT_sChannel_ee.root");
-  sampleName.push_back("results/merged/SingleTbar_sChannel_ee.root");
-  sampleName.push_back("results/merged/SingleT_tChannel_ee.root");
-  sampleName.push_back("results/merged/SingleTbar_tChannel_ee.root");
-  sampleName.push_back("results/merged/SingleT_tWChannel_ee.root");
-  sampleName.push_back("results/merged/SingleTbar_tWChannel_ee.root");
+  sampleName.push_back("results/merged/SingleT_sChannel_ee.root"); // 7 
+  sampleName.push_back("results/merged/SingleTbar_sChannel_ee.root"); // 8
+  sampleName.push_back("results/merged/SingleT_tChannel_ee.root"); // 9
+  sampleName.push_back("results/merged/SingleTbar_tChannel_ee.root"); // 10
+  sampleName.push_back("results/merged/SingleT_tWChannel_ee.root"); // 11
+  sampleName.push_back("results/merged/SingleTbar_tWChannel_ee.root"); // 12
 
-  sampleName.push_back("results/merged/TTbar_ee.root");
+  sampleName.push_back("results/merged/TTbar_ee.root"); // 13
 
-  sampleName.push_back("results/merged/WGToENuG_ee.root");
-  sampleName.push_back("results/merged/WGToMuNuG_ee.root");
-  sampleName.push_back("results/merged/WGToTauNuG_ee.root");
+  sampleName.push_back("results/merged/WGToENuG_ee.root"); // 14
+  sampleName.push_back("results/merged/WGToMuNuG_ee.root"); // 15
+  sampleName.push_back("results/merged/WGToTauNuG_ee.root"); // 16
 
-  sampleName.push_back("results/merged/ZGToEEG_ee.root");
-  sampleName.push_back("results/merged/ZGToMuMuG_ee.root");
-  sampleName.push_back("results/merged/ZGToTauTauG_ee.root");
-  sampleName.push_back("results/merged/ZGToNuNuG_ee.root");
+  sampleName.push_back("results/merged/ZGToEEG_ee.root"); // 17
+  sampleName.push_back("results/merged/ZGToMuMuG_ee.root"); // 18
+  sampleName.push_back("results/merged/ZGToTauTauG_ee.root"); // 19
+  sampleName.push_back("results/merged/ZGToNuNuG_ee.root"); // 20
 
-  sampleName.push_back("results/merged/WW_ee.root");
-  sampleName.push_back("results/merged/ggWW_ee.root");
-  sampleName.push_back("results/merged/WZ_ee.root");
-  sampleName.push_back("results/merged/ZZ_ee.root");
+  sampleName.push_back("results/merged/WW_ee.root"); // 21
+  sampleName.push_back("results/merged/ggWW_ee.root"); // 22
+  sampleName.push_back("results/merged/WZ_ee.root"); // 23
+  sampleName.push_back("results/merged/ZZ_ee.root"); // 24
 
-  sampleName.push_back("results/merged/WW_mcatnlo_ee.root");
-  sampleName.push_back("results/merged/WW_mcatnlo_scaledown_ee.root");
-  sampleName.push_back("results/merged/WW_mcatnlo_scaleup_ee.root");
-  sampleName.push_back("results/merged/WW_pythia_ee.root");
-  sampleName.push_back("results/merged/Wgamma_inclusive_ee.root");
+  sampleName.push_back("results/merged/WW_mcatnlo_ee.root"); // 25
+  sampleName.push_back("results/merged/WW_mcatnlo_scaledown_ee.root"); // 26
+  sampleName.push_back("results/merged/WW_mcatnlo_scaleup_ee.root"); // 27
+  sampleName.push_back("results/merged/WW_pythia_ee.root"); // 28
+  sampleName.push_back("results/merged/Wgamma_inclusive_ee.root"); // 29
 
   std::map<int,float> ggHiggs_xsec;
   // samples are emu only
@@ -231,14 +231,14 @@ void countEvents() {
 
 
   std::vector<float> sampleXsec;
-  sampleXsec.push_back(31314.); // madgraph
+  sampleXsec.push_back(31314.); // madgraph // 0
   // sampleXsec.push_back(31314. * 0.00111); // PYTHIA BIG filtered
-  sampleXsec.push_back(3319.61); // sigma(powheg_nlo_10-20) * sigma(fewz_nnlo_20-inf)/sigma(powheg_nlo_20-inf)=3216*1666/1614 =  3319.61 pb
-  sampleXsec.push_back(3319.61);
-  sampleXsec.push_back(3319.61);
-  sampleXsec.push_back(4998./3.);
-  sampleXsec.push_back(4998./3.);
-  sampleXsec.push_back(4998./3.);
+  sampleXsec.push_back(3319.61); // sigma(powheg_nlo_10-20) * sigma(fewz_nnlo_20-inf)/sigma(powheg_nlo_20-inf)=3216*1666/1614 =  3319.61 pb // 1
+  sampleXsec.push_back(3319.61); // 2
+  sampleXsec.push_back(3319.61); // 3
+  sampleXsec.push_back(4998./3.); // 4
+  sampleXsec.push_back(4998./3.); // 5
+  sampleXsec.push_back(4998./3.); // 6
 
   // Madgraph single top
   //   sampleXsec.push_back(4.21 * (0.1080*3));
@@ -246,36 +246,46 @@ void countEvents() {
   //   sampleXsec.push_back(10.6);
 
   // powheg samples. Xsecs taken from PREP: http://cms.cern.ch/iCMS/prep/requestmanagement?pwg=TOP&campid=Summer11
-  sampleXsec.push_back(2.341);
-  sampleXsec.push_back(1.265);
+  sampleXsec.push_back(2.341); // 7
+  sampleXsec.push_back(1.265); // 8
 
-  sampleXsec.push_back(3.572);
-  sampleXsec.push_back(1.843);
+  sampleXsec.push_back(3.572); // 9
+  sampleXsec.push_back(1.843); // 10
 
   // prep says 7.46 pb. 7.87 is from Guillelmo
-  sampleXsec.push_back(7.87);
-  sampleXsec.push_back(7.87);
+  sampleXsec.push_back(7.87); // 11
+  sampleXsec.push_back(7.87); // 12
+
+  // ttbar
+  sampleXsec.push_back(157.5); // 13
 
   // Wgamma
-  sampleXsec.push_back(137.5 * 0.1080);
-  sampleXsec.push_back(137.5 * 0.1080);
-  sampleXsec.push_back(137.5 * 0.1080);
+  sampleXsec.push_back(137.5 * 0.1080); // 14
+  sampleXsec.push_back(137.5 * 0.1080); // 15
+  sampleXsec.push_back(137.5 * 0.1080); // 16
 
   // Zgamma
-  sampleXsec.push_back(41.3 * 0.033658);
-  sampleXsec.push_back(41.3 * 0.033658);
-  sampleXsec.push_back(41.3 * 0.033658);
-  sampleXsec.push_back(41.3 * 0.020);
+  sampleXsec.push_back(41.3 * 0.033658); // 17
+  sampleXsec.push_back(41.3 * 0.033658); // 18
+  sampleXsec.push_back(41.3 * 0.033658); // 19
+  sampleXsec.push_back(41.3 * 0.020); // 20
 
   // WW
   // s(NLO qqWW+ggWW) = 47 pb, [K. Ellis]
   // gg/Tot = 0.0305
   // sigma(qqWW) = 47*(1-0.0305) * 0.108*0.108*9 = 4.7833889
   // sigma(ggWW) = 47*0.0305*0.108*0.108*9 = 0.150483
-  sampleXsec.push_back(4.7833889);
-  sampleXsec.push_back(0.150483);
-  sampleXsec.push_back(18.2 * 3*0.1080 * 3*0.033658);
-  sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor.
+  sampleXsec.push_back(4.7833889); // 21
+  sampleXsec.push_back(0.150483); // 22
+  sampleXsec.push_back(18.2 * 3*0.1080 * 3*0.033658); // 23
+  sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor. // 24
+
+  // systematic samples
+  sampleXsec.push_back(4.7833889); // 25
+  sampleXsec.push_back(4.7833889); // 26
+  sampleXsec.push_back(4.7833889); // 27
+  sampleXsec.push_back(4.7833889); // 28
+  sampleXsec.push_back(137.5); // 29
 
   std::vector<std::vector<double> > signalProcId;
   for(int imass=0; imass<17;imass++) {
