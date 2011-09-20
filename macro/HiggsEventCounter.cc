@@ -268,7 +268,7 @@ void countEvents() {
   sampleXsec.push_back(41.3 * 0.033658); // 17
   sampleXsec.push_back(41.3 * 0.033658); // 18
   sampleXsec.push_back(41.3 * 0.033658); // 19
-  sampleXsec.push_back(41.3 * 0.020); // 20
+  sampleXsec.push_back(41.3 * 0.20); // 20
 
   // WW
   // s(NLO qqWW+ggWW) = 47 pb, [K. Ellis]
