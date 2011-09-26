@@ -45,6 +45,20 @@ hadd results/merged/WW_mcatnlo_scaledown_ee.root results/Summer11_V1/WWTo2L2Nu_s
 hadd results/merged/WW_mcatnlo_scaleup_ee.root results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*datasetEE.root
 hadd results/merged/WW_pythia_ee.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetEE.root
 hadd results/merged/Wgamma_inclusive_ee.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetEE.root
+hadd results/merged/TT_pythia6-tauola_ee.root results/Summer11_V1/TT_TuneZ2_7TeV-pythia6-tauola/*datasetEE.root
+hadd results/merged/TTbar_scaleup_ee.root results/Summer11_V1/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetEE.root
+hadd results/merged/SingleT_scaledown_tWChannel-DR_ee.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DR/*datasetEE.root
+hadd results/merged/SingleT_scaledown_tWChannel-DS_ee.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DS/*datasetEE.root
+hadd results/merged/SingleT_scaleup_tWChannel-DR_ee.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DR/*datasetEE.root
+hadd results/merged/SingleT_scaleup_tWChannel-DS_ee.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DS/*datasetEE.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DR_ee.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DR/*datasetEE.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DS_ee.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DS/*datasetEE.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DR_ee.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DR/*datasetEE.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DS_ee.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DS/*datasetEE.root
+hadd results/merged/WJets_scaledown_ee.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/*datasetEE.root
+hadd results/merged/WJets_scaleup_ee.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetEE.root
+hadd results/merged/WJets_matchingup_ee.root results/Summer11_V1/WJetsToLNu_TuneZ2_matchingup_7TeV-madgraph-tauola/*datasetEE.root
+
 
 echo "Now merging MM datasets..."
 for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
@@ -87,6 +101,20 @@ hadd results/merged/WW_mcatnlo_scaledown_mm.root results/Summer11_V1/WWTo2L2Nu_s
 hadd results/merged/WW_mcatnlo_scaleup_mm.root results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*datasetMM.root
 hadd results/merged/WW_pythia_mm.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetMM.root
 hadd results/merged/Wgamma_inclusive_mm.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetMM.root
+hadd results/merged/TT_pythia6-tauola_mm.root results/Summer11_V1/TT_TuneZ2_7TeV-pythia6-tauola/*datasetMM.root
+hadd results/merged/TTbar_scaleup_mm.root results/Summer11_V1/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetMM.root
+hadd results/merged/SingleT_scaledown_tWChannel-DR_mm.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DR/*datasetMM.root
+hadd results/merged/SingleT_scaledown_tWChannel-DS_mm.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DS/*datasetMM.root
+hadd results/merged/SingleT_scaleup_tWChannel-DR_mm.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DR/*datasetMM.root
+hadd results/merged/SingleT_scaleup_tWChannel-DS_mm.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DS/*datasetMM.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DR_mm.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DR/*datasetMM.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DS_mm.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DS/*datasetMM.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DR_mm.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DR/*datasetMM.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DS_mm.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DS/*datasetMM.root
+hadd results/merged/WJets_scaledown_mm.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/*datasetMM.root
+hadd results/merged/WJets_scaleup_mm.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetMM.root
+hadd results/merged/WJets_matchingup_mm.root results/Summer11_V1/WJetsToLNu_TuneZ2_matchingup_7TeV-madgraph-tauola/*datasetMM.root
+
 
 echo "Now merging EM datasets..."
 for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
@@ -129,6 +157,19 @@ hadd results/merged/WW_mcatnlo_scaledown_em.root results/Summer11_V1/WWTo2L2Nu_s
 hadd results/merged/WW_mcatnlo_scaleup_em.root results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*datasetEM.root
 hadd results/merged/WW_pythia_em.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetEM.root
 hadd results/merged/Wgamma_inclusive_em.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetEM.root
+hadd results/merged/TT_pythia6-tauola_em.root results/Summer11_V1/TT_TuneZ2_7TeV-pythia6-tauola/*datasetEM.root
+hadd results/merged/TTbar_scaleup_em.root results/Summer11_V1/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetEM.root
+hadd results/merged/SingleT_scaledown_tWChannel-DR_em.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DR/*datasetEM.root
+hadd results/merged/SingleT_scaledown_tWChannel-DS_em.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DS/*datasetEM.root
+hadd results/merged/SingleT_scaleup_tWChannel-DR_em.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DR/*datasetEM.root
+hadd results/merged/SingleT_scaleup_tWChannel-DS_em.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DS/*datasetEM.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DR_em.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DR/*datasetEM.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DS_em.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DS/*datasetEM.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DR_em.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DR/*datasetEM.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DS_em.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DS/*datasetEM.root
+hadd results/merged/WJets_scaledown_em.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/*datasetEM.root
+hadd results/merged/WJets_scaleup_em.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetEM.root
+hadd results/merged/WJets_matchingup_em.root results/Summer11_V1/WJetsToLNu_TuneZ2_matchingup_7TeV-madgraph-tauola/*datasetEM.root
 
 echo "Now merging ME datasets..."
 for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
@@ -171,5 +212,16 @@ hadd results/merged/WW_mcatnlo_scaledown_me.root results/Summer11_V1/WWTo2L2Nu_s
 hadd results/merged/WW_mcatnlo_scaleup_me.root results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*datasetME.root
 hadd results/merged/WW_pythia_me.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetME.root
 hadd results/merged/Wgamma_inclusive_me.root results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*datasetME.root
-
-
+hadd results/merged/TT_pythia6-tauola_me.root results/Summer11_V1/TT_TuneZ2_7TeV-pythia6-tauola/*datasetME.root
+hadd results/merged/TTbar_scaleup_me.root results/Summer11_V1/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetME.root
+hadd results/merged/SingleT_scaledown_tWChannel-DR_me.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DR/*datasetME.root
+hadd results/merged/SingleT_scaledown_tWChannel-DS_me.root results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DS/*datasetME.root
+hadd results/merged/SingleT_scaleup_tWChannel-DR_me.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DR/*datasetME.root
+hadd results/merged/SingleT_scaleup_tWChannel-DS_me.root results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DS/*datasetME.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DR_me.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DR/*datasetME.root
+hadd results/merged/SingleTbar_scaledown_tWChannel-DS_me.root results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DS/*datasetME.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DR_me.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DR/*datasetME.root
+hadd results/merged/SingleTbar_scaleup_tWChannel-DS_me.root results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DS/*datasetME.root
+hadd results/merged/WJets_scaledown_me.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/*datasetME.root
+hadd results/merged/WJets_scaleup_me.root results/Summer11_V1/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/*datasetME.root
+hadd results/merged/WJets_matchingup_me.root results/Summer11_V1/WJetsToLNu_TuneZ2_matchingup_7TeV-madgraph-tauola/*datasetME.root
