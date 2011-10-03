@@ -500,6 +500,7 @@ int main(int argc, char* argv[]) {
   }
   
   lplusfake.setRequiredTriggers(maskEE);
+  lplusfake.setNotRequiredTriggers(maskNotEE);
   lplusfake.Loop();
   lplusfake.displayEfficiencies(outputFileName);
   
