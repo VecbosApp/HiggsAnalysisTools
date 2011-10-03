@@ -104,7 +104,8 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
 
   // To read good run list!   // chiara
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json"; 
+    // std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -176,31 +177,32 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate15() {
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate30() {
 
   // Smurf cut-based 
-//   m30_fakeRateEB[0] = 0.0706892;
-//   m30_fakeRateEB[1] = 0.0600548;
-//   m30_fakeRateEB[2] = 0.0967004;
-//   m30_fakeRateEB[3] = 0.0759246;
-//   m30_fakeRateEB[4] = 0.0757698;
+  m30_fakeRateEB[0] = 0.0706892;
+  m30_fakeRateEB[1] = 0.0600548;
+  m30_fakeRateEB[2] = 0.0967004;
+  m30_fakeRateEB[3] = 0.0759246;
+  m30_fakeRateEB[4] = 0.0757698;
 
-//   m30_fakeRateEB_err[0] = 0.00705514;
-//   m30_fakeRateEB_err[1] = 0.00436126;
-//   m30_fakeRateEB_err[2] = 0.00502058;
-//   m30_fakeRateEB_err[3] = 0.0039008;
-//   m30_fakeRateEB_err[4] = 0.0125631;
+  m30_fakeRateEB_err[0] = 0.00705514;
+  m30_fakeRateEB_err[1] = 0.00436126;
+  m30_fakeRateEB_err[2] = 0.00502058;
+  m30_fakeRateEB_err[3] = 0.0039008;
+  m30_fakeRateEB_err[4] = 0.0125631;
 
-//   m30_fakeRateEE[0] = 0.0169693;
-//   m30_fakeRateEE[1] = 0.0166916;
-//   m30_fakeRateEE[2] = 0.0455474;
-//   m30_fakeRateEE[3] = 0.0400856;
-//   m30_fakeRateEE[4] = 0.0268137;
+  m30_fakeRateEE[0] = 0.0169693;
+  m30_fakeRateEE[1] = 0.0166916;
+  m30_fakeRateEE[2] = 0.0455474;
+  m30_fakeRateEE[3] = 0.0400856;
+  m30_fakeRateEE[4] = 0.0268137;
   
-//   m30_fakeRateEE_err[0] = 0.00313307;
-//   m30_fakeRateEE_err[1] = 0.00204691;
-//   m30_fakeRateEE_err[2] = 0.00266818;
-//   m30_fakeRateEE_err[3] = 0.00231222;
-//   m30_fakeRateEE_err[4] = 0.00789673;
+  m30_fakeRateEE_err[0] = 0.00313307;
+  m30_fakeRateEE_err[1] = 0.00204691;
+  m30_fakeRateEE_err[2] = 0.00266818;
+  m30_fakeRateEE_err[3] = 0.00231222;
+  m30_fakeRateEE_err[4] = 0.00789673;
   
-// LH based
+  /*
+  // LH based
   m30_fakeRateEB[0] = 0.018937;
   m30_fakeRateEB[1] = 0.0317367;
   m30_fakeRateEB[2] = 0.0428001;
@@ -224,7 +226,7 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate30() {
   m30_fakeRateEE_err[2] = 0.0014194;
   m30_fakeRateEE_err[3] = 0.00127924;
   m30_fakeRateEE_err[4] = 0.00555369;
-
+  */
 }
 
 // fake from Smurf selection, ET>35 - for LP: all V1->V7 - with tracker, dEta, dPhi
@@ -447,7 +449,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // weight for the PU observed in 2011 data
     float tmpWeight = 1.;
-    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  
+    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU[0]);  
 
     // Good Run selection
     if (_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("goodRunLS") && !isGoodRunLS()) {
@@ -2001,23 +2003,40 @@ float LeptonPlusFakeMLSelection_fullEE::GetProjectedMet(TVector3 p1, TVector3 p2
 bool LeptonPlusFakeMLSelection_fullEE::reloadTriggerMask(int runN) {
 
   std::vector<int> triggerMask;
+
   // load the triggers required for EE
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersEE.begin();fIter!=requiredTriggersEE.end();++fIter) {
     std::string pathName = getHLTPathForRun(runN,*fIter);
     for(unsigned int i=0; i<nameHLT->size(); i++) {
-      if(nameHLT->at(i).find(pathName) != string::npos)
-	{
-	  triggerMask.push_back( indexHLT[i] ) ;
-	  break;
-	}
+      if(nameHLT->at(i).find(pathName) != string::npos) {
+	triggerMask.push_back( indexHLT[i] ) ;
+	break;
+      }
     }
   }
   m_requiredTriggersEE = triggerMask;
+
+  // load the triggers NOT required for EE                                                                                                          
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersEE.begin();fIter!=notRequiredTriggersEE.end();++fIter) {
+    std::string pathName = getHLTPathForRun(runN,*fIter);
+    for(unsigned int i=0; i<nameHLT->size(); i++) {
+      if(nameHLT->at(i).find(pathName) != string::npos)
+	triggerMask.push_back( indexHLT[i] ) ;
+      break;
+    }
+  }
+  m_notRequiredTriggersEE = triggerMask;
 }
 
 bool LeptonPlusFakeMLSelection_fullEE::hasPassedHLT(){
+
   Utils anaUtils;
-  return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+  if(channel==ee) {
+    bool required    = anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+    bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersEE, firedTrg);
+    return (required && !notRequired);
+  }
   return true;
 }
 

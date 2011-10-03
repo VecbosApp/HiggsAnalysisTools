@@ -139,6 +139,7 @@ private:
   
   //! trigger masks
   std::vector<int>  m_requiredTriggersEE;
+  std::vector<int>  m_notRequiredTriggersEE;
   std::vector<std::string> requiredTriggersEE;
   std::vector<std::string> notRequiredTriggersEE;
 
