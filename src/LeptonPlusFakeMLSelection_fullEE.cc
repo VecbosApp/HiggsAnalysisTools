@@ -2032,12 +2032,9 @@ bool LeptonPlusFakeMLSelection_fullEE::reloadTriggerMask(int runN) {
 bool LeptonPlusFakeMLSelection_fullEE::hasPassedHLT(){
 
   Utils anaUtils;
-  if(channel==ee) {
-    bool required    = anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
-    bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersEE, firedTrg);
-    return (required && !notRequired);
-  }
-  return true;
+  bool required    = anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+  bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersEE, firedTrg);
+  return (required && !notRequired);
 }
 
 void LeptonPlusFakeMLSelection_fullEE::setRequiredTriggers(const std::vector<std::string>& reqTriggers) {
