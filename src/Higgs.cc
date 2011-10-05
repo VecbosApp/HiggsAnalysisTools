@@ -580,7 +580,6 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
 
   // if is ECAL driven, take the electron ID variables from the standard electron
   // above all, take the ECAL supercluster instead of PF super cluster
-  float scEta;
   float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
   float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
   bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
