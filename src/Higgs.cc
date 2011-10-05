@@ -452,26 +452,26 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
   
   // acceptance	         
-  if( p3Ele.Eta() > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
-  if( p3Ele.Pt() < 10. )  { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
-  
-  // taking the supercluster     
-  int sc;
-  bool ecalDriven    = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
-  if( ecalDriven) sc = superClusterIndexEle[theEle];
-  if(!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
-  if ( sc < 0 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
-  
+  if( fabs(p3Ele.Eta()) > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }  
+  if( p3Ele.Pt() < 10.  )       { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+
   // barrel or endcap 
   bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
   
+  // taking the supercluster     
+  int sc;
+  bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
+  if ( ecalDriven) sc = superClusterIndexEle[theEle];
+  if (!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
+  if ( sc < 0 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+  
   // isolation
-  float ecalIsol = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
-  float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
+  float ecalIsol    = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
+  float hcalIsol    = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
   float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                
-  if(ecalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
-  if(hcalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
-  if(trackerIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
+  if (ecalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
+  if (hcalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
+  if (trackerIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
 
   // H/E 
   if ( isEleEB && hOverEEle[theEle]>0.12) { isGoodDenom = false; isGoodDenomID = false; }
@@ -492,7 +492,7 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) { isGoodDenom = false; isGoodDenomID = false; }
 
-  // spikes
+  // spikes 
   float theE1 = eMaxSC[sc];
   float theE4SwissCross = e4SwissCrossSC[sc];
   float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
@@ -580,6 +580,7 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
 
   // if is ECAL driven, take the electron ID variables from the standard electron
   // above all, take the ECAL supercluster instead of PF super cluster
+  float scEta;
   float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
   float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
   bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
