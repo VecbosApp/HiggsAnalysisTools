@@ -8,7 +8,6 @@
 #include "HiggsAnalysisTools/include/LeptonPlusFakeMLSelection_fullME.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
-#include "CommonTools/include/PUWeight.h"
 
 #include <iostream>
 #include <string>
@@ -176,31 +175,31 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate15() {
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate30() {
 
   // Smurf cut-based
-//   m30_eleFakeRateEB[0] = 0.0706892;
-//   m30_eleFakeRateEB[1] = 0.0600548;
-//   m30_eleFakeRateEB[2] = 0.0967004;
-//   m30_eleFakeRateEB[3] = 0.0759246;
-//   m30_eleFakeRateEB[4] = 0.0757698;
+  m30_eleFakeRateEB[0] = 0.0706892;
+  m30_eleFakeRateEB[1] = 0.0600548;
+  m30_eleFakeRateEB[2] = 0.0967004;
+  m30_eleFakeRateEB[3] = 0.0759246;
+  m30_eleFakeRateEB[4] = 0.0757698;
 
-//   m30_eleFakeRateEB_err[0] = 0.00705514;
-//   m30_eleFakeRateEB_err[1] = 0.00436126;
-//   m30_eleFakeRateEB_err[2] = 0.00502058;
-//   m30_eleFakeRateEB_err[3] = 0.0039008;
-//   m30_eleFakeRateEB_err[4] = 0.0125631;
+  m30_eleFakeRateEB_err[0] = 0.00705514;
+  m30_eleFakeRateEB_err[1] = 0.00436126;
+  m30_eleFakeRateEB_err[2] = 0.00502058;
+  m30_eleFakeRateEB_err[3] = 0.0039008;
+  m30_eleFakeRateEB_err[4] = 0.0125631;
 
-//   m30_eleFakeRateEE[0] = 0.0169693;
-//   m30_eleFakeRateEE[1] = 0.0166916;
-//   m30_eleFakeRateEE[2] = 0.0455474;
-//   m30_eleFakeRateEE[3] = 0.0400856;
-//   m30_eleFakeRateEE[4] = 0.0268137;
+  m30_eleFakeRateEE[0] = 0.0169693;
+  m30_eleFakeRateEE[1] = 0.0166916;
+  m30_eleFakeRateEE[2] = 0.0455474;
+  m30_eleFakeRateEE[3] = 0.0400856;
+  m30_eleFakeRateEE[4] = 0.0268137;
   
-//   m30_eleFakeRateEE_err[0] = 0.00313307;
-//   m30_eleFakeRateEE_err[1] = 0.00204691;
-//   m30_eleFakeRateEE_err[2] = 0.00266818;
-//   m30_eleFakeRateEE_err[3] = 0.00231222;
-//   m30_eleFakeRateEE_err[4] = 0.00789673;
+  m30_eleFakeRateEE_err[0] = 0.00313307;
+  m30_eleFakeRateEE_err[1] = 0.00204691;
+  m30_eleFakeRateEE_err[2] = 0.00266818;
+  m30_eleFakeRateEE_err[3] = 0.00231222;
+  m30_eleFakeRateEE_err[4] = 0.00789673;
 
-
+  /*
   // LH-based
   m30_eleFakeRateEB[0] = 0.018937;
   m30_eleFakeRateEB[1] = 0.0317367;
@@ -225,7 +224,7 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate30() {
   m30_eleFakeRateEE_err[2] = 0.0014194;
   m30_eleFakeRateEE_err[3] = 0.00127924;
   m30_eleFakeRateEE_err[4] = 0.00555369;
-
+  */
 
 }
 
@@ -507,8 +506,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
 
-  PUWeight* fPUWeight = new PUWeight();
-
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
   std::cout << "Number of entries = " << nentries << std::endl;
@@ -520,9 +517,8 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     
     resetKinematicsStart();
 
-    // weight for the PU observed in 2011 data
+    // weight
     float tmpWeight = 1.;
-    if ( !_selectionME->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU);  
 
     // Good Run selection
     if (_selectionME->getSwitch("isData") && _selectionME->getSwitch("goodRunLS") && !isGoodRunLS()) {
@@ -1275,7 +1271,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_id( std
     TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisPt<20  ) {
-	if ( fbremEle[iEle]<0.15 && !(fabs(etaEle[iEle])<1.0 && eSuperClusterOverPEle[iEle]>0.95) ) continue;  // hardcoded
+	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;  // hardcoded
       }
     }
 
