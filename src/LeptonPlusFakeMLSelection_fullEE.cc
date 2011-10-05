@@ -2016,14 +2016,15 @@ bool LeptonPlusFakeMLSelection_fullEE::reloadTriggerMask(int runN) {
   }
   m_requiredTriggersEE = triggerMask;
 
-  // load the triggers NOT required for EE                                                                                                          
+  // load the triggers NOT required for EE 
   triggerMask.clear();
   for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersEE.begin();fIter!=notRequiredTriggersEE.end();++fIter) {
     std::string pathName = getHLTPathForRun(runN,*fIter);
     for(unsigned int i=0; i<nameHLT->size(); i++) {
-      if(nameHLT->at(i).find(pathName) != string::npos)
+      if(nameHLT->at(i).find(pathName) != string::npos) {
 	triggerMask.push_back( indexHLT[i] ) ;
-      break;
+	break;
+      }
     }
   }
   m_notRequiredTriggersEE = triggerMask;
@@ -2038,10 +2039,12 @@ bool LeptonPlusFakeMLSelection_fullEE::hasPassedHLT(){
 }
 
 void LeptonPlusFakeMLSelection_fullEE::setRequiredTriggers(const std::vector<std::string>& reqTriggers) {
+
   requiredTriggersEE=reqTriggers;
 }
 
 void LeptonPlusFakeMLSelection_fullEE::setNotRequiredTriggers(const std::vector<std::string>& reqTriggers){
+
   notRequiredTriggersEE=reqTriggers;
 }
 
