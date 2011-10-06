@@ -9,6 +9,8 @@
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
 #include "CommonTools/include/PUWeight.h"
+// #include "CommonTools/include/LumiReWeighting.h"  // for OOT PU
+
 //#include "Mt2/SUSYPhys_Mt2_222_Calculator.h"
 
 #include <iostream>
@@ -545,7 +547,9 @@ void HiggsMLSelection::Loop() {
 
   calculator_ = new kFactorEvaluator(mh);
 
-  PUWeight* fPUWeight = new PUWeight();
+  PUWeight* fPUWeight = new PUWeight();    // Isidro's function
+  // LumiReWeighting *fPUWeight;           // For OOT PU reweighting
+  // fPUWeight = new LumiReWeighting("/afs/cern.ch/user/c/crovelli/public/puReweighting/recommended_summer11S4_alsoOOT/Recommended_PU.root","/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/PileUp/Pileup_2011_to_173692_LPLumiScale_68mb.root","pileupMC","pileup");
 
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
@@ -563,8 +567,11 @@ void HiggsMLSelection::Loop() {
     float evtKfactor = 1.0;
     
     // weight for the PU observed in 2011 data
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);
-
+    // float avePU = ((float)(nPU[0]+nPU[1]+nPU[2]))/3.;    // for OOT PU reweighting
+    // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
+    // cout << fPUWeight->ITweight3BX(avePU) << endl;
+    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->weight(nPU);    // Isidro's function
+ 
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
     // look to the MC truth decay tree 
@@ -957,7 +964,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
-    myOutTreeEE -> fillMetStudies( m_projectedPFMet[ee], m_projectedTkMet[ee], significancePFMet[0], significancePFChMet[0], m_MTRcharged[ee] );   
+    myOutTreeEE -> fillMetStudies( m_projectedPFMet[ee], m_projectedTkMet[ee], significancePFMet[0], significancePFChMet[0], m_MTRcharged[ee] );
 
     std::vector<TLorentzVector> jesLJ = GetJetJesPcomponent(theLJ);
     std::vector<TLorentzVector> jesSJ = GetJetJesPcomponent(theSJ);
@@ -1094,7 +1101,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
 
-    myOutTreeMM -> fillMetStudies( m_projectedPFMet[mm], m_projectedTkMet[mm], significancePFMet[0], significancePFChMet[0], m_MTRcharged[mm] );   
+    myOutTreeMM -> fillMetStudies( m_projectedPFMet[mm], m_projectedTkMet[mm], significancePFMet[0], significancePFChMet[0], m_MTRcharged[mm]);   
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
@@ -1246,7 +1253,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEM -> fillRazor(m_MTR[em], m_MR[em], m_GammaMR[em]);
 
-    myOutTreeEM -> fillMetStudies( m_projectedPFMet[em], m_projectedTkMet[em], significancePFMet[0], significancePFChMet[0], m_MTRcharged[em] );   
+    myOutTreeEM -> fillMetStudies( m_projectedPFMet[em], m_projectedTkMet[em], significancePFMet[0], significancePFChMet[0], m_MTRcharged[em]); 
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
@@ -1390,7 +1397,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME -> fillRazor(m_MTR[me], m_MR[me], m_GammaMR[me]);
 
-    myOutTreeME -> fillMetStudies( m_projectedPFMet[me], m_projectedTkMet[me], significancePFMet[0], significancePFChMet[0], m_MTRcharged[me] );   
+    myOutTreeME -> fillMetStudies( m_projectedPFMet[me], m_projectedTkMet[me], significancePFMet[0], significancePFChMet[0], m_MTRcharged[me]);  
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
