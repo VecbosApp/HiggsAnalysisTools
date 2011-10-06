@@ -2893,6 +2893,19 @@ bool HiggsMLSelection::reloadTriggerMask(int runN)
     }
   m_requiredTriggersEE = triggerMask;
 
+  // load the triggers NOT required for EE                                                                                                                
+  triggerMask.clear();
+  for (std::vector< std::string >::const_iterator fIter=notRequiredTriggersEE.begin();fIter!=notRequiredTriggersEE.end();++fIter) {
+    std::string pathName = getHLTPathForRun(runN,*fIter);
+    for(unsigned int i=0; i<nameHLT->size(); i++) {
+      if(nameHLT->at(i).find(pathName) != string::npos) {
+        triggerMask.push_back( indexHLT[i] ) ;
+        break;
+      }
+    }
+  }
+  m_notRequiredTriggersEE = triggerMask;
+
   // load the triggers required for MM
   triggerMask.clear();
   for (std::vector< std::string >::const_iterator fIter=requiredTriggersMM.begin();fIter!=requiredTriggersMM.end();++fIter)
@@ -2965,8 +2978,11 @@ bool HiggsMLSelection::reloadTriggerMask(int runN)
 
 bool HiggsMLSelection::hasPassedHLT(int channel) {
   Utils anaUtils;
-  if(channel==ee) return anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
-  else if(channel==mm) {
+  if(channel==ee) { 
+    bool required = anaUtils.getTriggersOR(m_requiredTriggersEE, firedTrg);
+    bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersEE, firedTrg);
+    return (required && !notRequired);
+  } else if(channel==mm) {
     bool required = anaUtils.getTriggersOR(m_requiredTriggersMM, firedTrg);
     bool notRequired = anaUtils.getTriggersOR(m_notRequiredTriggersMM, firedTrg);
     return (required && !notRequired);
