@@ -458,12 +458,23 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   // barrel or endcap 
   bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
   
-  // taking the supercluster     
+  // taking shower shape
   int sc;
   bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
-  if ( ecalDriven) sc = superClusterIndexEle[theEle];
-  if (!ecalDriven) sc = PFsuperClusterIndexEle[theEle];
+  float thisSigmaIeIe = -1.;
+  if ( ecalDriven) { 
+    sc = superClusterIndexEle[theEle]; 
+    thisSigmaIeIe = sqrt(covIEtaIEtaSC[sc]); 
+  }
+  if (!ecalDriven) {
+    sc = PFsuperClusterIndexEle[theEle]; 
+    thisSigmaIeIe = sqrt(covIEtaIEtaPFSC[sc]); 
+  }
   if ( sc < 0 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+
+  // sigmaIetaIeta
+  if ( isEleEB && thisSigmaIeIe>0.01) { isGoodDenom = false; isGoodDenomID = false; }
+  if (!isEleEB && thisSigmaIeIe>0.03) { isGoodDenom = false; isGoodDenomID = false; }
   
   // isolation
   float ecalIsol    = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
@@ -477,13 +488,6 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   if ( isEleEB && hOverEEle[theEle]>0.12) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && hOverEEle[theEle]>0.10) { isGoodDenom = false; isGoodDenomID = false; }
 
-  // sigmaIetaIeta 
-  bool isBarrelSc;
-  if ( fabs(etaSC[sc]) <  1.479 ) isBarrelSc = true;
-  if ( fabs(etaSC[sc]) >= 1.479 ) isBarrelSc = false;
-  if ( isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.01) { isGoodDenom = false; isGoodDenomID = false; }
-  if (!isBarrelSc && sqrt(covIEtaIEtaSC[sc])>0.03) { isGoodDenom = false; isGoodDenomID = false; }
-
   // deltaEta
   if ( isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.007) ) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && (fabs(deltaEtaAtVtxEle[theEle])>0.009) ) { isGoodDenom = false; isGoodDenomID = false; }
@@ -491,12 +495,6 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   // deltaPhi
   if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) { isGoodDenom = false; isGoodDenomID = false; }
-
-  // spikes 
-  float theE1 = eMaxSC[sc];
-  float theE4SwissCross = e4SwissCrossSC[sc];
-  float theSpikeSC = 1.0 - (theE4SwissCross/theE1);
-  if (theSpikeSC>0.95) { isGoodDenom = false; isGoodDenomID = false; }
 
   *isDenomEleID = isGoodDenomID;
   *isDenomEleIso = isGoodDenomIso;
