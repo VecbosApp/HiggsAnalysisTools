@@ -8,7 +8,6 @@
 #include "HiggsAnalysisTools/include/LeptonPlusFakeMLSelection_fullEE.hh"
 #include "CommonTools/include/EfficiencyEvaluator.hh"
 #include "CommonTools/include/LeptonIdBits.h"
-#include "CommonTools/include/PUWeight.h"
 
 #include <iostream>
 #include <string>
@@ -104,8 +103,9 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
 
   // To read good run list!   // chiara
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json"; 
-    // std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
+    // std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json"; 
+    // std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11_May10only.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -434,8 +434,6 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
   unsigned int lastLumi=0;
   unsigned int lastRun=0;
 
-  PUWeight* fPUWeight = new PUWeight();
-
   Long64_t nbytes = 0, nb = 0;
   Long64_t nentries = fChain->GetEntries();
   std::cout << "Number of entries = " << nentries << std::endl;
@@ -447,9 +445,8 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     
     resetKinematicsStart();
 
-    // weight for the PU observed in 2011 data
+    // weight
     float tmpWeight = 1.;
-    if ( !_selectionEE->getSwitch("isData") ) tmpWeight *= fPUWeight->GetWeight(nPU[0]);  
 
     // Good Run selection
     if (_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("goodRunLS") && !isGoodRunLS()) {
@@ -542,6 +539,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     if (thePositron>-1 && theElectron>-1) {  
       float ptPositron = GetPt(pxEle[thePositron],pyEle[thePositron]);
       float ptElectron = GetPt(pxEle[theElectron],pyEle[theElectron]);
+      
       if (ptPositron>ptElectron) { 
 	theReal = thePositron;    
 	theFake = theElectron;
@@ -555,11 +553,13 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // here I have only 1 candidate passing the tight selection: is N1T
     if (thePositron>-1 && theElectron<0) { 
+
       theReal = thePositron;
       theFake = getBestDenominator(theReal);      
       is1tight = true;
     }
     if (theElectron>-1 && thePositron<0) { 
+
       theReal = theElectron;
       theFake = getBestDenominator(theReal);      
       is1tight = true;
@@ -567,6 +567,7 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // here I have zero candidates passing the tight selection: is N0T
     if (thePositron<0 && theElectron<0) { 
+
       int theDenomPlus  = theBestDenomEle.first;    
       int theDenomMinus = theBestDenomEle.second;
       float ptPlus  = GetPt(pxEle[theDenomPlus], pyEle[theDenomPlus]);
@@ -1091,13 +1092,21 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullEE::getBestElectronPair_id( std
       if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
     }
 
-    if (!theElectronID) continue;
+    if (!theElectronID) continue;  
 
     // further requests if we apply the smurf ID and pT<20
     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisPt<20  ) {
-	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue; // hardcoded
+	// if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue; // hardcoded
+	// chiara: this is new 
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[thisEle], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[thisEle];   scEta = etaSC[sc];   }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[thisEle]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[thisEle]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue; // hardcoded
       }
     }
 
@@ -1332,7 +1341,15 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisElePt<20  ) {
-	if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
+	// if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
+	// chiara: this is new
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[iele], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[iele];   scEta = etaSC[sc];   }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[iele]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[iele]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
       }
     }
     if (!theElectronIsol)    isTight = false; 
@@ -1915,7 +1932,15 @@ int LeptonPlusFakeMLSelection_fullEE::numExtraLeptons( std::vector<int> eleToRem
     if( stringIdLow.Contains("Smurf") ) {
       float pt = GetPt(pxEle[i],pyEle[i]);
       if ( pt<20  ) {
-	if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+	// if ( fbremEle[i]<0.15 && !(fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue;    
+	// chiara: this is new
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[i], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[i];   scEta = etaSC[sc];   }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[i]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[i]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue; // hardcoded
       }
     }
 
