@@ -570,9 +570,9 @@ void HiggsMLSelection::Loop() {
     // float avePU = ((float)(nPU[0]+nPU[1]+nPU[2]))/3.;    // for OOT PU reweighting
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->weight(nPU);    // Isidro's function
+    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);    // Isidro's function
  
-    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
+    //    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
     // look to the MC truth decay tree 
     // bool decayEE = findMcTree("HtoWWto2e2nu");
@@ -932,6 +932,10 @@ void HiggsMLSelection::Loop() {
     bool outputStep22 = CutBasedHiggsSelectionEE.outputStep22();
     bool outputStep23 = CutBasedHiggsSelectionEE.outputStep23();
     bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
+    bool outputStep25 = CutBasedHiggsSelectionEE.outputStep25();
+    bool outputStep26 = CutBasedHiggsSelectionEE.outputStep26();
+    bool outputStep27 = CutBasedHiggsSelectionEE.outputStep27();
+    bool outputStep28 = CutBasedHiggsSelectionEE.outputStep28();
 
 
     // eleID variables to fill the tree (after each cut)
@@ -956,7 +960,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee]);
 
-    myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
+                                outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
 
     myOutTreeEE -> fillRazor(m_MTR[ee], m_MR[ee], m_GammaMR[ee]);
     
@@ -1078,6 +1084,10 @@ void HiggsMLSelection::Loop() {
     outputStep22 = CutBasedHiggsSelectionMM.outputStep22();
     outputStep23 = CutBasedHiggsSelectionMM.outputStep23();
     outputStep24 = CutBasedHiggsSelectionMM.outputStep24();
+    outputStep25 = CutBasedHiggsSelectionMM.outputStep25();
+    outputStep26 = CutBasedHiggsSelectionMM.outputStep26();
+    outputStep27 = CutBasedHiggsSelectionMM.outputStep27();
+    outputStep28 = CutBasedHiggsSelectionMM.outputStep28();
 
 
     // filling the tree
@@ -1097,7 +1107,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm]);
     
-    myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
+                                outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
 
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
 
@@ -1225,6 +1237,10 @@ void HiggsMLSelection::Loop() {
     outputStep22 = CutBasedHiggsSelectionEM.outputStep22();
     outputStep23 = CutBasedHiggsSelectionEM.outputStep23();
     outputStep24 = CutBasedHiggsSelectionEM.outputStep24();
+    outputStep25 = CutBasedHiggsSelectionEM.outputStep25();
+    outputStep26 = CutBasedHiggsSelectionEM.outputStep26();
+    outputStep27 = CutBasedHiggsSelectionEM.outputStep27();
+    outputStep28 = CutBasedHiggsSelectionEM.outputStep28();
 
     // filling the tree
     if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
@@ -1249,7 +1265,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em]);
     
-    myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
+                                outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
 
     myOutTreeEM -> fillRazor(m_MTR[em], m_MR[em], m_GammaMR[em]);
 
@@ -1369,6 +1387,10 @@ void HiggsMLSelection::Loop() {
     outputStep22 = CutBasedHiggsSelectionME.outputStep22();
     outputStep23 = CutBasedHiggsSelectionME.outputStep23();
     outputStep24 = CutBasedHiggsSelectionME.outputStep24();
+    outputStep25 = CutBasedHiggsSelectionME.outputStep25();
+    outputStep26 = CutBasedHiggsSelectionME.outputStep26();
+    outputStep27 = CutBasedHiggsSelectionME.outputStep27();
+    outputStep28 = CutBasedHiggsSelectionME.outputStep28();
 
     // filling the tree
     if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
@@ -1393,7 +1415,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me]);
     
-    myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, outputStep21, outputStep22, outputStep23, outputStep24 ); 
+    myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
+                                outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
 
     myOutTreeME -> fillRazor(m_MTR[me], m_MR[me], m_GammaMR[me]);
 
@@ -2642,7 +2666,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     if( stringIdLow.Contains("Smurf") ) {
       float pt = GetPt(pxEle[i],pyEle[i]);
       if ( pt<20  ) {
-	if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+	if ( fbremEle[i]<0.15 && !(fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue;
       }
     }
 

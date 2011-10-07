@@ -89,7 +89,6 @@ public:
   bool outputStep14() { return m_step14; }
   bool outputStep15() { return m_step15; }
   bool outputStep16() { return m_step16; }
-  bool outputStep16bis() { return m_step16bis; }
   bool outputStep17() { return m_step17; }
   bool outputStep18() { return m_step18; }
   bool outputStep19() { return m_step19; }
@@ -97,8 +96,11 @@ public:
   bool outputStep21() { return m_step21; }
   bool outputStep22() { return m_step22; }
   bool outputStep23() { return m_step23; }
-  bool outputStep23bis() { return m_step23bis; }
   bool outputStep24() { return m_step24; }
+  bool outputStep25() { return m_step25; }
+  bool outputStep26() { return m_step26; }
+  bool outputStep27() { return m_step27; }
+  bool outputStep28() { return m_step28; }
 
   //! display the electron efficiency
   void displayEfficiencies(std::string datasetName);
@@ -141,8 +143,9 @@ private:
 
   //! latinos
   bool m_step0, m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step7, m_step8, m_step9;  
-  bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step16bis, m_step17;
-  bool m_step18, m_step19, m_step20, m_step21, m_step22, m_step23, m_step23bis, m_step24;
+  bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step17;
+  bool m_step18, m_step19, m_step20, m_step21, m_step22, m_step23, m_step24;
+  bool m_step25, m_step26, m_step27, m_step28;
 
   //! this is to do an efficiency for each process in the sample 
   //! (if more than one is present)

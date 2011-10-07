@@ -157,7 +157,7 @@ private:
   bool isOk[4];
   
   //! trigger masks
-  std::vector<int>  m_requiredTriggersEE, m_requiredTriggersMM, m_notRequiredTriggersMM,
+  std::vector<int>  m_requiredTriggersEE, m_notRequiredTriggersEE, m_requiredTriggersMM, m_notRequiredTriggersMM,
     m_requiredTriggersEM, m_notRequiredTriggersEM;
   std::vector<std::string> requiredTriggersEE, requiredTriggersMM, requiredTriggersEM;
   std::vector<std::string> notRequiredTriggersEE, notRequiredTriggersMM, notRequiredTriggersEM;
