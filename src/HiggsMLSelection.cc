@@ -570,9 +570,9 @@ void HiggsMLSelection::Loop() {
     // float avePU = ((float)(nPU[0]+nPU[1]+nPU[2]))/3.;    // for OOT PU reweighting
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
-    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU);    // Isidro's function
+    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
  
-    //    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
+    if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
     // look to the MC truth decay tree 
     // bool decayEE = findMcTree("HtoWWto2e2nu");
