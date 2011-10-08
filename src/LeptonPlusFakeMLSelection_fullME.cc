@@ -101,7 +101,8 @@ LeptonPlusFakeMLSelection_fullME::LeptonPlusFakeMLSelection_fullME(TTree *tree)
 
   // To read good run list!    // chiara
   if (_selectionME->getSwitch("goodRunLS") && _selectionME->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11_May10only.json";
+    // std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11_May10only.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -594,9 +595,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     // transverse impact parameter, for electrons passing conversion rejection
     std::pair<int,int> theBestIpEle = getBestElectronPair_ip(_convEleAll);     
 
-    // electrons passing the denominator definition              
-    // std::pair<int,int> theBestDenomEle = getBestElectronPair_denominator();   
-
     // -------------------------------------------------------------
     // MM candidates: preparing vectors of candidates and selecting the two highest pT mu- and mu+ after each step - to check the 20 GeV cut after 
 
@@ -608,10 +606,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     // transverse impact parameter, for isolated muons
     std::pair<int,int> theBestIpMuon = getBestMuonPair_ip(_isolMuonsAll);     
-
-    // muons passing the denominator definition                          
-    // std::pair<int,int> theBestDenomMuon = getBestMuonPair_denominator();    
-
 
     // -------------------------------------------------------------
     // ME candidates: preparing vectors of candidates and selecting the two highest pT ele+- and muon-+ after each step - to check the 20 GeV cut after
@@ -627,10 +621,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     // transverse impact parameter, for isolated leptons
     std::pair<int,int> theBestIpMuonEle = getBestMuonElePair(_ipEleAll,_ipMuonsAll);
-
-    // passing denominator, for all leptons  
-    // std::pair<int,int> theBestDenomMuonEle = getBestMuonElePair(_denomEleAll,_denomMuonAll);
-
 
     // -------------------------------------------------------------
     // the two highest pT electron and muon at this point are those I use for my analysis since they passed the full lepton selection  
@@ -1262,8 +1252,6 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_id( std
     TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisPt<20  ) {
-	// chiara: this is new
-	// if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;  // hardcoded
 	Utils anaUtils;
 	int sc;
 	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[thisEle], bits::isEcalDriven);
@@ -1780,8 +1768,6 @@ int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // 
     TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisElePt<20  ) {
-	// if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
-	// chiara: this is new
 	Utils anaUtils;
 	int sc;
 	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[iele], bits::isEcalDriven);
@@ -2496,8 +2482,6 @@ int LeptonPlusFakeMLSelection_fullME::numExtraLeptons( std::vector<int> eleToRem
     if( stringIdLow.Contains("Smurf") ) {
       float pt = GetPt(pxEle[i],pyEle[i]);
       if ( pt<20  ) {
-	// chiara: this is new
-	// if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
 	Utils anaUtils;
 	int sc;
 	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[i], bits::isEcalDriven);
