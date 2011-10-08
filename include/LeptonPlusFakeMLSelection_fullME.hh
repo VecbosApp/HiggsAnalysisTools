@@ -96,7 +96,7 @@ private:
   int getBestMuDenominator(int realEle);
 
   //! set the 4 vectors, invariant mass, etc. after preselections and full selection
-  void setKinematicsME(int myReal, int myFake);
+  void setKinematicsME(int myReal, int myFake, bool realMu);
   //! reset the kinematic quantities at the beginning of event and after the selection if needed
   void resetKinematicsStart();
   void resetKinematics();
