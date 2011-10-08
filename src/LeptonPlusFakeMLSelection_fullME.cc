@@ -101,7 +101,7 @@ LeptonPlusFakeMLSelection_fullME::LeptonPlusFakeMLSelection_fullME(TTree *tree)
 
   // To read good run list!    // chiara
   if (_selectionME->getSwitch("goodRunLS") && _selectionME->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11_May10only.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -554,12 +554,12 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
 
     // -------------------------------------------------------------
-    // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
-    std::pair<int,int> thePreElectrons      = getBestElectronPair_acceptance();
-    std::pair<int,int> thePreMuons          = getBestMuonPair_acceptance();
-    std::pair<int,int> theBestAcceptMuonEle = getBestMuonElePair(_acceptEleAll,_acceptMuonsAll);
-    thePreElectronME = theBestAcceptMuonEle.second;
-    thePreMuonME     = theBestAcceptMuonEle.first;
+    // get the best electrons and best muons passing the loose selection ==> tu be used to select ALL the possible channels at the beginning only
+    std::pair<int,int> thePreElectrons = getBestElectronPair_denominator();
+    std::pair<int,int> thePreMuons     = getBestMuonPair_denominator();
+    std::pair<int,int> theBestDenomMuonEle = getBestMuonElePair(_denomEleAll,_denomMuonAll);
+    thePreElectronME = theBestDenomMuonEle.second;
+    thePreMuonME     = theBestDenomMuonEle.first;
 
     // reconstructed channel
     m_channel[me] = false;
@@ -583,7 +583,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     // EE candidates: preparing vectors of candidates and selecting the two highest pT ele- and ele+ after each step - to check the 20 GeV cut after 
 
     // eleID, for electrons in acceptance
-    std::pair<int,int> theBestIdEle = getBestElectronPair_id(_acceptEleAll);   
+    std::pair<int,int> theBestIdEle = getBestElectronPair_id(_denomEleAll);   
 
     // isolation, for identified electrons
     std::pair<int,int> theBestIsolEle = getBestElectronPair_isol(_idEleAll); 
@@ -595,13 +595,13 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     std::pair<int,int> theBestIpEle = getBestElectronPair_ip(_convEleAll);     
 
     // electrons passing the denominator definition              
-    std::pair<int,int> theBestDenomEle = getBestElectronPair_denominator();   
+    // std::pair<int,int> theBestDenomEle = getBestElectronPair_denominator();   
 
     // -------------------------------------------------------------
     // MM candidates: preparing vectors of candidates and selecting the two highest pT mu- and mu+ after each step - to check the 20 GeV cut after 
 
     // muID, for muons in acceptance
-    std::pair<int,int> theBestIdMuon = getBestMuonPair_id(_acceptMuonsAll); 
+    std::pair<int,int> theBestIdMuon = getBestMuonPair_id(_denomMuonAll); 
 
     // isolation, for identified muons
     std::pair<int,int> theBestIsolMuon = getBestMuonPair_isol(_idMuonsAll); 
@@ -610,7 +610,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     std::pair<int,int> theBestIpMuon = getBestMuonPair_ip(_isolMuonsAll);     
 
     // muons passing the denominator definition                          
-    std::pair<int,int> theBestDenomMuon = getBestMuonPair_denominator();    
+    // std::pair<int,int> theBestDenomMuon = getBestMuonPair_denominator();    
 
 
     // -------------------------------------------------------------
@@ -618,7 +618,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     // leptonID, for leptons in acceptance
     std::pair<int,int> theBestIdMuonEle = getBestMuonElePair(_idEleAll,_idMuonsAll);
-    
+
     // isolation, for identified leptons
     std::pair<int,int> theBestIsolMuonEle = getBestMuonElePair(_isolEleAll,_isolMuonsAll);
 
@@ -627,11 +627,11 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 
     // transverse impact parameter, for isolated leptons
     std::pair<int,int> theBestIpMuonEle = getBestMuonElePair(_ipEleAll,_ipMuonsAll);
-    
-    // passing denominator, for all leptons  
-    std::pair<int,int> theBestDenomMuonEle = getBestMuonElePair(_denomEleAll,_denomMuonAll);
 
-    
+    // passing denominator, for all leptons  
+    // std::pair<int,int> theBestDenomMuonEle = getBestMuonElePair(_denomEleAll,_denomMuonAll);
+
+
     // -------------------------------------------------------------
     // the two highest pT electron and muon at this point are those I use for my analysis since they passed the full lepton selection  
     int theMuon     = theBestIpMuonEle.first;
@@ -643,7 +643,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     bool is2tight = false;
 
     bool isRealMu = false;
-
+    
     // here I have two candidates with opposite sign passing the tight selection: is N2T 
     if (theMuon>-1 && theElectron>-1) {
       theReal  = theMuon;
@@ -677,6 +677,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     // to be sure: I assumed above that tight => loose. If not true, I discard the event....
     bool denomEleId, denomEleIso, denomMuonId, denomMuonIso;
     if ( (theElectron>-1 && !isEleDenomFake(theElectron,&denomEleId,&denomEleIso)) || (theMuon>-1 && !isMuonDenomFake(theMuon,&denomMuonId,&denomMuonIso)) ) {
+      cout << "discard at sanity check" << endl;
       theReal = -1;
       theFake = -1;
     } 
@@ -692,7 +693,7 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     m_p3PFMET->SetXYZ(pxPFMet[0],pyPFMet[0],pzPFMet[0]);
     m_theMET = m_p3PFMET->Pt();
 
-    setKinematicsME(theReal, theFake);
+    setKinematicsME(theReal, theFake, isRealMu);
 
     // weight with the Fake / Prompt -> L2 probability                
     float theFakePt, theRealPt;
@@ -812,18 +813,6 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
 	fakerateErr2_50  = getElectronFakeRateError50( theRealPt, isRealBarrel );
 	fakerateErr2_QCD = getElectronFakeRateErrorQCD( theRealPt, isRealBarrel );
       }
-
-      /*
-      cout << "-----------------------------" << endl;
-      cout << endl;
-      cout << is0tight << " " << is1tight << " " << is2tight << " " << isRealMu << endl;
-      cout << endl;
-      cout << fakerate1   << " " << fakerateErr1   << endl;
-      cout << fakerate2   << " " << fakerateErr2   << endl;
-      cout << promptrate1 << " " << promptrateErr1 << endl;
-      cout << promptrate2 << " " << promptrateErr2 << endl;
-      cout << endl;
-      */
 
       float thisPartWeightFP_15 = 1.;
       float thisPartWeightFF_15 = 1.;
@@ -1032,9 +1021,11 @@ void LeptonPlusFakeMLSelection_fullME::Loop() {
     CutBasedHiggsSelectionME.SetElectronIp(theReal);
     CutBasedHiggsSelectionME.SetPositronIp(theFake);
 
-    // checking if the highest pT lepton at the end has pT>20. MU is the hardest in ME
-    float thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
-    if (thisMaxPtIpME<20)   { 
+    // checking if the highest pT lepton at the end has pT>20. MU is the hardest in ME, but I do not know if it is real or fake
+    float thisMaxPtIpME = -1.;
+    if ( isRealMu) thisMaxPtIpME = GetPt(pxMuon[theReal],pyMuon[theReal]);
+    if (!isRealMu) thisMaxPtIpME = GetPt(pxMuon[theFake],pyMuon[theFake]);
+    if (thisMaxPtIpME<20)   {
       CutBasedHiggsSelectionME.SetElectronIp(-1);
       CutBasedHiggsSelectionME.SetPositronIp(-1);
     }
@@ -1202,7 +1193,7 @@ void LeptonPlusFakeMLSelection_fullME::displayEfficiencies(std::string datasetNa
 }
 
 std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_acceptance() {
-  
+
   int theLep1 = -1;
   int theLep2 = -1;
   float maxPtLep1 = -1000.;
@@ -1271,7 +1262,15 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_id( std
     TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisPt<20  ) {
-	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;  // hardcoded
+	// chiara: this is new
+	// if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;  // hardcoded
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[thisEle], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[thisEle];   scEta = etaSC[sc]; }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[thisEle]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[thisEle]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue; // hardcoded
       }
     }
 
@@ -1425,7 +1424,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestElectronPair_ip( std
       theLep2   = thisEle;       
     }
     */
-    _ipEleAll.push_back(thisEle);  
+    _ipEleAll.push_back(thisEle);
   }
   _ipEleAll = sortElectronsByPt(_ipEleAll);
 
@@ -1585,7 +1584,7 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_isol( std::
     // float theMuonGlobalSum     = muonTrackerForGlobal + muonEcalForGlobal + muonHcalForGlobal - rhoFastjet*TMath::Pi()*0.3*0.3;
     // float theRelMuonIso        = theMuonGlobalSum/thisPt; 
     // if(_selectionME->getSwitch("muGlobalIso") && !_selectionME->passCut("muGlobalIso",theRelMuonIso)) continue;  
-    if( ! isPFIsolatedMuon(thisMu) ) continue;
+    if( !isPFIsolatedMuon(thisMu) ) continue;
 
     float thisCharge = chargeMuon[thisMu];
     // chiara
@@ -1655,7 +1654,6 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_ip( std::ve
       theLep2   = thisMu;       
     }
     */
-
     _ipMuonsAll.push_back(thisMu);   
   }
   _ipMuonsAll = sortMuonsByPt(_ipMuonsAll);
@@ -1708,25 +1706,42 @@ std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonPair_denominator
 
 std::pair<int,int> LeptonPlusFakeMLSelection_fullME::getBestMuonElePair(std::vector<int> electrons, std::vector<int> muons) {
 
-  int theEle=-1;
-  int theMuonA=-1;
+  int theEle =-1;
+  int theMuon=-1;
 
-  std::vector<int>::const_iterator muiter;
-  for(muiter=muons.begin(); muiter<muons.end();++muiter) {
-    int muCharge = chargeMuon[*muiter];
-    float muPt = GetPt(pxMuon[*muiter],pyMuon[*muiter]);
-    theMuonA = *muiter;
-    std::vector<int>::const_iterator eleiter;
-    for(eleiter=electrons.begin(); eleiter<electrons.end();++eleiter) {
-      int eleCharge = chargeEle[*eleiter];
-      float elePt = GetPt(pxEle[*eleiter],pyEle[*eleiter]);
+  if (muons.size()==0 && electrons.size()==0) { return std::make_pair(theMuon,theEle); }
 
-      // chiara: for SS test
-      if(eleCharge*muCharge<0 && muPt > elePt) return std::make_pair(*muiter,*eleiter); 
-      // if(eleCharge*muCharge>0 && muPt > elePt && eleCharge>0) return std::make_pair(*muiter,*eleiter); 
-    }
+  if (muons.size()>0 && electrons.size()==0) { 
+    std::vector<int>::const_iterator muiter;
+    muiter=muons.begin();
+    return std::make_pair(*muiter,theEle); 
   }
-  return std::make_pair(theMuonA,theEle); 
+
+  if (muons.size()==0 && electrons.size()>0) { 
+    std::vector<int>::const_iterator eleiter;
+    eleiter=electrons.begin();
+    return std::make_pair(theMuon,*eleiter); 
+  }
+
+  if (muons.size()>0 && electrons.size()>0) {
+
+    std::vector<int>::const_iterator muiter;
+    for(muiter=muons.begin(); muiter<muons.end();++muiter) {
+      int muCharge = chargeMuon[*muiter];
+      float muPt = GetPt(pxMuon[*muiter],pyMuon[*muiter]);
+
+      std::vector<int>::const_iterator eleiter;
+      for(eleiter=electrons.begin(); eleiter<electrons.end();++eleiter) {
+	int eleCharge = chargeEle[*eleiter];
+	float elePt = GetPt(pxEle[*eleiter],pyEle[*eleiter]);
+
+	// chiara: for SS test
+	if(eleCharge*muCharge<0 && muPt>elePt) return std::make_pair(*muiter,*eleiter); 
+	// if(eleCharge*muCharge>0 && muPt > elePt && eleCharge>0) return std::make_pair(*muiter,*eleiter); 
+      }
+    }
+    return std::make_pair(*muons.begin(),theEle);   // chiara: questo andra' fissato...  
+  } 
 }
 
 int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // this requires not only denom ok, but also NOT tight!
@@ -1765,7 +1780,15 @@ int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // 
     TString stringIdLow (_selectionME->getStringParameter("electronIDTypeLow"));
     if( stringIdLow.Contains("Smurf") ) {
       if ( thisElePt<20  ) {
-	if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
+	// if ( fbremEle[iele]<0.15 && !(fabs(etaEle[iele])<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
+	// chiara: this is new
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[iele], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[iele];   scEta = etaSC[sc]; }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[iele]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[iele]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[iele]>0.95) ) isTight = false;  // hardcoded
       }
     }
     if (!theElectronIsol)    isTight = false; 
@@ -1787,7 +1810,7 @@ int LeptonPlusFakeMLSelection_fullME::getBestEleDenominator(int realMuon) {  // 
 
 
 int LeptonPlusFakeMLSelection_fullME::getBestMuDenominator(int realEle) {  // this requires not only denom ok, but also NOT tight!
-  
+
   int theFake=-1;
   
   float maxPtFake=-1000.;
@@ -1797,7 +1820,7 @@ int LeptonPlusFakeMLSelection_fullME::getBestMuDenominator(int realEle) {  // th
   for(int imu=0; imu<nMuon; imu++) {
     
     float thisMuPt = GetPt(pxMuon[imu],pyMuon[imu]);    
-    
+   
     // chiara: for SS test
     if (chargeEle[realEle]*chargeMuon[imu]>0) continue;
     // if (chargeEle[realEle]*chargeMuon[imu]<0) continue;
@@ -1812,6 +1835,15 @@ int LeptonPlusFakeMLSelection_fullME::getBestMuDenominator(int realEle) {  // th
     // removing candidates passing the tight selection
     bool isTight = true;
     isMuonID(imu, &isTight);
+    if (!isPFIsolatedMuon(imu)) isTight = false;
+    int ctfMuon   = trackIndexMuon[imu]; 
+    float dxyMuon = transvImpactParTrack[ctfMuon];
+    float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];   
+    if (thisMuPt>20)    // hardcoded
+      if (_selectionME->getSwitch("muonIPhighPT") && (!_selectionME->passCut("muonIPhighPT",dxyMuon)) ) isTight = false;
+    if (thisMuPt<20)    // hardcoded
+      if (_selectionME->getSwitch("muonIPlowPT")  && (!_selectionME->passCut("muonIPlowPT",dxyMuon)) ) isTight = false;
+    if (_selectionME->getSwitch("muonDz") && (!_selectionME->passCut("muonDz",dzMuon)) )  isTight = false;
     if (isTight) continue;
 
     if( thisMuPt > maxPtFake ) { maxPtFake = thisMuPt; theFake=imu; }
@@ -2032,49 +2064,94 @@ float LeptonPlusFakeMLSelection_fullME::getMuonPromptRateError( float promptPt, 
   return -1.;
 }
 
-void LeptonPlusFakeMLSelection_fullME::setKinematicsME(int myReal, int myFake) {
+void LeptonPlusFakeMLSelection_fullME::setKinematicsME(int myReal, int myFake, bool realMu) {
 
   if (myFake > -1 && myReal > -1) {
 
-    eleCands[me].push_back(myFake);
-    muCands[me] .push_back(myReal);
-    m_p4LeptonMinus[me] -> SetXYZT(pxEle[myFake],pyEle[myFake],pzEle[myFake],energyEle[myFake]);
-    m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myReal],pyMuon[myReal],pzMuon[myReal],energyMuon[myReal]);
-    hardestLeptonPt[me] = GetPt(pxMuon[myReal],pyMuon[myReal]);
-    slowestLeptonPt[me] = GetPt(pxEle[myFake], pyEle[myFake]);
+    if (realMu) { 
+      eleCands[me].push_back(myFake);
+      muCands[me] .push_back(myReal);
+      m_p4LeptonMinus[me] -> SetXYZT(pxEle[myFake],pyEle[myFake],pzEle[myFake],energyEle[myFake]);
+      m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myReal],pyMuon[myReal],pzMuon[myReal],energyMuon[myReal]);
+      hardestLeptonPt[me] = GetPt(pxMuon[myReal],pyMuon[myReal]);
+      slowestLeptonPt[me] = GetPt(pxEle[myFake], pyEle[myFake]);
+      
+      if ( hardestLeptonPt[me] != GetPt(pxMuon[myReal],pyMuon[myReal]) ) {
+	cout << "questo non puo succedere mai" << endl;
+	cout << "myReal = " << myReal << ", myFake = " << myFake << endl;
+	cout << "hardest PT = " << hardestLeptonPt[me] << endl;
+	cout << "slowest PT = " << slowestLeptonPt[me] << endl;
+	cout << "real PT = "    << GetPt(pxMuon[myReal],pyMuon[myReal]) << endl;
+	cout << "fake PT = "    << GetPt(pxEle[myFake],pyEle[myFake]) << endl;
+      }
 
-    if ( hardestLeptonPt[me] != GetPt(pxMuon[myReal],pyMuon[myReal]) ) {
-      cout << "questo non puo succedere mai" << endl;
-      cout << "myReal = " << myReal << ", myFake = " << myFake << endl;
-      cout << "hardest PT = " << hardestLeptonPt[me] << endl;
-      cout << "slowest PT = " << slowestLeptonPt[me] << endl;
-      cout << "real PT = "    << GetPt(pxMuon[myReal],pyMuon[myReal]) << endl;
-      cout << "fake PT = "    << GetPt(pxEle[myFake],pyEle[myFake]) << endl;
-    }
+      hardestLeptonEta[me] = etaMuon[myReal];
+      slowestLeptonEta[me] = etaEle[myFake];
+      m_mll[me] = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+      m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+      m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+      m_deltaEtaLeptons[me] = etaEle[myFake]-etaMuon[myReal];
+      m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+      m_transvMass[me] = sqrt( 2.*(m_dilepPt[me].Pt())*(m_p3PFMET->Pt())*(1- cos(m_p3PFMET->DeltaPhi(m_dilepPt[me]))) );
+      m_GammaMR[me] = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
+      m_MR[me]      = CalcMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
+      m_MTR[me]     = CalcMTR(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],*m_p3PFMET);
+      m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
+      m_mT2[me]           = 0.;
+      m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+      
+      m_chEE[0]  = chargeMuon[myReal];
+      m_chEE[1]  = chargeEle[myFake];
+      m_isoEE[0] = pfCombinedIsoMuon[myReal] / hardestLeptonPt[me];
+      m_isoEE[1] = pfCombinedIsoEle[myFake] / slowestLeptonPt[me];
+      m_lhEE[0]  = -999;
+      m_lhEE[1]  = eleIdLikelihoodEle[myFake];
+    } 
 
-    hardestLeptonEta[me] = etaMuon[myReal];
-    slowestLeptonEta[me] = etaEle[myFake];
-    m_mll[me]           = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
-    m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
-    m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
-    m_deltaEtaLeptons[me] = etaEle[myFake]-etaEle[myReal];
-    m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
-    m_transvMass[me] = sqrt( 2.*(m_dilepPt[me].Pt())*(m_p3PFMET->Pt())*(1- cos(m_p3PFMET->DeltaPhi(m_dilepPt[me]))) );
-    m_GammaMR[me] = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
-    m_MR[me]      = CalcMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
-    m_MTR[me]     = CalcMTR(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],*m_p3PFMET);
-    m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
-    m_mT2[me]           = 0.;
-    m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-    m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
-    m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
 
-    m_chEE[0]  = chargeMuon[myReal];
-    m_chEE[1]  = chargeEle[myFake];
-    m_isoEE[0] = pfCombinedIsoMuon[myReal] / hardestLeptonPt[me];
-    m_isoEE[1] = pfCombinedIsoEle[myFake] / slowestLeptonPt[me];
-    m_lhEE[0]  = -999;
-    m_lhEE[1]  = eleIdLikelihoodEle[myFake];    
+    if (!realMu) { 
+      eleCands[me].push_back(myReal);
+      muCands[me] .push_back(myFake);
+      m_p4LeptonMinus[me] -> SetXYZT(pxEle[myReal],pyEle[myReal],pzEle[myReal],energyEle[myReal]);
+      m_p4LeptonPlus[me]  -> SetXYZT(pxMuon[myFake],pyMuon[myFake],pzMuon[myFake],energyMuon[myFake]);
+      hardestLeptonPt[me] = GetPt(pxMuon[myFake],pyMuon[myFake]);
+      slowestLeptonPt[me] = GetPt(pxEle[myReal], pyEle[myReal]);
+      
+      if ( hardestLeptonPt[me] != GetPt(pxMuon[myFake],pyMuon[myFake]) ) {
+	cout << "questo non puo succedere mai" << endl;
+	cout << "myReal = " << myReal << ", myFake = " << myFake << endl;
+	cout << "hardest PT = " << hardestLeptonPt[me] << endl;
+	cout << "slowest PT = " << slowestLeptonPt[me] << endl;
+	cout << "real PT = "    << GetPt(pxMuon[myFake],pyMuon[myFake]) << endl;
+	cout << "fake PT = "    << GetPt(pxEle[myReal],pyEle[myReal]) << endl;
+      }
+
+      hardestLeptonEta[me] = etaMuon[myFake];
+      slowestLeptonEta[me] = etaEle[myReal];
+      m_mll[me] = (*(m_p4LeptonMinus[me]) + *(m_p4LeptonPlus[me])).M();
+      m_deltaPhi[me]      = fabs(180./TMath::Pi() * m_p4LeptonMinus[me]->Vect().DeltaPhi(m_p4LeptonPlus[me]->Vect()));
+      m_deltaErre[me]     = m_p4LeptonMinus[me]->Vect().DeltaR(m_p4LeptonPlus[me]->Vect());
+      m_deltaEtaLeptons[me] = etaEle[myReal]-etaMuon[myFake];
+      m_dilepPt[me].SetXYZ( m_p4LeptonMinus[me]->Vect().X()+m_p4LeptonPlus[me]->Vect().X(),m_p4LeptonMinus[me]->Vect().Y()+m_p4LeptonPlus[me]->Vect().Y(),0.0 );
+      m_transvMass[me] = sqrt( 2.*(m_dilepPt[me].Pt())*(m_p3PFMET->Pt())*(1- cos(m_p3PFMET->DeltaPhi(m_dilepPt[me]))) );
+      m_GammaMR[me] = CalcGammaMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
+      m_MR[me]      = CalcMRstar(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me]);
+      m_MTR[me]     = CalcMTR(*m_p4LeptonMinus[me],*m_p4LeptonPlus[me],*m_p3PFMET);
+      m_metOptll[me]      = m_theMET / m_dilepPt[me].Pt();
+      m_mT2[me]           = 0.;
+      m_projectedMet[me]  = GetProjectedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_p3TKMET[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect());
+      m_chMet[me] = pfChargedMet(m_p4LeptonMinus[me]->Vect(),m_p4LeptonPlus[me]->Vect()).Pt();
+      
+      m_chEE[0]  = chargeMuon[myFake];
+      m_chEE[1]  = chargeEle[myReal];
+      m_isoEE[0] = pfCombinedIsoMuon[myFake] / hardestLeptonPt[me];
+      m_isoEE[1] = pfCombinedIsoEle[myReal] / slowestLeptonPt[me];
+      m_lhEE[0]  = -999;
+      m_lhEE[1]  = eleIdLikelihoodEle[myReal];
+    } 
   }  
 }
 
@@ -2195,6 +2272,7 @@ int LeptonPlusFakeMLSelection_fullME::numJets( std::vector<int> eleToRemove, std
 
     if(_selectionME->getSwitch("etJetAcc") && !_selectionME->passCut("etJetAcc", pt)) continue;
     m_goodJets.push_back(j);
+
     num++;
   }
 
@@ -2418,7 +2496,15 @@ int LeptonPlusFakeMLSelection_fullME::numExtraLeptons( std::vector<int> eleToRem
     if( stringIdLow.Contains("Smurf") ) {
       float pt = GetPt(pxEle[i],pyEle[i]);
       if ( pt<20  ) {
-	if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+	// chiara: this is new
+	// if ( fbremEle[i]>0.15 || ((fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95)) ) continue;
+	Utils anaUtils;
+	int sc;
+	bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[i], bits::isEcalDriven);
+	float scEta = -1.;
+	if ( ecalDriven) { sc = superClusterIndexEle[i];   scEta = etaSC[sc]; }
+	if (!ecalDriven) { sc = PFsuperClusterIndexEle[i]; scEta = etaPFSC[sc]; }
+	if ( fbremEle[i]<0.15 && !(fabs(scEta)<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue; // hardcoded
       }
     }
 
@@ -2548,6 +2634,7 @@ bool LeptonPlusFakeMLSelection_fullME::isPFIsolatedMuon(int muonIndex) {
   float eta = etaMuon[muonIndex];
   float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
   float iso = pfCombinedIsoMuon[muonIndex]/pt;
+
   if( pt>=20. && fabs(eta)<1.479 ) return (iso < 0.13);
   if( pt>=20. && fabs(eta)>=1.479 ) return (iso < 0.09);
   if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
