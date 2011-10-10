@@ -2418,6 +2418,7 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     if ( pt>ETMax2 && pt>ETMax ) {
 
       theSecondJet[theChannel] = theLeadingJet[theChannel];
+      subleadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[theSecondJet[theChannel]];
       ETMax2 = ETMax;
 
       theLeadingJet[theChannel] = j;
