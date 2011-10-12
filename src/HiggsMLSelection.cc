@@ -2414,6 +2414,7 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     if(pt>5.0) (*m_jetsSum[theChannel]) += p4Jet;
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+    if(fabs(etaAK5PFPUcorrJet[j]==5)) continue; // this is to remove the place with wrong JECs (https://hypernews.cern.ch/HyperNews/CMS/get/JetMET/1259/1.html)
 
     if ( pt>ETMax2 && pt>ETMax ) {
 
