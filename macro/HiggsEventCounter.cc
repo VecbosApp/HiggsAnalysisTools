@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define NSAMPLES 43
+#define NSAMPLES 30
 
 using namespace std;
 
@@ -62,8 +62,8 @@ void countEvents() {
   // nominal sample first, then the systematics ones
   chains[0]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[1]->Add("results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
-  chains[2]->Add("results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*Counters.root");
+  chains[1]->Add("results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[2]->Add("results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
   chains[3]->Add("results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
   chains[4]->Add("results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
@@ -82,7 +82,8 @@ void countEvents() {
   chains[11]->Add("results/Summer11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
   chains[12]->Add("results/Summer11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
 
-  chains[13]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  //  chains[13]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[13]->Add("results/Summer11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*Counters.root"); 
 
   chains[14]->Add("results/Summer11_V1/WGToENuG_TuneZ2_7TeV-madgraph/*Counters.root");
   chains[15]->Add("results/Summer11_V1/WGToMuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
@@ -95,35 +96,16 @@ void countEvents() {
 
   chains[21]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
   chains[22]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[23]->Add("results/Summer11_V1/WZTo3LNu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
-  chains[24]->Add("results/Summer11_V1/ZZ_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
+  chains[23]->Add("results/Summer11_V1/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[24]->Add("results/Summer11_V1/ZZJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  // samples for systematics: WW
+  // samples for systematics
   chains[25]->Add("results/Summer11_V1/WWTo2L2Nu_CT10_7TeV-mcatnlo/*Counters.root"); // nominal MC@NLO sample
   chains[26]->Add("results/Summer11_V1/WWTo2L2Nu_scaledown_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
   chains[27]->Add("results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
   chains[28]->Add("results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*Counters.root"); // PYTHIA sample 
-  
-  // samples for systematics: Vgamma
   chains[29]->Add("results/Summer11_V1/GVJets_7TeV-madgraph/*Counters.root"); // Vgamma inclusive
 
-  // samples for systematics: top
-  chains[30]->Add("results/Summer11_V1/TT_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
-  chains[31]->Add("results/Summer11_V1/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/*Counters.root");
-  chains[32]->Add("results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DR/*Counters.root");
-  chains[33]->Add("results/Summer11_V1/T_TuneZ2_scaledown_tW-channel-DS/*Counters.root");
-  chains[34]->Add("results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DR/*Counters.root");
-  chains[35]->Add("results/Summer11_V1/T_TuneZ2_scaleup_tW-channel-DS/*Counters.root");
-  chains[36]->Add("results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DR/*Counters.root");
-  chains[37]->Add("results/Summer11_V1/Tbar_TuneZ2_scaledown_tW-channel-DS/*Counters.root");
-  chains[38]->Add("results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DR/*Counters.root");
-  chains[39]->Add("results/Summer11_V1/Tbar_TuneZ2_scaleup_tW-channel-DS/*Counters.root");
-
-  // samples for systematics: W+jets
-  chains[40]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/*Counters.root");
-  chains[41]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/*Counters.root");
-  chains[42]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_matchingup_7TeV-madgraph-tauola/*Counters.root");
-  
   cout << "chains added. " << endl;
 
   std::vector<std::vector<TString> > signalSampleName;
@@ -179,22 +161,6 @@ void countEvents() {
   sampleName.push_back("results/merged/WW_mcatnlo_scaleup_ee.root"); // 27
   sampleName.push_back("results/merged/WW_pythia_ee.root"); // 28
   sampleName.push_back("results/merged/Wgamma_inclusive_ee.root"); // 29
-
-  sampleName.push_back("results/merged/TT_pythia6-tauola_ee.root");  // 30
-  sampleName.push_back("results/merged/TTbar_scaleup_ee.root");  // 31
-  sampleName.push_back("results/merged/SingleT_scaledown_tWChannel-DR_ee.root");  // 32
-  sampleName.push_back("results/merged/SingleT_scaledown_tWChannel-DS_ee.root");  // 33
-  sampleName.push_back("results/merged/SingleT_scaleup_tWChannel-DR_ee.root");    // 34
-  sampleName.push_back("results/merged/SingleT_scaleup_tWChannel-DS_ee.root");    // 35
-  sampleName.push_back("results/merged/SingleTbar_scaledown_tWChannel-DR_ee.root");  // 36
-  sampleName.push_back("results/merged/SingleTbar_scaledown_tWChannel-DS_ee.root");  // 37
-  sampleName.push_back("results/merged/SingleTbar_scaleup_tWChannel-DR_ee.root");   // 38
-  sampleName.push_back("results/merged/SingleTbar_scaleup_tWChannel-DS_ee.root");   // 39
-
-  // samples for systematics: W+jets
-  sampleName.push_back("results/merged/WJets_scaledown_ee.root");  // 40
-  sampleName.push_back("results/merged/WJets_scaleup_ee.root");    // 41
-  sampleName.push_back("results/merged/WJets_matchingup_ee.root");  // 42
 
   std::map<int,float> ggHiggs_xsec;
   // samples are emu only
@@ -291,8 +257,8 @@ void countEvents() {
   sampleXsec.push_back(7.87); // 11
   sampleXsec.push_back(7.87); // 12
 
-  // ttbar
-  sampleXsec.push_back(157.5); // 13
+  // ttbar -> 2l2nu
+  sampleXsec.push_back(157.5 * 3*0.108 * 3*0.108); // 13
 
   // Wgamma
   sampleXsec.push_back(137.5 * 0.1080); // 14
@@ -313,32 +279,16 @@ void countEvents() {
   sampleXsec.push_back(4.7833889); // 21
   sampleXsec.push_back(0.150483); // 22
   sampleXsec.push_back(18.2 * 3*0.1080 * 3*0.033658); // 23
-  sampleXsec.push_back(7.41); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor. // 24
+  sampleXsec.push_back(7.41 * 3*0.033658 * 0.2 * 2); // sigma_ZZ = 6.77 (1+0.12/1.277)=7.41pb, where 1.277 is the LO->NLO k-factor. // 24
+  // once moving to Madgraph ZZ->2l2nu => 7.41 * 3*0.033658 * 0.2
 
-  // systematic samples: WW
+  
+  // systematic samples
   sampleXsec.push_back(4.7833889); // 25
   sampleXsec.push_back(4.7833889); // 26
   sampleXsec.push_back(4.7833889); // 27
   sampleXsec.push_back(4.7833889); // 28
   sampleXsec.push_back(137.5); // 29
-
-  // systematic samples: top
-  sampleXsec.push_back(157.5); // 30
-  sampleXsec.push_back(157.5); // 31
-  sampleXsec.push_back(7.87); // 32
-  sampleXsec.push_back(7.87); // 33
-  sampleXsec.push_back(7.87); // 34
-  sampleXsec.push_back(7.87); // 35
-  sampleXsec.push_back(7.87); // 36
-  sampleXsec.push_back(7.87); // 37
-  sampleXsec.push_back(7.87); // 38
-  sampleXsec.push_back(7.87); // 39
-
-  // systematic samples: Wjets
-  sampleXsec.push_back(31314.);   // 40 
-  sampleXsec.push_back(31314.);   // 41
-  sampleXsec.push_back(31314.);   // 42
-
 
   std::vector<std::vector<double> > signalProcId;
   for(int imass=0; imass<17;imass++) {
@@ -384,19 +334,6 @@ void countEvents() {
   sampleProcessId.push_back(3); // qqWW MC@NLO scaleup
   sampleProcessId.push_back(6); // qqWW PYTHIA
   sampleProcessId.push_back(81); // Vgamma madgraph inclusive
-  sampleProcessId.push_back(10); // ttbar
-  sampleProcessId.push_back(10); // ttbar
-  sampleProcessId.push_back(19); // tW
-  sampleProcessId.push_back(19); // tW
-  sampleProcessId.push_back(19); // tW
-  sampleProcessId.push_back(19); // tW
-  sampleProcessId.push_back(20); // tW
-  sampleProcessId.push_back(20); // tW
-  sampleProcessId.push_back(20); // tW
-  sampleProcessId.push_back(20); // tW
-  sampleProcessId.push_back(80); // Wjets
-  sampleProcessId.push_back(80); // Wjets
-  sampleProcessId.push_back(80); // Wjets
 
   float nEvH[17][4];
   for(int imass=0; imass<17; imass++) {
