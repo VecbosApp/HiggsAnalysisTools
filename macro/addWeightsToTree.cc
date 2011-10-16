@@ -84,7 +84,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Bool_t          uncorrJetVeto;
     Bool_t          preDeltaPhi;
     Bool_t          finalSelection;
-    Bool_t          step[25];
+    Bool_t          step[29];
     Bool_t          hlt;
     Float_t         KFactor;
     Bool_t          promptDecay;
@@ -297,6 +297,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float dgammamr;
     float jetcat = 0;
     float consecevent = -1;
+    float iMet;
 
     // variables to be converted in float...
     float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
@@ -315,7 +316,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     for(int i=0; i<(int)trees.size();i++) {
       TTree *theTreeNew = trees[i];
 
-      // the selected final state: ee=0, mm=1, em=2
+      // the selected final state: mm=0, ee=1, em=2, mue=3
       theTreeNew->Branch("channel", &f_finalstate, "channel/F");
 
       // one integer containing the process identifier (for MC, 0 for data)
@@ -373,7 +374,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount, "subleadingJetsMaxBTagTrackCount/F");
-      theTreeNew->Branch("step", step, "step[25]/O");
+      theTreeNew->Branch("step", step, "step[29]/O");
       theTreeNew->Branch("zveto", &f_zveto, "zveto/F");
       theTreeNew->Branch("bveto_ip", &f_bveto_ip, "bveto_ip/F");
       theTreeNew->Branch("bveto_mu", &f_bveto_mu, "bveto_mu/F");
@@ -471,6 +472,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         theTreeNew->Branch("weightPP", &weightPP, "weightPP/F");
         theTreeNew->Branch("weightStatPP", &weightStatPP, "weightStatPP/F");
       }
+      theTreeNew->Branch("iMet", &iMet, "iMet/F");
 
     }
 
@@ -522,8 +524,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
-      i_WWSel = (step[13]) ? 1 : 0;
-      i_WWSel1j = (step[20] && njets==1) ? 1 : 0;
+      i_WWSel = (step[14]) ? 1 : 0;
+      i_WWSel1j = (step[28] && njets==1) ? 1 : 0;
       i_hlt = (hlt) ? 1 : 0;
 
       zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
@@ -562,6 +564,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
         mtw1 = calcMT(*pfmetV,TV_L1);
         mtw2 = calcMT(*pfmetV,TV_L2);
+        
+        iMet = projMet * cos(TV_tkmet.Angle(*pfmetV));
 
 	//  offline efficiency scale factors
 	Float_t eff1=1.; 
