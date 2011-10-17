@@ -103,9 +103,8 @@ LeptonPlusFakeMLSelection_fullEE::LeptonPlusFakeMLSelection_fullEE(TTree *tree)
 
   // To read good run list!   // chiara
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    // std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json"; 
+    std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11.json"; 
     // std::string goodRunJsonFile = "config/json/HWW.conservativeCertificationLP11_May10only.json";
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -141,65 +140,126 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeBinning() {
   m_minFakePt[0] = 10.;   m_maxFakePt[0] = 15.;
   m_minFakePt[1] = 15.;   m_maxFakePt[1] = 20.;
   m_minFakePt[2] = 20.;   m_maxFakePt[2] = 25.;
-  m_minFakePt[3] = 25.;   m_maxFakePt[3] = 50.;
-  m_minFakePt[4] = 50.;   m_maxFakePt[4] = 10000.;
+  m_minFakePt[3] = 25.;   m_maxFakePt[3] = 30.;
+  m_minFakePt[4] = 30.;   m_maxFakePt[4] = 10000.;
+}
+
+void LeptonPlusFakeMLSelection_fullEE::initialiseFakeEtaBinning() {
+
+  m_minFakeEta[0] = 0.;    m_maxFakeEta[0] = 1.;
+  m_minFakeEta[1] = 1.;    m_maxFakeEta[1] = 1.479;
+  m_minFakeEta[2] = 1.479; m_maxFakeEta[2] = 2.;
+  m_minFakeEta[3] = 2.;    m_maxFakeEta[3] = 2.5;
 }
 
 // fake from Smurf selection, ET>15 - for LP: all V1->V7 - with tracker, dEta, dPhi
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate15() {
 
-  m15_fakeRateEB[0] = 0.0865748;   
-  m15_fakeRateEB[1] = 0.0801243;
-  m15_fakeRateEB[2] = 0.119946; 
-  m15_fakeRateEB[3] = 0.0862089;
-  m15_fakeRateEB[4] = 0.0776998;
+  // chiara: for the moment this is still old mine and I simply duplicate... fixme
+  m15_fakeRateEB1[0] = 0.0865748;   
+  m15_fakeRateEB1[1] = 0.0801243;
+  m15_fakeRateEB1[2] = 0.119946; 
+  m15_fakeRateEB1[3] = 0.0862089;
+  m15_fakeRateEB1[4] = 0.0776998;
 
-  m15_fakeRateEB_err[0] = 0.00315669;
-  m15_fakeRateEB_err[1] = 0.00278899;
-  m15_fakeRateEB_err[2] = 0.00364046;
-  m15_fakeRateEB_err[3] = 0.00341243;
-  m15_fakeRateEB_err[4] = 0.0123415;
+  m15_fakeRateEB1_err[0] = 0.00315669;
+  m15_fakeRateEB1_err[1] = 0.00278899;
+  m15_fakeRateEB1_err[2] = 0.00364046;
+  m15_fakeRateEB1_err[3] = 0.00341243;
+  m15_fakeRateEB1_err[4] = 0.0123415;
 
-  m15_fakeRateEE[0] = 0.0202091;
-  m15_fakeRateEE[1] = 0.0192432;
-  m15_fakeRateEE[2] = 0.0524854;
-  m15_fakeRateEE[3] = 0.0438841;
-  m15_fakeRateEE[4] = 0.0290847;
+  m15_fakeRateEB2[0] = 0.0865748;   
+  m15_fakeRateEB2[1] = 0.0801243;
+  m15_fakeRateEB2[2] = 0.119946; 
+  m15_fakeRateEB2[3] = 0.0862089;
+  m15_fakeRateEB2[4] = 0.0776998;
+
+  m15_fakeRateEB2_err[0] = 0.00315669;
+  m15_fakeRateEB2_err[1] = 0.00278899;
+  m15_fakeRateEB2_err[2] = 0.00364046;
+  m15_fakeRateEB2_err[3] = 0.00341243;
+  m15_fakeRateEB2_err[4] = 0.0123415;
+
+  m15_fakeRateEE1[0] = 0.0202091;
+  m15_fakeRateEE1[1] = 0.0192432;
+  m15_fakeRateEE1[2] = 0.0524854;
+  m15_fakeRateEE1[3] = 0.0438841;
+  m15_fakeRateEE1[4] = 0.0290847;
   
-  m15_fakeRateEE_err[0] = 0.00129619;
-  m15_fakeRateEE_err[1] = 0.00115808;
-  m15_fakeRateEE_err[2] = 0.00177128;
-  m15_fakeRateEE_err[3] = 0.00188699;
-  m15_fakeRateEE_err[4] = 0.00793065;
+  m15_fakeRateEE1_err[0] = 0.00129619;
+  m15_fakeRateEE1_err[1] = 0.00115808;
+  m15_fakeRateEE1_err[2] = 0.00177128;
+  m15_fakeRateEE1_err[3] = 0.00188699;
+  m15_fakeRateEE1_err[4] = 0.00793065;
+
+  m15_fakeRateEE2[0] = 0.0202091;
+  m15_fakeRateEE2[1] = 0.0192432;
+  m15_fakeRateEE2[2] = 0.0524854;
+  m15_fakeRateEE2[3] = 0.0438841;
+  m15_fakeRateEE2[4] = 0.0290847;
+  
+  m15_fakeRateEE2_err[0] = 0.00129619;
+  m15_fakeRateEE2_err[1] = 0.00115808;
+  m15_fakeRateEE2_err[2] = 0.00177128;
+  m15_fakeRateEE2_err[3] = 0.00188699;
+  m15_fakeRateEE2_err[4] = 0.00793065;
 }
 
 // fake from Smurf selection, ET>30 - for LP: all V1->V7 - with tracker, dEta, dPhi
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate30() {
 
-  // Smurf cut-based 
-  m30_fakeRateEB[0] = 0.0706892;
-  m30_fakeRateEB[1] = 0.0600548;
-  m30_fakeRateEB[2] = 0.0967004;
-  m30_fakeRateEB[3] = 0.0759246;
-  m30_fakeRateEB[4] = 0.0757698;
+  // chiara: questi sono i numeri di Si (che pero' sono per ET35) 
+  // Smurf cut-based - fabs(eta): 0 - 1                                
+  m30_fakeRateEB1[0] = 0.133;
+  m30_fakeRateEB1[1] = 0.091;
+  m30_fakeRateEB1[2] = 0.113;
+  m30_fakeRateEB1[3] = 0.102;
+  m30_fakeRateEB1[4] = 0.123;
 
-  m30_fakeRateEB_err[0] = 0.00705514;
-  m30_fakeRateEB_err[1] = 0.00436126;
-  m30_fakeRateEB_err[2] = 0.00502058;
-  m30_fakeRateEB_err[3] = 0.0039008;
-  m30_fakeRateEB_err[4] = 0.0125631;
+  m30_fakeRateEB1_err[0] = 0.010;
+  m30_fakeRateEB1_err[1] = 0.007;
+  m30_fakeRateEB1_err[2] = 0.008;
+  m30_fakeRateEB1_err[3] = 0.008;
+  m30_fakeRateEB1_err[4] = 0.011;
 
-  m30_fakeRateEE[0] = 0.0169693;
-  m30_fakeRateEE[1] = 0.0166916;
-  m30_fakeRateEE[2] = 0.0455474;
-  m30_fakeRateEE[3] = 0.0400856;
-  m30_fakeRateEE[4] = 0.0268137;
-  
-  m30_fakeRateEE_err[0] = 0.00313307;
-  m30_fakeRateEE_err[1] = 0.00204691;
-  m30_fakeRateEE_err[2] = 0.00266818;
-  m30_fakeRateEE_err[3] = 0.00231222;
-  m30_fakeRateEE_err[4] = 0.00789673;
+  // Smurf cut-based - fabs(eta): 1 - 1.479                  
+  m30_fakeRateEB2[0] = 0.075;
+  m30_fakeRateEB2[1] = 0.063;
+  m30_fakeRateEB2[2] = 0.115;
+  m30_fakeRateEB2[3] = 0.089;
+  m30_fakeRateEB2[4] = 0.123;
+
+  m30_fakeRateEB2_err[0] = 0.009;
+  m30_fakeRateEB2_err[1] = 0.008;
+  m30_fakeRateEB2_err[2] = 0.009;
+  m30_fakeRateEB2_err[3] = 0.010;
+  m30_fakeRateEB2_err[4] = 0.013;
+
+  // Smurf cut-based - fabs(eta): 1.479 - 2. 
+  m30_fakeRateEE1[0] = 0.033;
+  m30_fakeRateEE1[1] = 0.039;
+  m30_fakeRateEE1[2] = 0.114;
+  m30_fakeRateEE1[3] = 0.090;
+  m30_fakeRateEE1[4] = 0.099;
+
+  m30_fakeRateEE1_err[0] = 0.007;
+  m30_fakeRateEE1_err[1] = 0.006;
+  m30_fakeRateEE1_err[2] = 0.009;
+  m30_fakeRateEE1_err[3] = 0.009;
+  m30_fakeRateEE1_err[4] = 0.011;
+
+  // Smurf cut-based - fabs(eta): 2. - 2.5 
+  m30_fakeRateEE2[0] = 0.057;
+  m30_fakeRateEE2[1] = 0.057;
+  m30_fakeRateEE2[2] = 0.112;
+  m30_fakeRateEE2[3] = 0.120;
+  m30_fakeRateEE2[4] = 0.120;
+
+  m30_fakeRateEE2_err[0] = 0.009;
+  m30_fakeRateEE2_err[1] = 0.008;
+  m30_fakeRateEE2_err[2] = 0.009;
+  m30_fakeRateEE2_err[3] = 0.010;
+  m30_fakeRateEE2_err[4] = 0.012;
   
   /*
   // LH based
@@ -232,85 +292,160 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate30() {
 // fake from Smurf selection, ET>35 - for LP: all V1->V7 - with tracker, dEta, dPhi
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate35() {
 
-  m35_fakeRateEB[0] = 0.0644588;
-  m35_fakeRateEB[1] = 0.060191;
-  m35_fakeRateEB[2] = 0.0861061;
-  m35_fakeRateEB[3] = 0.0743572;
-  m35_fakeRateEB[4] = 0.0770363;
+  // chiara: for the moment this is still old mine and I simply duplicate... fixme
+  m35_fakeRateEB1[0] = 0.0644588;
+  m35_fakeRateEB1[1] = 0.060191;
+  m35_fakeRateEB1[2] = 0.0861061;
+  m35_fakeRateEB1[3] = 0.0743572;
+  m35_fakeRateEB1[4] = 0.0770363;
 
-  m35_fakeRateEB_err[0] = 0.00894102;
-  m35_fakeRateEB_err[1] = 0.00558166;
-  m35_fakeRateEB_err[2] = 0.00578445;
-  m35_fakeRateEB_err[3] = 0.00428106;
-  m35_fakeRateEB_err[4] = 0.0128063;
+  m35_fakeRateEB1_err[0] = 0.00894102;
+  m35_fakeRateEB1_err[1] = 0.00558166;
+  m35_fakeRateEB1_err[2] = 0.00578445;
+  m35_fakeRateEB1_err[3] = 0.00428106;
+  m35_fakeRateEB1_err[4] = 0.0128063;
 
-  m35_fakeRateEE[0] = 0.019932;
-  m35_fakeRateEE[1] = 0.0177786; 
-  m35_fakeRateEE[2] = 0.0420348;
-  m35_fakeRateEE[3] = 0.035704;
-  m35_fakeRateEE[4] = 0.0234422;
+  m35_fakeRateEB2[0] = 0.0644588;
+  m35_fakeRateEB2[1] = 0.060191;
+  m35_fakeRateEB2[2] = 0.0861061;
+  m35_fakeRateEB2[3] = 0.0743572;
+  m35_fakeRateEB2[4] = 0.0770363;
+
+  m35_fakeRateEB2_err[0] = 0.00894102;
+  m35_fakeRateEB2_err[1] = 0.00558166;
+  m35_fakeRateEB2_err[2] = 0.00578445;
+  m35_fakeRateEB2_err[3] = 0.00428106;
+  m35_fakeRateEB2_err[4] = 0.0128063;
+
+  m35_fakeRateEE1[0] = 0.019932;
+  m35_fakeRateEE1[1] = 0.0177786; 
+  m35_fakeRateEE1[2] = 0.0420348;
+  m35_fakeRateEE1[3] = 0.035704;
+  m35_fakeRateEE1[4] = 0.0234422;
   
-  m35_fakeRateEE_err[0] = 0.00466236;
-  m35_fakeRateEE_err[1] = 0.0027012;
-  m35_fakeRateEE_err[2] = 0.00319567;
-  m35_fakeRateEE_err[3] = 0.00247104;
-  m35_fakeRateEE_err[4] = 0.00750109;
+  m35_fakeRateEE1_err[0] = 0.00466236;
+  m35_fakeRateEE1_err[1] = 0.0027012;
+  m35_fakeRateEE1_err[2] = 0.00319567;
+  m35_fakeRateEE1_err[3] = 0.00247104;
+  m35_fakeRateEE1_err[4] = 0.00750109;
+
+  m35_fakeRateEE2[0] = 0.019932;
+  m35_fakeRateEE2[1] = 0.0177786; 
+  m35_fakeRateEE2[2] = 0.0420348;
+  m35_fakeRateEE2[3] = 0.035704;
+  m35_fakeRateEE2[4] = 0.0234422;
+  
+  m35_fakeRateEE2_err[0] = 0.00466236;
+  m35_fakeRateEE2_err[1] = 0.0027012;
+  m35_fakeRateEE2_err[2] = 0.00319567;
+  m35_fakeRateEE2_err[3] = 0.00247104;
+  m35_fakeRateEE2_err[4] = 0.00750109;
 }
 
 // fake from Smurf selection, ET>50 - for LP: all V1->V7 - with tracker, dEta, dPhi
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate50() {
 
-  m50_fakeRateEB[0] = 0.0743264;
-  m50_fakeRateEB[1] = 0.0469011;
-  m50_fakeRateEB[2] = 0.0864613;
-  m50_fakeRateEB[3] = 0.0645644;
-  m50_fakeRateEB[4] = 0.0701654;
+  // chiara: for the moment this is still old mine and I simply duplicate... fixme
+  m50_fakeRateEB1[0] = 0.0743264;
+  m50_fakeRateEB1[1] = 0.0469011;
+  m50_fakeRateEB1[2] = 0.0864613;
+  m50_fakeRateEB1[3] = 0.0645644;
+  m50_fakeRateEB1[4] = 0.0701654;
 
-  m50_fakeRateEB_err[0] = 0.0216452;
-  m50_fakeRateEB_err[1] = 0.0102646;
-  m50_fakeRateEB_err[2] = 0.0111009;
-  m50_fakeRateEB_err[3] = 0.00602524;
-  m50_fakeRateEB_err[4] = 0.0134291;
+  m50_fakeRateEB1_err[0] = 0.0216452;
+  m50_fakeRateEB1_err[1] = 0.0102646;
+  m50_fakeRateEB1_err[2] = 0.0111009;
+  m50_fakeRateEB1_err[3] = 0.00602524;
+  m50_fakeRateEB1_err[4] = 0.0134291;
 
-  m50_fakeRateEE[0] = 0.0102727;
-  m50_fakeRateEE[1] = 0.0202491;
-  m50_fakeRateEE[2] = 0.0399345;
-  m50_fakeRateEE[3] = 0.0287661;
-  m50_fakeRateEE[4] = 0.016846;
+  m50_fakeRateEB2[0] = 0.0743264;
+  m50_fakeRateEB2[1] = 0.0469011;
+  m50_fakeRateEB2[2] = 0.0864613;
+  m50_fakeRateEB2[3] = 0.0645644;
+  m50_fakeRateEB2[4] = 0.0701654;
+
+  m50_fakeRateEB2_err[0] = 0.0216452;
+  m50_fakeRateEB2_err[1] = 0.0102646;
+  m50_fakeRateEB2_err[2] = 0.0111009;
+  m50_fakeRateEB2_err[3] = 0.00602524;
+  m50_fakeRateEB2_err[4] = 0.0134291;
+
+  m50_fakeRateEE1[0] = 0.0102727;
+  m50_fakeRateEE1[1] = 0.0202491;
+  m50_fakeRateEE1[2] = 0.0399345;
+  m50_fakeRateEE1[3] = 0.0287661;
+  m50_fakeRateEE1[4] = 0.016846;
   
-  m50_fakeRateEE_err[0] = 0.00725951;
-  m50_fakeRateEE_err[1] = 0.00614674;
-  m50_fakeRateEE_err[2] = 0.00622937;
-  m50_fakeRateEE_err[3] = 0.00360473;
-  m50_fakeRateEE_err[4] = 0.00710437;
+  m50_fakeRateEE1_err[0] = 0.00725951;
+  m50_fakeRateEE1_err[1] = 0.00614674;
+  m50_fakeRateEE1_err[2] = 0.00622937;
+  m50_fakeRateEE1_err[3] = 0.00360473;
+  m50_fakeRateEE1_err[4] = 0.00710437;
+
+  m50_fakeRateEE2[0] = 0.0102727;
+  m50_fakeRateEE2[1] = 0.0202491;
+  m50_fakeRateEE2[2] = 0.0399345;
+  m50_fakeRateEE2[3] = 0.0287661;
+  m50_fakeRateEE2[4] = 0.016846;
+  
+  m50_fakeRateEE2_err[0] = 0.00725951;
+  m50_fakeRateEE2_err[1] = 0.00614674;
+  m50_fakeRateEE2_err[2] = 0.00622937;
+  m50_fakeRateEE2_err[3] = 0.00360473;
+  m50_fakeRateEE2_err[4] = 0.00710437;
 }
 
 // fake from Smurf selection, QCD for closure, ET>30 - with tracker, dEta, dPhi (LP)
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRateQCD() {
 
-  mQCD_fakeRateEB[0] = 0.019106;
-  mQCD_fakeRateEB[1] = 0.0138018;
-  mQCD_fakeRateEB[2] = 0.0743516;
-  mQCD_fakeRateEB[3] = 0.0621557;
-  mQCD_fakeRateEB[4] = 0.0920799;
+  // chiara: for the moment this is still old mine and I simply duplicate... fixme
+  mQCD_fakeRateEB1[0] = 0.019106;
+  mQCD_fakeRateEB1[1] = 0.0138018;
+  mQCD_fakeRateEB1[2] = 0.0743516;
+  mQCD_fakeRateEB1[3] = 0.0621557;
+  mQCD_fakeRateEB1[4] = 0.0920799;
 
-  mQCD_fakeRateEB_err[0] = 0.0070397;
-  mQCD_fakeRateEB_err[1] = 0.00338596;
-  mQCD_fakeRateEB_err[2] = 0.00656926;
-  mQCD_fakeRateEB_err[3] = 0.00508687;
-  mQCD_fakeRateEB_err[4] = 0.0247443;
+  mQCD_fakeRateEB1_err[0] = 0.0070397;
+  mQCD_fakeRateEB1_err[1] = 0.00338596;
+  mQCD_fakeRateEB1_err[2] = 0.00656926;
+  mQCD_fakeRateEB1_err[3] = 0.00508687;
+  mQCD_fakeRateEB1_err[4] = 0.0247443;
 
-  mQCD_fakeRateEE[0] = 0.010952;
-  mQCD_fakeRateEE[1] = 0.0129353;
-  mQCD_fakeRateEE[2] = 0.054481;
-  mQCD_fakeRateEE[3] = 0.0511887;
-  mQCD_fakeRateEE[4] = 0.0603386;
+  mQCD_fakeRateEB2[0] = 0.019106;
+  mQCD_fakeRateEB2[1] = 0.0138018;
+  mQCD_fakeRateEB2[2] = 0.0743516;
+  mQCD_fakeRateEB2[3] = 0.0621557;
+  mQCD_fakeRateEB2[4] = 0.0920799;
+
+  mQCD_fakeRateEB2_err[0] = 0.0070397;
+  mQCD_fakeRateEB2_err[1] = 0.00338596;
+  mQCD_fakeRateEB2_err[2] = 0.00656926;
+  mQCD_fakeRateEB2_err[3] = 0.00508687;
+  mQCD_fakeRateEB2_err[4] = 0.0247443;
+
+  mQCD_fakeRateEE1[0] = 0.010952;
+  mQCD_fakeRateEE1[1] = 0.0129353;
+  mQCD_fakeRateEE1[2] = 0.054481;
+  mQCD_fakeRateEE1[3] = 0.0511887;
+  mQCD_fakeRateEE1[4] = 0.0603386;
   
-  mQCD_fakeRateEE_err[0] = 0.00371267;
-  mQCD_fakeRateEE_err[1] = 0.00229748;
-  mQCD_fakeRateEE_err[2] = 0.00415571;
-  mQCD_fakeRateEE_err[3] = 0.00370617;
-  mQCD_fakeRateEE_err[4] = 0.0195938;
+  mQCD_fakeRateEE1_err[0] = 0.00371267;
+  mQCD_fakeRateEE1_err[1] = 0.00229748;
+  mQCD_fakeRateEE1_err[2] = 0.00415571;
+  mQCD_fakeRateEE1_err[3] = 0.00370617;
+  mQCD_fakeRateEE1_err[4] = 0.0195938;
+
+  mQCD_fakeRateEE2[0] = 0.010952;
+  mQCD_fakeRateEE2[1] = 0.0129353;
+  mQCD_fakeRateEE2[2] = 0.054481;
+  mQCD_fakeRateEE2[3] = 0.0511887;
+  mQCD_fakeRateEE2[4] = 0.0603386;
+  
+  mQCD_fakeRateEE2_err[0] = 0.00371267;
+  mQCD_fakeRateEE2_err[1] = 0.00229748;
+  mQCD_fakeRateEE2_err[2] = 0.00415571;
+  mQCD_fakeRateEE2_err[3] = 0.00370617;
+  mQCD_fakeRateEE2_err[4] = 0.0195938;
 }
 
 // provided by Emanuele 
@@ -323,55 +458,13 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() { // chiara
   m_minPromptPt[3] = 25.;   m_maxPromptPt[3] = 50.;
   m_minPromptPt[4] = 50.;   m_maxPromptPt[4] = 10000.;
 
-  /* usato per EPS
-  // after merging with smurf; ~815/pb
+  // calcolato da Boris con Si's FR - ma non ho cambiato gli errori 
   // prompt in the barrel
-  m_promptRateEB[0] = 0.54;
-  m_promptRateEB[1] = 0.67;
-  m_promptRateEB[2] = 0.77;
-  m_promptRateEB[3] = 0.86;
-  m_promptRateEB[4] = 0.88;
-  
-  m_promptRateEB_err[0] = 0.03;
-  m_promptRateEB_err[1] = 0.02;
-  m_promptRateEB_err[2] = 0.01;
-  m_promptRateEB_err[3] = 0.01;
-  m_promptRateEB_err[4] = 0.06;
-
-  // prompt in the crack
-  m_promptRateCr[0] = 0.34;   // no stat; same as in the endcap
-  m_promptRateCr[1] = 0.48;
-  m_promptRateCr[2] = 0.53;
-  m_promptRateCr[3] = 0.70;
-  m_promptRateCr[4] = 0.77;
-  
-  m_promptRateCr_err[0] = 0.50;
-  m_promptRateCr_err[1] = 0.06;
-  m_promptRateCr_err[2] = 0.04;
-  m_promptRateCr_err[3] = 0.01;
-  m_promptRateCr_err[4] = 0.02;
-  
-  // prompt in the endcap
-  m_promptRateEE[0] = 0.34;
-  m_promptRateEE[1] = 0.49;
-  m_promptRateEE[2] = 0.61;
-  m_promptRateEE[3] = 0.74;
-  m_promptRateEE[4] = 0.80;
-
-  m_promptRateEE_err[0] = 0.22;
-  m_promptRateEE_err[1] = 0.02;
-  m_promptRateEE_err[2] = 0.01;
-  m_promptRateEE_err[3] = 0.01;
-  m_promptRateEE_err[4] = 0.01;
-  */
-
-  // after merging with smurf; denominator with deta, dphi and tracker iso. For LP
-  // prompt in the barrel
-  m_promptRateEB[0] = 0.69;
-  m_promptRateEB[1] = 0.77;
-  m_promptRateEB[2] = 0.83;
-  m_promptRateEB[3] = 0.89;
-  m_promptRateEB[4] = 0.91;
+  m_promptRateEB[0] = 0.605;
+  m_promptRateEB[1] = 0.689;
+  m_promptRateEB[2] = 0.860;
+  m_promptRateEB[3] = 0.950;
+  m_promptRateEB[4] = 1.;
   
   m_promptRateEB_err[0] = 0.02;
   m_promptRateEB_err[1] = 0.01;
@@ -380,11 +473,11 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() { // chiara
   m_promptRateEB_err[4] = 0.01;
 
   // prompt in the crack
-  m_promptRateCr[0] = 0.51;  
-  m_promptRateCr[1] = 0.48;
-  m_promptRateCr[2] = 0.62;
-  m_promptRateCr[3] = 0.69;
-  m_promptRateCr[4] = 0.75;
+  m_promptRateCr[0] = 0.342;  
+  m_promptRateCr[1] = 0.493;
+  m_promptRateCr[2] = 0.754;
+  m_promptRateCr[3] = 0.872;
+  m_promptRateCr[4] = 1.;
   
   m_promptRateCr_err[0] = 0.09;
   m_promptRateCr_err[1] = 0.04;
@@ -393,11 +486,11 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate() { // chiara
   m_promptRateCr_err[4] = 0.02;
   
   // prompt in the endcap
-  m_promptRateEE[0] = 0.40;
-  m_promptRateEE[1] = 0.55;
-  m_promptRateEE[2] = 0.65;
-  m_promptRateEE[3] = 0.73;
-  m_promptRateEE[4] = 0.81;
+  m_promptRateEE[0] = 0.416;
+  m_promptRateEE[1] = 0.518;
+  m_promptRateEE[2] = 0.818;
+  m_promptRateEE[3] = 0.922;
+  m_promptRateEE[4] = 0.999;
 
   m_promptRateEE_err[0] = 0.02;
   m_promptRateEE_err[1] = 0.01;
@@ -483,11 +576,11 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     
     // ----------------------------------------------------------------------------
-    // get the best electrons and best muons at acceptnace level 
+    // get the best electrons passing the denominator definition
     // ==> tu be used to select ALL the possible channels at the beginning only
-    std::pair<int,int> thePreElectrons = getBestElectronPair_acceptance();
-    thePreElectron  = thePreElectrons.second;
-    thePrePositron  = thePreElectrons.first;
+    std::pair<int,int> thePreElectrons = getBestElectronPair_denominator();
+    thePreElectron = thePreElectrons.second;
+    thePrePositron = thePreElectrons.first;
 
     // reconstructed channel
     m_channel[ee] = false;     
@@ -511,8 +604,8 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     // -------------------------------------------------------------
     // EE candidates: preparing vectors of candidates and selecting the two highest pT ele- and ele+ after each step - to check the 20 GeV cut after 
 
-    // eleID, for electrons in acceptance
-    std::pair<int,int> theBestIdEle = getBestElectronPair_id(_acceptEleAll);   
+    // eleID, for electrons passing the denominator
+    std::pair<int,int> theBestIdEle = getBestElectronPair_id(_denomEleAll);   
     
     // isolation, for identified electrons
     std::pair<int,int> theBestIsolEle = getBestElectronPair_isol(_idEleAll); 
@@ -522,9 +615,6 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
 
     // transverse impact parameter, for electrons passing conversion rejection
     std::pair<int,int> theBestIpEle = getBestElectronPair_ip(_convEleAll);     
-
-    // electrons passing the denominator definition
-    std::pair<int,int> theBestDenomEle = getBestElectronPair_denominator();
 
     // the two highest pT electrons at this point are those I use for my analysis since they passed the full lepton selection
     int thePositron = theBestIpEle.first;    
@@ -568,8 +658,8 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
     // here I have zero candidates passing the tight selection: is N0T
     if (thePositron<0 && theElectron<0) { 
 
-      int theDenomPlus  = theBestDenomEle.first;    
-      int theDenomMinus = theBestDenomEle.second;
+      int theDenomPlus  = thePrePositron;
+      int theDenomMinus = thePreElectron;
       float ptPlus  = GetPt(pxEle[theDenomPlus], pyEle[theDenomPlus]);
       float ptMinus = GetPt(pxEle[theDenomMinus],pyEle[theDenomMinus]);
       if (ptPlus>ptMinus) { 
@@ -636,30 +726,30 @@ void LeptonPlusFakeMLSelection_fullEE::Loop() {
       float promptrate1    = getPromptRate( theFakePt, etaEle[theFake] );
       float promptrateErr1 = getPromptRateError( theFakePt, etaEle[theFake] );
 
-      float fakerate1_15      = getFakeRate15( theFakePt, isFakeBarrel );
-      float fakerate1_30      = getFakeRate30( theFakePt, isFakeBarrel );
-      float fakerate1_35      = getFakeRate35( theFakePt, isFakeBarrel );
-      float fakerate1_50      = getFakeRate50( theFakePt, isFakeBarrel );
-      float fakerate1_QCD     = getFakeRateQCD( theFakePt, isFakeBarrel );
-      float fakerateErr1_15   = getFakeRateError15( theFakePt, isFakeBarrel );
-      float fakerateErr1_30   = getFakeRateError30( theFakePt, isFakeBarrel );
-      float fakerateErr1_35   = getFakeRateError35( theFakePt, isFakeBarrel );
-      float fakerateErr1_50   = getFakeRateError50( theFakePt, isFakeBarrel );
-      float fakerateErr1_QCD  = getFakeRateErrorQCD( theFakePt, isFakeBarrel );
-
+      float fakerate1_15      = getFakeRate15( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerate1_30      = getFakeRate30( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerate1_35      = getFakeRate35( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerate1_50      = getFakeRate50( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerate1_QCD     = getFakeRateQCD( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerateErr1_15   = getFakeRateError15( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerateErr1_30   = getFakeRateError30( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerateErr1_35   = getFakeRateError35( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerateErr1_50   = getFakeRateError50( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      float fakerateErr1_QCD  = getFakeRateErrorQCD( theFakePt, isFakeBarrel, fabs(etaEle[theFake]) );
+      
       float promptrate2    = getPromptRate( theRealPt, etaEle[theReal] );
       float promptrateErr2 = getPromptRateError( theRealPt, etaEle[theReal] );
 
-      float fakerate2_15      = getFakeRate15( theRealPt, isRealBarrel );
-      float fakerate2_30      = getFakeRate30( theRealPt, isRealBarrel );
-      float fakerate2_35      = getFakeRate35( theRealPt, isRealBarrel );
-      float fakerate2_50      = getFakeRate50( theRealPt, isRealBarrel );
-      float fakerate2_QCD     = getFakeRateQCD( theRealPt, isRealBarrel );
-      float fakerateErr2_15   = getFakeRateError15( theRealPt, isRealBarrel );
-      float fakerateErr2_30   = getFakeRateError30( theRealPt, isRealBarrel );
-      float fakerateErr2_35   = getFakeRateError35( theRealPt, isRealBarrel );
-      float fakerateErr2_50   = getFakeRateError50( theRealPt, isRealBarrel );
-      float fakerateErr2_QCD  = getFakeRateErrorQCD( theRealPt, isRealBarrel );
+      float fakerate2_15      = getFakeRate15( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerate2_30      = getFakeRate30( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerate2_35      = getFakeRate35( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerate2_50      = getFakeRate50( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerate2_QCD     = getFakeRateQCD( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerateErr2_15   = getFakeRateError15( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerateErr2_30   = getFakeRateError30( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerateErr2_35   = getFakeRateError35( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerateErr2_50   = getFakeRateError50( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
+      float fakerateErr2_QCD  = getFakeRateErrorQCD( theRealPt, isRealBarrel, fabs(etaEle[theReal]) );
 
       float thisPartWeightFP_15 = 1.;
       float thisPartWeightFF_15 = 1.;
@@ -1366,134 +1456,224 @@ int LeptonPlusFakeMLSelection_fullEE::getBestDenominator(int realEle) {
 
   return theFake;
 }
+						    
+float LeptonPlusFakeMLSelection_fullEE::getFakeRate15( float fakePt, bool isFakeBarrel, float fakeEta ) {
+  
+  for (int theBin = 0; theBin<7; theBin++) {
+    
+    if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRate15( float fakePt, bool isFakeBarrel ) {
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m15_fakeRateEB1[theBin];
+	  if (theEtaBin==1) return m15_fakeRateEB2[theBin];
+	  if (theEtaBin==2) return m15_fakeRateEE1[theBin];
+	  if (theEtaBin==3) return m15_fakeRateEE2[theBin];
+	}
+      }
+    }
+  }
+
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
+  return -1.;
+}
+
+float LeptonPlusFakeMLSelection_fullEE::getFakeRate30( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
-
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m15_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m15_fakeRateEE[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m30_fakeRateEB1[theBin];
+	  if (theEtaBin==1) return m30_fakeRateEB2[theBin];
+	  if (theEtaBin==2) return m30_fakeRateEE1[theBin];
+	  if (theEtaBin==3) return m30_fakeRateEE2[theBin];
+	}
+      }
     }
   }
 
-  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRate30( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRate35( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
-
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m30_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m30_fakeRateEE[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m35_fakeRateEB1[theBin];
+	  if (theEtaBin==1) return m35_fakeRateEB2[theBin];
+	  if (theEtaBin==2) return m35_fakeRateEE1[theBin];
+	  if (theEtaBin==3) return m35_fakeRateEE2[theBin];
+	}
+      }
     }
   }
 
-  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRate35( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRate50( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
-
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m35_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m35_fakeRateEE[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m50_fakeRateEB1[theBin];
+	  if (theEtaBin==1) return m50_fakeRateEB2[theBin];
+	  if (theEtaBin==2) return m50_fakeRateEE1[theBin];
+	  if (theEtaBin==3) return m50_fakeRateEE2[theBin];
+	}
+      }
     }
   }
 
-  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRate50( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateQCD( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
-
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m50_fakeRateEB[theBin];
-      if (!isFakeBarrel) return m50_fakeRateEE[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return mQCD_fakeRateEB1[theBin];
+	  if (theEtaBin==1) return mQCD_fakeRateEB2[theBin];
+	  if (theEtaBin==2) return mQCD_fakeRateEE1[theBin];
+	  if (theEtaBin==3) return mQCD_fakeRateEE2[theBin];
+	}
+      }
     }
   }
 
-  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateQCD( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateError15( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
   for (int theBin = 0; theBin<7; theBin++) {
-
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return mQCD_fakeRateEB[theBin];
-      if (!isFakeBarrel) return mQCD_fakeRateEE[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m15_fakeRateEB1_err[theBin];
+	  if (theEtaBin==1) return m15_fakeRateEB2_err[theBin];
+	  if (theEtaBin==2) return m15_fakeRateEE1_err[theBin];
+	  if (theEtaBin==3) return m15_fakeRateEE2_err[theBin];
+	}
+      }
     }
   }
 
-  std::cout << "BIG ERROR: fakePt = " << fakePt << endl;
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateError15( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateError30( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
-  for (int theBin = 0; theBin < 7; theBin++) {
+  for (int theBin = 0; theBin<7; theBin++) {
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m15_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return m15_fakeRateEE_err[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m30_fakeRateEB1_err[theBin];
+	  if (theEtaBin==1) return m30_fakeRateEB2_err[theBin];
+	  if (theEtaBin==2) return m30_fakeRateEE1_err[theBin];
+	  if (theEtaBin==3) return m30_fakeRateEE2_err[theBin];
+	}
+      }
     }
   }
 
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateError30( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateError35( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
-  for (int theBin = 0; theBin < 7; theBin++) {
+  for (int theBin = 0; theBin<7; theBin++) {
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m30_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return m30_fakeRateEE_err[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m35_fakeRateEB1_err[theBin];
+	  if (theEtaBin==1) return m35_fakeRateEB2_err[theBin];
+	  if (theEtaBin==2) return m35_fakeRateEE1_err[theBin];
+	  if (theEtaBin==3) return m35_fakeRateEE2_err[theBin];
+	}
+      }
     }
   }
 
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateError35( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateError50( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
-  for (int theBin = 0; theBin < 7; theBin++) {
+  for (int theBin = 0; theBin<7; theBin++) {
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m35_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return m35_fakeRateEE_err[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return m50_fakeRateEB1_err[theBin];
+	  if (theEtaBin==1) return m50_fakeRateEB2_err[theBin];
+	  if (theEtaBin==2) return m50_fakeRateEE1_err[theBin];
+	  if (theEtaBin==3) return m50_fakeRateEE2_err[theBin];
+	}
+      }
     }
   }
 
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateError50( float fakePt, bool isFakeBarrel ) {
+float LeptonPlusFakeMLSelection_fullEE::getFakeRateErrorQCD( float fakePt, bool isFakeBarrel, float fakeEta ) {
 
-  for (int theBin = 0; theBin < 7; theBin++) {
+  for (int theBin = 0; theBin<7; theBin++) {
+    
     if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return m50_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return m50_fakeRateEE_err[theBin];
+
+      for (int theEtaBin = 0; theEtaBin<4; theEtaBin++) {
+      
+	if( fabs(fakeEta) >= m_minFakeEta[theEtaBin] && fabs(fakeEta) < m_maxFakeEta[theEtaBin] ) {
+	  if (theEtaBin==0) return mQCD_fakeRateEB1_err[theBin];
+	  if (theEtaBin==1) return mQCD_fakeRateEB2_err[theBin];
+	  if (theEtaBin==2) return mQCD_fakeRateEE1_err[theBin];
+	  if (theEtaBin==3) return mQCD_fakeRateEE2_err[theBin];
+	}
+      }
     }
   }
 
-  return -1.;
-}
-
-float LeptonPlusFakeMLSelection_fullEE::getFakeRateErrorQCD( float fakePt, bool isFakeBarrel ) {
-
-  for (int theBin = 0; theBin < 7; theBin++) {
-    if( fakePt >= m_minFakePt[theBin] && fakePt < m_maxFakePt[theBin] ) {
-      if (isFakeBarrel)  return mQCD_fakeRateEB_err[theBin];
-      if (!isFakeBarrel) return mQCD_fakeRateEE_err[theBin];
-    }
-  }
-
+  std::cout << "BIG ERROR: fakePt = " << fakePt << ", fakeEta = " << fakeEta << endl;
   return -1.;
 }
 
