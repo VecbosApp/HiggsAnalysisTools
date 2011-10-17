@@ -51,21 +51,22 @@ private:
 
   //! fake rates initialization                                         
   void initialiseFakeBinning();
+  void initialiseFakeEtaBinning();
   void initialiseFakeRate15();
   void initialiseFakeRate30();
   void initialiseFakeRate35();
   void initialiseFakeRate50();
   void initialiseFakeRateQCD();
-  float getFakeRate15( float fakePt, bool isEB );
-  float getFakeRate30( float fakePt, bool isEB );
-  float getFakeRate35( float fakePt, bool isEB );
-  float getFakeRate50( float fakePt, bool isEB );
-  float getFakeRateQCD( float fakePt, bool isEB );
-  float getFakeRateError15( float fakePt, bool isEE );
-  float getFakeRateError30( float fakePt, bool isEE );
-  float getFakeRateError35( float fakePt, bool isEE );
-  float getFakeRateError50( float fakePt, bool isEE );
-  float getFakeRateErrorQCD( float fakePt, bool isEE );
+  float getFakeRate15( float fakePt, bool isEB, float fakeEta );
+  float getFakeRate30( float fakePt, bool isEB, float fakeEta );
+  float getFakeRate35( float fakePt, bool isEB, float fakeEta );
+  float getFakeRate50( float fakePt, bool isEB, float fakeEta );
+  float getFakeRateQCD( float fakePt, bool isEB, float fakeEta );
+  float getFakeRateError15( float fakePt, bool isEE, float fakeEta );
+  float getFakeRateError30( float fakePt, bool isEE, float fakeEta );
+  float getFakeRateError35( float fakePt, bool isEE, float fakeEta );
+  float getFakeRateError50( float fakePt, bool isEE, float fakeEta );
+  float getFakeRateErrorQCD( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization                                         
   void initialisePromptRate();
@@ -174,17 +175,29 @@ private:
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
 
   //! fake rates                                                                     
-  float m_minFakePt[5],     m_maxFakePt[5];
-  float m15_fakeRateEB[5],  m15_fakeRateEB_err[5];
-  float m15_fakeRateEE[5],  m15_fakeRateEE_err[5];
-  float m30_fakeRateEB[5],  m30_fakeRateEB_err[5];
-  float m30_fakeRateEE[5],  m30_fakeRateEE_err[5];
-  float m35_fakeRateEB[5],  m35_fakeRateEB_err[5];
-  float m35_fakeRateEE[5],  m35_fakeRateEE_err[5];
-  float m50_fakeRateEB[5],  m50_fakeRateEB_err[5];
-  float m50_fakeRateEE[5],  m50_fakeRateEE_err[5];
-  float mQCD_fakeRateEB[5], mQCD_fakeRateEB_err[5];
-  float mQCD_fakeRateEE[5], mQCD_fakeRateEE_err[5];
+  float m_minFakePt[5],      m_maxFakePt[5];
+  float m_minFakeEta[5],     m_maxFakeEta[5];
+  float m15_fakeRateEB1[5],  m15_fakeRateEB1_err[5];
+  float m15_fakeRateEE1[5],  m15_fakeRateEE1_err[5];
+  float m30_fakeRateEB1[5],  m30_fakeRateEB1_err[5];
+  float m30_fakeRateEE1[5],  m30_fakeRateEE1_err[5];
+  float m35_fakeRateEB1[5],  m35_fakeRateEB1_err[5];
+  float m35_fakeRateEE1[5],  m35_fakeRateEE1_err[5];
+  float m50_fakeRateEB1[5],  m50_fakeRateEB1_err[5];
+  float m50_fakeRateEE1[5],  m50_fakeRateEE1_err[5];
+  float mQCD_fakeRateEB1[5], mQCD_fakeRateEB1_err[5];
+  float mQCD_fakeRateEE1[5], mQCD_fakeRateEE1_err[5];
+  //
+  float m15_fakeRateEB2[5],  m15_fakeRateEB2_err[5];
+  float m15_fakeRateEE2[5],  m15_fakeRateEE2_err[5];
+  float m30_fakeRateEB2[5],  m30_fakeRateEB2_err[5];
+  float m30_fakeRateEE2[5],  m30_fakeRateEE2_err[5];
+  float m35_fakeRateEB2[5],  m35_fakeRateEB2_err[5];
+  float m35_fakeRateEE2[5],  m35_fakeRateEE2_err[5];
+  float m50_fakeRateEB2[5],  m50_fakeRateEB2_err[5];
+  float m50_fakeRateEE2[5],  m50_fakeRateEE2_err[5];
+  float mQCD_fakeRateEB2[5], mQCD_fakeRateEB2_err[5];
+  float mQCD_fakeRateEE2[5], mQCD_fakeRateEE2_err[5];
 
   //! prompt rates                                                                     
   float m_minPromptPt[5],  m_maxPromptPt[5];
