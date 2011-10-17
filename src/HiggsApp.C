@@ -486,7 +486,7 @@ int main(int argc, char* argv[]) {
 
   LeptonPlusFakeMLSelection_fullEE lplusfake(theChain);
   lplusfake.SetDatasetName(outputFileName);
-
+  
   std::vector<std::string> maskEE, maskNotEE;
 
   if(isMC) {
@@ -499,7 +499,8 @@ int main(int argc, char* argv[]) {
     } else if(DatasetName.Contains("SingleElectron")) {
       maskEE.push_back("1-164236:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
       maskEE.push_back("164237-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
-      maskEE.push_back("166968-999999:HLT_Ele52_CaloIdVT_TrkIdT_v");
+      maskEE.push_back("166968-170901:HLT_Ele52_CaloIdVT_TrkIdT_v");
+      maskEE.push_back("170902-999999:HLT_Ele65_CaloIdVT_TrkIdT_v");
       maskNotEE.push_back("1-170052:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
       maskNotEE.push_back("170053-999999:HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
     }
