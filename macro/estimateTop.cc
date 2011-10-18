@@ -56,16 +56,16 @@ void estimateTop(int njets) {
 
   // scale factors for the backgrounds
   float WWDataOverMC[2] = {1.02, 1.09} ; // estimation 1.1 fb-1 
-  float DYDataOverMC[2] = {2.2, 2.4};  // estimation 1.54 fb-1
+  float DYDataOverMC[2] = {3.3, 2.3};  // estimation 2.13 fb-1
   float WjDataTot[4][2];     // [icha][jetbin]
-  WjDataTot[ee][0] = 8.3; // updated LP
-  WjDataTot[mm][0] = 21.1 ; // updated LP
-  WjDataTot[em][0] = 50.9; // updated LP
-  WjDataTot[me][0] = 13.5; // updated LP
-  WjDataTot[ee][1] = 4.0; // updated LP
-  WjDataTot[mm][1] = 6.2; // updated LP
-  WjDataTot[em][1] = 31.9; // updated LP
-  WjDataTot[me][1] = 8.3; // updated LP
+  WjDataTot[ee][0] = 2.13/1.55*  8.3; // updated LP
+  WjDataTot[mm][0] = 2.13/1.55*  21.1 ; // updated LP
+  WjDataTot[em][0] = 2.13/1.55*  50.9; // updated LP
+  WjDataTot[me][0] = 2.13/1.55*  13.5; // updated LP
+  WjDataTot[ee][1] = 2.13/1.55*  4.0; // updated LP
+  WjDataTot[mm][1] = 2.13/1.55*  6.2; // updated LP
+  WjDataTot[em][1] = 2.13/1.55*  31.9; // updated LP
+  WjDataTot[me][1] = 2.13/1.55*  8.3; // updated LP
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
@@ -87,12 +87,9 @@ void estimateTop(int njets) {
   TH1F *btagHDataEM = new TH1F("btagHDataEM","",50,0,180);
   TH1F *btagHDataME = new TH1F("btagHDataME","",50,0,180);
 
-  // backgrounds in the tagged region
-  TH1F *btagWWHLL = new TH1F("btagWWHLL","",50,0,180);
-  TH1F *btagDYHLL = new TH1F("btagDYHLL","",50,0,180);
-
-  // WW background after CJV (used with the mistag rate)
-  TH1F *btagWWAllHLL = new TH1F("btagWWAllHLL","",50,0,180);
+  // WW,DY background after CJV (used with the mistag rate)
+  TH1F *WWAllHLL = new TH1F("WWAllHLL","",50,0,180);
+  TH1F *DYAllHLL = new TH1F("DYAllHLL","",50,0,180);
 
   treeTop->Project("topHEE","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==1)*baseW*puW*effW")).Data());
   treeTop->Project("topHMM","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==0)*baseW*puW*effW")).Data());
@@ -102,52 +99,52 @@ void estimateTop(int njets) {
   if(njets==0) {
     treeData->Project("btagHDataEE","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==1")).Data());
     treeData->Project("btagHDataMM","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==0")).Data());
-    treeData->Project("btagHDataEM","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==2")).Data());
-    treeData->Project("btagHDataME","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==3")).Data());
-
-    treeWW->Project("btagWWHLL","dphill",(TString("(step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto)*baseW*puW*effW")).Data());
-    treeDY->Project("btagDYHLL","dphill",(TString("(step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && !bveto)*baseW*puW*effW")).Data());
-    
+    treeData->Project("btagHDataEM","dphill",(TString("step[9] && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==2")).Data());
+    treeData->Project("btagHDataME","dphill",(TString("step[9] && nextra==0 && ")+TString(njcut)+TString( " && !bveto && channel==3")).Data());
   } else {
     treeData->Project("btagHDataEE","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==1")).Data());
     treeData->Project("btagHDataMM","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==0")).Data());
-    treeData->Project("btagHDataEM","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==2")).Data());
-    treeData->Project("btagHDataME","dphill",(TString("step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==3")).Data());
-
-    treeWW->Project("btagWWHLL","dphill",(TString("(step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0)*baseW*puW*effW")).Data());
-    treeDY->Project("btagDYHLL","dphill",(TString("(step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0)*baseW*puW*effW")).Data());
-
+    treeData->Project("btagHDataEM","dphill",(TString("step[9] && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==2")).Data());
+    treeData->Project("btagHDataME","dphill",(TString("step[9] && nextra==0 && ")+TString(njcut)+TString( " && leadingJetBTagTrackCount>2.1 && subleadingJetsMaxBTagTrackCount<=2.1 && nSoftMu==0 && channel==3")).Data());
   }
 
-  treeWW->Project("btagWWAllHLL","dphill",(TString("(step[9] && abs(dphilljet)<165 && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*effW")).Data());
+  treeWW->Project("WWAllHLL","dphill",(TString("(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*effW")).Data());
+  treeDY->Project("DYAllHLL","dphill",(TString("(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*effW")).Data());
 
   // backgrounds in the tagged region
-  // for W+jets estimated on data
+  // for W+jets estimated on data T+F sample
   float effBtagWj[2] = { 0.046, 0.016 };
-  float WW_tot = wantedLumi * btagWWHLL->Integral() * WWDataOverMC[njets];
-  float WW_tot_err = wantedLumi * yieldErrPoisson(WW_tot,btagWWHLL->Integral());
-  float DY_tot = wantedLumi * btagDYHLL->Integral() * DYDataOverMC[njets];
-  float DY_tot_err = wantedLumi * yieldErrPoisson(DY_tot,btagDYHLL->Integral());
+
+  // for WW and DY use the Z events in data
+  float mistagSig[2];
+  TH1F *ZDataHisto = new TH1F("ZDataHisto","",50,0,180);
+  treeData->Project("ZDataHisto","dphill","finalLeptons && mll>12 && !zveto && pfmet<30 && njets==0");
+  float mistagDenom = ZDataHisto->Integral();
+  treeData->Project("ZDataHisto","dphill","finalLeptons && mll>12 && !zveto && pfmet<30 && njets==0 && !bveto");
+  float mistagNum = ZDataHisto->Integral();
+  mistagSig[0] = mistagNum/mistagDenom;
+
+  treeData->Project("ZDataHisto","dphill","finalLeptons && mll>12 && !zveto && pfmet<30 && njets==1");
+  mistagDenom = ZDataHisto->Integral();
+  treeData->Project("ZDataHisto","dphill","finalLeptons && mll>12 && !zveto && pfmet<30 && njets==1 && !bveto");
+  mistagNum = ZDataHisto->Integral();
+  mistagSig[1] = mistagNum/mistagDenom;
+
+  std::cout << "Measured mistag rate from DY events in " << njets << " jet bin = " << mistagSig[njets] << std::endl;
+
+  float WW_tot = wantedLumi * WWAllHLL->Integral() * WWDataOverMC[njets] * mistagSig[njets];
+  float WW_tot_err = wantedLumi * yieldErrPoisson(WW_tot,WWAllHLL->GetEntries()) * mistagSig[njets];
+  float DY_tot = wantedLumi * DYAllHLL->Integral() * DYDataOverMC[njets] * mistagSig[njets];
+  float DY_tot_err = wantedLumi * yieldErrPoisson(DY_tot,DYAllHLL->GetEntries()) * mistagSig[njets];
   float Wjets_tot = effBtagWj[njets] * (WjDataTot[ee][njets] + WjDataTot[mm][njets] +
                                         WjDataTot[em][njets] + WjDataTot[me][njets]);
   float Wjets_tot_err = 0.40 * Wjets_tot; // approximation
-
-  // as x-check use the WW(all) x mistag rate from data
-  float WW_befTag = wantedLumi * btagWWAllHLL->Integral() * WWDataOverMC[njets];
-  float WW_befTag_err =  wantedLumi * yieldErrPoisson(WW_befTag,btagWWAllHLL->Integral());
-  float mistagR_MC = WW_tot / WW_befTag;
-  float mistagR_SF = 1.1; // from BTV-11-001
-  float mistagR_SF_err = 0.11;
-  float WW_tot_2 = WW_befTag * mistagR_MC * mistagR_SF;
-  float WW_tot_2_err = WW_tot_2 * quadrSum(WW_befTag_err/WW_befTag,mistagR_SF_err/mistagR_SF);
 
   float tagBkg_tot = WW_tot + DY_tot + Wjets_tot;
   float tagBkg_tot_err = quadrSum(WW_tot_err,DY_tot_err,Wjets_tot_err);
 
   std::cout << "--- Background estimations: ---" << std::endl;
   std::cout << "WW = " << WW_tot << " +/-" << WW_tot_err << std::endl;
-  std::cout << "WW mistag rate from sim * SF = " << WW_tot / WW_befTag * mistagR_SF << std::endl;
-  std::cout << "WW (with data mistag) = " << WW_tot_2 << " +/- " << WW_tot_2_err << std::endl;
   std::cout << "DY = " << DY_tot << " +/-" << DY_tot_err << std::endl;
   std::cout << "Wjets = " << Wjets_tot << " +/-" << Wjets_tot_err << std::endl;
   std::cout << "Tot background to tagged events = " << tagBkg_tot << " +/- " << tagBkg_tot_err << std::endl;
@@ -471,12 +468,12 @@ std::pair<float,float> estimateTopVetoEff(int njets, bool effFromData) {
 
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-    if(effFromData) treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1");
-    else treeData->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1)*baseW*puW*effW");
+    if(effFromData) treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1");
+    else treeData->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1)*baseW*puW*effW");
     float Ncontrol = histo1->Integral();
 
-    if(effFromData) treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0)");
-    else treeData->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0))*baseW*puW*effW");
+    if(effFromData) treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0)");
+    else treeData->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0))*baseW*puW*effW");
     float Ncontrol_toptag = histo1->Integral();
 
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
@@ -488,10 +485,10 @@ std::pair<float,float> estimateTopVetoEff(int njets, bool effFromData) {
 
     TH1F *histo2 = new TH1F("histo2","",50,0,180);
 
-    treeTop->Project("histo2","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0)*baseW*puW*effW");
+    treeTop->Project("histo2","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0)*baseW*puW*effW");
     float top_pretopveto = histo2->Integral();
     
-    treeTop->Project("histo2","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0 && dataset==10)*baseW*puW*effW");
+    treeTop->Project("histo2","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0 && dataset==10)*baseW*puW*effW");
     float ttbar_pretopveto = histo2->Integral();
 
     float fttbar = ttbar_pretopveto / top_pretopveto;
@@ -524,10 +521,10 @@ std::pair<float,float> estimateTopVetoEff(int njets, bool effFromData) {
 
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1");
     float Ncontrol = histo1->Integral();
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1 && leadingJetBTagTrackCount>2.1");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1 && leadingJetBTagTrackCount>2.1");
     float Ncontrol_toptag = histo1->Integral();
 
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
@@ -559,10 +556,10 @@ std::pair<float,float> estimateTopVetoEff2(int njets, float x, bool effFromData)
 
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1");
     float Ncontrol = histo1->Integral();
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0)");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1 && (subleadingJetsMaxBTagTrackCount>2.1 || nSoftMuNoJets>0)");
     float Ncontrol_toptag = histo1->Integral();
 
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
@@ -574,10 +571,10 @@ std::pair<float,float> estimateTopVetoEff2(int njets, float x, bool effFromData)
 
     TH1F *histo2 = new TH1F("histo2","",50,0,180);
 
-    treeTop->Project("histo2","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0)*baseW*puW*effW");
+    treeTop->Project("histo2","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0)*baseW*puW*effW");
     float top_pretopveto = histo2->Integral();
     
-    treeTop->Project("histo2","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0 && dataset==10)*baseW*puW*effW");
+    treeTop->Project("histo2","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0 && dataset==10)*baseW*puW*effW");
     float ttbar_pretopveto = histo2->Integral();
 
     float fttbar = ttbar_pretopveto / top_pretopveto;
@@ -610,10 +607,10 @@ std::pair<float,float> estimateTopVetoEff2(int njets, float x, bool effFromData)
 
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1");
     float Ncontrol = histo1->Integral();
 
-    treeData->Project("histo1","dphill","step[9] && abs(dphilljet)<165 && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1 && leadingJetBTagTrackCount>2.1");
+    treeData->Project("histo1","dphill","step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==2 && subleadingJetBTagTrackCount>2.1 && leadingJetBTagTrackCount>2.1");
     float Ncontrol_toptag = histo1->Integral();
 
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
@@ -643,9 +640,9 @@ void closureTest(int njets) {
   if(njets==0) {
     // MC truth efficiency
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
-    treeTop->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0 && bveto)*baseW*puW*effW");
+    treeTop->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0 && bveto)*baseW*puW*effW");
     float num_eff2b_MC = histo1->Integral();
-    treeTop->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==0)*baseW*puW*effW");
+    treeTop->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==0)*baseW*puW*effW");
     float denom_eff2b_MC = histo1->Integral();
     float eff2b_MC = num_eff2b_MC / denom_eff2b_MC;
     float eff2b_MC_err = sqrt(eff2b_MC*(1-eff2b_MC)/histo1->GetEntries());
@@ -664,10 +661,10 @@ void closureTest(int njets) {
     // MC truth efficiency
     TH1F *histo1 = new TH1F("histo1","",50,0,180);
 
-    treeTop->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==1)*baseW*puW*effW");
+    treeTop->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1)*baseW*puW*effW");
     float Ncontrol = histo1->Integral();
 
-    treeTop->Project("histo1","dphill","(step[9] && abs(dphilljet)<165 && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1)*baseW*puW*effW");
+    treeTop->Project("histo1","dphill","(step[9] && (abs(dphilljet)<165 || channel>1) && nextra==0 && njets==1 && leadingJetBTagTrackCount>2.1)*baseW*puW*effW");
     float Ncontrol_toptag = histo1->Integral();
 
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
