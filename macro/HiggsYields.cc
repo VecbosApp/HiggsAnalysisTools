@@ -101,8 +101,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileOthers = TFile::Open("results/datasets_trees_skim/others_ll.root");
   TFile *fileqqWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
   TFile *fileggWW = TFile::Open("results/datasets_trees_skim/WW_ll.root");
-  TFile *fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
-  TFile *fileFake = TFile::Open("results_data/datasets_trees_fake_skim/dataset_fake_ll.root");
+  TFile *fileData = 0;
+  if(showData) fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
+  TFile *fileFake = 0;
+  if(addDataDrivenEstimates) fileFake = TFile::Open("results_data/datasets_trees_fake_skim/dataset_fake_ll.root");
 
   char signalFile[200];
   if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
@@ -120,8 +122,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TTree* treeH = (TTree*)fileH->Get("latino");
   TTree* treeggH = (TTree*)fileH->Get("latino");
   TTree* treeqqH = (TTree*)fileH->Get("latino");
-  TTree* treeData = (TTree*)fileData->Get("latino");
-  TTree* treeFake = (TTree*)fileFake->Get("latino");
+  TTree* treeData = 0;
+  if(showData) treeData = (TTree*)fileData->Get("latino");
+  TTree* treeFake = 0;
+  if(addDataDrivenEstimates) treeFake = (TTree*)fileFake->Get("latino");
 
   std::vector<TTree*> trees;
   trees.push_back(treeZj); // 0
@@ -232,8 +236,6 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
       TString TheFinalCut = cutChannel[icha]+addCut;
 
-      //      cout << "final cut = " << TheFinalCut.Data() << endl;
-
       tree->Project("histo","dphill",TheFinalCut);
       double yield, yield_err;
       if(!addDataDrivenEstimates) {
@@ -331,7 +333,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     cutChannel.push_back(HCut_me);
     cutChannel.push_back(HCut_all);
     
-    treeData->Project("histo","dphill",cutChannel[icha]);
+    if(showData) treeData->Project("histo","dphill",cutChannel[icha]);
     double yield = histo->Integral();
     yields_data[icha] = yield;
   }
