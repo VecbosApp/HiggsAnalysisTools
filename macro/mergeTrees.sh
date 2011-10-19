@@ -27,8 +27,8 @@ hadd results/merged/Wjets_ee.root results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-mad
 hadd results/merged/Zee_Hi_ee.root results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEE.root
 hadd results/merged/Zmm_Hi_ee.root results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEE.root
 hadd results/merged/Ztautau_Hi_ee.root results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*datasetEE.root
-hadd results/merged/Zee_Lo_ee.root results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*datasetEE.root
-hadd results/merged/Zmm_Lo_ee.root results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*datasetEE.root
+hadd results/merged/Zee_Lo_ee.root results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEE.root
+hadd results/merged/Zmm_Lo_ee.root results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEE.root
 hadd results/merged/Ztautau_Lo_ee.root results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*datasetEE.root
 hadd results/merged/WW_ee.root results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*datasetEE.root 
 hadd results/merged/ggWW_ee.root results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*datasetEE.root
@@ -72,8 +72,8 @@ hadd results/merged/Wjets_mm.root results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-mad
 hadd results/merged/Zee_Hi_mm.root results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetMM.root
 hadd results/merged/Zmm_Hi_mm.root results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetMM.root
 hadd results/merged/Ztautau_Hi_mm.root results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*datasetMM.root
-hadd results/merged/Zee_Lo_mm.root results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*datasetMM.root
-hadd results/merged/Zmm_Lo_mm.root results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*datasetMM.root
+hadd results/merged/Zee_Lo_mm.root results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetMM.root
+hadd results/merged/Zmm_Lo_mm.root results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetMM.root
 hadd results/merged/Ztautau_Lo_mm.root results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*datasetMM.root
 hadd results/merged/WW_mm.root results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*datasetMM.root
 hadd results/merged/ggWW_mm.root results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*datasetMM.root
@@ -117,8 +117,8 @@ hadd results/merged/Wjets_em.root results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-mad
 hadd results/merged/Zee_Hi_em.root results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEM.root
 hadd results/merged/Zmm_Hi_em.root results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEM.root
 hadd results/merged/Ztautau_Hi_em.root results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*datasetEM.root
-hadd results/merged/Zee_Lo_em.root results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*datasetEM.root
-hadd results/merged/Zmm_Lo_em.root results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*datasetEM.root
+hadd results/merged/Zee_Lo_em.root results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEM.root
+hadd results/merged/Zmm_Lo_em.root results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetEM.root
 hadd results/merged/Ztautau_Lo_em.root results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*datasetEM.root
 hadd results/merged/WW_em.root results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*datasetEM.root
 hadd results/merged/ggWW_em.root results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*datasetEM.root
@@ -162,8 +162,8 @@ hadd results/merged/Wjets_me.root results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-mad
 hadd results/merged/Zee_Hi_me.root results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetME.root
 hadd results/merged/Zmm_Hi_me.root results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetME.root
 hadd results/merged/Ztautau_Hi_me.root results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*datasetME.root
-hadd results/merged/Zee_Lo_me.root results/Summer11_V1/DYToEE_M-10To20_TuneZ2_7TeV-pythia6/*datasetME.root
-hadd results/merged/Zmm_Lo_me.root results/Summer11_V1/DYToMuMu_M-10To20_TuneZ2_7TeV-pythia6/*datasetME.root
+hadd results/merged/Zee_Lo_me.root results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetME.root
+hadd results/merged/Zmm_Lo_me.root results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*datasetME.root
 hadd results/merged/Ztautau_Lo_me.root results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*datasetME.root
 hadd results/merged/WW_me.root results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*datasetME.root
 hadd results/merged/ggWW_me.root results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*datasetME.root
