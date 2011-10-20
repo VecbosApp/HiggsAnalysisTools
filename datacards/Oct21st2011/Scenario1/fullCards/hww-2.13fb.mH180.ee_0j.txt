@@ -1,0 +1,41 @@
+## H->WW for m(H) = 180, channel ee, 0 jets. Luminosity 2.13fb
+## Taken extrapolating the 1.55fb analysis by a factor 1.4
+## Debug info: {'WW': [6.5099999999999998, 350.0, 0.018599999999999998, 0.0024399999999999999], 'WJet': [0.34000000000000002, 1.2705882352941176], 'Top': [0.91569, 131.0, 0.0069899999999999997, 0.00115], 'ggWW': [0.77350000000000008, 350.0, 0.0022100000000000002, 0.00028899999999999998], 'VV': [0.091999999999999998], 'DY': [143.727, 10.0, 14.3727, 18.0197], 'ggH': [7.2720000000000002], 'vbfH': [0.127]}
+imax 1
+jmax *
+kmax *
+----------------------------------------------------------------------------------------------------
+# we put as 'observation' the expected background-only outcome
+bin          ee_0j
+observation  209
+----------------------------------------------------------------------------------------------------
+bin                                ee_0j    ee_0j    ee_0j    ee_0j    ee_0j    ee_0j    ee_0j    ee_0j
+process                             vbfH      ggH       WW     WJet      Top     ggWW       VV       DY
+process                               -7       -6        1        2        3        4        5        6
+rate                               0.175    9.993    8.946    0.467    1.258    1.063    0.126   197.509
+----------------------------------------------------------------------------------------------------
+lumi                      lnN       1.04     1.04        -        -        -        -     1.04        -   
+pdf_gg                    lnN          -     1.08        -        -        -     1.00        -        -   
+pdf_qqbar                 lnN       1.03        -     1.00        -        -        -     1.04        -   
+QCDscale_ggH              lnN          -     1.09        -        -        -        -        -        -   
+QCDscale_ggH1in           lnN          -     0.99        -        -        -        -        -        -   
+QCDscale_qqH              lnN       1.01        -        -        -        -        -        -        -   
+QCDscale_ggVV             lnN          -        -        -        -        -     1.50        -        -   
+QCDscale_VV               lnN          -        -        -        -        -        -     1.04        -   
+CMS_eff_e                 lnN       1.04     1.04        -        -        -        -     1.04        -   
+CMS_p_scale_e             lnN       1.02     1.02        -        -        -        -     1.02        -   
+CMS_met                   lnN       1.02     1.02        -        -        -        -     1.02        -   
+CMS_scale_j               lnN       1.02     1.02        -        -        -        -     1.02        -   
+QCDscale_ggH_ACEPT        lnN          -     1.02        -        -        -        -        -        -   
+QCDscale_qqH_ACEPT        lnN       1.02        -        -        -        -        -        -        -   
+UEPS                      lnN          -     0.94        -        -        -        -        -        -   
+CMS_QCDscale_WW_EXTRAP    lnN          -        -     0.95        -        -        -        -        -   
+CMS_fake_e                lnN          -        -        -     1.27        -        -        -        -   
+CMS_hww_Top_0j_extr       lnN          -        -        -        -     1.16        -        -        -   
+CMS_hww_Top_0j_stat       gmN 180      -        -        -        -   0.0070        -        -        -   
+CMS_hww_WW_0j_extr        lnN          -        -     1.13        -        -        -        -        -   
+CMS_hww_WW_0j_stat        gmN 480      -        -   0.0186        -        -        -        -        -   
+CMS_hww_ggWW_0j_extr      lnN          -        -        -        -        -     1.13        -        -   
+CMS_hww_ggWW_0j_stat      gmN 480      -        -        -        -        -   0.0022        -        -   
+CMS_hww_DYee0j_extr       gmM          -        -        -        -        -        -        -     1.00   
+CMS_hww_DYee0j_stat       gmN  13      -        -        -        -        -        -        -   14.3727   
