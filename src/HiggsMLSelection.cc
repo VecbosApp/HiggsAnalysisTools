@@ -1648,7 +1648,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> co
     // float d3dEle = impactPar3DGsfTrack[gsfTrack];
     // if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;   
     float dxyEle = transvImpactParGsfTrack[gsfTrack];
-    float dzEle  = PVzPV[0] - trackVzGsfTrack[gsfTrack];   
+    float dzEle  = eleDzPV(thisEle,0);
     if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",dxyEle)) ) continue;
     if (_selectionEE->getSwitch("electronDz") && (!_selectionEE->passCut("electronDz",dzEle)) ) continue;
 
@@ -1781,8 +1781,8 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
     
     int ctfMuon   = trackIndexMuon[thisMu]; 
     float dxyMuon = transvImpactParTrack[ctfMuon];
-    float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];   
-
+    float dzMuon  = muonDzPV(thisMu,0);
+    
     if (thisPt>20) {   // hardcoded
       if (_selectionEE->getSwitch("muonIPhighPT") && (!_selectionEE->passCut("muonIPhighPT",dxyMuon)) ) continue;   
     } 
@@ -2530,7 +2530,7 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
 
     // hardcoded
     float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
-    if(rawpt < 7.0) continue;
+    if(rawpt < 10.0) continue;
 
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
@@ -2624,9 +2624,9 @@ int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove, std::vector<in
     if(trackValidHitsTrack[track]<=10) continue;
 
     float dxyMuon= transvImpactParTrack[track];
-    float dzMuon = fabs(PVzPV[0] - trackVzTrack[track]);   
+    float dzMuon = fabs(muonDzPV(i,0));
     if(dxyMuon > 0.200) continue;     // hardcoded  
-    if(dzMuon  > 0.100) continue;     // hardcoded  
+    if(dzMuon  > 0.200) continue;     // hardcoded  
 
     //    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
     //    float isoSumRel = isoSumAbs / pt;
@@ -2676,7 +2676,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     // float d3dEle = impactPar3DGsfTrack[track];
     // if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",d3dEle)) ) continue;    
     float dxyEle = transvImpactParGsfTrack[track];
-    float dzEle  = PVzPV[0] - trackVzGsfTrack[track];   
+    float dzEle  = eleDzPV(i,0);
     if (_selectionEE->getSwitch("electronIP") && (!_selectionEE->passCut("electronIP",dxyEle)) ) continue;
     if (_selectionEE->getSwitch("electronDz") && (!_selectionEE->passCut("electronDz",dzEle)) ) continue;
 
