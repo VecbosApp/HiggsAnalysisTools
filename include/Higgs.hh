@@ -78,6 +78,18 @@ public:
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
   //! returns the output of the custom cut electron ID with WPXX && deominator selection
   void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
+  /// dxy, dz and dsz parameters with respect to PV for tracks
+  double trackDxyPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
+  double trackDzPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
+  double trackDszPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
+  /// dxy, dz and dsz parameters with respect to PV for electrons
+  double eleDxyPV(int iele, int iPV);
+  double eleDzPV(int iele, int iPV);
+  double eleDszPV(int iele, int iPV);
+  /// dxy, dz and dsz parameters with respect to PV for muons
+  double muonDxyPV(int imu, int iPV);
+  double muonDzPV(int imu, int iPV);
+  double muonDszPV(int imu, int iPV);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 
