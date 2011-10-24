@@ -679,3 +679,71 @@ void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, b
   *convRejOutput = tightConvRej;
 
 }
+
+// dxy parameter with respect to PV for tracks
+double Higgs::trackDxyPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom) {
+  return ( - (trackVPos.X()-PVPos.X())*trackMom.Y() + (trackVPos.Y()-PVPos.Y())*trackMom.X() ) / trackMom.Pt(); 
+}
+
+/// dz parameter with respect to PV for tracks
+double Higgs::trackDzPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom) {
+  float trackPt = trackMom.Pt();
+  return (trackVPos.Z()-PVPos.Z()) - ((trackVPos.X()-PVPos.X())*trackMom.X()+(trackVPos.Y()-PVPos.Y())*trackMom.Y())/trackPt *trackMom.Pz()/trackPt; 
+}
+
+/// dsz parameter with respect to PV for tracks
+double Higgs::trackDszPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom) {
+  float trackPt = trackMom.Pt();
+  float trackP  = trackMom.Mag();
+  return (trackVPos.Z()-PVPos.Z())*trackPt/trackP - ((trackVPos.X()-PVPos.X())*trackMom.X()+(trackVPos.Y()-PVPos.Y())*trackMom.Y())/trackPt *trackMom.Pz()/trackP; 
+}
+
+/// dxy, dz and dsz parameters with respect to PV for electrons
+double Higgs::eleDxyPV(int iele, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int gsfTrack = gsfTrackIndexEle[iele];
+  TVector3 lepVPos(trackVxGsfTrack[gsfTrack],trackVyGsfTrack[gsfTrack],trackVzGsfTrack[gsfTrack]);
+  TVector3 lepMom(pxEle[iele],pyEle[iele],pzEle[iele]);
+  return trackDxyPV(PVPos,lepVPos,lepMom);
+}
+
+double Higgs::eleDzPV(int iele, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int gsfTrack = gsfTrackIndexEle[iele];
+  TVector3 lepVPos(trackVxGsfTrack[gsfTrack],trackVyGsfTrack[gsfTrack],trackVzGsfTrack[gsfTrack]);
+  TVector3 lepMom(pxEle[iele],pyEle[iele],pzEle[iele]);
+  return trackDzPV(PVPos,lepVPos,lepMom);
+}
+
+double Higgs::eleDszPV(int iele, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int gsfTrack = gsfTrackIndexEle[iele];
+  TVector3 lepVPos(trackVxGsfTrack[gsfTrack],trackVyGsfTrack[gsfTrack],trackVzGsfTrack[gsfTrack]);
+  TVector3 lepMom(pxEle[iele],pyEle[iele],pzEle[iele]);
+  return trackDszPV(PVPos,lepVPos,lepMom);
+}
+
+/// dxy, dz and dsz parameters with respect to PV for muons
+double Higgs::muonDxyPV(int imu, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int ctfMuon   = trackIndexMuon[imu];
+  TVector3 lepVPos(trackVxTrack[ctfMuon],trackVyTrack[ctfMuon],trackVzTrack[ctfMuon]);
+  TVector3 lepMom(pxMuon[imu],pyMuon[imu],pzMuon[imu]);
+  return trackDxyPV(PVPos,lepVPos,lepMom);
+}
+
+double Higgs::muonDzPV(int imu, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int ctfMuon   = trackIndexMuon[imu];
+  TVector3 lepVPos(trackVxTrack[ctfMuon],trackVyTrack[ctfMuon],trackVzTrack[ctfMuon]);
+  TVector3 lepMom(pxMuon[imu],pyMuon[imu],pzMuon[imu]);
+  return trackDzPV(PVPos,lepVPos,lepMom);
+}
+
+double Higgs::muonDszPV(int imu, int iPV) {
+  TVector3 PVPos(PVxPV[iPV],PVyPV[iPV],PVzPV[iPV]);
+  int ctfMuon   = trackIndexMuon[imu];
+  TVector3 lepVPos(trackVxTrack[ctfMuon],trackVyTrack[ctfMuon],trackVzTrack[ctfMuon]);
+  TVector3 lepMom(pxMuon[imu],pyMuon[imu],pzMuon[imu]);
+  return trackDszPV(PVPos,lepVPos,lepMom);
+}
