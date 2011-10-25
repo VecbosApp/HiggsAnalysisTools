@@ -60,21 +60,22 @@ private:
 
   //! fake rates initialization for electrons
   void initialiseElectronFakeBinning();
+  void initialiseElectronFakeEtaBinning();
   void initialiseElectronFakeRate15();
   void initialiseElectronFakeRate30();
   void initialiseElectronFakeRate35();
   void initialiseElectronFakeRate50();
   void initialiseElectronFakeRateQCD();
-  float getElectronFakeRate15( float fakePt, bool isEB );
-  float getElectronFakeRate30( float fakePt, bool isEB );
-  float getElectronFakeRate35( float fakePt, bool isEB );
-  float getElectronFakeRate50( float fakePt, bool isEB );
-  float getElectronFakeRateQCD( float fakePt, bool isEB );
-  float getElectronFakeRateError15( float fakePt, bool isEE );
-  float getElectronFakeRateError30( float fakePt, bool isEE );
-  float getElectronFakeRateError35( float fakePt, bool isEE );
-  float getElectronFakeRateError50( float fakePt, bool isEE );
-  float getElectronFakeRateErrorQCD( float fakePt, bool isEE );
+  float getElectronFakeRate15( float fakePt, bool isEB, float fakeEta );
+  float getElectronFakeRate30( float fakePt, bool isEB, float fakeEta );
+  float getElectronFakeRate35( float fakePt, bool isEB, float fakeEta );
+  float getElectronFakeRate50( float fakePt, bool isEB, float fakeEta );
+  float getElectronFakeRateQCD( float fakePt, bool isEB, float fakeEta );
+  float getElectronFakeRateError15( float fakePt, bool isEE, float fakeEta );
+  float getElectronFakeRateError30( float fakePt, bool isEE, float fakeEta );
+  float getElectronFakeRateError35( float fakePt, bool isEE, float fakeEta );
+  float getElectronFakeRateError50( float fakePt, bool isEE, float fakeEta );
+  float getElectronFakeRateErrorQCD( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization for electrons
   void initialiseElectronPromptRate();
@@ -83,8 +84,8 @@ private:
 
   //! fake rates initialization for muons
   void initialiseMuonFakeRate();
-  float getMuonFakeRate( float fakePt, bool isEB );
-  float getMuonFakeRateError( float fakePt, bool isEE );
+  float getMuonFakeRate( float fakePt, bool isEB, float fakeEta );
+  float getMuonFakeRateError( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization for muons
   void initialiseMuonPromptRate();
@@ -189,17 +190,28 @@ private:
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
   
   //! electron fake rates                             
-  float m_eleMinFakePt[5],     m_eleMaxFakePt[5];
-  float m15_eleFakeRateEB[5],  m15_eleFakeRateEB_err[5];
-  float m30_eleFakeRateEB[5],  m30_eleFakeRateEB_err[5];
-  float m35_eleFakeRateEB[5],  m35_eleFakeRateEB_err[5];
-  float m50_eleFakeRateEB[5],  m50_eleFakeRateEB_err[5];
-  float mQCD_eleFakeRateEB[5], mQCD_eleFakeRateEB_err[5];
-  float m15_eleFakeRateEE[5],  m15_eleFakeRateEE_err[5];
-  float m30_eleFakeRateEE[5],  m30_eleFakeRateEE_err[5];
-  float m35_eleFakeRateEE[5],  m35_eleFakeRateEE_err[5];
-  float m50_eleFakeRateEE[5],  m50_eleFakeRateEE_err[5];
-  float mQCD_eleFakeRateEE[5], mQCD_eleFakeRateEE_err[5];
+  float m_eleMinFakePt[5],      m_eleMaxFakePt[5];
+  float m_eleMinFakeEta[4],     m_eleMaxFakeEta[4];
+  float m15_eleFakeRateEB1[5],  m15_eleFakeRateEB1_err[5];
+  float m30_eleFakeRateEB1[5],  m30_eleFakeRateEB1_err[5];
+  float m35_eleFakeRateEB1[5],  m35_eleFakeRateEB1_err[5];
+  float m50_eleFakeRateEB1[5],  m50_eleFakeRateEB1_err[5];
+  float mQCD_eleFakeRateEB1[5], mQCD_eleFakeRateEB1_err[5];
+  float m15_eleFakeRateEE1[5],  m15_eleFakeRateEE1_err[5];
+  float m30_eleFakeRateEE1[5],  m30_eleFakeRateEE1_err[5];
+  float m35_eleFakeRateEE1[5],  m35_eleFakeRateEE1_err[5];
+  float m50_eleFakeRateEE1[5],  m50_eleFakeRateEE1_err[5];
+  float mQCD_eleFakeRateEE1[5], mQCD_eleFakeRateEE1_err[5];
+  float m15_eleFakeRateEB2[5],  m15_eleFakeRateEB2_err[5];
+  float m30_eleFakeRateEB2[5],  m30_eleFakeRateEB2_err[5];
+  float m35_eleFakeRateEB2[5],  m35_eleFakeRateEB2_err[5];
+  float m50_eleFakeRateEB2[5],  m50_eleFakeRateEB2_err[5];
+  float mQCD_eleFakeRateEB2[5], mQCD_eleFakeRateEB2_err[5];
+  float m15_eleFakeRateEE2[5],  m15_eleFakeRateEE2_err[5];
+  float m30_eleFakeRateEE2[5],  m30_eleFakeRateEE2_err[5];
+  float m35_eleFakeRateEE2[5],  m35_eleFakeRateEE2_err[5];
+  float m50_eleFakeRateEE2[5],  m50_eleFakeRateEE2_err[5];
+  float mQCD_eleFakeRateEE2[5], mQCD_eleFakeRateEE2_err[5];
 
   //! electron prompt rates                             
   float m_eleMinPromptPt[5],  m_eleMaxPromptPt[5];
@@ -208,9 +220,12 @@ private:
   float m_elePromptRateCr[5], m_elePromptRateCr_err[5];
 
   //! muon fake rates                             
-  float m_muonMinFakePt[5],  m_muonMaxFakePt[5];
-  float m_muonFakeRateEB[5], m_muonFakeRateEB_err[5];
-  float m_muonFakeRateEE[5], m_muonFakeRateEE_err[5];
+  float m_muonMinFakePt[5],   m_muonMaxFakePt[5];
+  float m_muonMinFakeEta[4],  m_muonMaxFakeEta[4];
+  float m_muonFakeRateEB1[5], m_muonFakeRateEB1_err[5];
+  float m_muonFakeRateEB2[5], m_muonFakeRateEB2_err[5];
+  float m_muonFakeRateEE1[5], m_muonFakeRateEE1_err[5];
+  float m_muonFakeRateEE2[5], m_muonFakeRateEE2_err[5];
 
   //! muon prompt rates                             
   float m_muonMinPromptPt[5],  m_muonMaxPromptPt[5];
