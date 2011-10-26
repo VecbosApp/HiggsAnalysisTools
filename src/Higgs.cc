@@ -512,7 +512,7 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
 
   // impact parameter cuts
   float dxyEle = transvImpactParGsfTrack[gsf];
-  float dzEle  = PVzPV[0] - trackVzGsfTrack[gsf];
+  float dzEle  = eleDzPV(theEle,0);
   if (fabs(dxyEle)>0.02) isGoodDenom = false;
   if (fabs(dzEle)>0.10)  isGoodDenom = false;
 
@@ -545,7 +545,7 @@ bool Higgs::isMuonDenomFake(int theMuon, bool *isDenomMuonID, bool *isDenomMuonI
   // IP
   int ctfMuon   = trackIndexMuon[theMuon]; 
   float dxyMuon = transvImpactParTrack[ctfMuon];
-  float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];  
+  float dzMuon  = muonDzPV(theMuon,0);
   if (fabs(dxyMuon)>0.2 ) { isGoodDenom = false; isGoodDenomID = false; }   
   if (fabs(dzMuon)>0.1  ) { isGoodDenom = false; isGoodDenomID = false; }   
   
