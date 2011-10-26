@@ -1,6 +1,6 @@
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs)
-ROOTGLIBS     = $(shell root-config --glibs)
+ROOTGLIBS     = $(shell root-config --glibs) -lTMVA
 
 CXX           = g++
 CXXFLAGS      = -g -fPIC -Wno-deprecated -O -ansi -D_GNU_SOURCE -g -O2
@@ -112,6 +112,8 @@ $(OUTLIB)RedEleIDTree.o: $(INCLUDEDIR)/src/RedEleIDTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedEleIDTree.o $<
 $(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
+$(OUTLIB)ElectronIDMVA.o: $(INCLUDEDIR)/src/ElectronIDMVA.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronIDMVA.o $<
 $(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)/src/RedHiggsTree.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)RedHiggsTree.o $<
 $(OUTLIB)RedTriggerTree.o: $(INCLUDEDIR)/src/RedTriggerTree.cc
@@ -175,6 +177,7 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIBCOMMON)TriggerMask.o \
 	$(OUTLIBCOMMON)Utils.o \
 	$(OUTLIB)kFactorEvaluator.o \
+	$(OUTLIB)ElectronIDMVA.o \
 	$(OUTLIB)RedHiggsTree.o \
 	$(OUTLIB)RedTriggerTree.o \
 	$(OUTLIB)RedEleIDOptimTree.o \
