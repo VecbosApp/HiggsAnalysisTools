@@ -443,48 +443,56 @@ std::string Higgs::getHLTPathForRun(int runN, std::string fullname) {
   else return std::string("NOPATH");
 }
 
+// this is the smurfs tight denominator
 bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) {
-
+  
   Utils anaUtils;
   bool isGoodDenom = true;
   bool isGoodDenomID, isGoodDenomIso;
   isGoodDenomID = isGoodDenomIso = true;
   TVector3 p3Ele(pxEle[theEle], pyEle[theEle], pzEle[theEle]);
   
-  // acceptance	         
-  if( fabs(p3Ele.Eta()) > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }  
+  // acceptance
+  if( fabs(p3Ele.Eta()) > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
   if( p3Ele.Pt() < 10.  )       { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
-
-  // barrel or endcap 
-  bool isEleEB = anaUtils.fiducialFlagECAL(fiducialFlagsEle[theEle], isEB);
   
   // taking shower shape
   int sc;
   bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
   float thisSigmaIeIe = -1.;
-  if ( ecalDriven) { 
-    sc = superClusterIndexEle[theEle]; 
-    thisSigmaIeIe = sqrt(covIEtaIEtaSC[sc]); 
+  float scEta = -1.;
+  if ( ecalDriven) {
+    sc = superClusterIndexEle[theEle];
+    thisSigmaIeIe = sqrt(covIEtaIEtaSC[sc]);
+    scEta = etaSC[sc];
   }
   if (!ecalDriven) {
-    sc = PFsuperClusterIndexEle[theEle]; 
-    thisSigmaIeIe = sqrt(covIEtaIEtaPFSC[sc]); 
+    sc = PFsuperClusterIndexEle[theEle];
+    thisSigmaIeIe = sqrt(covIEtaIEtaPFSC[sc]);
+    scEta = etaPFSC[sc];
   }
   if ( sc < 0 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
+
+  // barrel or endcap
+  bool isEleEB = false;
+  if (fabs(scEta)<1.479) isEleEB = true;
 
   // sigmaIetaIeta
   if ( isEleEB && thisSigmaIeIe>0.01) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && thisSigmaIeIe>0.03) { isGoodDenom = false; isGoodDenomID = false; }
-  
+
   // isolation
-  float ecalIsol    = (dr03EcalRecHitSumEtEle[theEle])/p3Ele.Pt();
-  float hcalIsol    = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
-  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();                
-  if (ecalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
-  if (hcalIsol>0.2)    { isGoodDenom = false; isGoodDenomIso = false; }
+  float ecalIsolAbs = 0.0;
+  if ( isEleEB ) ecalIsolAbs = max(0.0,dr03EcalRecHitSumEtEle[theEle]-1.0);
+  else ecalIsolAbs = dr03EcalRecHitSumEtEle[theEle];
+  float ecalIsol = ecalIsolAbs/p3Ele.Pt();
+  float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
+  float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();
+  if (ecalIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
+  if (hcalIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
   if (trackerIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
 
-  // H/E 
+  // H/E
   if ( isEleEB && hOverEEle[theEle]>0.12) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && hOverEEle[theEle]>0.10) { isGoodDenom = false; isGoodDenomID = false; }
 
@@ -495,6 +503,18 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   // deltaPhi
   if ( isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.15) ) { isGoodDenom = false; isGoodDenomID = false; }
   if (!isEleEB && (fabs(deltaPhiAtVtxEle[theEle])>0.10) ) { isGoodDenom = false; isGoodDenomID = false; }
+
+  // full conversion rejection
+  int gsf = gsfTrackIndexEle[theEle];
+  int missHits = expInnerLayersGsfTrack[gsf];
+  bool matchConv = hasMatchedConversionEle[theEle];
+  if (missHits>0 || matchConv) isGoodDenom = false;
+
+  // impact parameter cuts
+  float dxyEle = transvImpactParGsfTrack[gsf];
+  float dzEle  = PVzPV[0] - trackVzGsfTrack[gsf];
+  if (fabs(dxyEle)>0.02) isGoodDenom = false;
+  if (fabs(dzEle)>0.10)  isGoodDenom = false;
 
   *isDenomEleID = isGoodDenomID;
   *isDenomEleIso = isGoodDenomIso;
@@ -520,16 +540,16 @@ bool Higgs::isMuonDenomFake(int theMuon, bool *isDenomMuonID, bool *isDenomMuonI
   
   // isolation
   float thePFMuonIso = pfCombinedIsoMuon[theMuon]/p3Muon.Pt();
-  if ( thePFMuonIso > 0.4 ) { isGoodDenom = false; isGoodDenomIso = false; }   // this is LM2; LM1 < 1.0
+  if ( thePFMuonIso > 0.4 ) { isGoodDenom = false; isGoodDenomIso = false; }
   
   // IP
   int ctfMuon   = trackIndexMuon[theMuon]; 
   float dxyMuon = transvImpactParTrack[ctfMuon];
   float dzMuon  = PVzPV[0] - trackVzTrack[ctfMuon];  
-  if (fabs(dxyMuon)>0.1 ) { isGoodDenom = false; isGoodDenomID = false; }     // this is LM2; LM1 < 0.1
-  if (fabs(dzMuon)>0.1  ) { isGoodDenom = false; isGoodDenomID = false; }     // this is LM2; LM1 < 0.1
+  if (fabs(dxyMuon)>0.2 ) { isGoodDenom = false; isGoodDenomID = false; }   
+  if (fabs(dzMuon)>0.1  ) { isGoodDenom = false; isGoodDenomID = false; }   
   
-  *isDenomMuonID = isGoodDenomID;
+  *isDenomMuonID  = isGoodDenomID;
   *isDenomMuonIso = isGoodDenomIso;
 
   return isGoodDenom;
