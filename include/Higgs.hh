@@ -9,6 +9,7 @@
 #include "HiggsAnalysisTools/include/HiggsBase.h"
 #include "HiggsAnalysisTools/include/JetCorrectionUncertainty.h"
 #include "EgammaAnalysisTools/include/CutBasedEleIDSelector.hh"
+#include "HiggsAnalysisTools/include/ElectronIDMVA.h"
 // ROOT includes
 #include <TLorentzVector.h>
 #include <TVector3.h>
@@ -75,9 +76,9 @@ public:
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
   //! returns the output of the custom cut electron ID with WPXX
-  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
+  void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
   //! returns the output of the custom cut electron ID with WPXX && deominator selection
-  void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID);
+  void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
   /// dxy, dz and dsz parameters with respect to PV for tracks
   double trackDxyPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
   double trackDzPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
@@ -90,6 +91,12 @@ public:
   double muonDxyPV(int imu, int iPV);
   double muonDzPV(int imu, int iPV);
   double muonDszPV(int imu, int iPV);
+  /// return 1/0 if the three methods to estimate the charge gives the same result / not
+  int eleChargeMajority(int iele);
+  /// return the value of electron BDT
+  float eleBDT(ElectronIDMVA *mva, int iele);
+  /// apply the BDT cut
+  bool passEleBDT(float pt, float eta, float bdtoutput);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 
@@ -111,6 +118,9 @@ protected:
   /// calculate transverse mass
   /// definitions in http://indico.cern.ch/getFile.py/access?contribId=4&resId=0&materialId=slides&confId=104213
   float mT3(TLorentzVector pl1, TLorentzVector pl2, TVector3 met);
+
+  /// MVA for electron ID. To be created and initialized from the children classes
+  ElectronIDMVA *fMVA;
 
 };
 
