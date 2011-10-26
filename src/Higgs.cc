@@ -455,7 +455,7 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   // acceptance
   if( fabs(p3Ele.Eta()) > 2.5 ) { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
   if( p3Ele.Pt() < 10.  )       { isGoodDenom = false; isGoodDenomID = false; isGoodDenomIso = false; }
-  
+
   // taking shower shape
   int sc;
   bool ecalDriven = anaUtils.electronRecoType(recoFlagsEle[theEle], bits::isEcalDriven);
@@ -588,7 +588,7 @@ void Higgs::isMuonID(int muonIndex, bool *muonIdOutput) {
   if (sign>=0.1) *muonIdOutput = false;
 }
 
-void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
+void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased) {
   
   *eleIdOutput = *isolOutput = *convRejOutput = false;
 
@@ -600,6 +600,7 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
   // above all, take the ECAL supercluster instead of PF super cluster
   float HoE, s9s25, deta, dphiin, dphiout, fbrem, see, spp, eopout, eop;
   float e1, e4SwissCross, fidFlagSC, seedRecHitFlag, seedTime, seedChi2;
+  float sceta;
   bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
   HoE = hOverEEle[eleIndex];
   deta = deltaEtaAtVtxEle[eleIndex];
@@ -619,6 +620,7 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
     seedRecHitFlag = recoFlagSC[sc];
     seedTime = timeSC[sc];
     seedChi2 = chi2SC[sc];
+    sceta = etaSC[sc];
   } else {
     int sc = PFsuperClusterIndexEle[eleIndex];
     if(sc>-1) {
@@ -626,15 +628,17 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
       see = sqrt(covIEtaIEtaPFSC[sc]);
       spp = sqrt(covIPhiIPhiPFSC[sc]);
       e1 = eMaxSC[sc];
-      e4SwissCross = e4SwissCrossSC[sc];
+      e4SwissCross = e4SwissCrossPFSC[sc];
       fidFlagSC = fiducialFlagsEle[eleIndex];
-      seedRecHitFlag = recoFlagSC[sc];
-      seedTime = timeSC[sc];
-      seedChi2 = chi2SC[sc];
+      seedRecHitFlag = recoFlagPFSC[sc];
+      seedTime = timePFSC[sc];
+      seedChi2 = chi2PFSC[sc];
+      sceta = etaPFSC[sc];
     } else {
       s9s25 = 999.;
       see = 999.;
       spp = 999.;
+      sceta = 999.;
     }
   }
 
@@ -678,25 +682,28 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
   thisCutBasedID->m_cleaner->SetSeedChi2(seedChi2);
 
   //  return egammaCutBasedID.output(); // class dependent result
-  *eleIdOutput = thisCutBasedID->outputNoClassEleId();
+  if(!applyBDTIdNotCutbased) *eleIdOutput = thisCutBasedID->outputNoClassEleId();
+  else {
+    float bdt = eleBDT(fMVA,eleIndex);
+    *eleIdOutput = passEleBDT(pt,sceta,bdt);
+  }
   *isolOutput = thisCutBasedID->outputNoClassIso();
   *convRejOutput = thisCutBasedID->outputNoClassConv();
 }
 
-void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID) {
+void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased) {
 
   bool tightId, tightIso, tightConvRej;
   tightId = tightIso = tightConvRej = true;
-  isEleID(eleIndex,&tightId,&tightIso,&tightConvRej,thisCutBasedID);
+  isEleID(eleIndex,&tightId,&tightIso,&tightConvRej,thisCutBasedID,applyBDTIdNotCutbased);
 
   bool denomId, denomIso;
   denomId = denomIso = true;
-  isEleDenomFake(eleIndex,&denomId,&denomIso);
+  bool fullDenom = isEleDenomFake(eleIndex,&denomId,&denomIso);
   
-  // denominator definition is only applied on ID (because different algorithm is used offline and in HLT)
   *eleIdOutput = (tightId && denomId);
-  *isolOutput = tightIso;
-  *convRejOutput = tightConvRej;
+  *isolOutput = (tightIso && denomIso);
+  *convRejOutput = tightConvRej; // num and denom conv rej are the same
 
 }
 
@@ -766,4 +773,104 @@ double Higgs::muonDszPV(int imu, int iPV) {
   TVector3 lepVPos(trackVxTrack[ctfMuon],trackVyTrack[ctfMuon],trackVzTrack[ctfMuon]);
   TVector3 lepMom(pxMuon[imu],pyMuon[imu],pzMuon[imu]);
   return trackDszPV(PVPos,lepVPos,lepMom);
+}
+
+int Higgs::eleChargeMajority(int iele) {
+  int gsfTrk = gsfTrackIndexEle[iele];
+  int gsfCharge = chargeGsfTrack[gsfTrk];
+  int pixelsCharge = scPixChargeEle[iele];
+
+  int ctfTrk = trackIndexEle[iele];
+  if(ctfTrk<0) return (gsfCharge==pixelsCharge);
+
+  int ctfCharge = chargeTrack[ctfTrk];
+  return ((ctfCharge==pixelsCharge) && (ctfCharge==gsfCharge));
+}
+
+float Higgs::eleBDT(ElectronIDMVA *mva, int eleIndex) {
+  
+  if(mva==0) {
+    std::cout << "electron BDT not created/initialized. BIG PROBLEM. Returning false output -999!" << std::endl; 
+    return -999.;
+  }
+  
+  int gsfTrack = gsfTrackIndexEle[eleIndex]; 
+
+  float ElePt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
+
+  float EleDEtaIn = deltaEtaAtVtxEle[eleIndex];
+  float EleDPhiIn = deltaPhiAtVtxEle[eleIndex];
+  float EleHoverE = hOverEEle[eleIndex];
+  float EleD0 = transvImpactParGsfTrack[gsfTrack];
+  float EleFBrem = fbremEle[eleIndex];
+  float EleEOverP = eSuperClusterOverPEle[eleIndex];
+  float EleESeedClusterOverPout = eSeedOverPoutEle[eleIndex];
+  float EleNBrem = nbremsEle[eleIndex];
+  TVector3 pInGsf(pxGsfTrack[gsfTrack],pyGsfTrack[gsfTrack],pzGsfTrack[gsfTrack]);
+
+  double gsfsign   = (-eleDxyPV(eleIndex,0) >=0 ) ? 1. : -1.;
+  float EleIP3d = gsfsign * impactPar3DGsfTrack[gsfTrack];
+  float EleIP3dSig = EleIP3d/impactPar3DErrorGsfTrack[gsfTrack];
+
+  // we have not pout and seed cluster energy in the trees. Gymnastyc...
+  float Pout = pInGsf.Mag() - fbremEle[eleIndex] * pInGsf.Mag();
+  float SCSeedEnergy = EleESeedClusterOverPout * Pout;
+  float EleESeedClusterOverPIn = SCSeedEnergy/pInGsf.Mag();      
+
+  float EleSigmaIEtaIEta, EleSigmaIPhiIPhi, EleOneOverEMinusOneOverP, EleSCEta;
+
+  Utils anaUtils;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[eleIndex];
+    EleSigmaIEtaIEta = sqrt(covIEtaIEtaSC[sc]);
+    EleSigmaIPhiIPhi = sqrt(covIPhiIPhiSC[sc]);
+    EleOneOverEMinusOneOverP = 1./energySC[sc]  - 1./pInGsf.Mag();
+    EleSCEta = etaSC[sc];
+  } else {
+    int sc = PFsuperClusterIndexEle[eleIndex];
+    if(sc>-1) {
+      EleSigmaIEtaIEta = sqrt(covIEtaIEtaPFSC[sc]);
+      EleSigmaIPhiIPhi = sqrt(covIPhiIPhiPFSC[sc]);
+      EleOneOverEMinusOneOverP = 1./energyPFSC[sc]  - 1./pInGsf.Mag();
+      EleSCEta = etaPFSC[sc];
+    } else {
+      EleSigmaIEtaIEta = 999.;
+      EleSigmaIPhiIPhi = 999.;
+      EleOneOverEMinusOneOverP = 999.;
+      EleESeedClusterOverPIn = 999.;
+      EleSCEta = 0.;
+    }
+  }
+
+  return mva->MVAValue(ElePt, EleSCEta,
+                       EleSigmaIEtaIEta,
+                       EleDEtaIn,
+                       EleDPhiIn,
+                       EleHoverE,
+                       EleD0,
+                       EleFBrem,
+                       EleEOverP,
+                       EleESeedClusterOverPout,
+                       EleSigmaIPhiIPhi,
+                       EleNBrem,
+                       EleOneOverEMinusOneOverP,
+                       EleESeedClusterOverPIn,
+                       EleIP3d,
+                       EleIP3dSig );
+
+}
+
+bool Higgs::passEleBDT(float pt, float eta, float bdt) {
+
+  if(pt < 20 && fabs(eta) < 1.0) return (bdt > 0.139);
+  if(pt < 20 && fabs(eta) >= 1.0 && fabs(eta) < 1.479) return (bdt > 0.525);
+  if(pt < 20 && fabs(eta) >= 1.479 && fabs(eta) < 2.500) return (bdt > 0.543);
+  if(pt >= 20 && fabs(eta) < 1.0) return (bdt > 0.947);
+  if(pt >= 20 && fabs(eta) >= 1.0 && fabs(eta) < 1.479) return (bdt > 0.950);
+  if(pt >= 20 && fabs(eta) >= 1.479 && fabs(eta) < 2.500) return (bdt > 0.884);
+
+  // here we are cutting the events with |SC eta|>2.5. If the acceptance is done with |ele eta|<2.5 then will cut some event more. Fine. Synch with this.
+  return false;
+
 }

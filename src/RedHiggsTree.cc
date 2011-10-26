@@ -195,6 +195,7 @@ void RedHiggsTree::addKinematics() {
   myTree->Branch("ch", myLepCharge, "ch[2]/I");
   myTree->Branch("lh", myEleLh, "lh[2]/F");
   myTree->Branch("iso", myIso, "iso[2]/F");
+  myTree->Branch("chmajority", myMajority, "chmajority[2]/I");
 
   myJetsSum = 0;
   myUncorrJetsSum = 0;
@@ -425,7 +426,7 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxSecJet[3], float pySecJet[3], float pzSecJet[3],    
                                   float pxL1, float pyL1, float pzL1,
                                   float pxL2, float pyL2, float pzL2,
-                                  int ch[2], float lh[2], float iso[2],
+                                  int ch[2], float lh[2], float iso[2], int majority[2],
                                   TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet) {
 
   myPxTkMet = pxTkMet;
@@ -455,6 +456,7 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
     myLepCharge[i] = ch[i];
     myIso[i] = iso[i];
     myEleLh[i] = lh[i];
+    myMajority[i] = majority[i];
   }
 }
 

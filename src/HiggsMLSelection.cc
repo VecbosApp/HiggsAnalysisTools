@@ -83,6 +83,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   _selectionEE->addSwitch("isData");
   _selectionEE->addSwitch("goodRunLS");
   _selectionEE->addSwitch("asymmetricID");
+  _selectionEE->addSwitch("applyBDTEleID");
   _selectionEE->addStringParameter("electronIDType");
   _selectionEE->addStringParameter("electronIDTypeLow");  
   _selectionEE->addStringParameter("JESUncertainty");
@@ -101,7 +102,10 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
     EgammaCutBasedIDLow.ConfigureNoClass("config/higgs/electronId/"+selectionStringLow);
     EgammaCutBasedIDLow.ConfigureEcalCleaner("config/higgs/electronId/");
   }
-  
+
+  if(_selectionEE->getSwitch("applyBDTEleID")) m_useBDTEleID = true;
+  else m_useBDTEleID = false;
+
   // configuring electron likelihood
   TFile *fileLH = TFile::Open("pdfs_MC.root");
   TDirectory *EB0lt15dir = fileLH->GetDirectory("/");
@@ -118,6 +122,17 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   defaultSwitches.m_useOneOverEMinusOneOverP = true;
   LH = new ElectronLikelihood(&(*EB0lt15dir), &(*EB1lt15dir), &(*EElt15dir), &(*EB0gt15dir), &(*EB1gt15dir), &(*EEgt15dir), defaultSwitches, std::string("class"),std::string("class"),true,true);
   
+  // configuring the electron BDT
+  fMVA = new ElectronIDMVA();
+  fMVA->Initialize("BDTG method",
+                   "elebdtweights/Subdet0LowPt_WithIPInfo_BDTG.weights.xml",
+                   "elebdtweights/Subdet1LowPt_WithIPInfo_BDTG.weights.xml",
+                   "elebdtweights/Subdet2LowPt_WithIPInfo_BDTG.weights.xml",
+                   "elebdtweights/Subdet0HighPt_WithIPInfo_BDTG.weights.xml",
+                   "elebdtweights/Subdet1HighPt_WithIPInfo_BDTG.weights.xml",
+                   "elebdtweights/Subdet2HighPt_WithIPInfo_BDTG.weights.xml" ,                
+                   ElectronIDMVA::kWithIPInfo);
+
   // Reading GoodRUN LS
   std::cout << "[GoodRunLS]::goodRunLS is " << _selectionEE->getSwitch("goodRunLS") << " isData is " <<  _selectionEE->getSwitch("isData") << std::endl;
 
@@ -570,7 +585,8 @@ void HiggsMLSelection::Loop() {
     // float avePU = ((float)(nPU[0]+nPU[1]+nPU[2]))/3.;    // for OOT PU reweighting
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
+    // JUST FOR SYNCHRONIZATION: UNCOMMENT !!!!!
+    //    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
  
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
@@ -982,7 +998,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
-                                     m_chEE, m_lhEE, m_isoEE,
+                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET); 
       myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[ee], m_p4LeptonMinusEnergy[ee], m_p4PlusType[ee], m_p4MinusType[ee],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
@@ -991,7 +1007,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
-                                     m_chEE, m_lhEE, m_isoEE,
+                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET);
       myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[ee], m_p4LeptonPlusEnergy[ee], m_p4MinusType[ee], m_p4PlusType[ee],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
@@ -1129,7 +1145,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
-                                     m_chMM, m_lhMM, m_isoMM,
+                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET); 
       myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonPlusEnergy[mm], m_p4LeptonMinusEnergy[mm], m_p4PlusType[mm], m_p4MinusType[mm],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm]);
@@ -1142,7 +1158,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
-                                     m_chMM, m_lhMM, m_isoMM,
+                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET);
       myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonMinusEnergy[mm], m_p4LeptonPlusEnergy[mm], m_p4MinusType[mm], m_p4PlusType[mm],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm] );
@@ -1283,7 +1299,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
-                                     m_chEM, m_lhEM, m_isoEM,
+                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET); 
       myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[em], m_p4LeptonMinusEnergy[em], m_p4PlusType[em], m_p4MinusType[em],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
@@ -1292,7 +1308,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
-                                     m_chEM, m_lhEM, m_isoEM,
+                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET);
       myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[em], m_p4LeptonPlusEnergy[em], m_p4MinusType[em], m_p4PlusType[em],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
@@ -1433,7 +1449,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
-                                     m_chME, m_lhME, m_isoME,
+                                     m_chME, m_lhME, m_isoME, m_chmajME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET); 
       myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[me], m_p4LeptonMinusEnergy[me], m_p4PlusType[me], m_p4MinusType[me],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
@@ -1442,7 +1458,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
-                                     m_chME, m_lhME, m_isoME,
+                                     m_chME, m_lhME, m_isoME, m_chmajME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET);
       myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[me], m_p4LeptonPlusEnergy[me], m_p4MinusType[me], m_p4PlusType[me],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
@@ -1542,21 +1558,21 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
-      if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow);
+      if (thisPt>=20) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
+      if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow,m_useBDTEleID);
     }
 
     if (!theElectronID) continue;
     
     // further requests if we apply the smurf ID and pT<15
-    TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
-    if( stringIdLow.Contains("Smurf") ) {
-      if ( thisPt<20  ) {
-	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;
-      }
-    }
+//     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
+//     if( stringIdLow.Contains("Smurf") && !m_useBDTEleID ) {
+//       if ( thisPt<20  ) {
+// 	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;
+//       }
+//     }
     
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
@@ -1584,7 +1600,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
 
     if (!theElectronIsol) continue;
     
@@ -1615,7 +1631,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID);
+    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
     
     if (!theElectronConvRej) continue;
 
@@ -1892,6 +1908,8 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_isoEE[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[ee];
     m_lhEE[0] = eleIdLikelihoodEle[lead];
     m_lhEE[1] = eleIdLikelihoodEle[sublead];    
+    m_chmajEE[0] = eleChargeMajority(lead);
+    m_chmajEE[1] = eleChargeMajority(sublead);
   }
 
 }
@@ -1942,6 +1960,8 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_isoMM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[mm];
     m_lhMM[0] = -999.;
     m_lhMM[1] = -999.;
+    m_chmajMM[0] = -999.;
+    m_chmajMM[1] = -999.;
   }
 
 }
@@ -1992,6 +2012,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
       m_lhEM[0] = eleIdLikelihoodEle[lead];
       m_lhEM[1] = -999.;
+      m_chmajEM[0] = eleChargeMajority(lead);
+      m_chmajEM[1] = -999.;
 
     } else {
       eleCands[me].push_back(myEle);
@@ -2032,6 +2054,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
       m_lhME[0] = -999.;
       m_lhME[1] = eleIdLikelihoodEle[sublead];
+      m_chmajME[0] = -999.;
+      m_chmajME[1] = eleChargeMajority(sublead);
 
     }
   }
@@ -2080,6 +2104,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
       m_lhEM[0] = eleIdLikelihoodEle[lead];
       m_lhEM[1] = -999.;
+      m_chmajEM[0] = eleChargeMajority(lead);
+      m_chmajEM[1] = -999.;
 
     } else {
       eleCands[me].push_back(myPosi);
@@ -2120,6 +2146,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
       m_lhME[0] = -999.;
       m_lhME[1] = eleIdLikelihoodEle[sublead];
+      m_chmajME[0] = -999.;
+      m_chmajME[1] = eleChargeMajority(sublead);
     }
   }
   
@@ -2180,6 +2208,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
         m_lhEM[0] = eleIdLikelihoodEle[lead];
         m_lhEM[1] = -999.;
+        m_chmajEM[0] = eleChargeMajority(lead);
+        m_chmajEM[1] = -999.;
 
       } else {
         eleCands[me].push_back(myPosi);
@@ -2220,6 +2250,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
         m_lhME[0] = -999.;
         m_lhME[1] = eleIdLikelihoodEle[sublead];
+        m_chmajME[0] = -999.;
+        m_chmajME[1] = eleChargeMajority(sublead);
       }
 
     } else {
@@ -2265,6 +2297,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
         m_lhEM[0] = eleIdLikelihoodEle[lead];
         m_lhEM[1] = -999.;
+        m_chmajEM[0] = eleChargeMajority(lead);
+        m_chmajEM[1] = -999.;
       } else {
         eleCands[me].push_back(myEle);
         muCands[me].push_back(myMuPlus);
@@ -2304,6 +2338,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
         m_lhME[0] = -999.;
         m_lhME[1] = eleIdLikelihoodEle[sublead];
+        m_chmajME[0] = -999.;
+        m_chmajME[1] = eleChargeMajority(sublead);
       }
     }
   }
@@ -2655,22 +2691,22 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
     if (!_selectionEE->getSwitch("asymmetricID")) 
-      isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
+      isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID,m_useBDTEleID);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID);
-      if(pt<20)  isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow);
+      if(pt>=20) isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID,m_useBDTEleID);
+      if(pt<20)  isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow,m_useBDTEleID);
     }
     if(!theId || !theIso || !theConvRej) continue;
     
     // further requests if we apply the smurf ID and pT<15
-    TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
-    if( stringIdLow.Contains("Smurf") ) {
-      float pt = GetPt(pxEle[i],pyEle[i]);
-      if ( pt<20  ) {
-	if ( fbremEle[i]<0.15 && !(fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue;
-      }
-    }
+//     TString stringIdLow (_selectionEE->getStringParameter("electronIDTypeLow"));
+//     if( stringIdLow.Contains("Smurf") && !m_useBDTEleID ) {
+//       float pt = GetPt(pxEle[i],pyEle[i]);
+//       if ( pt<20  ) {
+// 	if ( fbremEle[i]<0.15 && !(fabs(etaEle[i])<1.0 && eSuperClusterOverPEle[i]>0.95) ) continue;
+//       }
+//     }
 
     int track = gsfTrackIndexEle[i];
     // float d3dEle = impactPar3DGsfTrack[track];
@@ -2779,8 +2815,8 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     // match with MC truth
     myMatched[i] = 999;
     if ( !_selectionEE->getSwitch("isData") ) { 
-      int matchedReco = 0;
-      TVector3 pReco(pxEle[eleIndex],pyEle[eleIndex],pzEle[eleIndex]);
+      int matchedReco = 0; 
+     TVector3 pReco(pxEle[eleIndex],pyEle[eleIndex],pzEle[eleIndex]);
       for (int ii=0; ii<25; ii++) {  // chiara
 	TVector3 Welegen;
  	if ( (fabs(idMc[mothMc[ii]])==24) && (fabs(idMc[ii])==11) ) {
