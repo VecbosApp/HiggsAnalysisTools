@@ -60,7 +60,7 @@ public:
                       float pxSecJet[3], float pySecJet[3], float pzSecJet[3],
                       float pxL1, float pyL1, float pzL1,
                       float pxL2, float pyL2, float pzL2,
-                      int ch[2], float lh[2], float iso[2], int majority[2],
+                      int ch[2], float lh[2], float iso[2], int majority[2], float bdt[2],
                       TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet);
   
   void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2,
@@ -208,7 +208,7 @@ private:
 
   // lepton variables
   int myLepCharge[2];
-  float myIso[2], myEleLh[2];
+  float myIso[2], myEleLh[2], myEleBdt[2];
 
   TFile* myFile;
   TTree* myTree;
