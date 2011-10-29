@@ -145,13 +145,6 @@ void RedHiggsTree::addFake() {
   myTree->Branch("weightPP15",     &myWeightPP15,     "weightPP15/F");
   myTree->Branch("weightStatPP15", &myWeightStatPP15, "weightStatPP15/F");
 
-  myTree->Branch("weightFP30",     &myWeightFP30,     "weightFP30/F");
-  myTree->Branch("weightStatFP30", &myWeightStatFP30, "weightStatFP30/F");
-  myTree->Branch("weightFF30",     &myWeightFF30,     "weightFF30/F");
-  myTree->Branch("weightStatFF30", &myWeightStatFF30, "weightStatFF30/F");
-  myTree->Branch("weightPP30",     &myWeightPP30,     "weightPP30/F");
-  myTree->Branch("weightStatPP30", &myWeightStatPP30, "weightStatPP30/F");
-
   myTree->Branch("weightFP35",     &myWeightFP35,     "weightFP35/F");
   myTree->Branch("weightStatFP35", &myWeightStatFP35, "weightStatFP35/F");
   myTree->Branch("weightFF35",     &myWeightFF35,     "weightFF35/F");
@@ -376,7 +369,6 @@ void RedHiggsTree::fillRazor(float MTR, float mR, float gammaMR) {
 
 void RedHiggsTree::fillFake(int ntigh, float wfp, float wsfp, 
 			    float wfp15, float wsfp15, float wff15, float wsff15, float wpp15, float wspp15,
-			    float wfp30, float wsfp30, float wff30, float wsff30, float wpp30, float wspp30,
 			    float wfp35, float wsfp35, float wff35, float wsff35, float wpp35, float wspp35,
 			    float wfp50, float wsfp50, float wff50, float wsff50, float wpp50, float wspp50,
 			    float wfpQCD, float wsfpQCD, float wffQCD, float wsffQCD, float wppQCD, float wsppQCD) {
@@ -391,13 +383,6 @@ void RedHiggsTree::fillFake(int ntigh, float wfp, float wsfp,
   myWeightStatFF15 = wsff15;
   myWeightPP15     = wpp15;
   myWeightStatPP15 = wspp15;
-  //
-  myWeightFP30     = wfp30;
-  myWeightStatFP30 = wsfp30;
-  myWeightFF30     = wff30;
-  myWeightStatFF30 = wsff30;
-  myWeightPP30     = wpp30;
-  myWeightStatPP30 = wspp30;
   //
   myWeightFP35     = wfp35;
   myWeightStatFP35 = wsfp35;
