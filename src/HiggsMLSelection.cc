@@ -2763,7 +2763,7 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
-    float dz  = PVzPV[0] - trackVzTrack[track];  
+    float dz  = muonDzPV(i,0);  
 
     if (ptMu>20) {   // hardcoded
       if (_selectionEE->getSwitch("muonIPhighPT") && (!_selectionEE->passCut("muonIPhighPT",dxy)) ) continue;   
