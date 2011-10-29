@@ -488,6 +488,7 @@ bool Higgs::isEleDenomFake(int theEle, bool *isDenomEleID, bool *isDenomEleIso) 
   float ecalIsol = ecalIsolAbs/p3Ele.Pt();
   float hcalIsol = (dr03HcalTowerSumEtEle[theEle])/p3Ele.Pt();
   float trackerIsol = (dr03TkSumPtEle[theEle])/p3Ele.Pt();
+
   if (ecalIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
   if (hcalIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
   if (trackerIsol>0.2) { isGoodDenom = false; isGoodDenomIso = false; }
@@ -700,9 +701,9 @@ void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, b
   bool denomId, denomIso;
   denomId = denomIso = true;
   bool fullDenom = isEleDenomFake(eleIndex,&denomId,&denomIso);
-  
-  *eleIdOutput = (tightId && denomId);
-  *isolOutput = (tightIso && denomIso);
+
+  *eleIdOutput = (tightId && denomId && denomIso); // apply the full denom on top of the ID to be consistent with the others for synch reasons
+  *isolOutput = (tightIso);
   *convRejOutput = tightConvRej; // num and denom conv rej are the same
 
 }
@@ -795,24 +796,24 @@ float Higgs::eleBDT(ElectronIDMVA *mva, int eleIndex) {
   }
   
   int gsfTrack = gsfTrackIndexEle[eleIndex]; 
+  double gsfsign   = (-eleDxyPV(eleIndex,0) >=0 ) ? 1. : -1.;
 
   float ElePt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
 
   float EleDEtaIn = deltaEtaAtVtxEle[eleIndex];
   float EleDPhiIn = deltaPhiAtVtxEle[eleIndex];
   float EleHoverE = hOverEEle[eleIndex];
-  float EleD0 = transvImpactParGsfTrack[gsfTrack];
+  float EleD0 = gsfsign * transvImpactParGsfTrack[gsfTrack];
   float EleFBrem = fbremEle[eleIndex];
   float EleEOverP = eSuperClusterOverPEle[eleIndex];
   float EleESeedClusterOverPout = eSeedOverPoutEle[eleIndex];
   float EleNBrem = nbremsEle[eleIndex];
   TVector3 pInGsf(pxGsfTrack[gsfTrack],pyGsfTrack[gsfTrack],pzGsfTrack[gsfTrack]);
 
-  double gsfsign   = (-eleDxyPV(eleIndex,0) >=0 ) ? 1. : -1.;
   float EleIP3d = gsfsign * impactPar3DGsfTrack[gsfTrack];
   float EleIP3dSig = EleIP3d/impactPar3DErrorGsfTrack[gsfTrack];
 
-  // we have not pout and seed cluster energy in the trees. Gymnastyc...
+  // we have not pout and seed cluster energy in the trees. Gymnastics...
   float Pout = pInGsf.Mag() - fbremEle[eleIndex] * pInGsf.Mag();
   float SCSeedEnergy = EleESeedClusterOverPout * Pout;
   float EleESeedClusterOverPIn = SCSeedEnergy/pInGsf.Mag();      
