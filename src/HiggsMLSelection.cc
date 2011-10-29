@@ -998,7 +998,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
-                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE,
+                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE, m_bdtEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET); 
       myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[ee], m_p4LeptonMinusEnergy[ee], m_p4PlusType[ee], m_p4MinusType[ee],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
@@ -1007,7 +1007,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEE, pyLJEE, pzLJEE, pxSJEE, pySJEE, pzSJEE,
 				     m_p4LeptonMinus[ee]->Px(), m_p4LeptonMinus[ee]->Py(), m_p4LeptonMinus[ee]->Pz(),
 				     m_p4LeptonPlus[ee]->Px(), m_p4LeptonPlus[ee]->Py(), m_p4LeptonPlus[ee]->Pz(),
-                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE,
+                                     m_chEE, m_lhEE, m_isoEE, m_chmajEE, m_bdtEE,
                                      m_jetsSum[ee], m_uncorrJetsSum[ee], m_p3PFMET);
       myOutTreeEE -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[ee], m_p4LeptonPlusEnergy[ee], m_p4MinusType[ee], m_p4PlusType[ee],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[ee], jesMtDown[ee]);
@@ -1145,7 +1145,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
-                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM,
+                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM, m_bdtMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET); 
       myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonPlusEnergy[mm], m_p4LeptonMinusEnergy[mm], m_p4PlusType[mm], m_p4MinusType[mm],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm]);
@@ -1158,7 +1158,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJMM, pyLJMM, pzLJMM, pxSJMM, pySJMM, pzSJMM,
 				     m_p4LeptonMinus[mm]->Px(), m_p4LeptonMinus[mm]->Py(), m_p4LeptonMinus[mm]->Pz(),
 				     m_p4LeptonPlus[mm]->Px(), m_p4LeptonPlus[mm]->Py(), m_p4LeptonPlus[mm]->Pz(),
-                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM,
+                                     m_chMM, m_lhMM, m_isoMM, m_chmajMM, m_bdtMM,
                                      m_jetsSum[mm], m_uncorrJetsSum[mm], m_p3PFMET);
       myOutTreeMM -> fillSystematics( dummyV, dummyV, m_p4LeptonMinusEnergy[mm], m_p4LeptonPlusEnergy[mm], m_p4MinusType[mm], m_p4PlusType[mm],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[mm], jesMtDown[mm] );
@@ -1299,7 +1299,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
-                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM,
+                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM, m_bdtEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET); 
       myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[em], m_p4LeptonMinusEnergy[em], m_p4PlusType[em], m_p4MinusType[em],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
@@ -1308,7 +1308,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJEM, pyLJEM, pzLJEM, pxSJEM, pySJEM, pzSJEM,
 				     m_p4LeptonMinus[em]->Px(), m_p4LeptonMinus[em]->Py(), m_p4LeptonMinus[em]->Pz(),
 				     m_p4LeptonPlus[em]->Px(), m_p4LeptonPlus[em]->Py(), m_p4LeptonPlus[em]->Pz(),
-                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM,
+                                     m_chEM, m_lhEM, m_isoEM, m_chmajEM, m_bdtEM,
                                      m_jetsSum[em], m_uncorrJetsSum[em], m_p3PFMET);
       myOutTreeEM -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[em], m_p4LeptonPlusEnergy[em], m_p4MinusType[em], m_p4PlusType[em],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[em], jesMtDown[em]);
@@ -1449,7 +1449,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
-                                     m_chME, m_lhME, m_isoME, m_chmajME,
+                                     m_chME, m_lhME, m_isoME, m_chmajME, m_bdtME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET); 
       myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonPlusEnergy[me], m_p4LeptonMinusEnergy[me], m_p4PlusType[me], m_p4MinusType[me],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
@@ -1458,7 +1458,7 @@ void HiggsMLSelection::Loop() {
                                      pxLJME, pyLJME, pzLJME, pxSJME, pySJME, pzSJME,
 				     m_p4LeptonMinus[me]->Px(), m_p4LeptonMinus[me]->Py(), m_p4LeptonMinus[me]->Pz(),
 				     m_p4LeptonPlus[me]->Px(), m_p4LeptonPlus[me]->Py(), m_p4LeptonPlus[me]->Pz(),
-                                     m_chME, m_lhME, m_isoME, m_chmajME,
+                                     m_chME, m_lhME, m_isoME, m_chmajME, m_bdtME,
                                      m_jetsSum[me], m_uncorrJetsSum[me], m_p3PFMET);
       myOutTreeME -> fillSystematics( mySCEnergy, myR9, m_p4LeptonMinusEnergy[me], m_p4LeptonPlusEnergy[me], m_p4MinusType[me], m_p4PlusType[me],
                                       m_metFromJets, m_pfMetJESUp, m_pfMetJESDown, jesMtUp[me], jesMtDown[me]);
@@ -1908,6 +1908,8 @@ void HiggsMLSelection::setKinematicsEE(int myEle, int myPosi) {
     m_isoEE[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[ee];
     m_lhEE[0] = eleIdLikelihoodEle[lead];
     m_lhEE[1] = eleIdLikelihoodEle[sublead];    
+    m_bdtEE[0] = eleBDT(fMVA,lead);
+    m_bdtEE[1] = eleBDT(fMVA,sublead);
     m_chmajEE[0] = eleChargeMajority(lead);
     m_chmajEE[1] = eleChargeMajority(sublead);
   }
@@ -1960,6 +1962,8 @@ void HiggsMLSelection::setKinematicsMM(int myMuMinus, int myMuPlus) {
     m_isoMM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[mm];
     m_lhMM[0] = -999.;
     m_lhMM[1] = -999.;
+    m_bdtMM[0] = -999.;
+    m_bdtMM[1] = -999.;
     m_chmajMM[0] = -999.;
     m_chmajMM[1] = -999.;
   }
@@ -2012,6 +2016,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
       m_lhEM[0] = eleIdLikelihoodEle[lead];
       m_lhEM[1] = -999.;
+      m_bdtEM[0] = eleBDT(fMVA,lead);
+      m_bdtEM[1] = -999.;
       m_chmajEM[0] = eleChargeMajority(lead);
       m_chmajEM[1] = -999.;
 
@@ -2054,6 +2060,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
       m_lhME[0] = -999.;
       m_lhME[1] = eleIdLikelihoodEle[sublead];
+      m_bdtEM[0] = -999.;
+      m_bdtEM[1] = eleBDT(fMVA,sublead);
       m_chmajME[0] = -999.;
       m_chmajME[1] = eleChargeMajority(sublead);
 
@@ -2104,6 +2112,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
       m_lhEM[0] = eleIdLikelihoodEle[lead];
       m_lhEM[1] = -999.;
+      m_bdtEM[0] = eleBDT(fMVA,lead);
+      m_bdtEM[1] = -999.;
       m_chmajEM[0] = eleChargeMajority(lead);
       m_chmajEM[1] = -999.;
 
@@ -2146,6 +2156,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
       m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
       m_lhME[0] = -999.;
       m_lhME[1] = eleIdLikelihoodEle[sublead];
+      m_bdtME[0] = -999.;
+      m_bdtME[1] = eleBDT(fMVA,sublead);
       m_chmajME[0] = -999.;
       m_chmajME[1] = eleChargeMajority(sublead);
     }
@@ -2208,6 +2220,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
         m_lhEM[0] = eleIdLikelihoodEle[lead];
         m_lhEM[1] = -999.;
+        m_bdtEM[0] = eleBDT(fMVA,lead);
+        m_bdtEM[1] = -999.;
         m_chmajEM[0] = eleChargeMajority(lead);
         m_chmajEM[1] = -999.;
 
@@ -2250,6 +2264,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
         m_lhME[0] = -999.;
         m_lhME[1] = eleIdLikelihoodEle[sublead];
+        m_bdtME[0] = -999.;
+        m_bdtME[1] = eleBDT(fMVA,sublead);
         m_chmajME[0] = -999.;
         m_chmajME[1] = eleChargeMajority(sublead);
       }
@@ -2297,6 +2313,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoEM[1] = pfCombinedIsoMuon[sublead] / slowestLeptonPt[em];
         m_lhEM[0] = eleIdLikelihoodEle[lead];
         m_lhEM[1] = -999.;
+        m_bdtEM[0] = eleBDT(fMVA,lead);
+        m_bdtEM[1] = -999.;
         m_chmajEM[0] = eleChargeMajority(lead);
         m_chmajEM[1] = -999.;
       } else {
@@ -2338,6 +2356,8 @@ void HiggsMLSelection::setKinematicsEMME(int myEle, int myPosi, int myMuPlus, in
         m_isoME[1] = pfCombinedIsoEle[sublead] / slowestLeptonPt[me];
         m_lhME[0] = -999.;
         m_lhME[1] = eleIdLikelihoodEle[sublead];
+        m_bdtME[0] = -999.;
+        m_bdtME[1] = eleBDT(fMVA,sublead);
         m_chmajME[0] = -999.;
         m_chmajME[1] = eleChargeMajority(sublead);
       }
@@ -2795,9 +2815,9 @@ void HiggsMLSelection::setEleIdVariables(int hard, int slow) {
     mySpp[i] = SigmaiPiP(eleIndex);
     myEop[i] = eSuperClusterOverPEle[eleIndex];
     myFbrem[i] = fbremEle[eleIndex];
-    myTrackerIso[i]  = dr03TkSumPtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    myHcalIso[i]     = dr03HcalTowerSumEtFullConeEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    myEcalJIso[i]    = dr03EcalRecHitSumEtEle[eleIndex] - rhoFastjet*TMath::Pi()*0.3*0.3;
+    myTrackerIso[i]  = dr03TkSumPtEle[eleIndex];
+    myHcalIso[i]     = dr03HcalTowerSumEtEle[eleIndex];
+    myEcalJIso[i]    = dr03EcalRecHitSumEtEle[eleIndex];
     myEcalGTIso[i]   = 1000.;
     float combinedIso = 0.0;
     if ( fabs(myEta[i])<1.476 ) combinedIso = dr03TkSumPtEle[eleIndex] + TMath::Max(0.0,dr03EcalRecHitSumEtEle[eleIndex]-1.0) + dr03HcalTowerSumEtFullConeEle[eleIndex];
