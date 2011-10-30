@@ -10,6 +10,8 @@
 using namespace std;
 
 int FRWeights = 0;
+Float_t lumiA = 2.1;
+Float_t lumiB = 1.8;
 
 float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2);
 float calcMT(TVector3 met, TVector3 lepton);
@@ -38,14 +40,20 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   TFile fileSFmuons41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Spring11_41X.root");
   TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap");
   // 
-  TFile fileSFmuons42("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Summer11_42X.root");
-  TH2F *histoSFmuons42 = (TH2F*)fileSFmuons42.Get("hScaleFactorMap");
+  TFile fileSFmuons42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011AData_vs_42XMC.root");
+  TH2F *histoSFmuons42A = (TH2F*)fileSFmuons42A.Get("hScaleFactorMap");
+  // 
+  TFile fileSFmuons42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011BData_vs_42XMC.root");
+  TH2F *histoSFmuons42B = (TH2F*)fileSFmuons42B.Get("hScaleFactorMap");
   //
   TFile fileSFEle41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/EffSFs_ElectronSel_DataLP11_MCSpring11_41X.root");
   TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF");
   //
-  TFile fileSFEle42("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Electrons_vpvPlusExpo_OutputScaleFactorMap_Summer11_42X.root");
-  TH2F *histoSFele42 = (TH2F*)fileSFEle42.Get("hScaleFactorMap");
+  TFile fileSFEle42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011A_MC_42X_BDTID.root");
+  TH2F *histoSFele42A = (TH2F*)fileSFEle42A.Get("hScaleFactorMap");
+  //
+  TFile fileSFEle42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011B_MC_42X_BDTID.root");
+  TH2F *histoSFele42B = (TH2F*)fileSFEle42B.Get("hScaleFactorMap");
   
   if ( treeOrig ) {
     int nentriesOrig = treeOrig->GetEntries();
@@ -298,11 +306,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float jetcat = 0;
     float consecevent = -1;
     float iMet;
-
+    float dphill; // deltaphi in radians
+    
     // variables to be converted in float...
     float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
       f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_typeL1, f_typeL2, 
-      f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId;
+      f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav;
     float f_ch[2];
     
       
@@ -311,6 +320,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
     // additional (dummy for the moment)
     Float_t effW   = 1.0;   
+    Float_t effAW, effBW; effAW = effBW = 1.0;
     Float_t triggW = 1.0;
 
     for(int i=0; i<(int)trees.size();i++) {
@@ -318,6 +328,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
       // the selected final state: mm=0, ee=1, em=2, mue=3
       theTreeNew->Branch("channel", &f_finalstate, "channel/F");
+      theTreeNew->Branch("sameflav", &sameflav, "sameflav/F");
 
       // one integer containing the process identifier (for MC, 0 for data)
       theTreeNew->Branch("dataset", &f_processId, "dataset/F");
@@ -329,6 +340,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("event", &f_event, "event/F");
       theTreeNew->Branch("puW", &puweight, "puW/F");
       theTreeNew->Branch("effW", &effW, "effW/F");
+      theTreeNew->Branch("effAW", &effAW, "effAW/F");
+      theTreeNew->Branch("effBW", &effBW, "effBW/F");
       theTreeNew->Branch("triggW", &triggW, "triggW/F");
       theTreeNew->Branch("pfmet", &pfMet, "pfmet/F");
       theTreeNew->Branch("chmet", &tkMET, "chmet/F");  
@@ -337,7 +350,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("ppfmet", &pmet, "ppfmet/F");
       theTreeNew->Branch("pchmet", &pmet2, "pchmet/F");
       theTreeNew->Branch("mpmet", &projMet, "mpmet/F");
-      theTreeNew->Branch("dphill", &deltaPhi, "dphill/F");
+      theTreeNew->Branch("dphill", &dphill, "dphill/F");
       theTreeNew->Branch("drll", &deltaR, "drll/F");
       theTreeNew->Branch("mll", &eleInvMass, "mll/F");
       theTreeNew->Branch("mth", &transvMass, "mth/F");
@@ -566,10 +579,14 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         mtw2 = calcMT(*pfmetV,TV_L2);
         
         iMet = projMet * cos(TV_tkmet.Angle(*pfmetV));
+        
+        dphill = deltaPhi * TMath::Pi() / 180.;
 
 	//  offline efficiency scale factors
 	Float_t eff1=1.; 
 	Float_t eff2=1.;
+        Float_t effA1, effA2, effB1, effB2;
+        effA1 = effA2 = effB1 = effB2 = 1.;
 	if (processId>0) { // MC => apply scale factors
 	  if (finalstate==0) {   // mm
 	    if (release==0) { 
@@ -578,8 +595,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
 	    }
 	    else if (release==1) {
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);    
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);    
+	      effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);    
+	      effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);    
+	      effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);    
+	      effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);    
+              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
 	    }
 	  }
 	  else if (finalstate==1) { // ee
@@ -588,8 +609,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
 	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
 	    } else if (release==1) {
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	      effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
+	      effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
+	      effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
+	      effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
+              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
 	    }
 	  } else if (finalstate==2) {  // em
 	    // cout << "finalstate==2" << endl;
@@ -597,8 +622,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
 	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
 	    } else if (release==1) {
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele42);
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons42);
+	      effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
+	      effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);
+	      effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
+	      effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);
+              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
 	    }
 	  } else if (finalstate==3) {  // me
 	    // cout << "finalstate==3" << endl;
@@ -606,13 +635,21 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
 	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
 	    } else if (release==1) {
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons42);
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele42);
+	      effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);
+	      effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
+	      effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);
+	      effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
+              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
 	    }
 	  } 
 	  effW = eff1*eff2;
+	  effAW = effA1*effA2;
+	  effBW = effB1*effB2;
 	} else { // data
 	  effW = 1.;
+	  effAW = 1.;
+	  effBW = 1.;
 	}
 
         if(TV_jet1.Pt()>15) {
@@ -677,6 +714,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       } 
       consecevent = (float)j;
       
+      sameflav = (finalstate<2) ? 1. : 0;
+
       // change the format of the integers -> float
       f_run = (float)run;
       f_lumi = (float)lumi;
