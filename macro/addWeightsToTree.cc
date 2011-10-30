@@ -6,6 +6,7 @@
 #include <TLorentzVector.h>
 #include <TVector3.h>
 #include <iostream>
+#include <PUWeight.C>
 
 using namespace std;
 
@@ -35,6 +36,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     cout << "File " << filename << " not existing !" << endl;
     return;
   }
+
+  // used for PU reweighting
+  PUWeight* fPUWeight2011A = new PUWeight("summer11","DY",-1,"2011A",0); 
+  PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
 
   // reading root files with electrons and muons efficiencies
   TFile fileSFmuons41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Spring11_41X.root");
@@ -93,6 +98,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Bool_t          preDeltaPhi;
     Bool_t          finalSelection;
     Bool_t          step[29];
+    Float_t         npu[3];
     Bool_t          hlt;
     Float_t         KFactor;
     Bool_t          promptDecay;
@@ -192,6 +198,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("preDeltaPhi", &preDeltaPhi);
     treeOrig->SetBranchAddress("finalSelection", &finalSelection);
     treeOrig->SetBranchAddress("step", step);
+    treeOrig->SetBranchAddress("npu", npu);
     treeOrig->SetBranchAddress("KFactor", &KFactor);
     treeOrig->SetBranchAddress("promptDecay", &promptDecay);
     // treeOrig->SetBranchAddress("maxPtLh", &maxPtLh);
@@ -269,7 +276,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t R9_1,       R9_2;
     Float_t scEnergy_1, scEnergy_2;
     Int_t   matched_1,  matched_2;
-    
+
     Float_t ellh;
 
     // convert the booleans into integers (to insert in RooDataset)
@@ -323,6 +330,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t effAW, effBW; effAW = effBW = 1.0;
     Float_t triggW = 1.0;
 
+    // pileup
+    float puAW, puBW, puW;
+    
     for(int i=0; i<(int)trees.size();i++) {
       TTree *theTreeNew = trees[i];
 
@@ -338,7 +348,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("run", &f_run, "run/F");
       theTreeNew->Branch("lumi", &f_lumi, "lumi/F");
       theTreeNew->Branch("event", &f_event, "event/F");
-      theTreeNew->Branch("puW", &puweight, "puW/F");
+      theTreeNew->Branch("puW", &puW, "puW/F");
+      theTreeNew->Branch("puAW", &puAW, "puAW/F");
+      theTreeNew->Branch("puBW", &puBW, "puBW/F");
       theTreeNew->Branch("effW", &effW, "effW/F");
       theTreeNew->Branch("effAW", &effAW, "effAW/F");
       theTreeNew->Branch("effBW", &effBW, "effBW/F");
@@ -490,7 +502,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     }
 
     int j =0;
-
+  
     for(int i=0; i<nentriesOrig; i++) {
       if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl;
       treeOrig->GetEntry(i);
@@ -581,6 +593,11 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         iMet = projMet * cos(TV_tkmet.Angle(*pfmetV));
         
         dphill = deltaPhi * TMath::Pi() / 180.;
+
+	// PU weights
+	puAW = fPUWeight2011A->GetWeight(npu[1]); 
+	puBW = fPUWeight2011B->GetWeight(npu[1]); 
+	puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
 
 	//  offline efficiency scale factors
 	Float_t eff1=1.; 
