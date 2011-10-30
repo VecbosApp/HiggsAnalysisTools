@@ -22,7 +22,7 @@ muEcalIso               0
 leptonId                1
 convRej                 1
 looseMET                1
-tightMET                0
+tightMET                1
 projectedMET            1
 metOverPtLL             0
 mll                     1
