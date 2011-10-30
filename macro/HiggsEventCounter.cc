@@ -247,18 +247,18 @@ void countEvents() {
   //   sampleXsec.push_back(10.6);
 
   // powheg samples. Xsecs taken from PREP: http://cms.cern.ch/iCMS/prep/requestmanagement?pwg=TOP&campid=Summer11
-  sampleXsec.push_back(2.341); // 7
-  sampleXsec.push_back(1.265); // 8
+  sampleXsec.push_back(3.19); // 7
+  sampleXsec.push_back(1.44); // 8
 
-  sampleXsec.push_back(3.572); // 9
-  sampleXsec.push_back(1.843); // 10
+  sampleXsec.push_back(41.92); // 9
+  sampleXsec.push_back(22.65); // 10
 
   // prep says 7.46 pb. 7.87 is from Guillelmo
   sampleXsec.push_back(7.87); // 11
   sampleXsec.push_back(7.87); // 12
 
   // ttbar -> 2l2nu
-  sampleXsec.push_back(157.5 * 3*0.108 * 3*0.108); // 13
+  sampleXsec.push_back(163.0 * 3*0.108 * 3*0.108); // 13
 
   // Wgamma
   sampleXsec.push_back(137.5 * 0.1080); // 14
