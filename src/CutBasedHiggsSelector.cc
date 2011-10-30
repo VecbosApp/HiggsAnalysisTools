@@ -73,6 +73,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_maxPtElectron = selector.m_maxPtElectron;
   m_minPtElectron = selector.m_minPtElectron;
   m_WWInvMass = selector.m_WWInvMass;
+  m_nVtx = selector.m_nVtx;
   m_extraSlowLeptonPTMin = selector.m_extraSlowLeptonPTMin;
   m_processID = selector.m_processID;
   *_selection = *selector._selection;
@@ -318,8 +319,8 @@ bool CutBasedHiggsSelector::output() {
   theCounter->IncrVar("mllZPeak",m_weight);
   m_step8 = true;
 
-  if (_selection->getSwitch("tightMET") && !_selection->passCut("tightMET",m_met)) return false; 
-  if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet)) return false; 
+  if (_selection->getSwitch("tightMET") && !_selection->passCut("tightMET",m_projectedMet)) return false; 
+  if (_selection->getSwitch("projectedMET") && !_selection->passCut("projectedMET",m_projectedMet-(float(m_nVtx))/2.0)) return false; 
   theCounter->IncrVar("tightMETandPrMET",m_weight);
   m_step9 = true;
 

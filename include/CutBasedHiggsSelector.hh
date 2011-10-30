@@ -58,6 +58,7 @@ public:
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
   void SetExtraSlowLeptonPTCut(float ptMin) { m_extraSlowLeptonPTMin = ptMin; }
   void SetWWInvMass(float wwmass) { m_WWInvMass = wwmass; }
+  void SetNvtx(int nvtx) { m_nVtx = nvtx; }
 
   //! get output of the selector
   bool output();
@@ -124,6 +125,7 @@ private:
   float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons, m_metOverPtLL, m_deltaPhiLLJet;
   float m_maxPtElectron, m_minPtElectron, m_WWInvMass;
   float m_extraSlowLeptonPTMin;
+  int m_nVtx;
   int m_processID;
 
   //! contains the preselection cuts
