@@ -907,6 +907,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
     CutBasedHiggsSelectionEE.SetMet(m_theMET);					
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
+    CutBasedHiggsSelectionEE.SetNvtx(nPV);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
@@ -1059,6 +1060,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons[mm]);
     CutBasedHiggsSelectionMM.SetMet(m_theMET);					
     CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
+    CutBasedHiggsSelectionMM.SetNvtx(nPV);
     CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
     CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ[mm]);   
     CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
@@ -1212,6 +1214,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons[em]);
     CutBasedHiggsSelectionEM.SetMet(m_theMET);					
     CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
+    CutBasedHiggsSelectionEM.SetNvtx(nPV);
     CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
     CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ[em]);  
     CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
@@ -1362,6 +1365,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetNExtraLeptons(nextraleptons[me]);
     CutBasedHiggsSelectionME.SetMet(m_theMET);					
     CutBasedHiggsSelectionME.SetProjectedMet(m_projectedMet[me]);
+    CutBasedHiggsSelectionME.SetNvtx(nPV);
     CutBasedHiggsSelectionME.SetMetOverPtLL(m_metOptll[me]);
     CutBasedHiggsSelectionME.SetDeltaPhiLLJet(dphiLLJ[me]);   
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
