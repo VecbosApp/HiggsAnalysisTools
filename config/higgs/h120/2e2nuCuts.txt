@@ -10,8 +10,8 @@ muTrackerIso            -10000          10000
 muHcalIso               -10000          10000
 muEcalIso               -10000          10000
 looseMET                20              10000
-tightMET                30              10000
-projectedMET            40              10000
+tightMET                20              10000
+projectedMET            37              10000
 metOverPtLL             0.6             10000
 mll                     12              10000
 mllZPeak                15              10000
@@ -31,4 +31,4 @@ ptMuonAcc		10		10000
 etUncorrJetAcc          25              10000
 higgsMassRel            0.5             1.1
 higgsMassRel0j		70.		120.
-higgsMassRel1j		20.		120.
+higgsMassRel1j		70.		120.
