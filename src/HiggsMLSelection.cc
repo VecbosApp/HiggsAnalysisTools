@@ -3232,18 +3232,16 @@ std::vector<TLorentzVector> HiggsMLSelection::GetJetJesPcomponent(int jet) {
 
   // [nom/+1s/-1s]
 
-  TLorentzVector JP4(pxAK5PFPUcorrJet[jet],pyAK5PFPUcorrJet[jet],pzAK5PFPUcorrJet[jet],energyAK5PFPUcorrJet[jet]);
-
-  if(JP4.Pt()<=0) {
+  if(jet<0) {
     TLorentzVector up(0,0,0,0);
-    TLorentzVector down(0,0,0,0);
     std::vector<TLorentzVector> zero;
-    zero.push_back(JP4);
     zero.push_back(up);
-    zero.push_back(down);    
+    zero.push_back(up);
+    zero.push_back(up);    
     return zero;
   }
 
+  TLorentzVector JP4(pxAK5PFPUcorrJet[jet],pyAK5PFPUcorrJet[jet],pzAK5PFPUcorrJet[jet],energyAK5PFPUcorrJet[jet]);
   TLorentzVector LJP4JesUp = GetJESCorrected(JP4,"Up");
   TLorentzVector LJP4JesDown = GetJESCorrected(JP4,"Down");
 
