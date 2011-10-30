@@ -17,9 +17,6 @@ RedHiggsTree::RedHiggsTree(const char * filename) {
   myTree = new TTree("T1","eleID tree");
 
   // GENERAL block
-  myTree->Branch("run",                 &myRun,                 "run/I");
-  myTree->Branch("ls",                  &myLS,                  "ls/I");
-  myTree->Branch("event",               &myEvent,               "event/I");
   myTree->Branch("puweight",            &myPUWeight,            "puweight/F");
   myTree->Branch("hlt",                 &myHLT,                 "hlt/O");
   myTree->Branch("met",                 &myMet,                 "met/F");  
@@ -226,10 +223,10 @@ void RedHiggsTree::addHLTMuonsInfos() {
 }
 
 void RedHiggsTree::addRunInfos() {
-
   myTree->Branch("run", &myRun,     "run/I");
   myTree->Branch("lumi", &myLS,     "lumi/I");
   myTree->Branch("event", &myEvent, "event/I");
+  myTree->Branch("npu", myNpu, "npu[3]/F");
 }
 
 void RedHiggsTree::addMetStudies() {
@@ -534,13 +531,14 @@ void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool si
   myHLTSingleMuonOR = singleMuonOR;
 }
 
-void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, bool HLT) {
+void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, bool HLT, float npu[3]) {
 
   myRun = run;
   myLS = lumi;
   myEvent = event;
   myPUWeight = puweight;
   myHLT = HLT;
+  for(int i=0; i<3; i++) myNpu[i] = npu[i];
 }
 
 void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha ) {

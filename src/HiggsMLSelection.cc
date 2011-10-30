@@ -497,12 +497,12 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM->addMcTruthInfos();
     myOutTreeEM->addMcTruthInfos();
     myOutTreeME->addMcTruthInfos();
-  } else {
-    myOutTreeEE->addRunInfos();
-    myOutTreeMM->addRunInfos();
-    myOutTreeEM->addRunInfos();
-    myOutTreeME->addRunInfos();
   }
+
+  myOutTreeEE->addRunInfos();
+  myOutTreeMM->addRunInfos();
+  myOutTreeEM->addRunInfos();
+  myOutTreeME->addRunInfos();
 
   myOutTreeEE->addMLVars();
   myOutTreeMM->addMLVars();
@@ -586,7 +586,13 @@ void HiggsMLSelection::Loop() {
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
     if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
- 
+    float nputosave[3];
+    if( !_selectionEE->getSwitch("isData") ) {
+      for(int i=0; i<3; i++) nputosave[i] = float(nPU[i]);
+    } else {
+      for(int i=0; i<3; i++) nputosave[i] = -1.;
+    }
+
     if (!_selectionEE->getSwitch("isData") && _selectionEE->getSwitch("apply_kFactor")) evtKfactor = getkFactor("Higgs");
 
     // look to the MC truth decay tree 
@@ -960,7 +966,7 @@ void HiggsMLSelection::Loop() {
 
     if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
 
-    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[ee]);
+    myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[ee], nputosave);
 
     int theLJ  = theLeadingJet[ee];
     int theSJ  = theSecondJet[ee];
@@ -1109,7 +1115,7 @@ void HiggsMLSelection::Loop() {
 
     // filling the tree
     if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
-    myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[mm]);
+    myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[mm], nputosave);
     
     theLJ  = theLeadingJet[mm];
     theSJ  = theSecondJet[mm];
@@ -1263,7 +1269,7 @@ void HiggsMLSelection::Loop() {
     // filling the tree
     if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
 
-    myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[em]);
+    myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[em], nputosave);
 
     theLJ  = theLeadingJet[em];
     theSJ  = theSecondJet[em];
@@ -1414,7 +1420,7 @@ void HiggsMLSelection::Loop() {
     // filling the tree
     if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
 
-    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[me]);
+    myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[me], nputosave);
 
     theLJ  = theLeadingJet[me];
     theSJ  = theSecondJet[me];
