@@ -18,38 +18,65 @@ for($i=0; $i<($#masses+1); $i++) {
     open(MASSFILE,">config/higgs/higgsMass.txt");
     print MASSFILE "HiggsMass\t$mass\n";
 
-    $fullprefix=$prefix."/"."OptimMH$mass";
-    
     print  "submitting double ele...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleElectron 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with double ele. Sleeping 1000s to recover.\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleElectron 10 HiggsApp 8nh $prefix 0");
+    print  "done with double ele. Sleeping 600s to recover.\n";
     
-    sleep 1000;
+    sleep 600;
     
     print  "submitting double mu...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleMu 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with double mu. Sleeping 1000s to recover.\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleMu 10 HiggsApp 8nh $prefix 0");
+    print  "done with double mu. Sleeping 600s to recover.\n";
 
-    sleep 1000;
+    sleep 600;
 
     print  "submitting mu eg...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW MuEG 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with mu eg. Sleeping 1000s to recover.\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW MuEG 10 HiggsApp 8nh $prefix 0");
+    print  "done with mu eg. Sleeping 600s to recover.\n";
 
-    sleep 1000;
+    sleep 600;
     
     print  "submitting single mu...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleMu 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with single mu.\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleMu 5 HiggsApp 8nh $prefix 0");
+    print  "done with single mu. Sleeping 600s to recover.\n";
 
-    sleep 1000;
+    sleep 600;
 
     print  "submitting single ele...\n";
-    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleElectron 10 HiggsApp 8nh $fullprefix 0");
-    print  "done with single electron.\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleElectron 10 HiggsApp 8nh $prefix 0");
+    print  "done with single electron. Sleeping 600s to recover.\n";
 
+    sleep 600;
+
+    print  "submitting double ele...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleElectron_Run2011B 10 HiggsApp 8nh $prefix 0");
+    print  "done with double ele. Sleeping 600s to recover.\n";
     
-    print "\nDONE WITH MASS $mass GeV. Sleeping for 1000 s not to stress castor...\n";
+    sleep 600;
+    
+    print  "submitting double mu...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW DoubleMu_Run2011B 10 HiggsApp 8nh $prefix 0");
+    print  "done with double mu. Sleeping 600s to recover.\n";
+
+    sleep 600;
+
+    print  "submitting mu eg...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW MuEG_Run2011B 10 HiggsApp 8nh $prefix 0");
+    print  "done with mu eg. Sleeping 600s to recover.\n";
+
+    sleep 600;
+    
+    print  "submitting single mu...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleMu_Run2011B 5 HiggsApp 8nh $prefix 0");
+    print  "done with single mu. Sleeping 600s to recover.\n";
+
+    sleep 600;
+
+    print  "submitting single ele...\n";
+    system("python cmst3_submit_manyfilesperjob.py Data7TeVHWW SingleElectron_Run2011B 10 HiggsApp 8nh $prefix 0");
+    print  "done with single electron.\n";
+    
+    print "\nDONE\n";
     print "<--------------------------";
 
 }
