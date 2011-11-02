@@ -98,6 +98,8 @@ private:
   float mueleIsoGlobalSum(int theMuon, int theOtherEle); 
   //! get the kFactor of the event
   float getkFactor(std::string process);
+  //! get the generator level quantities for DY->ll (ee/mumu only)
+  void getDYGeneratorKinematics(int lepType);
   //! set the electron ID variables to dump
   void setEleIdVariables(int hard, int slow);
   //! search for the hardest lepton vertex
@@ -259,6 +261,9 @@ private:
 
   //! kfactor evaluator offline
   kFactorEvaluator *calculator_;
+
+  //! DY generator level quantities
+  float _genmll, _genptll, _genyll;
   
 };
 #endif

@@ -204,8 +204,10 @@ void RedHiggsTree::addKFactor() {
 }
 
 void RedHiggsTree::addMcTruthInfos() {
-
   myTree->Branch("promptDecay",         &myPromptDecay,         "promptDecay/O");
+  myTree->Branch("genmll",              &myGenmll,              "genmll/F");
+  myTree->Branch("genptll",             &myGenptll,             "genptll/F");
+  myTree->Branch("genyll",              &myGenyll,              "genyll/F");
 }
 
 void RedHiggsTree::addHLTElectronsInfos() {
@@ -512,9 +514,11 @@ void RedHiggsTree::fillKFactor(float kfactor, float genh, float ptlj ) {
   myLeadingJetPt = ptlj;
 }
 
-void RedHiggsTree::fillMcTruth(bool prompt) {
-
+void RedHiggsTree::fillMcTruth(bool prompt, float genmll, float genptll, float genyll) {
   myPromptDecay = prompt;
+  myGenptll = genptll;
+  myGenyll = genyll;
+  myGenmll = genmll;
 }
 
 void RedHiggsTree::fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR) {

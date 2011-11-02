@@ -88,7 +88,7 @@ public:
   //! fill with the k-Factor (used for signal only)
   void fillKFactor(float kfactor, float genh, float ptlj );
   //! fill the MC truth informations
-  void fillMcTruth(bool prompt);
+  void fillMcTruth(bool prompt, float genmll, float genptll, float genyll);
   //! fill the HLT electron triggers informations
   void fillHLTElectrons(bool singleEle, bool singleEleRelaxed, bool singleEleOR);
   //! fill the HLT muons triggers informations
@@ -109,6 +109,7 @@ public:
 private:
   bool myHLT;
   bool myPromptDecay;
+  float myGenptll, myGenyll, myGenmll;
   bool myHLTSingleElectron;
   bool myHLTSingleElectronRelaxed;
   bool myHLTSingleElectronOR;

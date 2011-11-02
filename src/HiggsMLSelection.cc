@@ -602,11 +602,14 @@ void HiggsMLSelection::Loop() {
 
     bool promptEE, promptMM, promptEM, promptME;
     promptEE = promptMM = promptEM = promptME = false;
+    _genmll = _genptll = _genyll = -1.;
     if( !_selectionEE->getSwitch("isData") ) {
       promptEE = findMcTree("HtoWWto2e2nu_prompt");
       promptMM = findMcTree("HtoWWto2m2nu_prompt");
       promptEM = findMcTree("HtoWWtoem2nu_prompt");  
       promptME = findMcTree("HtoWWtome2nu_prompt");  
+      if(TString(_datasetName.c_str()).Contains("DYToEE")) getDYGeneratorKinematics(11);
+      if(TString(_datasetName.c_str()).Contains("DYToMuMu")) getDYGeneratorKinematics(13);
     }
 
     // Good Run selection
@@ -964,7 +967,7 @@ void HiggsMLSelection::Loop() {
     if( GetPt(pxEle[thePreElectron],pyEle[thePreElectron]) > GetPt(pxEle[thePrePositron],pyEle[thePrePositron]) ) setEleIdVariables(thePreElectron,thePrePositron);
     else setEleIdVariables(thePrePositron, thePreElectron);
 
-    if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE);
+    if(!_selectionEE->getSwitch("isData")) myOutTreeEE -> fillMcTruth(promptEE,_genmll,_genptll,_genyll);
 
     myOutTreeEE->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[ee], nputosave);
 
@@ -1114,7 +1117,7 @@ void HiggsMLSelection::Loop() {
 
 
     // filling the tree
-    if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM);
+    if(!_selectionMM->getSwitch("isData")) myOutTreeMM -> fillMcTruth(promptMM,_genmll,_genptll,_genyll);
     myOutTreeMM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[mm], nputosave);
     
     theLJ  = theLeadingJet[mm];
@@ -1267,7 +1270,7 @@ void HiggsMLSelection::Loop() {
     outputStep28 = CutBasedHiggsSelectionEM.outputStep28();
 
     // filling the tree
-    if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM);
+    if(!_selectionEM->getSwitch("isData")) myOutTreeEM -> fillMcTruth(promptEM,_genmll,_genptll,_genyll);
 
     myOutTreeEM->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[em], nputosave);
 
@@ -1418,7 +1421,7 @@ void HiggsMLSelection::Loop() {
     outputStep28 = CutBasedHiggsSelectionME.outputStep28();
 
     // filling the tree
-    if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME);
+    if(!_selectionME->getSwitch("isData")) myOutTreeME -> fillMcTruth(promptME,_genmll,_genptll,_genyll);
 
     myOutTreeME->fillRunInfos(runNumber, lumiBlock, eventNumber, weight, passedHLT[me], nputosave);
 
@@ -3251,5 +3254,25 @@ std::vector<TLorentzVector> HiggsMLSelection::GetJetJesPcomponent(int jet) {
   jes.push_back(LJP4JesDown);
 
   return jes;
+
+}
+
+void HiggsMLSelection::getDYGeneratorKinematics(int lepType) {
+
+  TLorentzVector p1, p2;
+
+  for(int imc=2;imc<40;imc++) {
+    if(fabs(idMc[mothMc[imc]])==23) {
+      float pt = pMc[imc]*fabs(sin(thetaMc[imc]));
+      if(idMc[imc]==lepType) p1.SetPtEtaPhiE(pt,etaMc[imc],phiMc[imc],energyMc[imc]);
+      if(idMc[imc]==-lepType) p2.SetPtEtaPhiE(pt,etaMc[imc],phiMc[imc],energyMc[imc]);
+    }
+  }
+  
+  if(p1.Pt()>0 && p2.Pt()>0) {
+    _genmll = (p1+p2).M();
+    _genptll = (p1+p2).Pt();
+    _genyll = (p1+p2).Rapidity();
+  } 
 
 }
