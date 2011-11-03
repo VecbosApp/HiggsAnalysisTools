@@ -7,6 +7,7 @@
 #include <TVector3.h>
 #include <iostream>
 #include <PUWeight.C>
+#include <DYWeighter.cc>
 
 using namespace std;
 
@@ -41,25 +42,35 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   PUWeight* fPUWeight2011A = new PUWeight("summer11","DY",-1,"2011A",0); 
   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
 
+  DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
+
   // reading root files with electrons and muons efficiencies
   TFile fileSFmuons41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Spring11_41X.root");
-  TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap");
+  TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap")->Clone("effSFmuons41");
+  fileSFmuons41.Close();
   // 
-  TFile fileSFmuons42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011AData_vs_42XMC.root");
-  TH2F *histoSFmuons42A = (TH2F*)fileSFmuons42A.Get("hScaleFactorMap");
+  //TFile fileSFmuons42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011AData_vs_42XMC.root");
+  TFile fileSFmuons42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_mu.root");
+  TH2F *histoSFmuons42A = (TH2F*)fileSFmuons42A.Get("hScaleFactorMap")->Clone("effSFmuons42A");
   // 
-  TFile fileSFmuons42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011BData_vs_42XMC.root");
-  TH2F *histoSFmuons42B = (TH2F*)fileSFmuons42B.Get("hScaleFactorMap");
+  //TFile fileSFmuons42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011BData_vs_42XMC.root");
+  TFile fileSFmuons42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_mu.root");
+  TH2F *histoSFmuons42B = (TH2F*)fileSFmuons42B.Get("hScaleFactorMap")->Clone("effSFmuons42B");
   //
   TFile fileSFEle41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/EffSFs_ElectronSel_DataLP11_MCSpring11_41X.root");
-  TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF");
+  TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF")->Clone("effSFele41");
+  fileSFEle41.Close();
   //
-  TFile fileSFEle42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011A_MC_42X_BDTID.root");
-  TH2F *histoSFele42A = (TH2F*)fileSFEle42A.Get("hScaleFactorMap");
+  // TFile fileSFEle42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011A_MC_42X_BDTID.root");
+  TFile fileSFEle42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_ele.root");
+  TH2F *histoSFele42A = (TH2F*)fileSFEle42A.Get("hScaleFactorMap")->Clone("effSFele42A");
   //
-  TFile fileSFEle42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011B_MC_42X_BDTID.root");
-  TH2F *histoSFele42B = (TH2F*)fileSFEle42B.Get("hScaleFactorMap");
-  
+  //TFile fileSFEle42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011B_MC_42X_BDTID.root");
+  TFile fileSFEle42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_ele.root");
+  TH2F *histoSFele42B = (TH2F*)fileSFEle42B.Get("hScaleFactorMap")->Clone("effSFele42B");
+
+  fileOrig->cd();
+
   if ( treeOrig ) {
     int nentriesOrig = treeOrig->GetEntries();
 
@@ -173,10 +184,18 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         weightStatPP;
     Int_t           tight;
 
+    // DY generator level quantities
+    Float_t         genmll;
+    Float_t         genptll;
+    Float_t         genyll;
+
     treeOrig->SetBranchAddress("run", &run);
     treeOrig->SetBranchAddress("lumi", &lumi);
     treeOrig->SetBranchAddress("event", &event);
     treeOrig->SetBranchAddress("puweight", &puweight);
+    treeOrig->SetBranchAddress("genmll", &genmll);
+    treeOrig->SetBranchAddress("genptll", &genptll);
+    treeOrig->SetBranchAddress("genyll", &genyll);
     treeOrig->SetBranchAddress("hlt", &hlt);
     treeOrig->SetBranchAddress("met", &met);
     treeOrig->SetBranchAddress("pfMet", &pfMet);
@@ -306,7 +325,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float pmet, pmet2;
     float L1eta, L1phi;
     float L2eta, L2phi;
-    float dileptonPt;
+    float dileptonPt, dileptonEta;
     float mtw1, mtw2;
     float R, R2;
     float dgammamr;
@@ -348,6 +367,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("run", &f_run, "run/F");
       theTreeNew->Branch("lumi", &f_lumi, "lumi/F");
       theTreeNew->Branch("event", &f_event, "event/F");
+      theTreeNew->Branch("genmll", &genmll, "genmll/F");
+      theTreeNew->Branch("genptll", &genptll, "genptll/F");
+      theTreeNew->Branch("genyll", &genyll, "genyll/F");
       theTreeNew->Branch("puW", &puW, "puW/F");
       theTreeNew->Branch("puAW", &puAW, "puAW/F");
       theTreeNew->Branch("puBW", &puBW, "puBW/F");
@@ -708,10 +730,17 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         }
 
         dileptonPt   = TV_L1p2.Pt();
+        dileptonEta = TV_L1p2.Eta();
         L1eta = TV_L1.Eta();
         L2eta = TV_L2.Eta();
         L1phi = TV_L1.Phi();
         L2phi = TV_L2.Phi();
+        
+        // replace 1 with the POWHEG -> FEWZ NNLO x-sec
+        if(processId==30 || processId==31 || processId==33 || processId==34) {
+          KFactor = DYNNLOWeight->GetWeight(genmll,genptll,genyll);
+        }
+
       } else { 
         L1eta = 100.;
         L2eta = 100.;
