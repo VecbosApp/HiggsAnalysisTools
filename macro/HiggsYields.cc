@@ -168,9 +168,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   
   char njcut[30];
   sprintf(njcut, "njets==%d", njets);
-  char wwselcut[30];
-  if(njets==0) sprintf(wwselcut,"WWSel");
-  else if(njets==1) sprintf(wwselcut,"WWSel1j");
+  char wwselcut[700];
+
+  if(njets==0) sprintf(wwselcut,"WWSel && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav))");      
+  else if(njets==1) sprintf(wwselcut,"WWSel1j && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav))");
   else {
     std::cout << "Jet bin must be 0/1" << std::endl;
     return;
@@ -184,10 +185,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*effW*kfW");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*effW*kfW");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*effW*kfW");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*effW*kfW");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puBW*effW*kfW");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puBW*effW*kfW");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puBW*effW*kfW");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puBW*effW*kfW");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
