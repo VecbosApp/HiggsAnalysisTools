@@ -1,8 +1,10 @@
 #include <TFile.h>
 #include <TChain.h>
+#include <TCanvas.h>
 #include <TTree.h>
 #include <TString.h>
 #include <TH1F.h>
+#include <TMath.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -10,12 +12,16 @@
 #include <math.h>
 #include "massDependentCuts.cc"
 
+using namespace std;
+
 enum { ee=0, mm=1, em=2, me=3 };
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK, float nZV, float nZVerr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString addCutIn="1", TString addCutOut="1");
+void makeRPlot(int mH, int njets);
+void makeAllRPlots(int njets);
 
 void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk) {
 
@@ -125,9 +131,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   
   char njcut[30];
   sprintf(njcut, "njets==%d", njets);
-  char wwselcut[30];
-  if(njets==0) sprintf(wwselcut,"WWSel");
-  else if(njets==1) sprintf(wwselcut,"WWSel1j");
+  char wwselcut[1000];
+  if(njets==0) sprintf(wwselcut,"WWSel && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20");
+  else if(njets==1) sprintf(wwselcut,"WWSel1j && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20");
   else {
     std::cout << "Jet bin must be 0/1" << std::endl;
     return;
@@ -142,72 +148,75 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   TTree *treeZjets  = (TTree*)fileZjets->Get("latino");
   TTree *treeOthers = (TTree*)fileOthers->Get("latino");
 
-  TH1F *ZeejetsH = new TH1F("ZeejetsH","",50,0,180);
-  TH1F *ZmmjetsH = new TH1F("ZmmjetsH","",50,0,180);
-  TH1F *ZemjetsH = new TH1F("ZemjetsH","",50,0,180);
-  TH1F *ZmejetsH = new TH1F("ZmejetsH","",50,0,180);
+  TH1F *ZeejetsH = new TH1F("ZeejetsH","",50,0,TMath::Pi());
+  TH1F *ZmmjetsH = new TH1F("ZmmjetsH","",50,0,TMath::Pi());
+  TH1F *ZemjetsH = new TH1F("ZemjetsH","",50,0,TMath::Pi());
+  TH1F *ZmejetsH = new TH1F("ZmejetsH","",50,0,TMath::Pi());
 
   // to subtract WW,ZZ
-  TH1F *OthersEEH = new TH1F("OthersEEH","",50,0,180);
-  TH1F *OthersMMH = new TH1F("OthersMMH","",50,0,180);
+  TH1F *OthersEEH = new TH1F("OthersEEH","",50,0,TMath::Pi());
+  TH1F *OthersMMH = new TH1F("OthersMMH","",50,0,TMath::Pi());
 
-  TH1F *neeInH = new TH1F("neeInH","",50,0,180);
-  TH1F *nmmInH = new TH1F("nmmInH","",50,0,180);
-  TH1F *nemInH = new TH1F("nemInH","",50,0,180);
+  TH1F *neeInH = new TH1F("neeInH","",50,0,TMath::Pi());
+  TH1F *nmmInH = new TH1F("nmmInH","",50,0,TMath::Pi());
+  TH1F *nemInH = new TH1F("nemInH","",50,0,TMath::Pi());
 
   // to decide the cut for R
-  TH1F *neeCheckInH = new TH1F("neeCheckInH","",50,0,180);
-  TH1F *nmmCheckInH = new TH1F("nmmCheckInH","",50,0,180);
+  TH1F *nllCheckInH = new TH1F("nllCheckInH","",50,0,TMath::Pi());
 
   // to estimate R and k from MC
-  TH1F *neeLooseInH  = new TH1F("neeLooseInH","",50,0,180);
-  TH1F *neeLooseOutH = new TH1F("neeLooseOutH","",50,0,180);
-  TH1F *nmmLooseInH  = new TH1F("nmmLooseInH","",50,0,180);
-  TH1F *nmmLooseOutH = new TH1F("nmmLooseOutH","",50,0,180);
+  TH1F *neeLooseInH  = new TH1F("neeLooseInH","",50,0,TMath::Pi());
+  TH1F *neeLooseOutH = new TH1F("neeLooseOutH","",50,0,TMath::Pi());
+  TH1F *nmmLooseInH  = new TH1F("nmmLooseInH","",50,0,TMath::Pi());
+  TH1F *nmmLooseOutH = new TH1F("nmmLooseOutH","",50,0,TMath::Pi());
 
   // to estimate R and k from data
-  TH1F *neeLooseInHData  = new TH1F("neeLooseInHData","",50,0,180);
-  TH1F *neeLooseOutHData = new TH1F("neeLooseOutHData","",50,0,180);
-  TH1F *nmmLooseInHData  = new TH1F("nmmLooseInHData","",50,0,180);
-  TH1F *nmmLooseOutHData = new TH1F("nmmLooseOutHData","",50,0,180);  
-  TH1F *nemLooseInHData  = new TH1F("nemLooseInHData","",50,0,180);
-  TH1F *nemLooseOutHData = new TH1F("nemLooseOutHData","",50,0,180);  
+  TH1F *neeLooseInHData  = new TH1F("neeLooseInHData","",50,0,TMath::Pi());
+  TH1F *neeLooseOutHData = new TH1F("neeLooseOutHData","",50,0,TMath::Pi());
+  TH1F *nmmLooseInHData  = new TH1F("nmmLooseInHData","",50,0,TMath::Pi());
+  TH1F *nmmLooseOutHData = new TH1F("nmmLooseOutHData","",50,0,TMath::Pi());  
+  TH1F *nemLooseInHData  = new TH1F("nemLooseInHData","",50,0,TMath::Pi());
+  TH1F *nemLooseOutHData = new TH1F("nemLooseOutHData","",50,0,TMath::Pi());  
 
-  treeZjets->Project("ZeejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("ZmmjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==0)*baseW*puW*effW")).Data());
-  treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==2)*baseW*puW*effW")).Data());
-  treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==3)*baseW*puW*effW")).Data());
+  treeZjets->Project("ZeejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==1)*baseW*kfW*puAW*effAW")).Data());
+  treeZjets->Project("ZmmjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==0)*baseW*kfW*puAW*effAW")).Data());
+  treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==2)*baseW*kfW*puAW*effAW")).Data());
+  treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==3)*baseW*kfW*puAW*effAW")).Data());
 
-  // to choose between the last and the last-1 bin for R computation
-  treeZjets->Project("neeCheckInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("nmmCheckInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==0)*baseW*puW*effW")).Data());
-  int forTheCheck = neeCheckInH->GetEntries() + nmmCheckInH->GetEntries();
+  cout << "start: njcut = " << njcut << " come string = " << TString(njcut).Data() << std::endl;
+
+  TString wwCutIn("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
+  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
+  TString wwCutOut("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
+  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
+  TString weightString("baseW*kfW*puAW*effAW");
+
+  treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutIn + TString(" && mpmet>(37+nvtx/2.) && sameflav")+TString(")*baseW*kfW*puAW*effAW"));
+  float forTheCheck = nllCheckInH->GetEntries();
   char mpmetcut[30];
-  if(forTheCheck<50)  { std::cout << "less than 50 events: cutting at MET>30" << std::endl; sprintf(mpmetcut,"mpmet>30"); }
-  if(forTheCheck>=50) { std::cout << "more than 50 events: cutting at MET>40" << std::endl; sprintf(mpmetcut,"mpmet>40"); }
+  if(forTheCheck<50)  { std::cout << "less than 50 events: cutting at MET>30" << std::endl; sprintf(mpmetcut,"mpmet>30 && mpmet<=(37+nvtx/2.)"); }
+  if(forTheCheck>=50) { std::cout << "more than 50 events: cutting at MET>(37+nvtx/2.)" << std::endl; sprintf(mpmetcut,"mpmet>(37+nvtx/2.)"); }
+  
+  // nominal R computed with cut at 37 or 30 (according to the statistics at denominator) - MC
+  treeZjets->Project("neeLooseInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
+  treeZjets->Project("neeLooseOutH","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
+  treeZjets->Project("nmmLooseInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
+  treeZjets->Project("nmmLooseOutH","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
 
-  // nominal R computed with cut at 40 or 30 (according to the statistics at denominator) - MC
-  treeZjets->Project("neeLooseInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("neeLooseOutH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && zveto && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("nmmLooseInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==0)*baseW*puW*effW")).Data());
-  treeZjets->Project("nmmLooseOutH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto && channel==0)*baseW*puW*effW")).Data());
-
-  // nominal R computed with cut at 40 or 30 (according to the statistics at denominator) - data
-  treeData->Project("neeLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && !zveto && channel==1)")).Data());
-  treeData->Project("neeLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && zveto && channel==1)")).Data());
-  treeData->Project("nmmLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && !zveto && channel==0)")).Data());
-  treeData->Project("nmmLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && zveto && channel==0)")).Data());
-  treeData->Project("nemLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && !zveto && (channel==2 || channel==3))")).Data());
-  treeData->Project("nemLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && ")+TString(mpmetcut)+TString(" && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && mll>12 && zveto && (channel==2 || channel==3))")).Data());
+  // nominal R computed with cut at 37 or 30 (according to the statistics at denominator) - data
+  treeData->Project("neeLooseInHData","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
+  treeData->Project("neeLooseOutHData","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
+  treeData->Project("nmmLooseInHData","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)"));
+  treeData->Project("nmmLooseOutHData","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)"));
   
   // contribution of dibosons under the peak (from MC) with nominal selection
-  treeOthers->Project("OthersEEH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && !zveto && channel==1)*baseW*puW*effW")).Data());
-  treeOthers->Project("OthersMMH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>40 &&")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && !zveto && channel==0)*baseW*puW*effW")).Data());
-  
+  treeOthers->Project("OthersEEH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
+  treeOthers->Project("OthersMMH","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
+
   // number of events measured in data under the peak (control region with nominal selection)
-  treeData->Project("neeInH","dphill",(TString("mll>12 && finalLeptons && pfmet>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && !zveto && channel==1")).Data()); 
-  treeData->Project("nmmInH","dphill",(TString("mll>12 && finalLeptons && pfmet>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && !zveto && channel==0")).Data());
-  treeData->Project("nemInH","dphill",(TString("mll>12 && finalLeptons && pfmet>20 && mpmet>40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString(" && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0  && bveto && nSoftMu==0 && !zveto && (channel==2 || channel==3)")).Data());
+  treeData->Project("neeInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
+  treeData->Project("nmmInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)"));
+  treeData->Project("nemInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcut) + TString(" && !sameflav)"));
 
   // R and k estimations (from MC)
   float R[3], R_err[3], k[3], k_err[3];
@@ -224,9 +233,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   k[mm] = sqrt(nmmLooseInH->Integral() / neeLooseInH->Integral());
   k_err[mm] = 0.01; // from other studies
 
-  cout << "from loose analysis (cut 40 or 30) => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
-  cout << "from loose analysis (cut 40 or 30) => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
-  cout << "from loose analysis (cut 40 or 30) => Ree = "    << R[ee]  << ", Rmm = " << R[mm] << endl;
+  cout << "from loose analysis (cut 37 or 30) => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
+  cout << "from loose analysis (cut 37 or 30) => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
+  cout << "from loose analysis (cut 37 or 30) => Ree = "    << R[ee]  << ", Rmm = " << R[mm] << endl;
 
   // combine ee+mm because of low stat (MC) =>
   // R combined
@@ -279,11 +288,15 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   //   float kll_data_err = k_data_err[mm] * (1. - 1./k_data[mm]/k_data[mm]);
 
 
-  // for the systematics: mpMET>20 in MC
-  treeZjets->Project("neeLooseInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("nmmLooseInH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && !zveto && channel==0)*baseW*puW*effW")).Data());
-  treeZjets->Project("neeLooseOutH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto && channel==1)*baseW*puW*effW")).Data());
-  treeZjets->Project("nmmLooseOutH","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto && channel==0)*baseW*puW*effW")).Data());
+  // for the systematics: mpMET>30-37 or 20-30 in MC depending on the statistics of the 37 GeV bin
+  char mpmetcutsyst[30];
+  if(forTheCheck<50) { sprintf(mpmetcutsyst,"mpmet>20 && mpmet<30"); }
+  if(forTheCheck>=50) { sprintf(mpmetcutsyst,"mpmet>30 && mpmet<(37+nvtx/2.)"); }
+
+  treeZjets->Project("neeLooseInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==1)*") + weightString);
+  treeZjets->Project("neeLooseOutH","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==1)*") + weightString);
+  treeZjets->Project("nmmLooseInH","dphill",TString("(") + wwCutIn + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==0)*") + weightString);
+  treeZjets->Project("nmmLooseOutH","dphill",TString("(") + wwCutOut + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==0)*") + weightString);
 
   float R_interm[2];
   R_interm[ee] = (neeLooseOutH->Integral()) / (neeLooseInH->Integral());
@@ -302,14 +315,6 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   }
   Rll_systerr = fabs(Rll - Rll_interm);
   Rll_toterr  = quadrSum(Rll_err,Rll_systerr);
-
-  // for the systematics: mpMET>20 in data
-  treeData->Project("neeLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==1)")).Data());
-  treeData->Project("neeLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==1)")).Data());
-  treeData->Project("nmmLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==0)")).Data());
-  treeData->Project("nmmLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && channel==0)")).Data());
-  treeData->Project("nemLooseInHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutIn+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && !zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && (channel==2 || channel==3))")).Data());
-  treeData->Project("nemLooseOutHData","dphill",(TString("(mll>12 && finalLeptons && pfmet>20 && mpmet>20 && mpmet<40 && ")+addCutOut+TString(" && ")+TString(njcut)+TString( " && bveto && nSoftMu==0 && mll>12 && zveto && ((jetpt1>15 && abs(dphilljet)<165) || jetpt1<=15) && (channel==2 || channel==3))")).Data());
 
   float R_data_interm[2];
   R_data_interm[ee] = (neeLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()) / (neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral());
@@ -459,9 +464,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     tablefileMM.open(nameFileTableMM, ios_base::app);
     tablefileMM.precision(2);
 
-    tablefileMM << mass << "\t&\t" << nmmIn << "\t&\t" << nemIn << "\t&\t" << nOthers[mm] 
+    tablefileMM << mass << "\t&\t" << nmmIn //<< "\t&\t" << nemIn << "\t&\t" << nOthers[mm] 
                 << "\t&\t" << nmmIn - 0.5*nemIn * k[mm] - nOthers[mm]
-                << "\t&\t" << k[mm] << " $\\pm$ " << k_err[mm]
+      //                << "\t&\t" << k[mm] << " $\\pm$ " << k_err[mm]
                 << "\t&\t" << R_data[mm] << " $\\pm$ " << R_data_err[mm] << " $\\pm$ " << R_data_systerr[mm] 
                 << "\t&\t" <<  nmmExp << " $\\pm$ " << nmmExp_err 
                 << "\t&\t" << nZmmjetsMC << " $\\pm$ " << nZmmjetsMC_err 
@@ -474,9 +479,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     tablefileLL.open(nameFileTableLL, ios_base::app);
     tablefileLL.precision(2);
 
-    tablefileLL << mass << "\t&\t" << nllIn << "\t&\t" << nemIn << "\t&\t" << nOthersll
+    tablefileLL << mass << "\t&\t" << nllIn //<< "\t&\t" << nemIn << "\t&\t" << nOthersll
                 << "\t&\t" << nllIn - nemIn * kll - nOthersll 
-                << "\t&\t" << kll << " $\\pm$ " << kll_err
+      //                << "\t&\t" << kll << " $\\pm$ " << kll_err
                 << "\t&\t" << Rll << " $\\pm$ " << Rll_err << " $\\pm$ " << Rll_systerr 
                 << "\t&\t" <<  nllExp << " $\\pm$ " << nllExp_err 
                 << "\t&\t" << nZlljetsMC << " $\\pm$ " << nZlljetsMC_err 
@@ -556,3 +561,95 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3,
   return sqrt(sum);
 }
 
+void makeRPlot(int mH, int njets) {
+
+  float massBins[5] = {20,25,30,37,50};
+  std::vector<TString> metCuts;
+  metCuts.push_back("mpmet>20 && mpmet<=25");
+  metCuts.push_back("mpmet>25 && mpmet<=30");
+  metCuts.push_back("mpmet>30 && mpmet<=37");
+  metCuts.push_back("mpmet>37");
+
+  TH1F *Rll = new TH1F("Rll","Rll",4,massBins);
+  TH1F *Ree = new TH1F("Ree","Ree",4,massBins);
+  TH1F *Rmm = new TH1F("Rmm","Rmm",4,massBins);
+
+  std::vector<TH1F*> Rhisto;
+  Rhisto.push_back(Rll);
+  Rhisto.push_back(Ree);
+  Rhisto.push_back(Rmm);
+
+  TFile *fileZjets  = TFile::Open("results/datasets_trees/Zjets_ll.root");
+  TTree *treeZjets  = (TTree*)fileZjets->Get("latino");
+
+  TH1F *histoin = new TH1F("histoin","",50,0,TMath::Pi());
+  TH1F *histoout = new TH1F("histoout","",50,0,TMath::Pi());
+  
+  std::vector<TString> channel;
+  channel.push_back("sameflav");
+  channel.push_back("channel==1");
+  channel.push_back("channel==0");
+
+  TString weightString("baseW*kfW*puAW*effAW");
+  TString addCutIn, addCutOut;
+  if(mH>=115 && mH<=600) {
+    std::cout << "mH = " << mH << std::endl;
+    addCutIn = higgsCuts(mH,false);
+    addCutOut = higgsCuts(mH,true);
+  } else {
+    addCutIn = TString("1"); // WWsel
+    addCutOut = TString("1"); // WWsel
+  }
+
+  // in and out mll cuts are different on purpose
+  char njcut[30];
+  sprintf(njcut, "njets==%d", njets);
+  TString wwCutIn("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && ");
+  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
+  TString wwCutOut("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && ");
+  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
+
+  TCanvas c1;
+  for(int icha=0;icha<3;icha++) {
+    for(int imetbin=0;imetbin<4;imetbin++) {
+      TString finalcutIn = TString("(") + wwCutIn + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel[icha] + TString(")*") + weightString;
+      TString finalcutOut = TString("(") + wwCutOut + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel[icha] + TString(")*") + weightString;
+      std::cout << finalcutIn.Data() << std::endl;
+      treeZjets->Project("histoin","dphill",finalcutIn);
+      treeZjets->Project("histoout","dphill",finalcutOut);
+      float in = histoin->Integral();
+      float in_err = yieldErrPoisson(in,histoin->GetEntries());
+      float out = histoout->Integral();
+      float out_err = yieldErrPoisson(out,histoout->GetEntries());
+      float R = out/in;
+      float Rerr = R * quadrSum(out_err/out,in_err/in);
+      Rhisto[icha]->SetBinContent(imetbin+1,R);
+      Rhisto[icha]->SetBinError(imetbin+1,Rerr);
+    }
+    if(icha>0) {
+      Rhisto[icha]->SetLineColor(kOrange+8+icha);
+      Rhisto[icha]->SetMarkerColor(kOrange+8+icha);
+      Rhisto[icha]->SetMarkerStyle(25);
+    } else {
+      Rhisto[icha]->SetLineColor(kBlack);
+      Rhisto[icha]->SetMarkerColor(kBlack);
+      Rhisto[icha]->SetMarkerStyle(21);
+    }
+    if(icha==0) Rhisto[icha]->Draw("hist");
+    else Rhisto[icha]->Draw("histsame");
+    Rhisto[icha]->Draw("pesame");
+  }
+  
+  char massstr[5];
+  sprintf(massstr,"_mH%d",mH);
+  TString namefile = TString("R") + TString(massstr) + TString(".root");
+  c1.SaveAs(namefile.Data());
+
+}
+
+void makeAllRPlots(int njets) {
+  int mH[19] = {0,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0;i<19;i++) {
+    makeRPlot(mH[i],njets);
+  }
+}
