@@ -505,18 +505,18 @@ int main(int argc, char* argv[]) {
   } else {
     TString DatasetName(dataset);
     if(DatasetName.Contains("DoubleElectron")) {
-      maskEE.push_back("1-170052:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
-      maskEE.push_back("170053-999999:HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
+      maskEE.push_back("1-170901:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
+      maskEE.push_back("171050-999999:HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
     } else if(DatasetName.Contains("SingleElectron")) {
-      maskEE.push_back("1-164236:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
-      maskEE.push_back("164237-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEE.push_back("1-164237:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskEE.push_back("165085-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
       maskEE.push_back("166968-170901:HLT_Ele52_CaloIdVT_TrkIdT_v");
-      maskEE.push_back("170902-999999:HLT_Ele65_CaloIdVT_TrkIdT_v");
-      maskNotEE.push_back("1-170052:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
-      maskNotEE.push_back("170053-999999:HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
+      maskEE.push_back("170902-178419:HLT_Ele65_CaloIdVT_TrkIdT_v");
+      maskEE.push_back("178420-999999:HLT_Ele80_CaloIdVT_TrkIdT_v");
+      maskNotEE.push_back("1-170901:HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v");
+      maskNotEE.push_back("171050-999999:HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
     }
   }
-  
   lplusfake.setRequiredTriggers(maskEE);
   lplusfake.setNotRequiredTriggers(maskNotEE);
   lplusfake.Loop();
@@ -537,27 +537,32 @@ int main(int argc, char* argv[]) {
   } else {
     TString DatasetName(dataset);
     if(DatasetName.Contains("MuEG")) {
-      maskME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      maskME.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
+      maskME.push_back("175973-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskME.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskME.push_back("167914-999999:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v");
     } else if(DatasetName.Contains("SingleMu")) {
       maskME.push_back("1-163261:HLT_Mu15_v2");
-      maskME.push_back("163262-164237:HLT_Mu24_v");
-      maskME.push_back("165085-999999:HLT_Mu30_v");
-      maskME.push_back("163262-167043:HLT_IsoMu17_v");
-      maskME.push_back("167044-167913:HLT_IsoMu17_eta2p1_v");
-      maskME.push_back("170053-175910:HLT_IsoMu20_v");
+      maskME.push_back("163262-165099:HLT_Mu24_v");
+      maskME.push_back("165102-173235:HLT_Mu30_v");
+      maskME.push_back("173236-175972:HLT_Mu40_v");
+      maskME.push_back("175973-999999:HLT_Mu40_eta2p1_v");
+      maskME.push_back("163262-170901:HLT_IsoMu17_v");
+      maskME.push_back("171050-175910:HLT_IsoMu20_v");
       maskME.push_back("175911-175921:HLT_IsoMu24_v");
       maskME.push_back("175922-999999:HLT_IsoMu24_eta2p1_v");
-      maskNotME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      maskNotME.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
+      maskNotME.push_back("175973-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskNotME.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotME.push_back("167914-999999:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v");
     } else if(DatasetName.Contains("SingleElectron")) {
-      maskME.push_back("1-164236:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
-      maskME.push_back("164237-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskME.push_back("1-164237:HLT_Ele27_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
+      maskME.push_back("165085-166967:HLT_Ele32_CaloIdVT_CaloIsoT_TrkIdT_TrkIsoT_v");
       maskME.push_back("166968-170901:HLT_Ele52_CaloIdVT_TrkIdT_v");
-      maskME.push_back("170902-999999:HLT_Ele65_CaloIdVT_TrkIdT_v");
-      maskNotME.push_back("1-999999:HLT_Mu17_Ele8_CaloIdL_v");
+      maskME.push_back("170902-178419:HLT_Ele65_CaloIdVT_TrkIdT_v");
+      maskME.push_back("178420-999999:HLT_Ele80_CaloIdVT_TrkIdT_v");
+      maskNotME.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
+      maskNotME.push_back("175973-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskNotME.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotME.push_back("167914-999999:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v");
     }
