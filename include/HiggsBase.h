@@ -116,6 +116,7 @@ public :
    Float_t         pfGenericNoOverNeutralIsoEle[100];   //[nEle]
    Float_t         pfGenericNoOverPhotonIsoEle[100];   //[nEle]
    Float_t         pfCombinedIsoEle[100];   //[nEle]
+   Float_t         kinkMuon[100];   //[nMuon]
    Int_t           nPho;
    Int_t           chargePho[100];   //[nPho]
    Float_t         energyPho[100];   //[nPho]
@@ -595,6 +596,8 @@ public :
    Int_t           HFHadronMultiplicityAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
    Int_t           HFEMMultiplicityAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
    Float_t         areaAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
+   Float_t         weightedDz1AK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
+   Float_t         weightedDz2AK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
    Float_t         chargedEmEnergyAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
    Float_t         neutralEmEnergyAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
    Float_t         combinedSecondaryVertexBJetTagsAK5PFPUcorrJet[300];   //[nAK5PFPUcorrJet]
@@ -750,6 +753,7 @@ public :
    TBranch        *b_pfGenericNoOverNeutralIsoEle;   //!
    TBranch        *b_pfGenericNoOverPhotonIsoEle;   //!
    TBranch        *b_pfCombinedIsoEle;   //!
+   TBranch        *b_kinkMuon;   //!
    TBranch        *b_nPho;   //!
    TBranch        *b_chargePho;   //!
    TBranch        *b_energyPho;   //!
@@ -1213,6 +1217,8 @@ public :
    TBranch        *b_HFHadronMultiplicityAK5PFPUcorrJet;   //!
    TBranch        *b_HFEMMultiplicityAK5PFPUcorrJet;   //!
    TBranch        *b_areaAK5PFPUcorrJet;   //!
+   TBranch        *b_weightedDz1AK5PFPUcorrJet;   //!
+   TBranch        *b_weightedDz2AK5PFPUcorrJet;   //!
    TBranch        *b_chargedEmEnergyAK5PFPUcorrJet;   //!
    TBranch        *b_neutralEmEnergyAK5PFPUcorrJet;   //!
    TBranch        *b_combinedSecondaryVertexBJetTagsAK5PFPUcorrJet;   //!
@@ -1441,6 +1447,7 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("pfGenericNoOverNeutralIsoEle", pfGenericNoOverNeutralIsoEle, &b_pfGenericNoOverNeutralIsoEle);
    fChain->SetBranchAddress("pfGenericNoOverPhotonIsoEle", pfGenericNoOverPhotonIsoEle, &b_pfGenericNoOverPhotonIsoEle);
    fChain->SetBranchAddress("pfCombinedIsoEle", pfCombinedIsoEle, &b_pfCombinedIsoEle);
+   fChain->SetBranchAddress("kinkMuon", kinkMuon, &b_kinkMuon);
    fChain->SetBranchAddress("nPho", &nPho, &b_nPho);
    fChain->SetBranchAddress("chargePho", chargePho, &b_chargePho);
    fChain->SetBranchAddress("energyPho", energyPho, &b_energyPho);
@@ -1904,6 +1911,8 @@ void HiggsBase::Init(TTree *tree)
    fChain->SetBranchAddress("HFHadronMultiplicityAK5PFPUcorrJet", HFHadronMultiplicityAK5PFPUcorrJet, &b_HFHadronMultiplicityAK5PFPUcorrJet);
    fChain->SetBranchAddress("HFEMMultiplicityAK5PFPUcorrJet", HFEMMultiplicityAK5PFPUcorrJet, &b_HFEMMultiplicityAK5PFPUcorrJet);
    fChain->SetBranchAddress("areaAK5PFPUcorrJet", areaAK5PFPUcorrJet, &b_areaAK5PFPUcorrJet);
+   fChain->SetBranchAddress("weightedDz1AK5PFPUcorrJet", weightedDz1AK5PFPUcorrJet, &b_weightedDz1AK5PFPUcorrJet);
+   fChain->SetBranchAddress("weightedDz2AK5PFPUcorrJet", weightedDz2AK5PFPUcorrJet, &b_weightedDz2AK5PFPUcorrJet);
    fChain->SetBranchAddress("chargedEmEnergyAK5PFPUcorrJet", chargedEmEnergyAK5PFPUcorrJet, &b_chargedEmEnergyAK5PFPUcorrJet);
    fChain->SetBranchAddress("neutralEmEnergyAK5PFPUcorrJet", neutralEmEnergyAK5PFPUcorrJet, &b_neutralEmEnergyAK5PFPUcorrJet);
    fChain->SetBranchAddress("combinedSecondaryVertexBJetTagsAK5PFPUcorrJet", combinedSecondaryVertexBJetTagsAK5PFPUcorrJet, &b_combinedSecondaryVertexBJetTagsAK5PFPUcorrJet);
