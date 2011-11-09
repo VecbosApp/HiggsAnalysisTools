@@ -182,6 +182,21 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         weightStatFF;
     Float_t         weightPP;
     Float_t         weightStatPP;
+    //
+    Float_t         weightFP15;
+    Float_t         weightStatFP15;
+    Float_t         weightFF15;
+    Float_t         weightStatFF15;
+    Float_t         weightPP15;
+    Float_t         weightStatPP15;
+    //
+    Float_t         weightFP50;
+    Float_t         weightStatFP50;
+    Float_t         weightFF50;
+    Float_t         weightStatFF50;
+    Float_t         weightPP50;
+    Float_t         weightStatPP50;
+    //
     Int_t           tight;
 
     // DY generator level quantities
@@ -276,12 +291,27 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("signPFChargedMet", &signPFChargedMet);
     treeOrig->SetBranchAddress("mtrchargedMet", &mtrchargedMet);
     if(FRWeights) {
-      treeOrig->SetBranchAddress("weightFP", &weightFP);
+      treeOrig->SetBranchAddress("weightFP",     &weightFP);
       treeOrig->SetBranchAddress("weightStatFP", &weightStatFP);
-      treeOrig->SetBranchAddress("weightFF", &weightFF);
+      treeOrig->SetBranchAddress("weightFF",     &weightFF);
       treeOrig->SetBranchAddress("weightStatFF", &weightStatFF);
-      treeOrig->SetBranchAddress("weightPP", &weightPP);
+      treeOrig->SetBranchAddress("weightPP",     &weightPP);
       treeOrig->SetBranchAddress("weightStatPP", &weightStatPP);
+
+      treeOrig->SetBranchAddress("weightFP15",     &weightFP15);
+      treeOrig->SetBranchAddress("weightStatFP15", &weightStatFP15);
+      treeOrig->SetBranchAddress("weightFF15",     &weightFF15);
+      treeOrig->SetBranchAddress("weightStatFF15", &weightStatFF15);
+      treeOrig->SetBranchAddress("weightPP15",     &weightPP15);
+      treeOrig->SetBranchAddress("weightStatPP15", &weightStatPP15);
+
+      treeOrig->SetBranchAddress("weightFP50",     &weightFP50);
+      treeOrig->SetBranchAddress("weightStatFP50", &weightStatFP50);
+      treeOrig->SetBranchAddress("weightFF50",     &weightFF50);
+      treeOrig->SetBranchAddress("weightStatFF50", &weightStatFF50);
+      treeOrig->SetBranchAddress("weightPP50",     &weightPP50);
+      treeOrig->SetBranchAddress("weightStatPP50", &weightStatPP50);
+
       treeOrig->SetBranchAddress("tight", &tight);
     }
 
@@ -512,12 +542,28 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("baseW", &baseW,  "baseW/F");
 
       if(FRWeights) {
-        theTreeNew->Branch("weightFP", &weightFP, "weightFP/F");
+        theTreeNew->Branch("tight",        &tight,        "tight/I");
+	//
+        theTreeNew->Branch("weightFP",     &weightFP,     "weightFP/F");
         theTreeNew->Branch("weightStatFP", &weightStatFP, "weightStatFP/F");
-        theTreeNew->Branch("weightFF", &weightFF, "weightFF/F");
+        theTreeNew->Branch("weightFF",     &weightFF,     "weightFF/F");
         theTreeNew->Branch("weightStatFF", &weightStatFF, "weightStatFF/F");
-        theTreeNew->Branch("weightPP", &weightPP, "weightPP/F");
+        theTreeNew->Branch("weightPP",     &weightPP,     "weightPP/F");
         theTreeNew->Branch("weightStatPP", &weightStatPP, "weightStatPP/F");
+	// 
+        theTreeNew->Branch("weightFP15",     &weightFP15,     "weightFP15/F");
+        theTreeNew->Branch("weightStatFP15", &weightStatFP15, "weightStatFP15/F");
+        theTreeNew->Branch("weightFF15",     &weightFF15,     "weightFF15/F");
+        theTreeNew->Branch("weightStatFF15", &weightStatFF15, "weightStatFF15/F");
+        theTreeNew->Branch("weightPP15",     &weightPP15,     "weightPP15/F");
+        theTreeNew->Branch("weightStatPP15", &weightStatPP15, "weightStatPP15/F");
+	// 
+        theTreeNew->Branch("weightFP50",     &weightFP50,     "weightFP50/F");
+        theTreeNew->Branch("weightStatFP50", &weightStatFP50, "weightStatFP50/F");
+        theTreeNew->Branch("weightFF50",     &weightFF50,     "weightFF50/F");
+        theTreeNew->Branch("weightStatFF50", &weightStatFF50, "weightStatFF50/F");
+        theTreeNew->Branch("weightPP50",     &weightPP50,     "weightPP50/F");
+        theTreeNew->Branch("weightStatPP50", &weightStatPP50, "weightStatPP50/F");
       }
       theTreeNew->Branch("iMet", &iMet, "iMet/F");
 
