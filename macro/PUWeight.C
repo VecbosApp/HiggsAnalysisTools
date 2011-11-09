@@ -15,6 +15,7 @@ PUWeight::PUWeight(float luminosity, const char* year, int run):
   std::cout << "PU reweighting (old constructor): reading ideal MC" << std::endl;
   if (run==0) cout << "PU distribution for 2011A" << endl;
   if (run==1) cout << "PU distribution for 2011B" << endl;
+  if (run==-1) cout << "PU distribution for Full 2011" << endl;
   
   // Load Data histogram
   if (!LoadDataHistogram(luminosity, year, run)) return;
@@ -35,6 +36,7 @@ PUWeight::PUWeight(const char* mcfolder, const char* mcproccess, float luminosit
   std::cout << "PU reweighting (new constructor): reading both data and MC from file" << std::endl;
   if (run==0) cout << "PU distribution for 2011A" << endl;
   if (run==1) cout << "PU distribution for 2011B" << endl;
+  if (run==-1) cout << "PU distribution for Full 2011" << endl;
 
   // Load Data histogram
   if (!LoadDataHistogram(luminosity, year, run)) return;
@@ -49,8 +51,9 @@ PUWeight::PUWeight(const char* mcfolder, const char* mcproccess, float luminosit
 TH1F* PUWeight::LoadMCHistogram(const char* mcfolder, const char* mcproccess) {
   
   TString dsfile;
-  dsfile.Form("/afs/cern.ch/user/e/emanuele/public/puReweighting/%s/%s_PU.root", mcfolder, mcproccess);
-  
+  //  dsfile.Form("/afs/cern.ch/user/e/emanuele/public/puReweighting/%s/%s_PU.root", mcfolder, mcproccess);
+  dsfile.Form("/afs/cern.ch/user/m/mwlebour/public/s6MCPileUp.root");
+
   TFile* fds = TFile::Open(dsfile);
   if (!fds) {
     cerr << "ERROR [PUWeight]: Could not open file " << dsfile << "!"  << endl
@@ -60,7 +63,7 @@ TH1F* PUWeight::LoadMCHistogram(const char* mcfolder, const char* mcproccess) {
   }
   
   // Read dataset histogram...
-  fMC = (TH1F*) fds->Get("hNPU")->Clone("PU_MC");
+  fMC = (TH1F*) fds->Get("pileup")->Clone("PU_MC");
   if (!fMC) {
     cerr << "ERROR [PUWeight]: Could not find histogram for dataset " << mcproccess << "!" << endl;
     return 0;
@@ -94,8 +97,9 @@ TH1F* PUWeight::LoadDataHistogram(float luminosity, const char* year, int run) {
   TFile* fdt = 0;
   if (luminosity > 0) {
     if (run==0) dtfile.Form("/afs/cern.ch/user/c/crovelli/public/4PU/all2011A.pileup_v2_73mb.root");
-    if (run==1) dtfile.Form("/afs/cern.ch/user/c/crovelli/public/4PU/all2011B.pileup_v2_73mb.root");
-      
+    if (run==1) dtfile.Form("/afs/cern.ch/user/s/sixie/public/Pileup/targets/PUTarget.Run2011B.175832-180252.root");
+    if (run==-1) dtfile.Form("/afs/cern.ch/user/s/sixie/public/Pileup/targets/PUTarget.Full2011.160404-180252.root");
+
     fdt = TFile::Open(dtfile);
     if (!fdt) {
       cerr << "NOTE [PUWeight]: Could not find file " << dtfile << "!"  << endl;
@@ -105,7 +109,8 @@ TH1F* PUWeight::LoadDataHistogram(float luminosity, const char* year, int run) {
 
   if (!fdt) {
     if (run==0) dtfile="/afs/cern.ch/user/c/crovelli/public/4PU/all2011A.pileup_v2_73mb.root";
-    if (run==1) dtfile="/afs/cern.ch/user/c/crovelli/public/4PU/all2011B.pileup_v2_73mb.root";
+    if (run==1) dtfile="/afs/cern.ch/user/s/sixie/public/Pileup/targets/PUTarget.Run2011B.175832-180252.root";
+    if (run==-1) dtfile="/afs/cern.ch/user/s/sixie/public/Pileup/targets/PUTarget.Full2011.160404-180252.root";
     
     fdt = TFile::Open(dtfile);
     if (!fdt) {
