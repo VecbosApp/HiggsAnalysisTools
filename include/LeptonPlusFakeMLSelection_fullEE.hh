@@ -66,7 +66,7 @@ private:
   float getFakeRateErrorQCD( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization                                         
-  void initialisePromptRate();
+  void initialisePromptRate(int numVtx);
   float getPromptRate( float promptPt, float promptEta );
   float getPromptRateError( float promptPt, float promptEta );
 
@@ -120,6 +120,7 @@ private:
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
   ElectronLikelihood *LH;
+  bool m_useBDTEleID;
 
   //! to evaluate full selection efficiency
   Selection *_selectionEE;
@@ -170,6 +171,8 @@ private:
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
   float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
+  int m_chmajEE[2], m_chmajMM[2], m_chmajEM[2], m_chmajME[2];
+  float m_bdtEE[2], m_bdtMM[2], m_bdtEM[2], m_bdtME[2];
 
   //! fake rates                                                                     
   float m_minFakePt[5],      m_maxFakePt[5];
