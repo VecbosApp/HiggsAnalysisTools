@@ -586,6 +586,7 @@ void HiggsMLSelection::Loop() {
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
     if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
+
     float nputosave[3];
     if( !_selectionEE->getSwitch("isData") ) {
       for(int i=0; i<3; i++) nputosave[i] = float(nPU[i]);
@@ -2599,6 +2600,8 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     // hardcoded
     float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
     if(rawpt < 10.0) continue;
+
+    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
