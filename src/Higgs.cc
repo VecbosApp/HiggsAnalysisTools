@@ -584,6 +584,8 @@ void Higgs::isMuonID(int muonIndex, bool *muonIdOutput) {
 
   if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
 
+  if(kinkMuon[muonIndex]>=20) *muonIdOutput = false;
+
   float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
   float sign = fabs(ptErrorTrack[track]/ptTrack);
   if (sign>=0.1) *muonIdOutput = false;
