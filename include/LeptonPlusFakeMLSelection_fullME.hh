@@ -78,7 +78,7 @@ private:
   float getElectronFakeRateErrorQCD( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization for electrons
-  void initialiseElectronPromptRate();
+  void initialiseElectronPromptRate(int numVtx);
   float getElectronPromptRate( float fakePt, float fakeEta );
   float getElectronPromptRateError( float fakePt, float fakeEta );
 
@@ -88,7 +88,7 @@ private:
   float getMuonFakeRateError( float fakePt, bool isEE, float fakeEta );
 
   //! prompt rates initialization for muons
-  void initialiseMuonPromptRate();
+  void initialiseMuonPromptRate(int numVtx);
   float getMuonPromptRate( float fakePt, bool isEB );
   float getMuonPromptRateError( float fakePt, bool isEE );
 
@@ -185,6 +185,10 @@ private:
   float leadJetBtag[1], subLeadJetsMaxBtag[1], subleadJetBtag[1];
   TLorentzVector *m_jetsSum[1], *m_uncorrJetsSum[1];
 
+  bool m_useBDTEleID;
+
+  int m_chmajEE[2], m_chmajMM[2], m_chmajEM[2], m_chmajME[2];
+  float m_bdtEE[2], m_bdtMM[2], m_bdtEM[2], m_bdtME[2];
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
   float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];
   float m_lhEE[2], m_lhMM[2], m_lhEM[2], m_lhME[2];
