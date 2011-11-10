@@ -197,6 +197,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         weightPP50;
     Float_t         weightStatPP50;
     //
+    Float_t         weightFPQCD;
+    Float_t         weightStatFPQCD;
+    Float_t         weightFFQCD;
+    Float_t         weightStatFFQCD;
+    Float_t         weightPPQCD;
+    Float_t         weightStatPPQCD;
+    //
     Int_t           tight;
 
     // DY generator level quantities
@@ -311,6 +318,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       treeOrig->SetBranchAddress("weightStatFF50", &weightStatFF50);
       treeOrig->SetBranchAddress("weightPP50",     &weightPP50);
       treeOrig->SetBranchAddress("weightStatPP50", &weightStatPP50);
+
+      treeOrig->SetBranchAddress("weightFPQCD",     &weightFPQCD);
+      treeOrig->SetBranchAddress("weightStatFPQCD", &weightStatFPQCD);
+      treeOrig->SetBranchAddress("weightFFQCD",     &weightFFQCD);
+      treeOrig->SetBranchAddress("weightStatFFQCD", &weightStatFFQCD);
+      treeOrig->SetBranchAddress("weightPPQCD",     &weightPPQCD);
+      treeOrig->SetBranchAddress("weightStatPPQCD", &weightStatPPQCD);
 
       treeOrig->SetBranchAddress("tight", &tight);
     }
@@ -564,6 +578,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         theTreeNew->Branch("weightStatFF50", &weightStatFF50, "weightStatFF50/F");
         theTreeNew->Branch("weightPP50",     &weightPP50,     "weightPP50/F");
         theTreeNew->Branch("weightStatPP50", &weightStatPP50, "weightStatPP50/F");
+	// 
+        theTreeNew->Branch("weightFPQCD",     &weightFPQCD,     "weightFPQCD/F");
+        theTreeNew->Branch("weightStatFPQCD", &weightStatFPQCD, "weightStatFPQCD/F");
+        theTreeNew->Branch("weightFFQCD",     &weightFFQCD,     "weightFFQCD/F");
+        theTreeNew->Branch("weightStatFFQCD", &weightStatFFQCD, "weightStatFFQCD/F");
+        theTreeNew->Branch("weightPPQCD",     &weightPPQCD,     "weightPPQCD/F");
+        theTreeNew->Branch("weightStatPPQCD", &weightStatPPQCD, "weightStatPPQCD/F");
       }
       theTreeNew->Branch("iMet", &iMet, "iMet/F");
 
