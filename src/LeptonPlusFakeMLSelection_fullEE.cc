@@ -432,57 +432,56 @@ void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRate50() {
   m50_fakeRateEE2_err[4] = 0.016;
 }
 
-// fake from Smurf selection, QCD for closure, ET>30 - with tracker, dEta, dPhi (LP)
+// fake for eleID Bdt, QCD for closure test
 void LeptonPlusFakeMLSelection_fullEE::initialiseFakeRateQCD() {
 
-  // chiara: for the moment this is still old mine and I simply duplicate... fixme
-  mQCD_fakeRateEB1[0] = 0.019106;
-  mQCD_fakeRateEB1[1] = 0.0138018;
-  mQCD_fakeRateEB1[2] = 0.0743516;
-  mQCD_fakeRateEB1[3] = 0.0621557;
-  mQCD_fakeRateEB1[4] = 0.0920799;
+  mQCD_fakeRateEB1[0] = 0.0082;
+  mQCD_fakeRateEB1[1] = 0.0040;
+  mQCD_fakeRateEB1[2] = 0.0049;
+  mQCD_fakeRateEB1[3] = 0.0048;
+  mQCD_fakeRateEB1[4] = 0.0051;
 
-  mQCD_fakeRateEB1_err[0] = 0.0070397;
-  mQCD_fakeRateEB1_err[1] = 0.00338596;
-  mQCD_fakeRateEB1_err[2] = 0.00656926;
-  mQCD_fakeRateEB1_err[3] = 0.00508687;
-  mQCD_fakeRateEB1_err[4] = 0.0247443;
+  mQCD_fakeRateEB1_err[0] = 0.0002;
+  mQCD_fakeRateEB1_err[1] = 0.0002;
+  mQCD_fakeRateEB1_err[2] = 0.0002;
+  mQCD_fakeRateEB1_err[3] = 0.0003;
+  mQCD_fakeRateEB1_err[4] = 0.0004;
 
-  mQCD_fakeRateEB2[0] = 0.019106;
-  mQCD_fakeRateEB2[1] = 0.0138018;
-  mQCD_fakeRateEB2[2] = 0.0743516;
-  mQCD_fakeRateEB2[3] = 0.0621557;
-  mQCD_fakeRateEB2[4] = 0.0920799;
+  mQCD_fakeRateEB2[0] = 0.0061; 
+  mQCD_fakeRateEB2[1] = 0.0037; 
+  mQCD_fakeRateEB2[2] = 0.0065; 
+  mQCD_fakeRateEB2[3] = 0.0061; 
+  mQCD_fakeRateEB2[4] = 0.0064; 
 
-  mQCD_fakeRateEB2_err[0] = 0.0070397;
-  mQCD_fakeRateEB2_err[1] = 0.00338596;
-  mQCD_fakeRateEB2_err[2] = 0.00656926;
-  mQCD_fakeRateEB2_err[3] = 0.00508687;
-  mQCD_fakeRateEB2_err[4] = 0.0247443;
+  mQCD_fakeRateEB2_err[0] = 0.0002;
+  mQCD_fakeRateEB2_err[1] = 0.0002;
+  mQCD_fakeRateEB2_err[2] = 0.0004;
+  mQCD_fakeRateEB2_err[3] = 0.0005;
+  mQCD_fakeRateEB2_err[4] = 0.0008;
 
-  mQCD_fakeRateEE1[0] = 0.010952;
-  mQCD_fakeRateEE1[1] = 0.0129353;
-  mQCD_fakeRateEE1[2] = 0.054481;
-  mQCD_fakeRateEE1[3] = 0.0511887;
-  mQCD_fakeRateEE1[4] = 0.0603386;
+  mQCD_fakeRateEE1[0] = 0.0030;
+  mQCD_fakeRateEE1[1] = 0.0017;
+  mQCD_fakeRateEE1[2] = 0.0032;
+  mQCD_fakeRateEE1[3] = 0.0032; 
+  mQCD_fakeRateEE1[4] = 0.0031;
   
-  mQCD_fakeRateEE1_err[0] = 0.00371267;
-  mQCD_fakeRateEE1_err[1] = 0.00229748;
-  mQCD_fakeRateEE1_err[2] = 0.00415571;
-  mQCD_fakeRateEE1_err[3] = 0.00370617;
-  mQCD_fakeRateEE1_err[4] = 0.0195938;
+  mQCD_fakeRateEE1_err[0] = 0.0001;
+  mQCD_fakeRateEE1_err[1] = 0.0001;
+  mQCD_fakeRateEE1_err[2] = 0.0002;
+  mQCD_fakeRateEE1_err[3] = 0.0003;
+  mQCD_fakeRateEE1_err[4] = 0.0005;
 
-  mQCD_fakeRateEE2[0] = 0.010952;
-  mQCD_fakeRateEE2[1] = 0.0129353;
-  mQCD_fakeRateEE2[2] = 0.054481;
-  mQCD_fakeRateEE2[3] = 0.0511887;
-  mQCD_fakeRateEE2[4] = 0.0603386;
+  mQCD_fakeRateEE2[0] = 0.0018; 
+  mQCD_fakeRateEE2[1] = 0.0009;
+  mQCD_fakeRateEE2[2] = 0.0022;
+  mQCD_fakeRateEE2[3] = 0.0023;
+  mQCD_fakeRateEE2[4] = 0.0026;
   
-  mQCD_fakeRateEE2_err[0] = 0.00371267;
-  mQCD_fakeRateEE2_err[1] = 0.00229748;
-  mQCD_fakeRateEE2_err[2] = 0.00415571;
-  mQCD_fakeRateEE2_err[3] = 0.00370617;
-  mQCD_fakeRateEE2_err[4] = 0.0195938;
+  mQCD_fakeRateEE2_err[0] = 0.0001;
+  mQCD_fakeRateEE2_err[1] = 0.0001;
+  mQCD_fakeRateEE2_err[2] = 0.0002;
+  mQCD_fakeRateEE2_err[3] = 0.0002;
+  mQCD_fakeRateEE2_err[4] = 0.0004;
 }
 
 // prompt rate from eleID Bdt - for 2011A+B average analysis, split in #vtx (Clara, Nov 8)
@@ -576,6 +575,58 @@ void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate(int numVtx) {
     m_promptRateEE_err[4] = 0.009;
   }
 }
+
+/*
+// prompt rate from eleID Bdt - for 2011A+B average analysis, not split in #vtx (Clara, Nov 8)
+void LeptonPlusFakeMLSelection_fullEE::initialisePromptRate(int numVtx) { 
+  
+  // binning                                      
+  m_minPromptPt[0] = 10.;   m_maxPromptPt[0] = 15.;
+  m_minPromptPt[1] = 15.;   m_maxPromptPt[1] = 20.;
+  m_minPromptPt[2] = 20.;   m_maxPromptPt[2] = 25.;
+  m_minPromptPt[3] = 25.;   m_maxPromptPt[3] = 50.;
+  m_minPromptPt[4] = 50.;   m_maxPromptPt[4] = 10000.;
+
+  // prompt in the barrel
+  m_promptRateEB[0] = 0.584;
+  m_promptRateEB[1] = 0.667;
+  m_promptRateEB[2] = 0.773;
+  m_promptRateEB[3] = 0.872;
+  m_promptRateEB[4] = 0.905;
+  
+  m_promptRateEB_err[0] = 0.009;
+  m_promptRateEB_err[1] = 0.005;
+  m_promptRateEB_err[2] = 0.003;
+  m_promptRateEB_err[3] = 0.001;
+  m_promptRateEB_err[4] = 0.001;
+
+  // prompt in the crack
+  m_promptRateCr[0] = 0.456;
+  m_promptRateCr[1] = 0.527;
+  m_promptRateCr[2] = 0.703;
+  m_promptRateCr[3] = 0.819;
+  m_promptRateCr[4] = 0.868;
+  
+  m_promptRateCr_err[0] = 0.049;
+  m_promptRateCr_err[1] = 0.035;
+  m_promptRateCr_err[2] = 0.017;
+  m_promptRateCr_err[3] = 0.092;
+  m_promptRateCr_err[4] = 0.007;
+
+  // prompt in the endcap
+  m_promptRateEE[0] = 0.367;
+  m_promptRateEE[1] = 0.441;
+  m_promptRateEE[2] = 0.666;
+  m_promptRateEE[3] = 0.771;
+  m_promptRateEE[4] = 0.832;
+  
+  m_promptRateEE_err[0] = 0.020;
+  m_promptRateEE_err[1] = 0.008;
+  m_promptRateEE_err[2] = 0.006;
+  m_promptRateEE_err[3] = 0.001;
+  m_promptRateEE_err[4] = 0.002;
+}
+*/
 
 /*
 // prompt rate from eleID Bdt - for 2011A analysis (Clara, for 1st Nov. reload) 
@@ -2074,9 +2125,9 @@ float LeptonPlusFakeMLSelection_fullEE::bVetoJets( std::vector<int> eleToRemove,
 
     // hardcoded
     float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
-    if(rawpt < 10.0) continue;   // chiara: new
+    if(rawpt < 10.0) continue;   
 
-    // to be commented on MC until we do not run on Fall11. Chiara: new
+    // chiara, to be commented on MC until we do not run on Fall11
     if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
@@ -2183,7 +2234,7 @@ float LeptonPlusFakeMLSelection_fullEE::deltaPhiLLJet15(int ichan) {
      float dxyMuon= transvImpactParTrack[track];
      float dzMuon = muonDzPV(i,0);
      if(dxyMuon > 0.200) continue;     // hardcoded       
-     if(dzMuon  > 0.200) continue;     // hardcoded  // chiara, new
+     if(dzMuon  > 0.200) continue;     // hardcoded  
      float isoSumRel = pfCombinedIsoMuon[i] / pt;
      if(pt>20 || isoSumRel<0.1) continue;
     
