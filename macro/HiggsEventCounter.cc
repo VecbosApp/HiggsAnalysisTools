@@ -33,19 +33,19 @@ void countEvents() {
     TChain *sigChains[4];
     for(int i=0; i<4; i++) sigChains[i] = new TChain(nametree);
 
-    TString hSample("results/Summer11_V1/GluGluToHToWWTo2L2Nu_M-");
+    TString hSample("results/Fall11_V1/GluGluToHToWWTo2L2Nu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[0]->Add(hSample.Data());
     
-    hSample = TString("results/Summer11_V1/GluGluToHToWWToLNuTauNu_M-");
+    hSample = TString("results/Fall11_V1/GluGluToHToWWToLNuTauNu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[1]->Add(hSample.Data());
     
-    hSample = TString("results/Summer11_V1/VBF_HToWWTo2L2Nu_M-");
+    hSample = TString("results/Fall11_V1/VBF_HToWWTo2L2Nu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[2]->Add(hSample.Data());
     
-    hSample = TString("results/Summer11_V1/VBF_HToWWToLNuTauNu_M-");
+    hSample = TString("results/Fall11_V1/VBF_HToWWToLNuTauNu_M-");
     hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
     sigChains[3]->Add(hSample.Data());
 
@@ -60,51 +60,51 @@ void countEvents() {
   }
 
   // nominal sample first, then the systematics ones
-  chains[0]->Add("results/Summer11_V1/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[0]->Add("results/Fall11_V1/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[1]->Add("results/Summer11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
-  chains[2]->Add("results/Summer11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
-  chains[3]->Add("results/Summer11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
+  chains[1]->Add("results/Fall11_V1/DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[2]->Add("results/Fall11_V1/DYToMuMu_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[3]->Add("results/Fall11_V1/DYToTauTau_M-10To20_TuneZ2_7TeV-pythia6-tauola/*Counters.root");
 
-  chains[4]->Add("results/Summer11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
-  chains[5]->Add("results/Summer11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
-  chains[6]->Add("results/Summer11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*Counters.root");
+  chains[4]->Add("results/Fall11_V1/DYToEE_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[5]->Add("results/Fall11_V1/DYToMuMu_M-20_CT10_TuneZ2_7TeV-powheg-pythia/*Counters.root");
+  chains[6]->Add("results/Fall11_V1/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/*Counters.root");
 
   // madgraph samples
-  //  chains[7]->Add("results/Summer11_V1/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
-  //  chains[8]->Add("results/Summer11_V1/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
-  //  chains[9]->Add("results/Summer11_V1/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
+  //  chains[7]->Add("results/Fall11_V1/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*Counters.root");
+  //  chains[8]->Add("results/Fall11_V1/TToBLNu_TuneZ2_t-channel_7TeV-madgraph/*Counters.root");
+  //  chains[9]->Add("results/Fall11_V1/TToBLNu_TuneZ2_tW-channel_7TeV-madgraph/*Counters.root");
 
-  chains[7]->Add("results/Summer11_V1/T_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[8]->Add("results/Summer11_V1/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[9]->Add("results/Summer11_V1/T_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[10]->Add("results/Summer11_V1/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
-  chains[11]->Add("results/Summer11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
-  chains[12]->Add("results/Summer11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
+  chains[7]->Add("results/Fall11_V1/T_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[8]->Add("results/Fall11_V1/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[9]->Add("results/Fall11_V1/T_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[10]->Add("results/Fall11_V1/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/*Counters.root");
+  chains[11]->Add("results/Fall11_V1/T_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
+  chains[12]->Add("results/Fall11_V1/Tbar_TuneZ2_tW-channel-DR_7TeV-powheg-tauola/*Counters.root");
 
-  //  chains[13]->Add("results/Summer11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
-  chains[13]->Add("results/Summer11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*Counters.root"); 
+  //  chains[13]->Add("results/Fall11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[13]->Add("results/Fall11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*Counters.root"); 
 
-  chains[14]->Add("results/Summer11_V1/WGToENuG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[15]->Add("results/Summer11_V1/WGToMuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[16]->Add("results/Summer11_V1/WGToTauNuG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[14]->Add("results/Fall11_V1/WGToENuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[15]->Add("results/Fall11_V1/WGToMuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[16]->Add("results/Fall11_V1/WGToTauNuG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
 
-  chains[17]->Add("results/Summer11_V1/ZGToEEG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[18]->Add("results/Summer11_V1/ZGToMuMuG_TuneZ2_7TeV-madgraph/*Counters.root");
-  chains[19]->Add("results/Summer11_V1/ZGToTauTauG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
-  chains[20]->Add("results/Summer11_V1/ZGToNuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[17]->Add("results/Fall11_V1/ZGToEEG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[18]->Add("results/Fall11_V1/ZGToMuMuG_TuneZ2_7TeV-madgraph/*Counters.root");
+  chains[19]->Add("results/Fall11_V1/ZGToTauTauG_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[20]->Add("results/Fall11_V1/ZGToNuNuG_TuneZ2_7TeV-madgraph/*Counters.root");
 
-  chains[21]->Add("results/Summer11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
-  chains[22]->Add("results/Summer11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
-  chains[23]->Add("results/Summer11_V1/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
-  chains[24]->Add("results/Summer11_V1/ZZJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[21]->Add("results/Fall11_V1/WWJetsTo2L2Nu_TuneZ2_7TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
+  chains[22]->Add("results/Fall11_V1/GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6/*Counters.root");
+  chains[23]->Add("results/Fall11_V1/WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola/*Counters.root");
+  chains[24]->Add("results/Fall11_V1/ZZTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*Counters.root");
 
   // samples for systematics
-  chains[25]->Add("results/Summer11_V1/WWTo2L2Nu_CT10_7TeV-mcatnlo/*Counters.root"); // nominal MC@NLO sample
-  chains[26]->Add("results/Summer11_V1/WWTo2L2Nu_scaledown_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
-  chains[27]->Add("results/Summer11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
-  chains[28]->Add("results/Summer11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*Counters.root"); // PYTHIA sample 
-  chains[29]->Add("results/Summer11_V1/GVJets_7TeV-madgraph/*Counters.root"); // Vgamma inclusive
+  chains[25]->Add("results/Fall11_V1/WWTo2L2Nu_CT10_7TeV-mcatnlo/*Counters.root"); // nominal MC@NLO sample
+  chains[26]->Add("results/Fall11_V1/WWTo2L2Nu_scaledown_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
+  chains[27]->Add("results/Fall11_V1/WWTo2L2Nu_scaleup_CT10_7TeV-mcatnlo/*Counters.root"); // syst MC@NLO sample 
+  chains[28]->Add("results/Fall11_V1/WWTo2L2Nu_TuneZ2_7TeV_pythia6_tauola/*Counters.root"); // PYTHIA sample 
+  chains[29]->Add("results/Fall11_V1/GVJets_7TeV-madgraph/*Counters.root"); // Vgamma inclusive
 
   cout << "chains added. " << endl;
 
