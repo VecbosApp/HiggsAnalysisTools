@@ -83,11 +83,13 @@ void estimateTop(int njets) {
   TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
   TFile *fileWW   = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileDY   = TFile::Open("results/datasets_trees/Zjets_ll.root");
+  TFile *fileOthers   = TFile::Open("results/datasets_trees/others_ll.root");
 
   TTree *treeData = (TTree*)fileData->Get("latino");
   TTree *treeTop  = (TTree*)fileTop->Get("latino");
   TTree *treeWW   = (TTree*)fileWW->Get("latino");
   TTree *treeDY   = (TTree*)fileDY->Get("latino");
+  TTree *treeOthers = (TTree*)fileOthers->Get("latino");
 
   // these used  for the channel-split estimates (not now)
   TH1F *topHEE = new TH1F("topHEE","",50,0,2*TMath::Pi());
@@ -102,6 +104,7 @@ void estimateTop(int njets) {
   // WW,DY background after CJV (used with the mistag rate)
   TH1F *WWAllHLL = new TH1F("WWAllHLL","",50,0,2*TMath::Pi());
   TH1F *DYAllHLL = new TH1F("DYAllHLL","",50,0,2*TMath::Pi());
+  TH1F *OthersAllHLL = new TH1F("OthersAllHLL","",50,0,2*TMath::Pi());
 
   treeTop->Project("topHEE","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==1)*baseW*puW*kfW*effW")).Data());
   treeTop->Project("topHMM","dphill",(TString("(")+TString(wwselcut)+TString(" && channel==0)*baseW*puW*kfW*effW")).Data());
@@ -124,6 +127,7 @@ void estimateTop(int njets) {
 
   treeWW->Project("WWAllHLL","dphill",(TString("(") + btagLevelCut + TString("  && (abs(dphilljet)<165 || channel>1) && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*kfW*effW")).Data());
   treeDY->Project("DYAllHLL","dphill",(TString("(") + btagLevelCut + TString("  && (abs(dphilljet)<165 || channel>1) && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*kfW*effW")).Data());
+  treeOthers->Project("OthersAllHLL","dphill",(TString("(") + btagLevelCut + TString("  && (abs(dphilljet)<165 || channel>1) && nextra==0 && ")+TString(njcut)+TString( ") *baseW*puW*kfW*effW")).Data());
 
   // for Wjets WW and DY use the Z events in data
   float mistagSig[2];
@@ -146,17 +150,21 @@ void estimateTop(int njets) {
   float WW_tot_err = wantedLumi * yieldErrPoisson(WW_tot,WWAllHLL->GetEntries()) * mistagSig[njets];
   float DY_tot = wantedLumi * DYAllHLL->Integral() * DYDataOverMC[njets] * mistagSig[njets];
   float DY_tot_err = wantedLumi * yieldErrPoisson(DY_tot,DYAllHLL->GetEntries()) * mistagSig[njets];
+  float Others_tot = wantedLumi * OthersAllHLL->Integral() * mistagSig[njets];
+  float Others_tot_err = wantedLumi * yieldErrPoisson(Others_tot,OthersAllHLL->GetEntries()) * mistagSig[njets];
+
   float Wjets_tot = mistagSig[njets] * (WjDataTot[ee][njets] + WjDataTot[mm][njets] +
                                         WjDataTot[em][njets] + WjDataTot[me][njets]);
   float Wjets_tot_err = 0.40 * Wjets_tot; // approximation
 
-  float tagBkg_tot = WW_tot + DY_tot + Wjets_tot;
-  float tagBkg_tot_err = quadrSum(WW_tot_err,DY_tot_err,Wjets_tot_err);
+  float tagBkg_tot = WW_tot + DY_tot + Wjets_tot + Others_tot;
+  float tagBkg_tot_err = quadrSum(WW_tot_err,DY_tot_err,Wjets_tot_err,Others_tot_err);
 
   std::cout << "--- Background estimations: ---" << std::endl;
   std::cout << "WW = " << WW_tot << " +/-" << WW_tot_err << std::endl;
   std::cout << "DY = " << DY_tot << " +/-" << DY_tot_err << std::endl;
   std::cout << "Wjets = " << Wjets_tot << " +/-" << Wjets_tot_err << std::endl;
+  std::cout << "Others = " << Others_tot << " +/-" << Others_tot_err << std::endl;
   std::cout << "Tot background to tagged events = " << tagBkg_tot << " +/- " << tagBkg_tot_err << std::endl;
   std::cout << "---- end backgrounds ---\n\n" << std::endl;
 
@@ -700,12 +708,12 @@ std::pair<float,float> estimateTopVetoEffBkgSub(int njets, bool effFromData) {
     float eff_softtoptag = Ncontrol_toptag / Ncontrol;
     float eff_softtoptag_err = sqrt(eff_softtoptag * (1-eff_softtoptag)/Ncontrol);
 
-
-    treeTop->Project("histo2","dphill","(step[9] && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav) && (abs(dphilljet)<165 || channel>1) && nextra==0 && njet==0)*baseW*puW*effW");
-    float top_pretopveto = histo2->Integral();
+    TH1F *histo3 = new TH1F("histo3","",50,0,2*TMath::Pi());
+    treeTop->Project("histo3","dphill","(step[9] && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav) && (abs(dphilljet)<165 || channel>1) && nextra==0 && njet==0)*baseW*puW*effW");
+    float top_pretopveto = histo3->Integral();
     
-    treeTop->Project("histo2","dphill","(step[9] && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav) && (abs(dphilljet)<165 || channel>1) && nextra==0 && njet==0 && dataset==10)*baseW*puW*effW");
-    float ttbar_pretopveto = histo2->Integral();
+    treeTop->Project("histo3","dphill","(step[9] && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav) && (abs(dphilljet)<165 || channel>1) && nextra==0 && njet==0 && dataset==10)*baseW*puW*effW");
+    float ttbar_pretopveto = histo3->Integral();
 
     float fttbar = ttbar_pretopveto / top_pretopveto;
     float fsinglet = 1.0 - fttbar;
