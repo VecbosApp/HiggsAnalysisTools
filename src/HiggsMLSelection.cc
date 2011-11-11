@@ -2699,10 +2699,9 @@ int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove, std::vector<in
     if(dxyMuon > 0.200) continue;     // hardcoded  
     if(dzMuon  > 0.200) continue;     // hardcoded  
 
-    //    float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
-    //    float isoSumRel = isoSumAbs / pt;
-    float isoSumRel = pfCombinedIsoMuon[i] / pt;
-    if(pt>20 || isoSumRel<0.1) continue;  
+    float isoSumRel = (sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i]) / pt;
+    //    float isoSumRel = pfCombinedIsoMuon[i] / pt;
+    if(pt>20 && isoSumRel<0.1) continue;  
     
     num++;
   }
