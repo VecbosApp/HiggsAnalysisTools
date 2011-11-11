@@ -18,14 +18,14 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nE
 
 void estimateWW() {
 
-  // constants: backgrounds estimated in all region. LP updated
-  float Wjets0j[4] = { 7.8, 8.2, 44.7, 20.2 };
+  // constants: backgrounds estimated in all region. Updated to 4.63 fb-1
+  float Wjets0j[4] = { 11.4, 8.2, 52.0, 22.9 };
   float Wjets0j_err[4] = { quadrSum(0.0,0.27*Wjets0j[ee]), 
                            quadrSum(0.0,0.31*Wjets0j[mm]), 
                            quadrSum(0.0,0.37*Wjets0j[em]), 
                            quadrSum(0.0,0.31*Wjets0j[me]) };
 
-  float Wjets1j[4] = { 3.6, 8.3, 31.2, 15.6 };
+  float Wjets1j[4] = { 5.1, 8.3, 35.6, 18.3 };
   float Wjets1j_err[4] = { quadrSum(0.0,0.25*Wjets1j[ee]), 
                            quadrSum(0.0,0.30*Wjets1j[mm]), 
                            quadrSum(0.0,0.26*Wjets1j[em]), 
@@ -61,8 +61,8 @@ void estimateWW() {
   DY1j_tot_err = sqrt(DY1j_tot_err);
 
   // from data-driven estimate (4.67 fb-1 update)
-  float top0j_tot = 206.; 
-  float top0j_tot_err = 33.;
+  float top0j_tot = 169; 
+  float top0j_tot_err = 17.;
 
   float top1j_tot = 370.;
   float top1j_tot_err = 17.;
@@ -77,7 +77,8 @@ void estimateWW() {
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
-  TFile *fileWjets = TFile::Open("results/datasets_trees/Wjets_ll.root");
+  //  TFile *fileWjets = TFile::Open("results/datasets_trees/Wjets_ll.root");
+  TFile *fileWjets = TFile::Open("results_data/datasets_trees_looseloose/looseloosenew.root");
   TFile *fileZjets = TFile::Open("results/datasets_trees/Zjets_ll.root");
   TFile *fileDiBosons = TFile::Open("results/datasets_trees/others_ll.root");
 
@@ -118,7 +119,7 @@ void estimateWW() {
   treeData->Project("dataH","dphill","WWSel");
   treeWW->Project("WWH","dphill","(WWSel)*baseW*puW*effW");
   treeTop->Project("topH","dphill","(WWSel)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(WWSel)*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(WWSel)*fakeW");
   treeZjets->Project("DYH","dphill","(WWSel)*baseW*puW*effW");
   treeDiBosons->Project("DiBosonsH","dphill","(WWSel)*baseW*puW*effW");
 
@@ -134,7 +135,7 @@ void estimateWW() {
   treeData->Project("dataH","dphill","mll>100 && WWSel");
   treeWW->Project("WWH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
   treeTop->Project("topH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel)*fakeW");
   treeZjets->Project("DYH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
   treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
 
@@ -162,7 +163,7 @@ void estimateWW() {
   treeData->Project("dataH","dphill","WWSel1j");
   treeWW->Project("WWH","dphill","(WWSel1j)*baseW*puW*effW");
   treeTop->Project("topH","dphill","(WWSel1j)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(WWSel1j)*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(WWSel1j)*fakeW");
   treeZjets->Project("DYH","dphill","(WWSel1j)*baseW*puW*effW");
   treeDiBosons->Project("DiBosonsH","dphill","(WWSel1j)*baseW*puW*effW");
 
@@ -177,7 +178,7 @@ void estimateWW() {
   treeData->Project("dataH","dphill","mll>100 && WWSel1j");
   treeWW->Project("WWH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
   treeTop->Project("topH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel1j)*fakeW");
   treeZjets->Project("DYH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
   treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
 
