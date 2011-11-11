@@ -16,6 +16,7 @@ float wantedLumi = 4.63;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr);
+std::pair<float,float> nWjetsTag(float nnotag, float nnotagerr, float r, float rerr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 std::pair<float,float> estimateTopVetoEff(int njet, bool fromData=true);
 std::pair<float,float> estimateTopVetoEff2(int njet, float x, bool effFromData);
@@ -70,14 +71,14 @@ void estimateTop(int njets) {
 //   WjDataTot[em][1] = 32.7; // updated 2.12 fb-1
 //   WjDataTot[me][1] = 21.4; // updated 2.12 fb-1
 
-  WjDataTot[ee][0] = 7.8; // updated 4.63 fb-1
+  WjDataTot[ee][0] = 11.4; // updated 4.63 fb-1
   WjDataTot[mm][0] = 8.2 ; // updated 4.63 fb-1
-  WjDataTot[em][0] = 44.7; // updated 4.63 fb-1
-  WjDataTot[me][0] = 20.2; // updated 4.63 fb-1
-  WjDataTot[ee][1] = 3.6; // updated 4.63 fb-1
+  WjDataTot[em][0] = 52.9; // updated 4.63 fb-1
+  WjDataTot[me][0] = 22.9; // updated 4.63 fb-1
+  WjDataTot[ee][1] = 5.1; // updated 4.63 fb-1
   WjDataTot[mm][1] = 8.3; // updated 4.63 fb-1
-  WjDataTot[em][1] = 31.2; // updated 4.63 fb-1
-  WjDataTot[me][1] = 15.6; // updated 4.63 fb-1
+  WjDataTot[em][1] = 35.6; // updated 4.63 fb-1
+  WjDataTot[me][1] = 18.3; // updated 4.63 fb-1
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
@@ -153,9 +154,10 @@ void estimateTop(int njets) {
   float Others_tot = wantedLumi * OthersAllHLL->Integral() * mistagSig[njets];
   float Others_tot_err = wantedLumi * yieldErrPoisson(Others_tot,OthersAllHLL->GetEntries()) * mistagSig[njets];
 
-  float Wjets_tot = mistagSig[njets] * (WjDataTot[ee][njets] + WjDataTot[mm][njets] +
-                                        WjDataTot[em][njets] + WjDataTot[me][njets]);
-  float Wjets_tot_err = 0.40 * Wjets_tot; // approximation
+  float Wjets_tot_notag = WjDataTot[ee][njets] + WjDataTot[mm][njets] + WjDataTot[em][njets] + WjDataTot[me][njets];
+  // approximation: assuming 40% uncertainty on W+jets and 10% on mistag rate
+  float Wjets_tot = (nWjetsTag(Wjets_tot_notag, 0.40 * Wjets_tot_notag, mistagSig[njets], 0.10 * mistagSig[njets])).first;
+  float Wjets_tot_err = (nWjetsTag(Wjets_tot_notag, 0.40 * Wjets_tot_notag, mistagSig[njets], 0.10 * mistagSig[njets])).second;
 
   float tagBkg_tot = WW_tot + DY_tot + Wjets_tot + Others_tot;
   float tagBkg_tot_err = quadrSum(WW_tot_err,DY_tot_err,Wjets_tot_err,Others_tot_err);
@@ -456,6 +458,14 @@ float quadrSum(float x1, float x2, float x3, float x4, float x5, float x6, float
 std::pair<float,float> nVeto(float ntag, float eff2b, float eff2berr) {
   float val = ntag * (1-eff2b) / eff2b;
   float err = ntag * eff2berr / pow(eff2b,2);
+  return std::make_pair(val,err);
+}
+
+std::pair<float,float> nWjetsTag(float nnotag, float nnotagerr, float r, float rerr) {
+
+  // W jets number is anti-tagged. Extrapolate to the tagged region
+  float val = nnotag * r/(1-r);
+  float err = quadrSum(r/(1-r)*nnotagerr, nnotag/pow(r-1,2)*rerr);
   return std::make_pair(val,err);
 }
 
