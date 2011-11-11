@@ -2235,8 +2235,10 @@ float LeptonPlusFakeMLSelection_fullEE::deltaPhiLLJet15(int ichan) {
      float dzMuon = muonDzPV(i,0);
      if(dxyMuon > 0.200) continue;     // hardcoded       
      if(dzMuon  > 0.200) continue;     // hardcoded  
-     float isoSumRel = pfCombinedIsoMuon[i] / pt;
-     if(pt>20 || isoSumRel<0.1) continue;
+
+     float isoSumRel = (sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i]) / pt;
+     //    float isoSumRel = pfCombinedIsoMuon[i] / pt;
+     if(pt>20 && isoSumRel<0.1) continue;  
     
      num++;
    }
