@@ -26,3 +26,7 @@ foreach (sort(keys(%collect))) {
     close CARD;
     print "> WJet_$_.txt\n";
 }
+
+# for the 2 jet bin use only the sum
+system("awk '{print \$1 \"\t\" \$14 \"\t\" \$16}' WJetsYieldsData_ForTable_2j.txt | tail -n 17 > WJet_all_2j.txt");
+print "> WJet_all_2j.txt\n";
