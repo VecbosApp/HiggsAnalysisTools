@@ -13,7 +13,7 @@ using namespace std;
 
 int FRWeights = 0;
 Float_t lumiA = 2.1;
-Float_t lumiB = 1.8;
+Float_t lumiB = 2.5;
 
 float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2);
 float calcMT(TVector3 met, TVector3 lepton);
@@ -41,6 +41,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   // used for PU reweighting
   PUWeight* fPUWeight2011A = new PUWeight("summer11","DY",-1,"2011A",0); 
   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
+  PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
 
@@ -49,24 +50,24 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap")->Clone("effSFmuons41");
   fileSFmuons41.Close();
   // 
-  //TFile fileSFmuons42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011AData_vs_42XMC.root");
-  TFile fileSFmuons42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_mu.root");
+  TFile fileSFmuons42A("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Muon_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011AReweighted.root");
+  //TFile fileSFmuons42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_mu.root");
   TH2F *histoSFmuons42A = (TH2F*)fileSFmuons42A.Get("hScaleFactorMap")->Clone("effSFmuons42A");
   // 
-  //TFile fileSFmuons42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Mu/OutputScaleFactorMap_Run2011BData_vs_42XMC.root");
-  TFile fileSFmuons42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_mu.root");
+  TFile fileSFmuons42B("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Muon_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011BReweighted.root");
+  //TFile fileSFmuons42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_mu.root");
   TH2F *histoSFmuons42B = (TH2F*)fileSFmuons42B.Get("hScaleFactorMap")->Clone("effSFmuons42B");
   //
   TFile fileSFEle41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/EffSFs_ElectronSel_DataLP11_MCSpring11_41X.root");
   TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF")->Clone("effSFele41");
   fileSFEle41.Close();
   //
-  // TFile fileSFEle42A("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011A_MC_42X_BDTID.root");
-  TFile fileSFEle42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_ele.root");
+  TFile fileSFEle42A("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Electron_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011AReweighted.root");
+  //TFile fileSFEle42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_ele.root");
   TH2F *histoSFele42A = (TH2F*)fileSFEle42A.Get("hScaleFactorMap")->Clone("effSFele42A");
   //
-  //TFile fileSFEle42B("/cmsrm/pc23_2/emanuele/data/Higgs4.2.X/LeptonSFs/Ele/OutputScaleFactorMap_DATA_Run2011B_MC_42X_BDTID.root");
-  TFile fileSFEle42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_ele.root");
+  TFile fileSFEle42B("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Electron_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011BReweighted.root");
+  //TFile fileSFEle42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_ele.root");
   TH2F *histoSFele42B = (TH2F*)fileSFEle42B.Get("hScaleFactorMap")->Clone("effSFele42B");
 
   fileOrig->cd();
@@ -380,7 +381,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     
     // variables to be converted in float...
     float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
-      f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_typeL1, f_typeL2, 
+      f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_dphiveto, f_typeL1, f_typeL2, 
       f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav;
     float f_ch[2];
     
@@ -455,7 +456,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
       // theTreeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
       // theTreeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
-      theTreeNew->Branch("njets", &f_njets, "njets/F");
+      theTreeNew->Branch("njet", &f_njets, "njet/F");
       theTreeNew->Branch("nuncorrjets", &f_nuncorrjets, "nuncorrjets/F");
       theTreeNew->Branch("dxyEVT", &dxyEVT, "dxyEVT/F");
       theTreeNew->Branch("dszEVT", &dszEVT, "dszEVT/F");
@@ -470,9 +471,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("bveto_ip", &f_bveto_ip, "bveto_ip/F");
       theTreeNew->Branch("bveto_mu", &f_bveto_mu, "bveto_mu/F");
       theTreeNew->Branch("bveto", &f_bveto, "bveto/F");
+      theTreeNew->Branch("dphiveto", &f_dphiveto, "dphiveto/F");
       theTreeNew->Branch("mtr", &mtr, "mtr/F");
       theTreeNew->Branch("mr", &mr, "mr/F");
-      theTreeNew->Branch("gammaMRstar", &dgammamr, "gammaMRstar/F");
+      theTreeNew->Branch("gammaMRStar", &dgammamr, "gammaMRStar/F");
       theTreeNew->Branch("R", &R, "R/F");
       theTreeNew->Branch("pfmetsign", &signPFMet, "pfmetsign/F");
       theTreeNew->Branch("chmetsign", &signPFChargedMet, "chmetsign/F");
@@ -593,8 +595,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     int j =0;
   
     for(int i=0; i<nentriesOrig; i++) {
-      if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl;
-      treeOrig->GetEntry(i);
+      if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl; 
+     treeOrig->GetEntry(i);
 
       if (njets==0) jetcat = 1;
       else if(njets==1) jetcat = -1;
@@ -638,8 +640,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
       i_finalSelection = (finalSelection) ? 1 : 0;
       i_promptDecay = (promptDecay) ? 1 : 0;
-      i_WWSel = (step[14]) ? 1 : 0;
-      i_WWSel1j = (step[23] && njets==1) ? 1 : 0;
       i_hlt = (hlt) ? 1 : 0;
 
       zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
@@ -686,7 +686,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	// PU weights
 	puAW = fPUWeight2011A->GetWeight(npu[1]); 
 	puBW = fPUWeight2011B->GetWeight(npu[1]); 
-	puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
+	//puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
+        puW = fPUWeightFull2011->GetWeight(npu[1]);
 
 	//  offline efficiency scale factors
 	Float_t eff1=1.; 
@@ -829,6 +830,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       
       sameflav = (finalstate<2) ? 1. : 0;
 
+      i_WWSel = (step[14] && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
+      i_WWSel1j = (step[23] && njets==1 && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
+
       // change the format of the integers -> float
       f_run = (float)run;
       f_lumi = (float)lumi;
@@ -841,6 +845,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       f_bveto_ip = (float)bveto_ip;
       f_bveto_mu = (float)bveto_mu;
       f_bveto = (float)bveto;
+      f_dphiveto = (float) ((jetpt1>15 && deltaPhi_LL_JET1<165) || jetpt1<=15);
       f_typeL1 = (float)typeL1;
       f_typeL2 = (float)typeL2;
       f_nSoftMuNoJets = (float)nSoftMuNoJets;
