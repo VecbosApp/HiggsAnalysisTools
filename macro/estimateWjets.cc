@@ -10,15 +10,18 @@
 #include "massDependentCuts.cc"
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
+
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
+
 TString kinematicCut(int ibin);
+
 void estimateWjets(int njets);
 
-enum { ee=0, mm=1, em=2, me=3 };
+enum { ee=1, mm=0, em=2, me=3 };
 enum { barrellowpt=0, barrelhighpt=1, endcaplowpt=2, endcaphighpt=3 };
 
 void printLatex() {
-
+  
   ofstream textfile;
   textfile.open("Wjets_yields.tex", ios_base::trunc);
   textfile << "\\documentclass{article}" << endl;
@@ -34,42 +37,48 @@ void printLatex() {
   ofstream textfile2;
   textfile2.open("Wjets_yields.tex", ios_base::app);
   textfile2 << "\\end{document}" << endl << endl;
-
 }
 
 void estimateWjets(int njets) {
   
-  char njetscut[20];
-  sprintf(njetscut,"(njets==%d)",njets);
-  char wwLevelCut[20];
-  if(njets==0) sprintf(wwLevelCut,"WWSel");
-  if(njets==1) sprintf(wwLevelCut,"WWSel1j");
+  // new WW selection
+  char wwLevelCut[1000];
 
-  float yield_WWSel[5][4]; // [bin][icha] bin = 5 => total
-  float yield_WWSel_staterr[5][4]; // [bin][icha]
+  if(njets==0) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==0 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && (pt2 > 15 || !sameflav) && ptll > 45)"); 
 
-  // systematics
-  float percErr[4][2];
-  percErr[ee][0]=0.27;  // 0jets, ee
-  percErr[ee][1]=0.25;  
-  percErr[me][0]=0.31;  
-  percErr[me][1]=0.29;  
-  percErr[mm][0]=0.31;  
-  percErr[mm][1]=0.30;  
-  percErr[em][0]=0.37;  
-  percErr[em][1]=0.26;  
+  if(njets==1) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==1 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
+  
+  if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
 
-  // for now only ee and me are done
-  TFile *fileEE = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
-  TFile *fileMM = TFile::Open("results_data/datasets_trees_fake/dataset_fake_mm.root");
-  TFile *fileEM = TFile::Open("results_data/datasets_trees_fake/dataset_fake_em.root");
-  TFile *fileME = TFile::Open("results_data/datasets_trees_fake/dataset_fake_me.root");
+  float yield_WWSel[5][4];           // [bin][icha] bin = 5 => total
+  float yield_WWSel_staterr[5][4];   // [bin][icha]
+  
+  // systematics 
+  float percErr[4][3];   // channel, jet-bin
+  percErr[ee][0]=0.36;   // 0jets, ee
+  percErr[ee][1]=0.36;  
+  percErr[ee][2]=0.36;  
+  percErr[me][0]=0.36;  
+  percErr[me][1]=0.36;  
+  percErr[me][2]=0.36;  
+  percErr[mm][0]=0.36;  
+  percErr[mm][1]=0.36;  
+  percErr[mm][2]=0.36;  
+  percErr[em][0]=0.36;  
+  percErr[em][1]=0.36;  
+  percErr[em][2]=0.36;  
 
-  TTree *treeEE = (TTree*)fileEE->Get("T1");
-  TTree *treeMM = (TTree*)fileMM->Get("T1");
-  TTree *treeEM = (TTree*)fileEM->Get("T1");
-  TTree *treeME = (TTree*)fileME->Get("T1");
+  // trees
+  TFile *fileEE = TFile::Open("results_fake/Full2011.root");
+  TFile *fileMM = TFile::Open("results_fake/Full2011.root");
+  TFile *fileEM = TFile::Open("results_fake/Full2011.root");
+  TFile *fileME = TFile::Open("results_fake/Full2011.root");
 
+  TTree *treeEE = (TTree*)fileEE->Get("latino");
+  TTree *treeMM = (TTree*)fileMM->Get("latino");
+  TTree *treeEM = (TTree*)fileEM->Get("latino");
+  TTree *treeME = (TTree*)fileME->Get("latino");
+  
   std::vector<TTree*> trees;
   trees.push_back(treeEE);
   trees.push_back(treeMM);
@@ -82,18 +91,15 @@ void estimateWjets(int njets) {
   for(int icha=0; icha<4; icha++) {
     for(int ibin=0; ibin<4; ibin++) {
 
+      char channel[20];
+      sprintf(channel,"(channel==%d)",icha);
+
       TString fpCut, fpCutStatErr;
-      if(icha==0 || icha==3) { // chiara has the hlt bit and WWSel to be applied
-        fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
-        fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
-      } else { // for mm, em HLT already applied
-        fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-        fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
-      }
-      // for MC closure test
-      // TString fpCut = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
-      // TString fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
-      
+      fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
+      // cout << "stima @ WW level: " << endl;
+      // cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
+
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[ibin][icha] = histo->Integral();
       
@@ -106,18 +112,18 @@ void estimateWjets(int njets) {
     for(int ibin=0; ibin<4; ibin++) {
       if(ibin==0) { 
         yield_WWSel[4][icha] = yield_WWSel[ibin][icha];
-        yield_WWSel_staterr[4][icha] = pow(yield_WWSel_staterr[ibin][icha],2);
+        yield_WWSel_staterr[4][icha] = pow(yield_WWSel_staterr[ibin][icha],2);    
       }
       else {
         yield_WWSel[4][icha] += yield_WWSel[ibin][icha];
-        yield_WWSel_staterr[4][icha] += pow(yield_WWSel_staterr[ibin][icha],2);}
+        yield_WWSel_staterr[4][icha] += pow(yield_WWSel_staterr[ibin][icha],2);}  
     }
   }
 
   float yield_WWSel_fullerr[4];    // [bin]
   for(int icha=0; icha<4; icha++) { 
-    yield_WWSel_staterr[4][icha] = sqrt(yield_WWSel_staterr[4][icha]);
-    yield_WWSel_fullerr[icha] = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
+    yield_WWSel_staterr[4][icha] = sqrt(yield_WWSel_staterr[4][icha]);            
+    yield_WWSel_fullerr[icha]    = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
     cout << "channel " << icha 
 	 << ": val = "     << yield_WWSel[4][icha] 
 	 << ", statErr = " << yield_WWSel_staterr[4][icha] 
@@ -130,7 +136,7 @@ void estimateWjets(int njets) {
   float yield_WWSel_tot_err = 0.;
   for(int icha=0; icha<4; icha++) {
     yield_WWSel_tot += yield_WWSel[4][icha];
-    yield_WWSel_tot_err += pow(yield_WWSel_staterr[4][icha],2);
+    yield_WWSel_tot_err += pow(yield_WWSel_fullerr[icha],2);  
   }
   yield_WWSel_tot_err = sqrt(yield_WWSel_tot_err);
 
@@ -193,6 +199,7 @@ void estimateWjets(int njets) {
   textfile << "\\end{small}" << endl;
   textfile << "\\end{table}" << endl;
 
+  std::cout << "WW level DONE." << std::endl;
 
   char nameFileTable[100];
   sprintf(nameFileTable, "WJetsYieldsData_ForTable_%dj.txt",njets);
@@ -206,28 +213,36 @@ void estimateWjets(int njets) {
   for (int i=0; i<17; i++) {
     
     int mass = masses[i];
-
-    TString higgsMassDependentCut = higgsCuts(mass,true);
     
-    // yields at WW level
+    TString higgsMassDependentCut = higgsCuts(mass,true);
+
+    // specific vbf selection
+    if (njets==2) {
+      char vbfLevelCut[1000];
+      if(i<=8) sprintf(vbfLevelCut,"((max(abs(jeteta1),abs(jeteta2))<4.5) && (njetvbf==0) && (mll<100) && (abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5) && (detajj>3.5) && (mjj>450))"); 
+      if(i>8) sprintf(vbfLevelCut,"((max(abs(jeteta1),abs(jeteta2))<4.5) && (njetvbf==0) && (abs(eta1 - (jeteta1+jeteta2)/2)/detajj < 0.5 && abs(eta2 - (jeteta1+jeteta2)/2)/detajj < 0.5) && (detajj>3.5) && (mjj>450))"); 
+      higgsMassDependentCut = TString(vbfLevelCut);
+      // cout << "caso VBF: " << endl;
+      // cout << vbfLevelCut  << endl;
+    }
+    
+    // yields at higgs level
     for(int icha=0; icha<4; icha++) {
+      char channel[20];
+      sprintf(channel,"channel==%d",icha);
+
       TString fpCut, fpCutStatErr;
-      if(icha==0 || icha==3) { // chiara has the hlt bit
-        fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt*") + TString(wwLevelCut);
-        fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt*") + TString(wwLevelCut);
-      } else { // alicia has already applied WWSel + HLT
-        fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightFP");
-        fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*weightStatFP");
-      }
-      // for MC closure test
-      // TString fpCut = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW*") + TString(wwLevelCut);
-      // TString fpCutStatErr = TString("(") + higgsMassDependentCut + TString(" && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW*") + TString(wwLevelCut);
+      fpCut        = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
       
+      // cout << "at higgs level, mass = " << i << endl;
+      // std::cout << "taglio = " << fpCut.Data() << std::endl;
+
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[4][icha] = histo->Integral();
       
       trees[icha]->Project("histo","dphill",fpCutStatErr);
-      yield_WWSel_staterr[4][icha] = sqrt(histo->Integral());
+      yield_WWSel_staterr[4][icha] = sqrt(histo->Integral());  
 
       yield_WWSel_fullerr[icha] = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
     }
@@ -236,10 +251,10 @@ void estimateWjets(int njets) {
     float yield_tot = 0.;
     float yield_tot_err = 0.;
     for(int icha=0; icha<4; icha++) {
-      yield_tot += yield_WWSel[4][icha];
-      yield_tot_err += pow(yield_WWSel_staterr[4][icha],2);
+      yield_tot     += yield_WWSel[4][icha];
+      yield_tot_err += pow(yield_WWSel_fullerr[icha],2);  
     }
-    yield_tot_err = sqrt(yield_tot_err);
+    yield_tot_err = sqrt(yield_tot_err);     
 
     // summary table for limits
     if (i==0) { 
@@ -247,92 +262,36 @@ void estimateWjets(int njets) {
       tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
     }
     tablefile << mass 
-              << "\t\t" << yield_WWSel[4][1] << " +/- " <<  yield_WWSel_fullerr[1] 
-              << "\t\t" << yield_WWSel[4][3] << " +/- " <<  yield_WWSel_fullerr[3] 
-              << "\t\t" << yield_WWSel[4][2] << " +/- " <<  yield_WWSel_fullerr[2] 
-              << "\t\t" << yield_WWSel[4][0] << " +/- " <<  yield_WWSel_fullerr[0] 
+              << "\t\t" << yield_WWSel[4][mm] << " +/- " <<  yield_WWSel_fullerr[mm] 
+              << "\t\t" << yield_WWSel[4][me] << " +/- " <<  yield_WWSel_fullerr[me] 
+              << "\t\t" << yield_WWSel[4][em] << " +/- " <<  yield_WWSel_fullerr[em] 
+              << "\t\t" << yield_WWSel[4][ee] << " +/- " <<  yield_WWSel_fullerr[ee] 
               << "\t\t" << yield_tot << " +/- " <<  yield_tot_err  
               << std::endl;
 
   }
 
-
+  /*
   /// ===> compute !b-veto efficiency on W+jets 
   // this is useful for W+jets contamination in the top-tagged control sample
   // use a channel independent estimate
   // for now only ee is done
-  TFile *fileEEAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
-  TFile *fileMMAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
-  TFile *fileEMAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_ee.root");
-  TFile *fileMEAll = TFile::Open("results_data/datasets_trees_fake/dataset_fake_me.root");
+  TFile *fileEEAll = TFile::Open("results_data_fakes/2011A_scenario3.root");
+  TFile *fileMMAll = TFile::Open("results_data_fakes/2011A_scenario3.root");
+  TFile *fileEMAll = TFile::Open("results_data_fakes/2011A_scenario3.root");
+  TFile *fileMEAll = TFile::Open("results_data_fakes/2011A_scenario3.root");
 
-  TTree *treeEEAll = (TTree*)fileEEAll->Get("T1");
-  TTree *treeMMAll = (TTree*)fileMMAll->Get("T1");
-  TTree *treeEMAll = (TTree*)fileEMAll->Get("T1");
-  TTree *treeMEAll = (TTree*)fileMEAll->Get("T1");
+  TTree *treeEEAll = (TTree*)fileEEAll->Get("latino");
+  TTree *treeMMAll = (TTree*)fileMMAll->Get("latino");
+  TTree *treeEMAll = (TTree*)fileEMAll->Get("latino");
+  TTree *treeMEAll = (TTree*)fileMEAll->Get("latino");
 
   trees.clear();
   trees.push_back(treeEEAll);
   trees.push_back(treeMMAll);
   trees.push_back(treeEMAll);
   trees.push_back(treeMEAll);
-
-
-  // yields at WW level: tagged events
-  float yield_WWSel_denom[4]; // [icha]
-  float yield_WWSel_denom_staterr[4]; // [icha]
-
-  float yield_WWSel_denom_tot = 0.;
-  float yield_WWSel_denom_tot_staterr = 0.;
-
-  float yield_WWSel_1jnum_tot = 0.;
-  float yield_WWSel_1jnum_tot_staterr = 0.;
-
-  TH1F *histo2 = new TH1F("histo2","",100,0.,180.); // for the denominator
-
-  for(int icha=0; icha<4; icha++) {
-    // step[9] is all before b-veto and njet cut 
-
-    TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");            
-    TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt"); 
-    // for MC closure test
-    // TString fpCut = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW");               
-    // TString fpCutStatErr = TString("(") + TString("step[9] && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW");    
-    
-    trees[icha]->Project("histo2","dphill",fpCut);
-    yield_WWSel_denom[icha] = histo2->Integral();
-    yield_WWSel_denom_tot += yield_WWSel_denom[icha];
-    
-    trees[icha]->Project("histo2","dphill",fpCutStatErr);
-    yield_WWSel_denom_staterr[icha] = sqrt(histo2->Integral());
-    yield_WWSel_denom_tot_staterr += pow(yield_WWSel_denom_staterr[icha],2);
-
-    // as the tagged 1 jet bin
-    // for the 1 jet numerator: one event enter the top control region if the leading jet is btagged && all the rest are not 
-
-    fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightFP*hlt");
-    fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*weightStatFP*hlt");
-    // for MC closure test
-    // fpCut = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*1.545*weightFP*baseW");
-    // fpCutStatErr = TString("(") + TString("step[9] && leadingJetBTagTrackCount>2.1 && subleadingJetBTagTrackCount<=2.1 && ") + TString(njetscut) + TString(")") + TString("*1.545*weightStatFP*baseW");
-
-    trees[icha]->Project("histo2","dphill",fpCut);
-    yield_WWSel_1jnum_tot += histo2->Integral();
-    
-    trees[icha]->Project("histo2","dphill",fpCutStatErr);
-    yield_WWSel_1jnum_tot_staterr += pow(histo2->Integral(),2);
-  }
-  
-  yield_WWSel_denom_tot_staterr = sqrt(yield_WWSel_denom_tot_staterr);
-  yield_WWSel_1jnum_tot_staterr = sqrt(yield_WWSel_1jnum_tot_staterr);
-
-  float numerator = 0;
-  if(njets==0) numerator = yield_WWSel_denom_tot - yield_WWSel_tot; // events that are btagged
-  else numerator = yield_WWSel_1jnum_tot_staterr;
-
-  float btageff = numerator / yield_WWSel_denom_tot;
-  float btageff_err = sqrt(btageff*(1-btageff)/yield_WWSel_denom_tot);
-  std::cout << "On the TF sample: btagging (IP + soft mu) efficiency = " << btageff << " +/- " << btageff_err << std::endl;
+  */
 
 }
 
@@ -354,9 +313,9 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3,
 }
 
 TString kinematicCut(int ibin) {
-  if(ibin==barrellowpt) return TString("(abs(eta2)<=1.479 && pt2<20)");
+  if(ibin==barrellowpt)  return TString("(abs(eta2)<=1.479 && pt2<20)");
   if(ibin==barrelhighpt) return TString("(abs(eta2)<=1.479 && pt2>=20)");
-  if(ibin==endcaplowpt) return TString("(abs(eta2)>1.479 && pt2<20)");
+  if(ibin==endcaplowpt)  return TString("(abs(eta2)>1.479 && pt2<20)");
   if(ibin==endcaphighpt) return TString("(abs(eta2)>1.479 && pt2>=20)");
   return TString("wrong bin chosen. Check method kinematicCut(int ibin)");
 }
