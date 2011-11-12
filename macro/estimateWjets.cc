@@ -207,11 +207,23 @@ void estimateWjets(int njets) {
   tablefile.open(nameFileTable, ios_base::trunc);
   tablefile.precision(2);
 
+  char nameFileTable2[100];
+  sprintf(nameFileTable2, "WJetsYieldsData_SF_ForTable_%dj.txt",njets);
+  ofstream tablefile2;
+  tablefile2.open(nameFileTable2, ios_base::trunc);
+  tablefile2.precision(2);
+
+  char nameFileTable3[100];
+  sprintf(nameFileTable3, "WJetsYieldsData_OF_ForTable_%dj.txt",njets);
+  ofstream tablefile3;
+  tablefile3.open(nameFileTable3, ios_base::trunc);
+  tablefile3.precision(2);
+
   int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
   for (int i=0; i<17; i++) {
-    
+
     int mass = masses[i];
     
     TString higgsMassDependentCut = higgsCuts(mass,true);
@@ -256,7 +268,13 @@ void estimateWjets(int njets) {
     }
     yield_tot_err = sqrt(yield_tot_err);     
 
-    // summary table for limits
+    // total splitted between SF and OF (for datacards)
+    float yield_sf = yield_WWSel[4][mm] + yield_WWSel[4][ee];
+    float yield_of = yield_WWSel[4][em] + yield_WWSel[4][me];
+    float err_sf   = sqrt( yield_WWSel_fullerr[mm]*yield_WWSel_fullerr[mm] + yield_WWSel_fullerr[ee]*yield_WWSel_fullerr[ee]);
+    float err_of   = sqrt( yield_WWSel_fullerr[em]*yield_WWSel_fullerr[em] + yield_WWSel_fullerr[me]*yield_WWSel_fullerr[me]);
+
+    // summary table for limits: splitting in 4 channels
     if (i==0) { 
       tablefile << "# " << njets << " jets bin data" << endl;
       tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
@@ -269,6 +287,15 @@ void estimateWjets(int njets) {
               << "\t\t" << yield_tot << " +/- " <<  yield_tot_err  
               << std::endl;
 
+    // summary table for limits: splitting in 2 channels (SF, OF)
+    if (i==0) { 
+      tablefile2 << "# " << njets << " jets bin data" << endl;
+      tablefile2 << "# \t\t SF" << endl;
+      tablefile3 << "# " << njets << " jets bin data" << endl;
+      tablefile3 << "# \t\t OF" << endl;
+    }
+    tablefile2 << mass << "\t\t" << yield_sf << " +/- " << err_sf << std::endl; 
+    tablefile3 << mass << "\t\t" << yield_of << " +/- " << err_of << std::endl; 
   }
 
   /*
