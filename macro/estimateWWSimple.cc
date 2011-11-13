@@ -9,7 +9,7 @@
 #include <math.h>
 #include "massDependentCuts.cc"
 
-enum { ee=0, mm=1, em=2, me=3 };
+enum { ee=0, mm=1, em=2, me=3, sf=4, of=5 };
 
 float usedLumi = 4.63;
 
@@ -334,8 +334,8 @@ void estimateWW() {
   tablefile4.precision(3);
 
   // these are for limits
-  ofstream cardfile[4][2][2]; //[cha][jetbin][qq/gg]
-  for(int icha=0; icha<4; icha++) {
+  ofstream cardfile[6][2][2]; //[cha][jetbin][qq/gg]
+  for(int icha=0; icha<6; icha++) {
     for(int j=0; j<2; j++) {
       for(int iproc=0; iproc<2; iproc++) {
         char fileName[50];
@@ -344,11 +344,15 @@ void estimateWW() {
           if(icha==mm) sprintf(fileName,"WWCard_mm_%dj.txt",j);
           if(icha==em) sprintf(fileName,"WWCard_em_%dj.txt",j);
           if(icha==me) sprintf(fileName,"WWCard_me_%dj.txt",j);
+          if(icha==sf) sprintf(fileName,"WWCard_sf_%dj.txt",j);
+          if(icha==of) sprintf(fileName,"WWCard_of_%dj.txt",j);
         } else {
           if(icha==ee) sprintf(fileName,"ggWWCard_ee_%dj.txt",j);
           if(icha==mm) sprintf(fileName,"ggWWCard_mm_%dj.txt",j);
           if(icha==em) sprintf(fileName,"ggWWCard_em_%dj.txt",j);
           if(icha==me) sprintf(fileName,"ggWWCard_me_%dj.txt",j);
+          if(icha==sf) sprintf(fileName,"ggWWCard_sf_%dj.txt",j);
+          if(icha==of) sprintf(fileName,"ggWWCard_of_%dj.txt",j);
         }
         cardfile[icha][j][iproc].open(fileName, ios_base::trunc);
         cardfile[icha][j][iproc].precision(3);
@@ -368,7 +372,7 @@ void estimateWW() {
   for (int i=0; i<19; i++) {
     
     int mass = masses[i];
-    TString higgsMassDependentCut = higgsCuts(mass,true);
+    TString higgsMassDependentCut = higgsCutsBDT(mass,true);
     
     TString HCut[4][2]; // [icha][qq/gg]
     
@@ -465,6 +469,34 @@ void estimateWW() {
                                  << "\t" <<  alpha_1j_err 
                                  << std::endl;
       }
+      float alpha_sf_0j = (nWWData_HiggsSel_0j[ee][iproc] + nWWData_HiggsSel_0j[mm][iproc]) / integralData0jCtrl;
+      float alpha_sf_0j_err = alpha_sf_0j * (quadrSum(nWWData_HiggsSel_0j_err[ee][iproc],nWWData_HiggsSel_0j_err[mm][iproc])) / (nWWData_HiggsSel_0j[ee][iproc] + nWWData_HiggsSel_0j[mm][iproc]);
+      float alpha_sf_1j = (nWWData_HiggsSel_1j[ee][iproc] + nWWData_HiggsSel_1j[mm][iproc]) / integralData1jCtrl;
+      float alpha_sf_1j_err = alpha_sf_1j * (quadrSum(nWWData_HiggsSel_1j_err[ee][iproc],nWWData_HiggsSel_1j_err[mm][iproc])) / (nWWData_HiggsSel_1j[ee][iproc] + nWWData_HiggsSel_1j[mm][iproc]);
+
+      float alpha_of_0j = (nWWData_HiggsSel_0j[em][iproc] + nWWData_HiggsSel_0j[me][iproc]) / integralData0jCtrl;
+      float alpha_of_0j_err = alpha_of_0j * (quadrSum(nWWData_HiggsSel_0j_err[em][iproc],nWWData_HiggsSel_0j_err[me][iproc])) / (nWWData_HiggsSel_0j[em][iproc] + nWWData_HiggsSel_0j[me][iproc]);
+      float alpha_of_1j = (nWWData_HiggsSel_1j[em][iproc] + nWWData_HiggsSel_1j[me][iproc]) / integralData1jCtrl;
+      float alpha_of_1j_err = alpha_of_1j * (quadrSum(nWWData_HiggsSel_1j_err[em][iproc],nWWData_HiggsSel_1j_err[me][iproc])) / (nWWData_HiggsSel_1j[em][iproc] + nWWData_HiggsSel_1j[me][iproc]);
+
+      cardfile[sf][0][iproc] << mass 
+                             << "\t" << integralData0jCtrl << "\t" << alpha_sf_0j
+                             << "\t" <<  alpha_sf_0j_err 
+                             << std::endl;
+      cardfile[sf][1][iproc] << mass 
+                             << "\t" << integralData1jCtrl << "\t" << alpha_sf_1j
+                             << "\t" <<  alpha_sf_1j_err 
+                             << std::endl;
+      
+      cardfile[of][0][iproc] << mass 
+                             << "\t" << integralData0jCtrl << "\t" << alpha_of_0j
+                             << "\t" <<  alpha_of_0j_err 
+                             << std::endl;
+      cardfile[of][1][iproc] << mass 
+                             << "\t" << integralData1jCtrl << "\t" << alpha_of_1j
+                             << "\t" <<  alpha_of_1j_err 
+                             << std::endl;
+
     }
 
 
