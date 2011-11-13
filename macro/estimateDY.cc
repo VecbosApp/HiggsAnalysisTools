@@ -23,10 +23,13 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
 void makeRPlot(int mH, int njets);
 void makeAllRPlots(int njets);
 
-void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk) {
+void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool cutbasedestimation=true) {
 
   std::cout << "===> ESTIMATION AT WW LEVEL <===" << std::endl;
   estimateDY(lumiInInvFb, 0,njets,useDataRk);
+
+  if(cutbasedestimation) std::cout << "@@@ ESTIMATION FOR CUT-BASED ANALYSIS @@@" << std::endl;
+  else std::cout << "@@@ ESTIMATION FOR BDT ANALYSIS @@@" << std::endl;
 
   // these are for limits
   ofstream cardfile[2][2]; //[cha][jetbin]
@@ -84,13 +87,21 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk) {
   tablefileLL << "$m_{H}$ [GeV] \t\t \t & $n^{data}_{in}$ \t\t & $n^{data}_{in}(sub)$ \t\t\t & \t $R_{MC}$ \t & \t $n^{data}_{DY}$ \t & \t $n^{MC}_{DY}$ \\\\" << endl;
   tablefileLL << "\\hline" << endl;
 
-  int mH[18] = {115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0; i<18;i++) {
+  int mH[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0; i<19;i++) {
     std::cout << "mH = " << mH[i] << std::endl;
-    TString addCutInR = higgsCutsNoMT(mH[i],false);
-    TString addCutOutR = higgsCutsNoMT(mH[i],true);
-    TString addCutIn = higgsCuts(mH[i],false);
-    TString addCutOut = higgsCuts(mH[i],true);
+    TString addCutInR, addCutOutR, addCutIn, addCutOut;
+    if(cutbasedestimation) {
+      addCutInR = higgsCutsNoMT(mH[i],false);
+      addCutOutR = higgsCutsNoMT(mH[i],true);
+      addCutIn = higgsCuts(mH[i],false);
+      addCutOut = higgsCuts(mH[i],true);
+    } else {
+      addCutInR = higgsCutsBDTNoMT(mH[i],false);
+      addCutOutR = higgsCutsBDTNoMT(mH[i],true);
+      addCutIn = higgsCutsBDT(mH[i],false);
+      addCutOut = higgsCutsBDT(mH[i],true);
+    }
     estimateDY(lumiInInvFb, mH[i],njets,useDataRk,addCutIn,addCutOut,addCutInR,addCutOutR);
   }
 
@@ -197,7 +208,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   TString wwCutOut("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
   wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
 
-  TString weightString("baseW*kfW*puW*effW");
+  TString weightString;
+  if(njets==0) weightString = TString("baseW*kfW*puW*effW");
+  else weightString = TString("baseW*puW*effW");
 
   treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && mpmet>30 && mpmet<(37+nvtx/2.) && sameflav")+TString(")*baseW*kfW*puW*effW"));
   float forTheCheck = nllCheckInH->GetEntries();
@@ -601,9 +614,12 @@ void makeRPlot(int mH, int njets) {
   channel.push_back("channel==1");
   channel.push_back("channel==0");
 
-  TString weightString("baseW*kfW*puW*effW");
+  TString weightString;
+  if(njets==0) weightString = TString("baseW*kfW*puW*effW");
+  else weightString = TString("baseW*puW*effW");
+  
   TString addCutIn, addCutOut;
-  if(mH>=115 && mH<=600) {
+  if(mH>=110 && mH<=600) {
     std::cout << "mH = " << mH << std::endl;
     addCutIn = higgsCutsNoMT(mH,false);
     addCutOut = higgsCutsNoMT(mH,true);
@@ -660,8 +676,8 @@ void makeRPlot(int mH, int njets) {
 }
 
 void makeAllRPlots(int njets) {
-  int mH[19] = {0,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0;i<19;i++) {
+  int mH[20] = {0,110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0;i<20;i++) {
     makeRPlot(mH[i],njets);
   }
 }
