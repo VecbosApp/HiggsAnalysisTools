@@ -10,7 +10,7 @@
 #include <math.h>
 #include "massDependentCuts.cc"
 
-enum { ee=0, mm=1, em=2, me=3 };
+enum { ee=0, mm=1, em=2, me=3, sf=4, of=5 };
 
 float wantedLumi = 4.63;
 
@@ -46,9 +46,9 @@ void estimateTop(int njets) {
   std::pair<float,float> efftag = estimateTopVetoEffBkgSub(njets);
   float eff_2b = efftag.first;
   float eff_2b_err = efftag.second;
-  //  std::cout << "===> DISCLAIMER: TAKING THE EFF 2B PRECOMPUTED!" << std::endl; for 0-jet: Matt eff estimation  
-  // float eff_2b = 0.49;
-  // float eff_2b_err = 0.01;
+//   std::cout << "===> DISCLAIMER: TAKING THE EFF 2B PRECOMPUTED!" << std::endl; // for 0-jet: Matt eff estimation  
+//   float eff_2b = 0.49;
+//   float eff_2b_err = 0.01;
 
   char njcut[30];
   sprintf(njcut, "njet==%d", njets);
@@ -63,7 +63,7 @@ void estimateTop(int njets) {
   // scale factors for the backgrounds
   float WWDataOverMC[2] = {1.00, 1.00} ; // use one for first iteration
   float DYDataOverMC[2] = {6.0, 7.2};  // estimation 4.63 fb-1
-  float WjDataTot[4][2];     // [icha][jetbin]
+  float WjDataTot[6][2];     // [icha][jetbin]
   // cut based eleID, all LP (scenario1)
 //   WjDataTot[ee][0] = 19.5; // updated 2.12 fb-1
 //   WjDataTot[mm][0] = 19.1 ; // updated 2.12 fb-1
@@ -82,7 +82,12 @@ void estimateTop(int njets) {
   WjDataTot[mm][1] = 8.3; // updated 4.63 fb-1
   WjDataTot[em][1] = 35.6; // updated 4.63 fb-1
   WjDataTot[me][1] = 18.3; // updated 4.63 fb-1
-  
+
+  for(int j=0; j<2; j++) {
+    WjDataTot[sf][j] = WjDataTot[ee][j] + WjDataTot[mm][j];
+    WjDataTot[of][j] = WjDataTot[em][j] + WjDataTot[me][j];
+  }
+
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileTop  = TFile::Open("results/datasets_trees/top_ll.root");
   TFile *fileWW   = TFile::Open("results/datasets_trees/WW_ll.root");
@@ -320,13 +325,15 @@ void estimateTop(int njets) {
   tablefileMC << "\\hline" << endl;
 
   // these are for limits
-  ofstream cardfile[4]; //[cha]
-  for(int icha=0; icha<4; icha++) {
+  ofstream cardfile[6]; //[cha]
+  for(int icha=0; icha<6; icha++) {
     char fileName[2];
     if(icha==ee) sprintf(fileName,"TopCard_ee_%dj.txt",njets);
     if(icha==mm) sprintf(fileName,"TopCard_mm_%dj.txt",njets);
     if(icha==em) sprintf(fileName,"TopCard_em_%dj.txt",njets);
     if(icha==me) sprintf(fileName,"TopCard_me_%dj.txt",njets);
+    if(icha==sf) sprintf(fileName,"TopCard_sf_%dj.txt",njets);
+    if(icha==of) sprintf(fileName,"TopCard_of_%dj.txt",njets);
     cardfile[icha].open(fileName, ios_base::trunc);
     cardfile[icha].setf(ios::fixed,ios::floatfield);
     cardfile[icha].precision(5);
@@ -405,6 +412,24 @@ void estimateTop(int njets) {
       ///////////////
 
     }
+
+    // sum in the sf/of
+    float alpha_sf = (nTopData_HiggsSel[ee] + nTopData_HiggsSel[mm]) / nBTagTag_data_tot;
+    float alpha_sf_err = alpha_sf * (quadrSum(nTopData_HiggsSel_err[ee],nTopData_HiggsSel_err[mm])) / (nTopData_HiggsSel[ee] + nTopData_HiggsSel[mm]);
+
+    float alpha_of = (nTopData_HiggsSel[em] + nTopData_HiggsSel[me]) / nBTagTag_data_tot;
+    float alpha_of_err = alpha_sf * (quadrSum(nTopData_HiggsSel_err[em],nTopData_HiggsSel_err[me])) / (nTopData_HiggsSel[em] + nTopData_HiggsSel[me]);
+
+    
+    cardfile[sf] << mass
+                 << "\t" << nBTagTag_data_tot << "\t" << alpha_sf
+                 << "\t" <<  alpha_sf_err
+                 << std::endl;
+
+    cardfile[of] << mass
+                 << "\t" << nBTagTag_data_tot << "\t" << alpha_of
+                 << "\t" <<  alpha_of_err
+                 << std::endl;
 
     // summary table for limits
     float nTopData_HiggsSel_tot = 0;
