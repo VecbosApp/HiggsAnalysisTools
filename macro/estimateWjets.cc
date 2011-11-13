@@ -43,12 +43,12 @@ void estimateWjets(int njets) {
   
   // new WW selection
   char wwLevelCut[1000];
-
+  
   if(njets==0) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==0 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && (pt2 > 15 || !sameflav) && ptll > 45)"); 
-
+  
   if(njets==1) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==1 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
   
-  if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
+  if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet>=2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
 
   float yield_WWSel[5][4];           // [bin][icha] bin = 5 => total
   float yield_WWSel_staterr[5][4];   // [bin][icha]
@@ -90,7 +90,7 @@ void estimateWjets(int njets) {
   // yields at WW level
   for(int icha=0; icha<4; icha++) {
     for(int ibin=0; ibin<4; ibin++) {
-
+      
       char channel[20];
       sprintf(channel,"(channel==%d)",icha);
 
@@ -99,7 +99,7 @@ void estimateWjets(int njets) {
       fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
       // cout << "stima @ WW level: " << endl;
       // cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
-
+      
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[ibin][icha] = histo->Integral();
       
@@ -107,7 +107,7 @@ void estimateWjets(int njets) {
       yield_WWSel_staterr[ibin][icha] = sqrt(histo->Integral());
     }
   }  
-
+  
   for(int icha=0; icha<4; icha++) {
     for(int ibin=0; ibin<4; ibin++) {
       if(ibin==0) { 
@@ -219,14 +219,15 @@ void estimateWjets(int njets) {
   tablefile3.open(nameFileTable3, ios_base::trunc);
   tablefile3.precision(2);
 
-  int masses[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int masses[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int i=0; i<17; i++) {
+  for (int i=0; i<19; i++) {
 
     int mass = masses[i];
-    
-    TString higgsMassDependentCut = higgsCuts(mass,true);
+
+    TString higgsMassDependentCut = higgsCuts(mass,true);       // for cut based studied
+    // TString higgsMassDependentCut = higgsCutsBDT(mass,true);       // for BDT studies
 
     // specific vbf selection
     if (njets==2) {
@@ -249,7 +250,7 @@ void estimateWjets(int njets) {
       
       // cout << "at higgs level, mass = " << i << endl;
       // std::cout << "taglio = " << fpCut.Data() << std::endl;
-
+      
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[4][icha] = histo->Integral();
       
@@ -259,20 +260,28 @@ void estimateWjets(int njets) {
       yield_WWSel_fullerr[icha] = quadrSum(yield_WWSel_staterr[4][icha], percErr[icha][njets]*yield_WWSel[4][icha]);
     }
     
-    // total for all the channels
+    // total (statistical only here) error for the four channels together
     float yield_tot = 0.;
-    float yield_tot_err = 0.;
+    float yield_tot_staterr = 0.;
+    float yield_tot_fullerr = 0.;
     for(int icha=0; icha<4; icha++) {
-      yield_tot     += yield_WWSel[4][icha];
-      yield_tot_err += pow(yield_WWSel_fullerr[icha],2);  
+      yield_tot         += yield_WWSel[4][icha];
+      yield_tot_staterr += pow(yield_WWSel_staterr[4][icha],2);  
+      yield_tot_fullerr += pow(yield_WWSel_fullerr[icha],2);  
     }
-    yield_tot_err = sqrt(yield_tot_err);     
+    yield_tot_staterr = sqrt(yield_tot_staterr);     
+    yield_tot_fullerr = sqrt(yield_tot_fullerr);     
+    cout << "mass " << i << ": yield = " << yield_tot << ", stat = " << yield_tot_staterr << ", full = " << yield_tot_fullerr << endl; 
 
     // total splitted between SF and OF (for datacards)
-    float yield_sf = yield_WWSel[4][mm] + yield_WWSel[4][ee];
-    float yield_of = yield_WWSel[4][em] + yield_WWSel[4][me];
-    float err_sf   = sqrt( yield_WWSel_fullerr[mm]*yield_WWSel_fullerr[mm] + yield_WWSel_fullerr[ee]*yield_WWSel_fullerr[ee]);
-    float err_of   = sqrt( yield_WWSel_fullerr[em]*yield_WWSel_fullerr[em] + yield_WWSel_fullerr[me]*yield_WWSel_fullerr[me]);
+    float yield_sf   = yield_WWSel[4][mm] + yield_WWSel[4][ee];
+    float yield_of   = yield_WWSel[4][em] + yield_WWSel[4][me];
+    //
+    float fullerr_sf = sqrt( yield_WWSel_fullerr[mm]*yield_WWSel_fullerr[mm] + yield_WWSel_fullerr[ee]*yield_WWSel_fullerr[ee]);
+    float fullerr_of = sqrt( yield_WWSel_fullerr[em]*yield_WWSel_fullerr[em] + yield_WWSel_fullerr[me]*yield_WWSel_fullerr[me]);
+    // 
+    float staterr_sf = sqrt( yield_WWSel_staterr[4][mm]*yield_WWSel_staterr[4][mm] + yield_WWSel_staterr[4][ee]*yield_WWSel_staterr[4][ee]);
+    float staterr_of = sqrt( yield_WWSel_staterr[4][em]*yield_WWSel_staterr[4][em] + yield_WWSel_staterr[4][me]*yield_WWSel_staterr[4][me]);
 
     // summary table for limits: splitting in 4 channels
     if (i==0) { 
@@ -280,11 +289,11 @@ void estimateWjets(int njets) {
       tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
     }
     tablefile << mass 
-              << "\t\t" << yield_WWSel[4][mm] << " +/- " <<  yield_WWSel_fullerr[mm] 
-              << "\t\t" << yield_WWSel[4][me] << " +/- " <<  yield_WWSel_fullerr[me] 
-              << "\t\t" << yield_WWSel[4][em] << " +/- " <<  yield_WWSel_fullerr[em] 
-              << "\t\t" << yield_WWSel[4][ee] << " +/- " <<  yield_WWSel_fullerr[ee] 
-              << "\t\t" << yield_tot << " +/- " <<  yield_tot_err  
+              << "\t\t" << yield_WWSel[4][mm] << " +/- " <<  yield_WWSel_staterr[4][mm] 
+              << "\t\t" << yield_WWSel[4][me] << " +/- " <<  yield_WWSel_staterr[4][me] 
+              << "\t\t" << yield_WWSel[4][em] << " +/- " <<  yield_WWSel_staterr[4][em] 
+              << "\t\t" << yield_WWSel[4][ee] << " +/- " <<  yield_WWSel_staterr[4][ee] 
+              << "\t\t" << yield_tot << " +/- " <<  yield_tot_staterr  
               << std::endl;
 
     // summary table for limits: splitting in 2 channels (SF, OF)
@@ -294,8 +303,8 @@ void estimateWjets(int njets) {
       tablefile3 << "# " << njets << " jets bin data" << endl;
       tablefile3 << "# \t\t OF" << endl;
     }
-    tablefile2 << mass << "\t\t" << yield_sf << " +/- " << err_sf << std::endl; 
-    tablefile3 << mass << "\t\t" << yield_of << " +/- " << err_of << std::endl; 
+    tablefile2 << mass << "\t\t" << yield_sf << " +/- " << staterr_sf << std::endl; 
+    tablefile3 << mass << "\t\t" << yield_of << " +/- " << staterr_of << std::endl; 
   }
 
   /*
