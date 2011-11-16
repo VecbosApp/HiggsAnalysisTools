@@ -105,7 +105,7 @@ TString higgsCutsBDT(int mH, bool out) {
   cuts.insert(std::make_pair(110,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<110")));
   cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<115")));
   cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<120")));
-  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<130")));
+  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<130")));
   cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<140")));
   cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<150")));
   cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<160")));
