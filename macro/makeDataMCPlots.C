@@ -60,8 +60,8 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   //  scalefactor_datadriven[2][0] = "1."; // if W+jets taken from MC
   scalefactor_datadriven[3][0] = "1.";      // taken from MC, + scale factor
   scalefactor_datadriven[4][0] = "1.54";
-  scalefactor_datadriven[5][0] = "4.0";
-  scalefactor_datadriven[6][0] = "1.0";      // for Z -> taus we use 1
+  scalefactor_datadriven[5][0] = "4.6";
+  scalefactor_datadriven[6][0] = "4.0";      // for Z -> taus we use 1
   scalefactor_datadriven[7][0] = "1.14";
 
 
@@ -70,9 +70,9 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   scalefactor_datadriven[2][1] = "1.";    // here the ee+me fake rate tree is used only for the shape. SF = (WjetsTot/ (Wjets_ee + Wjets_me))
   // scalefactor_datadriven[2][1] = "1.";
   scalefactor_datadriven[3][1] = "1.";    // taken from MC + scalefactor
-  scalefactor_datadriven[4][1] = "1.2";
-  scalefactor_datadriven[5][1] = "3.0";
-  scalefactor_datadriven[6][1] = "1.0";      // for Z -> taus we use 1
+  scalefactor_datadriven[4][1] = "1.17";
+  scalefactor_datadriven[5][1] = "3.5";
+  scalefactor_datadriven[6][1] = "2.0";      // for Z -> taus we use 1
   scalefactor_datadriven[7][1] = "1.15";
 
   Color_t colors[NSPECIES];
