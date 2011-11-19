@@ -20,8 +20,8 @@ float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK, float nZV, float nZVerr);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
 void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString addCutIn="1", TString addCutOut="1",TString addCutInR="1", TString addCutOutR="1");
-void makeRPlot(int mH, int njets);
-void makeAllRPlots(int njets);
+void makeRPlot(int mH, int njets, float lumiInInvFb);
+void makeAllRPlots(int njets, float lumiInInvFb);
 
 void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool cutbasedestimation=true) {
 
@@ -227,7 +227,7 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   treeZjets->Project("neeLooseOutH","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
   treeZjets->Project("nmmLooseInH","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
   treeZjets->Project("nmmLooseOutH","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
-
+ 
   // nominal R computed with cut at 37 or 30 (according to the statistics at denominator) - data
   treeData->Project("neeLooseInHData","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
   treeData->Project("neeLooseOutHData","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
@@ -566,7 +566,7 @@ float quadrSum(float x1, float x2, float x3, float x4, float x5, float x6, float
 std::pair<float,float> nDYout(float nDYin, float nemu, float R, float sigmaR, float K, float sigmaK, float nZV, float nZVerr) {
   float val = R * (nDYin - 0.5 * nemu * K - nZV);
   float err = quadrSum(sigmaR*(nDYin - 0.5 * nemu * K -nZV),
-                       R * sqrt(nDYin),
+                       // R * sqrt(nDYin),  // not propagating the stat error on nIn, which is accounted by a gamma function in the datacards
                        0.5 * R * K * sqrt(nemu),
                        0.5 * R * nemu * sigmaK,
                        R * nZVerr); 
@@ -586,7 +586,7 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3,
   return sqrt(sum);
 }
 
-void makeRPlot(int mH, int njets) {
+void makeRPlot(int mH, int njets, float lumiInInvFb) {
 
   float massBins[5] = {20,25,30,37,50};
   std::vector<TString> metCuts;
@@ -595,29 +595,38 @@ void makeRPlot(int mH, int njets) {
   metCuts.push_back("mpmet>30 && mpmet<=(37+nvtx/2.)");
   metCuts.push_back("mpmet>(37+nvtx/2.)");
 
-  TH1F *Rll = new TH1F("Rll","Rll",4,massBins);
-  TH1F *Ree = new TH1F("Ree","Ree",4,massBins);
-  TH1F *Rmm = new TH1F("Rmm","Rmm",4,massBins);
+  TH1F *RllMC = new TH1F("RllMC","RllMC",4,massBins);
+  TH1F *RllData = new TH1F("RllData","RllData",4,massBins);
 
   std::vector<TH1F*> Rhisto;
-  Rhisto.push_back(Rll);
-  Rhisto.push_back(Ree);
-  Rhisto.push_back(Rmm);
+  Rhisto.push_back(RllMC);
+  Rhisto.push_back(RllData);
 
   TFile *fileZjets  = TFile::Open("results/datasets_trees/Zjets_ll.root");
   TTree *treeZjets  = (TTree*)fileZjets->Get("latino");
+  TFile *fileOthers = TFile::Open("results/datasets_trees/others_ll.root");
+
+  TFile *fileData   = TFile::Open("results_data/datasets_trees/dataset_ll.root");
+  TTree *treeData   = (TTree*)fileData->Get("latino");
+  TTree *treeOthers = (TTree*)fileOthers->Get("latino");
+
+  std::vector<TTree*> trees;
+  trees.push_back(treeZjets);
+  trees.push_back(treeData);
 
   TH1F *histoin = new TH1F("histoin","",50,0,TMath::Pi());
   TH1F *histoout = new TH1F("histoout","",50,0,TMath::Pi());
+  TH1F *histoinVZ = new TH1F("histoinVZ","",50,0,TMath::Pi());
+  TH1F *histooutVZ = new TH1F("histooutVZ","",50,0,TMath::Pi());    
+  TH1F *histoinOF = new TH1F("histoinOF","",50,0,TMath::Pi());
+  TH1F *histooutOF = new TH1F("histooutOF","",50,0,TMath::Pi());
   
-  std::vector<TString> channel;
-  channel.push_back("sameflav");
-  channel.push_back("channel==1");
-  channel.push_back("channel==0");
+  TString channel("sameflav");
 
-  TString weightString;
-  if(njets==0) weightString = TString("baseW*kfW*puW*effW");
-  else weightString = TString("baseW*puW*effW");
+  std::vector<TString> weightString;
+  if(njets==0) weightString.push_back(TString("baseW*puW*effW"));
+  else weightString.push_back(TString("baseW*puW*effW"));
+  weightString.push_back(TString("1")); // data
 
   TString addCutIn, addCutOut;
   if(mH>=110 && mH<=600) {
@@ -638,17 +647,51 @@ void makeRPlot(int mH, int njets) {
   wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
 
   TCanvas c1;
-  for(int icha=0;icha<3;icha++) {
+  for(int isamp=0;isamp<2;isamp++) {
+    std::cout << "SAMPLE  = " << isamp << std::endl;
     for(int imetbin=0;imetbin<4;imetbin++) {
-      TString finalcutIn = TString("(") + wwCutIn + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel[icha] + TString(")*") + weightString;
-      TString finalcutOut = TString("(") + wwCutOut + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel[icha] + TString(")*") + weightString;
-      std::cout << finalcutIn.Data() << std::endl;
-      treeZjets->Project("histoin","dphill",finalcutIn);
-      treeZjets->Project("histoout","dphill",finalcutOut);
+      TString finalcutIn = TString("(") + wwCutIn + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel + TString(")*") + weightString[isamp];
+      TString finalcutOut = TString("(") + wwCutOut + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel + TString(")*") + weightString[isamp];
+      //      std::cout << finalcutIn.Data() << std::endl;
+      trees[isamp]->Project("histoin","dphill",finalcutIn);
+      trees[isamp]->Project("histoout","dphill",finalcutOut);
       float in = histoin->Integral();
       float in_err = yieldErrPoisson(in,histoin->GetEntries());
       float out = histoout->Integral();
       float out_err = yieldErrPoisson(out,histoout->GetEntries());
+      std::cout << "\tMET bin = " << imetbin << "\t" << metCuts[imetbin] << std::endl;
+      std::cout << "\tin = " << in << " +/- " << in_err << std::endl;
+      std::cout << "\tout = " << out << " +/- " << out_err << std::endl;
+      if(isamp==1) { // data: subtract bkg
+        TString finalcutInVZ = finalcutIn + TString("*(dataset==71 || dataset==74)*") + weightString[0];
+        TString finalcutOutVZ= finalcutOut + TString("*(dataset==71 || dataset==74)*") + weightString[0];
+        treeOthers->Project("histoinVZ","dphill",finalcutInVZ);
+        treeOthers->Project("histooutVZ","dphill",finalcutOutVZ);        
+        float nInVZ = lumiInInvFb * histoinVZ->Integral();
+        float nOutVZ = lumiInInvFb * histooutVZ->Integral();
+        float nInVZ_err = yieldErrPoisson(nInVZ,histoinVZ->GetEntries());
+        float nOutVZ_err = yieldErrPoisson(nOutVZ,histooutVZ->GetEntries());
+        std::cout << "\t\tnInVZ = " << nInVZ << " +/- " << nInVZ_err << std::endl;
+        std::cout << "\t\tnOutVZ = " << nOutVZ << " +/- " << nOutVZ_err << std::endl;
+
+        TString finalcutInOF = TString("(") + wwCutIn + TString(" && ") + metCuts[imetbin] + TString(" && !sameflav)*") + weightString[isamp];
+        TString finalcutOutOF = TString("(") + wwCutOut + TString(" && ") + metCuts[imetbin] + TString(" && !sameflav)*") + weightString[isamp];
+        trees[1]->Project("histoinOF","dphill",finalcutInOF);
+        trees[1]->Project("histooutOF","dphill",finalcutOutOF);
+        float nInOF = histoinOF->Integral();
+        float nOutOF = histooutOF->Integral();
+        float nInOF_err = sqrt(nInOF);
+        float nOutOF_err = sqrt(nOutOF);
+        std::cout << "\t\tnInOF = " << nInOF << " +/- " << nInOF_err << std::endl;
+        std::cout << "\t\tnOutOF = " << nOutOF << " +/- " << nOutOF_err << std::endl;
+
+        in = in - nInVZ - nInOF;
+        out = out - nOutVZ - nOutOF;
+        in_err = quadrSum(in_err,nInVZ_err,nInOF_err);
+        out_err = quadrSum(out_err,nOutVZ_err,nOutOF_err);
+        std::cout << "in(sub) = " << in << " +/- " << in_err << std::endl;
+        std::cout << "out(sub) = " << out << " +/- " << out_err << std::endl;
+      }
       float R, Rerr;
       if(in!=0 && out!=0) {
         R = out/in;
@@ -656,22 +699,22 @@ void makeRPlot(int mH, int njets) {
       } else {
         R = Rerr = 0;
       }
-      Rhisto[icha]->SetBinContent(imetbin+1,R);
-      Rhisto[icha]->SetBinError(imetbin+1,Rerr);
+      Rhisto[isamp]->SetBinContent(imetbin+1,R);
+      Rhisto[isamp]->SetBinError(imetbin+1,Rerr);
       std::cout << "Out = " << out << "\t in = " << in << std::endl;
     }
-    if(icha>0) {
-      Rhisto[icha]->SetLineColor(kOrange+8+icha);
-      Rhisto[icha]->SetMarkerColor(kOrange+8+icha);
-      Rhisto[icha]->SetMarkerStyle(25);
+    if(isamp==0) {
+      Rhisto[isamp]->SetLineColor(kOrange);
+      Rhisto[isamp]->SetMarkerColor(kOrange);
+      Rhisto[isamp]->SetMarkerStyle(25);
     } else {
-      Rhisto[icha]->SetLineColor(kBlack);
-      Rhisto[icha]->SetMarkerColor(kBlack);
-      Rhisto[icha]->SetMarkerStyle(21);
+      Rhisto[isamp]->SetLineColor(kBlack);
+      Rhisto[isamp]->SetMarkerColor(kBlack);
+      Rhisto[isamp]->SetMarkerStyle(21);
     }
-    if(icha==0) Rhisto[icha]->Draw("hist");
-    else Rhisto[icha]->Draw("histsame");
-    Rhisto[icha]->Draw("pesame");
+    if(isamp==0) Rhisto[isamp]->Draw("hist");
+    else Rhisto[isamp]->Draw("histsame");
+    Rhisto[isamp]->Draw("pesame");
   }
   
   char massstr[5];
@@ -681,9 +724,9 @@ void makeRPlot(int mH, int njets) {
 
 }
 
-void makeAllRPlots(int njets) {
+void makeAllRPlots(int njets, float lumiInInvFb) {
   int mH[20] = {0,110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int i=0;i<20;i++) {
-    makeRPlot(mH[i],njets);
+    makeRPlot(mH[i],njets,lumiInInvFb);
   }
 }
