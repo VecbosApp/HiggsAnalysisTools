@@ -38,8 +38,8 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
   textfile.open("yields.tex", ios_base::app);
   textfile << "\\subsection{Yields at full H selection level}" << std::endl;
 
-  int mH[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0; i<17;i++) {
+  int mH[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0; i<19;i++) {
     std::cout << "mH = " << mH[i] << "\t0 jet" << std::endl;
     HiggsYields(mH[i], 0, lumiInInvFb, showData, addDataDrivenEstimates);
   }
@@ -55,7 +55,7 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
 
   textfile2.open("yields.tex", ios_base::app);
   textfile2 << "\\subsection{Yields at full H selection level}" << std::endl;
-  for(int i=0; i<17;i++) {
+  for(int i=0; i<19;i++) {
     std::cout << "mH = " << mH[i] << "\t1 jet" << std::endl;
     HiggsYields(mH[i], 1, lumiInInvFb, showData, addDataDrivenEstimates);
   }
@@ -91,7 +91,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   char mass[10];
   sprintf(mass,"H%d",mH);
   if(mH!=-1) sampleName.push_back(std::string(mass));
-  else  sampleName.push_back("H130"); // take one mass as example
+  else  sampleName.push_back("H140"); // take one mass as example
 
   // open files
   TFile *fileZj = TFile::Open("results/datasets_trees_skim/Zjets_ll.root");
@@ -104,11 +104,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileData = 0;
   if(showData) fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
   TFile *fileFake = 0;
-  if(addDataDrivenEstimates) fileFake = TFile::Open("results_data/datasets_trees_fake_skim/dataset_fake_ll.root");
+  if(addDataDrivenEstimates) fileFake = TFile::Open("results_data/datasets_trees_looseloose/looseloosenew.root");
 
   char signalFile[200];
   if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
-  else sprintf(signalFile, "results/datasets_trees_skim/H130_ll.root"); // take one mass as example
+  else sprintf(signalFile, "results/datasets_trees_skim/H140_ll.root"); // take one mass as example
   TFile *fileH = TFile::Open(signalFile);
 
   // get trees
@@ -122,6 +122,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TTree* treeH = (TTree*)fileH->Get("latino");
   TTree* treeggH = (TTree*)fileH->Get("latino");
   TTree* treeqqH = (TTree*)fileH->Get("latino");
+  TTree* treeVgamma = (TTree*)fileOthers->Get("latino");
   TTree* treeData = 0;
   if(showData) treeData = (TTree*)fileData->Get("latino");
   TTree* treeFake = 0;
@@ -138,40 +139,43 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   trees.push_back(treeH); // 7
   trees.push_back(treeggH); // 8
   trees.push_back(treeqqH); // 9
+  trees.push_back(treeVgamma); // 10
 
    // evaluated with LP11 dataset (1.54 fb-1)
    std::vector<float> sfs_0j;
-   sfs_0j.push_back(2.2); // 0
-   sfs_0j.push_back(1.63); // 1
-   sfs_0j.push_back(1.63); // 2
+   sfs_0j.push_back(6.0); // 0
+   sfs_0j.push_back(1.54); // 1
+   sfs_0j.push_back(1.54); // 2
    sfs_0j.push_back(1.0); // 3
    sfs_0j.push_back(1.0); // 4
-   sfs_0j.push_back(1.04); // 5
-   sfs_0j.push_back(1.04); // 6
+   sfs_0j.push_back(1.14); // 5
+   sfs_0j.push_back(1.14); // 6
    sfs_0j.push_back(1.0); // 7
    sfs_0j.push_back(1.0); // 8
    sfs_0j.push_back(1.0); // 9
+   sfs_0j.push_back(1.0); // 10
 
    std::vector<float> sfs_1j;
-   sfs_1j.push_back(2.4); // 0
-   sfs_1j.push_back(1.26); // 1
-   sfs_1j.push_back(1.26); // 2
+   sfs_1j.push_back(6.0); // 0
+   sfs_1j.push_back(1.20); // 1
+   sfs_1j.push_back(1.20); // 2
    sfs_1j.push_back(1.0); // 3
    sfs_1j.push_back(1.0); // 4
-   sfs_1j.push_back(1.28); // 5
-   sfs_1j.push_back(1.28); // 6
+   sfs_1j.push_back(1.15); // 5
+   sfs_1j.push_back(1.15); // 6
    sfs_1j.push_back(1.0); // 7
    sfs_1j.push_back(1.0); // 8
    sfs_1j.push_back(1.0); // 9
+   sfs_1j.push_back(1.0); // 10
 
   TH1F *histo = new TH1F("histo","histo",100,0,180);
   
   char njcut[30];
-  sprintf(njcut, "njets==%d", njets);
+  sprintf(njcut, "njet==%d", njets);
   char wwselcut[700];
 
-  if(njets==0) sprintf(wwselcut,"WWSel && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav))");      
-  else if(njets==1) sprintf(wwselcut,"WWSel1j && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav))");
+  if(njets==0) sprintf(wwselcut,"WWSel && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav)");      
+  else if(njets==1) sprintf(wwselcut,"WWSel1j && ptll>45 && pt1>20 && ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav)");
   else {
     std::cout << "Jet bin must be 0/1" << std::endl;
     return;
@@ -185,10 +189,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puBW*effW*kfW");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puBW*effW*kfW");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puBW*effW*kfW");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puBW*effW*kfW");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*effW*kfW");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*effW*kfW");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*effW*kfW");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*effW*kfW");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
@@ -197,11 +201,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
     // for W+jets val
     std::vector<TString> cutChannelFake;
-    TString wwselcutFake = TString(njcut); // assume already skimmed WWlevel
-    HCut_ee = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*weightFP");
-    HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightFP");
-    HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightFP");
-    HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightFP");
+    HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*fakeW");
+    HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*fakeW");
+    HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*fakeW");
+    HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*fakeW");
           
     cutChannelFake.push_back(HCut_ee);
     cutChannelFake.push_back(HCut_mm);
@@ -210,10 +213,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
     // error (statistical only)
     std::vector<TString> cutChannelFakeStatErr;
-    HCut_ee = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*weightStatFP");
-    HCut_mm = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*weightStatFP");
-    HCut_em = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*weightStatFP");
-    HCut_me = TString("(")+TString(wwselcutFake)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*weightStatFP");
+    HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*fakeW*fakeW");
+    HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*fakeW*fakeW");
+    HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*fakeW*fakeW");
+    HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*fakeW*fakeW");
 
     cutChannelFakeStatErr.push_back(HCut_ee);
     cutChannelFakeStatErr.push_back(HCut_mm);
@@ -234,6 +237,9 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       // separate vbfH for the datacards 
       if(isample==8) addCut = TString("*(dataset>1000 && dataset<3000)");
       if(isample==9) addCut = TString("*(dataset>4000 && dataset<6000)");
+      // separate WZ/ZZ from Vgamma
+      if(isample==4) addCut = TString("*(dataset==71 || dataset==74)");
+      if(isample==10) addCut = TString("*((dataset>=38 && dataset<=41) || (dataset>=82 && dataset<=84))");
 
       TString TheFinalCut = cutChannel[icha]+addCut;
 
@@ -278,7 +284,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       }
 
       // sum the backgrounds (signal is the last)
-      if(isample < (int)trees.size()-3) {
+      if(isample < (int)trees.size()-4) {
         if(addDataDrivenEstimates && isample==3) { // W+jets is absolute number from data
           yields_bkgtot[icha] += yield;
           yields_bkgtot_err[icha] += yield_err * yield_err;
@@ -309,7 +315,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   }
 
   // calculate the total background
-  for(int isample=0; isample<(int)trees.size()-3; isample++) {
+  for(int isample=0; isample<(int)trees.size()-4; isample++) {
     yields_bkgtot[4] += (yields[isample])[4];
     yields_bkgtot_err[4] += pow( ((yields_err[isample])[4]), 2);
   }
@@ -352,11 +358,11 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   textfile << "\\hline" << endl;
 
   // header
-  for(int isample=0; isample<(int)trees.size()-2; isample++) {
+  for(int isample=0; isample<(int)trees.size()-3; isample++) {
     if(isample==0) textfile << "\t & " << sampleName[isample] << " & ";
-    else if(isample==(int)trees.size()-3 && !showData) textfile << sampleName[isample] << " \\\\ " << std::endl;
-    else if(isample==(int)trees.size()-3 && showData) textfile << sampleName[isample] << " & data \\\\ " << std::endl;
-    else if(isample==(int)trees.size()-4) textfile << sampleName[isample] << " & bkg. tot. & ";
+    else if(isample==(int)trees.size()-4 && !showData) textfile << sampleName[isample] << " \\\\ " << std::endl;
+    else if(isample==(int)trees.size()-4 && showData) textfile << sampleName[isample] << " & data \\\\ " << std::endl;
+    else if(isample==(int)trees.size()-5) textfile << sampleName[isample] << " & bkg. tot. & ";
     else textfile << sampleName[isample] << " & ";
   }
 
@@ -371,7 +377,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
   // yields
   for(int icha=0; icha<5; icha++) {
-    for(int isample=0; isample<(int)trees.size()-2; isample++) {
+    for(int isample=0; isample<(int)trees.size()-3; isample++) {
       std::vector<double> sampleYiled = yields[isample];
       std::vector<double> sampleYiled_err = yields_err[isample];
 
@@ -379,9 +385,9 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       double err = sampleYiled_err[icha];
       
       if(isample==0) textfile << chanName[icha] << " & " << val << " $\\pm$  " << err << " & ";
-      else if(isample==(int)trees.size()-3 && !showData) textfile << val << " $\\pm$  " << err << " \\\\ " << std::endl;
-      else if(isample==(int)trees.size()-3 && showData) textfile << val << " $\\pm$  " << err << " & " << yields_data[icha] << " \\\\ " << std::endl;
-      else if(isample==(int)trees.size()-4) textfile << val << " $\\pm$  " << err << " & " << yields_bkgtot[icha] << " $\\pm$  " << yields_bkgtot_err[icha] << " & ";
+      else if(isample==(int)trees.size()-4 && !showData) textfile << val << " $\\pm$  " << err << " \\\\ " << std::endl;
+      else if(isample==(int)trees.size()-4 && showData) textfile << val << " $\\pm$  " << err << " & " << yields_data[icha] << " \\\\ " << std::endl;
+      else if(isample==(int)trees.size()-5) textfile << val << " $\\pm$  " << err << " & " << yields_bkgtot[icha] << " $\\pm$  " << yields_bkgtot_err[icha] << " & ";
       else textfile << val << " $\\pm$  " << err << " & ";
     }
     if(icha==3) textfile << "\\hline" << std::endl;
@@ -413,6 +419,12 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     sampleNameCard.push_back("ggWW");
     sampleNameCard.push_back("ggH");
     sampleNameCard.push_back("vbfH");
+
+    // * vgamma is in a separate txt file * //
+    ofstream txtvgammafilefordatacard;
+    txtvgammafilefordatacard.setf(ios::fixed,ios::floatfield);
+    txtvgammafilefordatacard.precision(3);
+    txtvgammafilefordatacard.open("vgamma-yields-mc.txt", ios_base::app);
     
     // some gymnastic on the indices to use ttbar + tW and dividing ggH/qqH
     for(int isample=0; isample<(int)trees.size();isample++) {
@@ -427,16 +439,21 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       if(isample<2) samplename = isample;
       else if(isample==2 || isample==7) samplename = -111;
       else samplename = isample-1;
-
+      
       // signals at tghe end
       if(isample==8 || isample==9) samplename=isample-2;
-
-      txtfilefordatacard << mH << "\t" << njets << "\t" << sampleNameCard[samplename] 
-                         << "\t" << val[mm] << "\t" << val[me] << "\t" << val[em] << "\t" << val[ee] << std::endl; 
+      
+      if(isample!=10) { // not vgamma
+        txtfilefordatacard << mH << "\t" << njets << "\t" << sampleNameCard[samplename] 
+                           << "\t" << val[mm] << "\t" << val[me] << "\t" << val[em] << "\t" << val[ee] << std::endl; 
+      } else {
+        txtvgammafilefordatacard << mH << "\t" << njets << "\t" << "vgamma"
+                                 << "\t" << val[mm] << "\t" << val[me] << "\t" << val[em] << "\t" << val[ee] << std::endl;
+      }
     }
     txtfilefordatacard.precision(0);
     txtfilefordatacard << mH << "\t" << njets << "\t" << "data" 
-                       << "\t" << yields_data[mm] << "\t" << yields_data[me] << "\t" << yields_data[em] << "\t" << yields_data[ee] << std::endl;
+                       << "\t" << yields_data[mm] << "\t" << yields_data[me] << "\t" << yields_data[em] << "\t" << yields_data[ee] << std::endl;    
   }
 
   delete histo;
