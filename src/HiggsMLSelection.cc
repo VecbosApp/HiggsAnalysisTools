@@ -138,7 +138,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/test2TS.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -996,7 +996,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
 
-    myOutTreeEE -> fillMetStudies( m_projectedPFMet[ee], m_projectedTkMet[ee], significancePFMet[0], significancePFChMet[0], m_MTRcharged[ee] );
+    myOutTreeEE -> fillMetStudies( m_projectedPFMet[ee], m_projectedTkMet[ee], significancePFMet[0], significancePFChMet[0], m_MTRcharged[ee], rhoFastjet, rhoJetsFastJet );
 
     std::vector<TLorentzVector> jesLJ = GetJetJesPcomponent(theLJ);
     std::vector<TLorentzVector> jesSJ = GetJetJesPcomponent(theSJ);
@@ -1140,7 +1140,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
 
-    myOutTreeMM -> fillMetStudies( m_projectedPFMet[mm], m_projectedTkMet[mm], significancePFMet[0], significancePFChMet[0], m_MTRcharged[mm]);   
+    myOutTreeMM -> fillMetStudies( m_projectedPFMet[mm], m_projectedTkMet[mm], significancePFMet[0], significancePFChMet[0], m_MTRcharged[mm], rhoFastjet, rhoJetsFastJet);   
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
@@ -1299,7 +1299,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEM -> fillRazor(m_MTR[em], m_MR[em], m_GammaMR[em]);
 
-    myOutTreeEM -> fillMetStudies( m_projectedPFMet[em], m_projectedTkMet[em], significancePFMet[0], significancePFChMet[0], m_MTRcharged[em]); 
+    myOutTreeEM -> fillMetStudies( m_projectedPFMet[em], m_projectedTkMet[em], significancePFMet[0], significancePFChMet[0], m_MTRcharged[em], rhoFastjet, rhoJetsFastJet); 
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
@@ -1450,7 +1450,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME -> fillRazor(m_MTR[me], m_MR[me], m_GammaMR[me]);
 
-    myOutTreeME -> fillMetStudies( m_projectedPFMet[me], m_projectedTkMet[me], significancePFMet[0], significancePFChMet[0], m_MTRcharged[me]);  
+    myOutTreeME -> fillMetStudies( m_projectedPFMet[me], m_projectedTkMet[me], significancePFMet[0], significancePFChMet[0], m_MTRcharged[me], rhoFastjet, rhoJetsFastJet);  
 
     jesLJ = GetJetJesPcomponent(theLJ);
     jesSJ = GetJetJesPcomponent(theSJ);
@@ -1543,10 +1543,22 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_acceptance() {
     if(_selectionEE->getSwitch("etaElectronAcc") && !_selectionEE->passCut("etaElectronAcc",etaEle[i]) ) continue;
 
     if(_selectionEE->getSwitch("ptElectronAcc") && !_selectionEE->passCut("ptElectronAcc",thisPt) ) continue;
-    
+
     float thisCharge = chargeEle[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = i;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = i;
+    }
+    */
 
     _acceptEleAll.push_back(i);   
   }
@@ -1586,10 +1598,22 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
 // 	if ( fbremEle[thisEle]<0.15 && !(fabs(etaEle[thisEle])<1.0 && eSuperClusterOverPEle[thisEle]>0.95) ) continue;
 //       }
 //     }
-    
+
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+    /*
+    // only for same charge test  // chiara
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisEle;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisEle;
+    }
+    */
 
     _idEleAll.push_back(thisEle);  
   }
@@ -1616,11 +1640,23 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
     isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
 
     if (!theElectronIsol) continue;
-    
+
     float thisPt     = GetPt(pxEle[thisEle],pyEle[thisEle]);
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisEle;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisEle;
+    }                                                                                             
+    */
 
     _isolEleAll.push_back(thisEle);  
   }
@@ -1652,7 +1688,18 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisEle;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisEle;
+      }                                                                                                                                                            */
+                                  
     _convEleAll.push_back(thisEle);      
   }
   _convEleAll = sortElectronsByPt(_convEleAll);
@@ -1685,7 +1732,18 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_ip( std::vector<int> co
     float thisCharge = chargeEle[thisEle];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisEle; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisEle; }
-
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisEle;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisEle;
+      } 
+    */                                                                                                                                                                                             
     _ipEleAll.push_back(thisEle);  
   }
   _ipEleAll = sortElectronsByPt(_ipEleAll);
@@ -1720,7 +1778,19 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_acceptance() {
     float thisCharge = chargeMuon[i];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = i; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = i; }
-    
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = i;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = i;
+      }
+    */
+
     _acceptMuonsAll.push_back(i);  
   }
   _acceptMuonsAll = sortMuonsByPt(_acceptMuonsAll);
@@ -1750,7 +1820,19 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_id( std::vector<int> accept
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
-    
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisMu;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisMu;
+    }                                                                                                            
+    */
+                                                                                       
     _idMuonsAll.push_back(thisMu);   
   }
   _idMuonsAll = sortMuonsByPt(_idMuonsAll);
@@ -1785,7 +1867,17 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
-
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisMu;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisMu;
+      }*/                                                                                                                                                                                                      
     _isolMuonsAll.push_back(thisMu);   
   }
   _isolMuonsAll = sortMuonsByPt(_isolMuonsAll);
@@ -1820,11 +1912,20 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_ip( std::vector<int> isoMu 
     }
     if (_selectionEE->getSwitch("muonDz") && (!_selectionEE->passCut("muonDz",dzMuon)) )  continue;   
 
-
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
     if (thisCharge < 0 && thisPt> maxPtLep2){ maxPtLep2 = thisPt; theLep2 = thisMu; }
-
+    /*
+    // only for same charge test  // chiara  
+    if (thisCharge < 0 && thisPt > maxPtLep1 && thisPt > maxPtLep2){
+      maxPtLep2 = maxPtLep1;
+      maxPtLep1 = thisPt;
+      theLep2   = theLep1;
+      theLep1   = thisMu;
+    } else if ( thisCharge < 0 && thisPt > maxPtLep2 && thisPt < maxPtLep1 ){
+      maxPtLep2 = thisPt;
+      theLep2   = thisMu;
+      } */                                                                                                                                                                                                     
     _ipMuonsAll.push_back(thisMu);   
   }
   _ipMuonsAll = sortMuonsByPt(_ipMuonsAll);
@@ -1846,7 +1947,10 @@ std::pair<int,int> HiggsMLSelection::getBestEleMuonPair(std::vector<int> electro
     for(muiter=muons.begin(); muiter<muons.end();++muiter) {
       int muCharge = chargeMuon[*muiter];
       float muPt = GetPt(pxMuon[*muiter],pyMuon[*muiter]);
+      // chiara
       if(eleCharge*muCharge<0 && elePt > muPt) return std::make_pair(*eleiter,*muiter); 
+      // if (muCharge>0) continue;
+      // if (eleCharge*muCharge>0 && elePt > muPt) return std::make_pair(*eleiter,*muiter); 
     }
   }
   
@@ -1867,7 +1971,10 @@ std::pair<int,int> HiggsMLSelection::getBestMuonElePair(std::vector<int> electro
     for(eleiter=electrons.begin(); eleiter<electrons.end();++eleiter) {
       int eleCharge = chargeEle[*eleiter];
       float elePt = GetPt(pxEle[*eleiter],pyEle[*eleiter]);
+      // chiara
       if(eleCharge*muCharge<0 && muPt > elePt) return std::make_pair(*muiter,*eleiter); 
+      // if (eleCharge>0) continue;
+      // if (eleCharge*muCharge>0 && elePt > muPt) return std::make_pair(*eleiter,*muiter); 
     }
   }
   return std::make_pair(theMuon,theEle); 
