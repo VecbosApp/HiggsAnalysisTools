@@ -238,6 +238,8 @@ void RedHiggsTree::addMetStudies() {
   myTree->Branch("signPFMet",        &mySignPFMet,        "signPFMet/F");
   myTree->Branch("signPFChargedMet", &mySignPFChargedMet, "signPFChargedMet/F");
   myTree->Branch("mtrchargedMet",    &myMTRchargedMet,    "mtrchargedMet/F");
+  myTree->Branch("rho",              &myRho,              "rho/F"); 
+  myTree->Branch("rhoJet",           &myRhoJet,           "rhoJet/F"); 
 }
 
 void RedHiggsTree::store()
@@ -545,11 +547,13 @@ void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, bo
   for(int i=0; i<3; i++) myNpu[i] = npu[i];
 }
 
-void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha ) {
+void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float rho, float rhojet) {
   
   myProjPFMet        = projPF;  
   myProjPFChargedMet = projTk;  
   mySignPFMet        = signPFMet;
   mySignPFChargedMet = signChMet;
   myMTRchargedMet    = m_MTRcha;
+  myRho    = rho; 
+  myRhoJet = rhojet; 
 }

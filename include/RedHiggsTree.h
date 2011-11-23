@@ -99,7 +99,7 @@ public:
   void fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24, bool s25, bool s26, bool s27, bool s28);
   //! met studies
-  void fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha );
+  void fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float rho, float rhojet );
     
   //! effectively store the events in the tree
   void store();
@@ -162,6 +162,7 @@ private:
   int myTypeL1, myTypeL2;
 
   float myMTR, myMR, myGammaMR;
+  float myRho, myRhoJet;
 
   float myProjPFMet, myProjPFChargedMet;
   float mySignPFMet, mySignPFChargedMet;
