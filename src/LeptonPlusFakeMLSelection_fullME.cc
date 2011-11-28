@@ -170,193 +170,192 @@ void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeEtaBinning() {
 
 // fake for eleID Bdt, ET>15 - 2011A+2011B average analysis                               
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate15() {                                                                                                                                                                       
-  m15_eleFakeRateEB1[0] = 0.107; 
-  m15_eleFakeRateEB1[1] = 0.088; 
-  m15_eleFakeRateEB1[2] = 0.110; 
-  m15_eleFakeRateEB1[3] = 0.077;
-  m15_eleFakeRateEB1[4] = 0.065;                                                                                                                                         
+  m15_eleFakeRateEB1[0] = 0.109; 
+  m15_eleFakeRateEB1[1] = 0.103; 
+  m15_eleFakeRateEB1[2] = 0.123; 
+  m15_eleFakeRateEB1[3] = 0.099;
+  m15_eleFakeRateEB1[4] = 0.102;                                                                                                                                         
   m15_eleFakeRateEB1_err[0] = 0.007; 
-  m15_eleFakeRateEB1_err[1] = 0.007;
-  m15_eleFakeRateEB1_err[2] = 0.009; 
-  m15_eleFakeRateEB1_err[3] = 0.012;
-  m15_eleFakeRateEB1_err[4] = 0.015;                                                                                                                                     
-  m15_eleFakeRateEB2[0] = 0.055; 
-  m15_eleFakeRateEB2[1] = 0.067; 
-  m15_eleFakeRateEB2[2] = 0.085; 
-  m15_eleFakeRateEB2[3] = 0.057; 
-  m15_eleFakeRateEB2[4] = 0.035;                                                                                                                                         
+  m15_eleFakeRateEB1_err[1] = 0.008;
+  m15_eleFakeRateEB1_err[2] = 0.010; 
+  m15_eleFakeRateEB1_err[3] = 0.013;
+  m15_eleFakeRateEB1_err[4] = 0.018;                                                                                                                                     
+  m15_eleFakeRateEB2[0] = 0.056; 
+  m15_eleFakeRateEB2[1] = 0.074; 
+  m15_eleFakeRateEB2[2] = 0.093; 
+  m15_eleFakeRateEB2[3] = 0.070; 
+  m15_eleFakeRateEB2[4] = 0.058;                                                                                                                                         
   m15_eleFakeRateEB2_err[0] = 0.006; 
-  m15_eleFakeRateEB2_err[1] = 0.008; 
-  m15_eleFakeRateEB2_err[2] = 0.011; 
-  m15_eleFakeRateEB2_err[3] = 0.014; 
-  m15_eleFakeRateEB2_err[4] = 0.015;     
+  m15_eleFakeRateEB2_err[1] = 0.009; 
+  m15_eleFakeRateEB2_err[2] = 0.012; 
+  m15_eleFakeRateEB2_err[3] = 0.015; 
+  m15_eleFakeRateEB2_err[4] = 0.019;     
 
   m15_eleFakeRateEE1[0] = 0.028; 
-  m15_eleFakeRateEE1[1] = 0.022; 
-  m15_eleFakeRateEE1[2] = 0.080; 
-  m15_eleFakeRateEE1[3] = 0.052; 
-  m15_eleFakeRateEE1[4] = 0.059;                                                                                                                                         
+  m15_eleFakeRateEE1[1] = 0.028; 
+  m15_eleFakeRateEE1[2] = 0.085; 
+  m15_eleFakeRateEE1[3] = 0.059; 
+  m15_eleFakeRateEE1[4] = 0.071;                                                                                                                                         
   m15_eleFakeRateEE1_err[0] = 0.005; 
-  m15_eleFakeRateEE1_err[1] = 0.006; 
+  m15_eleFakeRateEE1_err[1] = 0.007; 
   m15_eleFakeRateEE1_err[2] = 0.011; 
-  m15_eleFakeRateEE1_err[3] = 0.012; 
-  m15_eleFakeRateEE1_err[4] = 0.017;                                                                                                                                     
+  m15_eleFakeRateEE1_err[3] = 0.013; 
+  m15_eleFakeRateEE1_err[4] = 0.019;                                                                                                                                     
   m15_eleFakeRateEE2[0] = 0.035; 
-  m15_eleFakeRateEE2[1] = 0.043; 
-  m15_eleFakeRateEE2[2] = 0.065; 
-  m15_eleFakeRateEE2[3] = 0.075; 
-  m15_eleFakeRateEE2[4] = 0.065;                
+  m15_eleFakeRateEE2[1] = 0.048; 
+  m15_eleFakeRateEE2[2] = 0.069; 
+  m15_eleFakeRateEE2[3] = 0.080; 
+  m15_eleFakeRateEE2[4] = 0.073;                
 
   m15_eleFakeRateEE2_err[0] = 0.006; 
   m15_eleFakeRateEE2_err[1] = 0.009; 
   m15_eleFakeRateEE2_err[2] = 0.010; 
   m15_eleFakeRateEE2_err[3] = 0.014; 
-  m15_eleFakeRateEE2_err[4] = 0.018; 
+  m15_eleFakeRateEE2_err[4] = 0.019; 
 }                                                                                                                                                                     
 // fake for eleID Bdt, ET>35 - 2011A+2011B average analysis 
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate35() {                                                                                                       
-  m35_eleFakeRateEB1[0] = 0.065; 
-  m35_eleFakeRateEB1[1] = 0.051; 
-  m35_eleFakeRateEB1[2] = 0.078; 
-  m35_eleFakeRateEB1[3] = 0.069; 
-  m35_eleFakeRateEB1[4] = 0.049;                                                                                                                                         
+  m35_eleFakeRateEB1[0] = 0.066; 
+  m35_eleFakeRateEB1[1] = 0.057; 
+  m35_eleFakeRateEB1[2] = 0.085; 
+  m35_eleFakeRateEB1[3] = 0.085; 
+  m35_eleFakeRateEB1[4] = 0.085;                                                                                                                                         
   m35_eleFakeRateEB1_err[0] = 0.015; 
-  m35_eleFakeRateEB1_err[1] = 0.008; 
+  m35_eleFakeRateEB1_err[1] = 0.009; 
   m35_eleFakeRateEB1_err[2] = 0.009; 
-  m35_eleFakeRateEB1_err[3] = 0.011; 
-  m35_eleFakeRateEB1_err[4] = 0.013;
+  m35_eleFakeRateEB1_err[3] = 0.012; 
+  m35_eleFakeRateEB1_err[4] = 0.017;
 
-  m35_eleFakeRateEB2[0] = 0.039; 
-  m35_eleFakeRateEB2[1] = 0.052; 
-  m35_eleFakeRateEB2[2] = 0.060; 
-  m35_eleFakeRateEB2[3] = 0.057; 
-  m35_eleFakeRateEB2[4] = 0.037;                                                                                                                                         
+  m35_eleFakeRateEB2[0] = 0.040; 
+  m35_eleFakeRateEB2[1] = 0.054; 
+  m35_eleFakeRateEB2[2] = 0.064; 
+  m35_eleFakeRateEB2[3] = 0.067; 
+  m35_eleFakeRateEB2[4] = 0.059;                                                                                                                                         
   m35_eleFakeRateEB2_err[0] = 0.012; 
   m35_eleFakeRateEB2_err[1] = 0.010; 
   m35_eleFakeRateEB2_err[2] = 0.011; 
-  m35_eleFakeRateEB2_err[3] = 0.014; 
-  m35_eleFakeRateEB2_err[4] = 0.015;
+  m35_eleFakeRateEB2_err[3] = 0.015; 
+  m35_eleFakeRateEB2_err[4] = 0.019;
 
   m35_eleFakeRateEE1[0] = 0.016;     
-  m35_eleFakeRateEE1[1] = 0.016; 
-  m35_eleFakeRateEE1[2] = 0.054; 
-  m35_eleFakeRateEE1[3] = 0.046; 
-  m35_eleFakeRateEE1[4] = 0.060;                                                                                                                                         
+  m35_eleFakeRateEE1[1] = 0.018; 
+  m35_eleFakeRateEE1[2] = 0.057; 
+  m35_eleFakeRateEE1[3] = 0.052; 
+  m35_eleFakeRateEE1[4] = 0.072;                                                                                                                                         
   m35_eleFakeRateEE1_err[0] = 0.009; 
   m35_eleFakeRateEE1_err[1] = 0.007; 
   m35_eleFakeRateEE1_err[2] = 0.010; 
   m35_eleFakeRateEE1_err[3] = 0.012; 
-  m35_eleFakeRateEE1_err[4] = 0.017;
+  m35_eleFakeRateEE1_err[4] = 0.019;
 
   m35_eleFakeRateEE2[0] = 0.023;    
-  m35_eleFakeRateEE2[1] = 0.040; 
-  m35_eleFakeRateEE2[2] = 0.040; 
-  m35_eleFakeRateEE2[3] = 0.066; 
-  m35_eleFakeRateEE2[4] = 0.059;                                                                                                                                         
+  m35_eleFakeRateEE2[1] = 0.041; 
+  m35_eleFakeRateEE2[2] = 0.046; 
+  m35_eleFakeRateEE2[3] = 0.070; 
+  m35_eleFakeRateEE2[4] = 0.068;                                                                                                                                         
   m35_eleFakeRateEE2_err[0] = 0.013; 
-  m35_eleFakeRateEE2_err[1] = 0.012; 
+  m35_eleFakeRateEE2_err[1] = 0.013; 
   m35_eleFakeRateEE2_err[2] = 0.009; 
-  m35_eleFakeRateEE2_err[3] = 0.014; 
-  m35_eleFakeRateEE2_err[4] = 0.018; 
+  m35_eleFakeRateEE2_err[3] = 0.015; 
+  m35_eleFakeRateEE2_err[4] = 0.019; 
 }          
 
 // fake for eleID Bdt, ET>50 - 2011A+2011B average analysis 
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRate50() {                                                                                                       
-  m50_eleFakeRateEB1[0] = 0.062; 
-  m50_eleFakeRateEB1[1] = 0.020; 
-  m50_eleFakeRateEB1[2] = 0.055; 
-  m50_eleFakeRateEB1[3] = 0.044; 
-  m50_eleFakeRateEB1[4] = 0.016;                                                                                                                                         
+  m50_eleFakeRateEB1[0] = 0.063; 
+  m50_eleFakeRateEB1[1] = 0.026; 
+  m50_eleFakeRateEB1[2] = 0.061; 
+  m50_eleFakeRateEB1[3] = 0.052; 
+  m50_eleFakeRateEB1[4] = 0.031;                                                                                                                                         
   m50_eleFakeRateEB1_err[0] = 0.036; 
-  m50_eleFakeRateEB1_err[1] = 0.011; 
-  m50_eleFakeRateEB1_err[2] = 0.014; 
-  m50_eleFakeRateEB1_err[3] = 0.013; 
-  m50_eleFakeRateEB1_err[4] = 0.009;                                                                                                                                     
-  m50_eleFakeRateEB2[0] = 0.041; 
-  m50_eleFakeRateEB2[1] = 0.032; 
-  m50_eleFakeRateEB2[2] = 0.056; 
-  m50_eleFakeRateEB2[3] = 0.0176; 
-  m50_eleFakeRateEB2[4] = 0.0129;  
+  m50_eleFakeRateEB1_err[1] = 0.012; 
+  m50_eleFakeRateEB1_err[2] = 0.015; 
+  m50_eleFakeRateEB1_err[3] = 0.014; 
+  m50_eleFakeRateEB1_err[4] = 0.012;                                                                                                                                     
+  m50_eleFakeRateEB2[0] = 0.042; 
+  m50_eleFakeRateEB2[1] = 0.034; 
+  m50_eleFakeRateEB2[2] = 0.060; 
+  m50_eleFakeRateEB2[3] = 0.024; 
+  m50_eleFakeRateEB2[4] = 0.025;  
 
   m50_eleFakeRateEB2_err[0] = 0.029; 
-  m50_eleFakeRateEB2_err[1] = 0.015; 
-  m50_eleFakeRateEB2_err[2] = 0.017; 
-  m50_eleFakeRateEB2_err[3] = 0.011; 
-  m50_eleFakeRateEB2_err[4] = 0.011;                                                                                                                                     
-  m50_eleFakeRateEE1[0] = 0.; 
-  m50_eleFakeRateEE1[1] = 0.006; 
-  m50_eleFakeRateEE1[2] = 0.052; 
-  m50_eleFakeRateEE1[3] = 0.029; 
-  m50_eleFakeRateEE1[4] = 0.038;                                                                                                                                         
-  m50_eleFakeRateEE1_err[0] = 0.; 
-  m50_eleFakeRateEE1_err[1] = 0.009; 
+  m50_eleFakeRateEB2_err[1] = 0.016; 
+  m50_eleFakeRateEB2_err[2] = 0.018; 
+  m50_eleFakeRateEB2_err[3] = 0.012; 
+  m50_eleFakeRateEB2_err[4] = 0.015;                                                                                                                                     
+  m50_eleFakeRateEE1[0] = 0.008; 
+  m50_eleFakeRateEE1[1] = 0.008; 
+  m50_eleFakeRateEE1[2] = 0.054; 
+  m50_eleFakeRateEE1[3] = 0.033; 
+  m50_eleFakeRateEE1[4] = 0.044;                                                                                                                                         
+  m50_eleFakeRateEE1_err[0] = 0.010; 
+  m50_eleFakeRateEE1_err[1] = 0.010; 
   m50_eleFakeRateEE1_err[2] = 0.018; 
-  m50_eleFakeRateEE1_err[3] = 0.014; 
-  m50_eleFakeRateEE1_err[4] = 0.016;     
+  m50_eleFakeRateEE1_err[3] = 0.015; 
+  m50_eleFakeRateEE1_err[4] = 0.017;     
 
   m50_eleFakeRateEE2[0] = 0.034; 
-  m50_eleFakeRateEE2[1] = 0.040; 
-  m50_eleFakeRateEE2[2] = 0.049; 
-  m50_eleFakeRateEE2[3] = 0.042; 
-  m50_eleFakeRateEE2[4] = 0.034;                                                                                                                                         
+  m50_eleFakeRateEE2[1] = 0.041; 
+  m50_eleFakeRateEE2[2] = 0.051; 
+  m50_eleFakeRateEE2[3] = 0.044; 
+  m50_eleFakeRateEE2[4] = 0.039;                                                                                                                                         
   m50_eleFakeRateEE2_err[0] = 0.034; 
   m50_eleFakeRateEE2_err[1] = 0.024; 
   m50_eleFakeRateEE2_err[2] = 0.018; 
   m50_eleFakeRateEE2_err[3] = 0.016; 
-  m50_eleFakeRateEE2_err[4] = 0.016; 
+  m50_eleFakeRateEE2_err[4] = 0.017; 
 }
 
-// fake from Smurf selection, QCD for closure, ET>30 - with tracker, dEta, dPhi (LP)
+// fake for eleID Bdt, QCD for closure test
 void LeptonPlusFakeMLSelection_fullME::initialiseElectronFakeRateQCD() {
 
-  // chiara: for the moment I simply duplicate - fixme
-  mQCD_eleFakeRateEB1[0] = 0.019106;
-  mQCD_eleFakeRateEB1[1] = 0.0138018;
-  mQCD_eleFakeRateEB1[2] = 0.0743516;
-  mQCD_eleFakeRateEB1[3] = 0.0621557;
-  mQCD_eleFakeRateEB1[4] = 0.0920799;
+  mQCD_eleFakeRateEB1[0] = 0.0082;
+  mQCD_eleFakeRateEB1[1] = 0.0040;
+  mQCD_eleFakeRateEB1[2] = 0.0049;
+  mQCD_eleFakeRateEB1[3] = 0.0048;
+  mQCD_eleFakeRateEB1[4] = 0.0051;
 
-  mQCD_eleFakeRateEB1_err[0] = 0.0070397;
-  mQCD_eleFakeRateEB1_err[1] = 0.00338596;
-  mQCD_eleFakeRateEB1_err[2] = 0.00656926;
-  mQCD_eleFakeRateEB1_err[3] = 0.00508687;
-  mQCD_eleFakeRateEB1_err[4] = 0.0247443;
+  mQCD_eleFakeRateEB1_err[0] = 0.0002;
+  mQCD_eleFakeRateEB1_err[1] = 0.0002;
+  mQCD_eleFakeRateEB1_err[2] = 0.0002;
+  mQCD_eleFakeRateEB1_err[3] = 0.0003;
+  mQCD_eleFakeRateEB1_err[4] = 0.0004;
 
-  mQCD_eleFakeRateEB2[0] = 0.019106;
-  mQCD_eleFakeRateEB2[1] = 0.0138018;
-  mQCD_eleFakeRateEB2[2] = 0.0743516;
-  mQCD_eleFakeRateEB2[3] = 0.0621557;
-  mQCD_eleFakeRateEB2[4] = 0.0920799;
+  mQCD_eleFakeRateEB2[0] = 0.0061; 
+  mQCD_eleFakeRateEB2[1] = 0.0037; 
+  mQCD_eleFakeRateEB2[2] = 0.0065; 
+  mQCD_eleFakeRateEB2[3] = 0.0061; 
+  mQCD_eleFakeRateEB2[4] = 0.0064; 
 
-  mQCD_eleFakeRateEB2_err[0] = 0.0070397;
-  mQCD_eleFakeRateEB2_err[1] = 0.00338596;
-  mQCD_eleFakeRateEB2_err[2] = 0.00656926;
-  mQCD_eleFakeRateEB2_err[3] = 0.00508687;
-  mQCD_eleFakeRateEB2_err[4] = 0.0247443;
+  mQCD_eleFakeRateEB2_err[0] = 0.0002;
+  mQCD_eleFakeRateEB2_err[1] = 0.0002;
+  mQCD_eleFakeRateEB2_err[2] = 0.0004;
+  mQCD_eleFakeRateEB2_err[3] = 0.0005;
+  mQCD_eleFakeRateEB2_err[4] = 0.0008;
 
-  mQCD_eleFakeRateEE1[0] = 0.010952;
-  mQCD_eleFakeRateEE1[1] = 0.0129353;
-  mQCD_eleFakeRateEE1[2] = 0.054481;
-  mQCD_eleFakeRateEE1[3] = 0.0511887;
-  mQCD_eleFakeRateEE1[4] = 0.0603386;
+  mQCD_eleFakeRateEE1[0] = 0.0030;
+  mQCD_eleFakeRateEE1[1] = 0.0017;
+  mQCD_eleFakeRateEE1[2] = 0.0032;
+  mQCD_eleFakeRateEE1[3] = 0.0032; 
+  mQCD_eleFakeRateEE1[4] = 0.0031;
   
-  mQCD_eleFakeRateEE1_err[0] = 0.00371267;
-  mQCD_eleFakeRateEE1_err[1] = 0.00229748;
-  mQCD_eleFakeRateEE1_err[2] = 0.00415571;
-  mQCD_eleFakeRateEE1_err[3] = 0.00370617;
-  mQCD_eleFakeRateEE1_err[4] = 0.0195938;
+  mQCD_eleFakeRateEE1_err[0] = 0.0001;
+  mQCD_eleFakeRateEE1_err[1] = 0.0001;
+  mQCD_eleFakeRateEE1_err[2] = 0.0002;
+  mQCD_eleFakeRateEE1_err[3] = 0.0003;
+  mQCD_eleFakeRateEE1_err[4] = 0.0005;
 
-  mQCD_eleFakeRateEE2[0] = 0.010952;
-  mQCD_eleFakeRateEE2[1] = 0.0129353;
-  mQCD_eleFakeRateEE2[2] = 0.054481;
-  mQCD_eleFakeRateEE2[3] = 0.0511887;
-  mQCD_eleFakeRateEE2[4] = 0.0603386;
+  mQCD_eleFakeRateEE2[0] = 0.0018; 
+  mQCD_eleFakeRateEE2[1] = 0.0009;
+  mQCD_eleFakeRateEE2[2] = 0.0022;
+  mQCD_eleFakeRateEE2[3] = 0.0023;
+  mQCD_eleFakeRateEE2[4] = 0.0026;
   
-  mQCD_eleFakeRateEE2_err[0] = 0.00371267;
-  mQCD_eleFakeRateEE2_err[1] = 0.00229748;
-  mQCD_eleFakeRateEE2_err[2] = 0.00415571;
-  mQCD_eleFakeRateEE2_err[3] = 0.00370617;
-  mQCD_eleFakeRateEE2_err[4] = 0.0195938;
+  mQCD_eleFakeRateEE2_err[0] = 0.0001;
+  mQCD_eleFakeRateEE2_err[1] = 0.0001;
+  mQCD_eleFakeRateEE2_err[2] = 0.0002;
+  mQCD_eleFakeRateEE2_err[3] = 0.0002;
+  mQCD_eleFakeRateEE2_err[4] = 0.0004;
 }
 
 // prompt rate from eleID Bdt - for 2011A+B average analysis, split in #vtx (Clara, Nov 8)
@@ -2474,9 +2473,8 @@ float LeptonPlusFakeMLSelection_fullME::bVetoJets( std::vector<int> eleToRemove,
 
     // hardcoded
     float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
-    if(rawpt < 10.0) continue;    // chiara: new
+    if(rawpt < 10.0) continue;    
 
-    // to be commented on MC until we do not run on Fall11. Chiara: new                                    
     if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
@@ -2569,7 +2567,7 @@ int LeptonPlusFakeMLSelection_fullME::numSoftMuons(std::vector<int> muonToRemove
     float dxyMuon= transvImpactParTrack[track];
     float dzMuon = muonDzPV(i,0);
     if(dxyMuon > 0.200) continue;     // hardcoded	
-    if(dzMuon  > 0.200) continue;     // hardcoded, chiara new	
+    if(dzMuon  > 0.200) continue;     // hardcoded
 
     float isoSumRel = (sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i]) / pt;
     //    float isoSumRel = pfCombinedIsoMuon[i] / pt;
