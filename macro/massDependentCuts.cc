@@ -8,6 +8,7 @@ TString higgsCuts(int mH, bool out) {
   cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
   cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<120")));
   cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<125")));
+  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80  &&  mth<125")));
   cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>25  &&  pt2>15  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<130")));
   cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>27  &&  pt2>25  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<150")));
   cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>30  &&  pt2>25  &&  dphill*180./TMath::Pi()<60  &&  mth>90  &&  mth<160")));
@@ -123,7 +124,7 @@ TString higgsCutsBDT(int mH, bool out) {
   cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<600")));
 
   std::map<int,TString> cutsOut;
-  cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<50")));
+  cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(115,cuts[115]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<80")));
@@ -172,7 +173,7 @@ TString higgsCutsBDTNoMT(int mH, bool out) {
   cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
 
   std::map<int,TString> cutsOut;
-  cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<50")));
+  cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(115,cuts[115]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<80")));
@@ -196,3 +197,4 @@ TString higgsCutsBDTNoMT(int mH, bool out) {
   else return cuts[mH];
 
 }
+
