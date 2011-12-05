@@ -13,7 +13,7 @@ TString higgsCuts(int mH, bool out) {
   cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>23  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<100 &&  mth>80  &&  mth<123")));
   cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>24  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<95  &&  mth>80  &&  mth<124")));
   cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<125")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<128")));
+  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>12 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<128")));
   cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>25  &&  pt2>15  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<130")));
   cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>27  &&  pt2>25  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<150")));
   cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>30  &&  pt2>25  &&  dphill*180./TMath::Pi()<60  &&  mth>90  &&  mth<160")));
@@ -74,7 +74,7 @@ TString higgsCutsNoMT(int mH, bool out) {
   cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>23  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<100")));
   cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>24  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<95 ")));
   cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90 ")));
+  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>12 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90 ")));
   cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>25  &&  pt2>15  &&  dphill*180./TMath::Pi()<90 ")));
   cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>27  &&  pt2>25  &&  dphill*180./TMath::Pi()<90 ")));
   cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>30  &&  pt2>25  &&  dphill*180./TMath::Pi()<60 ")));
