@@ -87,8 +87,8 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
   tablefileLL << "$m_{H}$ [GeV] \t\t \t & $n^{data}_{in}$ \t\t & $n^{data}_{in}(sub)$ \t\t\t & \t $R_{MC}$ \t & \t $n^{data}_{DY}$ \t & \t $n^{MC}_{DY}$ \\\\" << endl;
   tablefileLL << "\\hline" << endl;
 
-  int mH[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0; i<19;i++) {
+  int mH[25] = {110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0; i<25;i++) {
     std::cout << "mH = " << mH[i] << std::endl;
     TString addCutInR, addCutOutR, addCutIn, addCutOut;
     if(cutbasedestimation) {
@@ -725,8 +725,8 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
 }
 
 void makeAllRPlots(int njets, float lumiInInvFb) {
-  int mH[20] = {0,110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0;i<20;i++) {
+  int mH[26] = {0,110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0;i<26;i++) {
     makeRPlot(mH[i],njets,lumiInInvFb);
   }
 }

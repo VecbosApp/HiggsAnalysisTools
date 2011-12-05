@@ -366,13 +366,13 @@ void estimateWW() {
   TH1F *WWMEHFin = new TH1F("WWMEHFin","",50,0,180); // all
     
 
-  int masses[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int masses[25] = {110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int i=0; i<19; i++) {
+  for (int i=0; i<25; i++) {
     
     int mass = masses[i];
-    TString higgsMassDependentCut = higgsCutsBDT(mass,true);
+    TString higgsMassDependentCut = higgsCuts(mass,true);
     
     TString HCut[4][2]; // [icha][qq/gg]
     
