@@ -55,8 +55,8 @@ void countEvents() {
 
   // signals - second set
   std::vector<std::vector<TChain*> > signalChains2;
-  int mH2[7] = {110,115,122,124,126,128,135};
-  for(int imass=0; imass<7;imass++) {
+  int mH2[8] = {110,115,118,122,124,126,128,135};
+  for(int imass=0; imass<8;imass++) {
     char mass[5];
     sprintf(mass,"%d",mH2[imass]);
 
@@ -147,7 +147,7 @@ void countEvents() {
   }
 
   std::vector<std::vector<TString> > signalSampleName2;
-  for(int imass=0; imass<7;imass++) {
+  for(int imass=0; imass<8;imass++) {
     char mass[5];
     sprintf(mass,"%d",mH2[imass]);
     
@@ -279,7 +279,7 @@ void countEvents() {
 
   // these for the 2LAndTauNu samples
   std::vector<std::vector<double> > signalXSec2;
-  for(int imass=0; imass<7;imass++) {
+  for(int imass=0; imass<8;imass++) {
     std::vector<double> massXsec;
     double ggHiggs_xsec_2landtau2nu = ggHiggs_xsec[mH2[imass]];
     double qqHiggs_xsec_2landtau2nu = qqHiggs_xsec[mH2[imass]];
@@ -360,7 +360,7 @@ void countEvents() {
   }
 
   std::vector<std::vector<double> > signalProcId2;
-  for(int imass=0; imass<7;imass++) {
+  for(int imass=0; imass<8;imass++) {
     std::vector<double> massId;
     massId.push_back(9000+mH2[imass]); // ggH->2LAndTau2Nu
     massId.push_back(8000+mH2[imass]); // qqH->2LAndTau2Nu
@@ -440,14 +440,14 @@ void countEvents() {
   }
 
   // signal samples second set
-  float nEvH2[7][2];
-  for(int imass=0; imass<7; imass++) {
+  float nEvH2[8][2];
+  for(int imass=0; imass<8; imass++) {
     for(int i=0; i<2; i++) {
       nEvH2[imass][i] = 0.0;
     }
   }
 
-  for(int imass=0; imass<7; imass++) {
+  for(int imass=0; imass<8; imass++) {
     std::vector<TChain*> massChain = signalChains2[imass];
     for(int i=0; i<2; i++) {
 
@@ -530,7 +530,7 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1, " << release << ");" << std::endl;
     }
   }
-  for(int imass=0; imass<7; imass++) {
+  for(int imass=0; imass<8; imass++) {
     std::vector<double> massXsec = signalXSec2[imass];
     std::vector<TString> massSampleName = signalSampleName2[imass];
     std::vector<double> massId = signalProcId2[imass];
@@ -563,7 +563,7 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0, " << release << ");" << std::endl;
     }
   }
-  for(int imass=0; imass<7; imass++) {
+  for(int imass=0; imass<8; imass++) {
     std::vector<double> massXsec = signalXSec2[imass];
     std::vector<TString> massSampleName = signalSampleName2[imass];
     std::vector<double> massId = signalProcId2[imass];
@@ -600,7 +600,7 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleNameEM.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,2, " << release << ");" << std::endl;
     }
   }
-  for(int imass=0; imass<7; imass++) {
+  for(int imass=0; imass<8; imass++) {
     std::vector<double> massXsec = signalXSec2[imass];
     std::vector<TString> massSampleName = signalSampleName2[imass];
     std::vector<double> massId = signalProcId2[imass];
@@ -637,7 +637,7 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,3, " << release << ");" << std::endl;
     }
   }
-  for(int imass=0; imass<7; imass++) {
+  for(int imass=0; imass<8; imass++) {
     std::vector<double> massXsec = signalXSec2[imass];
     std::vector<TString> massSampleName = signalSampleName2[imass];
     std::vector<double> massId = signalProcId2[imass];
