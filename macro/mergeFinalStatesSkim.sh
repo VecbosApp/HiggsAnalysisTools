@@ -5,7 +5,7 @@
 
 
 # usage: ./mergeFinalStates.sh Hmass
-for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
+for i in 110 115 118 120 122 124 126 128 130 135 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
 do
   hadd -f results/datasets_trees_skim/H$i\_ll.root results/datasets_trees_skim/H$i\_ee.root results/datasets_trees_skim/H$i\_mm.root results/datasets_trees_skim/H$i\_em.root results/datasets_trees_skim/H$i\_me.root
 done
