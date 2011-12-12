@@ -12,6 +12,12 @@ do
   hadd results/merged/qqH$i\2L2Nu_ee.root results/Fall11_V1/VBF_HToWWTo2L2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEE.root
   hadd results/merged/qqH$i\LNuTauNu_ee.root results/Fall11_V1/VBF_HToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetEE.root
 done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/merged/ggH$i\2LAndTau2Nu_ee.root results/Fall11_V1/GluGluToHToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEE.root
+  hadd results/merged/qqH$i\2LAndTau2Nu_ee.root results/Fall11_V1/VBF_HToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEE.root
+done
+
 hadd results/merged/TTbar_ee.root results/Fall11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetEE.root 
 #hadd results/merged/TTbar_ee.root results/Fall11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*datasetEE.root
 #hadd results/merged/SingleTop_sChannel_ee.root results/Fall11_V1/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*datasetEE.root
@@ -56,6 +62,11 @@ do
   hadd results/merged/ggH$i\LNuTauNu_mm.root results/Fall11_V1/GluGluToHToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetMM.root
   hadd results/merged/qqH$i\2L2Nu_mm.root results/Fall11_V1/VBF_HToWWTo2L2Nu_M-$i\_7TeV-powheg-pythia6/*datasetMM.root
   hadd results/merged/qqH$i\LNuTauNu_mm.root results/Fall11_V1/VBF_HToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetMM.root
+done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/merged/ggH$i\2LAndTau2Nu_mm.root results/Fall11_V1/GluGluToHToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetMM.root
+  hadd results/merged/qqH$i\2LAndTau2Nu_mm.root results/Fall11_V1/VBF_HToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetMM.root
 done
 hadd results/merged/TTbar_mm.root results/Fall11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetMM.root
 #hadd results/merged/TTbar_mm.root results/Fall11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*datasetMM.root
@@ -102,6 +113,11 @@ do
   hadd results/merged/qqH$i\2L2Nu_em.root results/Fall11_V1/VBF_HToWWTo2L2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEM.root
   hadd results/merged/qqH$i\LNuTauNu_em.root results/Fall11_V1/VBF_HToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetEM.root
 done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/merged/ggH$i\2LAndTau2Nu_em.root results/Fall11_V1/GluGluToHToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEM.root
+  hadd results/merged/qqH$i\2LAndTau2Nu_em.root results/Fall11_V1/VBF_HToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetEM.root
+done
 hadd results/merged/TTbar_em.root results/Fall11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetEM.root
 #hadd results/merged/TTbar_em.root results/Fall11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*datasetEM.root
 #hadd results/merged/SingleTop_sChannel_em.root results/Fall11_V1/TToBLNu_TuneZ2_s-channel_7TeV-madgraph/*datasetEM.root
@@ -146,6 +162,11 @@ do
   hadd results/merged/ggH$i\LNuTauNu_me.root results/Fall11_V1/GluGluToHToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetME.root
   hadd results/merged/qqH$i\2L2Nu_me.root results/Fall11_V1/VBF_HToWWTo2L2Nu_M-$i\_7TeV-powheg-pythia6/*datasetME.root
   hadd results/merged/qqH$i\LNuTauNu_me.root results/Fall11_V1/VBF_HToWWToLNuTauNu_M-$i\_7TeV-powheg-pythia6/*datasetME.root
+done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/merged/ggH$i\2LAndTau2Nu_me.root results/Fall11_V1/GluGluToHToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetME.root
+  hadd results/merged/qqH$i\2LAndTau2Nu_me.root results/Fall11_V1/VBF_HToWWTo2LAndTau2Nu_M-$i\_7TeV-powheg-pythia6/*datasetME.root
 done
 hadd results/merged/TTbar_me.root results/Fall11_V1/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetME.root
 #hadd results/merged/TTbar_me.root results/Fall11_V1/TTJets_TuneZ2_7TeV-madgraph-tauola/*datasetME.root

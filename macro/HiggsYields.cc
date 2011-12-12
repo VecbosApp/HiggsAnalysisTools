@@ -11,7 +11,7 @@ using namespace std;
 enum { ee=0, mm=1, em=2, me=3, ll=4 };
 
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
-void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates);
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates, int imass);
 void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates);
 
 void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
@@ -33,15 +33,15 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
   textfile << "Yields for an integrated luminosity $L_{int} = $ " << lumiInInvFb << " fb$^{-1}$." << std::endl;
   if(addDataDrivenEstimates) textfile << "All the following yields are corrected by the data driven estimates, where possible. W+jets is taken from T+L sample on data." << std::endl;
   else textfile << "All the following yields are pure MC estimates, without data-driven corrections" << std::endl;
-  HiggsYields(-1, 0, lumiInInvFb, showData, addDataDrivenEstimates);
+  HiggsYields(-1, 0, lumiInInvFb, showData, addDataDrivenEstimates, -1);
 
   textfile.open("yields.tex", ios_base::app);
   textfile << "\\subsection{Yields at full H selection level}" << std::endl;
 
-  int mH[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0; i<19;i++) {
+  int mH[24] = {110,115,118,120,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0; i<24;i++) {
     std::cout << "mH = " << mH[i] << "\t0 jet" << std::endl;
-    HiggsYields(mH[i], 0, lumiInInvFb, showData, addDataDrivenEstimates);
+    HiggsYields(mH[i], 0, lumiInInvFb, showData, addDataDrivenEstimates, i);
   }
   textfile.close();
 
@@ -51,13 +51,13 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
   textfile2 << "\\section{Yields for 1 jet}" << endl;
   textfile2 << "\\subsection{Yields at WW selection level}" << std::endl;
   std::cout << "Evaluating yields at WW selection level" << std::endl;
-  HiggsYields(-1, 1, lumiInInvFb, showData, addDataDrivenEstimates);
+  HiggsYields(-1, 1, lumiInInvFb, showData, addDataDrivenEstimates, -1);
 
   textfile2.open("yields.tex", ios_base::app);
   textfile2 << "\\subsection{Yields at full H selection level}" << std::endl;
-  for(int i=0; i<19;i++) {
+  for(int i=0; i<24;i++) {
     std::cout << "mH = " << mH[i] << "\t1 jet" << std::endl;
-    HiggsYields(mH[i], 1, lumiInInvFb, showData, addDataDrivenEstimates);
+    HiggsYields(mH[i], 1, lumiInInvFb, showData, addDataDrivenEstimates, i);
   }
   textfile2.close();
 
@@ -67,7 +67,7 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
 
 }
 
-void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
+void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDataDrivenEstimates, int imass) {
 
   std::vector<std::vector<double> > yields;
   std::vector<std::vector<double> > yields_err;
@@ -104,7 +104,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileData = 0;
   if(showData) fileData = TFile::Open("results_data/datasets_trees_skim/dataset_ll.root");
   TFile *fileFake = 0;
-  if(addDataDrivenEstimates) fileFake = TFile::Open("results_data/datasets_trees_looseloose/looseloosenew.root");
+  if(addDataDrivenEstimates) fileFake = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
 
   char signalFile[200];
   if(mH!=-1) sprintf(signalFile, "results/datasets_trees_skim/H%d_ll.root", mH);
@@ -403,6 +403,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   else textfile << "\\end{scriptsize}" << endl;
   textfile << "\\end{table}" << endl;
 
+  if(imass>0 && imass%10==0) textfile << "\\clearpage" << std::endl;
 
   if(mH!=-1) {
     // * for the datacards * //
