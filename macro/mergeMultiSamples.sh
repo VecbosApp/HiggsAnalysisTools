@@ -10,6 +10,10 @@ for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
 do
   hadd results/datasets_trees/H$i\_ee.root results/merged/ggH$i\2L2Nu_ee.root results/merged/ggH$i\LNuTauNu_ee.root results/merged/qqH$i\2L2Nu_ee.root results/merged/qqH$i\LNuTauNu_ee.root
 done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/datasets_trees/H$i\_ee.root results/merged/ggH$i\2LAndTau2Nu_ee.root results/merged/qqH$i\2LAndTau2Nu_ee.root
+done
 
 # WW is a species per se
 hadd results/datasets_trees/WW_ee.root results/merged/WW_ee.root results/merged/ggWW_ee.root
@@ -37,6 +41,10 @@ echo "Now merging species for mm..."
 for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
 do
   hadd results/datasets_trees/H$i\_mm.root results/merged/ggH$i\2L2Nu_mm.root results/merged/ggH$i\LNuTauNu_mm.root results/merged/qqH$i\2L2Nu_mm.root results/merged/qqH$i\LNuTauNu_mm.root
+done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/datasets_trees/H$i\_mm.root results/merged/ggH$i\2LAndTau2Nu_mm.root results/merged/qqH$i\2LAndTau2Nu_mm.root
 done
 
 # WW is a species per se
@@ -66,6 +74,10 @@ for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
 do
   hadd results/datasets_trees/H$i\_em.root results/merged/ggH$i\2L2Nu_em.root results/merged/ggH$i\LNuTauNu_em.root results/merged/qqH$i\2L2Nu_em.root results/merged/qqH$i\LNuTauNu_em.root
 done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/datasets_trees/H$i\_em.root results/merged/ggH$i\2LAndTau2Nu_em.root results/merged/qqH$i\2LAndTau2Nu_em.root
+done
 
 # WW is a species per se
 hadd results/datasets_trees/WW_em.root results/merged/WW_em.root results/merged/ggWW_em.root
@@ -94,6 +106,10 @@ echo "Now merging species for me..."
 for i in 120 130 140 150 160 170 180 190 200 250 300 350 400 450 500 550 600
 do
   hadd results/datasets_trees/H$i\_me.root results/merged/ggH$i\2L2Nu_me.root results/merged/ggH$i\LNuTauNu_me.root results/merged/qqH$i\2L2Nu_me.root results/merged/qqH$i\LNuTauNu_me.root
+done
+for i in 110 115 118 122 124 126 128 135
+do
+  hadd results/datasets_trees/H$i\_me.root results/merged/ggH$i\2LAndTau2Nu_me.root results/merged/qqH$i\2LAndTau2Nu_me.root
 done
 
 # WW is a species per se
