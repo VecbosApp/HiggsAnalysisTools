@@ -646,7 +646,7 @@ void countEvents() {
       int release = 1;
       float w = weight(nEvH2[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameME = massSampleName[i].ReplaceAll("_ee","_me");
-      weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiME, " << massId[i] << " ,3, " << release << ");" << std::endl;
+      weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,3, " << release << ");" << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
