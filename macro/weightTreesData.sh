@@ -7,7 +7,7 @@
 
 mkdir -p results_data/merged_skim
 
-echo "Adding weights..."
+echo "Adding weights to tight x tight..."
 root -l -b <<EOF
 
 .L addWeightsToTree.cc+
@@ -28,6 +28,14 @@ addWeights("results_data/merged/dataset_SingleElectron_me.root", 1.0, 100, 3, 1)
 
 .q
 
+EOF
+
+echo "Adding weights to loose x loose..."
+root -l -b <<EOF
+.L addWeightsToTreeLooseLoose.C+
+addWeightsToTreeLooseLoose looper
+looper.Loop()
+.q
 EOF
 
 echo "done weighting."
