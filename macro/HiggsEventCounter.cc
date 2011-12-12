@@ -21,7 +21,7 @@ void countEvents() {
 
   cout << "nametree = " << nametree << endl;
 
-  // signals
+  // signals - first set
   std::vector<std::vector<TChain*> > signalChains;
   int mH[17] = {120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   for(int imass=0; imass<17;imass++) {
@@ -51,6 +51,30 @@ void countEvents() {
 
     for(int i=0; i<4; i++) massChain.push_back(sigChains[i]);
     signalChains.push_back(massChain);
+  }
+
+  // signals - second set
+  std::vector<std::vector<TChain*> > signalChains2;
+  int mH2[7] = {110,115,122,124,126,128,135};
+  for(int imass=0; imass<7;imass++) {
+    char mass[5];
+    sprintf(mass,"%d",mH2[imass]);
+
+    std::vector<TChain*> massChain;
+
+    TChain *sigChains[2];
+    for(int i=0; i<2; i++) sigChains[i] = new TChain(nametree);
+
+    TString hSample("results/Fall11_V1/GluGluToHToWWTo2LAndTau2Nu_M-");
+    hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
+    sigChains[0]->Add(hSample.Data());
+    
+    hSample = TString("results/Fall11_V1/VBF_HToWWTo2LAndTau2Nu_M-");
+    hSample += TString(mass)+TString("_7TeV-powheg-pythia6/*Counters.root");
+    sigChains[1]->Add(hSample.Data());
+    
+    for(int i=0; i<2; i++) massChain.push_back(sigChains[i]);
+    signalChains2.push_back(massChain);
   }
 
   // backgrounds
@@ -122,6 +146,18 @@ void countEvents() {
     signalSampleName.push_back(massSampleName);
   }
 
+  std::vector<std::vector<TString> > signalSampleName2;
+  for(int imass=0; imass<7;imass++) {
+    char mass[5];
+    sprintf(mass,"%d",mH2[imass]);
+    
+    std::vector<TString> massSampleName;
+    massSampleName.push_back(TString("results/merged/ggH")+TString(mass)+TString("2LAndTau2Nu_ee.root"));
+    massSampleName.push_back(TString("results/merged/qqH")+TString(mass)+TString("2LAndTau2Nu_ee.root"));
+
+    signalSampleName2.push_back(massSampleName);
+  }
+
   std::vector<TString> sampleName;
   sampleName.push_back("results/merged/Wjets_ee.root"); // 0
 
@@ -164,8 +200,16 @@ void countEvents() {
 
   std::map<int,float> ggHiggs_xsec;
   // samples are emu only
+  ggHiggs_xsec.insert(std::make_pair(110,0.100387));
+  ggHiggs_xsec.insert(std::make_pair(115,0.165009));
+  ggHiggs_xsec.insert(std::make_pair(118,0.213183));
   ggHiggs_xsec.insert(std::make_pair(120,0.249642));
+  ggHiggs_xsec.insert(std::make_pair(122,0.286962));
+  ggHiggs_xsec.insert(std::make_pair(124,0.326685));
+  ggHiggs_xsec.insert(std::make_pair(126,0.368359));
+  ggHiggs_xsec.insert(std::make_pair(128,0.410187));
   ggHiggs_xsec.insert(std::make_pair(130,0.452090));
+  ggHiggs_xsec.insert(std::make_pair(135,0.553354));
   ggHiggs_xsec.insert(std::make_pair(140,0.641773));
   ggHiggs_xsec.insert(std::make_pair(150,0.770471));
   ggHiggs_xsec.insert(std::make_pair(160,0.866443));
@@ -187,8 +231,16 @@ void countEvents() {
 
   std::map<int,float> qqHiggs_xsec;
   // samples are emu only
+  qqHiggs_xsec.insert(std::make_pair(110,0.007073));
+  qqHiggs_xsec.insert(std::make_pair(115,0.012126));
+  qqHiggs_xsec.insert(std::make_pair(118,0.016029));
   qqHiggs_xsec.insert(std::make_pair(120,0.019057));
+  qqHiggs_xsec.insert(std::make_pair(122,0.022236));
+  qqHiggs_xsec.insert(std::make_pair(124,0.025656));
+  qqHiggs_xsec.insert(std::make_pair(126,0.029327));
+  qqHiggs_xsec.insert(std::make_pair(128,0.033085));
   qqHiggs_xsec.insert(std::make_pair(130,0.036942));
+  qqHiggs_xsec.insert(std::make_pair(135,0.046536));
   qqHiggs_xsec.insert(std::make_pair(140,0.055686));
   qqHiggs_xsec.insert(std::make_pair(150,0.070561));
   qqHiggs_xsec.insert(std::make_pair(160,0.083858));
@@ -208,6 +260,7 @@ void countEvents() {
   qqHiggs_xsec.insert(std::make_pair(550,0.004249));
   qqHiggs_xsec.insert(std::make_pair(600,0.003374));
 
+  // these for the 2L2Nu, 2Tau2Nu samples
   std::vector<std::vector<double> > signalXSec;
   for(int imass=0; imass<17;imass++) {
     std::vector<double> massXsec;
@@ -216,12 +269,6 @@ void countEvents() {
     double qqHiggs_xsec_2l2nu = qqHiggs_xsec[mH[imass]] * 4./9.; // 4/9 because we are considering only the samples containing e-mu combinations.
     double qqHiggs_xsec_taunulnu = qqHiggs_xsec[mH[imass]] * 4./9.; // i.e. 2*BR(W->tau nu) * BR(W->e/mu nu) = 2 * 1/3 * 2/3
 
-//     std::cout << "For mH = " << mH[imass] << " GeV found xsec x BR = " << std::endl
-//               << "ggH->2L2Nu = " << ggHiggs_xsec_2l2nu << " pb;" << std::endl
-//               << "ggH->LNuTauNu = " << ggHiggs_xsec_taunulnu << " pb;" << std::endl
-//               << "qqH->2L2Nu = " << qqHiggs_xsec_2l2nu << " pb;" << std::endl
-//               << "qqH->LNuTauNu = " << qqHiggs_xsec_taunulnu << " pb." << std::endl;
-    
     massXsec.push_back(ggHiggs_xsec_2l2nu);
     massXsec.push_back(ggHiggs_xsec_taunulnu);
     massXsec.push_back(qqHiggs_xsec_2l2nu);
@@ -230,6 +277,18 @@ void countEvents() {
     signalXSec.push_back(massXsec);
   }
 
+  // these for the 2LAndTauNu samples
+  std::vector<std::vector<double> > signalXSec2;
+  for(int imass=0; imass<7;imass++) {
+    std::vector<double> massXsec;
+    double ggHiggs_xsec_2landtau2nu = ggHiggs_xsec[mH2[imass]];
+    double qqHiggs_xsec_2landtau2nu = qqHiggs_xsec[mH2[imass]];
+
+    massXsec.push_back(ggHiggs_xsec_2landtau2nu);
+    massXsec.push_back(qqHiggs_xsec_2landtau2nu);
+
+    signalXSec2.push_back(massXsec);
+  }
 
   std::vector<float> sampleXsec;
   sampleXsec.push_back(31314.); // madgraph // 0
@@ -300,6 +359,14 @@ void countEvents() {
     signalProcId.push_back(massId);
   }
 
+  std::vector<std::vector<double> > signalProcId2;
+  for(int imass=0; imass<7;imass++) {
+    std::vector<double> massId;
+    massId.push_back(9000+mH2[imass]); // ggH->2LAndTau2Nu
+    massId.push_back(8000+mH2[imass]); // qqH->2LAndTau2Nu
+    signalProcId2.push_back(massId);
+  }
+
   std::vector<int> sampleProcessId; 
   // ids are taken from: https://docs.google.com/spreadsheet/ccc?key=0Ankm0DuoD0h0dHRhV1VNSlV1NEdhNFdyOXh3eFpSMHc&hl=en_US#gid=31
   sampleProcessId.push_back(80); // Wjets
@@ -335,6 +402,7 @@ void countEvents() {
   sampleProcessId.push_back(6); // qqWW PYTHIA
   sampleProcessId.push_back(81); // Vgamma madgraph inclusive
 
+  // signal samples first set
   float nEvH[17][4];
   for(int imass=0; imass<17; imass++) {
     for(int i=0; i<4; i++) {
@@ -367,6 +435,43 @@ void countEvents() {
         nb = massChain[i]->GetEntry(jentry);   nbytes += nb;
 
         nEvH[imass][i] += nSel[0];
+      }
+    }
+  }
+
+  // signal samples second set
+  float nEvH2[7][2];
+  for(int imass=0; imass<7; imass++) {
+    for(int i=0; i<2; i++) {
+      nEvH2[imass][i] = 0.0;
+    }
+  }
+
+  for(int imass=0; imass<7; imass++) {
+    std::vector<TChain*> massChain = signalChains2[imass];
+    for(int i=0; i<2; i++) {
+
+      cout << "\tProcessing signal sample mass # " << mH2[imass] << "..." << endl;
+      
+      Int_t           nCuts;
+      Float_t         nSel[25];   //[nCuts]
+      
+      // List of branches
+      TBranch        *b_nCuts;   //!
+      TBranch        *b_nSel;   //!
+      
+      massChain[i]->SetBranchAddress("nCuts", &nCuts, &b_nCuts);
+      massChain[i]->SetBranchAddress("nSel", nSel, &b_nSel);
+    
+      Long64_t nentries = massChain[i]->GetEntries();
+
+      Long64_t nbytes = 0, nb = 0;
+      // loop over files (>1 if VecBos in batch, splitted in many jobs)
+      for (Long64_t jentry=0; jentry<nentries;jentry++) {
+        
+        nb = massChain[i]->GetEntry(jentry);   nbytes += nb;
+
+        nEvH2[imass][i] += nSel[0];
       }
     }
   }
@@ -425,6 +530,16 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1, " << release << ");" << std::endl;
     }
   }
+  for(int imass=0; imass<7; imass++) {
+    std::vector<double> massXsec = signalXSec2[imass];
+    std::vector<TString> massSampleName = signalSampleName2[imass];
+    std::vector<double> massId = signalProcId2[imass];
+    for(int i=0; i<2; i++) {
+      int release = 1;
+      float w = weight(nEvH2[imass][i], massXsec[i], 1., 1.);
+      weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1, " << release << ");" << std::endl;
+    }
+  }
   for(int isample=0; isample<NSAMPLES; isample++) {
     int release = 1;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
@@ -444,6 +559,18 @@ void countEvents() {
       cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH[imass][i] << endl;
       int release = 1;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
+      TString massSampleNameMM = massSampleName[i].ReplaceAll("_ee","_mm");
+      weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0, " << release << ");" << std::endl;
+    }
+  }
+  for(int imass=0; imass<7; imass++) {
+    std::vector<double> massXsec = signalXSec2[imass];
+    std::vector<TString> massSampleName = signalSampleName2[imass];
+    std::vector<double> massId = signalProcId2[imass];
+    for(int i=0; i<2; i++) {
+      cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH2[imass][i] << endl;
+      int release = 1;
+      float w = weight(nEvH2[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameMM = massSampleName[i].ReplaceAll("_ee","_mm");
       weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0, " << release << ");" << std::endl;
     }
@@ -473,6 +600,18 @@ void countEvents() {
       weightsFile << "addWeights(\"" << massSampleNameEM.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,2, " << release << ");" << std::endl;
     }
   }
+  for(int imass=0; imass<7; imass++) {
+    std::vector<double> massXsec = signalXSec2[imass];
+    std::vector<TString> massSampleName = signalSampleName2[imass];
+    std::vector<double> massId = signalProcId2[imass];
+    for(int i=0; i<2; i++) {
+      cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH2[imass][i] << endl;
+      int release = 1;
+      float w = weight(nEvH2[imass][i], massXsec[i], 1., 1.);
+      TString massSampleNameEM = massSampleName[i].ReplaceAll("_ee","_em");
+      weightsFile << "addWeights(\"" << massSampleNameEM.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,2, " << release << ");" << std::endl;
+    }
+  }
   for(int isample=0; isample<NSAMPLES; isample++) {
     //    cout << "Events processed for sample: " << sampleName[isample] << " = " << nEv[isample] << endl;
     int release = 1;
@@ -496,6 +635,18 @@ void countEvents() {
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameME = massSampleName[i].ReplaceAll("_ee","_me");
       weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,3, " << release << ");" << std::endl;
+    }
+  }
+  for(int imass=0; imass<7; imass++) {
+    std::vector<double> massXsec = signalXSec2[imass];
+    std::vector<TString> massSampleName = signalSampleName2[imass];
+    std::vector<double> massId = signalProcId2[imass];
+    for(int i=0; i<2; i++) {
+      cout << "Events processed for sample: " << massSampleName[i] << " = " << nEvH2[imass][i] << endl;
+      int release = 1;
+      float w = weight(nEvH2[imass][i], massXsec[i], 1., 1.);
+      TString massSampleNameME = massSampleName[i].ReplaceAll("_ee","_me");
+      weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiME, " << massId[i] << " ,3, " << release << ");" << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
