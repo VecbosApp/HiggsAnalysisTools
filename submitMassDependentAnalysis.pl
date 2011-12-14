@@ -28,8 +28,7 @@ for($i=0; $i<($#masses+1); $i++) {
     
     $higgsList = "VBF_HToWWToLNuTauNu_M-".$mass."_7TeV-powheg-pythia6";
     system("python cmst3_submit_manyfilesperjob.py Fall11_V1 $higgsList 10 HiggsApp 8nh $prefix 1");
-    
-    sleep 30;
+
 }   
 
 print "done with signals. Sleeping 600s...\n";
@@ -75,7 +74,7 @@ system("python cmst3_submit_manyfilesperjob.py Fall11_V1 WWJetsTo2L2Nu_TuneZ2_7T
 system("python cmst3_submit_manyfilesperjob.py Fall11_V1 GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6 10 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Fall11_V1 GVJets_7TeV-madgraph 10 HiggsApp 8nh $prefix 1");
 system("python cmst3_submit_manyfilesperjob.py Fall11_V1 ZZTo2L2Nu_TuneZ2_7TeV_pythia6_tauola 5 HiggsApp 8nh $prefix 1");
-system("python cmst3_submit_manyfilesperjob.py Fall11_V1 WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1");
+#system("python cmst3_submit_manyfilesperjob.py Fall11_V1 WZJetsTo3LNu_TuneZ2_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1");
 print  "done with dibosons.\n";
 
 sleep 600;
