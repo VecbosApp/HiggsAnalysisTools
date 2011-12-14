@@ -138,7 +138,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/test2TS.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
@@ -585,7 +585,7 @@ void HiggsMLSelection::Loop() {
     // float avePU = ((float)(nPU[0]+nPU[1]+nPU[2]))/3.;    // for OOT PU reweighting
     // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->ITweight3BX(avePU);     
     // cout << fPUWeight->ITweight3BX(avePU) << endl;
-    if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
+    // if ( !_selectionEE->getSwitch("isData") ) weight *= fPUWeight->GetWeight(nPU[1]);    // Isidro's function
 
     float nputosave[3];
     if( !_selectionEE->getSwitch("isData") ) {
