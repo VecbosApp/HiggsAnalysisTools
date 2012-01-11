@@ -238,8 +238,8 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       if(isample==5) addCut = TString("*(dataset==0)");
       if(isample==6) addCut = TString("*(dataset==1)");
       // separate vbfH for the datacards 
-      if(isample==8) addCut = TString("*(dataset>1000 && dataset<3000)");
-      if(isample==9) addCut = TString("*(dataset>4000 && dataset<6000)");
+      if(isample==8) addCut = TString("*((dataset>1000 && dataset<3000) || (dataset>9000 && dataset<10000))");
+      if(isample==9) addCut = TString("*((dataset>4000 && dataset<6000) || (dataset>8000 && dataset<9000))");
       // separate WZ/ZZ from Vgamma
       if(isample==4) addCut = TString("*(dataset==71 || dataset==74)");
       if(isample==10) addCut = TString("*((dataset>=38 && dataset<=41) || (dataset>=82 && dataset<=84))");
