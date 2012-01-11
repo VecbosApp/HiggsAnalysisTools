@@ -20,8 +20,9 @@ for m in $(cat ./masses); do
                 > hww-$LUMI.mH$m.comb_${J}j.txt; 
     done
     test -f hww-$LUMI.mH$m.comb_0j.txt || continue;
-    test -f hww-$LUMI.mH$m.comb_2j.txt || echo "No 2-jets datacards for m(H) = $m, lumi $LUMI (hww-$LUMI.mH$m.comb_2j.txt)";
-    test -f hww-$LUMI.mH$m.comb_2j.txt || break;
+#    test -f hww-$LUMI.mH$m.comb_2j.txt || echo "No 2-jets datacards for m(H) = $m, lumi $LUMI (hww-$LUMI.mH$m.comb_2j.txt)";
+#    test -f hww-$LUMI.mH$m.comb_2j.txt || break;
     echo " make hww-$LUMI.mH$m.comb.txt"
-    combineCards.py HWW_0j=hww-$LUMI.mH$m.comb_0j.txt HWW_1j=hww-$LUMI.mH$m.comb_1j.txt HWW_2j=hww-$LUMI.mH$m.comb_2j.txt > hww-$LUMI.mH$m.comb.txt
+#    combineCards.py HWW_0j=hww-$LUMI.mH$m.comb_0j.txt HWW_1j=hww-$LUMI.mH$m.comb_1j.txt HWW_2j=hww-$LUMI.mH$m.comb_2j.txt > hww-$LUMI.mH$m.comb.txt
+    combineCards.py HWW_0j=hww-$LUMI.mH$m.comb_0j.txt HWW_1j=hww-$LUMI.mH$m.comb_1j.txt > hww-$LUMI.mH$m.comb.txt
 done
