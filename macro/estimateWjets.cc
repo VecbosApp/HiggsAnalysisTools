@@ -69,10 +69,10 @@ void estimateWjets(int njets) {
   percErr[em][2]=0.36;  
 
   // trees
-  TFile *fileEE = TFile::Open("results_fake/Full2011.root");
-  TFile *fileMM = TFile::Open("results_fake/Full2011.root");
-  TFile *fileEM = TFile::Open("results_fake/Full2011.root");
-  TFile *fileME = TFile::Open("results_fake/Full2011.root");
+  TFile *fileEE = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
+  TFile *fileMM = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
+  TFile *fileEM = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
+  TFile *fileME = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
 
   TTree *treeEE = (TTree*)fileEE->Get("latino");
   TTree *treeMM = (TTree*)fileMM->Get("latino");
@@ -95,8 +95,8 @@ void estimateWjets(int njets) {
       sprintf(channel,"(channel==%d)",icha);
 
       TString fpCut, fpCutStatErr;
-      fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
-      fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
+      fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*fakeW*") + TString(wwLevelCut);
       // cout << "stima @ WW level: " << endl;
       // cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
       
@@ -219,10 +219,10 @@ void estimateWjets(int njets) {
   tablefile3.open(nameFileTable3, ios_base::trunc);
   tablefile3.precision(2);
 
-  int masses[19] = {110,115,120,130,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int masses[24] = {110,115,118,120,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int i=0; i<19; i++) {
+  for (int i=0; i<24; i++) {
 
     int mass = masses[i];
 
@@ -245,8 +245,8 @@ void estimateWjets(int njets) {
       sprintf(channel,"channel==%d",icha);
 
       TString fpCut, fpCutStatErr;
-      fpCut        = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
-      fpCutStatErr = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
+      fpCut        = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*fakeW*") + TString(wwLevelCut);
       
       // cout << "at higgs level, mass = " << i << endl;
       // std::cout << "taglio = " << fpCut.Data() << std::endl;
@@ -285,8 +285,8 @@ void estimateWjets(int njets) {
 
     // summary table for limits: splitting in 4 channels
     if (i==0) { 
-      tablefile << "# " << njets << " jets bin data" << endl;
-      tablefile << "# \t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
+      tablefile << njets << " jets bin data" << endl;
+      tablefile << "\t\t mumu \t\t mue \t\t emu \t\t ee \t\t ll" << endl;
     }
     tablefile << mass 
               << "\t\t" << yield_WWSel[4][mm] << " +/- " <<  yield_WWSel_staterr[4][mm] 
@@ -298,10 +298,10 @@ void estimateWjets(int njets) {
 
     // summary table for limits: splitting in 2 channels (SF, OF)
     if (i==0) { 
-      tablefile2 << "# " << njets << " jets bin data" << endl;
-      tablefile2 << "# \t\t SF" << endl;
-      tablefile3 << "# " << njets << " jets bin data" << endl;
-      tablefile3 << "# \t\t OF" << endl;
+      tablefile2 << njets << " jets bin data" << endl;
+      tablefile2 << "\t\t SF" << endl;
+      tablefile3 << njets << " jets bin data" << endl;
+      tablefile3 << "\t\t OF" << endl;
     }
     tablefile2 << mass << "\t\t" << yield_sf << " +/- " << staterr_sf << std::endl; 
     tablefile3 << mass << "\t\t" << yield_of << " +/- " << staterr_of << std::endl; 
