@@ -19,6 +19,9 @@ void printLatex(float lumiInInvFb, bool showData, bool addDataDrivenEstimates) {
   ofstream txtfilefordatacard;
   txtfilefordatacard.open("mcyields.txt", ios_base::trunc);
 
+  ofstream txtfileforvgammadatacard;
+  txtfileforvgammadatacard.open("vgamma-yields-mc.txt", ios_base::trunc);
+
   ofstream textfile;
   textfile.open("yields.tex", ios_base::trunc);
 
@@ -441,7 +444,7 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
       else if(isample==2 || isample==7) samplename = -111;
       else samplename = isample-1;
       
-      // signals at tghe end
+      // signals at the end
       if(isample==8 || isample==9) samplename=isample-2;
       
       if(isample!=10) { // not vgamma
