@@ -10,7 +10,7 @@
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TPaveText.h"
-#include "scripts/LatinoPlot.C"
+#include "LatinoPlot.C"
 #include "massDependentCuts.cc"
 
 #include <iostream>
@@ -23,7 +23,7 @@
 void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=false, int signalFactor=1)
 {
   gROOT->SetStyle("Plain");
-  gROOT->ProcessLine(".x scripts/LatinoStyle.C");
+  gROOT->ProcessLine(".x LatinoStyle.C");
   gStyle->SetPalette(1);
   gStyle->SetOptStat(0);  // Show overflow, underflow + SumOfWeights 
   gStyle->SetOptFit(111110); 
@@ -60,8 +60,8 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   //  scalefactor_datadriven[2][0] = "1."; // if W+jets taken from MC
   scalefactor_datadriven[3][0] = "1.";      // taken from MC, + scale factor
   scalefactor_datadriven[4][0] = "1.54";
-  scalefactor_datadriven[5][0] = "4.6";
-  scalefactor_datadriven[6][0] = "4.0";      // for Z -> taus we use 1
+  scalefactor_datadriven[5][0] = "1.0"; // 4.6: Zll
+  scalefactor_datadriven[6][0] = "1.0"; // 4.0: Ztt
   scalefactor_datadriven[7][0] = "1.14";
 
 
@@ -71,8 +71,8 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   // scalefactor_datadriven[2][1] = "1.";
   scalefactor_datadriven[3][1] = "1.";    // taken from MC + scalefactor
   scalefactor_datadriven[4][1] = "1.17";
-  scalefactor_datadriven[5][1] = "3.5";
-  scalefactor_datadriven[6][1] = "2.0";      // for Z -> taus we use 1
+  scalefactor_datadriven[5][1] = "1.0"; // 3.5: Zll
+  scalefactor_datadriven[6][1] = "1.0"; // 2.0: Ztt
   scalefactor_datadriven[7][1] = "1.15";
 
   Color_t colors[NSPECIES];
@@ -107,14 +107,14 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   TString files[NSPECIES];
   char mass[10];
   sprintf(mass,"%d",mH);
-  files[0]="results_data/datasets_trees_skim/dataset_"+TString(finalstate)+".root";  
-  files[1]="results/datasets_trees_skim/H"+TString(mass)+"_"+TString(finalstate)+".root";  
-  files[2]="results_data/datasets_trees_looseloose/looseloosenew.root";
-  files[3]="results/datasets_trees_skim/others_"+TString(finalstate)+".root";
-  files[4]="results/datasets_trees_skim/top_"+TString(finalstate)+".root";
-  files[5]="results/datasets_trees_skim/Zjets_"+TString(finalstate)+".root";
-  files[6]="results/datasets_trees_skim/Zjets_"+TString(finalstate)+".root";
-  files[7]="results/datasets_trees_skim/WW_"+TString(finalstate)+".root";
+  files[0]="results_data/datasets_trees/dataset_ll.root";  
+  files[1]="results/datasets_trees_skim/H"+TString(mass)+"_ll.root";  
+  files[2]="results_data/datasets_trees_looseloose_skim/looseloose.root";
+  files[3]="results/datasets_trees_skim/others_ll.root";
+  files[4]="results/datasets_trees_skim/top_ll.root";
+  files[5]="results/datasets_trees_skim/Zjets_ll.root";
+  files[6]="results/datasets_trees_skim/Zjets_ll.root";
+  files[7]="results/datasets_trees_skim/WW_ll.root";
 
   TString plotsDir="./HWW/"+TString(finalstate)+"/";
 
@@ -134,8 +134,8 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   variables[7]="njet";
   variables[8]="nvtx";
   variables[9]="gammaMRStar";
-  variables[10]="jetpt1";
-  variables[11]="jetpt2";
+  variables[10]="R";
+  variables[11]="softbdisc";
 
   TString units[NVARIABLES];
   units[0]="GeV";
@@ -144,12 +144,12 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   units[3]="GeV/c^{2}";
   units[4]="GeV/c";
   units[5]="GeV/c";
-  units[6]="#circ";
+  units[6]="rad.";
   units[7]="";
   units[8]="";
   units[9]="GeV/c^{2}";
-  units[10]="GeV/c";
-  units[11]="GeV/c";
+  units[10]="";
+  units[11]="";
 
   int nbins[NVARIABLES];
   nbins[0]=50;
@@ -194,14 +194,14 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   range[8][0]=1.;
   range[8][1]=21.;
   // mR
-  range[9][0]=0.;
+  range[9][0]=90.;
   range[9][1]=300.;
-  // pt lead jet
-  range[10][0]=10.;
-  range[10][1]=300.;
-  // pt sublead jet
-  range[11][0]=10.;
-  range[11][1]=300.;
+  // R^2
+  range[10][0]=0.;
+  range[10][1]=2.;
+  // n bjet
+  range[11][0]=-2.0;
+  range[11][1]=2.1;
 
   TString xaxisLabel[NVARIABLES];
   xaxisLabel[0]="PF E_{T}^{miss}";
@@ -213,9 +213,9 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   xaxisLabel[6]="#Delta #phi_{ll}";
   xaxisLabel[7]="n jets";
   xaxisLabel[8]="n vtx";
-  xaxisLabel[9]="2 * #gamma^{*}M_{R}^{*}";
-  xaxisLabel[10]="p_{T}^{jet1}";
-  xaxisLabel[11]="p_{T}^{jet2}";
+  xaxisLabel[9]="M_{R}";
+  xaxisLabel[10]="R";
+  xaxisLabel[11]="max(TCHE)";
 
   TString binSize[NVARIABLES];
 
@@ -227,7 +227,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 	if(i==0)
 	  histos[i][j][z]->Sumw2();
 	char binsiz[10];
-	sprintf(binsiz,"%2.0f",(range[z][1]-range[z][0])/nbins[z]);
+        sprintf(binsiz,"%2.0f",(range[z][1]-range[z][0])/nbins[z]);
 	binSize[z]=TString(binsiz);
       }
     }
@@ -237,15 +237,24 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   TString HCutIn = higgsCuts(mH,false);
 
   TString cut[NCUTS];
-  cut[0]="(finalLeptons && (mll>12+8*sameflav) && abs(drll)>0.1 && njet>=1)*";
-  cut[1]="(WWSel && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav))*";
-  cut[2]="(WWSel1j && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav))*";
-  //  cut[0]=TString("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav) && finalLeptons && pfmet>20 && mpmet>(37+nvtx/2.) &&");
-  //  cut[0] += (HCutIn + TString("&&") + TString( "((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0)*"));
-  //  cut[1]="(pfmet>20 && mll>12 && njet==0 && (dphilljet<165 || !sameflav) && bveto_mu && nextra == 0 && bveto_ip)*";
-  //  cut[2]="(pfmet>20 && mll>12 && njet==1 && (dphilljet<165 || !sameflav) && bveto_mu && nextra == 0 && bveto_ip)*";
+  cut[0]="(finalLeptons && (mll>12+8*sameflav) && abs(drll)>0.1 && njet>=0)*";
+  cut[1]="(WWSel && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav))*"; // std WW 0j
+  cut[2]="(WWSel1j && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav))*"; // std WW 1j
   cut[3]="((WWSel && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav)) &&"+HCut+" && njet==0)*";   // final 0j
   cut[4]="((WWSel1j && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && (mll>20 || !sameflav)) &&"+HCut+" && njet==1)*";   // final 1j
+  /*
+  cut[3]="(WWSel)*";
+  cut[4]="(WWSel1j)*";
+  */
+
+  TString channelcut("1*");
+  if(TString(finalstate).Contains("sf")) channelcut=TString("(channel<2)*");
+  if(TString(finalstate).Contains("of")) channelcut=TString("(channel>1)*");
+  if(TString(finalstate).Contains("mm")) channelcut=TString("(channel==0)*");
+  if(TString(finalstate).Contains("ee")) channelcut=TString("(channel==1)*");
+  if(TString(finalstate).Contains("em")) channelcut=TString("(channel==2)*");
+  if(TString(finalstate).Contains("me")) channelcut=TString("(channel==3)*");
+  for(int i=0;i<NCUTS;i++) cut[i]+=channelcut;
 
   char lumistr[5];
   sprintf(lumistr,"%.1f",lumi);
@@ -272,7 +281,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 
   for (int z=0;z<NVARIABLES;++z)
     {
-      for (int j=0;j<NCUTS;++j)
+      for (int j=1;j<NCUTS;++j)
       {
           int firstSpecie = 0;
           if(blindData) firstSpecie = 1;
@@ -324,7 +333,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
           myPlot.setMCHist(iZTau,    histos[6][j][z]);          
 	  myPlot.setMCHist(iWW,      histos[7][j][z]);
 
-          myPlot.setDataHist(histos[0][j][z]);
+          if(!blindData) myPlot.setDataHist(histos[0][j][z]);
           
 	  // Draw
 	  //--------------------------------------------------------------------
@@ -333,17 +342,16 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 
  	  c1->SetLogy(0);
 
-          if(j == 0 || z == 7) myPlot.Draw();
-          else myPlot.Draw(2);
+          myPlot.setNoStack();
+          myPlot.Draw();
           //          else if(j == 1) myPlot.Draw(2);
           //          else  myPlot.Draw(4);
 
           c1->GetFrame()->DrawClone();
 
-	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".lin.png");
-          c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".root");
-	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".lin.eps");
-          //	  c1->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".pdf");
+	  c1->SaveAs(plotsDir+variables[z]+TString(icut[j])+suffix+".lin.png");
+          c1->SaveAs(plotsDir+variables[z]+TString(icut[j])+suffix+".root");
+	  c1->SaveAs(plotsDir+variables[z]+TString(icut[j])+suffix+".lin.eps");
 
 	  TCanvas* c2 = new TCanvas(Form("test_%d_%d_log", z, j),
 				    Form("test_%d_%d_log", z, j));
@@ -354,7 +362,7 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 
           c2->GetFrame()->DrawClone();
           
-	  c2->SaveAs(plotsDir+variables[z]+"MCOnly_"+TString(icut[j])+"_"+suffix+".log.png");
+	  c2->SaveAs(plotsDir+variables[z]+TString(icut[j])+suffix+".log.png");
 
 
 	}
