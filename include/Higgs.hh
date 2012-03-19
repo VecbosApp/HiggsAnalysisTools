@@ -65,6 +65,7 @@ public:
   double CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met);
   double CalcMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
+  double CalcMRNEW(TLorentzVector P, TLorentzVector Q, TVector3 MET);
   std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
   std::vector<int> sortMuonsByPt(std::vector<int> muons);
   TLorentzVector GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection);

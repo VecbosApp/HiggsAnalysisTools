@@ -319,6 +319,28 @@ double Higgs::CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb){
   return temp;
 }
 
+
+//
+// this is MR including the ISR recoil
+//
+double Higgs::CalcMRNEW(TLorentzVector P, TLorentzVector Q, TVector3 MET){
+
+  double PpQ = sqrt((P.P()+Q.P())*(P.P()+Q.P())-(P.Pz()+Q.Pz())*(P.Pz()+Q.Pz())); //old GammaMRstar function
+
+  double vptx = (P+Q).Px();
+  double vpty = (P+Q).Py();
+  TVector3 vpt;
+  vpt.SetXYZ(vptx,vpty,0.0);
+
+  TVector3 vI = vpt+MET;
+
+  vI.SetZ(0.0); //just in case someone forgot....
+    
+  float MR2 = 0.5*(PpQ*PpQ-vpt.Dot(vI)+PpQ*sqrt(PpQ*PpQ+vI.Dot(vI)-2.*vI.Dot(vpt)));
+  
+  return sqrt(MR2);
+}
+
 //
 // This is 'M_{T}^{R}', the guy that should be used in the numerator of 'R' or 'R*'
 //
