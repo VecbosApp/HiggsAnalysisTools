@@ -320,15 +320,15 @@ void countEvents() {
   sampleXsec.push_back(163.0 * 3*0.108 * 3*0.108); // 13
 
   // Wgamma
-  sampleXsec.push_back(137.5 * 0.1080); // 14
-  sampleXsec.push_back(137.5 * 0.1080); // 15
-  sampleXsec.push_back(137.5 * 0.1080); // 16
+  sampleXsec.push_back(137.5); // 14
+  sampleXsec.push_back(137.5); // 15
+  sampleXsec.push_back(137.5); // 16
 
   // Zgamma
-  sampleXsec.push_back(41.3 * 0.033658); // 17
-  sampleXsec.push_back(41.3 * 0.033658); // 18
-  sampleXsec.push_back(41.3 * 0.033658); // 19
-  sampleXsec.push_back(41.3 * 0.20); // 20
+  sampleXsec.push_back(41.3); // 17
+  sampleXsec.push_back(41.3); // 18
+  sampleXsec.push_back(41.3); // 19
+  sampleXsec.push_back(41.3 / 0.033658 * 0.20); // 20
 
   // WW
   // s(NLO qqWW+ggWW) = 47 pb, [K. Ellis]
