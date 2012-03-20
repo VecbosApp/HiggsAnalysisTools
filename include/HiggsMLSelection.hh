@@ -130,6 +130,8 @@ private:
   bool hasPassedHLT(int channel);
   //! hardcoded muon isolation
   bool isPFIsolatedMuon(int muonIndex);
+  //! get the leading jet three-momentum; 0 if it is below threshold in pT
+  TVector3 getLeadingJet(int index, float ptThr=15.0);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -207,9 +209,11 @@ private:
   float m_maxDxyEvt, m_maxDszEvt;
   float m_maxTrackCountingHighEffBJetTags, m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags; 
   int m_closestPV;
+  int m_numbtagjets[4], nsoftjets[4];
   
   int _theGenEle, _theGenPos;
   int _theGenMuMinus, _theGenMuPlus;
+
 
   //! vectors to store indices of best candidates
   std::vector<int> _acceptEleAll, _idEleAll, _isolEleAll, _convEleAll, _ipEleAll;
