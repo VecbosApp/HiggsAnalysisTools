@@ -61,6 +61,8 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("subleadingJetBTagTrackCount", &mySubleadingJetBTagTrackCount,    "subleadingJetBTagTrackCount/F");    
   myTree->Branch("subleadingJetsMaxBTagTrackCount", &mySubleadingJetsMaxBTagTrackCount,    "subleadingJetsMaxBTagTrackCount/F");    
   myTree->Branch("numExtraLep", &myNumExtraLep, "numExtraLep/I");   
+  myTree->Branch("nsoftjet", &myNumSoftJets, "nsoftjet/I");
+  myTree->Branch("nsoftbjet", &myNumSoftBJets, "nsoftbjet/I");
 }
 
 void RedHiggsTree::addSystematics() {
@@ -120,6 +122,12 @@ void RedHiggsTree::addCSA07Infos() {
 void RedHiggsTree::addLatinos() {
 
   myTree->Branch("step",              mySteps,              "step[29]/O"); 
+}
+
+void RedHiggsTree::addPDFs() {
+  myTree->Branch("cteq66W", myCTEQ66, "cteq66W[45]/D");
+  myTree->Branch("mstwW",   myMSTW,   "mstwW[31]/D");
+  myTree->Branch("nnpdfW",  myNNPDF,  "nnpdfW[101]/D");
 }
 
 void RedHiggsTree::addRazor() {
@@ -227,7 +235,7 @@ void RedHiggsTree::addHLTMuonsInfos() {
 void RedHiggsTree::addRunInfos() {
   myTree->Branch("run", &myRun,     "run/I");
   myTree->Branch("lumi", &myLS,     "lumi/I");
-  myTree->Branch("event", &myEvent, "event/I");
+  myTree->Branch("event", &myEvent, "event/l");
   myTree->Branch("npu", myNpu, "npu[3]/F");
 }
 
@@ -310,7 +318,7 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
 void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
                               float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu, 
                               float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount,
-                              int numExtraLep, int nsoftmunojets) {
+                              int numExtraLep, int nsoftmunojets, int nSoftBJets, int nSoftJets) {
  
   myNjets   = njets;
   myNuncorrjets = nuncorrjets;
@@ -325,6 +333,8 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
   mySubleadingJetBTagTrackCount = subleadJetBTagTrackCount;
   mySubleadingJetsMaxBTagTrackCount = subleadJetsMaxBTagTrackCount;
   myNumExtraLep = numExtraLep;
+  myNumSoftBJets = nSoftBJets;
+  myNumSoftJets = nSoftJets;
 }
 
 void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
@@ -359,6 +369,12 @@ void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool
   mySteps[27] = s27;
   mySteps[28] = s28;
 
+}
+
+void RedHiggsTree::fillPDFs(double cteq66[45], double mstw[31], double nnpdf[101]) {
+  for(int i=0;i<45;++i) myCTEQ66[i] = cteq66[i];
+  for(int i=0;i<31;++i) myMSTW[i] = mstw[i];
+  for(int i=0;i<101;++i) myNNPDF[i] = nnpdf[i];
 }
 
 void RedHiggsTree::fillRazor(float MTR, float mR, float gammaMR) {
@@ -537,7 +553,7 @@ void RedHiggsTree::fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool si
   myHLTSingleMuonOR = singleMuonOR;
 }
 
-void RedHiggsTree::fillRunInfos(int run, int lumi, int event, float puweight, bool HLT, float npu[3]) {
+void RedHiggsTree::fillRunInfos(int run, int lumi, long event, float puweight, bool HLT, float npu[3]) {
 
   myRun = run;
   myLS = lumi;

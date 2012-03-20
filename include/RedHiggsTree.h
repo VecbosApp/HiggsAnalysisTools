@@ -42,7 +42,8 @@ public:
   void addSystematics();
   //! for met studies
   void addMetStudies();
-
+  //! add PDFs
+  void addPDFs();
 
   //! event by event final dataset fill
   void fillAll(float met, float pfmet, float cmet, float projmet, 
@@ -77,7 +78,7 @@ public:
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, 
                   float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount, 
-                  int numExtraLep, int nSoftMuNoJets);
+                  int numExtraLep, int nSoftMuNoJets, int nSoftBJets, int nSoftJets);
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                      int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
@@ -94,19 +95,22 @@ public:
   //! fill the HLT muons triggers informations
   void fillHLTMuons(bool singleMuon, bool singleMuonRelaxed, bool singleMuonOR);
   //! fill the run,lumi, event number
-  void fillRunInfos(int run, int lumi, int event, float puweight, bool HLT, float npu[3]);   
+  void fillRunInfos(int run, int lumi, long event, float puweight, bool HLT, float npu[3]);   
   //! latinos 
   void fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24, bool s25, bool s26, bool s27, bool s28);
   //! met studies
   void fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float rho, float rhojet );
-    
+  //! PDFs
+  void fillPDFs(double cteq66[45], double mstw[31], double nnpdf[101]);
+
   //! effectively store the events in the tree
   void store();
   //! save in the ROOT file
   void save();
 
 private:
+  double myCTEQ66[45], myMSTW[31], myNNPDF[101];
   bool myHLT;
   bool myPromptDecay;
   float myGenptll, myGenyll, myGenmll;
@@ -140,7 +144,7 @@ private:
   float myBTagSecVertex;
   int myNSoftMu, myNSoftMuNoJets;
   float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount, mySubleadingJetsMaxBTagTrackCount;
-  int  myNumExtraLep;
+  int  myNumExtraLep, myNumSoftBJets, myNumSoftJets;
   bool myFinalLeptons;
   bool myJetVeto;
   bool myUncorrJetVeto;
@@ -152,7 +156,8 @@ private:
   float myKFactor, myPUWeight;
   float myGenHPt;
   float myLeadingJetPt;
-  int myRun, myLS, myEvent;
+  int myRun, myLS;
+  long myEvent;
   float myPxTkMet, myPyTkMet, myPzTkMet;
   float myPxLeadJet[3], myPyLeadJet[3], myPzLeadJet[3];
   float myPxSecondJet[3], myPySecondJet[3], myPzSecondJet[3];

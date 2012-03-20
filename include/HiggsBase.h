@@ -27,7 +27,7 @@ public :
    Float_t         sigmaFastjet;
    Float_t         rhoJetsFastJet;
    Int_t           runNumber;
-   UInt64_t        eventNumber;
+   Long_t          eventNumber;
    Int_t           lumiBlock;
    Int_t           bunchCrossing;
    Int_t           orbitNumber;
