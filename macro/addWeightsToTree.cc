@@ -91,7 +91,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     // and a branch with float final selection bool (for roofit)
     Int_t           run;
     Int_t           lumi;
-    Int_t           event;
+    Long_t          event;
     Float_t         puweight;
     Float_t         met;
     Float_t         pfMet;
@@ -157,6 +157,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Int_t           typeL2;
     Int_t           nSoftMu;
     Int_t           nSoftMuNoJets;
+    Int_t           nsoftjet;
+    Int_t           nsoftbjet;
     Float_t         mtr;
     Float_t         mr;
     Float_t         gammamr;
@@ -212,6 +214,11 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         genptll;
     Float_t         genyll;
 
+    // PDF weights
+//     Double_t       cteq66W[45];
+//     Double_t       mstwW[31];
+//     Double_t       nnpdfW[101];
+    
     treeOrig->SetBranchAddress("run", &run);
     treeOrig->SetBranchAddress("lumi", &lumi);
     treeOrig->SetBranchAddress("event", &event);
@@ -285,6 +292,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("typeL2", &typeL2);
     treeOrig->SetBranchAddress("nSoftMu", &nSoftMu);
     treeOrig->SetBranchAddress("nSoftMuNoJets", &nSoftMuNoJets);
+    treeOrig->SetBranchAddress("nsoftjet", &nsoftjet);
+    treeOrig->SetBranchAddress("nsoftbjet", &nsoftbjet);
     treeOrig->SetBranchAddress("numExtraLep", &numExtraLep);
     treeOrig->SetBranchAddress("mtr", &mtr);
     treeOrig->SetBranchAddress("mr", &mr);
@@ -298,6 +307,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("signPFMet", &signPFMet);
     treeOrig->SetBranchAddress("signPFChargedMet", &signPFChargedMet);
     treeOrig->SetBranchAddress("mtrchargedMet", &mtrchargedMet);
+//     treeOrig->SetBranchAddress("cteq66W", cteq66W);
+//     treeOrig->SetBranchAddress("mstwW",mstwW);
+//     treeOrig->SetBranchAddress("nnpdfW",nnpdfW);
     if(FRWeights) {
       treeOrig->SetBranchAddress("weightFP",     &weightFP);
       treeOrig->SetBranchAddress("weightStatFP", &weightStatFP);
@@ -382,7 +394,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     // variables to be converted in float...
     float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
       f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_dphiveto, f_typeL1, f_typeL2, 
-      f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav;
+      f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav, f_nsoftbjet, f_nsoftjet;
     float f_ch[2];
     
       
@@ -536,6 +548,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("jetphi2", &jetphi2, "jetphi2/F");
       theTreeNew->Branch("nSoftMu", &f_nSoftMu, "nSoftMu/I");
       theTreeNew->Branch("nSoftMuNoJets", &f_nSoftMuNoJets, "nSoftMuNoJets/F");
+      theTreeNew->Branch("nsoftjet", &f_nsoftjet, "nsoftjet/F");
+      theTreeNew->Branch("nsoftbjet", &f_nsoftbjet, "nsoftbjet/F");
       theTreeNew->Branch("nextra", &f_numExtraLep, "nextra/F");
       theTreeNew->Branch("sumJetsV4", "TLorentzVector", &sumJetsV4);
       theTreeNew->Branch("uncorrSumJetsV4", "TLorentzVector", &uncorrSumJetsV4);
@@ -556,6 +570,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
       theTreeNew->Branch("consecevent", &consecevent, "consecevent/F");
       theTreeNew->Branch("baseW", &baseW,  "baseW/F");
+
+//       theTreeNew->Branch("cteq66W", cteq66W, "cteq66W[45]/D");
+//       theTreeNew->Branch("mstwW",   mstwW,   "mstwW[31]/D");
+//       theTreeNew->Branch("nnpdfW",  nnpdfW,  "nnpdfW[101]/D");
 
       if(FRWeights) {
         theTreeNew->Branch("tight",        &tight,        "tight/I");
@@ -759,35 +777,29 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	  effBW = 1.;
 	}
 
+        jetpt1 = TV_jet1.Pt();
+        jeteta1 = TV_jet1.Eta();
+        jetphi1 = TV_jet1.Phi();
         if(TV_jet1.Pt()>15) {
           TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
           deltaPhi_LLJ1_MET = (180./TMath::Pi()) * fabs(TV_tkmet.DeltaPhi(TV_L12pJ1));   
           deltaPhi_MET_JET1 = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_tkmet));
           deltaPhi_LL_JET1  = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_L1p2));
-          jetpt1 = TV_jet1.Pt();
-          jeteta1 = TV_jet1.Eta();
-          jetphi1 = TV_jet1.Phi();
         } else {
           deltaPhi_LLJ1_MET = -1.;
           deltaPhi_MET_JET1 = -1.;
           deltaPhi_LL_JET1 = -1.;
-          jetpt1 = -999.;
-          jeteta1 = -999.;
-          jetphi1 = -999.;
         }
 
+        jetpt2 = TV_jet2.Pt();
+        jeteta2 = TV_jet2.Eta();
+        jetphi2 = TV_jet2.Phi();
         if(TV_jet2.Pt()>15) {
           deltaPhi_MET_JET2 = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_tkmet));
           deltaPhi_LL_JET2  = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_L1p2));
-          jetpt2 = TV_jet2.Pt();
-          jeteta2 = TV_jet2.Eta();
-          jetphi2 = TV_jet2.Phi();
         } else {
           deltaPhi_MET_JET2 = -1.;
           deltaPhi_LL_JET2 = -1.;
-          jetpt2 = -999.;
-          jeteta2 = -999.;
-          jetphi2 = -999.;
         }
 
         if(TV_jet1.Pt()>15 && TV_jet2.Pt()>15) {
@@ -832,7 +844,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
       i_WWSel = (step[14] && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
       i_WWSel1j = (step[23] && njets==1 && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
-
+      
       // change the format of the integers -> float
       f_run = (float)run;
       f_lumi = (float)lumi;
@@ -851,6 +863,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       f_nSoftMuNoJets = (float)nSoftMuNoJets;
       f_nSoftMu = (float)nSoftMu;
       f_numExtraLep = (float)numExtraLep;
+      f_nsoftjet = (float)nsoftjet;
+      f_nsoftbjet = (float)nsoftbjet;
       f_ch[0] = (float)ch[0];
       f_ch[1] = (float)ch[1];
       f_finalstate = (float)finalstate;
