@@ -1,5 +1,6 @@
 #include "HiggsAnalysisTools/include/CutBasedHiggsSelector.hh"
 #include <iostream>
+#include <stdio.h>
 #include <math.h>
 
 CutBasedHiggsSelector::CutBasedHiggsSelector() {
