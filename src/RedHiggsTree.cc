@@ -338,7 +338,7 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
 }
 
 void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
-                               bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24, bool s25, bool s26, bool s27, bool s28) {
+                               bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24, bool s25, bool s26) {
   mySteps[0]  = s0;
   mySteps[1]  = s1;
   mySteps[2]  = s2;
@@ -366,9 +366,6 @@ void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool
   mySteps[24] = s24;
   mySteps[25] = s25;
   mySteps[26] = s26;
-  mySteps[27] = s27;
-  mySteps[28] = s28;
-
 }
 
 void RedHiggsTree::fillPDFs(double cteq66[45], double mstw[31], double nnpdf[101]) {

@@ -38,8 +38,6 @@ CutBasedHiggsSelector::CutBasedHiggsSelector() {
   m_step24 = false;
   m_step25 = false;
   m_step26 = false;
-  m_step27 = false;
-  m_step28 = false;
 
   m_processID = -1;
 }
@@ -73,6 +71,7 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_detaLeptons = selector.m_detaLeptons;
   m_maxPtElectron = selector.m_maxPtElectron;
   m_minPtElectron = selector.m_minPtElectron;
+  m_ptll = selector.m_ptll;
   m_WWInvMass = selector.m_WWInvMass;
   m_nVtx = selector.m_nVtx;
   m_extraSlowLeptonPTMin = selector.m_extraSlowLeptonPTMin;
@@ -112,8 +111,6 @@ CutBasedHiggsSelector::CutBasedHiggsSelector( const CutBasedHiggsSelector& selec
   m_step24 = selector.m_step24;
   m_step25 = selector.m_step25;
   m_step26 = selector.m_step26;
-  m_step27 = selector.m_step27;
-  m_step28 = selector.m_step28;
 }
 
 CutBasedHiggsSelector::~CutBasedHiggsSelector() {}
@@ -147,6 +144,8 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   _selection->addCut("jetConeWidth");
   _selection->addCut("nSoftMuons");
   _selection->addCut("bTagVeto");
+  _selection->addCut("ptll");
+  _selection->addCut("minPtLeptonSameFlav");
   _selection->addCut("mll2");
   _selection->addCut("maxPtLepton");
   _selection->addCut("minPtLepton");
@@ -172,20 +171,22 @@ void CutBasedHiggsSelector::Configure(const char *fileCuts, const char* fileSwit
   globalCounter->AddVar("mllZPeak"); // 8
   globalCounter->AddVar("tightMETandPrMET"); // 9
   //  globalCounter->AddVar("metOverPtLL");
-  globalCounter->AddVar("zeroJets"); // 10
-  globalCounter->AddVar("deltaPhiLLJet"); // 11
-  globalCounter->AddVar("nSoftMuons"); // 12
-  globalCounter->AddVar("nExtraLeptons"); // 13
-  globalCounter->AddVar("bTagVeto"); // 14
-  globalCounter->AddVar("maxPtLepton"); // 15
-  globalCounter->AddVar("minPtLepton"); // 16
-  globalCounter->AddVar("mll2"); // 17
-  globalCounter->AddVar("higgsMassRel0j"); // 18
-  globalCounter->AddVar("deltaPhi"); // 19
-  globalCounter->AddVar("final"); // 19
-  globalCounter->AddVar("oneJet"); // 28
-  globalCounter->AddVar("gt1Jets");
-  globalCounter->AddVar("WW1jet"); // 23 -> WW level for 1jet bin
+  globalCounter->AddVar("deltaPhiLLJet"); // 10
+  globalCounter->AddVar("nSoftMuons"); // 11
+  globalCounter->AddVar("nExtraLeptons"); // 12
+  globalCounter->AddVar("bTagVeto"); // 13
+  globalCounter->AddVar("ptll"); // 14
+  globalCounter->AddVar("minPtLeptonSameFlav"); // 15
+  globalCounter->AddVar("zeroJets"); // 16
+  globalCounter->AddVar("maxPtLepton"); // 17
+  globalCounter->AddVar("minPtLepton"); // 18
+  globalCounter->AddVar("mll2"); // 19
+  globalCounter->AddVar("higgsMassRel0j"); // 20
+  globalCounter->AddVar("deltaPhi"); // 21
+  globalCounter->AddVar("final"); // 22
+  globalCounter->AddVar("oneJet"); // 23
+  globalCounter->AddVar("gt1Jets"); // 24
+  globalCounter->AddVar("WW1jet"); // 25 -> WW level for 1jet bin
 }
 
 bool CutBasedHiggsSelector::output() {
@@ -224,6 +225,8 @@ bool CutBasedHiggsSelector::output() {
       processCounter->AddVar("nSoftMuons");
       processCounter->AddVar("nExtraLeptons");
       processCounter->AddVar("bTagVeto");
+      processCounter->AddVar("ptll");
+      processCounter->AddVar("minPtLeptonSameFlav");
       processCounter->AddVar("maxPtLepton");
       processCounter->AddVar("minPtLepton");
       processCounter->AddVar("mll2");
@@ -274,8 +277,6 @@ bool CutBasedHiggsSelector::output() {
   m_step24 = false;
   m_step25 = false;
   m_step26 = false;
-  m_step27 = false;
-  m_step28 = false;
 
   theCounter->IncrVar("event",m_weight);
   
@@ -325,115 +326,114 @@ bool CutBasedHiggsSelector::output() {
   theCounter->IncrVar("tightMETandPrMET",m_weight);
   m_step9 = true;
 
-//   if (_selection->getSwitch("metOverPtLL") && !_selection->passCut("metOverPtLL",m_metOverPtLL)) return false;
-//   theCounter->IncrVar("metOverPtLL",m_weight);
-//   m_step9 = true;
+  //   if (_selection->getSwitch("metOverPtLL") && !_selection->passCut("metOverPtLL",m_metOverPtLL)) return false;
+  //   theCounter->IncrVar("metOverPtLL",m_weight);
+  //   m_step9 = true;
 
-  if (m_nJets==0) {
-    theCounter->IncrVar("zeroJets",m_weight);
-    m_jetVeto = true;
+  if(!_selection->getSwitch("deltaPhiLLJet") ||
+     (_selection->getSwitch("deltaPhiLLJet") && _selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet))) {
+    theCounter->IncrVar("deltaPhiLLJet",m_weight);
     m_step10 = true;
-
-    if(!_selection->getSwitch("deltaPhiLLJet") ||
-       (_selection->getSwitch("deltaPhiLLJet") && _selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet))) {
-      theCounter->IncrVar("deltaPhiLLJet",m_weight);
+      
+    if(!_selection->getSwitch("nSoftMuons") ||
+       (_selection->getSwitch("nSoftMuons") && _selection->passCut("nSoftMuons",m_nSoftMuons))) {
+      theCounter->IncrVar("nSoftMuons",m_weight);
       m_step11 = true;
-      
-
-      if(!_selection->getSwitch("nSoftMuons") ||
-         (_selection->getSwitch("nSoftMuons") && _selection->passCut("nSoftMuons",m_nSoftMuons))) {
-        theCounter->IncrVar("nSoftMuons",m_weight);
-        m_step12 = true;
         
-        if (!_selection->getSwitch("nExtraLeptons") || 
-            (_selection->getSwitch("nExtraLeptons") && _selection->passCut("nExtraLeptons",m_nExtraLeptons))) {
-          theCounter->IncrVar("nExtraLeptons",m_weight);
-          m_step13 = true;
+      if (!_selection->getSwitch("nExtraLeptons") || 
+          (_selection->getSwitch("nExtraLeptons") && _selection->passCut("nExtraLeptons",m_nExtraLeptons))) {
+        theCounter->IncrVar("nExtraLeptons",m_weight);
+        m_step12 = true;
           
-          if(!_selection->getSwitch("bTagVeto") ||
-             (_selection->getSwitch("bTagVeto") && _selection->passCut("bTagVeto",m_btagJets))) {
-            theCounter->IncrVar("bTagVeto",m_weight);
+        if(!_selection->getSwitch("bTagVeto") ||
+           (_selection->getSwitch("bTagVeto") && _selection->passCut("bTagVeto",m_btagJets))) {
+          theCounter->IncrVar("bTagVeto",m_weight);
+          m_step13 = true;
+            
+          if(!_selection->getSwitch("ptll") ||
+             (_selection->getSwitch("ptll") && _selection->passCut("ptll",m_ptll))) {
+            theCounter->IncrVar("ptll",m_weight);
             m_step14 = true;
-      
-            if (!_selection->getSwitch("maxPtLepton") || 
-                (_selection->getSwitch("maxPtLepton") && _selection->passCut("maxPtLepton", m_highPt))) {
-              theCounter->IncrVar("maxPtLepton",m_weight);
+
+            if(!_selection->getSwitch("minPtLeptonSameFlav") ||
+               (_selection->getSwitch("minPtLeptonSameFlav") && _selection->passCut("minPtLeptonSameFlav",m_lowPt))) {
+              theCounter->IncrVar("minPtLeptonSameFlav",m_weight);
               m_step15 = true;
-	      
-              if (!_selection->getSwitch("minPtLepton") || 
-                  (_selection->getSwitch("minPtLepton") && _selection->passCut("minPtLepton", m_lowPt))
-                  && m_lowPt >= m_extraSlowLeptonPTMin ) {
-                theCounter->IncrVar("minPtLepton",m_weight);
+
+              if (m_nJets==0) {
+                theCounter->IncrVar("zeroJets",m_weight);
+                m_jetVeto = true;
                 m_step16 = true;
-
-                if (!_selection->getSwitch("mll2") ||
-                    (_selection->getSwitch("mll2") && _selection->passCut("mll2", m_invMass))) {
-                  theCounter->IncrVar("mll2",m_weight);
-                  m_step17 = true;
-
-		  if (!_selection->getSwitch("higgsMassRel0j") || 
-		      (_selection->getSwitch("higgsMassRel0j") && _selection->passCut("higgsMassRel0j", m_WWInvMass))) {
-		    theCounter->IncrVar("higgsMassRel0j",m_weight);
-                    m_step18 = true;                    
                   
-                    m_preDeltaPhi = true;
-                    if (!_selection->getSwitch("deltaPhi") ||
-                        _selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) {
-                      theCounter->IncrVar("deltaPhi",m_weight); 
-                      theCounter->IncrVar("final",m_weight);
+                if (!_selection->getSwitch("maxPtLepton") || 
+                    (_selection->getSwitch("maxPtLepton") && _selection->passCut("maxPtLepton", m_highPt))) {
+                  theCounter->IncrVar("maxPtLepton",m_weight);
+                  m_step17 = true;
+                    
+                  if (!_selection->getSwitch("minPtLepton") || 
+                      (_selection->getSwitch("minPtLepton") && _selection->passCut("minPtLepton", m_lowPt))
+                      && m_lowPt >= m_extraSlowLeptonPTMin ) {
+                    theCounter->IncrVar("minPtLepton",m_weight);
+                    m_step18 = true;
+
+                    if (!_selection->getSwitch("mll2") ||
+                        (_selection->getSwitch("mll2") && _selection->passCut("mll2", m_invMass))) {
+                      theCounter->IncrVar("mll2",m_weight);
                       m_step19 = true;
 
-                      return true;
+                      if (!_selection->getSwitch("higgsMassRel0j") || 
+                          (_selection->getSwitch("higgsMassRel0j") && _selection->passCut("higgsMassRel0j", m_WWInvMass))) {
+                        theCounter->IncrVar("higgsMassRel0j",m_weight);
+                        m_step20 = true;                    
+                    
+                        m_preDeltaPhi = true;
+                        if (!_selection->getSwitch("deltaPhi") ||
+                            _selection->getSwitch("deltaPhi") && _selection->passCut("deltaPhi", m_deltaPhi)) {
+                          theCounter->IncrVar("deltaPhi",m_weight); 
+                          theCounter->IncrVar("final",m_weight);
+                          m_step21 = true;
+                            
+                          return true;
+                        }
+                      }
                     }
                   }
                 }
+              } else {
+    
+                // for nJets>0 we do not need cut by cut: just final counter
+                if(m_nJets==1) theCounter->IncrVar("WW1jet",m_weight);
+                
+                if(_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
+                m_step22 = true;
+                
+                if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
+                if (_selection->getSwitch("minPtLepton") && m_lowPt < m_extraSlowLeptonPTMin) return false;
+                m_step23 = true;
+                
+                if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
+                m_step24 = true;
+                
+                if (_selection->getSwitch("higgsMassRel1j") && !_selection->passCut("higgsMassRel1j", m_WWInvMass)) return false;
+                theCounter->IncrVar("higgsMassRel1j",m_weight);
+                m_step25 = true;
+                
+                if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
+                m_step26 = true;
+                
+                if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
+                
+                if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
+                
+                return true;
               }
             }
           }
         }
       }
     }
-  } else {
-    
-    // for nJets>0 we do not need cut by cut: just final counter
-    if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
-    m_step20 = true;
-
-    if(_selection->getSwitch("bTagVeto") && !_selection->passCut("bTagVeto",m_btagJets)) return false;
-    m_step21 = true;
-
-    if(_selection->getSwitch("nSoftMuons") && !_selection->passCut("nSoftMuons",m_nSoftMuons)) return false; 
-    m_step22 = true;
-
-    //    if(_selection->getSwitch("deltaPhiLLJet") && !_selection->passCut("deltaPhiLLJet",m_deltaPhiLLJet)) return false;
-    if(_selection->getSwitch("nExtraLeptons") && !_selection->passCut("nExtraLeptons",m_nExtraLeptons)) return false;
-    m_step23 = true;
-    theCounter->IncrVar("WW1jet",m_weight);
-
-    if(_selection->getSwitch("maxPtLepton") && !_selection->passCut("maxPtLepton", m_highPt)) return false;
-    m_step24 = true;
-
-    if (_selection->getSwitch("minPtLepton") && !_selection->passCut("minPtLepton", m_lowPt)) return false;
-    if (_selection->getSwitch("minPtLepton") && m_lowPt < m_extraSlowLeptonPTMin) return false;
-    m_step25 = true;
-
-    if(_selection->getSwitch("mll2") && !_selection->passCut("mll2", m_invMass)) return false;
-    m_step26 = true;
-
-    if (_selection->getSwitch("higgsMassRel1j") && !_selection->passCut("higgsMassRel1j", m_WWInvMass)) return false;
-    theCounter->IncrVar("higgsMassRel1j",m_weight);
-    m_step27 = true;
-
-    if (_selection->getSwitch("deltaPhi") && !_selection->passCut("deltaPhi", m_deltaPhi)) return false;
-    m_step28 = true;
-
-    if (m_nJets==1) theCounter->IncrVar("oneJet",m_weight);
-
-    if (m_nJets>1)  theCounter->IncrVar("gt1Jets",m_weight);
-    
-    return true;
   }
-
+    
   return false;
 }
 
@@ -458,11 +458,13 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
       theCounter->Draw("mll","looseMET");
       theCounter->Draw("mllZPeak","mll");
       theCounter->Draw("tightMETandPrMET","mllZPeak");
-      theCounter->Draw("zeroJets","tightMETandPrMET");
-      theCounter->Draw("deltaPhiLLJet","zeroJets");
+      theCounter->Draw("deltaPhiLLJet","tightMETandPrMET");
       theCounter->Draw("nSoftMuons","deltaPhiLLJet");
       theCounter->Draw("nExtraLeptons","nSoftMuons");
       theCounter->Draw("bTagVeto","nExtraLeptons");
+      theCounter->Draw("ptll","bTagVeto");
+      theCounter->Draw("minPtLeptonSameFlav","ptll");
+      theCounter->Draw("zeroJets","minPtLeptonSameFlav");
       theCounter->Draw("maxPtLepton","bTagVeto");
       theCounter->Draw("minPtLepton","maxPtLepton");
       theCounter->Draw("mll2","minPtLepton");
@@ -490,11 +492,13 @@ void CutBasedHiggsSelector::displayEfficiencies(std::string datasetName) {
     globalCounter->Draw("mll","looseMET");
     globalCounter->Draw("mllZPeak","mll");
     globalCounter->Draw("tightMETandPrMET","mllZPeak");
-    globalCounter->Draw("zeroJets","tightMETandPrMET");
-    globalCounter->Draw("deltaPhiLLJet","zeroJets");
+    globalCounter->Draw("deltaPhiLLJet","tightMETandPrMET");
     globalCounter->Draw("nSoftMuons","deltaPhiLLJet");
     globalCounter->Draw("nExtraLeptons","nSoftMuons");
     globalCounter->Draw("bTagVeto","nExtraLeptons");
+    globalCounter->Draw("ptll","bTagVeto");
+    globalCounter->Draw("minPtLeptonSameFlav","ptll");
+    globalCounter->Draw("zeroJets","minPtLeptonSameFlav");
     globalCounter->Draw("maxPtLepton","bTagVeto");
     globalCounter->Draw("minPtLepton","maxPtLepton");
     globalCounter->Draw("mll2","minPtLepton");

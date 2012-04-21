@@ -56,6 +56,7 @@ public:
   void SetDeltaPhiLLJet(float deltaphiLLJet) { m_deltaPhiLLJet = deltaphiLLJet; }
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
+  void SetPtll(float ptll) { m_ptll = ptll; }
   void SetExtraSlowLeptonPTCut(float ptMin) { m_extraSlowLeptonPTMin = ptMin; }
   void SetWWInvMass(float wwmass) { m_WWInvMass = wwmass; }
   void SetNvtx(int nvtx) { m_nVtx = nvtx; }
@@ -100,8 +101,6 @@ public:
   bool outputStep24() { return m_step24; }
   bool outputStep25() { return m_step25; }
   bool outputStep26() { return m_step26; }
-  bool outputStep27() { return m_step27; }
-  bool outputStep28() { return m_step28; }
 
   //! display the electron efficiency
   void displayEfficiencies(std::string datasetName);
@@ -123,7 +122,7 @@ private:
   int m_nJets, m_nUncorrJets, m_nSoftMuons, m_nExtraLeptons;
   float m_btagJets;
   float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons, m_metOverPtLL, m_deltaPhiLLJet;
-  float m_maxPtElectron, m_minPtElectron, m_WWInvMass;
+  float m_maxPtElectron, m_minPtElectron, m_WWInvMass, m_ptll;
   float m_extraSlowLeptonPTMin;
   int m_nVtx;
   int m_processID;
@@ -147,7 +146,7 @@ private:
   bool m_step0, m_step1, m_step2, m_step3, m_step4, m_step5, m_step6, m_step7, m_step8, m_step9;  
   bool m_step10, m_step11, m_step12, m_step13, m_step14, m_step15, m_step16, m_step17;
   bool m_step18, m_step19, m_step20, m_step21, m_step22, m_step23, m_step24;
-  bool m_step25, m_step26, m_step27, m_step28;
+  bool m_step25, m_step26;
 
   //! this is to do an efficiency for each process in the sample 
   //! (if more than one is present)

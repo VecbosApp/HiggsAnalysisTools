@@ -931,6 +931,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
     CutBasedHiggsSelectionEE.SetDetaLeptons(m_deltaEtaLeptons[ee]);
+    CutBasedHiggsSelectionEE.SetPtll(m_dilepPt[ee].Pt());
     // CutBasedHiggsSelectionEE.SetWWInvMass(2.*m_transvMass[ee]/_massVal);
     CutBasedHiggsSelectionEE.SetWWInvMass(m_transvMass[ee]);
 
@@ -968,8 +969,6 @@ void HiggsMLSelection::Loop() {
     bool outputStep24 = CutBasedHiggsSelectionEE.outputStep24();
     bool outputStep25 = CutBasedHiggsSelectionEE.outputStep25();
     bool outputStep26 = CutBasedHiggsSelectionEE.outputStep26();
-    bool outputStep27 = CutBasedHiggsSelectionEE.outputStep27();
-    bool outputStep28 = CutBasedHiggsSelectionEE.outputStep28();
 
 
     // eleID variables to fill the tree (after each cut)
@@ -999,7 +998,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
-                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
 
     myOutTreeEE -> fillRazor(m_MTR[ee], m_MR[ee], m_GammaMR[ee]);
     
@@ -1087,6 +1086,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
     CutBasedHiggsSelectionMM.SetInvMass(m_mll[mm]);
     CutBasedHiggsSelectionMM.SetDetaLeptons(m_deltaEtaLeptons[mm]);
+    CutBasedHiggsSelectionMM.SetPtll(m_dilepPt[mm].Pt());
     // CutBasedHiggsSelectionMM.SetWWInvMass(2.*m_transvMass[mm]/_massVal);
     CutBasedHiggsSelectionMM.SetWWInvMass(m_transvMass[mm]);
 
@@ -1124,8 +1124,6 @@ void HiggsMLSelection::Loop() {
     outputStep24 = CutBasedHiggsSelectionMM.outputStep24();
     outputStep25 = CutBasedHiggsSelectionMM.outputStep25();
     outputStep26 = CutBasedHiggsSelectionMM.outputStep26();
-    outputStep27 = CutBasedHiggsSelectionMM.outputStep27();
-    outputStep28 = CutBasedHiggsSelectionMM.outputStep28();
 
 
     // filling the tree
@@ -1150,7 +1148,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
-                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
 
     myOutTreeMM -> fillRazor(m_MTR[mm], m_MR[mm], m_GammaMR[mm]);
 
@@ -1244,6 +1242,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
     CutBasedHiggsSelectionEM.SetInvMass(m_mll[em]);
     CutBasedHiggsSelectionEM.SetDetaLeptons(m_deltaEtaLeptons[em]);
+    CutBasedHiggsSelectionEM.SetPtll(m_dilepPt[em].Pt());
     // CutBasedHiggsSelectionEM.SetWWInvMass(2.*m_transvMass[em]/_massVal);
     CutBasedHiggsSelectionEM.SetWWInvMass(m_transvMass[em]);
 
@@ -1281,8 +1280,6 @@ void HiggsMLSelection::Loop() {
     outputStep24 = CutBasedHiggsSelectionEM.outputStep24();
     outputStep25 = CutBasedHiggsSelectionEM.outputStep25();
     outputStep26 = CutBasedHiggsSelectionEM.outputStep26();
-    outputStep27 = CutBasedHiggsSelectionEM.outputStep27();
-    outputStep28 = CutBasedHiggsSelectionEM.outputStep28();
 
     // filling the tree
     if(!_selectionEM->getSwitch("isData")) {
@@ -1312,7 +1309,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
-                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
 
     myOutTreeEM -> fillRazor(m_MTR[em], m_MR[em], m_GammaMR[em]);
 
@@ -1398,6 +1395,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
     CutBasedHiggsSelectionME.SetInvMass(m_mll[me]);
     CutBasedHiggsSelectionME.SetDetaLeptons(m_deltaEtaLeptons[me]);
+    CutBasedHiggsSelectionME.SetPtll(m_dilepPt[me].Pt());
     // CutBasedHiggsSelectionME.SetWWInvMass(2.*m_transvMass[me]/_massVal);
     CutBasedHiggsSelectionME.SetWWInvMass(m_transvMass[me]);
 
@@ -1435,8 +1433,6 @@ void HiggsMLSelection::Loop() {
     outputStep24 = CutBasedHiggsSelectionME.outputStep24();
     outputStep25 = CutBasedHiggsSelectionME.outputStep25();
     outputStep26 = CutBasedHiggsSelectionME.outputStep26();
-    outputStep27 = CutBasedHiggsSelectionME.outputStep27();
-    outputStep28 = CutBasedHiggsSelectionME.outputStep28();
 
     // filling the tree
     if(!_selectionME->getSwitch("isData")) {
@@ -1466,7 +1462,7 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
-                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26, outputStep27, outputStep28 ); 
+                                outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
 
     myOutTreeME -> fillRazor(m_MTR[me], m_MR[me], m_GammaMR[me]);
 
