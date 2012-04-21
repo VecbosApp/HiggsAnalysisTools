@@ -28,6 +28,8 @@ metOverPtLL             0
 mll                     1
 mllZPeak                1
 bTagVeto                1
+ptll                    1
+minPtLeptonSameFlav     1
 mll2                    1
 jetConeWidth		1
 etaElectronAcc		1   

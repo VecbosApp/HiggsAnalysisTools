@@ -16,6 +16,8 @@ metOverPtLL             0.6             10000
 mll                     12              10000
 mllZPeak                0               10000
 bTagVeto                -10000          2.1
+ptll                    45              10000
+minPtLeptonSameFlav     0               10000
 mll2                    12              40
 jetConeWidth		0.0		0.3
 etaJetAcc		-5.0		5.0
