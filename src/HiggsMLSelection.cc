@@ -645,14 +645,14 @@ void HiggsMLSelection::Loop() {
 
     // -------------------------------------------------------------
     // vertex selection - we only consider the first vertex of the list ( = highest sumPT^2)
-    bool isGoodVertex = true;
-    if (nPV<1) isGoodVertex = false;
-    float rhoVtx = sqrt(PVxPV[0]*PVxPV[0] + PVyPV[0]*PVyPV[0]);
-    if ( isFakePV[0] )       isGoodVertex = false;
-    if ( ndofPV[0]<4 )       isGoodVertex = false;
-    if ( fabs(PVzPV[0])>24.) isGoodVertex = false;
-    if ( rhoVtx>2 )          isGoodVertex = false; 
+    bool isGoodVertex = goodPV(0);
     
+    // count the number of good PVs (necessary for the MET cut)
+    int nGoodPV=0;
+    for(int v=0;v<nPV;++v) {
+      if(goodPV(v)) nGoodPV++;
+    }
+
     // -------------------------------------------------------------
     
     // get the best electrons and best muons ==> tu be used to select ALL the possible channels at the beginning only
@@ -925,7 +925,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetNExtraLeptons(nextraleptons[ee]);
     CutBasedHiggsSelectionEE.SetMet(m_theMET);					
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
-    CutBasedHiggsSelectionEE.SetNvtx(nPV);
+    CutBasedHiggsSelectionEE.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
@@ -990,7 +990,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
-			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nPV,
+			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nGoodPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
@@ -1080,7 +1080,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetNExtraLeptons(nextraleptons[mm]);
     CutBasedHiggsSelectionMM.SetMet(m_theMET);					
     CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
-    CutBasedHiggsSelectionMM.SetNvtx(nPV);
+    CutBasedHiggsSelectionMM.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
     CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ[mm]);   
     CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
@@ -1140,7 +1140,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillAll(m_chMet[mm], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[mm], m_deltaPhi[mm], m_deltaErre[mm], m_transvMass[mm], m_mll[mm], 
-			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm], nPV,
+			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm], nGoodPV,
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
@@ -1236,7 +1236,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetNExtraLeptons(nextraleptons[em]);
     CutBasedHiggsSelectionEM.SetMet(m_theMET);					
     CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
-    CutBasedHiggsSelectionEM.SetNvtx(nPV);
+    CutBasedHiggsSelectionEM.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
     CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ[em]);  
     CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
@@ -1296,7 +1296,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeEM -> fillAll(m_chMet[em], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[em], m_deltaPhi[em], m_deltaErre[em], m_transvMass[em], m_mll[em], 
-			   hardestLeptonPt[em], slowestLeptonPt[em], m_deltaEtaLeptons[em], nPV,
+			   hardestLeptonPt[em], slowestLeptonPt[em], m_deltaEtaLeptons[em], nGoodPV,
 			   selUpToFinalLeptonsEM, selUpToJetVetoEM, selUpToUncorrJetVetoEM, selPreDeltaPhiEM, isSelectedEM);
 
     setEleIdVariables(theBestIpEleMuon.first, -1);
@@ -1389,7 +1389,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetNExtraLeptons(nextraleptons[me]);
     CutBasedHiggsSelectionME.SetMet(m_theMET);					
     CutBasedHiggsSelectionME.SetProjectedMet(m_projectedMet[me]);
-    CutBasedHiggsSelectionME.SetNvtx(nPV);
+    CutBasedHiggsSelectionME.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionME.SetMetOverPtLL(m_metOptll[me]);
     CutBasedHiggsSelectionME.SetDeltaPhiLLJet(dphiLLJ[me]);   
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
@@ -1449,7 +1449,7 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeME -> fillAll(m_chMet[me], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
-			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me], nPV,
+			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me], nGoodPV,
 			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);
 
     setEleIdVariables(theBestIpMuonEle.second, -1);
@@ -3053,7 +3053,7 @@ float HiggsMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
   float deltaPhi1_pf = fabs(p1.DeltaPhi(*m_p3PFMET));
   float deltaPhi2_pf = fabs(p2.DeltaPhi(*m_p3PFMET));
   float deltaphi_pf = TMath::Min(deltaPhi1_pf,deltaPhi2_pf);
-  if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * sin(deltaphi_pf);
+  if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * fabs(sin(deltaphi_pf));
   else projMET_pf = m_p3PFMET->Mag();
 
   // calculate with TKMET
@@ -3062,7 +3062,7 @@ float HiggsMLSelection::GetProjectedMet(TVector3 p1, TVector3 p2) {
   float deltaPhi1_tk = fabs(p1.DeltaPhi(p3tkMet));
   float deltaPhi2_tk = fabs(p2.DeltaPhi(p3tkMet));
   float deltaphi_tk  = TMath::Min(deltaPhi1_tk,deltaPhi2_tk);
-  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = p3tkMet.Mag() * sin(deltaphi_tk);
+  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = p3tkMet.Mag() * fabs(sin(deltaphi_tk));
   else projMET_tk = p3tkMet.Mag();
 
   return TMath::Min(projMET_pf,projMET_tk);
@@ -3075,7 +3075,7 @@ float HiggsMLSelection::GetProjectedPFMet(TVector3 p1, TVector3 p2) {
   float deltaPhi1_pf = fabs(p1.DeltaPhi(*m_p3PFMET));
   float deltaPhi2_pf = fabs(p2.DeltaPhi(*m_p3PFMET));
   float deltaphi_pf = TMath::Min(deltaPhi1_pf,deltaPhi2_pf);
-  if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * sin(deltaphi_pf);
+  if(deltaphi_pf<TMath::Pi()/2.) projMET_pf = m_p3PFMET->Mag() * fabs(sin(deltaphi_pf));
   else projMET_pf = m_p3PFMET->Mag();
 
   return projMET_pf;
@@ -3089,7 +3089,7 @@ float HiggsMLSelection::GetProjectedTkMet(TVector3 p1, TVector3 p2) {
   float deltaPhi1_tk = fabs(p1.DeltaPhi(p3tkMet));
   float deltaPhi2_tk = fabs(p2.DeltaPhi(p3tkMet));
   float deltaphi_tk  = TMath::Min(deltaPhi1_tk,deltaPhi2_tk);
-  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = p3tkMet.Mag() * sin(deltaphi_tk);
+  if(deltaphi_tk<TMath::Pi()/2.) projMET_tk = p3tkMet.Mag() * fabs(sin(deltaphi_tk));
   else projMET_tk = p3tkMet.Mag();
 
   return projMET_tk;

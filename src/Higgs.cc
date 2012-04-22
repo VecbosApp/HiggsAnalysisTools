@@ -899,3 +899,14 @@ bool Higgs::passEleBDT(float pt, float eta, float bdt) {
   return false;
 
 }
+
+bool Higgs::goodPV(int v) {
+  bool isGoodVertex = true;
+  if (nPV<1) isGoodVertex = false;
+  float rhoVtx = sqrt(PVxPV[v]*PVxPV[v] + PVyPV[v]*PVyPV[v]);
+  if ( isFakePV[v] )       isGoodVertex = false;
+  if ( ndofPV[v]<=4 )      isGoodVertex = false;
+  if ( fabs(PVzPV[v])>24.) isGoodVertex = false;
+  if ( rhoVtx>2 )          isGoodVertex = false; 
+  return isGoodVertex;
+}

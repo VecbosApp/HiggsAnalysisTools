@@ -98,6 +98,8 @@ public:
   float eleBDT(ElectronIDMVA *mva, int iele);
   /// apply the BDT cut
   bool passEleBDT(float pt, float eta, float bdtoutput);
+  /// filter the good PVs
+  bool goodPV(int v);
 
   enum jetIdWP { none=0, loose=1, medium=2, tight=3 };
 
