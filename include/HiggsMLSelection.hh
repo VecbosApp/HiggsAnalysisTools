@@ -132,6 +132,9 @@ private:
   bool isPFIsolatedMuon(int muonIndex);
   //! get the leading jet three-momentum; 0 if it is below threshold in pT
   TVector3 getLeadingJet(int index, float ptThr=15.0);
+  //! for jetId studies
+  double ErrEt( double Et, double Eta);
+  bool isLooseJetMva(float pt, float eta, float id);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -198,6 +201,13 @@ private:
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
+
+  // for jetId studies
+  bool wantJetIdStuff;
+  float leadJetPt[4], leadJetEta[4], leadJetMvaJetId[4];
+  int   leadJetLoosePFId[4], leadJetMatchGen[4], leadJetLooseId[4];
+  float subleadJetPt[4], subleadJetEta[4], subleadJetMvaJetId[4];
+  int   subleadJetLoosePFId[4], subleadJetMatchGen[4], subleadJetLooseId[4];
 
   int m_chEE[2], m_chMM[2], m_chEM[2], m_chME[2];
   float m_isoEE[2], m_isoMM[2], m_isoEM[2], m_isoME[2];

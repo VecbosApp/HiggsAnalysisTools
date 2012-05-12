@@ -65,6 +65,22 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("nsoftbjet", &myNumSoftBJets, "nsoftbjet/I");
 }
 
+void RedHiggsTree::addJetsVars() {
+
+  myTree->Branch("leadJetPt",          &myLeadJetPt,          "leadJetPt/F");
+  myTree->Branch("leadJetEta",         &myLeadJetEta,         "leadJetEta/F");
+  myTree->Branch("leadJetLooseId",     &myLeadJetLooseId,     "leadJetLooseId/I");
+  myTree->Branch("leadJetGenMatch",    &myLeadJetGenMatch,    "leadJetGenMatch/I");
+  myTree->Branch("leadJetIdMva",       &myLeadJetIdMva,       "leadJetIdMva/F");
+  myTree->Branch("leadJetPassLooseId",     &myLeadJetPassLooseId,     "leadJetPassLooseId/I");
+  myTree->Branch("subleadJetPt",       &mySubleadJetPt,       "subleadJetPt/F");
+  myTree->Branch("subleadJetEta",      &mySubleadJetEta,      "subleadJetEta/F");
+  myTree->Branch("subleadJetLooseId",  &mySubleadJetLooseId,  "subleadJetLooseId/I");
+  myTree->Branch("subleadJetGenMatch", &mySubleadJetGenMatch, "subleadJetGenMatch/I");
+  myTree->Branch("subleadJetIdMva",    &mySubleadJetIdMva,    "subleadJetIdMva/F");
+  myTree->Branch("subleadJetPassLooseId",  &mySubleadJetPassLooseId,  "subleadJetPassLooseId/I");
+}
+
 void RedHiggsTree::addSystematics() {
   
   myTree->Branch("scEnergy", myScEnergy, "scEnergy[2]/F");
@@ -314,8 +330,8 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
   myPreDeltaPhi = preDeltaPhi;
   myFinalSelection = finalSelection;
 }
-
-void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
+ 
+ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
                               float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nsoftmu, 
                               float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount,
                               int numExtraLep, int nsoftmunojets, int nSoftBJets, int nSoftJets) {
@@ -335,6 +351,22 @@ void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float ds
   myNumExtraLep = numExtraLep;
   myNumSoftBJets = nSoftBJets;
   myNumSoftJets = nSoftJets;
+ }
+
+void RedHiggsTree::fillJetsVars(float ljpt, float ljeta, int ljpfid, int ljmatch, float ljmva, int ljl, float sljpt, float sljeta, int sljpfid, int sljmatch, float sljmva, int sljl) {
+
+  myLeadJetPt             = ljpt;
+  myLeadJetEta            = ljeta;
+  myLeadJetLooseId        = ljpfid;
+  myLeadJetGenMatch       = ljmatch;
+  myLeadJetIdMva          = ljmva;
+  myLeadJetPassLooseId    = ljl;
+  mySubleadJetPt          = sljpt;
+  mySubleadJetEta         = sljeta;
+  mySubleadJetLooseId     = sljpfid;
+  mySubleadJetGenMatch    = sljmatch;
+  mySubleadJetIdMva       = sljmva;
+  mySubleadJetPassLooseId = sljl;
 }
 
 void RedHiggsTree::fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,

@@ -1,3 +1,4 @@
+
 #ifndef RedHiggsTree_h
 #define RedHiggsTree_h
 
@@ -16,6 +17,8 @@ public:
 
   //! add more informations for analysis not cut based
   void addMLVars();
+  //! add infos for jetId studies
+  void addJetsVars();
   //! add the electron ID+iso variables for the selected best electrons
   void addElectronInfos();
   //! add the CSA07 processID and weight block
@@ -79,6 +82,10 @@ public:
                   float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, 
                   float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount, 
                   int numExtraLep, int nSoftMuNoJets, int nSoftBJets, int nSoftJets);
+
+  //! fill infos for jetId studies
+  void fillJetsVars(float ljpt, float ljeta, int ljpfid, int ljmatch, float ljmva, int ljl, float sljpt, float sljeta, int sljpfid, int sljmatch, float sljmva, int sljl);
+
   //! fill electron ID variables
   void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
                      int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
@@ -209,6 +216,12 @@ private:
   int myMatched[2], myMajority[2];
   TVector3 *myMetFromJets, *myPfMetUp, *myPfMetDown;
   float myMtUp, myMtDown;
+
+  //! jet Id variables
+  float myLeadJetPt, myLeadJetEta, myLeadJetIdMva;
+  int   myLeadJetLooseId, myLeadJetGenMatch, myLeadJetPassLooseId;
+  float mySubleadJetPt, mySubleadJetEta, mySubleadJetIdMva;
+  int   mySubleadJetLooseId, mySubleadJetGenMatch, mySubleadJetPassLooseId;
 
   // lepton variables
   int myLepCharge[2];

@@ -162,6 +162,9 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   // histo to study jet/electron match
   H_deltaRuncorr = new TH1F("H_deltaRuncorr","uncorrected jets",100, 0.,2*TMath::Pi());
   H_deltaRcorr   = new TH1F("H_deltaRcorr",  "corrected jets",  100, 0.,2*TMath::Pi());
+
+  // as defaults switch off jet ID studies 
+  wantJetIdStuff = false;
 }
 
 HiggsMLSelection::~HiggsMLSelection(){
@@ -514,6 +517,13 @@ void HiggsMLSelection::Loop() {
   myOutTreeEM->addMLVars();
   myOutTreeME->addMLVars();
 
+  if (wantJetIdStuff) {
+    myOutTreeEE->addJetsVars();
+    myOutTreeMM->addJetsVars();
+    myOutTreeEM->addJetsVars();
+    myOutTreeME->addJetsVars();
+  }
+
   myOutTreeEE->addLatinos();
   myOutTreeMM->addLatinos();
   myOutTreeEM->addLatinos();
@@ -836,6 +846,25 @@ void HiggsMLSelection::Loop() {
       nsoftjets[ichan] = 0;
     }
 
+    // initialize variables for jetId studies
+    if (wantJetIdStuff) {
+      for(int ichan=0; ichan<4; ichan++) {
+	leadJetPt[ichan]        = -2000.;
+	leadJetEta[ichan]       = -2000.;
+	leadJetLoosePFId[ichan] = -2000;
+	leadJetMatchGen[ichan]  = -2000;
+	leadJetMvaJetId[ichan]  = -2000.;
+	leadJetLooseId[ichan]   = -2000;
+	//
+	subleadJetPt[ichan]        = -2000.;
+	subleadJetEta[ichan]       = -2000.;
+	subleadJetLoosePFId[ichan] = -2000;
+	subleadJetMatchGen[ichan]  = -2000;
+	subleadJetMvaJetId[ichan]  = -2000.;
+	subleadJetLooseId[ichan]   = -2000;
+      }    
+    }
+    
     for(int ichan=0; ichan<4; ichan++) {
 
       // jet counter
@@ -996,6 +1025,10 @@ void HiggsMLSelection::Loop() {
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee], m_numbtagjets[ee], nsoftjets[ee]);
 
+    if (wantJetIdStuff) 
+      myOutTreeEE -> fillJetsVars(leadJetPt[ee], leadJetEta[ee], leadJetLoosePFId[ee], leadJetMatchGen[ee], leadJetMvaJetId[ee], leadJetLooseId[ee], subleadJetPt[ee], subleadJetEta[ee], subleadJetLoosePFId[ee], subleadJetMatchGen[ee], subleadJetMvaJetId[ee], subleadJetLooseId[ee]);
+
+
     myOutTreeEE -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
                                 outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
@@ -1145,7 +1178,10 @@ void HiggsMLSelection::Loop() {
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm], m_numbtagjets[mm], nsoftjets[mm]);
-    
+
+    if (wantJetIdStuff)     
+      myOutTreeMM -> fillJetsVars(leadJetPt[mm], leadJetEta[mm], leadJetLoosePFId[mm], leadJetMatchGen[mm], leadJetMvaJetId[mm], leadJetLooseId[mm], subleadJetPt[mm], subleadJetEta[mm], subleadJetLoosePFId[mm], subleadJetMatchGen[mm], subleadJetMvaJetId[mm], subleadJetLooseId[mm]);
+
     myOutTreeMM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
                                 outputStep21, outputStep22, outputStep23, outputStep24, outputStep25, outputStep26 ); 
@@ -1306,6 +1342,9 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em], m_numbtagjets[em], nsoftjets[em]);
+
+    if (wantJetIdStuff) 
+      myOutTreeEM -> fillJetsVars(leadJetPt[em], leadJetEta[em], leadJetLoosePFId[em], leadJetMatchGen[em], leadJetMvaJetId[em], leadJetLooseId[em], subleadJetPt[em], subleadJetEta[em], subleadJetLoosePFId[em], subleadJetMatchGen[em], subleadJetMvaJetId[em], subleadJetLooseId[em]);
     
     myOutTreeEM -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
@@ -1459,6 +1498,9 @@ void HiggsMLSelection::Loop() {
     
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me], m_numbtagjets[me], nsoftjets[me]);
+
+    if (wantJetIdStuff) 
+      myOutTreeME -> fillJetsVars(leadJetPt[me], leadJetEta[me], leadJetLoosePFId[me], leadJetMatchGen[me], leadJetMvaJetId[me], leadJetLooseId[me], subleadJetPt[me], subleadJetEta[me], subleadJetLoosePFId[me], subleadJetMatchGen[me], subleadJetMvaJetId[me], subleadJetLooseId[me]);
     
     myOutTreeME -> fillLatinos( outputStep0, outputStep1, outputStep2, outputStep3, outputStep4, outputStep5, outputStep6, outputStep7, outputStep8, outputStep9, outputStep10, 
                                 outputStep11, outputStep12, outputStep13, outputStep14, outputStep15, outputStep16, outputStep17, outputStep18, outputStep19, outputStep20, 
@@ -2575,7 +2617,10 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
-    
+
+    // Loose MvaId
+    if (!isLooseJetMva(pt,etaAK5PFPUcorrJet[j],jetIdMvaPhilV1AK5PFPUcorrJet[j])) continue;
+
     bool foundMatch = false;
 
     // check if the electrons falls into the jet
@@ -2603,18 +2648,17 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
       }
     }
     if(foundMatch) continue;
-
+    
     if(pt>5.0) (*m_jetsSum[theChannel]) += p4Jet;
-
+    
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
     if(fabs(etaAK5PFPUcorrJet[j]==5)) continue; // this is to remove the place with wrong JECs (https://hypernews.cern.ch/HyperNews/CMS/get/JetMET/1259/1.html)
-
+    
     if ( pt>ETMax2 && pt>ETMax ) {
-
+      
       theSecondJet[theChannel] = theLeadingJet[theChannel];
-      subleadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[theSecondJet[theChannel]];
       ETMax2 = ETMax;
-
+      
       theLeadingJet[theChannel] = j;
       leadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
       ETMax = pt;
@@ -2622,15 +2666,118 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     } else if ( pt>ETMax2 && pt<ETMax ) {
       theSecondJet[theChannel] = j;
       subleadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
+
       ETMax2 = pt;
     }
-
+  
     if(pt>10.) nsoftjets[theChannel]++;
     if(_selectionEE->getSwitch("etJetAcc") && !_selectionEE->passCut("etJetAcc", pt)) continue;
-
+    
     m_goodJets.push_back(j);
     num++;
-   
+    
+  }
+
+  // extra info for jet Id studies
+  if( wantJetIdStuff ) {
+    int theFirst  = theLeadingJet[theChannel];
+    int theSecond = theSecondJet[theChannel];
+    
+    // leading jet
+    if (theFirst>-1) {
+      float firstNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      float firstNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      int firstNConstituents       = chargedHadronMultiplicityAK5PFPUcorrJet[theFirst] + neutralHadronMultiplicityAK5PFPUcorrJet[theFirst] + photonMultiplicityAK5PFPUcorrJet[theFirst] + electronMultiplicityAK5PFPUcorrJet[theFirst] + muonMultiplicityAK5PFPUcorrJet[theFirst] + HFHadronMultiplicityAK5PFPUcorrJet[theFirst] + HFEMMultiplicityAK5PFPUcorrJet[theFirst];
+      float firstChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      int firstChargedMultiplicity  = chargedHadronMultiplicityAK5PFPUcorrJet[theFirst] + electronMultiplicityAK5PFPUcorrJet[theFirst] + muonMultiplicityAK5PFPUcorrJet[theFirst];
+      float firstChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      float firstPt = sqrt( pxAK5PFPUcorrJet[theFirst]*pxAK5PFPUcorrJet[theFirst] + pyAK5PFPUcorrJet[theFirst]*pyAK5PFPUcorrJet[theFirst] );
+      
+      leadJetPt[theChannel]        = firstPt;
+      leadJetEta[theChannel]       = etaAK5PFPUcorrJet[theFirst];
+      leadJetLoosePFId[theChannel] = isPFJetID(fabs(etaAK5PFPUcorrJet[theFirst]),firstNeutralHadFrac,firstNeutralEmFraction,firstNConstituents,firstChargedHadFraction,firstChargedMultiplicity,firstChargedEmFraction, Higgs::loose);
+      leadJetMvaJetId[theChannel]  = jetIdMvaPhilV1AK5PFPUcorrJet[theFirst];
+      leadJetLooseId[theChannel]   = isLooseJetMva(leadJetPt[theChannel],etaAK5PFPUcorrJet[theFirst],jetIdMvaPhilV1AK5PFPUcorrJet[theFirst]);
+    } else {
+      leadJetPt[theChannel]        = -999.;
+      leadJetEta[theChannel]       = -999.;
+      leadJetLoosePFId[theChannel] = -999;
+      leadJetMvaJetId[theChannel]  = -999.;
+      leadJetLooseId[theChannel]   = -999;
+    }
+    
+    // subleading jet
+    if (theSecond>-1) {
+      float secondNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      float secondNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      int secondNConstituents       = chargedHadronMultiplicityAK5PFPUcorrJet[theSecond] + neutralHadronMultiplicityAK5PFPUcorrJet[theSecond] + photonMultiplicityAK5PFPUcorrJet[theSecond] + electronMultiplicityAK5PFPUcorrJet[theSecond] + muonMultiplicityAK5PFPUcorrJet[theSecond] + HFHadronMultiplicityAK5PFPUcorrJet[theSecond] + HFEMMultiplicityAK5PFPUcorrJet[theSecond];
+      float secondChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      int secondChargedMultiplicity  = chargedHadronMultiplicityAK5PFPUcorrJet[theSecond] + electronMultiplicityAK5PFPUcorrJet[theSecond] + muonMultiplicityAK5PFPUcorrJet[theSecond];
+      float secondChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      float secondPt = sqrt( pxAK5PFPUcorrJet[theSecond]*pxAK5PFPUcorrJet[theSecond] + pyAK5PFPUcorrJet[theSecond]*pyAK5PFPUcorrJet[theSecond] );
+      subleadJetPt[theChannel]        = secondPt;
+      subleadJetEta[theChannel]       = etaAK5PFPUcorrJet[theSecond];
+      subleadJetLoosePFId[theChannel] = isPFJetID(fabs(etaAK5PFPUcorrJet[theSecond]),secondNeutralHadFrac,secondNeutralEmFraction,secondNConstituents,secondChargedHadFraction,secondChargedMultiplicity,secondChargedEmFraction, Higgs::loose);
+      subleadJetMvaJetId[theChannel]  = jetIdMvaPhilV1AK5PFPUcorrJet[theSecond];
+      subleadJetLooseId[theChannel]   = isLooseJetMva(subleadJetPt[theChannel],etaAK5PFPUcorrJet[theSecond],jetIdMvaPhilV1AK5PFPUcorrJet[theSecond]);
+    } else {
+      subleadJetPt[theChannel]        = -999.;
+      subleadJetEta[theChannel]       = -999.;
+      subleadJetLoosePFId[theChannel] = -999;
+      subleadJetMvaJetId[theChannel]  = -999.;
+      subleadJetLooseId[theChannel]   = -999;
+    }
+    
+    // match with gen jets
+    int firstAss  = -999;
+    int secondAss = -999;
+    float firstDRmin  = 999.;
+    float secondDRmin = 999.;
+    if (theFirst>-1) {
+      for (int iGen=0; iGen<nAK5GenJet; iGen++) {
+	TVector3 t3GenJet(pxAK5GenJet[iGen],pyAK5GenJet[iGen],pzAK5GenJet[iGen]);
+	TVector3 t3FirstRecoJet(pxAK5PFPUcorrJet[theFirst],pyAK5PFPUcorrJet[theFirst],pzAK5PFPUcorrJet[theFirst]);
+	float genPt   = t3GenJet.Perp();
+	float firstPt = sqrt( pxAK5PFPUcorrJet[theFirst]*pxAK5PFPUcorrJet[theFirst] + pyAK5PFPUcorrJet[theFirst]*pyAK5PFPUcorrJet[theFirst] );
+	float firstDR = t3FirstRecoJet.DeltaR(t3GenJet);
+	double firstExpres  = ErrEt(firstPt,t3FirstRecoJet.Eta());
+	if ( (firstDR<firstDRmin) && ((fabs(firstPt-genPt))/genPt)<0.5 ) {
+	  firstAss = iGen;
+	  firstDRmin = firstDR;
+	}
+      }
+      if (firstAss>-999) {
+	float firstGenAssPt = sqrt(pxAK5GenJet[firstAss]*pxAK5GenJet[firstAss] + pyAK5GenJet[firstAss]*pyAK5GenJet[firstAss]);
+	if (firstDRmin > 0.1 + 0.3 * exp(-0.05*(firstGenAssPt-10))) firstAss = -999;
+      }
+      if (firstAss>-1) leadJetMatchGen[theChannel] = 1;  
+      if (firstAss<0)  leadJetMatchGen[theChannel] = 0;  
+    } else {
+      leadJetMatchGen[theChannel] = -999;
+    }
+    
+    if (theSecond>-1) {
+      for (int iGen=0; iGen<nAK5GenJet; iGen++) {
+	TVector3 t3GenJet(pxAK5GenJet[iGen],pyAK5GenJet[iGen],pzAK5GenJet[iGen]);
+	TVector3 t3SecondRecoJet(pxAK5PFPUcorrJet[theSecond],pyAK5PFPUcorrJet[theSecond],pzAK5PFPUcorrJet[theSecond]);
+	float genPt = t3GenJet.Perp();
+	float secondPt = sqrt( pxAK5PFPUcorrJet[theSecond]*pxAK5PFPUcorrJet[theSecond] + pyAK5PFPUcorrJet[theSecond]*pyAK5PFPUcorrJet[theSecond] );
+	float secondDR = t3SecondRecoJet.DeltaR(t3GenJet);
+	double secondExpres = ErrEt(secondPt,t3SecondRecoJet.Eta());
+	if ( (secondDR<secondDRmin) && ((fabs(secondPt-genPt))/genPt)<0.5 ) {
+	  secondAss = iGen;
+	  secondDRmin = secondDR;
+	}
+      }
+      if (secondAss>-999) {
+	float secondGenAssPt = sqrt(pxAK5GenJet[secondAss]*pxAK5GenJet[secondAss] + pyAK5GenJet[secondAss]*pyAK5GenJet[secondAss]);
+	if (secondDRmin > 0.1 + 0.3 * exp(-0.05*(secondGenAssPt-10))) secondAss = -999;
+      }
+      if (secondAss>-1) subleadJetMatchGen[theChannel] = 1;  
+      if (secondAss<0)  subleadJetMatchGen[theChannel] = 0;  
+    } else {
+      subleadJetMatchGen[theChannel] =  -999;
+    }
   }
 
   return num;
@@ -2741,6 +2888,9 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
+
+    // Loose MvaId 
+    if (!isLooseJetMva(pt,etaAK5PFPUcorrJet[j],jetIdMvaPhilV1AK5PFPUcorrJet[j])) continue;
 
     bool foundMatch=false;
     // check if the electrons falls into the jet
@@ -3415,3 +3565,83 @@ TVector3 HiggsMLSelection::getLeadingJet(int index, float ptThr) {
   }
   return p3;
 }
+
+double HiggsMLSelection::ErrEt( double Et, double Eta) {
+  
+  double InvPerr2;
+  
+  double N, S, C, m;
+  if(fabs(Eta) < 0.5 ) {
+    N = 3.96859;
+    S = 0.18348;
+    C = 0.;
+    m = 0.62627;
+  } else if( fabs(Eta) < 1. ) {
+    N = 3.55226;
+    S = 0.24026;
+    C = 0.;
+    m = 0.52571;
+  } else if( fabs(Eta) < 1.5 ) {
+    N = 4.54826;
+    S = 0.22652;
+    C = 0.;
+    m = 0.58963;
+  } else if( fabs(Eta) < 2. ) {
+    N = 4.62622;
+    S = 0.23664;
+    C = 0.;
+    m = 0.48738;
+  } else if( fabs(Eta) < 3. ) {
+    N = 2.53324;
+    S = 0.34306;
+    C = 0.;
+    m = 0.28662;
+  } else if( fabs(Eta) < 5. ) {
+    N = 2.95397;
+    S = 0.11619;
+    C = 0.;
+    m = 0.96086;
+  }
+  
+  // this is the absolute resolution (squared), not sigma(pt)/pt	
+  // so have to multiply by pt^2, thats why m+1 instead of m-1	
+  InvPerr2 =  (N * fabs(N) ) + (S * S) * pow(Et, m+1) + (C * C) * Et * Et ;
+  
+  return sqrt(InvPerr2)/Et;
+}
+
+bool HiggsMLSelection::isLooseJetMva(float pt, float eta, float id) {
+
+  bool isOk = true;
+
+  if (pt<10) {
+    if (fabs(eta)<=2.5 && id<0.0)                   isOk = false;
+    if (fabs(eta)>2.5 && fabs(eta)<=2.75 && id<0.0) isOk = false;
+    if (fabs(eta)>2.75 && fabs(eta)<=3.0 && id<0.0) isOk = false;
+    if (fabs(eta)>3.0 && fabs(eta)<=5.0 && id<0.2)  isOk = false;
+  }
+
+  if (pt<20 && pt>=10) {
+    if (fabs(eta)<=2.5 && id<-0.4)                   isOk = false;
+    if (fabs(eta)>2.5 && fabs(eta)<=2.75 && id<-0.4) isOk = false;
+    if (fabs(eta)>2.75 && fabs(eta)<=3.0 && id<-0.4) isOk = false;
+    if (fabs(eta)>3.0 && fabs(eta)<=5.0 && id<0.4)   isOk = false;
+  }
+
+  if (pt<30 && pt>=20) {
+    if (fabs(eta)<=2.5 && id<0.0)                   isOk = false;
+    if (fabs(eta)>2.5 && fabs(eta)<=2.75 && id<0.0) isOk = false;
+    if (fabs(eta)>2.75 && fabs(eta)<=3.0 && id<0.2) isOk = false;
+    if (fabs(eta)>3.0 && fabs(eta)<=5.0 && id<0.6)  isOk = false;
+  }
+
+  if (pt<50 && pt>=30) {
+    if (fabs(eta)<=2.5 && id<0.0)                   isOk = false;
+    if (fabs(eta)>2.5 && fabs(eta)<=2.75 && id<0.0) isOk = false;
+    if (fabs(eta)>2.75 && fabs(eta)<=3.0 && id<0.6) isOk = false;
+    if (fabs(eta)>3.0 && fabs(eta)<=5.0 && id<0.2)  isOk = false;
+  }
+
+  return isOk;
+}
+
