@@ -76,10 +76,18 @@ public:
   bool isMuonDenomFake(int theMuon, bool *isDenomMuonID, bool *isDenomMuonIso);
   //! returns the output of the custom muon ID
   void isMuonID(int muonIndex, bool *muonIdOutput);
+  void isMuonID2012(int muonIndex, bool *muonIdOutput);
+  //! hardcoded muon isolation
+  bool isPFIsolatedMuon(int muonIndex);
+  bool isPFIsolatedMuon2012(int muonIndex);
   //! returns the output of the custom cut electron ID with WPXX
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
   //! returns the output of the custom cut electron ID with WPXX && deominator selection
   void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
+  //! returns the output of the custom cut electron ID with WPXX
+  void isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
+  //! returns the output of the custom cut electron ID with WPXX && deominator selection
+  void isEleID2012AndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
   /// dxy, dz and dsz parameters with respect to PV for tracks
   double trackDxyPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);
   double trackDzPV(TVector3 PVPos, TVector3 trackVPos, TVector3 trackMom);

@@ -79,7 +79,7 @@ public:
 		float wfpQCD, float wsfpQCD, float wffQCD, float wsffQCD, float wppQCD, float wsppQCD);
   //! fill more informations for analysis not cut based
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
-                  float bTagTrackCount, float bTagImpPar, float bTagSecVertex, int nSoftMu, 
+                  float softbdisc, float hardbdisc, float bTagSecVertex, int nSoftMu, 
                   float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount, 
                   int numExtraLep, int nSoftMuNoJets, int nSoftBJets, int nSoftJets);
 
@@ -146,8 +146,8 @@ private:
   int myNuncorrjets;
   float myDxyEVT;
   float myDszEVT;
-  float myBTagTrackCount;
-  float myBTagImpPar;
+  float mySoftBdisc;
+  float myHardBdisc;
   float myBTagSecVertex;
   int myNSoftMu, myNSoftMuNoJets;
   float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount, mySubleadingJetsMaxBTagTrackCount;

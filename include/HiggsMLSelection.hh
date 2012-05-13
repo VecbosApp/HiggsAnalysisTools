@@ -128,8 +128,6 @@ private:
   bool reloadTriggerMask(int runN);
   //! get the trigger answer depending on the channel
   bool hasPassedHLT(int channel);
-  //! hardcoded muon isolation
-  bool isPFIsolatedMuon(int muonIndex);
   //! get the leading jet three-momentum; 0 if it is below threshold in pT
   TVector3 getLeadingJet(int index, float ptThr=15.0);
   //! for jetId studies
@@ -201,6 +199,7 @@ private:
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
+  float m_softbdisc[4], m_hardbdisc[4];
 
   // for jetId studies
   bool wantJetIdStuff;

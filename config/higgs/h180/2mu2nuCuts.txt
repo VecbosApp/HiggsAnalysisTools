@@ -15,12 +15,12 @@ projectedMET            37              10000
 metOverPtLL             0.6             10000
 mll                     20              10000
 mllZPeak                15              10000
-bTagVeto                -10000          2.1
+bTagVeto                0.5               1.5
 ptll                    45              10000
 minPtLeptonSameFlav     15              10000
 mll2                    12              60
 jetConeWidth		0.0		0.3
-etaJetAcc		-5.0		5.0
+etaJetAcc		-4.7		4.7
 etJetAcc             30              10000
 nSoftMuons              0               0
 nExtraLeptons           0               0

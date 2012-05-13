@@ -7,6 +7,8 @@
 #include "TString.h"
 #include "CommonTools/include/Utils.hh"
 #include "CommonTools/include/LeptonIdBits.h"
+#include "CommonTools/include/ElectronEffectiveArea.h"
+#include "CommonTools/include/MuonEffectiveArea.h"
 #include "EgammaAnalysisTools/include/ElectronLikelihood.h"
 #include "HiggsAnalysisTools/include/Higgs.hh"
 
@@ -613,6 +615,72 @@ void Higgs::isMuonID(int muonIndex, bool *muonIdOutput) {
   if (sign>=0.1) *muonIdOutput = false;
 }
 
+void Higgs::isMuonID2012(int muonIndex, bool *muonIdOutput) {
+
+  *muonIdOutput = true;
+
+  Utils anaUtils; 
+  bool flagGlobalMu = false;
+  if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
+    int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
+    if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
+       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
+       numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
+  }
+
+  bool flagTrackerMu = false;
+  if( (anaUtils.muonIdVal(muonIdMuon[muonIndex],AllTrackerMuons) &&
+       anaUtils.muonIdVal(muonIdMuon[muonIndex],TMLastStationTight)) ) flagTrackerMu  = true;
+
+  if(!(flagGlobalMu || flagTrackerMu)) {
+    *muonIdOutput = false;
+    return;
+  }
+    
+  int track = trackIndexMuon[muonIndex];
+
+  int trackerLayersWithMeasurement = trackerLayersWithMeasurementTrack[track];
+  if(trackerLayersWithMeasurement<6) *muonIdOutput = false;
+
+  if( (numberOfValidPixelBarrelHitsTrack[track]+numberOfValidPixelEndcapHitsTrack[track])<1 ) *muonIdOutput = false; 
+
+  if(kinkMuon[muonIndex]>=20) *muonIdOutput = false;
+
+  if(pfmuonIdMuon[muonIndex]==0) *muonIdOutput = false;
+
+  float ptTrack = sqrt( pxTrack[track]*pxTrack[track] + pyTrack[track]*pyTrack[track] );
+  float sign = fabs(ptErrorTrack[track]/ptTrack);
+  if (sign>=0.1) *muonIdOutput = false;
+
+}
+
+bool Higgs::isPFIsolatedMuon(int muonIndex) {
+  float eta = etaMuon[muonIndex];
+  float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
+  float iso = pfCombinedIsoMuon[muonIndex]/pt;
+  if( pt>=20. && fabs(eta)<1.479 ) return (iso < 0.13);
+  if( pt>=20. && fabs(eta)>=1.479 ) return (iso < 0.09);
+  if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
+  if( pt<20. && fabs(eta)>=1.479 ) return (iso < 0.05);
+  return true;
+}
+
+bool Higgs::isPFIsolatedMuon2012(int muonIndex) {
+
+  float abseta = fabs(etaMuon[muonIndex]);
+  float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
+  float bdtiso = mvaisoMuon[muonIndex];
+
+  bool MUON_ISO_ICHEP2012 = (
+                             ( pt <= 20 && abseta >= 0.000 && abseta < 0.479 && bdtiso > 0.86 ) ||
+                             ( pt <= 20 && abseta >= 0.479 && abseta < 2.400 && bdtiso > 0.82 ) ||
+                             ( pt >  20 && abseta >= 0.000 && abseta < 0.479 && bdtiso > 0.82 ) ||
+                             ( pt >  20 && abseta >= 0.479 && abseta < 2.400 && bdtiso > 0.86 )
+                             );
+
+  return MUON_ISO_ICHEP2012;
+}
+
 void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased) {
   
   *eleIdOutput = *isolOutput = *convRejOutput = false;
@@ -716,11 +784,79 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
   *convRejOutput = thisCutBasedID->outputNoClassConv();
 }
 
+
+void Higgs::isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput) {
+  
+  *eleIdOutput = *isolOutput = *convRejOutput = false;
+
+  float bdt = mvaidtrigEle[eleIndex];
+
+  float abseta=-100.;
+  Utils anaUtils;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[eleIndex];
+    abseta=fabs(etaSC[sc]);
+  } else {
+    int sc = PFsuperClusterIndexEle[eleIndex];
+    abseta=fabs(etaPFSC[sc]);
+  }
+
+  // calculate the PU subtracted isolation
+  ElectronEffectiveArea::ElectronEffectiveAreaTarget effAreaTarget_ = ElectronEffectiveArea::kEleEAData2012;
+  ElectronEffectiveArea::ElectronEffectiveAreaType effAreaGamma_   = ElectronEffectiveArea::kEleGammaIso04;
+  ElectronEffectiveArea::ElectronEffectiveAreaType effAreaNeutralHad_ = ElectronEffectiveArea::kEleNeutralHadronIso04;
+  ElectronEffectiveArea::ElectronEffectiveAreaType effAreaGammaAndNeutralHad_ = ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04;
+
+  float eff_area_ga  = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaGamma_, abseta, effAreaTarget_);
+  float eff_area_nh  = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaNeutralHad_, abseta, effAreaTarget_);
+  float eff_area_ganh = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaGammaAndNeutralHad_, abseta, effAreaTarget_);
+
+  float iso = pfCandChargedIso04Ele[eleIndex];
+  //  iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]-eff_area_nh*rhoJetsFastJet + pfCandPhotonIso04Ele[eleIndex]-eff_area_ga*rhoJetsFastJet);
+  iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]+pfCandPhotonIso04Ele[eleIndex]-eff_area_ganh*rhoJetsFastJet);
+
+  float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
+
+  bool ELE_ID_EGAMMA_2012 = (
+                             ( pt <= 20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.00 ) ||
+                             ( pt <= 20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.10 ) ||
+                             ( pt <= 20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.62 ) ||
+                             ( pt >  20 && abseta >= 0.000 && abseta < 0.800 && bdt > 0.94 ) ||
+                             ( pt >  20 && abseta >= 0.800 && abseta < 1.479 && bdt > 0.85 ) ||
+                             ( pt >  20 && abseta >= 1.479 && abseta < 2.500 && bdt > 0.92 )
+                             );
+  bool ELE_ISO_EGAMMA_2012 = (iso/pt < 0.15);
+
+  int gsf = gsfTrackIndexEle[eleIndex];
+  bool ELE_CONV_2012 = (!hasMatchedConversionEle[eleIndex] && expInnerLayersGsfTrack[gsf]==0);
+
+  *eleIdOutput = ELE_ID_EGAMMA_2012;
+  *isolOutput = ELE_ISO_EGAMMA_2012;
+  *convRejOutput = ELE_CONV_2012;
+}
+
 void Higgs::isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased) {
 
   bool tightId, tightIso, tightConvRej;
   tightId = tightIso = tightConvRej = true;
   isEleID(eleIndex,&tightId,&tightIso,&tightConvRej,thisCutBasedID,applyBDTIdNotCutbased);
+
+  bool denomId, denomIso;
+  denomId = denomIso = true;
+  bool fullDenom = isEleDenomFake(eleIndex,&denomId,&denomIso);
+
+  *eleIdOutput = (tightId && denomId && denomIso); // apply the full denom on top of the ID to be consistent with the others for synch reasons
+  *isolOutput = (tightIso);
+  *convRejOutput = tightConvRej; // num and denom conv rej are the same
+
+}
+
+void Higgs::isEleID2012AndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput) {
+
+  bool tightId, tightIso, tightConvRej;
+  tightId = tightIso = tightConvRej = true;
+  isEleID2012(eleIndex,&tightId,&tightIso,&tightConvRej);
 
   bool denomId, denomIso;
   denomId = denomIso = true;

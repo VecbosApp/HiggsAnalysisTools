@@ -876,7 +876,7 @@ void HiggsMLSelection::Loop() {
 
       // b veto
       btag[ichan] = bVetoJets(eleCands[ichan],muCands[ichan],ichan);
-
+      
       // soft muon counter
       // w/o jet cleaning (for the selection)
       std::vector<int> emptyJets;
@@ -1022,7 +1022,7 @@ void HiggsMLSelection::Loop() {
 			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nGoodPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
-    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, btag[ee], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
+    myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[ee], m_hardbdisc[ee], m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee], m_numbtagjets[ee], nsoftjets[ee]);
 
     if (wantJetIdStuff) 
@@ -1176,7 +1176,7 @@ void HiggsMLSelection::Loop() {
 			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm], nGoodPV,
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
 
-    myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, btag[mm], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
+    myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[mm], m_hardbdisc[mm], m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm], m_numbtagjets[mm], nsoftjets[mm]);
 
     if (wantJetIdStuff)     
@@ -1340,7 +1340,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-    myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, btag[em], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
+    myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[em], m_hardbdisc[em], m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em], m_numbtagjets[em], nsoftjets[em]);
 
     if (wantJetIdStuff) 
@@ -1496,7 +1496,7 @@ void HiggsMLSelection::Loop() {
 				  myClassification, myNBremClusters, myDeta, myDphi, myHoe, mySee, mySpp, myEop, myFbrem,
 				  myTrackerIso, myHcalIso, myEcalJIso, myEcalGTIso, myCombinedIso, myCharge, myMissHits, myDist, myDcot, myLh, myMatched );
     
-    myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, btag[me], m_maxImpactParameterMVABJetTags, m_maxCombinedSecondaryVertexMVABJetTags, 
+    myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[me], m_hardbdisc[me], m_maxCombinedSecondaryVertexMVABJetTags, 
                               nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me], m_numbtagjets[me], nsoftjets[me]);
 
     if (wantJetIdStuff) 
@@ -1641,10 +1641,10 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_id( std::vector<int> ac
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
     float thisPt = GetPt(pxEle[thisEle],pyEle[thisEle]);
-    if (!_selectionEE->getSwitch("asymmetricID")) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
+    if (!_selectionEE->getSwitch("asymmetricID")) isEleID2012AndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej);
     if ( _selectionEE->getSwitch("asymmetricID")) {
-      if (thisPt>=20) isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
-      if (thisPt<20)  isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedIDLow,m_useBDTEleID);
+      if (thisPt>=20) isEleID2012AndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej);
+      if (thisPt<20)  isEleID2012AndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej);
     }
 
     if (!theElectronID) continue;
@@ -1695,7 +1695,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_isol( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
+    isEleID2012AndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej);
 
     if (!theElectronIsol) continue;
 
@@ -1738,7 +1738,7 @@ std::pair<int,int> HiggsMLSelection::getBestElectronPair_conv( std::vector<int> 
     bool theElectronID, theElectronIsol, theElectronConvRej;
     theElectronID = theElectronIsol = theElectronConvRej = true;
     
-    isEleIDAndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej,&EgammaCutBasedID,m_useBDTEleID);
+    isEleID2012AndDenom(thisEle,&theElectronID,&theElectronIsol,&theElectronConvRej);
     
     if (!theElectronConvRej) continue;
 
@@ -1871,7 +1871,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_id( std::vector<int> accept
     int thisMu = acceptMu[iMu];
 
     bool theMuonID = true;
-    isMuonID(thisMu, &theMuonID);
+    isMuonID2012(thisMu, &theMuonID);
     if (!theMuonID) continue;
 
     float thisPt     = GetPt(pxMuon[thisMu],pyMuon[thisMu]);
@@ -1920,7 +1920,7 @@ std::pair<int,int> HiggsMLSelection::getBestMuonPair_isol( std::vector<int> idMu
 //     float theRelMuonIso        = theMuonGlobalSum/thisPt; 
 //    float theRelMuonIso = pfCombinedIsoMuon[thisMu]/thisPt;
     //    if(_selectionEE->getSwitch("muGlobalIso") && !_selectionEE->passCut("muGlobalIso",theRelMuonIso)) continue;  
-    if( ! isPFIsolatedMuon(thisMu) ) continue;
+    if( ! isPFIsolatedMuon2012(thisMu) ) continue;
 
     float thisCharge = chargeMuon[thisMu];
     if (thisCharge > 0 && thisPt> maxPtLep1){ maxPtLep1 = thisPt; theLep1 = thisMu; }
@@ -2603,17 +2603,18 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     TLorentzVector p4Jet(p3Jet, energyAK5PFPUcorrJet[j]);
 
     float pt = GetPt(pxAK5PFPUcorrJet[j],pyAK5PFPUcorrJet[j]);
+    float rawpt = GetPt(uncorrpxAK5PFPUcorrJet[j],uncorrpyAK5PFPUcorrJet[j]);
     if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) pt = (GetJESCorrected(p4Jet,JESUncertainty.Data())).Pt();
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -2685,12 +2686,12 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     
     // leading jet
     if (theFirst>-1) {
-      float firstNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
-      float firstNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      float firstNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrenergyAK5PFPUcorrJet[theFirst];
+      float firstNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theFirst]/uncorrenergyAK5PFPUcorrJet[theFirst];
       int firstNConstituents       = chargedHadronMultiplicityAK5PFPUcorrJet[theFirst] + neutralHadronMultiplicityAK5PFPUcorrJet[theFirst] + photonMultiplicityAK5PFPUcorrJet[theFirst] + electronMultiplicityAK5PFPUcorrJet[theFirst] + muonMultiplicityAK5PFPUcorrJet[theFirst] + HFHadronMultiplicityAK5PFPUcorrJet[theFirst] + HFEMMultiplicityAK5PFPUcorrJet[theFirst];
-      float firstChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      float firstChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theFirst]/uncorrenergyAK5PFPUcorrJet[theFirst];
       int firstChargedMultiplicity  = chargedHadronMultiplicityAK5PFPUcorrJet[theFirst] + electronMultiplicityAK5PFPUcorrJet[theFirst] + muonMultiplicityAK5PFPUcorrJet[theFirst];
-      float firstChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theFirst]/uncorrEnergyAK5PFPUcorrJet[theFirst];
+      float firstChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theFirst]/uncorrenergyAK5PFPUcorrJet[theFirst];
       float firstPt = sqrt( pxAK5PFPUcorrJet[theFirst]*pxAK5PFPUcorrJet[theFirst] + pyAK5PFPUcorrJet[theFirst]*pyAK5PFPUcorrJet[theFirst] );
       
       leadJetPt[theChannel]        = firstPt;
@@ -2708,12 +2709,12 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
     
     // subleading jet
     if (theSecond>-1) {
-      float secondNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
-      float secondNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      float secondNeutralHadFrac    = neutralHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrenergyAK5PFPUcorrJet[theSecond];
+      float secondNeutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[theSecond]/uncorrenergyAK5PFPUcorrJet[theSecond];
       int secondNConstituents       = chargedHadronMultiplicityAK5PFPUcorrJet[theSecond] + neutralHadronMultiplicityAK5PFPUcorrJet[theSecond] + photonMultiplicityAK5PFPUcorrJet[theSecond] + electronMultiplicityAK5PFPUcorrJet[theSecond] + muonMultiplicityAK5PFPUcorrJet[theSecond] + HFHadronMultiplicityAK5PFPUcorrJet[theSecond] + HFEMMultiplicityAK5PFPUcorrJet[theSecond];
-      float secondChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      float secondChargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[theSecond]/uncorrenergyAK5PFPUcorrJet[theSecond];
       int secondChargedMultiplicity  = chargedHadronMultiplicityAK5PFPUcorrJet[theSecond] + electronMultiplicityAK5PFPUcorrJet[theSecond] + muonMultiplicityAK5PFPUcorrJet[theSecond];
-      float secondChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theSecond]/uncorrEnergyAK5PFPUcorrJet[theSecond];
+      float secondChargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[theSecond]/uncorrenergyAK5PFPUcorrJet[theSecond];
       float secondPt = sqrt( pxAK5PFPUcorrJet[theSecond]*pxAK5PFPUcorrJet[theSecond] + pyAK5PFPUcorrJet[theSecond]*pyAK5PFPUcorrJet[theSecond] );
       subleadJetPt[theChannel]        = secondPt;
       subleadJetEta[theChannel]       = etaAK5PFPUcorrJet[theSecond];
@@ -2794,23 +2795,23 @@ int HiggsMLSelection::numUncorrJets( std::vector<int> eleToRemove, std::vector<i
 
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
-    float uncorrEt = uncorrEnergyAK5PFPUcorrJet[j]*fabs(sin(thetaAK5PFPUcorrJet[j]));
+    float uncorrEt = uncorrenergyAK5PFPUcorrJet[j]*fabs(sin(thetaAK5PFPUcorrJet[j]));
     TLorentzVector p4Jet;
-    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFPUcorrJet[j],phiAK5PFPUcorrJet[j],uncorrEnergyAK5PFPUcorrJet[j]);
+    p4Jet.SetPtEtaPhiE(uncorrEt,etaAK5PFPUcorrJet[j],phiAK5PFPUcorrJet[j],uncorrenergyAK5PFPUcorrJet[j]);
     TVector3 p3Jet = p4Jet.Vect();
 
-    TLorentzVector p4JESJet(p3Jet, uncorrEnergyAK5PFPUcorrJet[j]);
+    TLorentzVector p4JESJet(p3Jet, uncorrenergyAK5PFPUcorrJet[j]);
     if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) uncorrEt = (GetJESCorrected(p4JESJet,JESUncertainty.Data())).Pt();
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -2856,7 +2857,8 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
 
   TString JESUncertainty(_selectionEE->getStringParameter("JESUncertainty"));
 
-  float output=-999;
+  float maxTCHE=-999;
+  float maxJetBProb=-999;
   float outputSubLeadJets = -999;
   m_numbtagjets[theChannel]=0;
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
@@ -2869,22 +2871,24 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     if(JESUncertainty == TString("Up") || JESUncertainty == TString("Down")) pt = (GetJESCorrected(p4Jet,JESUncertainty.Data())).Pt();
 
     if(_selectionEE->getSwitch("etaJetAcc") && !_selectionEE->passCut("etaJetAcc", fabs(etaAK5PFPUcorrJet[j]))) continue;
+    
+    // if(theSecondJet[theChannel]>-1 && fabs(etaAK5PFPUcorrJet[j])>4.5) continue;
 
     // hardcoded
-    float rawpt = uncorrEnergyAK5PFPUcorrJet[j] * fabs(sin(thetaAK5PFPUcorrJet[j]));
+    float rawpt = GetPt(uncorrpxAK5PFPUcorrJet[j],uncorrpyAK5PFPUcorrJet[j]);
     if(rawpt < 10.0) continue;
 
-    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
+    //    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
@@ -2918,29 +2922,56 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     }
     if(foundMatch) continue;
 
-    float tmp = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];     
-    if(tmp > output) output = tmp;
-    if(j != theLeadingJet[theChannel] && tmp > outputSubLeadJets) outputSubLeadJets = tmp;
+    float tmpTCHE = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];     
+    float tmpJBP = jetBProbabilityBJetTagsAK5PFPUcorrJet[j];
+    if(tmpTCHE > maxTCHE) maxTCHE = tmpTCHE; 
+    // if(pt<=30 && tmpTCHE > maxTCHE) maxTCHE = tmpTCHE;
+    // if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
 
-    if(tmp>1.6) m_numbtagjets[theChannel]++;
+    if(j != theLeadingJet[theChannel] && tmpTCHE > outputSubLeadJets) outputSubLeadJets = tmpTCHE;
+    if(tmpTCHE>1.6) m_numbtagjets[theChannel]++;
 
   }
 
   subLeadJetsMaxBtag[theChannel] = outputSubLeadJets;
-  return output;
+
+  int lj = theLeadingJet[theChannel];
+  float ptleadjet = GetPt(pxAK5PFPUcorrJet[lj],pyAK5PFPUcorrJet[lj]);
+
+  // hardcode the cuts
+  float bitval = 0;
+  if(maxTCHE<=2.1) bitval=1.;
+//   if(ptleadjet<30 && maxTCHE<=2.1) bitval=1.;
+//   if(ptleadjet>=30 && maxJetBProb<=1.05) bitval=1.;
+  
+  m_softbdisc[theChannel]=maxTCHE;
+  m_hardbdisc[theChannel]=maxJetBProb;
+
+  return bitval;
 
 }
 
 float HiggsMLSelection::deltaPhiLLJet(int ichan) {   
   
   int myLeadingJet = theLeadingJet[ichan];
+  int mySecondJet = theSecondJet[ichan];
 
+  // if the event has >=2 jet, the cut is on dphi(ll-jj). But the acceptance on jets has to be restricted from 5.0 to 4.5
+  if( mySecondJet > -1 && myLeadingJet > -1 && m_dilepPt[ichan].Pt()>0 
+      && fabs(etaAK5PFPUcorrJet[myLeadingJet])<4.5 && fabs(etaAK5PFPUcorrJet[mySecondJet])<4.5 ) {
+    TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);
+    TVector3 subleadingJetP3(pxAK5PFPUcorrJet[mySecondJet],pyAK5PFPUcorrJet[mySecondJet],pzAK5PFPUcorrJet[mySecondJet]);
+    TVector3 jjP3 = leadingJetP3+subleadingJetP3;
+    return fabs(180./TMath::Pi() * jjP3.DeltaPhi(m_dilepPt[ichan]));
+  }
+
+
+  // if the event has <=1 jet, the cut is on dphi(ll-j)
   if(myLeadingJet > -1 && m_dilepPt[ichan].Pt()>0) {
     TVector3 leadingJetP3(pxAK5PFPUcorrJet[myLeadingJet],pyAK5PFPUcorrJet[myLeadingJet],pzAK5PFPUcorrJet[myLeadingJet]);    
     if(leadingJetP3.Pt()>15.0) return fabs(180./TMath::Pi() * leadingJetP3.DeltaPhi(m_dilepPt[ichan]));                           
-    else return 0.0;
-  } else return 0.0;
-
+    else return 0.1;
+  } else return 0.1;
 }
 
 int HiggsMLSelection::numSoftMuons(std::vector<int> muonToRemove, std::vector<int> jetsToRemove) {
@@ -3003,11 +3034,11 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     bool theId, theIso, theConvRej;
     theId = theIso = theConvRej = true;
     if (!_selectionEE->getSwitch("asymmetricID")) 
-      isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID,m_useBDTEleID);
+      isEleID2012AndDenom(i,&theId,&theIso,&theConvRej);
     if (_selectionEE->getSwitch("asymmetricID")) {
       float pt = GetPt(pxEle[i],pyEle[i]);	
-      if(pt>=20) isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedID,m_useBDTEleID);
-      if(pt<20)  isEleIDAndDenom(i,&theId,&theIso,&theConvRej,&EgammaCutBasedIDLow,m_useBDTEleID);
+      if(pt>=20) isEleID2012AndDenom(i,&theId,&theIso,&theConvRej);
+      if(pt<20)  isEleID2012AndDenom(i,&theId,&theIso,&theConvRej);
     }
     if(!theId || !theIso || !theConvRej) continue;
     
@@ -3045,13 +3076,13 @@ int HiggsMLSelection::numExtraLeptons( std::vector<int> eleToRemove, std::vector
     if(_selectionEE->getSwitch("ptMuonAcc") && !_selectionEE->passCut("ptMuonAcc",ptMu) ) continue;
 
     bool theId = true;
-    isMuonID(i,&theId);
+    isMuonID2012(i,&theId);
     if(!theId) continue;
 //     float isoSumAbs = sumPt03Muon[i] + emEt03Muon[i] + hadEt03Muon[i] - rhoFastjet*TMath::Pi()*0.3*0.3;
 //     float isoSumRel = isoSumAbs / ptMu;
 //    float isoSumRel = pfCombinedIsoMuon[i] / ptMu;
 //    if(_selectionMM->getSwitch("muGlobalIso") && !_selectionMM->passCut("muGlobalIso",isoSumRel)) continue;
-    if( ! isPFIsolatedMuon(i) ) continue; 
+    if( ! isPFIsolatedMuon2012(i) ) continue; 
 
     int track = trackIndexMuon[i];
     float dxy = transvImpactParTrack[track];
@@ -3382,16 +3413,6 @@ void HiggsMLSelection::setNotRequiredTriggers(const std::vector<std::string>& re
   else std::cout << "WARNING: triggers are set for an unknown channel!" << std::endl;
 }
 
-bool HiggsMLSelection::isPFIsolatedMuon(int muonIndex) {
-  float eta = etaMuon[muonIndex];
-  float pt = GetPt(pxMuon[muonIndex],pyMuon[muonIndex]);
-  float iso = pfCombinedIsoMuon[muonIndex]/pt;
-  if( pt>=20. && fabs(eta)<1.479 ) return (iso < 0.13);
-  if( pt>=20. && fabs(eta)>=1.479 ) return (iso < 0.09);
-  if( pt<20. && fabs(eta)<1.479 ) return (iso < 0.06);
-  if( pt<20. && fabs(eta)>=1.479 ) return (iso < 0.05);
-  return true;
-}
 
 void HiggsMLSelection::JESPfMet( std::vector<int> eleToRemove, std::vector<int> muonToRemove) {
 
@@ -3421,14 +3442,14 @@ void HiggsMLSelection::JESPfMet( std::vector<int> eleToRemove, std::vector<int> 
     p4JetJesDown.SetPtEtaPhiE(ptDown,p4Jet.Eta(),p4Jet.Phi(),energyDown);
 
     // PF jet ID variables
-    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
-    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
+    float neutralEmFraction = neutralEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int nConstituents = chargedHadronMultiplicityAK5PFPUcorrJet[j] + neutralHadronMultiplicityAK5PFPUcorrJet[j] +
       photonMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j] +
       HFHadronMultiplicityAK5PFPUcorrJet[j] + HFEMMultiplicityAK5PFPUcorrJet[j];
-    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedHadFraction = chargedHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     int chargedMultiplicity = chargedHadronMultiplicityAK5PFPUcorrJet[j] + electronMultiplicityAK5PFPUcorrJet[j] + muonMultiplicityAK5PFPUcorrJet[j];
-    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrEnergyAK5PFPUcorrJet[j];
+    float chargedEmFraction = chargedEmEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
     
 //     if(!isPFJetID(fabs(etaAK5PFPUcorrJet[j]),neutralHadFrac,neutralEmFraction,nConstituents,
 //                   chargedHadFraction,chargedMultiplicity,chargedEmFraction, Higgs::loose)) continue;
