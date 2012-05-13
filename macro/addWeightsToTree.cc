@@ -121,8 +121,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Int_t           nVtx;
     Float_t         dxyEVT;
     Float_t         dszEVT;
-    Float_t         bTagTrackCount;
-    Float_t         bTagImpPar;
+    Float_t         softbdisc;
+    Float_t         hardbdisc;
     Float_t         bTagSecVertex;
     Float_t         leadingJetBTagTrackCount;
     Float_t         subleadingJetBTagTrackCount;
@@ -256,8 +256,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("nuncorrjets", &nuncorrjets);
     treeOrig->SetBranchAddress("dxyEVT", &dxyEVT);
     treeOrig->SetBranchAddress("dszEVT", &dszEVT);
-    treeOrig->SetBranchAddress("bTagTrackCount", &bTagTrackCount);
-    treeOrig->SetBranchAddress("bTagImpPar", &bTagImpPar);
+    treeOrig->SetBranchAddress("softbdisc", &softbdisc);
+    treeOrig->SetBranchAddress("hardbdisc", &hardbdisc);
     treeOrig->SetBranchAddress("bTagSecVertex", &bTagSecVertex);
     treeOrig->SetBranchAddress("leadingJetBTagTrackCount", &leadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount);
@@ -472,8 +472,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("nuncorrjets", &f_nuncorrjets, "nuncorrjets/F");
       theTreeNew->Branch("dxyEVT", &dxyEVT, "dxyEVT/F");
       theTreeNew->Branch("dszEVT", &dszEVT, "dszEVT/F");
-      theTreeNew->Branch("softbdisc", &bTagTrackCount, "softbdisc/F");
-      theTreeNew->Branch("bTagImpPar", &bTagImpPar, "bTagImpPar/F");
+      theTreeNew->Branch("softbdisc", &softbdisc, "softbdisc/F");
+      theTreeNew->Branch("hardbdisc", &hardbdisc, "hardbdisc/F");
       theTreeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
@@ -660,11 +660,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       i_promptDecay = (promptDecay) ? 1 : 0;
       i_hlt = (hlt) ? 1 : 0;
 
-      zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
-      bveto_ip = (bTagTrackCount<2.1) ? 1 : 0;
-      bveto_mu = (nSoftMu==0) ? 1 : 0;
-      bveto = (bveto_ip && bveto_mu) ? 1 : 0;
-
       pfmetX = pfmetV->Px();
       pfmetY = pfmetV->Py();
 
@@ -672,6 +667,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       if(lh[0]!=-999 && lh[1]==-999) ellh = lh[0]; // emu
       if(lh[0]==-999 && lh[1]!=-999) ellh = lh[1]; // mue
       if(lh[0]==-999 && lh[1]==-999) ellh = -999; // mumu
+
+      zveto = bveto_ip = bveto_mu = bveto = -999;
 
       if (finalLeptons) {
         TVector3 TV_L1( pxL1, pyL1, pzL1 );
@@ -686,6 +683,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 	float l2eta = TV_L2.Eta();
 	float l1pt  = TV_L1.Pt();
 	float l2pt  = TV_L2.Pt();
+
+        zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
+        bveto_ip = ((TV_jet1.Pt()<30 && softbdisc<=2.1) ||
+                    (TV_jet1.Pt()>=30 && hardbdisc<=1.05)) ? 1 : 0;
+        bveto_mu = (nSoftMu==0) ? 1 : 0;
+        bveto = (bveto_ip && bveto_mu) ? 1 : 0;
 
         dphilmet1 = fabs(pfmetV->DeltaPhi(TV_L1));
         dphilmet2 = fabs(pfmetV->DeltaPhi(TV_L2));
