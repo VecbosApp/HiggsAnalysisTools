@@ -2878,7 +2878,7 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     float rawpt = GetPt(uncorrpxAK5PFPUcorrJet[j],uncorrpyAK5PFPUcorrJet[j]);
     if(rawpt < 10.0) continue;
 
-    //    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
+    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
