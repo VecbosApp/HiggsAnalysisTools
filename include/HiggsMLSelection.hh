@@ -20,6 +20,7 @@
 #include "HiggsAnalysisTools/include/RedTriggerTree.hh"
 #include "HiggsAnalysisTools/include/RedEleIDTree.h"
 #include "HiggsAnalysisTools/include/kFactorEvaluator.hh"
+#include "HiggsAnalysisTools/include/GetDYMVA.h"
 #include <TVector3.h>
 #include <TLorentzVector.h>
 
@@ -133,6 +134,8 @@ private:
   //! for jetId studies
   double ErrEt( double Et, double Eta);
   bool isLooseJetMva(float pt, float eta, float id);
+  //! compute the DY MVA
+  double getDYMVA(int channel);
 
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
@@ -200,6 +203,9 @@ private:
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
   float m_softbdisc[4], m_hardbdisc[4];
+  int njets[4], nuncorrjets[4];
+  float m_dymva[4];
+  int m_goodvertices;
 
   // for jetId studies
   bool wantJetIdStuff;
@@ -277,6 +283,9 @@ private:
 
   //! DY generator level quantities
   float _genmll, _genptll, _genyll;
+
+  // DY MVA
+  GetDYMVA *m_dymvaAlgo;
   
 };
 #endif

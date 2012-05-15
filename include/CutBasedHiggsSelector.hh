@@ -53,6 +53,7 @@ public:
   void SetMet(float met)                 { m_met           = met;}
   void SetProjectedMet(float projmet)    { m_projectedMet  = projmet;}
   void SetMetOverPtLL(float metopt)      { m_metOverPtLL   = metopt;}
+  void SetDYMVA(float dymva)             { m_dymva         = dymva; }
   void SetDeltaPhiLLJet(float deltaphiLLJet) { m_deltaPhiLLJet = deltaphiLLJet; }
   void SetDeltaPhi(float deltaPhi)       { m_deltaPhi      = deltaPhi;}
   void SetDetaLeptons(float deltaEta)    { m_detaLeptons   = deltaEta;}
@@ -121,7 +122,7 @@ private:
   bool m_passedUncorrJetVeto;
   int m_nJets, m_nUncorrJets, m_nSoftMuons, m_nExtraLeptons;
   float m_btagJets;
-  float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons, m_metOverPtLL, m_deltaPhiLLJet;
+  float m_met, m_projectedMet, m_deltaPhi, m_detaLeptons, m_metOverPtLL, m_deltaPhiLLJet, m_dymva;
   float m_maxPtElectron, m_minPtElectron, m_WWInvMass, m_ptll;
   float m_extraSlowLeptonPTMin;
   int m_nVtx;

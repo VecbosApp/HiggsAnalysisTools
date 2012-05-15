@@ -133,6 +133,9 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
                    "elebdtweights/Subdet2HighPt_WithIPInfo_BDTG.weights.xml" ,                
                    ElectronIDMVA::kWithIPInfo);
 
+  // configuring the DYMVA
+  m_dymvaAlgo = new GetDYMVA(1);
+
   // Reading GoodRUN LS
   std::cout << "[GoodRunLS]::goodRunLS is " << _selectionEE->getSwitch("goodRunLS") << " isData is " <<  _selectionEE->getSwitch("isData") << std::endl;
 
@@ -662,6 +665,7 @@ void HiggsMLSelection::Loop() {
     for(int v=0;v<nPV;++v) {
       if(goodPV(v)) nGoodPV++;
     }
+    m_goodvertices = nGoodPV;
 
     // -------------------------------------------------------------
     
@@ -832,7 +836,6 @@ void HiggsMLSelection::Loop() {
     // look for PV in the event (there is always at least 1 PV)
     // m_closestPV = getPV();    // fixme: si chiama closest ma e' quello a piu' alto pT. 
     
-    int njets[4], nuncorrjets[4];
     float dphiLLJ[4];
     float btag[4];
     int nsoftmu[4], nsoftmunojets[4], nextraleptons[4];
@@ -889,6 +892,9 @@ void HiggsMLSelection::Loop() {
       // extra lepton counter
       nextraleptons[ichan] = numExtraLeptons(eleCands[ichan],muCands[ichan]);
       
+      // DY MVA
+      m_dymva[ichan] = getDYMVA(ichan);
+
       // calculate the smeared MET/MT // activate only when doing systematics, otherwise very slow
 //       JESPfMet(eleCands[ichan],muCands[ichan]);
 //       jesMtUp[ichan] = (transvMassJES(ichan)).first;
@@ -956,6 +962,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEE.SetProjectedMet(m_projectedMet[ee]);
     CutBasedHiggsSelectionEE.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionEE.SetMetOverPtLL(m_metOptll[ee]);
+    CutBasedHiggsSelectionEE.SetDYMVA(m_dymva[ee]);
     CutBasedHiggsSelectionEE.SetDeltaPhiLLJet(dphiLLJ[ee]);   
     CutBasedHiggsSelectionEE.SetDeltaPhi(m_deltaPhi[ee]);
     CutBasedHiggsSelectionEE.SetInvMass(m_mll[ee]);
@@ -1115,6 +1122,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionMM.SetProjectedMet(m_projectedMet[mm]);
     CutBasedHiggsSelectionMM.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionMM.SetMetOverPtLL(m_metOptll[mm]);
+    CutBasedHiggsSelectionMM.SetDYMVA(m_dymva[mm]);
     CutBasedHiggsSelectionMM.SetDeltaPhiLLJet(dphiLLJ[mm]);   
     CutBasedHiggsSelectionMM.SetDeltaPhi(m_deltaPhi[mm]);
     CutBasedHiggsSelectionMM.SetInvMass(m_mll[mm]);
@@ -1274,6 +1282,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionEM.SetProjectedMet(m_projectedMet[em]);
     CutBasedHiggsSelectionEM.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionEM.SetMetOverPtLL(m_metOptll[em]);
+    CutBasedHiggsSelectionEM.SetDYMVA(m_dymva[em]);
     CutBasedHiggsSelectionEM.SetDeltaPhiLLJet(dphiLLJ[em]);  
     CutBasedHiggsSelectionEM.SetDeltaPhi(m_deltaPhi[em]);
     CutBasedHiggsSelectionEM.SetInvMass(m_mll[em]);
@@ -1430,6 +1439,7 @@ void HiggsMLSelection::Loop() {
     CutBasedHiggsSelectionME.SetProjectedMet(m_projectedMet[me]);
     CutBasedHiggsSelectionME.SetNvtx(nGoodPV);
     CutBasedHiggsSelectionME.SetMetOverPtLL(m_metOptll[me]);
+    CutBasedHiggsSelectionME.SetDYMVA(m_dymva[me]);
     CutBasedHiggsSelectionME.SetDeltaPhiLLJet(dphiLLJ[me]);   
     CutBasedHiggsSelectionME.SetDeltaPhi(m_deltaPhi[me]);
     CutBasedHiggsSelectionME.SetInvMass(m_mll[me]);
@@ -2878,7 +2888,7 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     float rawpt = GetPt(uncorrpxAK5PFPUcorrJet[j],uncorrpyAK5PFPUcorrJet[j]);
     if(rawpt < 10.0) continue;
 
-    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
+    //    if(weightedDz1AK5PFPUcorrJet[j] >= 2) continue;
 
     // PF jet ID variables
     float neutralHadFrac = neutralHadronEnergyAK5PFPUcorrJet[j]/uncorrenergyAK5PFPUcorrJet[j];
@@ -2924,9 +2934,9 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
 
     float tmpTCHE = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];     
     float tmpJBP = jetBProbabilityBJetTagsAK5PFPUcorrJet[j];
-    if(tmpTCHE > maxTCHE) maxTCHE = tmpTCHE; 
-    // if(pt<=30 && tmpTCHE > maxTCHE) maxTCHE = tmpTCHE;
-    // if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
+    // if(tmpTCHE > maxTCHE) maxTCHE = tmpTCHE; 
+    if(pt<=30 && tmpTCHE > maxTCHE) maxTCHE = tmpTCHE;
+    if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
 
     if(j != theLeadingJet[theChannel] && tmpTCHE > outputSubLeadJets) outputSubLeadJets = tmpTCHE;
     if(tmpTCHE>1.6) m_numbtagjets[theChannel]++;
@@ -2939,10 +2949,9 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
   float ptleadjet = GetPt(pxAK5PFPUcorrJet[lj],pyAK5PFPUcorrJet[lj]);
 
   // hardcode the cuts
-  float bitval = 0;
-  if(maxTCHE<=2.1) bitval=1.;
-//   if(ptleadjet<30 && maxTCHE<=2.1) bitval=1.;
-//   if(ptleadjet>=30 && maxJetBProb<=1.05) bitval=1.;
+  float bitval = 1;
+  if(maxTCHE>=2.1) bitval=0.;
+  if(maxJetBProb>=1.05) bitval=0.;
   
   m_softbdisc[theChannel]=maxTCHE;
   m_hardbdisc[theChannel]=maxJetBProb;
@@ -3666,3 +3675,27 @@ bool HiggsMLSelection::isLooseJetMva(float pt, float eta, float id) {
   return isOk;
 }
 
+double HiggsMLSelection::getDYMVA(int channel) {
+  TVector3 ll = m_dilepPt[channel];
+
+  int nj = njets[channel];
+  double pmet = m_projectedPFMet[channel];
+  double pTrackMet = m_projectedTkMet[channel];
+  int nvtx = m_goodvertices;
+  double dilpt = m_dilepPt[channel].Pt();
+  
+  int theLJ  = theLeadingJet[channel];
+  TVector3 p3LJet(pxAK5PFPUcorrJet[theLJ],pyAK5PFPUcorrJet[theLJ],pzAK5PFPUcorrJet[theLJ]);
+  double ptjet1 = std::max(15.,p3LJet.Pt());
+
+  double metSig = mEtSigPFMet[0];
+  double dPhiDiLepJet1 = (ptjet1<15.) ? -0.1 : fabs(ll.DeltaPhi(p3LJet));
+  double dPhiJet1MET =   (ptjet1<15.) ? -0.1 : fabs(m_p3PFMET->DeltaPhi(p3LJet));
+  double dPhiDiLepMET =  fabs(ll.DeltaPhi(*m_p3PFMET));
+  double recoil = (ll+(*m_p3PFMET)).Pt();
+  double mt = m_transvMass[channel];
+
+  //  std::cout << "EVENT = " << eventNumber << std::endl;
+  return m_dymvaAlgo->getValue(nj, pmet, pTrackMet, nvtx, dilpt, ptjet1, metSig,
+                               dPhiDiLepJet1, dPhiDiLepMET, dPhiJet1MET, recoil, mt);
+}
