@@ -10,8 +10,10 @@ muTrackerIso            -10000          10000
 muHcalIso               -10000          10000
 muEcalIso               -10000          10000
 looseMET                20              10000
-tightMET                20              10000
-projectedMET            -100              10000
+tightMET                -100            10000
+dymva0j                 -10             10
+dymva1j                 -10             10
+projectedMET            20              10000
 metOverPtLL             0.6             10000
 mll                     12              10000
 mllZPeak                0               10000
