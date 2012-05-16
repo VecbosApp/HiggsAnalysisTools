@@ -624,7 +624,7 @@ void Higgs::isMuonID2012(int muonIndex, bool *muonIdOutput) {
   if(anaUtils.muonIdVal(muonIdMuon[muonIndex],AllGlobalMuons)) {
     int globalMuonTrack = combinedTrackIndexMuon[muonIndex];
     if(trackNormalizedChi2GlobalMuonTrack[globalMuonTrack] < 10 && 
-       trackValidHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
+       numberOfValidMuonHitsGlobalMuonTrack[globalMuonTrack] > 0 &&
        numberOfMatchesMuon[muonIndex] > 1 ) flagGlobalMu = true; // to be used when new trees are available
   }
 
