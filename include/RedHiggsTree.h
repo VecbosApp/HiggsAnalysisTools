@@ -20,7 +20,7 @@ public:
   //! add infos for jetId studies
   void addJetsVars();
   //! add the electron ID+iso variables for the selected best electrons
-  void addElectronInfos();
+  void addLeptonInfos();
   //! add the CSA07 processID and weight block
   void addCSA07Infos();
   //! add the k-Factor (used for signal only)
@@ -64,7 +64,7 @@ public:
                       float pxSecJet[3], float pySecJet[3], float pzSecJet[3],
                       float pxL1, float pyL1, float pzL1,
                       float pxL2, float pyL2, float pzL2,
-                      int ch[2], float lh[2], float iso[2], int majority[2], float bdt[2],
+                      int ch[2],
                       TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet);
   
   void fillSystematics(float scE[2], float r9[2], float ene1, float ene2, int ty1, int ty2,
@@ -86,11 +86,9 @@ public:
   //! fill infos for jetId studies
   void fillJetsVars(float ljpt, float ljeta, int ljpfid, int ljmatch, float ljmva, int ljl, float sljpt, float sljeta, int sljpfid, int sljmatch, float sljmva, int sljl);
 
-  //! fill electron ID variables
-  void fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
-                     int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
-                     float trackerIso[2], float hcalIso[2], float ecalJIso[2], float ecalGTIso[2], float combinedIso[2], int charge[2],
-                     int missHits[2], float dist[2], float dcot[2], float lh[2], int matched[2]);
+  //! fill lepton ID variables
+  void fillLeptons(float pt[2], float eta[2], float phi[2],
+                   float lepid[2], float lepiso[2], float lepconv[2]);
   //! fill the CSA07 processID and weight and lumi (in pb-1)
   void fillCSA07(double weight, double processId, float lumi=1000.);
   //! fill with the k-Factor (used for signal only)
@@ -107,7 +105,7 @@ public:
   void fillLatinos(bool s0, bool s1, bool s2, bool s3, bool s4, bool s5, bool s6, bool s7, bool s8, bool s9, bool s10, bool s11, bool s12, bool s13, bool s14, bool s15, bool s16, bool s17,
                    bool s18, bool s19, bool s20, bool s21, bool s22, bool s23, bool s24, bool s25, bool s26);
   //! met studies
-  void fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float rho, float rhojet );
+  void fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float DYMVA, float rho, float rhojet );
   //! PDFs
   void fillPDFs(double cteq66[45], double mstw[31], double nnpdf[101]);
 
@@ -173,7 +171,7 @@ private:
   float myEneL1, myEneL2;
   int myTypeL1, myTypeL2;
 
-  float myMTR, myMR, myGammaMR;
+  float myMTR, myMR, myGammaMR, myDYMVA;
   float myRho, myRhoJet;
 
   float myProjPFMet, myProjPFChargedMet;
@@ -202,18 +200,9 @@ private:
   // latinos
   bool mySteps[27];
 
-  // electron variables
-  int myRecoflag[2];
+  // lepton variables
   float myPt[2], myEta[2], myPhi[2];
-  int myClassification[2], myNBremClusters[2];
-  float myDeta[2], myDphi[2], myHoe[2], mySee[2], mySpp[2], myEop[2], myFbrem[2];
-  float myTrackerIso[2], myHcalIso[2], myEcalJIso[2], myEcalGTIso[2], myCombinedIso[2];
-  int myCharge[2];
-  int myMissHits[2];
-  float myDist[2], myDcot[2];
-  float myLh[2];
-  float myScEnergy[2], myR9[2];
-  int myMatched[2], myMajority[2];
+  float myLepId[2], myLepIso[2], myLepConv[2];
   TVector3 *myMetFromJets, *myPfMetUp, *myPfMetDown;
   float myMtUp, myMtDown;
 
@@ -225,7 +214,7 @@ private:
 
   // lepton variables
   int myLepCharge[2];
-  float myIso[2], myEleLh[2], myEleBdt[2];
+  float myScEnergy[2], myR9[2];
 
   TFile* myFile;
   TTree* myTree;

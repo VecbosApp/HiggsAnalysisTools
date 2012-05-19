@@ -101,8 +101,8 @@ private:
   float getkFactor(std::string process);
   //! get the generator level quantities for DY->ll (ee/mumu only)
   void getDYGeneratorKinematics(int lepType);
-  //! set the electron ID variables to dump
-  void setEleIdVariables(int hard, int slow);
+  //! set the electron/muon ID variables to dump
+  void setLepIdVariables(int hard, int slow, int hardpdgid, int slowpdgid);
   //! search for the hardest lepton vertex
   int getPV();
   //! dxy parameter with respect to PV for electron tracks
@@ -250,17 +250,9 @@ private:
   RedEleIDTree *myEleIdTree;
   
   //! variables for EleID
-  int myRecoflag[2];
   float myPt[2], myEta[2], myPhi[2];
-  int myClassification[2], myNBremClusters[2];
-  float myDeta[2], myDphi[2], myHoe[2], mySee[2], mySpp[2], myEop[2], myFbrem[2];
-  float myTrackerIso[2], myHcalIso[2], myEcalJIso[2], myEcalGTIso[2], myCombinedIso[2];
+  float myLepId[2], myLepIso[2], myConv[2];
   float myR9[2], mySCEnergy[2];
-  int myCharge[2];
-  int myMissHits[2];
-  float myDist[2], myDcot[2];
-  float myLh[2];
-  int myMatched[2];
 
   //! new variables
   float m_eOverP[100];

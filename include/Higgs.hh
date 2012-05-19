@@ -84,6 +84,8 @@ public:
   void isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
   //! returns the output of the custom cut electron ID with WPXX && deominator selection
   void isEleIDAndDenom(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput, CutBasedEleIDSelector *thisCutBasedID, bool applyBDTIdNotCutbased=false);
+  //! returns the value of corrected PF isolation
+  float corrEleIso2012(int eleIndex);
   //! returns the output of the custom cut electron ID with WPXX
   void isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput);
   //! returns the output of the custom cut electron ID with WPXX && deominator selection

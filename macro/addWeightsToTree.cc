@@ -32,7 +32,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   fileOrig = TFile::Open(filename);
   if( fileOrig ) {
     fileOrig->cd();
-    treeOrig = (TTree*)fileOrig->Get("T1");
+    treeOrig = (TTree*)fileOrig->Get("latino");
   } else {
     cout << "File " << filename << " not existing !" << endl;
     return;
@@ -114,15 +114,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Bool_t          hlt;
     Float_t         KFactor;
     Bool_t          promptDecay;
-    // Float_t         maxPtLh;
-    // Float_t         minPtLh;
     Int_t           njets;
     Int_t           nuncorrjets;
     Int_t           nVtx;
     Float_t         dxyEVT;
     Float_t         dszEVT;
-    Float_t         softbdisc;
-    Float_t         hardbdisc;
+    Float_t         softtche;
+    Float_t         hardbjpb;
     Float_t         bTagSecVertex;
     Float_t         leadingJetBTagTrackCount;
     Float_t         subleadingJetBTagTrackCount;
@@ -136,15 +134,18 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         scEnergy[2];
     Float_t         R9[2];
     Int_t           matched[2];
-    Float_t         pxTkMet;
-    Float_t         pyTkMet;
-    Float_t         pzTkMet;
+    Float_t         pxChMet;
+    Float_t         pyChMet;
+    Float_t         pzChMet;
+    Float_t         dymva1;
     Float_t         pxLeadJet[3];
     Float_t         pyLeadJet[3];
     Float_t         pzLeadJet[3];
     Float_t         pxSecondJet[3];
     Float_t         pySecondJet[3];
     Float_t         pzSecondJet[3];
+    Float_t         jetmva1, jetmva2;
+    Int_t           jetid1, jetid2;
     Float_t         pxL1;
     Float_t         pyL1;
     Float_t         pzL1;
@@ -166,8 +167,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     // lepton quantities (independent from lepton flavor)
     // 0 leading, 1 is trailing
     Int_t           ch[2];
-    Float_t         lh[2];
-    Float_t         iso[2];
+    Float_t         lepiso[2];
 
     TLorentzVector *sumJetsV4 = 0;
     TLorentzVector *uncorrSumJetsV4 = 0;
@@ -250,14 +250,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("npu", npu);
     treeOrig->SetBranchAddress("KFactor", &KFactor);
     treeOrig->SetBranchAddress("promptDecay", &promptDecay);
-    // treeOrig->SetBranchAddress("maxPtLh", &maxPtLh);
-    // treeOrig->SetBranchAddress("minPtLh", &minPtLh);
     treeOrig->SetBranchAddress("njets", &njets);
     treeOrig->SetBranchAddress("nuncorrjets", &nuncorrjets);
     treeOrig->SetBranchAddress("dxyEVT", &dxyEVT);
     treeOrig->SetBranchAddress("dszEVT", &dszEVT);
-    treeOrig->SetBranchAddress("softbdisc", &softbdisc);
-    treeOrig->SetBranchAddress("hardbdisc", &hardbdisc);
+    treeOrig->SetBranchAddress("softtche", &softtche);
+    treeOrig->SetBranchAddress("hardbjpb", &hardbjpb);
     treeOrig->SetBranchAddress("bTagSecVertex", &bTagSecVertex);
     treeOrig->SetBranchAddress("leadingJetBTagTrackCount", &leadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount);
@@ -271,15 +269,20 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("scEnergy", scEnergy);
     treeOrig->SetBranchAddress("R9", R9);
     treeOrig->SetBranchAddress("matched", matched);
-    treeOrig->SetBranchAddress("pxTkMet", &pxTkMet);
-    treeOrig->SetBranchAddress("pyTkMet", &pyTkMet);
-    treeOrig->SetBranchAddress("pzTkMet", &pzTkMet);
+    treeOrig->SetBranchAddress("pxChMet", &pxChMet);
+    treeOrig->SetBranchAddress("pyChMet", &pyChMet);
+    treeOrig->SetBranchAddress("pzChMet", &pzChMet); 
+    treeOrig->SetBranchAddress("dymva1", &dymva1);
     treeOrig->SetBranchAddress("pxLeadJet", pxLeadJet);
     treeOrig->SetBranchAddress("pyLeadJet", pyLeadJet);
     treeOrig->SetBranchAddress("pzLeadJet", pzLeadJet);
     treeOrig->SetBranchAddress("pxSecondJet", pxSecondJet);
     treeOrig->SetBranchAddress("pySecondJet", pySecondJet);
     treeOrig->SetBranchAddress("pzSecondJet", pzSecondJet);
+    treeOrig->SetBranchAddress("jetmva1", &jetmva1);
+    treeOrig->SetBranchAddress("jetmva2", &jetmva2);
+    treeOrig->SetBranchAddress("jetid1", &jetid1);
+    treeOrig->SetBranchAddress("jetid2", &jetid2);
     treeOrig->SetBranchAddress("pxL1", &pxL1);
     treeOrig->SetBranchAddress("pyL1", &pyL1);
     treeOrig->SetBranchAddress("pzL1", &pzL1);
@@ -302,8 +305,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("uncorrSumJetsV4", &uncorrSumJetsV4);
     treeOrig->SetBranchAddress("pfmetV", &pfmetV);
     treeOrig->SetBranchAddress("ch", ch);
-    treeOrig->SetBranchAddress("lh", lh);
-    treeOrig->SetBranchAddress("iso", iso);
+    treeOrig->SetBranchAddress("lepiso", lepiso);
     treeOrig->SetBranchAddress("signPFMet", &signPFMet);
     treeOrig->SetBranchAddress("signPFChargedMet", &signPFChargedMet);
     treeOrig->SetBranchAddress("mtrchargedMet", &mtrchargedMet);
@@ -353,21 +355,17 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t scEnergy_1, scEnergy_2;
     Int_t   matched_1,  matched_2;
 
-    Float_t ellh;
-
     // convert the booleans into integers (to insert in RooDataset)
-    Int_t         i_finalLeptons;
     Int_t         i_jetVeto;
     Int_t         i_uncorrJetVeto;
     Int_t         i_preDeltaPhi;
     Int_t         i_finalSelection;
     Int_t         i_promptDecay;
-    Int_t         i_WWSel;
+    Int_t         i_WWSel0j;
     Int_t         i_WWSel1j;
     Int_t         i_hlt;
 
     // other kinematics
-    float deltaPhi_LL;    
     float deltaPhi_LL_MET;
     float deltaPhi_LLJ1_MET;
     float deltaPhi_LL_JET1;
@@ -378,11 +376,11 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float dphilmet1, dphilmet2;
     float jetpt1, jeteta1, jetphi1;
     float jetpt2, jeteta2, jetphi2;
-    float tkMET;
+    float chmet;
     float pmet, pmet2;
     float L1eta, L1phi;
     float L2eta, L2phi;
-    float dileptonPt, dileptonEta;
+    float dileptonPt;
     float mtw1, mtw2;
     float R, R2;
     float dgammamr;
@@ -393,13 +391,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     
     // variables to be converted in float...
     float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
-      f_zveto, f_bveto_ip, f_bveto_mu, f_bveto, f_dphiveto, f_typeL1, f_typeL2, 
+      f_zveto, f_bveto_ip, f_bveto_mu, f_bveto_munj, f_bveto, f_dphiveto, f_typeL1, f_typeL2, 
       f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav, f_nsoftbjet, f_nsoftjet;
     float f_ch[2];
     
       
     // vetoes
-    int zveto, bveto_ip, bveto_mu, bveto;
+    int zveto, bveto_ip, bveto_mu, bveto_munj, bveto;
 
     // additional (dummy for the moment)
     Float_t effW   = 1.0;   
@@ -435,7 +433,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("effBW", &effBW, "effBW/F");
       theTreeNew->Branch("triggW", &triggW, "triggW/F");
       theTreeNew->Branch("pfmet", &pfMet, "pfmet/F");
-      theTreeNew->Branch("chmet", &tkMET, "chmet/F");  
+      theTreeNew->Branch("chmet", &chmet, "chmet/F");  
+      theTreeNew->Branch("dymva1", &dymva1, "dymva1/F");
       theTreeNew->Branch("trigger", &f_hlt, "trigger/F");
       theTreeNew->Branch("caloMet", &caloMet, "caloMet/F");
       theTreeNew->Branch("ppfmet", &pmet, "ppfmet/F");
@@ -457,23 +456,20 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("phi2", &L2phi, "phi2/F");
       theTreeNew->Branch("detaLeptons", &detaLeptons, "detaLeptons/F");
       theTreeNew->Branch("nvtx", &f_nVtx, "nvtx/F");
-      theTreeNew->Branch("finalLeptons", &i_finalLeptons, "finalLeptons/I");
       theTreeNew->Branch("jetVeto", &i_jetVeto, "jetVeto/I");
       theTreeNew->Branch("uncorrJetVeto", &i_uncorrJetVeto, "uncorrJetVeto/I");
       theTreeNew->Branch("preDeltaPhi", &i_preDeltaPhi, "preDeltaPhi/I");
       theTreeNew->Branch("finalSelection", &i_finalSelection, "finalSelection/I");
-      theTreeNew->Branch("WWSel", &i_WWSel, "WWSel/I");
+      theTreeNew->Branch("WWSel0j", &i_WWSel0j, "WWSel0j/I");
       theTreeNew->Branch("WWSel1j", &i_WWSel1j, "WWSel1j/I");
       theTreeNew->Branch("kfW", &KFactor, "kfW/F");
       theTreeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
-      // theTreeNew->Branch("maxPtLh", &maxPtLh, "maxPtLh/F");
-      // theTreeNew->Branch("minPtLh", &minPtLh, "minPtLh/F");
       theTreeNew->Branch("njet", &f_njets, "njet/F");
       theTreeNew->Branch("nuncorrjets", &f_nuncorrjets, "nuncorrjets/F");
       theTreeNew->Branch("dxyEVT", &dxyEVT, "dxyEVT/F");
       theTreeNew->Branch("dszEVT", &dszEVT, "dszEVT/F");
-      theTreeNew->Branch("softbdisc", &softbdisc, "softbdisc/F");
-      theTreeNew->Branch("hardbdisc", &hardbdisc, "hardbdisc/F");
+      theTreeNew->Branch("softtche", &softtche, "softtche/F");
+      theTreeNew->Branch("hardbjpb", &hardbjpb, "hardbjpb/F");
       theTreeNew->Branch("bTagSecVertex", &bTagSecVertex, "bTagSecVertex/F");
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
@@ -482,6 +478,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("zveto", &f_zveto, "zveto/F");
       theTreeNew->Branch("bveto_ip", &f_bveto_ip, "bveto_ip/F");
       theTreeNew->Branch("bveto_mu", &f_bveto_mu, "bveto_mu/F");
+      theTreeNew->Branch("bveto_munj", &f_bveto_munj, "bveto_munj/F");
       theTreeNew->Branch("bveto", &f_bveto, "bveto/F");
       theTreeNew->Branch("dphiveto", &f_dphiveto, "dphiveto/F");
       theTreeNew->Branch("mtr", &mtr, "mtr/F");
@@ -510,15 +507,19 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("R92_eleid", &R9_2, "R92_eleid/F");
       theTreeNew->Branch("scEnergy2_eleid", &scEnergy_2, "scEnergy2_eleid/F");
       theTreeNew->Branch("matched2_eleid", &matched_2, "matched2_eleid/I");
-      theTreeNew->Branch("pxTkMet", &pxTkMet, "pxTkMet/F");
-      theTreeNew->Branch("pyTkMet", &pyTkMet, "pyTkMet/F");
-      theTreeNew->Branch("pzTkMet", &pzTkMet, "pzTkMet/F");
+      theTreeNew->Branch("pxChMet", &pxChMet, "pxChMet/F");
+      theTreeNew->Branch("pyChMet", &pyChMet, "pyChMet/F");
+      theTreeNew->Branch("pzChMet", &pzChMet, "pzChMet/F");
       theTreeNew->Branch("pxLeadJet", pxLeadJet, "pxLeadJet[3]/F");
       theTreeNew->Branch("pyLeadJet", pyLeadJet, "pyLeadJet[3]/F");
       theTreeNew->Branch("pzLeadJet", pzLeadJet, "pzLeadJet[3]/F");
       theTreeNew->Branch("pxSecondJet", pxSecondJet, "pxSecondJet[3]/F");
       theTreeNew->Branch("pySecondJet", pySecondJet, "pySecondJet[3]/F");
       theTreeNew->Branch("pzSecondJet", pzSecondJet, "pzSecondJet[3]/F");
+      theTreeNew->Branch("jetmva1", &jetmva1, "jetmva1/F");
+      theTreeNew->Branch("jetmva2", &jetmva2, "jetmva2/F");
+      theTreeNew->Branch("jetid1", &jetid1, "jetid1/I");
+      theTreeNew->Branch("jetid2", &jetid2, "jetid2/I");
       theTreeNew->Branch("pxL1", &pxL1, "pxL1/F");
       theTreeNew->Branch("pyL1", &pyL1, "pyL1/F");
       theTreeNew->Branch("pzL1", &pzL1, "pzL1/F");
@@ -531,8 +532,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("typeL2", &f_typeL2, "typeL2/F");
       theTreeNew->Branch("dphilmet1", &dphilmet1, "dphilmet1/F");
       theTreeNew->Branch("dphilmet2", &dphilmet2, "dphilmet2/F");
-      theTreeNew->Branch("deltaPhi_LL", &deltaPhi_LL, "deltaPhi_LL/F");
-      theTreeNew->Branch("deltaPhi_LL_MET", &deltaPhi_LL_MET, "deltaPhi_LL_MET/F");
+      theTreeNew->Branch("dphillmet", &deltaPhi_LL_MET, "dphillmet/F");
       theTreeNew->Branch("deltaPhi_LLJ1_MET", &deltaPhi_LLJ1_MET, "deltaPhi_LLJ1_MET/F");
       theTreeNew->Branch("dphilljet", &deltaPhi_LL_JET1, "dphilljet/F");
       theTreeNew->Branch("dphilljet2", &deltaPhi_LL_JET2, "dphilljet2/F");
@@ -558,14 +558,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("pfmetY", &pfmetY, "pfmetY/F");
       theTreeNew->Branch("ch1", &(f_ch[0]), "ch1/F");
       theTreeNew->Branch("ch2", &(f_ch[1]), "ch2/F");
-      theTreeNew->Branch("iso1", &(iso[0]), "iso1/F");
-      theTreeNew->Branch("iso2", &(iso[1]), "iso2/F");
-
-      theTreeNew->Branch("lh1", &(lh[0]), "lh1/F");
-      theTreeNew->Branch("lh2", &(lh[1]), "lh2/F");
-      // likelihood of the electron (or worst likelihood  if 2 electrons in the elel)
-      theTreeNew->Branch("ellh", &ellh, "ellh/F");
-
+      theTreeNew->Branch("iso1", &(lepiso[0]), "iso1/F");
+      theTreeNew->Branch("iso2", &(lepiso[1]), "iso2/F");
       theTreeNew->Branch("jetcat", &jetcat,  "jetcat/F");
 
       theTreeNew->Branch("consecevent", &consecevent, "consecevent/F");
@@ -652,7 +646,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       //         bTagImpPar>=-1001 && bTagImpPar<=2 &&
       //         finalSelection) {
       
-      i_finalLeptons = (finalLeptons) ? 1 : 0;
       i_jetVeto = (jetVeto) ? 1 : 0;
       i_uncorrJetVeto = (uncorrJetVeto) ? 1 : 0;
       i_preDeltaPhi = (preDeltaPhi) ? 1 : 0;
@@ -663,190 +656,166 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       pfmetX = pfmetV->Px();
       pfmetY = pfmetV->Py();
 
-      if(lh[0]!=-999 && lh[1]!=-999) ellh = TMath::Min(lh[0],lh[1]); // ee
-      if(lh[0]!=-999 && lh[1]==-999) ellh = lh[0]; // emu
-      if(lh[0]==-999 && lh[1]!=-999) ellh = lh[1]; // mue
-      if(lh[0]==-999 && lh[1]==-999) ellh = -999; // mumu
+      zveto = bveto_ip = bveto_mu = bveto_munj = bveto = -999;
 
-      zveto = bveto_ip = bveto_mu = bveto = -999;
+      TVector3 TV_L1( pxL1, pyL1, pzL1 );
+      TVector3 TV_L2( pxL2, pyL2, pzL2 );
+      TVector3 TV_L1p2 = TV_L1 + TV_L2;
+      TVector3 TV_chmet( pxChMet, pyChMet, pzChMet );
+      TVector3 TV_jet1( pxLeadJet[0], pyLeadJet[0], pzLeadJet[0] );
+      TVector3 TV_jet2( pxSecondJet[0], pySecondJet[0], pzSecondJet[0] );
+      deltaPhi_LL_MET   = (180./3.14) * TV_chmet.DeltaPhi(TV_L1p2);
+      float l1eta = TV_L1.Eta();
+      float l2eta = TV_L2.Eta();
+      float l1pt  = TV_L1.Pt();
+      float l2pt  = TV_L2.Pt();
 
-      if (finalLeptons) {
-        TVector3 TV_L1( pxL1, pyL1, pzL1 );
-        TVector3 TV_L2( pxL2, pyL2, pzL2 );
-        TVector3 TV_L1p2 = TV_L1 + TV_L2;
-        TVector3 TV_tkmet( pxTkMet, pyTkMet, pzTkMet );
-        TVector3 TV_jet1( pxLeadJet[0], pyLeadJet[0], pzLeadJet[0] );
-        TVector3 TV_jet2( pxSecondJet[0], pySecondJet[0], pzSecondJet[0] );
-        deltaPhi_LL       = (180./3.14) * TV_L1.DeltaPhi(TV_L2);
-        deltaPhi_LL_MET   = (180./3.14) * TV_tkmet.DeltaPhi(TV_L1p2);
-	float l1eta = TV_L1.Eta();
-	float l2eta = TV_L2.Eta();
-	float l1pt  = TV_L1.Pt();
-	float l2pt  = TV_L2.Pt();
+      zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
+      bveto_ip = 1;
+      if(softtche>=2.1) bveto_ip = 0;
+      if(hardbjpb>=1.05) bveto_ip = 0;
+      bveto_mu = (nSoftMu==0) ? 1 : 0;
+      bveto = (bveto_ip && bveto_mu) ? 1 : 0;
+      bveto_munj = (nSoftMuNoJets==0) ? 1 : 0;
 
-        zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
-        bveto_ip = ((TV_jet1.Pt()<30 && softbdisc<=2.1) ||
-                    (TV_jet1.Pt()>=30 && hardbdisc<=1.05)) ? 1 : 0;
-        bveto_mu = (nSoftMu==0) ? 1 : 0;
-        bveto = (bveto_ip && bveto_mu) ? 1 : 0;
+      dphilmet1 = fabs(pfmetV->DeltaPhi(TV_L1));
+      dphilmet2 = fabs(pfmetV->DeltaPhi(TV_L2));
 
-        dphilmet1 = fabs(pfmetV->DeltaPhi(TV_L1));
-        dphilmet2 = fabs(pfmetV->DeltaPhi(TV_L2));
+      chmet = TV_chmet.Pt();    
+      pmet = GetProjectedMet(*pfmetV,TV_L1,TV_L2);
+      pmet2 = GetProjectedMet(TV_chmet,TV_L1,TV_L2);
 
-        tkMET = TV_tkmet.Pt();    
-        pmet = GetProjectedMet(*pfmetV,TV_L1,TV_L2);
-        pmet2 = GetProjectedMet(TV_tkmet,TV_L1,TV_L2);
-
-        mtw1 = calcMT(*pfmetV,TV_L1);
-        mtw2 = calcMT(*pfmetV,TV_L2);
+      mtw1 = calcMT(*pfmetV,TV_L1);
+      mtw2 = calcMT(*pfmetV,TV_L2);
         
-        iMet = projMet * cos(TV_tkmet.Angle(*pfmetV));
+      iMet = projMet * cos(TV_chmet.Angle(*pfmetV));
         
-        dphill = deltaPhi * TMath::Pi() / 180.;
+      dphill = deltaPhi * TMath::Pi() / 180.;
 
-	// PU weights
-	puAW = fPUWeight2011A->GetWeight(npu[1]); 
-	puBW = fPUWeight2011B->GetWeight(npu[1]); 
-	//puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
-        puW = fPUWeightFull2011->GetWeight(npu[1]);
+      // PU weights
+      puAW = fPUWeight2011A->GetWeight(npu[1]); 
+      puBW = fPUWeight2011B->GetWeight(npu[1]); 
+      //puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
+      puW = fPUWeightFull2011->GetWeight(npu[1]);
 
-	//  offline efficiency scale factors
-	Float_t eff1=1.; 
-	Float_t eff2=1.;
-        Float_t effA1, effA2, effB1, effB2;
-        effA1 = effA2 = effB1 = effB2 = 1.;
-	if (processId>0) { // MC => apply scale factors
-	  if (finalstate==0) {   // mm
-	    if (release==0) { 
-	      // cout << "finalstate==0" << endl;
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
-	    }
-	    else if (release==1) {
-	      effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);    
-	      effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);    
-	      effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);    
-	      effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);    
-              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
-              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
-	    }
-	  }
-	  else if (finalstate==1) { // ee
-	    // cout << "finalstate==1" << endl;
-	    if (release==0) { 
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
-	    } else if (release==1) {
-	      effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
-	      effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
-	      effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
-	      effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
-              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
-              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
-	    }
-	  } else if (finalstate==2) {  // em
-	    // cout << "finalstate==2" << endl;
-	    if (release==0) { 
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-	      eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
-	    } else if (release==1) {
-	      effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
-	      effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);
-	      effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
-	      effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);
-              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
-              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
-	    }
-	  } else if (finalstate==3) {  // me
-	    // cout << "finalstate==3" << endl;
-	    if (release==0) { 
-	      eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
+      //  offline efficiency scale factors
+      Float_t eff1=1.; 
+      Float_t eff2=1.;
+      Float_t effA1, effA2, effB1, effB2;
+      effA1 = effA2 = effB1 = effB2 = 1.;
+      if (processId>0) { // MC => apply scale factors
+        if (finalstate==0) {   // mm
+          if (release==0) { 
+            // cout << "finalstate==0" << endl;
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
+          }
+          else if (release==1) {
+            effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);    
+            effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);    
+            effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);    
+            effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);    
+            eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+            eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
+          }
+        }
+        else if (finalstate==1) { // ee
+          // cout << "finalstate==1" << endl;
+          if (release==0) { 
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+          } else if (release==1) {
+            effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
+            effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
+            effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
+            effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
+            eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+            eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
+          }
+        } else if (finalstate==2) {  // em
+          // cout << "finalstate==2" << endl;
+          if (release==0) { 
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
+          } else if (release==1) {
+            effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
+            effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);
+            effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
+            effB2 = getOfflineEff(l2pt, l2eta, histoSFmuons42B);
+            eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+            eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
+          }
+        } else if (finalstate==3) {  // me
+          // cout << "finalstate==3" << endl;
+          if (release==0) { 
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
 	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
-	    } else if (release==1) {
-	      effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);
-	      effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
-	      effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);
-	      effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
-              eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
-              eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
-	    }
-	  } 
-	  effW = eff1*eff2;
-	  effAW = effA1*effA2;
-	  effBW = effB1*effB2;
-	} else { // data
-	  effW = 1.;
-	  effAW = 1.;
-	  effBW = 1.;
-	}
+          } else if (release==1) {
+            effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);
+            effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
+            effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);
+            effB2 = getOfflineEff(l2pt, l2eta, histoSFele42B);
+            eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
+            eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
+          }
+        } 
+        effW = eff1*eff2;
+        effAW = effA1*effA2;
+        effBW = effB1*effB2;
+      } else { // data
+        effW = 1.;
+        effAW = 1.;
+        effBW = 1.;
+      }
 
-        jetpt1 = TV_jet1.Pt();
-        jeteta1 = TV_jet1.Eta();
-        jetphi1 = TV_jet1.Phi();
-        if(TV_jet1.Pt()>15) {
-          TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
-          deltaPhi_LLJ1_MET = (180./TMath::Pi()) * fabs(TV_tkmet.DeltaPhi(TV_L12pJ1));   
-          deltaPhi_MET_JET1 = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_tkmet));
-          deltaPhi_LL_JET1  = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_L1p2));
-        } else {
-          deltaPhi_LLJ1_MET = -1.;
-          deltaPhi_MET_JET1 = -1.;
-          deltaPhi_LL_JET1 = -1.;
-        }
+      jetpt1 = TV_jet1.Pt();
+      jeteta1 = TV_jet1.Eta();
+      jetphi1 = TV_jet1.Phi();
+      if(TV_jet1.Pt()>15) {
+        TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
+        deltaPhi_LLJ1_MET = (180./TMath::Pi()) * fabs(TV_chmet.DeltaPhi(TV_L12pJ1));   
+        deltaPhi_MET_JET1 = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_chmet));
+        deltaPhi_LL_JET1  = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_L1p2));
+      } else {
+        deltaPhi_LLJ1_MET = -1.;
+        deltaPhi_MET_JET1 = -1.;
+        deltaPhi_LL_JET1 = -1.;
+      }
 
-        jetpt2 = TV_jet2.Pt();
-        jeteta2 = TV_jet2.Eta();
-        jetphi2 = TV_jet2.Phi();
-        if(TV_jet2.Pt()>15) {
-          deltaPhi_MET_JET2 = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_tkmet));
-          deltaPhi_LL_JET2  = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_L1p2));
-        } else {
-          deltaPhi_MET_JET2 = -1.;
-          deltaPhi_LL_JET2 = -1.;
-        }
+      jetpt2 = TV_jet2.Pt();
+      jeteta2 = TV_jet2.Eta();
+      jetphi2 = TV_jet2.Phi();
+      if(TV_jet2.Pt()>15) {
+        deltaPhi_MET_JET2 = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_chmet));
+        deltaPhi_LL_JET2  = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_L1p2));
+      } else {
+        deltaPhi_MET_JET2 = -1.;
+        deltaPhi_LL_JET2 = -1.;
+      }
 
-        if(TV_jet1.Pt()>15 && TV_jet2.Pt()>15) {
-          TVector3 TV_J1p2  = TV_jet1 + TV_jet2;
-          deltaPhi_LL_JJ    = (180./3.14) * TV_L1p2.DeltaPhi(TV_J1p2);
-        } else {
-          deltaPhi_LL_JJ = -1.;
-        }
+      if(TV_jet1.Pt()>15 && TV_jet2.Pt()>15) {
+        TVector3 TV_J1p2  = TV_jet1 + TV_jet2;
+        deltaPhi_LL_JJ    = (180./3.14) * TV_L1p2.DeltaPhi(TV_J1p2);
+      } else {
+        deltaPhi_LL_JJ = -1.;
+      }
 
-        dileptonPt   = TV_L1p2.Pt();
-        dileptonEta = TV_L1p2.Eta();
-        L1eta = TV_L1.Eta();
-        L2eta = TV_L2.Eta();
-        L1phi = TV_L1.Phi();
-        L2phi = TV_L2.Phi();
+      dileptonPt   = TV_L1p2.Pt();
+      L1eta = TV_L1.Eta();
+      L2eta = TV_L2.Eta();
+      L1phi = TV_L1.Phi();
+      L2phi = TV_L2.Phi();
         
-        // replace 1 with the POWHEG -> FEWZ NNLO x-sec
-        if(processId==30 || processId==31 || processId==33 || processId==34) {
-          KFactor = DYNNLOWeight->GetWeight(genmll,genptll,genyll);
-        }
-
-      } else { 
-        L1eta = 100.;
-        L2eta = 100.;
-        L1phi = 100.;
-        L2phi = 100.;
-        deltaPhi_LL = -9999.;
-        deltaPhi_LL_MET = -9999.;
-        deltaPhi_LLJ1_MET = -9999.;
-        deltaPhi_LL_JET1 = -9999.;
-        deltaPhi_LL_JET2 = -9999.;
-        deltaPhi_MET_JET1 = -9999.;
-        deltaPhi_MET_JET2 = -9999.;
-	deltaPhi_LL_JJ = -9999.;	
-        jetpt1 = -9999.;
-        jetpt2 = -9999.;
-        dileptonPt = -9999.;
-      } 
+      // replace 1 with the POWHEG -> FEWZ NNLO x-sec
+      if(processId==30 || processId==31 || processId==33 || processId==34) {
+        KFactor = DYNNLOWeight->GetWeight(genmll,genptll,genyll);
+      }
       consecevent = (float)j;
       
       sameflav = (finalstate<2) ? 1. : 0;
 
-      i_WWSel = (step[14] && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
-      i_WWSel1j = (step[23] && njets==1 && dileptonPt>45 && ((minPtEle>10 && !sameflav) || (minPtEle>15 && sameflav)) && (eleInvMass>20 || !sameflav)) ? 1 : 0;
+      i_WWSel0j = (step[15] && njets==0) ? 1 : 0;
+      i_WWSel1j = (step[15] && njets==1) ? 1 : 0;
       
       // change the format of the integers -> float
       f_run = (float)run;
@@ -859,6 +828,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       f_zveto = (float)zveto;
       f_bveto_ip = (float)bveto_ip;
       f_bveto_mu = (float)bveto_mu;
+      f_bveto_munj = (float)bveto_munj;
       f_bveto = (float)bveto;
       f_dphiveto = (float) ((jetpt1>15 && deltaPhi_LL_JET1<165) || jetpt1<=15);
       f_typeL1 = (float)typeL1;
@@ -873,15 +843,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       f_finalstate = (float)finalstate;
       f_processId = (float)processId;
 
-      if(finalLeptons) {
-        if(processId < 100 || processId >= 1000 ) { // MC
+      if(processId < 100 || processId >= 1000 ) { // MC
+        treeNew->Fill();
+        if(i_WWSel0j || i_WWSel1j) treeNewSkim->Fill();
+      } else { // data: apply the trigger 
+        if(hlt) {
           treeNew->Fill();
-          if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
-        } else { // data: apply the trigger 
-          if(hlt) {
-            treeNew->Fill();
-	    if(i_WWSel || i_WWSel1j) treeNewSkim->Fill();
-          }
+          if(i_WWSel0j || i_WWSel1j) treeNewSkim->Fill();
         }
       }
       j++;

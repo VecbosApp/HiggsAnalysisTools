@@ -784,12 +784,7 @@ void Higgs::isEleID(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *con
   *convRejOutput = thisCutBasedID->outputNoClassConv();
 }
 
-
-void Higgs::isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput) {
-  
-  *eleIdOutput = *isolOutput = *convRejOutput = false;
-
-  float bdt = mvaidtrigEle[eleIndex];
+float Higgs::corrEleIso2012(int eleIndex) {
 
   float abseta=-100.;
   Utils anaUtils;
@@ -815,6 +810,42 @@ void Higgs::isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool 
   float iso = pfCandChargedIso04Ele[eleIndex];
   //  iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]-eff_area_nh*rhoJetsFastJet + pfCandPhotonIso04Ele[eleIndex]-eff_area_ga*rhoJetsFastJet);
   iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]+pfCandPhotonIso04Ele[eleIndex]-eff_area_ganh*rhoJetsFastJet);
+
+  return iso;
+
+}
+
+void Higgs::isEleID2012(int eleIndex, bool *eleIdOutput, bool *isolOutput, bool *convRejOutput) {
+  
+  *eleIdOutput = *isolOutput = *convRejOutput = false;
+
+  float bdt = mvaidtrigEle[eleIndex];
+
+  float abseta=-100.;
+  Utils anaUtils;
+  bool ecaldriven = anaUtils.electronRecoType(recoFlagsEle[eleIndex], isEcalDriven);
+  if(ecaldriven) {
+    int sc = superClusterIndexEle[eleIndex];
+    abseta=fabs(etaSC[sc]);
+  } else {
+    int sc = PFsuperClusterIndexEle[eleIndex];
+    abseta=fabs(etaPFSC[sc]);
+  }
+
+  // calculate the PU subtracted isolation
+  float iso = corrEleIso2012(eleIndex);
+//   ElectronEffectiveArea::ElectronEffectiveAreaTarget effAreaTarget_ = ElectronEffectiveArea::kEleEAData2012;
+//   ElectronEffectiveArea::ElectronEffectiveAreaType effAreaGamma_   = ElectronEffectiveArea::kEleGammaIso04;
+//   ElectronEffectiveArea::ElectronEffectiveAreaType effAreaNeutralHad_ = ElectronEffectiveArea::kEleNeutralHadronIso04;
+//   ElectronEffectiveArea::ElectronEffectiveAreaType effAreaGammaAndNeutralHad_ = ElectronEffectiveArea::kEleGammaAndNeutralHadronIso04;
+
+//   float eff_area_ga  = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaGamma_, abseta, effAreaTarget_);
+//   float eff_area_nh  = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaNeutralHad_, abseta, effAreaTarget_);
+//   float eff_area_ganh = ElectronEffectiveArea::GetElectronEffectiveArea(effAreaGammaAndNeutralHad_, abseta, effAreaTarget_);
+
+//   float iso = pfCandChargedIso04Ele[eleIndex];
+//   //  iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]-eff_area_nh*rhoJetsFastJet + pfCandPhotonIso04Ele[eleIndex]-eff_area_ga*rhoJetsFastJet);
+//   iso += max<float>(0.,pfCandNeutralIso04Ele[eleIndex]+pfCandPhotonIso04Ele[eleIndex]-eff_area_ganh*rhoJetsFastJet);
 
   float pt = GetPt(pxEle[eleIndex],pyEle[eleIndex]);
 

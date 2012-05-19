@@ -14,7 +14,7 @@
 RedHiggsTree::RedHiggsTree(const char * filename) {
 
   myFile = new TFile(filename,"RECREATE");
-  myTree = new TTree("T1","eleID tree");
+  myTree = new TTree("latino","latino tree");
 
   // GENERAL block
   myTree->Branch("puweight",            &myPUWeight,            "puweight/F");
@@ -52,8 +52,8 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("nuncorrjets",         &myNuncorrjets,         "nuncorrjets/I");
   myTree->Branch("dxyEVT",              &myDxyEVT,              "dxyEVT/F");
   myTree->Branch("dszEVT",              &myDszEVT,              "dszEVT/F");
-  myTree->Branch("softbdisc",           &mySoftBdisc,           "softbdisc/F");
-  myTree->Branch("hardbdisc",           &myHardBdisc,           "hardbdisc/F");
+  myTree->Branch("softtche",            &mySoftBdisc,           "softtcche/F");
+  myTree->Branch("hardbjpb",            &myHardBdisc,           "hardbjbp/F");
   myTree->Branch("bTagSecVertex",       &myBTagSecVertex,       "bTagSecVertex/F");
   myTree->Branch("nSoftMu",             &myNSoftMu,             "nSoftMu/I");
   myTree->Branch("nSoftMuNoJets",       &myNSoftMuNoJets,       "nSoftMuNoJets/I");
@@ -71,14 +71,14 @@ void RedHiggsTree::addJetsVars() {
   myTree->Branch("leadJetEta",         &myLeadJetEta,         "leadJetEta/F");
   myTree->Branch("leadJetLooseId",     &myLeadJetLooseId,     "leadJetLooseId/I");
   myTree->Branch("leadJetGenMatch",    &myLeadJetGenMatch,    "leadJetGenMatch/I");
-  myTree->Branch("leadJetIdMva",       &myLeadJetIdMva,       "leadJetIdMva/F");
-  myTree->Branch("leadJetPassLooseId",     &myLeadJetPassLooseId,     "leadJetPassLooseId/I");
+  myTree->Branch("jetmva1",            &myLeadJetIdMva,       "jetmva1/F");
+  myTree->Branch("jetid1",             &myLeadJetPassLooseId, "jetid1/I");
   myTree->Branch("subleadJetPt",       &mySubleadJetPt,       "subleadJetPt/F");
   myTree->Branch("subleadJetEta",      &mySubleadJetEta,      "subleadJetEta/F");
   myTree->Branch("subleadJetLooseId",  &mySubleadJetLooseId,  "subleadJetLooseId/I");
   myTree->Branch("subleadJetGenMatch", &mySubleadJetGenMatch, "subleadJetGenMatch/I");
-  myTree->Branch("subleadJetIdMva",    &mySubleadJetIdMva,    "subleadJetIdMva/F");
-  myTree->Branch("subleadJetPassLooseId",  &mySubleadJetPassLooseId,  "subleadJetPassLooseId/I");
+  myTree->Branch("jetmva2",            &mySubleadJetIdMva,    "jetmva2/F");
+  myTree->Branch("jetid2",             &mySubleadJetPassLooseId,  "jetid2/I");
 }
 
 void RedHiggsTree::addSystematics() {
@@ -100,32 +100,13 @@ void RedHiggsTree::addSystematics() {
 
 }
 
-void RedHiggsTree::addElectronInfos() {
-  
-  myTree->Branch("recoflag", myRecoflag, "recoflag[2]/I");
-  myTree->Branch("pt", myPt, "pt[2]/F");
-  myTree->Branch("eta", myEta, "eta[2]/F");
-  myTree->Branch("phi", myPhi, "phi[2]/F");
-  myTree->Branch("classification", myClassification, "classification[2]/I");
-  myTree->Branch("nbrems", myNBremClusters, "nbrems[2]/I");
-  myTree->Branch("deta", myDeta, "deta[2]/F");
-  myTree->Branch("dphi", myDphi, "dphi[2]/F");
-  myTree->Branch("hoe", myHoe, "hoe[2]/F");
-  myTree->Branch("see", mySee, "see[2]/F");
-  myTree->Branch("spp", mySpp, "spp[2]/F");
-  myTree->Branch("eop", myEop, "eop[2]/F");
-  myTree->Branch("fbrem", myFbrem, "fbrem[2]/F");
-  myTree->Branch("trackerIso", myTrackerIso, "trackerIso[2]/F");
-  myTree->Branch("hcalIso", myHcalIso, "hcalIso[2]/F");
-  myTree->Branch("ecalJIso", myEcalJIso, "ecalJIso[2]/F");
-  myTree->Branch("ecalGTIso", myEcalGTIso, "ecalGTIso[2]/F");
-  myTree->Branch("combinedIso", myCombinedIso, "combinedIso[2]/F");
-  myTree->Branch("charge", myCharge, "charge[2]/I");
-  myTree->Branch("missHits", myMissHits, "missHits[2]/I");
-  myTree->Branch("dist", myDist, "dist[2]/F");
-  myTree->Branch("dcot", myDcot, "dcot[2]/F");
-  myTree->Branch("lh", myLh, "lh[2]/F");
-  myTree->Branch("matched", myMatched, "matched[2]/I");
+void RedHiggsTree::addLeptonInfos() {
+  myTree->Branch("pt",      myPt,      "pt[2]/F");
+  myTree->Branch("eta",     myEta,     "eta[2]/F");
+  myTree->Branch("phi",     myPhi,     "phi[2]/F");
+  myTree->Branch("lepid",   myLepId,   "lepid[2]/F"); 
+  myTree->Branch("lepiso",  myLepIso,  "lepiso[2]/F"); 
+  myTree->Branch("lepconv", myLepConv, "lepconv[2]/F"); 
 }
 
 void RedHiggsTree::addCSA07Infos() {
@@ -191,9 +172,9 @@ void RedHiggsTree::addFake() {
 
 void RedHiggsTree::addKinematics() {
 
-  myTree->Branch("pxTkMet", &myPxTkMet, "pxTkMet/F");
-  myTree->Branch("pyTkMet", &myPyTkMet, "pyTkMet/F");
-  myTree->Branch("pzTkMet", &myPzTkMet, "pzTkMet/F");
+  myTree->Branch("pxChMet", &myPxTkMet, "pxChMet/F");
+  myTree->Branch("pyChMet", &myPyTkMet, "pyChMet/F");
+  myTree->Branch("pzChMet", &myPzTkMet, "pzChMet/F");
   myTree->Branch("pxLeadJet", myPxLeadJet, "pxLeadJet[3]/F"); // 0th is nominal JEC, 1st=+1sigma JES, 2nd=-1sigma JES   
   myTree->Branch("pyLeadJet", myPyLeadJet, "pyLeadJet[3]/F");
   myTree->Branch("pzLeadJet", myPzLeadJet, "pzLeadJet[3]/F");
@@ -207,10 +188,6 @@ void RedHiggsTree::addKinematics() {
   myTree->Branch("pyL2", &myPyL2, "pyL2/F");
   myTree->Branch("pzL2", &myPzL2, "pzL2/F");
   myTree->Branch("ch", myLepCharge, "ch[2]/I");
-  myTree->Branch("lh", myEleLh, "lh[2]/F");
-  myTree->Branch("bdt", myEleBdt, "bdt[2]/F");
-  myTree->Branch("iso", myIso, "iso[2]/F");
-  myTree->Branch("chmajority", myMajority, "chmajority[2]/I");
 
   myJetsSum = 0;
   myUncorrJetsSum = 0;
@@ -262,6 +239,7 @@ void RedHiggsTree::addMetStudies() {
   myTree->Branch("signPFMet",        &mySignPFMet,        "signPFMet/F");
   myTree->Branch("signPFChargedMet", &mySignPFChargedMet, "signPFChargedMet/F");
   myTree->Branch("mtrchargedMet",    &myMTRchargedMet,    "mtrchargedMet/F");
+  myTree->Branch("dymva1",           &myDYMVA,            "dymva1/F");
   myTree->Branch("rho",              &myRho,              "rho/F"); 
   myTree->Branch("rhoJet",           &myRhoJet,           "rhoJet/F"); 
 }
@@ -458,7 +436,7 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
                                   float pxSecJet[3], float pySecJet[3], float pzSecJet[3],    
                                   float pxL1, float pyL1, float pzL1,
                                   float pxL2, float pyL2, float pzL2,
-                                  int ch[2], float lh[2], float iso[2], int majority[2], float bdt[2],
+                                  int ch[2], 
                                   TLorentzVector *jetSum, TLorentzVector *uncorrJetSum, TVector3 *pfmet) {
 
   myPxTkMet = pxTkMet;
@@ -486,10 +464,6 @@ void RedHiggsTree::fillKinematics(float pxTkMet, float pyTkMet, float pzTkMet,
   myPfMet = pfmet;
   for(int i=0; i<2; i++) {
     myLepCharge[i] = ch[i];
-    myIso[i] = iso[i];
-    myEleLh[i] = lh[i];
-    myEleBdt[i] = bdt[i];
-    myMajority[i] = majority[i];
   }
 }
 
@@ -513,36 +487,14 @@ void RedHiggsTree::fillSystematics(float scE[2], float r9[2], float ene1, float 
 }
 
 
-void RedHiggsTree::fillElectrons(int recoflag[2], float pt[2], float eta[2], float phi[2],
-                                 int classification[2], int nbrems[2], float deta[2], float dphi[2], float hoe[2], float see[2], float spp[2], float eop[2], float fbrem[2],
-                                 float trackerIso[2], float hcalIso[2], float ecalJIso[2], float ecalGTIso[2], float combinedIso[2], int charge[2],
-                                 int missHits[2], float dist[2], float dcot[2], float lh[2], int matched[2]) {
-
+void RedHiggsTree::fillLeptons(float pt[2], float eta[2], float phi[2], float lepid[2], float lepiso[2], float lepconv[2]) {
   for(int i=0; i<2; i++) {
-    myRecoflag[i] = recoflag[i];
     myPt[i] = pt[i];
     myEta[i] = eta[i];
     myPhi[i] = phi[i];
-    myClassification[i] = classification[i];
-    myNBremClusters[i] = nbrems[i];
-    myDeta[i] = deta[i];
-    myDphi[i] = dphi[i];
-    myHoe[i] = hoe[i];
-    mySee[i] = see[i];
-    mySpp[i] = spp[i];
-    myEop[i] = eop[i];
-    myFbrem[i] = fbrem[i];
-    myTrackerIso[i] = trackerIso[i];
-    myHcalIso[i] = hcalIso[i];
-    myEcalJIso[i] = ecalJIso[i];
-    myEcalGTIso[i] = ecalGTIso[i];
-    myCombinedIso[i] = combinedIso[i];
-    myCharge[i] = charge[i];
-    myMissHits[i] = missHits[i];
-    myDist[i] = dist[i];
-    myDcot[i] = dcot[i];
-    myLh[i] = lh[i];
-    myMatched[i] = matched[i];
+    myLepId[i] = lepid[i];
+    myLepIso[i] = lepiso[i];
+    myLepConv[i] = lepconv[i];
   }
 }
 
@@ -592,13 +544,14 @@ void RedHiggsTree::fillRunInfos(int run, int lumi, long event, float puweight, b
   for(int i=0; i<3; i++) myNpu[i] = npu[i];
 }
 
-void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float rho, float rhojet) {
+void RedHiggsTree::fillMetStudies(float projPF, float projTk, float signPFMet, float signChMet, float m_MTRcha, float DYMVA, float rho, float rhojet) {
   
   myProjPFMet        = projPF;  
   myProjPFChargedMet = projTk;  
   mySignPFMet        = signPFMet;
   mySignPFChargedMet = signChMet;
   myMTRchargedMet    = m_MTRcha;
+  myDYMVA  = DYMVA;
   myRho    = rho; 
   myRhoJet = rhojet; 
 }
