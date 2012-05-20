@@ -6,10 +6,12 @@
 #include <TLorentzVector.h>
 #include <TVector3.h>
 #include <iostream>
-#include <PUWeight.C>
+#include "LumiReweightingStandAlone.h"
+//#include <PUWeight.C>
 #include <DYWeighter.cc>
 
 using namespace std;
+using namespace reweight;
 
 int FRWeights = 0;
 Float_t lumiA = 2.1;
@@ -39,10 +41,14 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   }
 
   // used for PU reweighting
-  PUWeight* fPUWeight2011A = new PUWeight("summer11","DY",-1,"2011A",0); 
-  PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
-  PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
+  //   PUWeight* fPUWeight2011A = new PUWeight("summer11","DY",-1,"2011A",0); 
+  //   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
+  //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
+  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/summer12.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/run2012A.root",
+                               "pileup","pileup");
+    
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
 
   // reading root files with electrons and muons efficiencies
@@ -76,12 +82,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     int nentriesOrig = treeOrig->GetEntries();
 
     TFile *fileNew = TFile::Open(filename,"recreate");
-    TTree *treeNew = new TTree("latino","tree with only selected events");
-
-    TString skimFile(filename);
-    skimFile.ReplaceAll("merged","merged_skim");
-    TFile *fileNewSkim = TFile::Open(skimFile.Data(),"recreate");
-    TTree *treeNewSkim = new TTree("latino","tree with only selected events");
+    TTree *treeNew = new TTree("latino","tree with 2 lepton selection");
+    TTree *treeNewSkim = new TTree("latinoWWskim","tree with WW selection");
 
     std::vector<TTree*> trees; 
     trees.push_back(treeNew);
@@ -693,10 +695,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       dphill = deltaPhi * TMath::Pi() / 180.;
 
       // PU weights
-      puAW = fPUWeight2011A->GetWeight(npu[1]); 
-      puBW = fPUWeight2011B->GetWeight(npu[1]); 
-      //puW = (puAW * lumiA + puBW * lumiB) / (lumiA+lumiB);
-      puW = fPUWeightFull2011->GetWeight(npu[1]);
+      puW = LumiWeights.weight(npu[1]);
+      // 2011
+      // puAW = fPUWeight2011A->GetWeight(npu[1]); 
+      // puBW = fPUWeight2011B->GetWeight(npu[1]); 
+      // puW = fPUWeightFull2011->GetWeight(npu[1]);
+      
 
       //  offline efficiency scale factors
       Float_t eff1=1.; 
@@ -858,11 +862,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   
     fileNew->cd();
     treeNew->Write();
-    fileNew->Close();
-
-    fileNewSkim->cd();
     treeNewSkim->Write();
-    fileNewSkim->Close();
+    fileNew->Close();
 
     fileOrig->cd();
     fileOrig->Close();
