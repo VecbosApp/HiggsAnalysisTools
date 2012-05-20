@@ -7,8 +7,8 @@ import commands
 #######################################
 ### usage  cmst3_submit_manyfilesperjob.py dataset njobs applicationName queue 
 #######################################
-if len(sys.argv) != 8:
-    print "usage cmst3_submit_manyfilesperjob.py process dataset nfileperjob applicationName queue prefix isMC"
+if len(sys.argv) != 9:
+    print "usage cmst3_submit_manyfilesperjob.py process dataset nfileperjob applicationName queue prefix isMC epoch"
     sys.exit(1)
 process = sys.argv[1]
 dataset = sys.argv[2]
@@ -19,18 +19,29 @@ nfileperjob = int(sys.argv[3])
 application = sys.argv[4]
 prefix = sys.argv[6]
 isMC = int(sys.argv[7])
+epoch = int(sys.argv[8])
 if isMC != 0:
-    inputlist = "cmst3_42X/MC/"+process+"/"+dataset+".list"
+    if epoch == 2011:
+        inputlist = "cmst3_42X/MC/"+process+"/"+dataset+".list"
+    else:
+        inputlist = "cmst3_52X/MC/"+process+"/"+dataset+".list"
 else:
-    inputlist = "cmst3_42X/"+process+"/"+dataset+".list"
+    if epoch == 2011:
+        inputlist = "cmst3_42X/Data/"+process+"/"+dataset+".list"
+    else:
+        inputlist = "cmst3_52X/Data/"+process+"/"+dataset+".list"
 # to write on the cmst3 cluster disks
 ################################################
 #castordir = "/castor/cern.ch/user/m/mpierini/CMST3/Vecbos/output/"
 #outputmain = castordir+output
 # to write on local disks
 ################################################
-castordir = "/castor/cern.ch/user/e/emanuele/Higgs4.2.X/"
-diskoutputdir = "/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/"
+if epoch==2011:
+    castordir = "/castor/cern.ch/user/e/emanuele/Higgs4.2.X/"
+    diskoutputdir = "/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/"
+else:
+    castordir = "/castor/cern.ch/user/e/emanuele/Higgs5.2.X/"
+    diskoutputdir = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/"
 outputmain = castordir+"/"+prefix+"/"+process+"/"+output
 diskoutputmain = diskoutputdir+"/"+prefix+"/"+process+"/"+output
 # prepare job to write on the cmst3 cluster disks
@@ -84,8 +95,12 @@ while (len(inputfiles) > 0):
     outputfile.write('cp -r '+pwd+"/"+prefix+'/config $WORKDIR\n')
     outputfile.write('cp -r '+pwd+"/"+'/data $WORKDIR\n')
     outputfile.write('cp -r '+pwd+"/"+'/elebdtweights $WORKDIR\n')
-    outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc434\n')
-    outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_2_8_patch7/\n')
+    if epoch==2011:
+        outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc434\n')
+        outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_4_2_8_patch7/\n')
+    else:
+        outputfile.write('export SCRAM_ARCH=slc5_amd64_gcc462\n')
+        outputfile.write('cd /afs/cern.ch/user/e/emanuele/scratch0/higgs/CMSSW_5_2_4/\n')
     outputfile.write('eval `scramv1 runtime -sh`\n')
     outputfile.write('cd $WORKDIR\n')
     outputfile.write(pwd+'/'+application+' '+inputfilename+" "+output+"_"+str(ijob)+" "+str(isMC)+" "+dataset+"\n")
@@ -100,7 +115,8 @@ while (len(inputfiles) > 0):
     ijob = ijob+1
     # and now cope with the max number of accesses (3000, keep 2500 for the safe side)
     totfiles = nfileperjob*ijob
-    if(totfiles % 2500 == 0):
+    if(totfiles % 1000 == 0):
         time.sleep(500);
+        print "sleeping 500 s during a dataset...";
     #time.sleep(1)
     continue
