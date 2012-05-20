@@ -90,8 +90,8 @@
 
 int main(int argc, char* argv[]) {
 
-  char inputFileName[150];
-  char outputFileName[150];
+  char inputFileName[500];
+  char outputFileName[500];
   char dataset[150];
   if ( argc < 2 ){
     std::cout << "missing argument: insert at least inputFile with list of root files" << std::endl; 
