@@ -46,7 +46,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
   LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/summer12.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/run2012A.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/run2012.root",
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
@@ -93,7 +93,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     // and a branch with float final selection bool (for roofit)
     Int_t           run;
     Int_t           lumi;
-    Long_t          event;
+    ULong64_t       event;
     Float_t         puweight;
     Float_t         met;
     Float_t         pfMet;
@@ -129,13 +129,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         subleadingJetsMaxBTagTrackCount;
     Float_t         pt[2];
     Float_t         eta[2];
-    Float_t         deta[2];
-    Float_t         dphi[2];
-    Float_t         hoe[2];
-    Float_t         see[2];
     Float_t         scEnergy[2];
     Float_t         R9[2];
-    Int_t           matched[2];
     Float_t         pxChMet;
     Float_t         pyChMet;
     Float_t         pzChMet;
@@ -264,13 +259,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount);
     treeOrig->SetBranchAddress("pt", pt);
     treeOrig->SetBranchAddress("eta", eta);
-    treeOrig->SetBranchAddress("deta", deta);
-    treeOrig->SetBranchAddress("dphi", dphi);
-    treeOrig->SetBranchAddress("hoe", hoe);
-    treeOrig->SetBranchAddress("see", see);
     treeOrig->SetBranchAddress("scEnergy", scEnergy);
     treeOrig->SetBranchAddress("R9", R9);
-    treeOrig->SetBranchAddress("matched", matched);
     treeOrig->SetBranchAddress("pxChMet", &pxChMet);
     treeOrig->SetBranchAddress("pyChMet", &pyChMet);
     treeOrig->SetBranchAddress("pzChMet", &pzChMet); 
@@ -349,13 +339,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     // electron ID (only filled for electrons)
     Float_t pt_1,       pt_2;
     Float_t eta_1,      eta_2;
-    Float_t deta_1,     deta_2;
-    Float_t dphi_1,     dphi_2;
-    Float_t hoe_1,      hoe_2;
-    Float_t see_1,      see_2;
     Float_t R9_1,       R9_2;
     Float_t scEnergy_1, scEnergy_2;
-    Int_t   matched_1,  matched_2;
 
     // convert the booleans into integers (to insert in RooDataset)
     Int_t         i_jetVeto;
@@ -493,22 +478,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("R2", &R2, "R2/F");
       theTreeNew->Branch("pt1_eleid", &pt_1, "pt1_eleid/F");
       theTreeNew->Branch("eta1_eleid", &eta_1, "eta1_eleid/F");
-      theTreeNew->Branch("deta1_eleid", &deta_1, "deta1_eleid/F");
-      theTreeNew->Branch("dphi1_eleid", &dphi_1, "dphi1_eleid/F");
-      theTreeNew->Branch("hoe1_eleid", &hoe_1, "hoe1_eleid/F");
-      theTreeNew->Branch("see1_eleid", &see_1, "see1_eleid/F");
       theTreeNew->Branch("R91_eleid", &R9_1, "R91_eleid/F");
       theTreeNew->Branch("scEnergy1_eleid", &scEnergy_1, "scEnergy1_eleid/F");
-      theTreeNew->Branch("matched1_eleid", &matched_1, "matched1_eleid/I");
       theTreeNew->Branch("pt2_eleid", &pt_2, "pt2_eleid/F");
       theTreeNew->Branch("eta2_eleid", &eta_2, "eta2_eleid/F");
-      theTreeNew->Branch("deta2_eleid", &deta_2, "deta2_eleid/F");
-      theTreeNew->Branch("dphi2_eleid", &dphi_2, "dphi2_eleid/F");
-      theTreeNew->Branch("hoe2_eleid", &hoe_2, "hoe2_eleid/F");
-      theTreeNew->Branch("see2_eleid", &see_2, "see2_eleid/F");
       theTreeNew->Branch("R92_eleid", &R9_2, "R92_eleid/F");
       theTreeNew->Branch("scEnergy2_eleid", &scEnergy_2, "scEnergy2_eleid/F");
-      theTreeNew->Branch("matched2_eleid", &matched_2, "matched2_eleid/I");
       theTreeNew->Branch("pxChMet", &pxChMet, "pxChMet/F");
       theTreeNew->Branch("pyChMet", &pyChMet, "pyChMet/F");
       theTreeNew->Branch("pzChMet", &pzChMet, "pzChMet/F");
@@ -618,22 +593,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
       pt_1       = pt[0];
       eta_1      = eta[0];
-      deta_1     = deta[0];
-      dphi_1     = dphi[0];
-      hoe_1      = hoe[0];
-      see_1      = see[0];
       scEnergy_1 = scEnergy[0];
       R9_1       = R9[0];
-      matched_1  = matched[0];
       pt_2       = pt[1];
       eta_2      = eta[1];
-      deta_2     = deta[1];
-      dphi_2     = dphi[1];
-      hoe_2      = hoe[1];
-      see_2      = see[1];
       scEnergy_2 = scEnergy[1];
       R9_2       = R9[1];
-      matched_2  = matched[1];
       R = mtr/mr;
       R2 = mtrchargedMet/mr;
       dgammamr = 2*gammamr;
@@ -772,10 +737,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         effBW = 1.;
       }
 
-      jetpt1 = TV_jet1.Pt();
-      jeteta1 = TV_jet1.Eta();
-      jetphi1 = TV_jet1.Phi();
-      if(TV_jet1.Pt()>15) {
+      if(sqrt(pow(pxLeadJet[0],2)+pow(pyLeadJet[0],2))>15) {
+        jetpt1 = TV_jet1.Pt();
+        jeteta1 = TV_jet1.Eta();
+        jetphi1 = TV_jet1.Phi();
         TVector3 TV_L12pJ1 = TV_L1p2 + TV_jet1;
         deltaPhi_LLJ1_MET = (180./TMath::Pi()) * fabs(TV_chmet.DeltaPhi(TV_L12pJ1));   
         deltaPhi_MET_JET1 = (180./TMath::Pi()) * fabs(TV_jet1.DeltaPhi(TV_chmet));
@@ -785,11 +750,11 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         deltaPhi_MET_JET1 = -1.;
         deltaPhi_LL_JET1 = -1.;
       }
-
-      jetpt2 = TV_jet2.Pt();
-      jeteta2 = TV_jet2.Eta();
-      jetphi2 = TV_jet2.Phi();
-      if(TV_jet2.Pt()>15) {
+      
+      if(sqrt(pow(pxSecondJet[0],2)+pow(pySecondJet[0],2))>15) {
+        jetpt2 = TV_jet2.Pt();
+        jeteta2 = TV_jet2.Eta();
+        jetphi2 = TV_jet2.Phi();
         deltaPhi_MET_JET2 = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_chmet));
         deltaPhi_LL_JET2  = (180./TMath::Pi()) * fabs(TV_jet2.DeltaPhi(TV_L1p2));
       } else {
@@ -797,7 +762,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         deltaPhi_LL_JET2 = -1.;
       }
 
-      if(TV_jet1.Pt()>15 && TV_jet2.Pt()>15) {
+      if(sqrt(pow(pxLeadJet[0],2)+pow(pyLeadJet[0],2))>15 && sqrt(pow(pxSecondJet[0],2)+pow(pySecondJet[0],2))>15) {
         TVector3 TV_J1p2  = TV_jet1 + TV_jet2;
         deltaPhi_LL_JJ    = (180./3.14) * TV_L1p2.DeltaPhi(TV_J1p2);
       } else {
@@ -809,7 +774,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       L2eta = TV_L2.Eta();
       L1phi = TV_L1.Phi();
       L2phi = TV_L2.Phi();
-        
+
       // replace 1 with the POWHEG -> FEWZ NNLO x-sec
       if(processId==30 || processId==31 || processId==33 || processId==34) {
         KFactor = DYNNLOWeight->GetWeight(genmll,genptll,genyll);
