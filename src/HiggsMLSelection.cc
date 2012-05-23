@@ -106,22 +106,6 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
   if(_selectionEE->getSwitch("applyBDTEleID")) m_useBDTEleID = true;
   else m_useBDTEleID = false;
 
-  // configuring electron likelihood
-  TFile *fileLH = TFile::Open("pdfs_MC.root");
-  TDirectory *EB0lt15dir = fileLH->GetDirectory("/");
-  TDirectory *EB1lt15dir = fileLH->GetDirectory("/");
-  TDirectory *EElt15dir = fileLH->GetDirectory("/");
-  TDirectory *EB0gt15dir = fileLH->GetDirectory("/");
-  TDirectory *EB1gt15dir = fileLH->GetDirectory("/");
-  TDirectory *EEgt15dir = fileLH->GetDirectory("/");
-  LikelihoodSwitches defaultSwitches;
-  defaultSwitches.m_useFBrem = true;
-  defaultSwitches.m_useEoverP = false;
-  defaultSwitches.m_useSigmaPhiPhi = true;
-  defaultSwitches.m_useHoverE = false;        
-  defaultSwitches.m_useOneOverEMinusOneOverP = true;
-  LH = new ElectronLikelihood(&(*EB0lt15dir), &(*EB1lt15dir), &(*EElt15dir), &(*EB0gt15dir), &(*EB1gt15dir), &(*EEgt15dir), defaultSwitches, std::string("class"),std::string("class"),true,true);
-  
   // configuring the electron BDT
   fMVA = new ElectronIDMVA();
   fMVA->Initialize("BDTG method",
@@ -141,7 +125,7 @@ HiggsMLSelection::HiggsMLSelection(TTree *tree)
 
   // To read good run list!
   if (_selectionEE->getSwitch("goodRunLS") && _selectionEE->getSwitch("isData")) {
-    std::string goodRunJsonFile = "config/json/goodCollisions2011.json";
+    std::string goodRunJsonFile = "config/json/goodCollisions2012.json";
     setJsonGoodRunList(goodRunJsonFile);
     fillRunLSMap();
   }
