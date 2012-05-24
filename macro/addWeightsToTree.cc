@@ -45,8 +45,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
-  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/summer12.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/run2012.root",
+  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7MCPileUp.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/pu2012AB.root",
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
