@@ -7,14 +7,14 @@ lumi=$1
 
 echo "COUNTING EVENTS PROCESSED IN MC..."
 root -b -l <<EOF
-.L HiggsEventCounter.cc+
+.L HiggsEventCounter8TeV.cc+
 countEvents();
 .q
 EOF
 echo "COUNTING EVENTS PROCESSED IN MC DONE."
 
 echo "MERGING TREES STEP..."
-./mergeTrees.sh
+./mergeTrees.sh 2012
 echo "MERGING TREES STEP DONE."
 
 echo "WEIGHTING TREES STEP..."
@@ -22,13 +22,11 @@ echo "WEIGHTING TREES STEP..."
 echo "MERGING TREES STEP DONE."
 
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION..."
-./mergeMultiSamples.sh
-./mergeMultiSamplesSkim.sh
+./mergeMultiSamples.sh 2012
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION DONE."
 
 echo "MERGING FINAL STATES..."
-./mergeFinalStates.sh
-./mergeFinalStatesSkim.sh
+./mergeFinalStates.sh 2012
 echo "MERGING FINAL STATES DONE."
 
 #echo "CREATING FIT ROODATASETS STEP..."
