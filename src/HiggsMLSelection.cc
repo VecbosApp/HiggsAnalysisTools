@@ -3656,13 +3656,12 @@ double HiggsMLSelection::getDYMVA(int channel) {
   double ptjet1 = std::max(15.,p3LJet.Pt());
 
   double metSig = mEtSigPFMet[0];
-  double dPhiDiLepJet1 = (ptjet1<15.) ? -0.1 : fabs(ll.DeltaPhi(p3LJet));
-  double dPhiJet1MET =   (ptjet1<15.) ? -0.1 : fabs(m_p3PFMET->DeltaPhi(p3LJet));
+  double dPhiDiLepJet1 = (p3LJet.Pt()<15.) ? -0.1 : fabs(ll.DeltaPhi(p3LJet));
+  double dPhiJet1MET =   (p3LJet.Pt()<15.) ? -0.1 : fabs(m_p3PFMET->DeltaPhi(p3LJet));
   double dPhiDiLepMET =  fabs(ll.DeltaPhi(*m_p3PFMET));
   double recoil = (ll+(*m_p3PFMET)).Pt();
   double mt = m_transvMass[channel];
 
-  //  std::cout << "EVENT = " << eventNumber << std::endl;
   return m_dymvaAlgo->getValue(nj, pmet, pTrackMet, nvtx, dilpt, ptjet1, metSig,
                                dPhiDiLepJet1, dPhiDiLepMET, dPhiJet1MET, recoil, mt);
 }
