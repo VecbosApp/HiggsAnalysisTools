@@ -381,7 +381,7 @@ int main(int argc, char* argv[]) {
       maskMM.push_back("190456-999999:HLT_Mu17_TkMu8_v");
     } else if(DatasetName.Contains("MuEG")) {
       maskEM.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
-      maskEM.push_back("175973:180252HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
+      maskEM.push_back("175973-180252:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskEM.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskEM.push_back("167914-180252:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v"); // end 2011
       maskEM.push_back("190456-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
@@ -414,7 +414,7 @@ int main(int argc, char* argv[]) {
       maskEM.push_back("175911-175921:HLT_IsoMu24_v");
       maskEM.push_back("175922-999999:HLT_IsoMu24_eta2p1_v");
       maskNotEM.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
-      maskNotEM.push_back("175973:180252HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
+      maskNotEM.push_back("175973-180252:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskNotEM.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotEM.push_back("167914-180252:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v"); // end 2011
       maskNotEM.push_back("190456-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
@@ -437,7 +437,7 @@ int main(int argc, char* argv[]) {
       maskEM.push_back("178420-180252:HLT_Ele80_CaloIdVT_TrkIdT_v"); // end of 2011 
       maskEM.push_back("190456-999999:HLT_Ele27_WP80_v");
       maskNotEM.push_back("1-175972:HLT_Mu17_Ele8_CaloIdL_v");
-      maskNotEM.push_back("175973:180252HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
+      maskNotEM.push_back("175973-180252:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v");
       maskNotEM.push_back("1-167913:HLT_Mu8_Ele17_CaloIdL_v");
       maskNotEM.push_back("167914-180252:HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v"); // end 2011
       maskNotEM.push_back("190456-999999:HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v");
