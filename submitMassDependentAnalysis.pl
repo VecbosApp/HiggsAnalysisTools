@@ -55,15 +55,14 @@ if($year==2012) {
 
     sleep 600;
     print  "submitting DY low mass...\n";
-    # put the low mass DYJets when available
-    # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X DYToEE_M-10To20_CT10_TuneZ2_7TeV-powheg-pythia 10 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X DYJetsToLL_M-10To50filter_8TeV-madgraph 10 HiggsApp 8nh $prefix 1 2012");
     print  "done with V+jets.\n";
 
     sleep 600;
 
     print  "submitting dibosons...\n";
     system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WWJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola 10 HiggsApp 8nh $prefix 1 2012");
-    # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X GluGluToWWTo4L_TuneZ2_7TeV-gg2ww-pythia6 10 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X GluGluToWWTo4L_TuneZ2star_8TeV-gg2ww-pythia6 10 HiggsApp 8nh $prefix 1 2012");
     # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X GVJets_7TeV-madgraph 10 HiggsApp 8nh $prefix 1 2012");
     system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X ZZTo2L2Nu_TuneZ2star_8TeV_pythia6_tauola 5 HiggsApp 8nh $prefix 1 2012");
     system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WZTo3LNu_TuneZ2star_8TeV_pythia6_tauola 5 HiggsApp 8nh $prefix 1 2012");
