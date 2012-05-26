@@ -3,8 +3,6 @@
 # it runs several scripts that bring from the results of the selection stored in the directory "results/"
 # to the merged RooDataSets of the species used for the fit
 
-lumi=$1
-
 echo "COUNTING EVENTS PROCESSED IN MC..."
 root -b -l <<EOF
 .L HiggsEventCounter8TeV.cc+
@@ -18,7 +16,7 @@ echo "MERGING TREES STEP..."
 echo "MERGING TREES STEP DONE."
 
 echo "WEIGHTING TREES STEP..."
-./weightTrees.sh $lumi $lumi $lumi
+./weightTrees.sh 1000
 echo "MERGING TREES STEP DONE."
 
 echo "MERGING WEIGHTED TREES ACCORDING FIT SPECIES DEFINITION..."
@@ -29,7 +27,3 @@ echo "MERGING FINAL STATES..."
 ./mergeFinalStates.sh 2012
 echo "MERGING FINAL STATES DONE."
 
-#echo "CREATING FIT ROODATASETS STEP..."
-#chmod u+x ./createFitDatasets.sh
-#./createFitDatasets.sh $Hmass
-#echo "CREATING FIT ROODATASETS DONE."
