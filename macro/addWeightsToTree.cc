@@ -45,8 +45,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
-  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7MCPileUp.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/pu2012AB.root",
+  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup60.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012AB.root",
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
@@ -450,6 +450,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("WWSel0j", &i_WWSel0j, "WWSel0j/I");
       theTreeNew->Branch("WWSel1j", &i_WWSel1j, "WWSel1j/I");
       theTreeNew->Branch("kfW", &KFactor, "kfW/F");
+      theTreeNew->Branch("npu", npu, "npu[3]/F");
       theTreeNew->Branch("promptDecay", &i_promptDecay, "promptDecay/I");
       theTreeNew->Branch("njet", &f_njets, "njet/F");
       theTreeNew->Branch("nuncorrjets", &f_nuncorrjets, "nuncorrjets/F");
