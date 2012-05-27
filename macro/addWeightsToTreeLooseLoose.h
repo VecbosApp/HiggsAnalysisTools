@@ -325,9 +325,9 @@ addWeightsToTreeLooseLoose::addWeightsToTreeLooseLoose(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_May18JSON_V1/datasets_trees/dataset_looseloose.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_synchPreappr_V2/datasets_trees/dataset_looseloose.root");
       if (!f) {
-         f = new TFile("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_May18JSON_V1/datasets_trees/dataset_looseloose.root");
+         f = new TFile("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_synchPreappr_V2/datasets_trees/dataset_looseloose.root");
       }
       tree = (TTree*)gDirectory->Get("latino");
 

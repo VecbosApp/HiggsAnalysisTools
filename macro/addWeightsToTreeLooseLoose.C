@@ -1,6 +1,7 @@
 #define addWeightsToTreeLooseLoose_cxx
 #include "addWeightsToTreeLooseLoose.h"
 #include <TH2.h>
+#include <TMath.h>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
@@ -35,7 +36,7 @@ void addWeightsToTreeLooseLoose::Loop()
 
   float WWSel0j, WWSel1j;
 
-  TFile *fileNew = TFile::Open("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_May18JSON_V1/datasets_trees/dataset_looseloose_wwbits.root","recreate");
+  TFile *fileNew = TFile::Open("/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/Data_synchPreappr_V2/datasets_trees/dataset_looseloose_wwbits.root","recreate");
   TTree *treeNew = new TTree("latino","tree with only selected events");
 
   std::vector<TTree*> trees; 
@@ -58,8 +59,8 @@ void addWeightsToTreeLooseLoose::Loop()
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    WWSel0j = trigger==1. && pfmet>20. && mll>12 && zveto==1 && mpmet>20. && bveto_mu==1 && nextra==0 && (bveto_ip==1 &&  (njet != 1  || nbjet==0) && ((njet<2 || njet>3) || (jetbjpb1<=1.05 && jetbjpb2<=1.05)))  && ptll>45. &&   ( !sameflav || ( (njet==0 || dymva0>0.60) && (njet==1 || dymva1>0.30) && ( njet==0 || njet==1 || (pfmet > (40.0+nvtx/2.0))) ) ) && njet==0;
-    WWSel1j = trigger==1. && pfmet>20. && mll>12 && zveto==1 && mpmet>20. && bveto_mu==1 && nextra==0 && (bveto_ip==1 &&  (njet != 1  || nbjet==0) && ((njet<2 || njet>3) || (jetbjpb1<=1.05 && jetbjpb2<=1.05)))  && ptll>45. &&   ( !sameflav || ( (njet==0 || dymva0>0.60) && (njet==1 || dymva1>0.30) && ( njet==0 || njet==1 || (pfmet > (40.0+nvtx/2.0))) ) ) && njet==1;
+    WWSel0j =  trigger==1. && pfmet>20. && mll>12 && zveto==1 && mpmet>20. && (njet==0 || njet==1 || (dphilljetjet<TMath::Pi()/180.*165. || !sameflav )  ) && bveto_mu==1 && nextra==0 && (bveto_ip==1 &&  (nbjet==0 || njet>3)) && ptll>45. &&   ( !sameflav || ( (njet!=0 || dymva1>0.60) && (njet!=1 || dymva1>0.30) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ) && njet==0;
+    WWSel1j =  trigger==1. && pfmet>20. && mll>12 && zveto==1 && mpmet>20. && (njet==0 || njet==1 || (dphilljetjet<TMath::Pi()/180.*165. || !sameflav )  ) && bveto_mu==1 && nextra==0 && (bveto_ip==1 &&  (nbjet==0 || njet>3)) && ptll>45. &&   ( !sameflav || ( (njet!=0 || dymva1>0.60) && (njet!=1 || dymva1>0.30) && ( njet==0 || njet==1 || (pfmet > 45.0)) ) ) && njet==1;
 
     treeNew->Fill();
   }

@@ -43,12 +43,13 @@ void estimateWjets(int njets) {
   
   // new WW selection
   char wwLevelCut[1000];
+
+  // godd upt ot MH=140. Change dymva => mpmet cut after
+  if(njets==0) sprintf(wwLevelCut,"WWSel0j"); 
   
-  if(njets==0) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==0 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && (pt2 > 15 || !sameflav) && ptll > 45)"); 
+  if(njets==1) sprintf(wwLevelCut,"WWSel1j");
   
-  if(njets==1) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet==1 && (dphiveto || ! sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
-  
-  if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet>=2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); 
+  if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet>=2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); // not updated
 
   float yield_WWSel[5][4];           // [bin][icha] bin = 5 => total
   float yield_WWSel_staterr[5][4];   // [bin][icha]
@@ -69,16 +70,21 @@ void estimateWjets(int njets) {
   percErr[em][2]=0.36;  
 
   // trees
-  TFile *fileEE = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
-  TFile *fileMM = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
-  TFile *fileEM = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
-  TFile *fileME = TFile::Open("results_data/datasets_trees_looseloose_skim/looseloose.root");
+  TFile *fileEE = TFile::Open("results_data/datasets_trees/dataset_looseloose.root");
+  TFile *fileMM = TFile::Open("results_data/datasets_trees/dataset_looseloose.root");
+  TFile *fileEM = TFile::Open("results_data/datasets_trees/dataset_looseloose.root");
+  TFile *fileME = TFile::Open("results_data/datasets_trees/dataset_looseloose.root");
 
   TTree *treeEE = (TTree*)fileEE->Get("latino");
   TTree *treeMM = (TTree*)fileMM->Get("latino");
   TTree *treeEM = (TTree*)fileEM->Get("latino");
   TTree *treeME = (TTree*)fileME->Get("latino");
-  
+
+  treeEE->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
+  treeMM->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
+  treeEM->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
+  treeME->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
+
   std::vector<TTree*> trees;
   trees.push_back(treeEE);
   trees.push_back(treeMM);
@@ -95,8 +101,8 @@ void estimateWjets(int njets) {
       sprintf(channel,"(channel==%d)",icha);
 
       TString fpCut, fpCutStatErr;
-      fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*")        + TString(wwLevelCut);
-      fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*fakeW*") + TString(wwLevelCut);
+      fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
       // cout << "stima @ WW level: " << endl;
       // cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
       
@@ -226,8 +232,8 @@ void estimateWjets(int njets) {
 
     int mass = masses[i];
 
-    TString higgsMassDependentCut = higgsCuts(mass,true);       // for cut based studied
-    // TString higgsMassDependentCut = higgsCutsBDT(mass,true);       // for BDT studies
+    TString higgsMassDependentCut = higgsCuts(mass,true,njets);       // for cut based studied
+    // TString higgsMassDependentCut = higgsCutsBDT(mass,true,njets);       // for BDT studies
 
     // specific vbf selection
     if (njets==2) {
@@ -245,8 +251,8 @@ void estimateWjets(int njets) {
       sprintf(channel,"channel==%d",icha);
 
       TString fpCut, fpCutStatErr;
-      fpCut        = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*")        + TString(wwLevelCut);
-      fpCutStatErr = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fakeW*fakeW*") + TString(wwLevelCut);
+      fpCut        = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
+      fpCutStatErr = TString("(") + higgsMassDependentCut  + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
       
       // cout << "at higgs level, mass = " << i << endl;
       // std::cout << "taglio = " << fpCut.Data() << std::endl;
