@@ -204,7 +204,7 @@ void countEvents() {
   sampleXsec.push_back(11.1773); // 4
   sampleXsec.push_back(225.1967); // 5
   sampleXsec.push_back(5.8123); // 6
-  sampleXsec.push_back(1.74184585); // 7
+  sampleXsec.push_back(0.182852); // 7
   sampleXsec.push_back(0.7346); // 8
   sampleXsec.push_back(0.3649); // 9: PYTHIA
   sampleXsec.push_back(5.8123); // 12
