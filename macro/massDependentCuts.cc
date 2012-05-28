@@ -1,34 +1,44 @@
 #include <TString.h>
 #include <map>
 
-TString higgsCuts(int mH, bool out) {
+TString higgsCuts(int mH, bool out, int njets) {
   
+  TString dymvacut = (njets==0) ? TString("(dymva1>0.6 || !sameflav) && njet==0") : TString("(dymva1>0.3 || !sameflav) && njet==1");
+  TString finalmetcut = (njets==0) ? TString("(mpmet>45 || !sameflav) && njet==0") : TString("(mpmet>45 || !sameflav) && njet==1");
+
   std::map<int,TString> cuts;
-  cuts.insert(std::make_pair(110,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
-  cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
-  cuts.insert(std::make_pair(118,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<115")));
-  cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<120")));
-  cuts.insert(std::make_pair(122,TString("ptll>45 && pt1>21  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<110 &&  mth>80  &&  mth<121")));
-  cuts.insert(std::make_pair(124,TString("ptll>45 && pt1>22  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<105 &&  mth>80  &&  mth<122")));
-  cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>23  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<100 &&  mth>80  &&  mth<123")));
-  cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>24  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<95  &&  mth>80  &&  mth<124")));
-  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<125")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>12 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<128")));
-  cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>25  &&  pt2>15  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<130")));
-  cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>27  &&  pt2>25  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<150")));
-  cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>30  &&  pt2>25  &&  dphill*180./TMath::Pi()<60  &&  mth>90  &&  mth<160")));
-  cuts.insert(std::make_pair(170,TString("ptll>45 && pt1>34  &&  pt2>25  &&  dphill*180./TMath::Pi()<60  &&  mth>110 &&  mth<170")));
-  cuts.insert(std::make_pair(180,TString("ptll>45 && pt1>36  &&  pt2>25  &&  dphill*180./TMath::Pi()<70  &&  mth>120 &&  mth<180")));
-  cuts.insert(std::make_pair(190,TString("ptll>45 && pt1>38  &&  pt2>25  &&  dphill*180./TMath::Pi()<90  &&  mth>120 &&  mth<190")));
-  cuts.insert(std::make_pair(200,TString("ptll>45 && pt1>40  &&  pt2>25  &&  dphill*180./TMath::Pi()<100 &&  mth>120 &&  mth<200")));
-  cuts.insert(std::make_pair(250,TString("ptll>45 && pt1>55  &&  pt2>25  &&  dphill*180./TMath::Pi()<140 &&  mth>120 &&  mth<250")));
-  cuts.insert(std::make_pair(300,TString("ptll>45 && pt1>70  &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<300")));
-  cuts.insert(std::make_pair(350,TString("ptll>45 && pt1>80  &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<350")));
-  cuts.insert(std::make_pair(400,TString("ptll>45 && pt1>90  &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<400")));
-  cuts.insert(std::make_pair(450,TString("ptll>45 && pt1>110 &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<450")));
-  cuts.insert(std::make_pair(500,TString("ptll>45 && pt1>120 &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<500")));
-  cuts.insert(std::make_pair(550,TString("ptll>45 && pt1>130 &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<550")));
-  cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>140 &&  pt2>25  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<600")));
+  cuts.insert(std::make_pair(110,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
+  cuts.insert(std::make_pair(115,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
+  cuts.insert(std::make_pair(118,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<115")));
+  cuts.insert(std::make_pair(120,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<120")));
+  cuts.insert(std::make_pair(122,dymvacut + TString(" &&  dphill*180./TMath::Pi()<110 &&  mth>80  &&  mth<121")));
+  cuts.insert(std::make_pair(124,dymvacut + TString(" &&  dphill*180./TMath::Pi()<105 &&  mth>80  &&  mth<122")));
+  cuts.insert(std::make_pair(125,dymvacut + TString(" &&  dphill*180./TMath::Pi()<103 &&  mth>80  &&  mth<123")));
+  cuts.insert(std::make_pair(126,dymvacut + TString(" &&  dphill*180./TMath::Pi()<100 &&  mth>80  &&  mth<123")));
+  cuts.insert(std::make_pair(128,dymvacut + TString(" &&  dphill*180./TMath::Pi()<95  &&  mth>80  &&  mth<124")));
+  cuts.insert(std::make_pair(130,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<125")));
+  cuts.insert(std::make_pair(135,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<128")));
+  cuts.insert(std::make_pair(140,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<130")));
+  cuts.insert(std::make_pair(145,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<140")));
+  cuts.insert(std::make_pair(150,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<150")));
+  cuts.insert(std::make_pair(155,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90  &&  mth>80  &&  mth<155")));
+  cuts.insert(std::make_pair(160,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<60  &&  mth>90  &&  mth<160")));
+  cuts.insert(std::make_pair(170,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<60  &&  mth>110 &&  mth<170")));
+  cuts.insert(std::make_pair(180,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<70  &&  mth>120 &&  mth<180")));
+  cuts.insert(std::make_pair(190,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90  &&  mth>120 &&  mth<190")));
+  cuts.insert(std::make_pair(200,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<100 &&  mth>120 &&  mth<200")));
+  cuts.insert(std::make_pair(250,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<140 &&  mth>120 &&  mth<250")));
+  cuts.insert(std::make_pair(300,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<300")));
+  cuts.insert(std::make_pair(350,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<350")));
+  cuts.insert(std::make_pair(400,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<400")));
+  cuts.insert(std::make_pair(450,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<450")));
+  cuts.insert(std::make_pair(500,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<500")));
+  cuts.insert(std::make_pair(550,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<550")));
+  cuts.insert(std::make_pair(600,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<600")));
+  cuts.insert(std::make_pair(700,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<700")));
+  cuts.insert(std::make_pair(800,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<800")));
+  cuts.insert(std::make_pair(900,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<900")));
+  cuts.insert(std::make_pair(1000,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175 &&  mth>120 &&  mth<1000")));
 
   std::map<int,TString> cutsOut;
   cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<40")));
@@ -37,12 +47,15 @@ TString higgsCuts(int mH, bool out) {
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<40")));
   cutsOut.insert(std::make_pair(122,cuts[122]+TString(" && mll<41")));
   cutsOut.insert(std::make_pair(124,cuts[124]+TString(" && mll<42")));
+  cutsOut.insert(std::make_pair(125,cuts[125]+TString(" && mll<43")));
   cutsOut.insert(std::make_pair(126,cuts[126]+TString(" && mll<43")));
   cutsOut.insert(std::make_pair(128,cuts[128]+TString(" && mll<44")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<45")));
   cutsOut.insert(std::make_pair(135,cuts[135]+TString(" && mll<45")));
   cutsOut.insert(std::make_pair(140,cuts[140]+TString(" && mll<45")));
+  cutsOut.insert(std::make_pair(145,cuts[145]+TString(" && mll<48")));
   cutsOut.insert(std::make_pair(150,cuts[150]+TString(" && mll<50")));
+  cutsOut.insert(std::make_pair(155,cuts[155]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(160,cuts[160]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(170,cuts[170]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(180,cuts[180]+TString(" && mll<60")));
@@ -56,40 +69,54 @@ TString higgsCuts(int mH, bool out) {
   cutsOut.insert(std::make_pair(500,cuts[500]+TString(" && mll<400")));
   cutsOut.insert(std::make_pair(550,cuts[550]+TString(" && mll<450")));
   cutsOut.insert(std::make_pair(600,cuts[600]+TString(" && mll<500")));
+  cutsOut.insert(std::make_pair(700,cuts[600]+TString(" && mll<600")));
+  cutsOut.insert(std::make_pair(800,cuts[600]+TString(" && mll<700")));
+  cutsOut.insert(std::make_pair(900,cuts[600]+TString(" && mll<800")));
+  cutsOut.insert(std::make_pair(1000,cuts[600]+TString(" && mll<900")));
 
   if(out) return cutsOut[mH];
   else return cuts[mH];
 
 }
 
-TString higgsCutsNoMT(int mH, bool out) {
+TString higgsCutsNoMT(int mH, bool out, int njets) {
   
+  TString dymvacut = (njets==0) ? TString("(dymva1>0.6 || !sameflav) && njet==0") : TString("(dymva1>0.3 && !sameflav) && njet==1");
+  TString finalmetcut = (njets==0) ? TString("(mpmet>45 && !sameflav) && njet==0") : TString("(mpmet>45 && !sameflav) && njet==1");
+
   std::map<int,TString> cuts;
-  cuts.insert(std::make_pair(110,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115")));
-  cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115")));
-  cuts.insert(std::make_pair(118,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115")));
-  cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<115")));
-  cuts.insert(std::make_pair(122,TString("ptll>45 && pt1>21  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<110")));
-  cuts.insert(std::make_pair(124,TString("ptll>45 && pt1>22  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<105")));
-  cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>23  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<100")));
-  cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>24  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<95 ")));
-  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>12 && !sameflav) || (pt2>15 && sameflav)) &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>25  &&  pt2>15  &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>27  &&  pt2>25  &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>30  &&  pt2>25  &&  dphill*180./TMath::Pi()<60 ")));
-  cuts.insert(std::make_pair(170,TString("ptll>45 && pt1>34  &&  pt2>25  &&  dphill*180./TMath::Pi()<60 ")));
-  cuts.insert(std::make_pair(180,TString("ptll>45 && pt1>36  &&  pt2>25  &&  dphill*180./TMath::Pi()<70 ")));
-  cuts.insert(std::make_pair(190,TString("ptll>45 && pt1>38  &&  pt2>25  &&  dphill*180./TMath::Pi()<90 ")));
-  cuts.insert(std::make_pair(200,TString("ptll>45 && pt1>40  &&  pt2>25  &&  dphill*180./TMath::Pi()<100")));
-  cuts.insert(std::make_pair(250,TString("ptll>45 && pt1>55  &&  pt2>25  &&  dphill*180./TMath::Pi()<140")));
-  cuts.insert(std::make_pair(300,TString("ptll>45 && pt1>70  &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(350,TString("ptll>45 && pt1>80  &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(400,TString("ptll>45 && pt1>90  &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(450,TString("ptll>45 && pt1>110 &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(500,TString("ptll>45 && pt1>120 &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(550,TString("ptll>45 && pt1>130 &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
-  cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>140 &&  pt2>25  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(110,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115")));
+  cuts.insert(std::make_pair(115,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115")));
+  cuts.insert(std::make_pair(118,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115")));
+  cuts.insert(std::make_pair(120,dymvacut + TString(" &&  dphill*180./TMath::Pi()<115")));
+  cuts.insert(std::make_pair(122,dymvacut + TString(" &&  dphill*180./TMath::Pi()<110")));
+  cuts.insert(std::make_pair(124,dymvacut + TString(" &&  dphill*180./TMath::Pi()<105")));
+  cuts.insert(std::make_pair(125,dymvacut + TString(" &&  dphill*180./TMath::Pi()<103")));
+  cuts.insert(std::make_pair(126,dymvacut + TString(" &&  dphill*180./TMath::Pi()<100")));
+  cuts.insert(std::make_pair(128,dymvacut + TString(" &&  dphill*180./TMath::Pi()<95")));
+  cuts.insert(std::make_pair(130,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90")));
+  cuts.insert(std::make_pair(135,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90")));
+  cuts.insert(std::make_pair(140,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90")));
+  cuts.insert(std::make_pair(145,dymvacut + TString(" &&  dphill*180./TMath::Pi()<90")));
+  cuts.insert(std::make_pair(150,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90 ")));
+  cuts.insert(std::make_pair(155,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90 ")));
+  cuts.insert(std::make_pair(160,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<60 ")));
+  cuts.insert(std::make_pair(170,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<60 ")));
+  cuts.insert(std::make_pair(180,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<70 ")));
+  cuts.insert(std::make_pair(190,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<90 ")));
+  cuts.insert(std::make_pair(200,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<100")));
+  cuts.insert(std::make_pair(250,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<140")));
+  cuts.insert(std::make_pair(300,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(350,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(400,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(450,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(500,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(550,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(600,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(700,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(800,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(900,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
+  cuts.insert(std::make_pair(1000,finalmetcut + TString("  &&  dphill*180./TMath::Pi()<175")));
 
   std::map<int,TString> cutsOut;
   cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<40")));
@@ -98,12 +125,15 @@ TString higgsCutsNoMT(int mH, bool out) {
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<40")));
   cutsOut.insert(std::make_pair(122,cuts[122]+TString(" && mll<41")));
   cutsOut.insert(std::make_pair(124,cuts[124]+TString(" && mll<42")));
+  cutsOut.insert(std::make_pair(125,cuts[125]+TString(" && mll<43")));
   cutsOut.insert(std::make_pair(126,cuts[126]+TString(" && mll<43")));
   cutsOut.insert(std::make_pair(128,cuts[128]+TString(" && mll<44")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<45")));
   cutsOut.insert(std::make_pair(135,cuts[135]+TString(" && mll<45")));
   cutsOut.insert(std::make_pair(140,cuts[140]+TString(" && mll<45")));
+  cutsOut.insert(std::make_pair(145,cuts[145]+TString(" && mll<48")));
   cutsOut.insert(std::make_pair(150,cuts[150]+TString(" && mll<50")));
+  cutsOut.insert(std::make_pair(155,cuts[155]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(160,cuts[160]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(170,cuts[170]+TString(" && mll<50")));
   cutsOut.insert(std::make_pair(180,cuts[180]+TString(" && mll<60")));
@@ -117,40 +147,54 @@ TString higgsCutsNoMT(int mH, bool out) {
   cutsOut.insert(std::make_pair(500,cuts[500]+TString(" && mll<400")));
   cutsOut.insert(std::make_pair(550,cuts[550]+TString(" && mll<450")));
   cutsOut.insert(std::make_pair(600,cuts[600]+TString(" && mll<500")));
+  cutsOut.insert(std::make_pair(700,cuts[600]+TString(" && mll<600")));
+  cutsOut.insert(std::make_pair(800,cuts[600]+TString(" && mll<700")));
+  cutsOut.insert(std::make_pair(900,cuts[600]+TString(" && mll<800")));
+  cutsOut.insert(std::make_pair(1000,cuts[600]+TString(" && mll<900")));
 
   if(out) return cutsOut[mH];
   else return cuts[mH];
 
 }
 
-TString higgsCutsBDT(int mH, bool out) {
+TString higgsCutsBDT(int mH, bool out, int njets) {
+
+  TString dymvacut = (njets==0) ? TString("dymva1>0.6 && njet==0") : TString("dymva1>0.3 && njet==1");
+  TString finalmetcut = (njets==0) ? TString("mpmet>45 && njet==0") : TString("mpmet>45 && njet==1");
   
   std::map<int,TString> cuts;
-  cuts.insert(std::make_pair(110,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<110")));
-  cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<115")));
-  cuts.insert(std::make_pair(118,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<118")));
-  cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<120")));
-  cuts.insert(std::make_pair(122,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<122")));
-  cuts.insert(std::make_pair(124,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<124")));
-  cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<126")));
-  cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<128")));
-  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<130")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<135")));
-  cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<140")));
-  cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<150")));
-  cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<160")));
-  cuts.insert(std::make_pair(170,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<170")));
-  cuts.insert(std::make_pair(180,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<180")));
-  cuts.insert(std::make_pair(190,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<190")));
-  cuts.insert(std::make_pair(200,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<200")));
-  cuts.insert(std::make_pair(250,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<250")));
-  cuts.insert(std::make_pair(300,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<300")));
-  cuts.insert(std::make_pair(350,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<350")));
-  cuts.insert(std::make_pair(400,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<400")));
-  cuts.insert(std::make_pair(450,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<450")));
-  cuts.insert(std::make_pair(500,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<500")));
-  cuts.insert(std::make_pair(550,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<550")));
-  cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) &&  mth>80 && mth<600")));
+  cuts.insert(std::make_pair(110,dymvacut + TString(" &&  mth>80 && mth<110")));
+  cuts.insert(std::make_pair(115,dymvacut + TString(" &&  mth>80 && mth<115")));
+  cuts.insert(std::make_pair(118,dymvacut + TString(" &&  mth>80 && mth<118")));
+  cuts.insert(std::make_pair(120,dymvacut + TString(" &&  mth>80 && mth<120")));
+  cuts.insert(std::make_pair(122,dymvacut + TString(" &&  mth>80 && mth<122")));
+  cuts.insert(std::make_pair(124,dymvacut + TString(" &&  mth>80 && mth<124")));
+  cuts.insert(std::make_pair(125,dymvacut + TString(" &&  mth>80 && mth<125")));
+  cuts.insert(std::make_pair(126,dymvacut + TString(" &&  mth>80 && mth<126")));
+  cuts.insert(std::make_pair(128,dymvacut + TString(" &&  mth>80 && mth<128")));
+  cuts.insert(std::make_pair(130,dymvacut + TString(" &&  mth>80 && mth<130")));
+  cuts.insert(std::make_pair(135,dymvacut + TString(" &&  mth>80 && mth<135")));
+  cuts.insert(std::make_pair(140,dymvacut + TString(" &&  mth>80 && mth<140")));
+  cuts.insert(std::make_pair(145,dymvacut + TString(" &&  mth>80 && mth<145")));
+  cuts.insert(std::make_pair(150,finalmetcut + TString("  &&  mth>80 && mth<150")));
+  cuts.insert(std::make_pair(155,finalmetcut + TString("  &&  mth>80 && mth<155")));
+  cuts.insert(std::make_pair(160,finalmetcut + TString("  &&  mth>80 && mth<160")));
+  cuts.insert(std::make_pair(170,finalmetcut + TString("  &&  mth>80 && mth<170")));
+  cuts.insert(std::make_pair(180,finalmetcut + TString("  &&  mth>80 && mth<180")));
+  cuts.insert(std::make_pair(190,finalmetcut + TString("  &&  mth>80 && mth<190")));
+  cuts.insert(std::make_pair(200,finalmetcut + TString("  &&  mth>80 && mth<200")));
+  cuts.insert(std::make_pair(250,finalmetcut + TString("  &&  mth>80 && mth<250")));
+  cuts.insert(std::make_pair(300,finalmetcut + TString("  &&  mth>80 && mth<300")));
+  cuts.insert(std::make_pair(350,finalmetcut + TString("  &&  mth>80 && mth<350")));
+  cuts.insert(std::make_pair(400,finalmetcut + TString("  &&  mth>80 && mth<400")));
+  cuts.insert(std::make_pair(450,finalmetcut + TString("  &&  mth>80 && mth<450")));
+  cuts.insert(std::make_pair(500,finalmetcut + TString("  &&  mth>80 && mth<500")));
+  cuts.insert(std::make_pair(550,finalmetcut + TString("  &&  mth>80 && mth<550")));
+  cuts.insert(std::make_pair(600,finalmetcut + TString("  &&  mth>80 && mth<600")));
+  cuts.insert(std::make_pair(700,finalmetcut + TString("  &&  mth>80 && mth<700")));
+  cuts.insert(std::make_pair(800,finalmetcut + TString("  &&  mth>80 && mth<800")));
+  cuts.insert(std::make_pair(900,finalmetcut + TString("  &&  mth>80 && mth<900")));
+  cuts.insert(std::make_pair(1000,finalmetcut + TString("  &&  mth>80 && mth<1000")));
 
   std::map<int,TString> cutsOut;
   cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<70")));
@@ -159,12 +203,15 @@ TString higgsCutsBDT(int mH, bool out) {
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(122,cuts[122]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(124,cuts[124]+TString(" && mll<70")));
+  cutsOut.insert(std::make_pair(125,cuts[125]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(126,cuts[126]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(128,cuts[128]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(135,cuts[135]+TString(" && mll<90")));
   cutsOut.insert(std::make_pair(140,cuts[140]+TString(" && mll<90")));
+  cutsOut.insert(std::make_pair(145,cuts[145]+TString(" && mll<90")));
   cutsOut.insert(std::make_pair(150,cuts[150]+TString(" && mll<100")));
+  cutsOut.insert(std::make_pair(155,cuts[155]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(160,cuts[160]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(170,cuts[170]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(180,cuts[180]+TString(" && mll<110")));
@@ -178,40 +225,54 @@ TString higgsCutsBDT(int mH, bool out) {
   cutsOut.insert(std::make_pair(500,cuts[500]+TString(" && mll<500")));
   cutsOut.insert(std::make_pair(550,cuts[550]+TString(" && mll<550")));
   cutsOut.insert(std::make_pair(600,cuts[600]+TString(" && mll<600")));
+  cutsOut.insert(std::make_pair(700,cuts[600]+TString(" && mll<700")));
+  cutsOut.insert(std::make_pair(800,cuts[600]+TString(" && mll<800")));
+  cutsOut.insert(std::make_pair(900,cuts[600]+TString(" && mll<900")));
+  cutsOut.insert(std::make_pair(1000,cuts[600]+TString(" && mll<1000")));
 
   if(out) return cutsOut[mH];
   else return cuts[mH];
 
 }
 
-TString higgsCutsBDTNoMT(int mH, bool out) {
+TString higgsCutsBDTNoMT(int mH, bool out, int njets) {
+  
+  TString dymvacut = (njets==0) ? TString("dymva1>0.6 && njet==0") : TString("dymva1>0.3 && njet==1");
+  TString finalmetcut = (njets==0) ? TString("mpmet>45 && njet==0") : TString("mpmet>45 && njet==1");
   
   std::map<int,TString> cuts;
-  cuts.insert(std::make_pair(110,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(115,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(118,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(120,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(122,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(124,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(126,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(128,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(130,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(135,TString("ptll>45 && pt1>25  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(140,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(150,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(160,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(170,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(180,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(190,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(200,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(250,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(300,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(350,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(400,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(450,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(500,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(550,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
-  cuts.insert(std::make_pair(600,TString("ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav))")));
+  cuts.insert(std::make_pair(110,dymvacut));
+  cuts.insert(std::make_pair(115,dymvacut));
+  cuts.insert(std::make_pair(118,dymvacut));
+  cuts.insert(std::make_pair(120,dymvacut));
+  cuts.insert(std::make_pair(122,dymvacut));
+  cuts.insert(std::make_pair(124,dymvacut));
+  cuts.insert(std::make_pair(125,dymvacut));
+  cuts.insert(std::make_pair(126,dymvacut));
+  cuts.insert(std::make_pair(128,dymvacut));
+  cuts.insert(std::make_pair(130,dymvacut));
+  cuts.insert(std::make_pair(135,dymvacut));
+  cuts.insert(std::make_pair(140,dymvacut));
+  cuts.insert(std::make_pair(145,dymvacut));
+  cuts.insert(std::make_pair(150,finalmetcut));
+  cuts.insert(std::make_pair(155,finalmetcut));
+  cuts.insert(std::make_pair(160,finalmetcut));
+  cuts.insert(std::make_pair(170,finalmetcut));
+  cuts.insert(std::make_pair(180,finalmetcut));
+  cuts.insert(std::make_pair(190,finalmetcut));
+  cuts.insert(std::make_pair(200,finalmetcut));
+  cuts.insert(std::make_pair(250,finalmetcut));
+  cuts.insert(std::make_pair(300,finalmetcut));
+  cuts.insert(std::make_pair(350,finalmetcut));
+  cuts.insert(std::make_pair(400,finalmetcut));
+  cuts.insert(std::make_pair(450,finalmetcut));
+  cuts.insert(std::make_pair(500,finalmetcut));
+  cuts.insert(std::make_pair(550,finalmetcut));
+  cuts.insert(std::make_pair(600,finalmetcut));
+  cuts.insert(std::make_pair(700,finalmetcut));
+  cuts.insert(std::make_pair(800,finalmetcut));
+  cuts.insert(std::make_pair(900,finalmetcut));
+  cuts.insert(std::make_pair(1000,finalmetcut));
 
   std::map<int,TString> cutsOut;
   cutsOut.insert(std::make_pair(110,cuts[110]+TString(" && mll<70")));
@@ -220,12 +281,15 @@ TString higgsCutsBDTNoMT(int mH, bool out) {
   cutsOut.insert(std::make_pair(120,cuts[120]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(122,cuts[122]+TString(" && mll<70")));
   cutsOut.insert(std::make_pair(124,cuts[124]+TString(" && mll<70")));
+  cutsOut.insert(std::make_pair(125,cuts[125]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(126,cuts[126]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(128,cuts[128]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(130,cuts[130]+TString(" && mll<80")));
   cutsOut.insert(std::make_pair(135,cuts[135]+TString(" && mll<90")));
   cutsOut.insert(std::make_pair(140,cuts[140]+TString(" && mll<90")));
+  cutsOut.insert(std::make_pair(145,cuts[145]+TString(" && mll<90")));
   cutsOut.insert(std::make_pair(150,cuts[150]+TString(" && mll<100")));
+  cutsOut.insert(std::make_pair(155,cuts[155]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(160,cuts[160]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(170,cuts[170]+TString(" && mll<100")));
   cutsOut.insert(std::make_pair(180,cuts[180]+TString(" && mll<110")));
@@ -239,6 +303,10 @@ TString higgsCutsBDTNoMT(int mH, bool out) {
   cutsOut.insert(std::make_pair(500,cuts[500]+TString(" && mll<500")));
   cutsOut.insert(std::make_pair(550,cuts[550]+TString(" && mll<550")));
   cutsOut.insert(std::make_pair(600,cuts[600]+TString(" && mll<600")));
+  cutsOut.insert(std::make_pair(700,cuts[600]+TString(" && mll<700")));
+  cutsOut.insert(std::make_pair(800,cuts[600]+TString(" && mll<800")));
+  cutsOut.insert(std::make_pair(900,cuts[600]+TString(" && mll<900")));
+  cutsOut.insert(std::make_pair(1000,cuts[600]+TString(" && mll<1000")));
 
   if(out) return cutsOut[mH];
   else return cuts[mH];
