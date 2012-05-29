@@ -25,7 +25,7 @@ float getOfflineEff(float pT, float eta, TH2F *myH);
 void addWeights(const char* filename, float baseW, int processId, int finalstate, int release) {
 
   cout << "Adding weight branch to file " << filename << " with weight " << baseW << endl;
-  if (release==0) cout << "Offline efficiency computed using 41X samples" << endl;
+  if (release==0) cout << "Offline efficiency computed using 52X samples" << endl;
   if (release==1) cout << "Offline efficiency computed using 42X samples" << endl;
 
   TFile *fileOrig = 0;
@@ -50,31 +50,24 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
-
   // reading root files with electrons and muons efficiencies
-  TFile fileSFmuons41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/Muons_vpvPlusExpo_OutputScaleFactorMap_Spring11_41X.root");
-  TH2F *histoSFmuons41 = (TH2F*)fileSFmuons41.Get("hScaleFactorMap")->Clone("effSFmuons41");
-  fileSFmuons41.Close();
-  // 
   TFile fileSFmuons42A("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Muon_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011AReweighted.root");
-  //TFile fileSFmuons42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_mu.root");
   TH2F *histoSFmuons42A = (TH2F*)fileSFmuons42A.Get("hScaleFactorMap")->Clone("effSFmuons42A");
-  // 
+  fileSFmuons42A.Close();
   TFile fileSFmuons42B("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Muon_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011BReweighted.root");
-  //TFile fileSFmuons42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_mu.root");
   TH2F *histoSFmuons42B = (TH2F*)fileSFmuons42B.Get("hScaleFactorMap")->Clone("effSFmuons42B");
-  //
-  TFile fileSFEle41("/cmsrm/pc23_2/crovelli/data/muonTeP_LP/EffSFs_ElectronSel_DataLP11_MCSpring11_41X.root");
-  TH2F *histoSFele41 = (TH2F*)fileSFEle41.Get("pt_abseta_SF")->Clone("effSFele41");
-  fileSFEle41.Close();
-  //
+  fileSFmuons42B.Close();
+  TFile fileSFmuons52("/afs/cern.ch/work/e/emanuele/public/effsf/muon_scale_factors_52X.root");
+  TH2F *histoSFmuons52 = (TH2F*)fileSFmuons52.Get("muonDATAMCratio")->Clone("effSFmuons52");
+
   TFile fileSFEle42A("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Electron_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011AReweighted.root");
-  //TFile fileSFEle42A("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011A_ele.root");
   TH2F *histoSFele42A = (TH2F*)fileSFEle42A.Get("hScaleFactorMap")->Clone("effSFele42A");
-  //
+  fileSFEle42A.Close();
   TFile fileSFEle42B("/cmsrm/pc24_2/emanuele/data/Higgs4.2.X/LeptonSFs/8thNovemberReload_Electron_Efficiencies_Run2011_ALL/OutputScaleFactorMap_MC42X_2011BReweighted.root");
-  //TFile fileSFEle42B("/afs/cern.ch/user/c/crovelli/public/sfAandB/sfK_run2011B_ele.root");
   TH2F *histoSFele42B = (TH2F*)fileSFEle42B.Get("hScaleFactorMap")->Clone("effSFele42B");
+  fileSFEle42B.Close();
+  TFile fileSFEle52("/afs/cern.ch/work/e/emanuele/public/effsf/electron_scale_factors_52X.root");
+  TH2F *histoSFele52 = (TH2F*)fileSFEle52.Get("newhwwWP_ratio")->Clone("effSFele52");
 
   fileOrig->cd();
 
@@ -127,6 +120,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Float_t         leadingJetBTagTrackCount;
     Float_t         subleadingJetBTagTrackCount;
     Float_t         subleadingJetsMaxBTagTrackCount;
+    Float_t         leadingJetBTagBProb;
+    Float_t         subleadingJetBTagBProb;
+    Float_t         subleadingJetsMaxBTagBProb;
     Float_t         pt[2];
     Float_t         eta[2];
     Float_t         scEnergy[2];
@@ -257,6 +253,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("leadingJetBTagTrackCount", &leadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount);
     treeOrig->SetBranchAddress("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount);
+    treeOrig->SetBranchAddress("leadingJetBTagJetBProb", &leadingJetBTagBProb);
+    treeOrig->SetBranchAddress("subleadingJetBTagJetBProb", &subleadingJetBTagBProb);
+    treeOrig->SetBranchAddress("subleadingJetsMaxBTagJetBProb", &subleadingJetsMaxBTagBProb);
     treeOrig->SetBranchAddress("pt", pt);
     treeOrig->SetBranchAddress("eta", eta);
     treeOrig->SetBranchAddress("scEnergy", scEnergy);
@@ -388,11 +387,10 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
     // additional (dummy for the moment)
     Float_t effW   = 1.0;   
-    Float_t effAW, effBW; effAW = effBW = 1.0;
     Float_t triggW = 1.0;
 
     // pileup
-    float puAW, puBW, puW;
+    float puW;
     
     for(int i=0; i<(int)trees.size();i++) {
       TTree *theTreeNew = trees[i];
@@ -413,11 +411,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("genptll", &genptll, "genptll/F");
       theTreeNew->Branch("genyll", &genyll, "genyll/F");
       theTreeNew->Branch("puW", &puW, "puW/F");
-      theTreeNew->Branch("puAW", &puAW, "puAW/F");
-      theTreeNew->Branch("puBW", &puBW, "puBW/F");
       theTreeNew->Branch("effW", &effW, "effW/F");
-      theTreeNew->Branch("effAW", &effAW, "effAW/F");
-      theTreeNew->Branch("effBW", &effBW, "effBW/F");
       theTreeNew->Branch("triggW", &triggW, "triggW/F");
       theTreeNew->Branch("pfmet", &pfMet, "pfmet/F");
       theTreeNew->Branch("chmet", &chmet, "chmet/F");  
@@ -462,6 +456,9 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("leadingJetBTagTrackCount", &leadingJetBTagTrackCount, "leadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetBTagTrackCount", &subleadingJetBTagTrackCount, "subleadingJetBTagTrackCount/F");
       theTreeNew->Branch("subleadingJetsMaxBTagTrackCount", &subleadingJetsMaxBTagTrackCount, "subleadingJetsMaxBTagTrackCount/F");
+      theTreeNew->Branch("leadingJetBTagBProb", &leadingJetBTagBProb, "leadingJetBTagBProb/F");
+      theTreeNew->Branch("subleadingJetBTagBProb", &subleadingJetBTagBProb, "subleadingJetBTagBProb/F");
+      theTreeNew->Branch("subleadingJetsMaxBTagBProb", &subleadingJetsMaxBTagBProb, "subleadingJetsMaxBTagBProb/F");
       theTreeNew->Branch("step", step, "step[29]/O");
       theTreeNew->Branch("zveto", &f_zveto, "zveto/F");
       theTreeNew->Branch("bveto_ip", &f_bveto_ip, "bveto_ip/F");
@@ -662,11 +659,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
       // PU weights
       puW = LumiWeights.weight(npu[1]);
-      // 2011
-      // puAW = fPUWeight2011A->GetWeight(npu[1]); 
-      // puBW = fPUWeight2011B->GetWeight(npu[1]); 
-      // puW = fPUWeightFull2011->GetWeight(npu[1]);
-      
 
       //  offline efficiency scale factors
       Float_t eff1=1.; 
@@ -676,9 +668,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       if (processId>0) { // MC => apply scale factors
         if (finalstate==0) {   // mm
           if (release==0) { 
-            // cout << "finalstate==0" << endl;
-            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);    
-            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);    
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons52);    
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons52);    
           }
           else if (release==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);    
@@ -692,8 +683,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         else if (finalstate==1) { // ee
           // cout << "finalstate==1" << endl;
           if (release==0) { 
-            eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-            eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFele52);
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFele52);
           } else if (release==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
@@ -705,8 +696,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         } else if (finalstate==2) {  // em
           // cout << "finalstate==2" << endl;
           if (release==0) { 
-            eff1 = getOfflineEff(l1pt, l1eta, histoSFele41);
-            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons41);
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFele52);
+            eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons52);
           } else if (release==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);
@@ -718,8 +709,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
         } else if (finalstate==3) {  // me
           // cout << "finalstate==3" << endl;
           if (release==0) { 
-            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons41);
-	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele41);
+            eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons52);
+	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele52);
           } else if (release==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
@@ -730,12 +721,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
           }
         } 
         effW = eff1*eff2;
-        effAW = effA1*effA2;
-        effBW = effB1*effB2;
       } else { // data
         effW = 1.;
-        effAW = 1.;
-        effBW = 1.;
       }
 
       if(sqrt(pow(pxLeadJet[0],2)+pow(pyLeadJet[0],2))>15) {
@@ -784,8 +771,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       
       sameflav = (finalstate<2) ? 1. : 0;
 
-      i_WWSel0j = (step[15] && njets==0) ? 1 : 0;
-      i_WWSel1j = (step[15] && njets==1) ? 1 : 0;
+      i_WWSel0j = (step[14] && (dymva1>0.6 || !sameflav) && njets==0) ? 1 : 0;
+      i_WWSel1j = (step[14] && (dymva1>0.3 || !sameflav) && njets==1) ? 1 : 0;
       
       // change the format of the integers -> float
       f_run = (float)run;
@@ -859,16 +846,17 @@ float calcMT(TVector3 met, TVector3 lepton) {
 float getOfflineEff(float pT, float eta, TH2F *myH) {
 
   float theEff=-1.;
-  
-  //  int numberOfBins = myH->GetNbinsX()*myH->GetNbinsY();
+
   int   xBins = myH->GetXaxis()->GetNbins();
   float xMin  = myH->GetXaxis()->GetBinLowEdge(1);
   float xMax  = myH->GetXaxis()->GetBinUpEdge(xBins);
   int   yBins = myH->GetYaxis()->GetNbins();
   float yMin  = myH->GetYaxis()->GetBinLowEdge(1);
   float yMax  = myH->GetYaxis()->GetBinUpEdge(yBins);
-  int theBin = myH->FindBin(pT, fabs(eta));
-  if (pT>xMin && pT<xMax && fabs(eta)>yMin && fabs(eta)<yMax) {
+  //  int theBin = myH->FindBin(pT, fabs(eta));  // 42X Clara's maps are pt(x);eta(y)
+  int theBin = myH->FindBin(fabs(eta), pT);
+  //  if (pT>xMin && pT<xMax && fabs(eta)>yMin && fabs(eta)<yMax) {
+  if (pT>yMin && pT<yMax && fabs(eta)>xMin && fabs(eta)<xMax) { 
     theEff = myH->GetBinContent(theBin);
   } else {
     theEff = 1.;
