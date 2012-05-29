@@ -81,6 +81,7 @@ public:
   void fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT,
                   float softbdisc, float hardbdisc, float bTagSecVertex, int nSoftMu, 
                   float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount, 
+                  float leadJetBTagBProb, float subleadJetBTagBProb, float subleadJetsMaxBTagBProb, 
                   int numExtraLep, int nSoftMuNoJets, int nSoftBJets, int nSoftJets);
 
   //! fill infos for jetId studies
@@ -149,6 +150,7 @@ private:
   float myBTagSecVertex;
   int myNSoftMu, myNSoftMuNoJets;
   float myLeadingJetBTagTrackCount, mySubleadingJetBTagTrackCount, mySubleadingJetsMaxBTagTrackCount;
+  float myLeadingJetBTagJetBProb, mySubleadingJetBTagJetBProb, mySubleadingJetsMaxBTagJetBProb;
   int  myNumExtraLep, myNumSoftBJets, myNumSoftJets;
   bool myFinalLeptons;
   bool myJetVeto;

@@ -140,7 +140,6 @@ private:
   //! to evaluate eleID
   CutBasedEleIDSelector EgammaCutBasedID;
   CutBasedEleIDSelector EgammaCutBasedIDLow;
-  ElectronLikelihood *LH;
   bool m_useBDTEleID;
   //! to evaluate preselection efficiency
   Selection *_preselection;
@@ -202,6 +201,7 @@ private:
   float m_metOptll[4];
   float hardestLeptonPt[4], slowestLeptonPt[4];
   float leadJetBtag[4], subleadJetBtag[4], subLeadJetsMaxBtag[4];
+  float leadJetBtagBProb[4], subleadJetBtagBProb[4], subLeadJetsMaxBtagBProb[4];
   float m_softbdisc[4], m_hardbdisc[4];
   int njets[4], nuncorrjets[4];
   float m_dymva[4];

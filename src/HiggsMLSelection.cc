@@ -830,6 +830,9 @@ void HiggsMLSelection::Loop() {
       leadJetBtag[ichan] = -2000.;
       subleadJetBtag[ichan] = -2000.;
       subLeadJetsMaxBtag[ichan] = -2000.;
+      leadJetBtagBProb[ichan] = -2000.;
+      subleadJetBtagBProb[ichan] = -2000.;
+      subLeadJetsMaxBtagBProb[ichan] = -2000.;
       nsoftjets[ichan] = 0;
     }
 
@@ -1009,7 +1012,9 @@ void HiggsMLSelection::Loop() {
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
 
     myOutTreeEE -> fillMLVars(njets[ee], nuncorrjets[ee], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[ee], m_hardbdisc[ee], m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], nextraleptons[ee], nsoftmunojets[ee], m_numbtagjets[ee], nsoftjets[ee]);
+                              nsoftmu[ee], leadJetBtag[ee], subleadJetBtag[ee], subLeadJetsMaxBtag[ee], 
+                              leadJetBtagBProb[ee], subleadJetBtagBProb[ee], subLeadJetsMaxBtagBProb[ee],
+                              nextraleptons[ee], nsoftmunojets[ee], m_numbtagjets[ee], nsoftjets[ee]);
 
     if (wantJetIdStuff) 
       myOutTreeEE -> fillJetsVars(leadJetPt[ee], leadJetEta[ee], leadJetLoosePFId[ee], leadJetMatchGen[ee], leadJetMvaJetId[ee], leadJetLooseId[ee], subleadJetPt[ee], subleadJetEta[ee], subleadJetLoosePFId[ee], subleadJetMatchGen[ee], subleadJetMvaJetId[ee], subleadJetLooseId[ee]);
@@ -1168,7 +1173,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeMM -> fillLeptons(myPt, myEta, myPhi, myLepId, myLepIso, myConv);
 
     myOutTreeMM -> fillMLVars(njets[mm], nuncorrjets[mm], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[mm], m_hardbdisc[mm], m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], nextraleptons[mm], nsoftmunojets[mm], m_numbtagjets[mm], nsoftjets[mm]);
+                              nsoftmu[mm], leadJetBtag[mm], subleadJetBtag[mm], subLeadJetsMaxBtag[mm], 
+                              leadJetBtagBProb[mm], subleadJetBtagBProb[mm], subLeadJetsMaxBtagBProb[mm],
+                              nextraleptons[mm], nsoftmunojets[mm], m_numbtagjets[mm], nsoftjets[mm]);
 
     if (wantJetIdStuff)     
       myOutTreeMM -> fillJetsVars(leadJetPt[mm], leadJetEta[mm], leadJetLoosePFId[mm], leadJetMatchGen[mm], leadJetMvaJetId[mm], leadJetLooseId[mm], subleadJetPt[mm], subleadJetEta[mm], subleadJetLoosePFId[mm], subleadJetMatchGen[mm], subleadJetMvaJetId[mm], subleadJetLooseId[mm]);
@@ -1333,7 +1340,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeEM -> fillLeptons(myPt, myEta, myPhi, myLepId, myLepIso, myConv);
     
     myOutTreeEM -> fillMLVars(njets[em], nuncorrjets[em], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[em], m_hardbdisc[em], m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], nextraleptons[em], nsoftmunojets[em], m_numbtagjets[em], nsoftjets[em]);
+                              nsoftmu[em], leadJetBtag[em], subleadJetBtag[em], subLeadJetsMaxBtag[em], 
+                              leadJetBtagBProb[em], subleadJetBtagBProb[em], subLeadJetsMaxBtagBProb[em],
+                              nextraleptons[em], nsoftmunojets[em], m_numbtagjets[em], nsoftjets[em]);
 
     if (wantJetIdStuff) 
       myOutTreeEM -> fillJetsVars(leadJetPt[em], leadJetEta[em], leadJetLoosePFId[em], leadJetMatchGen[em], leadJetMvaJetId[em], leadJetLooseId[em], subleadJetPt[em], subleadJetEta[em], subleadJetLoosePFId[em], subleadJetMatchGen[em], subleadJetMvaJetId[em], subleadJetLooseId[em]);
@@ -1489,7 +1498,9 @@ void HiggsMLSelection::Loop() {
     myOutTreeME -> fillLeptons(myPt, myEta, myPhi, myLepId, myLepIso, myConv);
     
     myOutTreeME -> fillMLVars(njets[me], nuncorrjets[me], m_maxDxyEvt, m_maxDszEvt, m_softbdisc[me], m_hardbdisc[me], m_maxCombinedSecondaryVertexMVABJetTags, 
-                              nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], nextraleptons[me], nsoftmunojets[me], m_numbtagjets[me], nsoftjets[me]);
+                              nsoftmu[me], leadJetBtag[me], subleadJetBtag[me], subLeadJetsMaxBtag[me], 
+                              leadJetBtagBProb[me], subleadJetBtagBProb[me], subLeadJetsMaxBtagBProb[me],
+                              nextraleptons[me], nsoftmunojets[me], m_numbtagjets[me], nsoftjets[me]);
 
     if (wantJetIdStuff) 
       myOutTreeME -> fillJetsVars(leadJetPt[me], leadJetEta[me], leadJetLoosePFId[me], leadJetMatchGen[me], leadJetMvaJetId[me], leadJetLooseId[me], subleadJetPt[me], subleadJetEta[me], subleadJetLoosePFId[me], subleadJetMatchGen[me], subleadJetMvaJetId[me], subleadJetLooseId[me]);
@@ -2664,11 +2675,13 @@ int HiggsMLSelection::numJets( std::vector<int> eleToRemove, std::vector<int> mu
       
       theLeadingJet[theChannel] = j;
       leadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
+      leadJetBtagBProb[theChannel] = jetBProbabilityBJetTagsAK5PFPUcorrJet[j];
       ETMax = pt;
 
     } else if ( pt>ETMax2 && pt<ETMax ) {
       theSecondJet[theChannel] = j;
       subleadJetBtag[theChannel] = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];
+      subleadJetBtagBProb[theChannel] = jetBProbabilityBJetTagsAK5PFPUcorrJet[j];
 
       ETMax2 = pt;
     }
@@ -2862,6 +2875,7 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
   float maxTCHE=-999;
   float maxJetBProb=-999;
   float outputSubLeadJets = -999;
+  float outputSubLeadJetsBProb = -999;
   m_numbtagjets[theChannel]=0;
   for(int j=0;j<nAK5PFPUcorrJet;j++) {
 
@@ -2931,11 +2945,13 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
     if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
 
     if(j != theLeadingJet[theChannel] && tmpTCHE > outputSubLeadJets) outputSubLeadJets = tmpTCHE;
+    if(j != theLeadingJet[theChannel] && tmpJBP > outputSubLeadJetsBProb) outputSubLeadJetsBProb = tmpJBP;
     if(tmpTCHE>1.6) m_numbtagjets[theChannel]++;
 
   }
 
   subLeadJetsMaxBtag[theChannel] = outputSubLeadJets;
+  subLeadJetsMaxBtagBProb[theChannel] = outputSubLeadJetsBProb;
 
   int lj = theLeadingJet[theChannel];
   float ptleadjet = GetPt(pxAK5PFPUcorrJet[lj],pyAK5PFPUcorrJet[lj]);

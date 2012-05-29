@@ -60,6 +60,9 @@ void RedHiggsTree::addMLVars() {
   myTree->Branch("leadingJetBTagTrackCount", &myLeadingJetBTagTrackCount,    "leadingJetBTagTrackCount/F");
   myTree->Branch("subleadingJetBTagTrackCount", &mySubleadingJetBTagTrackCount,    "subleadingJetBTagTrackCount/F");    
   myTree->Branch("subleadingJetsMaxBTagTrackCount", &mySubleadingJetsMaxBTagTrackCount,    "subleadingJetsMaxBTagTrackCount/F");    
+  myTree->Branch("leadingJetBTagJetBProb", &myLeadingJetBTagJetBProb,    "leadingJetBTagJetBProb/F");
+  myTree->Branch("subleadingJetBTagJetBProb", &mySubleadingJetBTagJetBProb,    "subleadingJetBTagJetBProb/F");    
+  myTree->Branch("subleadingJetsMaxBTagJetBProb", &mySubleadingJetsMaxBTagJetBProb,    "subleadingJetsMaxBTagJetBProb/F");    
   myTree->Branch("numExtraLep", &myNumExtraLep, "numExtraLep/I");   
   myTree->Branch("nsoftjet", &myNumSoftJets, "nsoftjet/I");
   myTree->Branch("nsoftbjet", &myNumSoftBJets, "nsoftbjet/I");
@@ -312,6 +315,7 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
  void RedHiggsTree::fillMLVars(int njets, int nuncorrjets, float dxyEVT, float dszEVT, 
                               float softbdisc, float hardbdisc, float bTagSecVertex, int nsoftmu, 
                               float leadJetBTagTrackCount, float subleadJetBTagTrackCount, float subleadJetsMaxBTagTrackCount,
+                              float leadJetBTagJetBProb, float subleadJetBTagJetBProb, float subleadJetsMaxBTagJetBProb,
                               int numExtraLep, int nsoftmunojets, int nSoftBJets, int nSoftJets) {
  
   myNjets   = njets;
@@ -326,6 +330,9 @@ void RedHiggsTree::fillAll(float met, float pfmet, float cmet, float projmet,
   myLeadingJetBTagTrackCount = leadJetBTagTrackCount;
   mySubleadingJetBTagTrackCount = subleadJetBTagTrackCount;
   mySubleadingJetsMaxBTagTrackCount = subleadJetsMaxBTagTrackCount;
+  myLeadingJetBTagJetBProb = leadJetBTagJetBProb;
+  mySubleadingJetBTagJetBProb = subleadJetBTagJetBProb;
+  mySubleadingJetsMaxBTagJetBProb = subleadJetsMaxBTagJetBProb;
   myNumExtraLep = numExtraLep;
   myNumSoftBJets = nSoftBJets;
   myNumSoftJets = nSoftJets;
