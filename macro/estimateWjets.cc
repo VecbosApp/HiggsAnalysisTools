@@ -225,10 +225,10 @@ void estimateWjets(int njets) {
   tablefile3.open(nameFileTable3, ios_base::trunc);
   tablefile3.precision(2);
 
-  int masses[24] = {110,115,118,120,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int masses[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int i=0; i<24; i++) {
+  for (int i=0; i<27; i++) {
 
     int mass = masses[i];
 
