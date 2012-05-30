@@ -87,20 +87,22 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
   tablefileLL << "$m_{H}$ [GeV] \t\t \t & $n^{data}_{in}$ \t\t & $n^{data}_{in}(sub)$ \t\t\t & \t $R_{MC}$ \t & \t $n^{data}_{DY}$ \t & \t $n^{MC}_{DY}$ \\\\" << endl;
   tablefileLL << "\\hline" << endl;
 
-  int mH[25] = {110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0; i<25;i++) {
+  // int mH[23] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int mH[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
+  for(int i=0; i<27;i++) {
+    // for(int i=0; i<1;i++) {
     std::cout << "mH = " << mH[i] << std::endl;
     TString addCutInR, addCutOutR, addCutIn, addCutOut;
     if(cutbasedestimation) {
-      addCutInR = higgsCutsNoMT(mH[i],false);
-      addCutOutR = higgsCutsNoMT(mH[i],true);
-      addCutIn = higgsCuts(mH[i],false);
-      addCutOut = higgsCuts(mH[i],true);
+      addCutInR = higgsCutsNoMT(mH[i],false,njets);
+      addCutOutR = higgsCutsNoMT(mH[i],true,njets);
+      addCutIn = higgsCuts(mH[i],false,njets);
+      addCutOut = higgsCuts(mH[i],true,njets);
     } else {
-      addCutInR = higgsCutsBDTNoMT(mH[i],false);
-      addCutOutR = higgsCutsBDTNoMT(mH[i],true);
-      addCutIn = higgsCutsBDT(mH[i],false);
-      addCutOut = higgsCutsBDT(mH[i],true);
+      addCutInR = higgsCutsBDTNoMT(mH[i],false,njets);
+      addCutOutR = higgsCutsBDTNoMT(mH[i],true,njets);
+      addCutIn = higgsCutsBDT(mH[i],false,njets);
+      addCutOut = higgsCutsBDT(mH[i],true,njets);
     }
     estimateDY(lumiInInvFb, mH[i],njets,useDataRk,addCutIn,addCutOut,addCutInR,addCutOutR);
   }
@@ -145,8 +147,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   char njcut[30];
   sprintf(njcut, "njet==%d", njets);
   char wwselcut[1000];
-  if(njets==0) sprintf(wwselcut,"WWSel && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20");
-  else if(njets==1) sprintf(wwselcut,"WWSel1j && ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20");
+  if(njets==0) sprintf(wwselcut,"step[14]==1 && njet==0 && dymva1>0.6");
+  else if(njets==1) sprintf(wwselcut,"step[14]==1 && njet==1 && dymva1>0.3");
+
   else {
     std::cout << "Jet bin must be 0/1" << std::endl;
     return;
@@ -191,52 +194,69 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   TH1F *nemLooseInHData  = new TH1F("nemLooseInHData","",50,0,TMath::Pi());
   TH1F *nemLooseOutHData = new TH1F("nemLooseOutHData","",50,0,TMath::Pi());  
 
-  treeZjets->Project("ZeejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==1)*baseW*kfW*puW*effW")).Data());
-  treeZjets->Project("ZmmjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==0)*baseW*kfW*puW*effW")).Data());
-  treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==2)*baseW*kfW*puW*effW")).Data());
-  treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==3)*baseW*kfW*puW*effW")).Data());
+  treeZjets->Project("ZeejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==1)*baseW*puW*effW")).Data());   
+  treeZjets->Project("ZmmjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==0)*baseW*puW*effW")).Data());
+  treeZjets->Project("ZemjetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==2)*baseW*puW*effW")).Data());
+  treeZjets->Project("ZmejetsH","dphill",(TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==3)*baseW*puW*effW")).Data());
 
-  cout << "start: njcut = " << njcut << " come string = " << TString(njcut).Data() << std::endl;
+  cout << "start: njets = " << njcut << std::endl;
+  cout << "per MC truth: " << TString("(")+TString(wwselcut)+TString(" && ")+addCutOut+TString(" && channel==1)*baseW*puW*effW").Data();   
+  cout <<endl;
 
-  TString wwCutInR("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
-  wwCutInR += (addCutInR + TString(" && ") + TString(njcut) + TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
-  TString wwCutOutR("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
-  wwCutOutR += (addCutOutR+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
+  TString wwCutInR("(step[7] && ptll>45 && pfmet>20 && mpmet>20 && ");  
+  wwCutInR += (addCutInR + TString(" && ") + TString(njcut) + TString( " && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
+  TString wwCutOutR("(step[7] && ptll>45 && pfmet>20 && mpmet>20 && "); 
+  wwCutOutR += (addCutOutR+TString(" && ")+TString(njcut)+TString( " && nextra==0 && bveto && nSoftMu==0 && zveto)"));
 
-  TString wwCutIn("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
-  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
-  TString wwCutOut("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && mpmet>20 &&");
-  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
+  TString wwCutIn("(step[7] && ptll>45 && pfmet>20 && mpmet>20 && ");  
+  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
+  TString wwCutOut("(step[7] && ptll>45 && pfmet>20 && mpmet>20 && "); 
+  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && nextra==0 && bveto && nSoftMu==0 && zveto)"));
 
-  TString weightString;  
-  if(njets==0) weightString = TString("baseW*kfW*puW*effW");
-  else weightString = TString("baseW*puW*effW");
+  TString weightString = TString("baseW*puW*effW");   
 
-  treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && mpmet>30 && mpmet<(37+nvtx/2.) && sameflav")+TString(")*baseW*kfW*puW*effW"));
+  // check the N-1 bin statistics
+  TString DYmvaCut;
+  if(njets==0) DYmvaCut = TString("0.6"); 
+  if(njets==1) DYmvaCut = TString("0.3"); 
+  treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && dymva1>-0.6 && dymva1<") + DYmvaCut + TString(" && sameflav")+TString(")*baseW*puW*effW"));
   float forTheCheck = nllCheckInH->GetEntries();
   
-  TString mpmetcutnom("mpmet>(37+nvtx/2.)");
+  TString mpmetcutnom = TString("dymva1>") + DYmvaCut;
+  TString mpmetcutNminus1 = TString("dymva1>-0.6 && dymva1<") + DYmvaCut;
+  TString mpmetcutNminus2 = TString("dymva1>-0.85 && dymva1<-0.60");
+  TString mpmetcutNminus3 = TString("dymva1>-0.90 && dymva1<-0.85");
 
   char mpmetcut[30];
-  if(forTheCheck>=50) { std::cout << "more than 50 events: cutting at MET>30-37" << std::endl; sprintf(mpmetcut,"mpmet>(37+nvtx/2.)"); }
-  if(forTheCheck<50 || (mass>=150 && mass<=190) || mass==350)  { std::cout << "less than 50 events or tight selection masses: cutting at MET>30" 
-                                                                           << std::endl; sprintf(mpmetcut,"mpmet>30 && mpmet<=(37+nvtx/2.)"); }
+  if(forTheCheck>=50) { std::cout << "more than 50 events in bin N-1: cutting at bin N-1" << std::endl; sprintf(mpmetcut,mpmetcutNminus1.Data()); }
+  // chiara: cos'erano queste eccezioni per le masse?
+  // if(forTheCheck<50 || (mass>=150 && mass<=190) || mass==350)  { std::cout << "less than 50 events or tight selection masses: cutting at MET>30" 
+  // << std::endl; sprintf(mpmetcut,"mpmet>30 && mpmet<=(37+nvtx/2.)"); }
+  if(forTheCheck<50)  { 
+    std::cout << "less than 50 events or tight selection masses: cutting at MET>30" << std::endl;
+    sprintf(mpmetcut,mpmetcutNminus2.Data()); 
+  }
 
-  // nominal R computed with cut at 37 or 30 (according to the statistics at denominator) - MC
+  // nominal R computed with cut at -0.6 or nominal (according to the statistics at denominator) - MC
   treeZjets->Project("neeLooseInH","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
   treeZjets->Project("neeLooseOutH","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString);
   treeZjets->Project("nmmLooseInH","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
   treeZjets->Project("nmmLooseOutH","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)*") + weightString);
- 
-  // nominal R computed with cut at 37 or 30 (according to the statistics at denominator) - data
+
+  TString finCutIn = TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString;
+  TString finCutOut = TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)*") + weightString;
+  cout << "cut in per R = " << finCutIn.Data() << endl;
+  cout << "cut out per R = " << finCutOut.Data() << endl;
+
+  // nominal R computed with cut at -0.6 or nominal (according to the statistics at denominator) - data
   treeData->Project("neeLooseInHData","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
   treeData->Project("neeLooseOutHData","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==1)"));
   treeData->Project("nmmLooseInHData","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)"));
   treeData->Project("nmmLooseOutHData","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcut) + TString(" && channel==0)"));
   
   // contribution of dibosons under the peak (from MC) with nominal selection
-  treeOthers->Project("OthersEEH","dphill",TString("(") + wwCutIn + TString(" && ") + mpmetcutnom + TString(" && channel==1)*") + weightString);
-  treeOthers->Project("OthersMMH","dphill",TString("(") + wwCutIn + TString(" && ") + mpmetcutnom + TString(" && channel==0)*") + weightString);
+  treeOthers->Project("OthersEEH","dphill",TString("(") + wwCutIn + TString(" && ") + mpmetcutnom + TString(" && channel==1)*(dataset==71 || dataset==74)*") + weightString);
+  treeOthers->Project("OthersMMH","dphill",TString("(") + wwCutIn + TString(" && ") + mpmetcutnom + TString(" && channel==0)*(dataset==71 || dataset==74)*") + weightString);
 
   // number of events measured in data under the peak (control region with nominal selection)
   treeData->Project("neeInH","dphill",TString("(") + wwCutIn + TString(" && ") + mpmetcutnom + TString(" && channel==1)"));
@@ -258,9 +278,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   k[mm] = sqrt(nmmLooseInH->Integral() / neeLooseInH->Integral());
   k_err[mm] = 0.01; // from other studies
 
-  cout << "from loose analysis (cut 37 or 30) => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
-  cout << "from loose analysis (cut 37 or 30) => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
-  cout << "from loose analysis (cut 37 or 30) => Ree = "    << R[ee]  << ", Rmm = " << R[mm] << endl;
+  cout << "from loose analysis (N-1 or N-2) => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
+  cout << "from loose analysis (N-1 or N-2) => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
+  cout << "from loose analysis (N-1 or N-2) => Ree = "    << R[ee]  << ", Rmm = " << R[mm] << endl;
 
   // combine ee+mm because of low stat (MC) =>
   // R combined
@@ -270,22 +290,61 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   float nllLooseIn_err  = yieldErrPoisson(nllLooseIn, neeLooseInH->GetEntries()+nmmLooseInH->GetEntries());
   float Rll             = nllLooseOut / nllLooseIn;
   float Rll_err         = Rll * quadrSum(nllLooseOut_err/nllLooseOut, nllLooseIn_err/nllLooseIn);
-
+  
   // k combined 
   float kll     = 0.5 * (k[mm]+1.0/k[mm]);
   float kll_err = k_err[mm] * (1. - 1./k[mm]/k[mm]);
   
-  
-
   // R and k estimations (data)
-  float R_data[2], R_data_err[2], k_data[2], k_data_err[2];
-  R_data[ee]     = (neeLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()) / (neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral());
-  R_data_err[ee] = R_data[ee] * quadrSum( yieldErrPoisson(neeLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral(),neeLooseOutHData->GetEntries()+0.5*nemLooseOutHData->GetEntries()) / (neeLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()),
-                                          yieldErrPoisson(neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral(),neeLooseInHData->GetEntries()+0.5*nemLooseInHData->GetEntries()) / (neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral()));
+  float k_data[2], k_data_err[2];
 
-  R_data[mm]     = (nmmLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()) / (nmmLooseInHData->Integral()-0.5*nemLooseInHData->Integral());
-  R_data_err[mm] = R_data[mm] * quadrSum( yieldErrPoisson(nmmLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral(),nmmLooseOutHData->GetEntries()+0.5*nemLooseOutHData->GetEntries()) / (nmmLooseOutHData->Integral()-0.5*nemLooseOutHData->Integral()),
-                                          yieldErrPoisson(nmmLooseInHData->Integral()-0.5*nemLooseInHData->Integral(),nmmLooseInHData->GetEntries()+0.5*nemLooseInHData->GetEntries()) / (nmmLooseInHData->Integral()-0.5*nemLooseInHData->Integral()));
+  // contribution of dibosons under the peak (from MC) with nominal selection
+  TString finalcutIn  = TString("(") + wwCutInR + TString(" && ") + TString(mpmetcut) + TString(" && sameflav)*");
+  TString finalcutOut = TString("(") + wwCutOutR + TString(" && ") + TString(mpmetcut) + TString(" && sameflav)*");
+  TString finalcutInVZ = finalcutIn + TString("*(dataset==71 || dataset==74)*baseW*puW*effW");
+  TString finalcutOutVZ= finalcutOut + TString("*(dataset==71 || dataset==74)*baseW*puW*effW");
+  TH1F *vzin = new TH1F("vzin","",50,0,TMath::Pi());
+  TH1F *vzout = new TH1F("vzout","",50,0,TMath::Pi());
+  treeOthers->Project("vzin","dphill",finalcutInVZ);
+  treeOthers->Project("vzout","dphill",finalcutOutVZ);
+
+  float nInVZ = lumiInInvFb * vzin->Integral();
+  float nOutVZ = lumiInInvFb * vzout->Integral();
+  float nInVZ_err = yieldErrPoisson(nInVZ,vzin->GetEntries());
+  float nOutVZ_err = yieldErrPoisson(nOutVZ,vzout->GetEntries());
+  std::cout << "\t\tnInVZ = " << nInVZ << " +/- " << nInVZ_err << std::endl;
+  std::cout << "\t\tnOutVZ = " << nOutVZ << " +/- " << nOutVZ_err << std::endl;
+
+  // contribution of OF from data
+  TString finalcutInOF = TString("(") + wwCutInR + TString(" && ") + TString(mpmetcut) + TString(" && !sameflav)");
+  TString finalcutOutOF = TString("(") + wwCutOutR + TString(" && ") + TString(mpmetcut) + TString(" && !sameflav)");
+  TH1F *histoinOF = new TH1F("histoinOF","",50,0,TMath::Pi());
+  TH1F *histooutOF = new TH1F("histooutOF","",50,0,TMath::Pi());
+  treeData->Project("histoinOF","dphill",finalcutInOF);
+  treeData->Project("histooutOF","dphill",finalcutOutOF);
+  float nInOF = histoinOF->Integral();
+  float nOutOF = histooutOF->Integral();
+  float nInOF_err = sqrt(nInOF);
+  float nOutOF_err = sqrt(nOutOF);
+  std::cout << "\t\tnInOF = " << nInOF << " +/- " << nInOF_err << std::endl;
+  std::cout << "\t\tnOutOF = " << nOutOF << " +/- " << nOutOF_err << std::endl;
+
+  float in = neeLooseInHData->Integral() + nmmLooseInHData->Integral();
+  float out = neeLooseOutHData->Integral() + nmmLooseOutHData->Integral();
+  float in_err = yieldErrPoisson(in,(neeLooseInHData->GetEntries()+nmmLooseInHData->GetEntries()));
+  float out_err = yieldErrPoisson(out,(neeLooseOutHData->GetEntries()+nmmLooseOutHData->GetEntries()));
+  in = in - nInVZ - nInOF;
+  out = out - nOutVZ - nOutOF;
+  in_err = quadrSum(in_err,nInVZ_err,nInOF_err);
+  out_err = quadrSum(out_err,nOutVZ_err,nOutOF_err);
+  
+  float Rll_data, Rll_data_err;
+  if(in!=0 && out!=0) {
+    Rll_data = out/in;
+    Rll_data_err = Rll_data * quadrSum(out_err/out,in_err/in);
+  } else {
+    Rll_data = Rll_data_err = 0;
+  }
 
   k_data[ee]     = sqrt((neeLooseInHData->Integral()-0.5*nemLooseInHData->Integral()) / (nmmLooseInHData->Integral()-0.5*nemLooseInHData->Integral()) );
   k_data_err[ee] = 0.01; // from other studies
@@ -294,29 +353,15 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
 
 
   // combine ee+mm because of low stat (from data)
-  // R
-  float nllLooseOutData     = neeLooseOutHData->Integral() + nmmLooseOutHData->Integral();
-  float nllLooseOutData_err = yieldErrPoisson(nllLooseOutData, neeLooseOutHData->GetEntries()+nmmLooseOutHData->GetEntries());
-  float numR     = nllLooseOutData - nemLooseOutHData->Integral();
-  float numR_err = quadrSum(nllLooseOutData_err,nemLooseOutHData->Integral());
-
-  float nllLooseInData     = neeLooseInHData->Integral() + nmmLooseInHData->Integral();
-  float nllLooseInData_err = yieldErrPoisson(nllLooseInData, neeLooseInHData->GetEntries()+nmmLooseInHData->GetEntries());
-  float denomR     = nllLooseInData - nemLooseInHData->Integral();
-  float denomR_err = quadrSum(nllLooseInData_err,nemLooseInHData->Integral());
-
-  float Rll_data     = numR / denomR;
-  float Rll_data_err = Rll_data * quadrSum(numR_err/numR, denomR_err/denomR);
-
   // k combined is 
   //   float kll_data = 0.5*(k_data[mm]+1.0/k_data[mm]);
   //   float kll_data_err = k_data_err[mm] * (1. - 1./k_data[mm]/k_data[mm]);
 
-
-  // for the systematics: mpMET>30-37 or 20-30 in MC depending on the statistics of the 37 GeV bin
+  // for the systematics: N-2 or N-3 in MC depending on the statistics of the N bin
   char mpmetcutsyst[30];
-  if(forTheCheck>=50) { sprintf(mpmetcutsyst,"mpmet>30 && mpmet<=(37+nvtx/2.)"); }
-  if(forTheCheck<50 || (mass>=150 && mass<=190) || mass==350) { sprintf(mpmetcutsyst,"mpmet>(37+nvtx/2.)"); }
+  if(forTheCheck>=50) { sprintf(mpmetcutsyst,mpmetcutNminus2.Data()); }
+  // if(forTheCheck<50 || (mass>=150 && mass<=190) || mass==350) { sprintf(mpmetcutsyst,"mpmet>(37+nvtx/2.)"); }
+  if(forTheCheck<50) { sprintf(mpmetcutsyst,mpmetcutNminus3.Data()); }
 
   treeZjets->Project("neeLooseInH","dphill",TString("(") + wwCutInR + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==1)*") + weightString);
   treeZjets->Project("neeLooseOutH","dphill",TString("(") + wwCutOutR + TString(" && ") +TString(mpmetcutsyst) + TString(" && channel==1)*") + weightString);
@@ -327,9 +372,9 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   R_interm[ee] = (neeLooseOutH->Integral()) / (neeLooseInH->Integral());
   R_interm[mm] = (nmmLooseOutH->Integral()) / (nmmLooseInH->Integral());
   
-  cout << "from interm: cut 20 => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
-  cout << "from interm: cut 20 => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
-  cout << "from interm: cut 20 => Ree = "    << R_interm[ee]  << ", Rmm = " << R_interm[mm] << endl;
+  cout << "from interm: N-1 bin => num EE = " << neeLooseOutH->Integral()  << ", denom EE = " << neeLooseInH->Integral() << endl;
+  cout << "from interm: N-1 bin => num MM = " << nmmLooseOutH->Integral()  << ", denom MM = " << nmmLooseInH->Integral() << endl;
+  cout << "from interm: N-1 bin => Ree = "    << R_interm[ee]  << ", Rmm = " << R_interm[mm] << endl;
   
   float Rll_interm = (neeLooseOutH->Integral() + nmmLooseOutH->Integral()) / (neeLooseInH->Integral() + nmmLooseInH->Integral());
 
@@ -347,11 +392,7 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   float Rll_data_interm = (neeLooseOutHData->Integral() + nmmLooseOutHData->Integral() - nemLooseOutHData->Integral()) /
     (neeLooseInHData->Integral() + nmmLooseInHData->Integral() - nemLooseInHData->Integral());
 
-  float R_data_systerr[2], R_data_toterr[2], Rll_data_systerr, Rll_data_toterr;
-  for(int icha=0; icha<2; icha++) {
-    R_data_systerr[icha] = fabs(R_data[icha] - R_data_interm[icha]);
-    R_data_toterr[icha]  = quadrSum(R_data_err[icha],R_data_systerr[icha]);
-  }
+  float Rll_data_systerr, Rll_data_toterr;
   Rll_data_systerr = fabs(Rll_data - Rll_data_interm);
   Rll_data_toterr  = quadrSum(Rll_data_err,Rll_data_systerr);
 
@@ -371,11 +412,8 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     std::cout << "--------------------------" << std::endl;
     std::cout << "My estimation of R and k (data): " << std::endl;
     std::cout << "Number of events in data to estimate R (not reweighted): " << std::endl;
-    std::cout << "Zee (out/in) = " <<  neeLooseOutHData->GetEntries() - 0.5*nemLooseOutHData->GetEntries() << " / " << neeLooseInHData->GetEntries()-0.5*nemLooseInHData->GetEntries() << std::endl;
-    std::cout << "Zmm (out/in) = " <<  nmmLooseOutHData->GetEntries() - 0.5*nemLooseOutHData->GetEntries() << " / " << nmmLooseInHData->GetEntries()-0.5*nemLooseInHData->GetEntries() << std::endl;
-    std::cout << "Zem (out/in) to subtract bkg = " <<  nemLooseOutHData->GetEntries() << " / " << nemLooseInHData->GetEntries() << std::endl;
-    std::cout << "Ree = " << R_data[ee] << " +/- " <<  R_data_err[ee] << " (stat.) +/- " << R_data_systerr[ee] << " (syst.) " << std::endl;
-    std::cout << "Rmm = " << R_data[mm] << " +/- " <<  R_data_err[mm] << " (stat.) +/- " << R_data_systerr[ee] << " (syst.) " << std::endl;
+    std::cout << "Zll (out/in) = " <<  out << " / " << in << std::endl;
+    std::cout << "em data / VZ (in) to subtract bkg = " << nInOF  << " / " << nInVZ << std::endl;
     std::cout << "ke = "  << k_data[ee] << " +/- " <<  k_data_err[ee] << std::endl;
     std::cout << "km = "  << k_data[mm] << " +/- " <<  k_data_err[mm] << std::endl;
     std::cout << "Combined ee+mm R estimation: " << std::endl;
@@ -435,19 +473,21 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   float neeExp, neeExp_err, nmmExp, nmmExp_err;
   float nllExp, nllExp_err;
   if(useDataRk) {  
-    neeExp     = (nDYout(neeIn, nemIn, R_data[ee], R_data_toterr[ee], k_data[ee], k_data_err[ee], nOthers[ee], nOthers_toterr[ee])).first;
-    neeExp_err = (nDYout(neeIn, nemIn, R_data[ee], R_data_toterr[ee], k_data[ee], k_data_err[ee], nOthers[ee], nOthers_toterr[ee])).second;
-    nmmExp     = (nDYout(nmmIn, nemIn, R_data[mm], R_data_toterr[mm], k_data[mm], k_data_err[mm], nOthers[mm], nOthers_toterr[mm])).first;
-    nmmExp_err = (nDYout(nmmIn, nemIn, R_data[mm], R_data_toterr[mm], k_data[mm], k_data_err[mm], nOthers[mm], nOthers_toterr[mm])).second;
+    neeExp     = -1.;
+    neeExp_err = -1.;
+    nmmExp     = -1.;
+    nmmExp_err = -1.;
+    nllExp       = (nDYout(nllIn, 2*nemIn, Rll_data, Rll_data_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).first;
+    nllExp_err   = (nDYout(nllIn, 2*nemIn, Rll_data, Rll_data_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).second;
   } else {
     neeExp     = (nDYout(neeIn, nemIn, R[ee], R_err[ee], k[ee], k_err[ee], nOthers[ee], nOthers_toterr[ee])).first;
     neeExp_err = (nDYout(neeIn, nemIn, R[ee], R_err[ee], k[ee], k_err[ee], nOthers[ee], nOthers_toterr[ee])).second;
     nmmExp     = (nDYout(nmmIn, nemIn, R[mm], R_err[mm], k[mm], k_err[mm], nOthers[mm], nOthers_toterr[mm])).first;
     nmmExp_err = (nDYout(nmmIn, nemIn, R[mm], R_err[mm], k[mm], k_err[mm], nOthers[mm], nOthers_toterr[mm])).second;
+    // in any case for the moment using R from MC, as smurfs => to be (maybe) fixed with more data
+    nllExp       = (nDYout(nllIn, 2*nemIn, Rll, Rll_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).first;
+    nllExp_err   = (nDYout(nllIn, 2*nemIn, Rll, Rll_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).second;
   }
-  // in any case for the moment using R from MC, as smurfs => to be (maybe) fixed with more data
-  nllExp       = (nDYout(nllIn, 2*nemIn, Rll, Rll_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).first;
-  nllExp_err   = (nDYout(nllIn, 2*nemIn, Rll, Rll_toterr, kll, kll_err, nOthersll, nOthersll_toterr)).second;
 
   // and em from MC
   float nemmeExp     = nZemjetsMC+nZmejetsMC;
@@ -477,8 +517,8 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     // short printout
     tablefileEE << mass << "\t&\t" << neeIn << "\t&\t" << nemIn << "\t&\t" << nOthers[ee] 
                 << "\t&\t" << neeIn - 0.5*nemIn * k[ee] - nOthers[ee]
-                << "\t&\t" << k[ee] << " $\\pm$ " << k_err[ee] << " $\\pm$ "
-                << "\t&\t" << R[ee] << " $\\pm$ " << R_err[ee] << " $\\pm$ " << R_data_systerr[ee]
+      //          << "\t&\t" << k[ee] << " $\\pm$ " << k_err[ee] << " $\\pm$ "
+      //                << "\t&\t" << R[ee] << " $\\pm$ " << R_err[ee] << " $\\pm$ " << R_systerr[ee]
                 << "\t&\t" <<  neeExp << " $\\pm$ " << neeExp_err 
                 << "\t&\t" << nZeejetsMC << " $\\pm$ " << nZeejetsMC_err 
                 << "\t \\\\" << std::endl;
@@ -492,7 +532,7 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     tablefileMM << mass << "\t&\t" << nmmIn //<< "\t&\t" << nemIn << "\t&\t" << nOthers[mm] 
                 << "\t&\t" << nmmIn - 0.5*nemIn * k[mm] - nOthers[mm]
       //                << "\t&\t" << k[mm] << " $\\pm$ " << k_err[mm]
-                << "\t&\t" << R_data[mm] << " $\\pm$ " << R_data_err[mm] << " $\\pm$ " << R_data_systerr[mm] 
+      //                << "\t&\t" << R[mm] << " $\\pm$ " << R_err[mm] << " $\\pm$ " << Rll_systerr[mm] 
                 << "\t&\t" <<  nmmExp << " $\\pm$ " << nmmExp_err 
                 << "\t&\t" << nZmmjetsMC << " $\\pm$ " << nZmmjetsMC_err 
                 << "\t \\\\" << std::endl;
@@ -588,12 +628,17 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3,
 
 void makeRPlot(int mH, int njets, float lumiInInvFb) {
 
-  float massBins[5] = {20,25,30,37,50};
+  float massBins[5] = {-0.9,-0.85,-0.6,0.6,1.};
   std::vector<TString> metCuts;
-  metCuts.push_back("mpmet>20 && mpmet<=25");
-  metCuts.push_back("mpmet>25 && mpmet<=30");
-  metCuts.push_back("mpmet>30 && mpmet<=(37+nvtx/2.)");
-  metCuts.push_back("mpmet>(37+nvtx/2.)");
+  metCuts.push_back("dymva1>-0.90 && dymva1<=-0.85");
+  metCuts.push_back("dymva1>-0.85 && dymva1<=-0.60");
+  if (njets==0){ 
+    metCuts.push_back("dymva1>-0.60 && dymva1<=0.60");
+    metCuts.push_back("dymva1>0.6");
+  } else {
+    metCuts.push_back("dymva1>-0.60 && dymva1<=0.30");
+    metCuts.push_back("dymva1>0.3");
+  }
 
   TH1F *RllMC = new TH1F("RllMC","RllMC",4,massBins);
   TH1F *RllData = new TH1F("RllData","RllData",4,massBins);
@@ -631,8 +676,8 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
   TString addCutIn, addCutOut;
   if(mH>=110 && mH<=600) {
     std::cout << "mH = " << mH << std::endl;
-    addCutIn = higgsCutsNoMT(mH,false);
-    addCutOut = higgsCutsNoMT(mH,true);
+    addCutIn = higgsCutsNoMT(mH,false,njets);
+    addCutOut = higgsCutsNoMT(mH,true,njets);
   } else {
     addCutIn = TString("1"); // WWsel
     addCutOut = TString("1"); // WWsel
@@ -641,10 +686,10 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
   // in and out mll cuts are different on purpose
   char njcut[30];
   sprintf(njcut, "njet==%d", njets);
-  TString wwCutIn("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && ");
-  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
-  TString wwCutOut("(ptll>45 && pt1>20  &&  ((pt2>10 && !sameflav) || (pt2>15 && sameflav)) && mll>20 && finalLeptons && pfmet>20 && ");
-  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && ((jetpt1>15 && dphilljet<165) || jetpt1<=15) && nextra==0 && bveto && nSoftMu==0 && zveto)"));
+  TString wwCutIn("(step[7] && ptll>45 && pfmet>20 && mpmet>20 &&");
+  wwCutIn += (addCutIn + TString(" && ") + TString(njcut) + TString( " && nextra==0 && bveto && nSoftMu==0 && abs(mll-91.1876)<7.5)"));
+  TString wwCutOut("(step[7] && ptll>45 && pfmet>20 && mpmet>20 &&");
+  wwCutOut += (addCutOut+TString(" && ")+TString(njcut)+TString( " && nextra==0 && bveto && nSoftMu==0 && zveto)"));
 
   TCanvas c1;
   for(int isamp=0;isamp<2;isamp++) {
@@ -652,7 +697,8 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
     for(int imetbin=0;imetbin<4;imetbin++) {
       TString finalcutIn = TString("(") + wwCutIn + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel + TString(")*") + weightString[isamp];
       TString finalcutOut = TString("(") + wwCutOut + TString(" && ") + metCuts[imetbin] + TString(" && ") + channel + TString(")*") + weightString[isamp];
-      //      std::cout << finalcutIn.Data() << std::endl;
+      std::cout << "cut in = " << finalcutIn.Data() << std::endl;
+      std::cout << "cut out = " << finalcutOut.Data() << std::endl;
       trees[isamp]->Project("histoin","dphill",finalcutIn);
       trees[isamp]->Project("histoout","dphill",finalcutOut);
       float in = histoin->Integral();
@@ -725,8 +771,8 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
 }
 
 void makeAllRPlots(int njets, float lumiInInvFb) {
-  int mH[26] = {0,110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
-  for(int i=0;i<26;i++) {
+  int mH[24] = {0,110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  for(int i=0;i<24;i++) {
     makeRPlot(mH[i],njets,lumiInInvFb);
   }
 }
