@@ -44,8 +44,8 @@ void estimateWjets(int njets) {
   // new WW selection
   char wwLevelCut[1000];
 
-  if(njets==0) sprintf(wwLevelCut,"step[14] && (dymva1>0.6 || !sameflav) && njet==0"); 
-  if(njets==1) sprintf(wwLevelCut,"step[14] && (dymva1>0.3 || !sameflav) && njet==1");
+  if(njets==0) sprintf(wwLevelCut,"(step[14] && (dymva1>0.6 || !sameflav) && njet==0)"); 
+  if(njets==1) sprintf(wwLevelCut,"(step[14] && (dymva1>0.3 || !sameflav) && njet==1)");
   if(njets==2) sprintf(wwLevelCut,"(trigger && pfmet > 20 && mll > (12 + 8*sameflav) && zveto && mpmet > (20+(17+nvtx/2.)*sameflav) && njet>=2 && (dphilljetjet< pi/180.*165. || !sameflav) && bveto_mu && nextra == 0 && bveto_ip && nbjet==0 && (pt2 > 15 || !sameflav) && ptll > 45)"); // not updated
 
   float yield_WWSel[5][4];           // [bin][icha] bin = 5 => total
@@ -100,8 +100,8 @@ void estimateWjets(int njets) {
       TString fpCut, fpCutStatErr;
       fpCut        = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*")        + TString(wwLevelCut);
       fpCutStatErr = TString("(") + kinematicCut(ibin) + TString(" && ") + TString(channel) + TString(")") + TString("*fake2W*fake2W*") + TString(wwLevelCut);
-      // cout << "stima @ WW level: " << endl;
-      // cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
+      cout << "stima @ WW level: " << endl;
+      cout << "icha = " << icha << ", ibin = " << ibin << ", string = " << fpCut << endl;
       
       trees[icha]->Project("histo","dphill",fpCut);
       yield_WWSel[ibin][icha] = histo->Integral();
