@@ -107,7 +107,7 @@ void DrawLegend(Float_t x1,
 class LatinoPlot {
 
     public: 
-        LatinoPlot() { _hist.resize(nSamples,0); _data = 0; _breakdown = false; _mass = 0;}
+  LatinoPlot() { _hist.resize(nSamples,0); _data = 0; _breakdown = false; _mass = 0; _nostack = false; }
         void setMCHist   (const samp &s, TH1F * h)  { _hist[s]       = h;  } 
         void setDataHist (TH1F * h)                 { _data          = h;  } 
         void setHWWHist  (TH1F * h)                 { setMCHist(iHWW  ,h); } 
