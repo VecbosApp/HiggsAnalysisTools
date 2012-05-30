@@ -11,7 +11,7 @@
 
 enum { ee=0, mm=1, em=2, me=3, sf=4, of=5 };
 
-float usedLumi = 4.63;
+float usedLumi = 1.603;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
@@ -19,13 +19,15 @@ float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nE
 void estimateWW() {
 
   // constants: backgrounds estimated in all region. Updated to 4.63 fb-1
-  float Wjets0j[4] = { 11.4, 8.2, 52.0, 22.9 };
+  // float Wjets0j[4] = { 11.4, 8.2, 52.0, 22.9 };
+  float Wjets0j[4] = { 8.1, 5.9, 31.8, 11.9 };
   float Wjets0j_err[4] = { quadrSum(0.0,0.27*Wjets0j[ee]), 
                            quadrSum(0.0,0.31*Wjets0j[mm]), 
                            quadrSum(0.0,0.37*Wjets0j[em]), 
                            quadrSum(0.0,0.31*Wjets0j[me]) };
 
-  float Wjets1j[4] = { 5.1, 8.3, 35.6, 18.3 };
+  // float Wjets1j[4] = { 5.1, 8.3, 35.6, 18.3 };
+  float Wjets1j[4] = { 3.1, 3.7, 18.1, 11.9 };
   float Wjets1j_err[4] = { quadrSum(0.0,0.25*Wjets1j[ee]), 
                            quadrSum(0.0,0.30*Wjets1j[mm]), 
                            quadrSum(0.0,0.26*Wjets1j[em]), 
@@ -33,13 +35,15 @@ void estimateWW() {
 
   // DY from Summer11 MC, ee+mm scale factors from data-driven estimate, 4.63 fb-1 update
   // em, me from MC => SF=1
-  float DY0j[4] = { 1.8, 1.2, 0.0, 0.0 };
+  //float DY0j[4] = { 1.8, 1.2, 0.0, 0.0 };
+  float DY0j[4] = { 0.6, 0.6, 0.0, 0.0 };
   float DY0j_err[4] = { 0.7, 0.5, 0.0, 0.0 };
-  float scalef_DY0j[4] = { 6.0, 6.0, 1.0, 1.0 };
+  float scalef_DY0j[4] = { 4.0, 4.0, 1.0, 1.0 };
 
-  float DY1j[4] = { 4.4, 10.1, 12.4, 14.2 };
+  //float DY1j[4] = { 4.4, 10.1, 12.4, 14.2 };
+  float DY1j[4] = { 0.40, 0.40, 3.9, 4.8 };
   float DY1j_err[4] = { 0.9, 1.7, 2.6, 4.3 };
-  float scalef_DY1j[4] = { 6.0, 6.0, 1.0, 1.0 };
+  float scalef_DY1j[4] = { 4.0, 4.0, 1.0, 1.0 };
 
   float Wjets0j_tot(0), Wjets0j_tot_err(0), Wjets1j_tot(0), Wjets1j_tot_err(0);
   float DY0j_tot(0), DY0j_tot_err(0), DY1j_tot(0), DY1j_tot_err(0);
@@ -61,24 +65,37 @@ void estimateWW() {
   DY1j_tot_err = sqrt(DY1j_tot_err);
 
   // from data-driven estimate (4.67 fb-1 update)
-  float top0j_tot = 169; 
-  float top0j_tot_err = 17.;
+//   float top0j_tot = 169; 
+//   float top0j_tot_err = 17.;
 
-  float top1j_tot = 370.;
-  float top1j_tot_err = 17.;
+//   float top1j_tot = 370.;
+//   float top1j_tot_err = 17.;
 
+//   // from MC
+//   float dibosons0j_tot = 24.8;
+//   float dibosons0j_tot_err = 0.3;
+
+//   float dibosons1j_tot = 20.7;
+//   float dibosons1j_tot_err = 0.2;
+
+  float top0j_tot = 29.1 * 1.6/0.81; 
+  float top0j_tot_err = 5.0;
+
+  float top1j_tot = 63 * 1.6/0.81;
+  float top1j_tot_err = 9.0;
+  
   // from MC
-  float dibosons0j_tot = 24.8;
+  float dibosons0j_tot = 6.3 * 1.6/0.81;
   float dibosons0j_tot_err = 0.3;
-
-  float dibosons1j_tot = 20.7;
+  
+  float dibosons1j_tot = 5.4 * 1.6/0.81;
   float dibosons1j_tot_err = 0.2;
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
   TFile *fileWW = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
   //  TFile *fileWjets = TFile::Open("results/datasets_trees/Wjets_ll.root");
-  TFile *fileWjets = TFile::Open("results_data/datasets_trees_looseloose/looseloosenew.root");
+  TFile *fileWjets = TFile::Open("results_data/datasets_trees/dataset_looseloose.root");
   TFile *fileZjets = TFile::Open("results/datasets_trees/Zjets_ll.root");
   TFile *fileDiBosons = TFile::Open("results/datasets_trees/others_ll.root");
 
@@ -86,6 +103,7 @@ void estimateWW() {
   TTree *treeWW = (TTree*)fileWW->Get("latino");
   TTree *treeTop= (TTree*)fileTop->Get("latino");
   TTree *treeWjets = (TTree*)fileWjets->Get("latino");
+  treeWjets->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
   TTree *treeZjets = (TTree*)fileZjets->Get("latino");
   TTree *treeDiBosons = (TTree*)fileDiBosons->Get("latino");
 
@@ -116,12 +134,12 @@ void estimateWW() {
 
   // --- 0 jet ---
   // estimate the values in the full region
-  treeData->Project("dataH","dphill","WWSel");
-  treeWW->Project("WWH","dphill","(WWSel)*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(WWSel)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(WWSel)*fakeW");
-  treeZjets->Project("DYH","dphill","(WWSel)*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(WWSel)*baseW*puW*effW");
+  treeData->Project("dataH","dphill","step[14] && njet==0 && (dymva1>0.6 || !sameflav)");
+  treeWW->Project("WWH","dphill","(step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(step[14] && njet==0 && (dymva1>0.6 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
 
   integralData0jTot = dataH->Integral();
   for(int imc=0; imc<(int)histosMC.size(); imc++) {
@@ -132,12 +150,12 @@ void estimateWW() {
   // estimate the yields in the control region
   float integralData0jCtrl;
   std::vector<float> integrals0jCtrl, error0jCtrl;
-  treeData->Project("dataH","dphill","mll>100 && WWSel");
-  treeWW->Project("WWH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel)*fakeW");
-  treeZjets->Project("DYH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && WWSel)*baseW*puW*effW");
+  treeData->Project("dataH","dphill","mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav)");
+  treeWW->Project("WWH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.6 || !sameflav))*baseW*puW*effW");
 
   integralData0jCtrl = dataH->Integral();
   std::cout << "Ratios All/Control, 0jet" << std::endl; 
@@ -160,12 +178,12 @@ void estimateWW() {
   // --- 1 jet ---
   // estimate the values in the full region
   std::vector<float> integrals1jTot, error1jTot, ratio1j, ratio1j_err;
-  treeData->Project("dataH","dphill","WWSel1j");
-  treeWW->Project("WWH","dphill","(WWSel1j)*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(WWSel1j)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(WWSel1j)*fakeW");
-  treeZjets->Project("DYH","dphill","(WWSel1j)*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(WWSel1j)*baseW*puW*effW");
+  treeData->Project("dataH","dphill","step[14] && njet==0 && (dymva1>0.3 || !sameflav)");
+  treeWW->Project("WWH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
 
   float integralData1jTot = dataH->Integral();
   for(int imc=0; imc<(int)histosMC.size(); imc++) {
@@ -175,12 +193,12 @@ void estimateWW() {
 
   // estimate the yields in the control region
   std::vector<float> integrals1jCtrl, error1jCtrl;
-  treeData->Project("dataH","dphill","mll>100 && WWSel1j");
-  treeWW->Project("WWH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(mll>100 && WWSel1j)*fakeW");
-  treeZjets->Project("DYH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && WWSel1j)*baseW*puW*effW");
+  treeData->Project("dataH","dphill","mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav)");
+  treeWW->Project("WWH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
 
   float integralData1jCtrl = dataH->Integral();
   std::cout << "Ratios All/Control, 1 jet" << std::endl; 
@@ -365,27 +383,27 @@ void estimateWW() {
   TH1F *WWEMHFin = new TH1F("WWEMHFin","",50,0,180); // all
   TH1F *WWMEHFin = new TH1F("WWMEHFin","",50,0,180); // all
     
-
-  int masses[25] = {110,115,118,120,122,124,126,128,130,135,140,150,160,170,180,190,200,250,300,350,400,450,500,550,600};
+  int masses[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
   // -------------------------------------------------------------------
   // now considering all masses to estimate the number of events at the end of the HWW selection
-  for (int i=0; i<25; i++) {
+  for (int i=0; i<27; i++) {
     
     int mass = masses[i];
-    TString higgsMassDependentCut = higgsCuts(mass,true);
+    TString higgsMassDependentCut = higgsCuts(mass,true,0);
     
     TString HCut[4][2]; // [icha][qq/gg]
     
     // calculate 0 jet mass dependent effciencies
-    HCut[ee][0] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==1)*baseW*puW*effW");
-    HCut[mm][0] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==0)*baseW*puW*effW");
-    HCut[em][0] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==2)*baseW*puW*effW");
-    HCut[me][0] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==3)*baseW*puW*effW");
+    // eliminate the final met cut (depending on Higgs mass, included in the higgsMassDependentCut)
+    HCut[ee][0] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==1)*baseW*puW*effW");
+    HCut[mm][0] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==0)*baseW*puW*effW");
+    HCut[em][0] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==2)*baseW*puW*effW");
+    HCut[me][0] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==3)*baseW*puW*effW");
 
-    HCut[ee][1] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==1)*baseW*puW*effW");
-    HCut[mm][1] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==0)*baseW*puW*effW");
-    HCut[em][1] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==2)*baseW*puW*effW");
-    HCut[me][1] = TString("(")+TString("WWSel")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==3)*baseW*puW*effW");
+    HCut[ee][1] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==1)*baseW*puW*effW");
+    HCut[mm][1] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==0)*baseW*puW*effW");
+    HCut[em][1] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==2)*baseW*puW*effW");
+    HCut[me][1] = TString("(")+TString("step[14] && njet==0")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==3)*baseW*puW*effW");
 
     float nWWData_HiggsSel_0j[4][2], nWWData_HiggsSel_0j_err[4][2];
     float nWWMC_HiggsSel_0j[4][2], nWWMC_HiggsSel_0j_err[4][2];
@@ -412,16 +430,18 @@ void estimateWW() {
       }
     }
 
+    higgsMassDependentCut = higgsCuts(mass,true,1);
     // calculate 1 jet mass dependent effciencies
-    HCut[ee][0] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==1)*baseW*puW*effW");
-    HCut[mm][0] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==0)*baseW*puW*effW");
-    HCut[em][0] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==2)*baseW*puW*effW");
-    HCut[me][0] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==3)*baseW*puW*effW");
+    // eliminate the final met cut (depending on Higgs mass, included in the higgsMassDependentCut)
+    HCut[ee][0] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==1)*baseW*puW*effW");
+    HCut[mm][0] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==0)*baseW*puW*effW");
+    HCut[em][0] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==2)*baseW*puW*effW");
+    HCut[me][0] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==0 && channel==3)*baseW*puW*effW");
 
-    HCut[ee][1] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==1)*baseW*puW*effW");
-    HCut[mm][1] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==0)*baseW*puW*effW");
-    HCut[em][1] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==2)*baseW*puW*effW");
-    HCut[me][1] = TString("(")+TString("WWSel1j")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==3)*baseW*puW*effW");    
+    HCut[ee][1] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==1)*baseW*puW*effW");
+    HCut[mm][1] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==0)*baseW*puW*effW");
+    HCut[em][1] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==2)*baseW*puW*effW");
+    HCut[me][1] = TString("(")+TString("step[14] && njet==1")+TString(" && ")+higgsMassDependentCut+TString(" && dataset==1 && channel==3)*baseW*puW*effW");    
 
     float nWWData_HiggsSel_1j[4][2], nWWData_HiggsSel_1j_err[4][2];
     float nWWMC_HiggsSel_1j[4][2], nWWMC_HiggsSel_1j_err[4][2];
