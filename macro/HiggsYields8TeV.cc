@@ -115,21 +115,24 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
   TFile *fileH = TFile::Open(signalFile);
 
   // get trees
-  TTree* treeZj = (TTree*)fileZj->Get("latino");
-  TTree* treeTTbar = (TTree*)fileTTbar->Get("latino");
-  TTree* treeSingleTop = (TTree*)fileSingleTop->Get("latino");
-  TTree* treeWj = (TTree*)fileWj->Get("latino");
-  TTree* treeOthers = (TTree*)fileOthers->Get("latino");
-  TTree* treeqqWW = (TTree*)fileqqWW->Get("latino");
-  TTree* treeggWW = (TTree*)fileggWW->Get("latino");
-  TTree* treeH = (TTree*)fileH->Get("latino");
-  TTree* treeggH = (TTree*)fileH->Get("latino");
-  TTree* treeqqH = (TTree*)fileH->Get("latino");
-  TTree* treeVgamma = (TTree*)fileOthers->Get("latino");
+  TTree* treeZj = (TTree*)fileZj->Get("latinoWWskim");
+  TTree* treeTTbar = (TTree*)fileTTbar->Get("latinoWWskim");
+  TTree* treeSingleTop = (TTree*)fileSingleTop->Get("latinoWWskim");
+  TTree* treeWj = (TTree*)fileWj->Get("latinoWWskim");
+  TTree* treeOthers = (TTree*)fileOthers->Get("latinoWWskim");
+  TTree* treeqqWW = (TTree*)fileqqWW->Get("latinoWWskim");
+  TTree* treeggWW = (TTree*)fileggWW->Get("latinoWWskim");
+  TTree* treeH = (TTree*)fileH->Get("latinoWWskim");
+  TTree* treeggH = (TTree*)fileH->Get("latinoWWskim");
+  TTree* treeqqH = (TTree*)fileH->Get("latinoWWskim");
+  TTree* treeVgamma = (TTree*)fileOthers->Get("latinoWWskim");
   TTree* treeData = 0;
-  if(showData) treeData = (TTree*)fileData->Get("latino");
+  if(showData) treeData = (TTree*)fileData->Get("latinoWWskim");
   TTree* treeFake = 0;
-  if(addDataDrivenEstimates) treeFake = (TTree*)fileFake->Get("latino");
+  if(addDataDrivenEstimates) {
+    treeFake = (TTree*)fileFake->Get("latino");
+    treeFake->AddFriend("flatino=latino","results_data/datasets_trees/dataset_looseloose_wwbits.root");
+  }
 
   std::vector<TTree*> trees;
   trees.push_back(treeZj); // 0
@@ -146,26 +149,26 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
    // evaluated with LP11 dataset (1.54 fb-1)
    std::vector<float> sfs_0j;
-   sfs_0j.push_back(6.0); // 0
-   sfs_0j.push_back(1.54); // 1
-   sfs_0j.push_back(1.54); // 2
+   sfs_0j.push_back(4.0); // 0
+   sfs_0j.push_back(1.12); // 1
+   sfs_0j.push_back(1.12); // 2
    sfs_0j.push_back(1.0); // 3
    sfs_0j.push_back(1.0); // 4
-   sfs_0j.push_back(1.14); // 5
-   sfs_0j.push_back(1.14); // 6
+   sfs_0j.push_back(1.3); // 5
+   sfs_0j.push_back(1.3); // 6
    sfs_0j.push_back(1.0); // 7
    sfs_0j.push_back(1.0); // 8
    sfs_0j.push_back(1.0); // 9
    sfs_0j.push_back(1.0); // 10
 
    std::vector<float> sfs_1j;
-   sfs_1j.push_back(6.0); // 0
-   sfs_1j.push_back(1.20); // 1
-   sfs_1j.push_back(1.20); // 2
+   sfs_1j.push_back(4.1); // 0
+   sfs_1j.push_back(0.88); // 1
+   sfs_1j.push_back(0.88); // 2
    sfs_1j.push_back(1.0); // 3
    sfs_1j.push_back(1.0); // 4
-   sfs_1j.push_back(1.15); // 5
-   sfs_1j.push_back(1.15); // 6
+   sfs_1j.push_back(0.88); // 5
+   sfs_1j.push_back(0.88); // 6
    sfs_1j.push_back(1.0); // 7
    sfs_1j.push_back(1.0); // 8
    sfs_1j.push_back(1.0); // 9
