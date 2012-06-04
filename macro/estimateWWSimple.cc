@@ -20,14 +20,14 @@ void estimateWW() {
 
   // constants: backgrounds estimated in all region. Updated to 4.63 fb-1
   // float Wjets0j[4] = { 11.4, 8.2, 52.0, 22.9 };
-  float Wjets0j[4] = { 8.1, 5.9, 31.8, 11.9 };
+  float Wjets0j[4] = { 7.9, 3.4, 26.9, 7.6 };
   float Wjets0j_err[4] = { quadrSum(0.0,0.27*Wjets0j[ee]), 
                            quadrSum(0.0,0.31*Wjets0j[mm]), 
                            quadrSum(0.0,0.37*Wjets0j[em]), 
                            quadrSum(0.0,0.31*Wjets0j[me]) };
 
   // float Wjets1j[4] = { 5.1, 8.3, 35.6, 18.3 };
-  float Wjets1j[4] = { 3.1, 3.7, 18.1, 11.9 };
+  float Wjets1j[4] = { 7.9, 2.7, 16.1, 9.2 };
   float Wjets1j_err[4] = { quadrSum(0.0,0.25*Wjets1j[ee]), 
                            quadrSum(0.0,0.30*Wjets1j[mm]), 
                            quadrSum(0.0,0.26*Wjets1j[em]), 
@@ -43,7 +43,7 @@ void estimateWW() {
   //float DY1j[4] = { 4.4, 10.1, 12.4, 14.2 };
   float DY1j[4] = { 0.40, 0.40, 3.9, 4.8 };
   float DY1j_err[4] = { 0.9, 1.7, 2.6, 4.3 };
-  float scalef_DY1j[4] = { 4.0, 4.0, 1.0, 1.0 };
+  float scalef_DY1j[4] = { 5.0, 5.0, 1.0, 1.0 };
 
   float Wjets0j_tot(0), Wjets0j_tot_err(0), Wjets1j_tot(0), Wjets1j_tot_err(0);
   float DY0j_tot(0), DY0j_tot_err(0), DY1j_tot(0), DY1j_tot_err(0);
@@ -78,17 +78,17 @@ void estimateWW() {
 //   float dibosons1j_tot = 20.7;
 //   float dibosons1j_tot_err = 0.2;
 
-  float top0j_tot = 29.1 * 1.6/0.81; 
+  float top0j_tot = 50.8; 
   float top0j_tot_err = 5.0;
 
-  float top1j_tot = 63 * 1.6/0.81;
+  float top1j_tot = 121.;
   float top1j_tot_err = 9.0;
   
   // from MC
-  float dibosons0j_tot = 6.3 * 1.6/0.81;
+  float dibosons0j_tot = 9.9;
   float dibosons0j_tot_err = 0.3;
   
-  float dibosons1j_tot = 5.4 * 1.6/0.81;
+  float dibosons1j_tot = 10.0;
   float dibosons1j_tot_err = 0.2;
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
@@ -178,12 +178,12 @@ void estimateWW() {
   // --- 1 jet ---
   // estimate the values in the full region
   std::vector<float> integrals1jTot, error1jTot, ratio1j, ratio1j_err;
-  treeData->Project("dataH","dphill","step[14] && njet==0 && (dymva1>0.3 || !sameflav)");
-  treeWW->Project("WWH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*fake2W");
-  treeZjets->Project("DYH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeData->Project("dataH","dphill","step[14] && njet==1 && (dymva1>0.3 || !sameflav)");
+  treeWW->Project("WWH","dphill","(step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(step[14] && njet==1 && (dymva1>0.3 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
 
   float integralData1jTot = dataH->Integral();
   for(int imc=0; imc<(int)histosMC.size(); imc++) {
@@ -193,12 +193,12 @@ void estimateWW() {
 
   // estimate the yields in the control region
   std::vector<float> integrals1jCtrl, error1jCtrl;
-  treeData->Project("dataH","dphill","mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav)");
-  treeWW->Project("WWH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeTop->Project("topH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeWjets->Project("WjetsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*fake2W");
-  treeZjets->Project("DYH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
-  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && step[14] && njet==0 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeData->Project("dataH","dphill","mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav)");
+  treeWW->Project("WWH","dphill","(mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeTop->Project("topH","dphill","(mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeWjets->Project("WjetsH","dphill","(mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav))*fake2W");
+  treeZjets->Project("DYH","dphill","(mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
+  treeDiBosons->Project("DiBosonsH","dphill","(mll>100 && step[14] && njet==1 && (dymva1>0.3 || !sameflav))*baseW*puW*effW");
 
   float integralData1jCtrl = dataH->Integral();
   std::cout << "Ratios All/Control, 1 jet" << std::endl; 
