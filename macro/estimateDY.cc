@@ -87,7 +87,6 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
   tablefileLL << "$m_{H}$ [GeV] \t\t \t & $n^{data}_{in}$ \t\t & $n^{data}_{in}(sub)$ \t\t\t & \t $R_{MC}$ \t & \t $n^{data}_{DY}$ \t & \t $n^{MC}_{DY}$ \\\\" << endl;
   tablefileLL << "\\hline" << endl;
 
-  // int mH[23] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600};
   int mH[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
   for(int i=0; i<27;i++) {
     // for(int i=0; i<1;i++) {
@@ -147,12 +146,20 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
   char njcut[30];
   sprintf(njcut, "njet==%d", njets);
   char wwselcut[1000];
-  if(njets==0) sprintf(wwselcut,"step[14]==1 && njet==0 && dymva1>0.6");
-  else if(njets==1) sprintf(wwselcut,"step[14]==1 && njet==1 && dymva1>0.3");
-
-  else {
-    std::cout << "Jet bin must be 0/1" << std::endl;
-    return;
+  if(mass<=140) {
+    if(njets==0) sprintf(wwselcut,"step[14]==1 && njet==0 && dymva1>0.6");
+    else if(njets==1) sprintf(wwselcut,"step[14]==1 && njet==1 && dymva1>0.3");
+    else {
+      std::cout << "Jet bin must be 0/1" << std::endl;
+      return;
+    }
+  } else {
+    if(njets==0) sprintf(wwselcut,"step[14]==1 && njet==0 && mpmet>45");
+    else if(njets==1) sprintf(wwselcut,"step[14]==1 && njet==1 && mpmet>45");
+    else {
+      std::cout << "Jet bin must be 0/1" << std::endl;
+      return;
+    }
   }
 
   // input files and trees
@@ -217,16 +224,27 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
 
   // check the N-1 bin statistics
   TString DYmvaCut;
-  if(njets==0) DYmvaCut = TString("0.6"); 
-  if(njets==1) DYmvaCut = TString("0.3"); 
-  treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && dymva1>-0.6 && dymva1<") + DYmvaCut + TString(" && sameflav")+TString(")*baseW*puW*effW"));
+  TString mpmetcutnom;
+  TString mpmetcutNminus1;
+  TString mpmetcutNminus2;
+  TString mpmetcutNminus3;
+  if(mass<=140) {
+    if(njets==0) DYmvaCut = TString("0.6"); 
+    if(njets==1) DYmvaCut = TString("0.3"); 
+    treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && dymva1>-0.6 && dymva1<") + DYmvaCut + TString(" && sameflav")+TString(")*baseW*puW*effW"));
+    mpmetcutnom = TString("dymva1>") + DYmvaCut;
+    mpmetcutNminus1 = TString("dymva1>-0.6 && dymva1<") + DYmvaCut;
+    mpmetcutNminus2 = TString("dymva1>-0.85 && dymva1<-0.60");
+    mpmetcutNminus3 = TString("dymva1>-0.90 && dymva1<-0.85");
+  } else {
+    treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && mpmet>30 && mpmet<45 && sameflav")+TString(")*baseW*puW*effW"));
+    mpmetcutnom = TString("mpmet>45");
+    mpmetcutNminus1 = TString("mpmet>30 && mpmet<45");
+    mpmetcutNminus2 = TString("mpmet>25 && mpmet<30");
+    mpmetcutNminus3 = TString("mpmet>20 && mpmet<25");
+  }
   float forTheCheck = nllCheckInH->GetEntries();
   
-  TString mpmetcutnom = TString("dymva1>") + DYmvaCut;
-  TString mpmetcutNminus1 = TString("dymva1>-0.6 && dymva1<") + DYmvaCut;
-  TString mpmetcutNminus2 = TString("dymva1>-0.85 && dymva1<-0.60");
-  TString mpmetcutNminus3 = TString("dymva1>-0.90 && dymva1<-0.85");
-
   char mpmetcut[30];
   if(forTheCheck>=50) { std::cout << "more than 50 events in bin N-1: cutting at bin N-1" << std::endl; sprintf(mpmetcut,mpmetcutNminus1.Data()); }
   // chiara: cos'erano queste eccezioni per le masse?
