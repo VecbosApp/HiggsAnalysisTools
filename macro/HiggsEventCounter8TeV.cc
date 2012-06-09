@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define NSAMPLES 11
+#define NSAMPLES 15
 
 using namespace std;
 
@@ -64,8 +64,13 @@ void countEvents() {
   chains[8]->Add("results/Summer12_V14_52X/WZTo3LNu_TuneZ2star_8TeV_pythia6_tauola/*Counters.root");
   chains[9]->Add("results/Summer12_V14_52X/ZZTo2L2Nu_TuneZ2star_8TeV_pythia6_tauola/*Counters.root");
 
-  // samples for systematics
+  // WW sample for systematics
   chains[10]->Add("results/Summer12_V14_52X/WWTo2L2Nu_TuneZ2star_8TeV_pythia6_tauola/*Counters.root"); // PYTHIA sample 
+  chains[11]->Add("results/Summer12_V14_52X/WGToLNuG_TuneZ2star_8TeV-madgraph-tauola/*Counters.root");
+  chains[12]->Add("results/Summer12_V14_52X/WGstarToLNu2E_TuneZ2star_8TeV-madgraph-tauola/*Counters.root");
+  chains[13]->Add("results/Summer12_V14_52X/WGstarToLNu2Mu_TuneZ2star_7TeV-madgraph-tauola/*Counters.root");
+  chains[14]->Add("results/Summer12_V14_52X/WGstarToLNu2Tau_TuneZ2star_7TeV-madgraph-tauola/*Counters.root");
+
   cout << "chains added. " << endl;
 
   std::vector<std::vector<TString> > signalSampleName;
@@ -92,6 +97,10 @@ void countEvents() {
   sampleName.push_back("results/merged/WZ_ee.root"); // 8
   sampleName.push_back("results/merged/ZZ_ee.root"); // 9
   sampleName.push_back("results/merged/WW_pythia_ee.root"); // 10
+  sampleName.push_back("results/merged/WGToLNuG_ee.root"); // 11
+  sampleName.push_back("results/merged/WGstarToLNu2E_ee.root"); // 12
+  sampleName.push_back("results/merged/WGstarToLNu2Mu_ee.root"); // 13
+  sampleName.push_back("results/merged/WGstarToLNu2Tau_ee.root"); // 14
 
   std::map<int,float> ggHiggs_xsec;
   // sigma_effective for gg->H and qqH = sigma * BR(H->WW) * BR(W->lnu)^2 (pb)
@@ -206,8 +215,12 @@ void countEvents() {
   sampleXsec.push_back(5.8123); // 6
   sampleXsec.push_back(0.182852); // 7
   sampleXsec.push_back(0.7346); // 8
-  sampleXsec.push_back(0.3649); // 9: PYTHIA
-  sampleXsec.push_back(5.8123); // 12
+  sampleXsec.push_back(0.3649); // 9
+  sampleXsec.push_back(5.8123); // 10
+  sampleXsec.push_back(553.92); // 11
+  sampleXsec.push_back(5.873); // 12
+  sampleXsec.push_back(1.914); // 13
+  sampleXsec.push_back(0.336); // 14
 
   std::vector<std::vector<double> > signalProcId;
   for(int imass=0; imass<27;imass++) {
@@ -230,7 +243,10 @@ void countEvents() {
   sampleProcessId.push_back(74); // WZ->3LNu
   sampleProcessId.push_back(71); // ZZ->anything
   sampleProcessId.push_back(6); // qqWW PYTHIA
-  sampleProcessId.push_back(81); // Vgamma madgraph inclusive
+  sampleProcessId.push_back(85); // Wgamma
+  sampleProcessId.push_back(82); // WGstarToElNu
+  sampleProcessId.push_back(83); // WGstarToMuNu
+  sampleProcessId.push_back(84); // WGstarToTauNu
 
   // signal samples
   float nEvH[27][2];
