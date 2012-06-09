@@ -71,15 +71,14 @@ if($year==2012) {
     sleep 600;
 
     print  "submitting W+gamma and Z+gamma...\n";
-    # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGToENuG_TuneZ2_7TeV-madgraph 5 HiggsApp 8nh $prefix 1 2012");
-    # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGToMuNuG_TuneZ2_7TeV-madgraph 5 HiggsApp 8nh $prefix 1 2012");
-    # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGToTauNuG_TuneZ2_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGToLNuG_TuneZ2star_8TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGstarToLNu2E_TuneZ2star_8TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGstarToLNu2Mu_TuneZ2star_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
+    system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WGstarToLNu2Tau_TuneZ2star_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
     # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X ZGToEEG_TuneZ2_7TeV-madgraph 5 HiggsApp 8nh $prefix 1 2012");
     # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X ZGToMuMuG_TuneZ2_7TeV-madgraph 5 HiggsApp 8nh $prefix 1 2012");
     # system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X ZGToTauTauG_TuneZ2_7TeV-madgraph-tauola 5 HiggsApp 8nh $prefix 1 2012");
     #system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X ZGToNuNuG_TuneZ2_7TeV-madgraph 5 HiggsApp 8nh $prefix 1 2012");
-
-    sleep 600;
 
     print  "submitting systematics samples for VV...\n";
     system("python cmst3_submit_manyfilesperjob.py Summer12_V14_52X WWTo2L2Nu_TuneZ2star_8TeV_pythia6_tauola 10 HiggsApp 8nh $prefix 1 2012");
