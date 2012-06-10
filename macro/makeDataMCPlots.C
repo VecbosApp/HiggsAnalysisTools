@@ -307,15 +307,16 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 	      
               if(i>0) {
                 if(j>0 && j<5) { // scalefactors are valid from WW level on
-                  if(i!=2 && i!=5 && i!=6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]);
+                  if(i!=2 && i!=5 && i!=6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]);
                   if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("fake2W")); // W+jets uses the FR data weight only
-                  // if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]); // when usign Wjets MC
-		  if(i==5) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]);
+                  // if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]); // when usign Wjets MC
+		  if(i==5) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]);
 		  //if(i==6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*(dataset==32 || dataset==35)*")+scalefactor_datadriven[i][jetbin]);
                 } else {
-                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW"));
-                  else T1[i]->Project(histoName,variables[z],cut[j]+TString("fake2W")); // W+jets uses the FR data weight only
-                  // else T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*effW")); // when usign Wjets MC 
+                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1"));
+                  // fake2W is not good at 2l level. Do Not plot (W+jets is invisible) 
+                  // T1[i]->Project(histoName,variables[z],cut[j]+TString("fake2W")); // W+jets uses the FR data weight only
+                  // else T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*1")); // when usign Wjets MC 
                 }
               } else T1[i]->Project(histoName,variables[z],cut[j]+TString("1"));
 	      std::cout << "Done " << histoName << std::endl;
