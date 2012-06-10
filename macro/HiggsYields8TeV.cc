@@ -150,27 +150,27 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
    // evaluated with LP11 dataset (1.54 fb-1)
    std::vector<float> sfs_0j;
-   sfs_0j.push_back(1.0); // 0
-   sfs_0j.push_back(1.0); // 1
-   sfs_0j.push_back(1.0); // 2
+   sfs_0j.push_back(3.0); // 0
+   sfs_0j.push_back(1.03); // 1
+   sfs_0j.push_back(1.03); // 2
    sfs_0j.push_back(1.0); // 3
    sfs_0j.push_back(1.0); // 4
    sfs_0j.push_back(1.0); // 5
-   sfs_0j.push_back(1.0); // 6
-   sfs_0j.push_back(1.0); // 7
+   sfs_0j.push_back(1.2); // 6
+   sfs_0j.push_back(1.2); // 7
    sfs_0j.push_back(1.0); // 8
    sfs_0j.push_back(1.0); // 9
    sfs_0j.push_back(1.0); // 10
 
    std::vector<float> sfs_1j;
-   sfs_1j.push_back(1.0); // 0
-   sfs_1j.push_back(1.0); // 1
-   sfs_1j.push_back(1.0); // 2
+   sfs_1j.push_back(3.0); // 0
+   sfs_1j.push_back(1.09); // 1
+   sfs_1j.push_back(1.09); // 2
    sfs_1j.push_back(1.0); // 3
    sfs_1j.push_back(1.0); // 4
    sfs_1j.push_back(1.0); // 5
-   sfs_1j.push_back(1.0); // 6
-   sfs_1j.push_back(1.0); // 7
+   sfs_1j.push_back(0.8); // 6
+   sfs_1j.push_back(0.8); // 7
    sfs_1j.push_back(1.0); // 8
    sfs_1j.push_back(1.0); // 9
    sfs_1j.push_back(1.0); // 10
@@ -197,10 +197,10 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
     TTree *tree = trees[isample];
 
     std::vector<TString> cutChannel;
-    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*effW");
-    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*effW");
-    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*effW");
-    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*effW");
+    TString HCut_ee = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==1)*baseW*puW*1");
+    TString HCut_mm = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==0)*baseW*puW*1");
+    TString HCut_em = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==2)*baseW*puW*1");
+    TString HCut_me = TString("(")+TString(wwselcut)+TString(" && ")+higgsMassDependentCut+TString(" && channel==3)*baseW*puW*1");
     
     cutChannel.push_back(HCut_ee);
     cutChannel.push_back(HCut_mm);
