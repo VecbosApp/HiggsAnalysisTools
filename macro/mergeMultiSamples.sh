@@ -28,7 +28,8 @@ if [ $year -eq "2012" ] ; then
     hadd results/datasets_trees/top_ee.root results/merged/TTbar_ee.root results/merged/SingleTbar_tWChannel_ee.root results/merged/SingleT_tWChannel_ee.root
 
 # merging all other backgrounds
-    hadd results/datasets_trees/others_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root 
+    hadd results/datasets_trees/others_ee.root results/merged/WZ_ee.root results/merged/ZZ_ee.root results/merged/WGToLNuG_ee.root \
+        results/merged/WGstarToLNu2E_ee.root results/merged/WGstarToLNu2Mu_ee.root results/merged/WGstarToLNu2Tau_ee.root
 
 
     echo "Now merging species for mm..."
@@ -52,7 +53,8 @@ if [ $year -eq "2012" ] ; then
     hadd results/datasets_trees/top_mm.root results/merged/TTbar_mm.root results/merged/SingleTbar_tWChannel_mm.root results/merged/SingleT_tWChannel_mm.root
 
 # merging all other backgrounds
-    hadd results/datasets_trees/others_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root 
+    hadd results/datasets_trees/others_mm.root results/merged/WZ_mm.root results/merged/ZZ_mm.root results/merged/WGToLNuG_mm.root \
+        results/merged/WGstarToLNu2E_mm.root results/merged/WGstarToLNu2Mu_mm.root results/merged/WGstarToLNu2Tau_mm.root
 
 
     echo "Now merging species for em..."
@@ -76,7 +78,8 @@ if [ $year -eq "2012" ] ; then
     hadd results/datasets_trees/top_em.root results/merged/TTbar_em.root results/merged/SingleTbar_tWChannel_em.root results/merged/SingleT_tWChannel_em.root
 
 # merging all other backgrounds
-    hadd results/datasets_trees/others_em.root results/merged/WZ_em.root results/merged/ZZ_em.root 
+    hadd results/datasets_trees/others_em.root results/merged/WZ_em.root results/merged/ZZ_em.root results/merged/WGToLNuG_em.root \
+        results/merged/WGstarToLNu2E_em.root results/merged/WGstarToLNu2Mu_em.root results/merged/WGstarToLNu2Tau_em.root
 
 
     echo "Now merging species for me..."
@@ -100,7 +103,8 @@ if [ $year -eq "2012" ] ; then
     hadd results/datasets_trees/top_me.root results/merged/TTbar_me.root results/merged/SingleTbar_tWChannel_me.root results/merged/SingleT_tWChannel_me.root
 
 # merging all other backgrounds
-    hadd results/datasets_trees/others_me.root results/merged/WZ_me.root results/merged/ZZ_me.root 
+    hadd results/datasets_trees/others_me.root results/merged/WZ_me.root results/merged/ZZ_me.root results/merged/WGToLNuG_me.root \
+        results/merged/WGstarToLNu2E_me.root results/merged/WGstarToLNu2Mu_me.root results/merged/WGstarToLNu2Tau_me.root
 
 fi
 
