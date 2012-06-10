@@ -45,8 +45,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeight2011B = new PUWeight("summer11","DY",-1,"2011B",1); 
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
-  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup60.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012AB.root",
+  LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup200.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_JSONJune1st.root",
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
@@ -638,7 +638,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       zveto = (fabs(eleInvMass-91.1876)>15) ? 1 : 0;
       bveto_ip = 1;
       if(softtche>=2.1) bveto_ip = 0;
-      if(hardbjpb>=1.05) bveto_ip = 0;
+      // if(hardbjpb>=1.05) bveto_ip = 0; // revert to 2011 definition
+      // and fix the temporary bug in the definition of maxTCHE for 1 jet bin
+      if(njets==1 && leadingJetBTagTrackCount>2.1) {
+        bveto_ip=0;
+        for(int s=13; s<29; s++) step[s]=0;
+      }
       bveto_mu = (nSoftMu==0) ? 1 : 0;
       bveto = (bveto_ip && bveto_mu) ? 1 : 0;
       bveto_munj = (nSoftMuNoJets==0) ? 1 : 0;
