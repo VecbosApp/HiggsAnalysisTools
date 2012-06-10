@@ -2940,9 +2940,9 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
 
     float tmpTCHE = trackCountingHighEffBJetTagsAK5PFPUcorrJet[j];     
     float tmpJBP = jetBProbabilityBJetTagsAK5PFPUcorrJet[j];
-    // if(tmpTCHE > maxTCHE) maxTCHE = tmpTCHE; 
-    if(pt<=30 && tmpTCHE > maxTCHE) maxTCHE = tmpTCHE;
-    if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
+    if(tmpTCHE > maxTCHE) maxTCHE = tmpTCHE; 
+    //     if(pt<=30 && tmpTCHE > maxTCHE) maxTCHE = tmpTCHE;
+    //     if(pt>30 && tmpJBP > maxJetBProb) maxJetBProb = tmpJBP;
 
     if(j != theLeadingJet[theChannel] && tmpTCHE > outputSubLeadJets) outputSubLeadJets = tmpTCHE;
     if(j != theLeadingJet[theChannel] && tmpJBP > outputSubLeadJetsBProb) outputSubLeadJetsBProb = tmpJBP;
@@ -2959,7 +2959,8 @@ float HiggsMLSelection::bVetoJets( std::vector<int> eleToRemove, std::vector<int
   // hardcode the cuts
   float bitval = 1;
   if(maxTCHE>=2.1) bitval=0.;
-  if(maxJetBProb>=1.05) bitval=0.;
+  // give data-MC discrepancies, revert to 2011 TCHE only
+  // if(maxJetBProb>=1.05) bitval=0.;
   
   m_softbdisc[theChannel]=maxTCHE;
   m_hardbdisc[theChannel]=maxJetBProb;
