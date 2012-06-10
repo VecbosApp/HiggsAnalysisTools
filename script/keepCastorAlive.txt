@@ -1,5 +1,7 @@
-30     5     *     *     *         cat /afs/cern.ch/user/e/emanuele/workspace/hww2l2nu/HiggsAnalysisTools/cmst3_52X/Data/Collisions8TeV_V14_52X/DoubleElectronRun2012*list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/stagefiles.log
-0      6     *     *     *         cat /afs/cern.ch/user/e/emanuele/workspace/hww2l2nu/HiggsAnalysisTools/cmst3_52X/Data/Collisions8TeV_V14_52X/DoubleMuRun2012*list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/stagefiles.log
-30     6     *     *     *         cat /afs/cern.ch/user/e/emanuele/workspace/hww2l2nu/HiggsAnalysisTools/cmst3_52X/Data/Collisions8TeV_V14_52X/MuEGRun2012*list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/stagefiles.log
-0      7     *     *     *         cat /afs/cern.ch/user/e/emanuele/workspace/hww2l2nu/HiggsAnalysisTools/cmst3_52X/Data/Collisions8TeV_V14_52X/SingleMuRun2012*list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/stagefiles.log
-30     7     *     *     *         cat /afs/cern.ch/user/e/emanuele/workspace/hww2l2nu/HiggsAnalysisTools/cmst3_52X/Data/Collisions8TeV_V14_52X/SingleElectronRun2012*list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/stagefiles.log
+0      4     *     *     *         cat /tmp/emanuele/lists/*8TeV*list | xargs -i stager_get -U mc2012 -M {} >! /tmp/emanuele/lists/stagefiles.log
+30     4     *     *     *         cat /tmp/emanuele/lists/*7TeV*list | xargs -i stager_get -U mc2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
+30     5     *     *     *         cat /tmp/emanuele/lists/DoubleElectron.list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
+0      6     *     *     *         cat /tmp/emanuele/lists/DoubleMu.list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
+30     6     *     *     *         cat /tmp/emanuele/lists/MuEG.list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
+0      7     *     *     *         cat /tmp/emanuele/lists/SingleMu.list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
+30     7     *     *     *         cat /tmp/emanuele/lists/SingleElectron.list | xargs -i stager_get -U data2012 -M {} >> /tmp/emanuele/lists/stagefiles.log
