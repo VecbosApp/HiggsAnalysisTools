@@ -468,6 +468,16 @@ void HiggsYields(int mH, int njets, float lumiInInvFb, bool showData, bool addDa
 
   delete histo;
 
+  fileZj->Close();
+  fileTTbar->Close();
+  fileSingleTop->Close();
+  fileWj->Close();
+  fileOthers->Close();
+  fileqqWW->Close();
+  fileggWW->Close();
+  if(fileData) fileData->Close();
+  if(fileFake) fileFake->Close();
+
 }
 
 float yieldErrPoisson(float nEst1, float n1, float nEst2, float n2, float nEst3, float n3, float nEst4, float n4, float nEst5, float n5, float nEst6, float n6) {
