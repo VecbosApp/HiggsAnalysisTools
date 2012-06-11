@@ -89,17 +89,17 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
 
   int mH[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
   for(int i=0; i<27;i++) {
-    // for(int i=0; i<1;i++) {
+    
     std::cout << "mH = " << mH[i] << std::endl;
     TString addCutInR, addCutOutR, addCutIn, addCutOut;
     if(cutbasedestimation) {
-      addCutInR = higgsCutsNoMT(mH[i],false,njets);
-      addCutOutR = higgsCutsNoMT(mH[i],true,njets);
+      addCutInR = higgsCutsNoMT(mH[i],false);
+      addCutOutR = higgsCutsNoMT(mH[i],true);
       addCutIn = higgsCuts(mH[i],false,njets);
       addCutOut = higgsCuts(mH[i],true,njets);
     } else {
-      addCutInR = higgsCutsBDTNoMT(mH[i],false,njets);
-      addCutOutR = higgsCutsBDTNoMT(mH[i],true,njets);
+      addCutInR = higgsCutsBDTNoMT(mH[i],false);
+      addCutOutR = higgsCutsBDTNoMT(mH[i],true);
       addCutIn = higgsCutsBDT(mH[i],false,njets);
       addCutOut = higgsCutsBDT(mH[i],true,njets);
     }
@@ -238,10 +238,15 @@ void estimateDY(float lumiInInvFb, int mass, int njets, bool useDataRk, TString 
     mpmetcutNminus3 = TString("dymva1>-0.90 && dymva1<-0.85");
   } else {
     treeZjets->Project("nllCheckInH","dphill",TString("(") + wwCutInR + TString(" && mpmet>30 && mpmet<45 && sameflav")+TString(")*baseW*puW*effW"));
-    mpmetcutnom = TString("mpmet>45");
-    mpmetcutNminus1 = TString("mpmet>30 && mpmet<45");
-    mpmetcutNminus2 = TString("mpmet>25 && mpmet<30");
-    mpmetcutNminus3 = TString("mpmet>20 && mpmet<25");
+    mpmetcutnom = TString("mpmet>45 && dphilljet<165");
+    mpmetcutNminus1 = TString("mpmet>30 && mpmet<45 && dphilljet<165");
+    mpmetcutNminus2 = TString("mpmet>25 && mpmet<30 && dphilljet<165");
+    mpmetcutNminus3 = TString("mpmet>20 && mpmet<25 && dphilljet<165");
+    
+    wwCutInR += TString("&& dphilljet<165");
+    wwCutOutR += TString("&& dphilljet<165");
+    wwCutIn += TString("&& dphilljet<165");
+    wwCutOut += TString("&& dphilljet<165");
   }
   float forTheCheck = nllCheckInH->GetEntries();
   
@@ -694,8 +699,8 @@ void makeRPlot(int mH, int njets, float lumiInInvFb) {
   TString addCutIn, addCutOut;
   if(mH>=110 && mH<=600) {
     std::cout << "mH = " << mH << std::endl;
-    addCutIn = higgsCutsNoMT(mH,false,njets);
-    addCutOut = higgsCutsNoMT(mH,true,njets);
+    addCutIn = higgsCutsNoMT(mH,false);
+    addCutOut = higgsCutsNoMT(mH,true);
   } else {
     addCutIn = TString("1"); // WWsel
     addCutOut = TString("1"); // WWsel
