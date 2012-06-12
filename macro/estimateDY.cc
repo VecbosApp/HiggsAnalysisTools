@@ -90,6 +90,7 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
   int mH[27] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500,550,600,700,800,900,1000};
   for(int i=0; i<27;i++) {
     
+    if(mH[i]<145) continue;
     std::cout << "mH = " << mH[i] << std::endl;
     TString addCutInR, addCutOutR, addCutIn, addCutOut;
     if(cutbasedestimation) {
