@@ -11,7 +11,7 @@
 
 enum { ee=0, mm=1, em=2, me=3, sf=4, of=5 };
 
-float usedLumi = 2.42;
+float usedLumi = 3.55;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 float yieldErrPoisson(float nEst1, float n1, float nEst2=0, float n2=0, float nEst3=0, float n3=0, float nEst4=0, float n4=0, float nEst5=0, float n5=0, float nEst6=0, float n6=0);
@@ -20,14 +20,14 @@ void estimateWW() {
 
   // constants: backgrounds estimated in all region. Updated to 4.63 fb-1
   // float Wjets0j[4] = { 11.4, 8.2, 52.0, 22.9 };
-  float Wjets0j[4] = { 11.0, 6.0, 43.7, 12.7 };
+  float Wjets0j[4] = { 12.0, 7.0, 54.2, 15.1 };
   float Wjets0j_err[4] = { quadrSum(0.0,0.27*Wjets0j[ee]), 
                            quadrSum(0.0,0.31*Wjets0j[mm]), 
                            quadrSum(0.0,0.37*Wjets0j[em]), 
                            quadrSum(0.0,0.31*Wjets0j[me]) };
 
   // float Wjets1j[4] = { 5.1, 8.3, 35.6, 18.3 };
-  float Wjets1j[4] = { 4.4, 4.2, 28.9, 15.6 };
+  float Wjets1j[4] = { 5.6, 5.1, 34.8, 17.7 };
   float Wjets1j_err[4] = { quadrSum(0.0,0.25*Wjets1j[ee]), 
                            quadrSum(0.0,0.30*Wjets1j[mm]), 
                            quadrSum(0.0,0.26*Wjets1j[em]), 
@@ -36,14 +36,14 @@ void estimateWW() {
   // DY from Summer11 MC, ee+mm scale factors from data-driven estimate, 4.63 fb-1 update
   // em, me from MC => SF=1
   //float DY0j[4] = { 1.8, 1.2, 0.0, 0.0 };
-  float DY0j[4] = { 1.6, 1.9, 0.8, 0.0 };
+  float DY0j[4] = { 2.5, 2.9, 1.2, 0.0 };
   float DY0j_err[4] = { 0.5, 0.3, 0.3, 0.0 };
-  float scalef_DY0j[4] = { 5.0, 5.0, 1.0, 1.0 };
+  float scalef_DY0j[4] = { 10.0, 8.0, 1.0, 1.0 };
 
   //float DY1j[4] = { 4.4, 10.1, 12.4, 14.2 };
-  float DY1j[4] = { 1.40, 0.80, 9.8, 10.9 };
+  float DY1j[4] = { 2.1, 1.3, 14.5, 15.8 };
   float DY1j_err[4] = { 0.6, 0.4, 1.5, 2.0 };
-  float scalef_DY1j[4] = { 3.0, 3.0, 1.0, 1.0 };
+  float scalef_DY1j[4] = { 10.0, 10.0, 1.0, 1.0 };
 
   float Wjets0j_tot(0), Wjets0j_tot_err(0), Wjets1j_tot(0), Wjets1j_tot_err(0);
   float DY0j_tot(0), DY0j_tot_err(0), DY1j_tot(0), DY1j_tot_err(0);
@@ -78,17 +78,17 @@ void estimateWW() {
 //   float dibosons1j_tot = 20.7;
 //   float dibosons1j_tot_err = 0.2;
 
-  float top0j_tot = 95.0; 
-  float top0j_tot_err = 14.0;
+  float top0j_tot = 112.0; 
+  float top0j_tot_err = 17.9;
 
-  float top1j_tot = 289.;
-  float top1j_tot_err = 15.0;
+  float top1j_tot = 350.;
+  float top1j_tot_err = 16.0;
   
   // from MC
-  float dibosons0j_tot = 14.9;
-  float dibosons0j_tot_err = 0.1;
+  float dibosons0j_tot = 21.9;
+  float dibosons0j_tot_err = 0.2;
   
-  float dibosons1j_tot = 13.9;
+  float dibosons1j_tot = 20.4;
   float dibosons1j_tot_err = 0.1;
   
   TFile *fileData = TFile::Open("results_data/datasets_trees/dataset_ll.root");
