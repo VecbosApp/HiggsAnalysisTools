@@ -301,13 +301,16 @@ void estimateWjets(int njets) {
 
     // summary table for limits: splitting in 2 channels (SF, OF)
     if (i==0) { 
-      tablefile2 << njets << " jets bin data" << endl;
-      tablefile2 << "\t\t SF" << endl;
-      tablefile3 << njets << " jets bin data" << endl;
-      tablefile3 << "\t\t OF" << endl;
+      // tablefile2 << njets << " jets bin data" << endl;
+      // tablefile2 << "\t\t SF" << endl;
+      // tablefile3 << njets << " jets bin data" << endl;
+      // tablefile3 << "\t\t OF" << endl;
     }
-    tablefile2 << mass << "\t\t" << yield_sf << " +/- " << staterr_sf << std::endl; 
-    tablefile3 << mass << "\t\t" << yield_of << " +/- " << staterr_of << std::endl; 
+    // if the yield is negative, put the uncertainty as central value or the limit will go crazy
+    if(yield_sf<0) yield_sf = staterr_sf;
+    if(yield_of<0) yield_of = staterr_of;
+    tablefile2 << mass << "\t\t" << yield_sf << "   " << staterr_sf << std::endl; 
+    tablefile3 << mass << "\t\t" << yield_of << "   " << staterr_of << std::endl; 
   }
 
   /*
