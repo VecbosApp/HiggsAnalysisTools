@@ -377,7 +377,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float dphill; // deltaphi in radians
     
     // variables to be converted in float...
-    float f_run, f_lumi, f_event, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
+    float f_run, f_lumi, f_hlt, f_nVtx, f_njets, f_nuncorrjets, 
       f_zveto, f_bveto_ip, f_bveto_mu, f_bveto_munj, f_bveto, f_dphiveto, f_typeL1, f_typeL2, 
       f_nSoftMu, f_nSoftMuNoJets, f_numExtraLep, f_finalstate, f_processId, sameflav, f_nsoftbjet, f_nsoftjet;
     float f_ch[2];
@@ -583,8 +583,8 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     int j =0;
 
     // event container. It happens that some events are duplicate, and are consecutive in the same run
-    std::vector<ULong64_t> eventsInRun;
-    int lastrun=0;
+    //     std::vector<ULong64_t> eventsInRun;
+    //     int lastrun=0;
 
     for(int i=0; i<nentriesOrig; i++) {
       if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl; 
@@ -802,7 +802,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       // change the format of the integers -> float
       f_run = (float)run;
       f_lumi = (float)lumi;
-      f_event = (float)event;
       f_hlt = (float)i_hlt;
       f_nVtx = (float)nVtx;
       f_njets = (float)njets;
