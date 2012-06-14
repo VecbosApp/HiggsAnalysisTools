@@ -6,6 +6,7 @@
 #include <TLorentzVector.h>
 #include <TVector3.h>
 #include <iostream>
+#include <algorithm>
 #include "LumiReweightingStandAlone.h"
 //#include <PUWeight.C>
 #include <DYWeighter.cc>
@@ -46,7 +47,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
   LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup200.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_JSONJune1st.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_3500ipb.root",
                                "pileup","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
@@ -406,7 +407,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       // Copys branches
       theTreeNew->Branch("run", &f_run, "run/F");
       theTreeNew->Branch("lumi", &f_lumi, "lumi/F");
-      theTreeNew->Branch("event", &f_event, "event/F");
+      theTreeNew->Branch("event", &event, "event/l");
       theTreeNew->Branch("genmll", &genmll, "genmll/F");
       theTreeNew->Branch("genptll", &genptll, "genptll/F");
       theTreeNew->Branch("genyll", &genyll, "genyll/F");
@@ -580,10 +581,29 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     }
 
     int j =0;
-  
+
+    // event container. It happens that some events are duplicate, and are consecutive in the same run
+    std::vector<ULong64_t> eventsInRun;
+    int lastrun=0;
+
     for(int i=0; i<nentriesOrig; i++) {
       if (i%10000 == 0) std::cout << ">>> Weighting event # " << i << " / " << nentriesOrig << " entries" << std::endl; 
-     treeOrig->GetEntry(i);
+      treeOrig->GetEntry(i);
+      
+      /// do this check only in data
+      //if(processId>=100 && processId<1000) {
+      //  if(run!=lastrun) {
+      //    eventsInRun.clear();
+      //    lastrun=run;
+      //  }
+      //  vector<ULong64_t>::iterator it;
+      //  it = find(eventsInRun.begin(), eventsInRun.end(), event);
+      //  if(it!=eventsInRun.end()) {
+      //    cout << "Found dup. Run = " << run << "   event = " << event << ". Skipping it." << endl;
+      //    continue;
+      //  }
+      //  eventsInRun.push_back(event);
+      //}
 
       if (njets==0) jetcat = 1;
       else if(njets==1) jetcat = -1;
