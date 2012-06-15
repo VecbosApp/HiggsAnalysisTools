@@ -44,7 +44,7 @@ void estimateTop(int njets) {
 
   // constants
   std::pair<float,float> efftag;
-  if(njets==0) efftag = estimateTopVetoEff2(njets,0.37);
+  if(njets==0) efftag = estimateTopVetoEff2(njets,0.15);
   if(njets==1) efftag = estimateTopVetoEffBkgSub(njets);
   float eff_2b = efftag.first;
   float eff_2b_err = efftag.second;
