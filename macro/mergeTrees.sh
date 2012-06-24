@@ -14,8 +14,8 @@ if [ $year -eq "2012" ] ; then
       hadd results/merged/qqH$i\2LAndTau2Nu_ee.root results/Summer12_V14_52X/VBF_HToWWTo2LAndTau2Nu_M-$i\_8TeV-powheg-pythia6/*datasetEE.root
     done
 
-    hadd results/merged/TTbar_ee.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetEE.root
-    #hadd results/merged/TTbar_ee.root results/Summer12_V14_52X/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetEE.root 
+    #hadd results/merged/TTbar_ee.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetEE.root
+    hadd results/merged/TTbar_ee.root results/Summer12_V14_52X/TTTo2L2Nu2B_8TeV-powheg-pythia6/*datasetEE.root 
     hadd results/merged/SingleT_tWChannel_ee.root results/Summer12_V14_52X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetEE.root
     hadd results/merged/SingleTbar_tWChannel_ee.root results/Summer12_V14_52X/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetEE.root
     hadd results/merged/Wjets_ee.root results/Summer12_V14_52X/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/*datasetEE.root
@@ -46,8 +46,8 @@ if [ $year -eq "2012" ] ; then
       hadd results/merged/qqH$i\2LAndTau2Nu_mm.root results/Summer12_V14_52X/VBF_HToWWTo2LAndTau2Nu_M-$i\_8TeV-powheg-pythia6/*datasetMM.root
     done
 
-    hadd results/merged/TTbar_mm.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetMM.root
-    #hadd results/merged/TTbar_mm.root results/Summer12_V14_52X/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetMM.root 
+    #hadd results/merged/TTbar_mm.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetMM.root
+    hadd results/merged/TTbar_mm.root results/Summer12_V14_52X/TTTo2L2Nu2B_8TeV-powheg-pythia6/*datasetMM.root 
     hadd results/merged/SingleT_tWChannel_mm.root results/Summer12_V14_52X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetMM.root
     hadd results/merged/SingleTbar_tWChannel_mm.root results/Summer12_V14_52X/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetMM.root
     hadd results/merged/Wjets_mm.root results/Summer12_V14_52X/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/*datasetMM.root
@@ -78,8 +78,8 @@ if [ $year -eq "2012" ] ; then
       hadd results/merged/qqH$i\2LAndTau2Nu_em.root results/Summer12_V14_52X/VBF_HToWWTo2LAndTau2Nu_M-$i\_8TeV-powheg-pythia6/*datasetEM.root
     done
 
-    hadd results/merged/TTbar_em.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetEM.root
-    #hadd results/merged/TTbar_em.root results/Summer12_V14_52X/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetEM.root 
+    #hadd results/merged/TTbar_em.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetEM.root
+    hadd results/merged/TTbar_em.root results/Summer12_V14_52X/TTTo2L2Nu2B_8TeV-powheg-pythia6/*datasetEM.root 
     hadd results/merged/SingleT_tWChannel_em.root results/Summer12_V14_52X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetEM.root
     hadd results/merged/SingleTbar_tWChannel_em.root results/Summer12_V14_52X/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetEM.root
     hadd results/merged/Wjets_em.root results/Summer12_V14_52X/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/*datasetEM.root
@@ -110,8 +110,8 @@ if [ $year -eq "2012" ] ; then
       hadd results/merged/qqH$i\2LAndTau2Nu_me.root results/Summer12_V14_52X/VBF_HToWWTo2LAndTau2Nu_M-$i\_8TeV-powheg-pythia6/*datasetME.root
     done
 
-    hadd results/merged/TTbar_me.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetME.root
-    #hadd results/merged/TTbar_me.root results/Summer12_V14_52X/TTTo2L2Nu2B_7TeV-powheg-pythia6/*datasetME.root 
+    #hadd results/merged/TTbar_me.root results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*datasetME.root
+    hadd results/merged/TTbar_me.root results/Summer12_V14_52X/TTTo2L2Nu2B_8TeV-powheg-pythia6/*datasetME.root 
     hadd results/merged/SingleT_tWChannel_me.root results/Summer12_V14_52X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetME.root
     hadd results/merged/SingleTbar_tWChannel_me.root results/Summer12_V14_52X/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*datasetME.root
     hadd results/merged/Wjets_me.root results/Summer12_V14_52X/WJetsToLNu_TuneZ2Star_8TeV-madgraph-tarball/*datasetME.root

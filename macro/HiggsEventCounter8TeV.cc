@@ -66,7 +66,8 @@ void countEvents() {
 
   chains[3]->Add("results/Summer12_V14_52X/T_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*Counters.root");
   chains[4]->Add("results/Summer12_V14_52X/Tbar_tW-channel-DR_TuneZ2star_8TeV-powheg-tauola/*Counters.root");
-  chains[5]->Add("results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*Counters.root"); 
+  //chains[5]->Add("results/Summer12_V14_52X/TTJets_TuneZ2star_8TeV-madgraph-tauola/*Counters.root"); 
+  chains[5]->Add("results/Summer12_V14_52X/TTTo2L2Nu2B_8TeV-powheg-pythia6/*Counters.root");
 
   chains[6]->Add("results/Summer12_V14_52X/WWJetsTo2L2Nu_TuneZ2star_8TeV-madgraph-tauola/*Counters.root"); // nominal WW MADGRAPH sample
   chains[7]->Add("results/Summer12_V14_52X/GluGluToWWTo4L_TuneZ2star_8TeV-gg2ww-pythia6/*Counters.root");
@@ -132,7 +133,8 @@ void countEvents() {
   sampleXsec.push_back(3532.8149); // 2
   sampleXsec.push_back(11.1773); // 3
   sampleXsec.push_back(11.1773); // 4
-  sampleXsec.push_back(225.1967); // 5
+  //  sampleXsec.push_back(225.1967); // 5 = TTJets inclusive
+  sampleXsec.push_back(23.6402); // 5 = TTbar->2l2nu
   sampleXsec.push_back(5.8123); // 6
   sampleXsec.push_back(0.182852); // 7
   sampleXsec.push_back(0.7346); // 8
