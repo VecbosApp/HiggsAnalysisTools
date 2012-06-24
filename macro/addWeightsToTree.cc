@@ -48,7 +48,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 
   LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup200.root",
                                "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_5050ipb.root",
-                               "pileup","pileup");
+                               "hNPU","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
   // reading root files with electrons and muons efficiencies
