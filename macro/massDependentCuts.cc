@@ -4,7 +4,7 @@
 TString higgsCuts(int mH, bool out, int njets) {
   
   TString dymvacut = (njets==0) ? TString("(dymva1>0.6 || !sameflav) && njet==0") : TString("(dymva1>0.3 || !sameflav) && njet==1");
-  TString finalmetcut = (njets==0) ? TString("(mpmet>45 || !sameflav) && njet==0") : TString("(mpmet>45 || !sameflav) && njet==1");
+  TString finalmetcut = (njets==0) ? TString("((mpmet>45 && dphilljet<165) || !sameflav) && njet==0") : TString("((mpmet>45 && dphilljet<165) || !sameflav) && njet==1");
 
   std::map<int,TString> cuts;
   cuts.insert(std::make_pair(110,dymvacut + TString(" && pt1>20 && dphill*180./TMath::Pi()<115 &&  mth>80  &&  mth<110")));
@@ -157,7 +157,7 @@ TString higgsCutsNoMT(int mH, bool out) {
 TString higgsCutsBDT(int mH, bool out, int njets) {
 
   TString dymvacut = (njets==0) ? TString("dymva1>0.6 && njet==0") : TString("dymva1>0.3 && njet==1");
-  TString finalmetcut = (njets==0) ? TString("mpmet>45 && njet==0") : TString("mpmet>45 && njet==1");
+  TString finalmetcut = (njets==0) ? TString("(mpmet>45 && dphilljet<165) && njet==0") : TString("(mpmet>45 && dphilljet<165) && njet==1");
   
   std::map<int,TString> cuts;
   cuts.insert(std::make_pair(110,dymvacut + TString(" &&  mth>80 && mth<110")));
