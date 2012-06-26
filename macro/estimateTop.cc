@@ -12,7 +12,7 @@
 
 enum { ee=0, mm=1, em=2, me=3, sf=4, of=5 };
 
-float wantedLumi = 3.55;
+float wantedLumi = 5.1;
 
 float quadrSum(float x1, float x2, float x3=0, float x4=0, float x5=0, float x6=0, float x7=0, float x8=0);
 std::pair<float,float> nVeto(float ntag, float ntagbkg, float eff2b, float eff2berr);
@@ -44,7 +44,7 @@ void estimateTop(int njets) {
 
   // constants
   std::pair<float,float> efftag;
-  if(njets==0) efftag = estimateTopVetoEff2(njets,0.15);
+  if(njets==0) efftag = estimateTopVetoEff2(njets,0.37);
   if(njets==1) efftag = estimateTopVetoEffBkgSub(njets);
   float eff_2b = efftag.first;
   float eff_2b_err = efftag.second;
@@ -70,7 +70,7 @@ void estimateTop(int njets) {
 
   // scale factors for the backgrounds
   float WWDataOverMC[2] = {1.00, 1.00} ; // use one for first iteration
-  float DYDataOverMC[2] = {8.7, 7.1};  // estimation 3.55 fb-1 2012
+  float DYDataOverMC[2] = {9.0, 8.0};  // estimation 5.1 fb-1 2012
   float WjDataTot[6][2];     // [icha][jetbin]
   // 2011
  // WjDataTot[ee][0] = 11.4; // updated 4.63 fb-1
@@ -82,14 +82,14 @@ void estimateTop(int njets) {
  // WjDataTot[em][1] = 35.6; // updated 4.63 fb-1
  // WjDataTot[me][1] = 18.3; // updated 4.63 fb-1
 
-  WjDataTot[ee][0] = 7.0;  // 2012 updated 2.4 fb-1
-  WjDataTot[mm][0] = 12.0;  // 2012 updated 2.4 fb-1
-  WjDataTot[em][0] = 54.2; // 2012 updated 2.4 fb-1
-  WjDataTot[me][0] = 15.1;  // 2012 updated 2.4 fb-1
-  WjDataTot[ee][1] = 5.1;  // 2012 updated 2.4 fb-1
-  WjDataTot[mm][1] = 5.6;  // 2012 updated 2.4 fb-1
-  WjDataTot[em][1] = 34.8; // 2012 updated 2.4 fb-1
-  WjDataTot[me][1] = 17.7;  // 2012 updated 2.4 fb-1
+  WjDataTot[ee][0] = 13.5; // 2012 updated 5.1 fb-1
+  WjDataTot[mm][0] = 19.0; // 2012 updated 5.1 fb-1
+  WjDataTot[em][0] = 96.1; // 2012 updated 5.1 fb-1
+  WjDataTot[me][0] = 29.6; // 2012 updated 5.1 fb-1
+  WjDataTot[ee][1] = 11.1; // 2012 updated 5.1 fb-1
+  WjDataTot[mm][1] = 11.9; // 2012 updated 5.1 fb-1
+  WjDataTot[em][1] = 68.3; // 2012 updated 5.1 fb-1
+  WjDataTot[me][1] = 31.2; // 2012 updated 5.1 fb-1
   
 
   for(int j=0; j<2; j++) {
