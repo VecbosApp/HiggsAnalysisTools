@@ -43,7 +43,7 @@ void estimateDYMassDependent(float lumiInInvFb, int njets, bool useDataRk, bool 
 
   ofstream cardfilell[2]; // [jetbin]
   char fileName[50];
-  sprintf(fileName,"DYCard_ll_%dj.txt",njets);
+  sprintf(fileName,"DYCard_sf_%dj.txt",njets);
   cardfilell[njets].open(fileName, ios_base::trunc);
   cardfilell[njets].precision(3);
 
