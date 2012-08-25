@@ -423,10 +423,15 @@ TVector3 Higgs::pfChargedMet(TVector3 lep1, TVector3 lep2) {
   float chMetP3x = pxPFChMet[0];
   float chMetP3y = pyPFChMet[0];
 
+  TVector3 firstPV(PVxPV[0],PVyPV[0],PVzPV[0]);
+
   // charged PF MET has been computed with all the PF cands (inverted -p)
   // first remove the contribution in dR = 0.1 to avoid double counting
   for(int i=0; i<nReducedPFCand; i++) {
+    if(chargeReducedPFCand[i]==0) continue;
     TVector3 pfCandP3(pxReducedPFCand[i],pyReducedPFCand[i],pzReducedPFCand[i]);
+    TVector3 pfCandVPos(vertexXReducedPFCand[i],vertexYReducedPFCand[i],vertexZReducedPFCand[i]);
+    if(fabs(trackDzPV(firstPV,pfCandVPos,pfCandP3))>0.1) continue;
     if(pfCandP3.DeltaR(lep1)<=0.1 || pfCandP3.DeltaR(lep2)<=0.1) {
       chMetP3x += pxReducedPFCand[i];
       chMetP3y += pyReducedPFCand[i];
