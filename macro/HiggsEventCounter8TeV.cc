@@ -255,8 +255,7 @@ void countEvents() {
   
   // now write ee
   weightsFile << "echo \"Adding weights for ee datasets for \" $lumiEE \" pb-1...\"" << std::endl;
-  weightsFile << "root -l -b <<EOF" << std::endl;
-  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
+  weightsFile << "make LatinosAnalyzer" << std::endl;
   for(int imass=0; imass<27; imass++) {
     std::vector<double> massXsec = signalXSec[imass];
     std::vector<TString> massSampleName = signalSampleName[imass];
@@ -264,20 +263,17 @@ void countEvents() {
     for(int i=0; i<2; i++) {
       int release = 0;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
-      weightsFile << "addWeights(\"" << massSampleName[i].Data() << "\", " << w << "*$lumiEE, " << massId[i] << " ,1, " << release << ");" << std::endl;
+      weightsFile << "./LatinosAnalyzer " << massSampleName[i].Data() << " " << w << "*$lumiEE " << massId[i] << " 1 " << release << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
     int release = 0;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
-    weightsFile << "addWeights(\"" << sampleName[isample].Data() << "\", " << w << "*$lumiEE, " << sampleProcessId[isample] << " ,1, " << release << ");" << std::endl;
+    weightsFile << "./LatinosAnalyzer " << sampleName[isample].Data() << " " << w << "*$lumiEE " << sampleProcessId[isample] << " 1 " << release << std::endl;
   }
-  weightsFile << ".q\n\nEOF\n" << std::endl;
   
   // now write mm
   weightsFile << "echo \"Adding weights for mm datasets for \" $lumiMM \" pb-1...\"" << std::endl;
-  weightsFile << "root -l -b <<EOF" << std::endl;
-  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
   for(int imass=0; imass<27; imass++) {
     std::vector<double> massXsec = signalXSec[imass];
     std::vector<TString> massSampleName = signalSampleName[imass];
@@ -287,7 +283,7 @@ void countEvents() {
       int release = 0;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameMM = massSampleName[i].ReplaceAll("_ee","_mm");
-      weightsFile << "addWeights(\"" << massSampleNameMM.Data() << "\", " << w << "*$lumiMM, " << massId[i] << " ,0, " << release << ");" << std::endl;
+      weightsFile << "./LatinosAnalyzer " << massSampleNameMM.Data() << " " << w << "*$lumiMM " << massId[i] << " 0 " << release << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
@@ -295,15 +291,12 @@ void countEvents() {
     int release = 0;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameMM = sampleName[isample].ReplaceAll("_ee","_mm");
-    weightsFile << "addWeights(\"" << sampleNameMM.Data() << "\", " << w << "*$lumiMM, " << sampleProcessId[isample] << " ,0, " << release << ");" << std::endl;
+    weightsFile << "./LatinosAnalyzer " << sampleNameMM.Data() << " " << w << "*$lumiMM " << sampleProcessId[isample] << " 0 " << release << std::endl;
   }
-  weightsFile << ".q\n\nEOF\n" << std::endl;
 
 
   // now write em
   weightsFile << "echo \"Adding weights for em datasets for \" $lumiEM \" pb-1...\"" << std::endl;
-  weightsFile << "root -l -b <<EOF" << std::endl;
-  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
   for(int imass=0; imass<27; imass++) {
     std::vector<double> massXsec = signalXSec[imass];
     std::vector<TString> massSampleName = signalSampleName[imass];
@@ -312,7 +305,7 @@ void countEvents() {
       int release = 0;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameEM = massSampleName[i].ReplaceAll("_ee","_em");
-      weightsFile << "addWeights(\"" << massSampleNameEM.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,2, " << release << ");" << std::endl;
+      weightsFile << "./LatinosAnalyzer " << massSampleNameEM.Data() << " " << w << "*$lumiEM " << massId[i] << " 2 " << release << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
@@ -320,15 +313,11 @@ void countEvents() {
     int release = 0;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_mm","_em");
-    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,2, " << release << ");" << std::endl;
+    weightsFile << "./LatinosAnalyzer " << sampleNameEM.Data() << " " << w << "*$lumiEM " << sampleProcessId[isample] << " 2 " << release << std::endl;
   }
-  weightsFile << ".q\n\nEOF\n" << std::endl;
-
 
   // now write me
   weightsFile << "echo \"Adding weights for me datasets for \" $lumiEM \" pb-1...\"" << std::endl;
-  weightsFile << "root -l -b <<EOF" << std::endl;
-  weightsFile << ".L addWeightsToTree.cc+" << std::endl;
   for(int imass=0; imass<27; imass++) {
     std::vector<double> massXsec = signalXSec[imass];
     std::vector<TString> massSampleName = signalSampleName[imass];
@@ -337,7 +326,7 @@ void countEvents() {
       int release = 0;
       float w = weight(nEvH[imass][i], massXsec[i], 1., 1.);
       TString massSampleNameME = massSampleName[i].ReplaceAll("_ee","_me");
-      weightsFile << "addWeights(\"" << massSampleNameME.Data() << "\", " << w << "*$lumiEM, " << massId[i] << " ,3, " << release << ");" << std::endl;
+      weightsFile << "./LatinosAnalyzer " << massSampleNameME.Data() << " " << w << "*$lumiEM " << massId[i] << " 3 " << release << std::endl;
     }
   }
   for(int isample=0; isample<NSAMPLES; isample++) {
@@ -345,10 +334,8 @@ void countEvents() {
     int release = 0;
     float w = weight(nEv[isample], sampleXsec[isample], 1., 1.);
     TString sampleNameEM = sampleName[isample].ReplaceAll("_em","_me");
-    weightsFile << "addWeights(\"" << sampleNameEM.Data() << "\", " << w << "*$lumiEM, " << sampleProcessId[isample] << " ,3, " << release << ");" << std::endl;
+    weightsFile << "./LatinosAnalyzer " << sampleNameEM.Data() << " " << w << "*$lumiEM " << sampleProcessId[isample] << " 3 " << release << std::endl;
   }
-  weightsFile << ".q\n\nEOF\n" << std::endl;
-
   weightsFile << "echo \"done weighting.\"" << std::endl;
 
 }

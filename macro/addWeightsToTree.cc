@@ -1,43 +1,48 @@
+// ROOT includes
 #include <TFile.h>
 #include <TTree.h>
 #include <TBranch.h>
-#include <TH2F.h>
 #include <TMath.h>
-#include <TLorentzVector.h>
-#include <TVector3.h>
-#include <iostream>
 #include <algorithm>
+#include <iostream>
+
+// HiggsAnalysisTools includes
 #include "LumiReweightingStandAlone.h"
-//#include <PUWeight.C>
 #include <DYWeighter.cc>
+#include "HiggsAnalysisTools/include/HWWKinematics.hh"
+
+#include "addWeightsToTree.hh"
 
 using namespace std;
 using namespace reweight;
 
-int FRWeights = 0;
-Float_t lumiA = 2.1;
-Float_t lumiB = 2.5;
+addWeightsToTree::addWeightsToTree(const char* filename, float baseW, int processId, int finalstate, int release) {
+  filename_ = std::string(filename);
+  baseW_ = baseW;
+  processId_ = processId;
+  finalstate_ = finalstate;
+  release_ = release;
+}
 
-float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2);
-float calcMT(TVector3 met, TVector3 lepton);
-void addFRWeights() { FRWeights = 1;};
-float getOfflineEff(float pT, float eta, TH2F *myH);
+void addWeightsToTree::addWeights() {
 
-void addWeights(const char* filename, float baseW, int processId, int finalstate, int release) {
+  // 2011 sub-rns lumi
+  Float_t lumiA = 2.1;
+  Float_t lumiB = 2.5;
 
-  cout << "Adding weight branch to file " << filename << " with weight " << baseW << endl;
-  if (release==0) cout << "Offline efficiency computed using 52X samples" << endl;
-  if (release==1) cout << "Offline efficiency computed using 42X samples" << endl;
+  cout << "Adding weight branch to file " << filename_ << " with weight " << baseW_ << endl;
+  if (release_==0) cout << "Offline efficiency computed using 52X samples" << endl;
+  if (release_==1) cout << "Offline efficiency computed using 42X samples" << endl;
 
   TFile *fileOrig = 0;
   TTree *treeOrig = 0;
 
-  fileOrig = TFile::Open(filename);
+  fileOrig = TFile::Open(filename_.c_str());
   if( fileOrig ) {
     fileOrig->cd();
     treeOrig = (TTree*)fileOrig->Get("latino");
   } else {
-    cout << "File " << filename << " not existing !" << endl;
+    cout << "File " << filename_ << " not existing !" << endl;
     return;
   }
 
@@ -47,7 +52,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   //   PUWeight* fPUWeightFull2011 = new PUWeight("summer11","DY",-1,"Full2011",-1); 
 
   LumiReWeighting LumiWeights( "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/s7pileup200.root",
-                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_5050ipb.root",
+                               "/afs/cern.ch/user/e/emanuele/workspace/public/pileup/puRun2012_5100ipb_71.root",
                                "hNPU","pileup");
     
   DYWeighter* DYNNLOWeight = new DYWeighter("/afs/cern.ch/user/e/emanuele/public/DYReweighting/fewz_powheg_weights_stepwise_2011_fine7.root");
@@ -75,13 +80,15 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
   if ( treeOrig ) {
     int nentriesOrig = treeOrig->GetEntries();
 
-    TFile *fileNew = TFile::Open(filename,"recreate");
+    TFile *fileNew = TFile::Open(filename_.c_str(),"recreate");
     TTree *treeNew = new TTree("latino","tree with 2 lepton selection");
-    TTree *treeNewSkim = new TTree("latinoWWskim","tree with WW selection");
+    TTree *treeNewSkim = new TTree("latinoWWSkim","tree with WW selection");
+    TTree *treeNewFitSkim = new TTree("latinoFitSkim","tree with fit selection");
 
     std::vector<TTree*> trees; 
     trees.push_back(treeNew);
     trees.push_back(treeNewSkim);
+    trees.push_back(treeNewFitSkim);
     
     // add also a branch with jet category (1 for njets=0, -1 for njets=1: useful for the fit)
     // and a branch with float final selection bool (for roofit)
@@ -154,9 +161,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     Int_t           nSoftMuNoJets;
     Int_t           nsoftjet;
     Int_t           nsoftbjet;
-    Float_t         mtr;
-    Float_t         mr;
-    Float_t         gammamr;
     Int_t           numExtraLep;
     // lepton quantities (independent from lepton flavor)
     // 0 leading, 1 is trailing
@@ -290,9 +294,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     treeOrig->SetBranchAddress("nsoftjet", &nsoftjet);
     treeOrig->SetBranchAddress("nsoftbjet", &nsoftbjet);
     treeOrig->SetBranchAddress("numExtraLep", &numExtraLep);
-    treeOrig->SetBranchAddress("mtr", &mtr);
-    treeOrig->SetBranchAddress("mr", &mr);
-    treeOrig->SetBranchAddress("gammamr", &gammamr);
     treeOrig->SetBranchAddress("sumJetsV4", &sumJetsV4);
     treeOrig->SetBranchAddress("uncorrSumJetsV4", &uncorrSumJetsV4);
     treeOrig->SetBranchAddress("pfmetV", &pfmetV);
@@ -304,37 +305,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
 //     treeOrig->SetBranchAddress("cteq66W", cteq66W);
 //     treeOrig->SetBranchAddress("mstwW",mstwW);
 //     treeOrig->SetBranchAddress("nnpdfW",nnpdfW);
-    if(FRWeights) {
-      treeOrig->SetBranchAddress("weightFP",     &weightFP);
-      treeOrig->SetBranchAddress("weightStatFP", &weightStatFP);
-      treeOrig->SetBranchAddress("weightFF",     &weightFF);
-      treeOrig->SetBranchAddress("weightStatFF", &weightStatFF);
-      treeOrig->SetBranchAddress("weightPP",     &weightPP);
-      treeOrig->SetBranchAddress("weightStatPP", &weightStatPP);
-
-      treeOrig->SetBranchAddress("weightFP15",     &weightFP15);
-      treeOrig->SetBranchAddress("weightStatFP15", &weightStatFP15);
-      treeOrig->SetBranchAddress("weightFF15",     &weightFF15);
-      treeOrig->SetBranchAddress("weightStatFF15", &weightStatFF15);
-      treeOrig->SetBranchAddress("weightPP15",     &weightPP15);
-      treeOrig->SetBranchAddress("weightStatPP15", &weightStatPP15);
-
-      treeOrig->SetBranchAddress("weightFP50",     &weightFP50);
-      treeOrig->SetBranchAddress("weightStatFP50", &weightStatFP50);
-      treeOrig->SetBranchAddress("weightFF50",     &weightFF50);
-      treeOrig->SetBranchAddress("weightStatFF50", &weightStatFF50);
-      treeOrig->SetBranchAddress("weightPP50",     &weightPP50);
-      treeOrig->SetBranchAddress("weightStatPP50", &weightStatPP50);
-
-      treeOrig->SetBranchAddress("weightFPQCD",     &weightFPQCD);
-      treeOrig->SetBranchAddress("weightStatFPQCD", &weightStatFPQCD);
-      treeOrig->SetBranchAddress("weightFFQCD",     &weightFFQCD);
-      treeOrig->SetBranchAddress("weightStatFFQCD", &weightStatFFQCD);
-      treeOrig->SetBranchAddress("weightPPQCD",     &weightPPQCD);
-      treeOrig->SetBranchAddress("weightStatPPQCD", &weightStatPPQCD);
-
-      treeOrig->SetBranchAddress("tight", &tight);
-    }
 
     // electron ID (only filled for electrons)
     Float_t pt_1,       pt_2;
@@ -369,8 +339,7 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     float L2eta, L2phi;
     float dileptonPt;
     float mtw1, mtw2;
-    float R, R2;
-    float dgammamr;
+    float mr,mrnew,dphillr,ddphillr;
     float jetcat = 0;
     float consecevent = -1;
     float iMet;
@@ -467,14 +436,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("bveto_munj", &f_bveto_munj, "bveto_munj/F");
       theTreeNew->Branch("bveto", &f_bveto, "bveto/F");
       theTreeNew->Branch("dphiveto", &f_dphiveto, "dphiveto/F");
-      theTreeNew->Branch("mtr", &mtr, "mtr/F");
-      theTreeNew->Branch("mr", &mr, "mr/F");
-      theTreeNew->Branch("gammaMRStar", &dgammamr, "gammaMRStar/F");
-      theTreeNew->Branch("R", &R, "R/F");
+      theTreeNew->Branch("gammaMRStar", &mr, "gammaMRStar/F");
+      theTreeNew->Branch("mr", &mrnew, "mr/F");
+      theTreeNew->Branch("dphillr", &dphillr, "dphillr/F");
+      theTreeNew->Branch("ddphillr", &ddphillr, "ddphillr/F");
       theTreeNew->Branch("pfmetsign", &signPFMet, "pfmetsign/F");
       theTreeNew->Branch("chmetsign", &signPFChargedMet, "chmetsign/F");
-      theTreeNew->Branch("chmtr", &mtrchargedMet, "chmtr/F");
-      theTreeNew->Branch("R2", &R2, "R2/F");
       theTreeNew->Branch("pt1_eleid", &pt_1, "pt1_eleid/F");
       theTreeNew->Branch("eta1_eleid", &eta_1, "eta1_eleid/F");
       theTreeNew->Branch("R91_eleid", &R9_1, "R91_eleid/F");
@@ -539,43 +506,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       theTreeNew->Branch("jetcat", &jetcat,  "jetcat/F");
 
       theTreeNew->Branch("consecevent", &consecevent, "consecevent/F");
-      theTreeNew->Branch("baseW", &baseW,  "baseW/F");
+      theTreeNew->Branch("baseW", &baseW_,  "baseW/F");
 
 //       theTreeNew->Branch("cteq66W", cteq66W, "cteq66W[45]/D");
 //       theTreeNew->Branch("mstwW",   mstwW,   "mstwW[31]/D");
 //       theTreeNew->Branch("nnpdfW",  nnpdfW,  "nnpdfW[101]/D");
 
-      if(FRWeights) {
-        theTreeNew->Branch("tight",        &tight,        "tight/I");
-	//
-        theTreeNew->Branch("weightFP",     &weightFP,     "weightFP/F");
-        theTreeNew->Branch("weightStatFP", &weightStatFP, "weightStatFP/F");
-        theTreeNew->Branch("weightFF",     &weightFF,     "weightFF/F");
-        theTreeNew->Branch("weightStatFF", &weightStatFF, "weightStatFF/F");
-        theTreeNew->Branch("weightPP",     &weightPP,     "weightPP/F");
-        theTreeNew->Branch("weightStatPP", &weightStatPP, "weightStatPP/F");
-	// 
-        theTreeNew->Branch("weightFP15",     &weightFP15,     "weightFP15/F");
-        theTreeNew->Branch("weightStatFP15", &weightStatFP15, "weightStatFP15/F");
-        theTreeNew->Branch("weightFF15",     &weightFF15,     "weightFF15/F");
-        theTreeNew->Branch("weightStatFF15", &weightStatFF15, "weightStatFF15/F");
-        theTreeNew->Branch("weightPP15",     &weightPP15,     "weightPP15/F");
-        theTreeNew->Branch("weightStatPP15", &weightStatPP15, "weightStatPP15/F");
-	// 
-        theTreeNew->Branch("weightFP50",     &weightFP50,     "weightFP50/F");
-        theTreeNew->Branch("weightStatFP50", &weightStatFP50, "weightStatFP50/F");
-        theTreeNew->Branch("weightFF50",     &weightFF50,     "weightFF50/F");
-        theTreeNew->Branch("weightStatFF50", &weightStatFF50, "weightStatFF50/F");
-        theTreeNew->Branch("weightPP50",     &weightPP50,     "weightPP50/F");
-        theTreeNew->Branch("weightStatPP50", &weightStatPP50, "weightStatPP50/F");
-	// 
-        theTreeNew->Branch("weightFPQCD",     &weightFPQCD,     "weightFPQCD/F");
-        theTreeNew->Branch("weightStatFPQCD", &weightStatFPQCD, "weightStatFPQCD/F");
-        theTreeNew->Branch("weightFFQCD",     &weightFFQCD,     "weightFFQCD/F");
-        theTreeNew->Branch("weightStatFFQCD", &weightStatFFQCD, "weightStatFFQCD/F");
-        theTreeNew->Branch("weightPPQCD",     &weightPPQCD,     "weightPPQCD/F");
-        theTreeNew->Branch("weightStatPPQCD", &weightStatPPQCD, "weightStatPPQCD/F");
-      }
       theTreeNew->Branch("iMet", &iMet, "iMet/F");
 
     }
@@ -617,9 +553,6 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       eta_2      = eta[1];
       scEnergy_2 = scEnergy[1];
       R9_2       = R9[1];
-      R = mtr/mr;
-      R2 = mtrchargedMet/mr;
-      dgammamr = 2*gammamr;
 
       // consider only events with 0 or 1 jet
       // and fit variables within fit range
@@ -679,8 +612,16 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       mtw2 = calcMT(*pfmetV,TV_L2);
         
       iMet = projMet * cos(TV_chmet.Angle(*pfmetV));
-        
+
       dphill = deltaPhi * TMath::Pi() / 180.;
+      //! razor-like variables
+      TLorentzVector FV_L1(TV_L1,eneL1);
+      TLorentzVector FV_L2(TV_L2,eneL2);
+      HWWKinematics kine(FV_L1,FV_L2,*pfmetV);
+      mr = 2*kine.CalcMR();
+      mrnew = 2*kine.CalcMRNEW();
+      dphillr = fabs(kine.CalcDeltaPhiRFRAME());
+      ddphillr = fabs(kine.CalcDoubleDphiRFRAME());
 
       // PU weights
       puW = LumiWeights.weight(npu[1]);
@@ -690,13 +631,13 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       Float_t eff2=1.;
       Float_t effA1, effA2, effB1, effB2;
       effA1 = effA2 = effB1 = effB2 = 1.;
-      if (processId>0) { // MC => apply scale factors
-        if (finalstate==0) {   // mm
-          if (release==0) { 
+      if (processId_>0) { // MC => apply scale factors
+        if (finalstate_==0) {   // mm
+          if (release_==0) { 
             eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons52);    
             eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons52);    
           }
-          else if (release==1) {
+          else if (release_==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);    
             effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);    
             effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);    
@@ -705,12 +646,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
             eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
           }
         }
-        else if (finalstate==1) { // ee
-          // cout << "finalstate==1" << endl;
-          if (release==0) { 
+        else if (finalstate_==1) { // ee
+          // cout << "finalstate_==1" << endl;
+          if (release_==0) { 
             eff1 = getOfflineEff(l1pt, l1eta, histoSFele52);
             eff2 = getOfflineEff(l2pt, l2eta, histoSFele52);
-          } else if (release==1) {
+          } else if (release_==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
             effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
@@ -718,12 +659,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
             eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
             eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);
           }
-        } else if (finalstate==2) {  // em
-          // cout << "finalstate==2" << endl;
-          if (release==0) { 
+        } else if (finalstate_==2) {  // em
+          // cout << "finalstate_==2" << endl;
+          if (release_==0) { 
             eff1 = getOfflineEff(l1pt, l1eta, histoSFele52);
             eff2 = getOfflineEff(l2pt, l2eta, histoSFmuons52);
-          } else if (release==1) {
+          } else if (release_==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFele42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFmuons42A);
             effB1 = getOfflineEff(l1pt, l1eta, histoSFele42B);
@@ -731,12 +672,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
             eff1 = (effA1 * lumiA + effB1 * lumiB) / (lumiA+lumiB);
             eff2 = (effA2 * lumiA + effB2 * lumiB) / (lumiA+lumiB);              
           }
-        } else if (finalstate==3) {  // me
-          // cout << "finalstate==3" << endl;
-          if (release==0) { 
+        } else if (finalstate_==3) {  // me
+          // cout << "finalstate_==3" << endl;
+          if (release_==0) { 
             eff1 = getOfflineEff(l1pt, l1eta, histoSFmuons52);
 	    eff2 = getOfflineEff(l2pt, l2eta, histoSFele52);
-          } else if (release==1) {
+          } else if (release_==1) {
             effA1 = getOfflineEff(l1pt, l1eta, histoSFmuons42A);
             effA2 = getOfflineEff(l2pt, l2eta, histoSFele42A);
             effB1 = getOfflineEff(l1pt, l1eta, histoSFmuons42B);
@@ -789,12 +730,12 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       L2phi = TV_L2.Phi();
 
       // replace 1 with the POWHEG -> FEWZ NNLO x-sec
-      if(processId==30 || processId==31 || processId==33 || processId==34) {
+      if(processId_==30 || processId_==31 || processId_==33 || processId_==34) {
         KFactor = DYNNLOWeight->GetWeight(genmll,genptll,genyll);
       }
       consecevent = (float)j;
       
-      sameflav = (finalstate<2) ? 1. : 0;
+      sameflav = (finalstate_<2) ? 1. : 0;
 
       i_WWSel0j = (step[14] && (dymva1>0.6 || !sameflav) && njets==0) ? 1 : 0;
       i_WWSel1j = (step[14] && (dymva1>0.3 || !sameflav) && njets==1) ? 1 : 0;
@@ -821,16 +762,21 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
       f_nsoftbjet = (float)nsoftbjet;
       f_ch[0] = (float)ch[0];
       f_ch[1] = (float)ch[1];
-      f_finalstate = (float)finalstate;
-      f_processId = (float)processId;
+      f_finalstate = (float)finalstate_;
+      f_processId = (float)processId_;
 
-      if(processId < 100 || processId >= 1000 ) { // MC
+      bool fitSel = pfMet>20. && eleInvMass>12 && projMet>20. && (njets==0 || njets==1 || (f_dphiveto || !sameflav )  ) && bveto_mu==1 && numExtraLep==0 && bveto_ip==1 && ( !sameflav || (pfMet>45.0 ) );
+
+      if(processId_ < 100 || processId_ >= 1000 ) { // MC
         treeNew->Fill();
         if(i_WWSel0j || i_WWSel1j) treeNewSkim->Fill();
+        if(fitSel) treeNewFitSkim->Fill();
+        
       } else { // data: apply the trigger 
         if(hlt) {
           treeNew->Fill();
           if(i_WWSel0j || i_WWSel1j) treeNewSkim->Fill();
+          if(fitSel) treeNewFitSkim->Fill();
         }
       }
       j++;
@@ -840,18 +786,19 @@ void addWeights(const char* filename, float baseW, int processId, int finalstate
     fileNew->cd();
     treeNew->Write();
     treeNewSkim->Write();
+    treeNewFitSkim->Write();
     fileNew->Close();
 
     fileOrig->cd();
     fileOrig->Close();
 
   } else {
-    cout << "Tree T1 not present in the file " << filename << endl;
+    cout << "Tree T1 not present in the file " << filename_ << endl;
     return;
   }
 }
 
-float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2) {
+float addWeightsToTree::GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2) {
 
   float projMET = 0.0;
   float deltaPhi1 = fabs(p1.DeltaPhi(met));
@@ -863,11 +810,11 @@ float GetProjectedMet(TVector3 met, TVector3 p1, TVector3 p2) {
   return projMET;
 }
 
-float calcMT(TVector3 met, TVector3 lepton) {
+float addWeightsToTree::calcMT(TVector3 met, TVector3 lepton) {
   return sqrt( 2.*(lepton.Pt())*(met.Pt())*( 1 - cos(met.DeltaPhi(lepton))) );
 }
 
-float getOfflineEff(float pT, float eta, TH2F *myH) {
+float addWeightsToTree::getOfflineEff(float pT, float eta, TH2F *myH) {
 
   float theEff=-1.;
 
