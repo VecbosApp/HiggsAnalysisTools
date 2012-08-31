@@ -99,7 +99,7 @@ void addWeightsToTreeLooseLoose::Loop()
     dphillr = fabs(kine.CalcDeltaPhiRFRAME());
     ddphillr = fabs(kine.CalcDoubleDphiRFRAME());
 
-    bool fitSel = pfmet>20. && mll>12 && mpmet>20. && (njet==0 || njet==1 || (dphilljetjet<TMath::Pi()/180.*165. || !sameflav )  ) && bveto_mu==1 && nextra==0 && bveto_ip==1 && ( !sameflav || (pfmet>45.0 ) );
+    bool fitSel = trigger==1. && pfmet>20. && mll>12 && mpmet>20. && (njet==0 || njet==1 || (dphilljetjet<TMath::Pi()/180.*165. || !sameflav )  ) && bveto_mu==1 && nextra==0 && bveto_ip==1 && ( !sameflav || (pfmet>45.0 ) );
 
     treeNew->Fill();
     if(WWSel0j || WWSel1j) treeNewWWSkim->Fill();
