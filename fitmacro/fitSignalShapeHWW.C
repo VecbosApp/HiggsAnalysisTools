@@ -14,7 +14,6 @@
 #include "TLegend.h"
 #include "TGraphErrors.h"
 
-
 #include "RooRealVar.h"
 #include "RooDataSet.h"
 #include "RooDataHist.h"
@@ -39,8 +38,25 @@ using namespace RooFit;
 
 using namespace std;
 
+int Wait() {
+     cout << " Continue [<RET>|q]?  ";
+     char x;
+     x = getchar();
+     if ((x == 'q') || (x == 'Q')) return 1;
+     return 0;
+}
+
 enum channels { of0j, of1j, sf0j, sf1j };
+
   
+string getChannelSuffix(int channel) {
+  if(channel==of0j) return string("of_0j");
+  if(channel==of1j) return string("of_1j");
+  if(channel==sf0j) return string("sf_0j");
+  if(channel==sf1j) return string("sf_1j");
+  return string("ERROR! Unclassified channel!");
+}
+
 string getStringChannel(int channel) {
   if(channel==of0j) return string("channel>=2 && njet==0");
   if(channel==of1j) return string("channel>=2 && njet==1");
@@ -114,6 +130,44 @@ void all(int channel=0) {
 
     //Wait();
   }
+
+  TGraphErrors* gA = new TGraphErrors(maxMassBin,massV,aVal,massE,aErr);
+  TGraphErrors* gN = new TGraphErrors(maxMassBin,massV,nVal,massE,nErr);
+  TGraphErrors* gMeanCB = new TGraphErrors(maxMassBin,massV,meanCBVal,massE,meanCBErr);
+  TGraphErrors* gSigmaCB = new TGraphErrors(maxMassBin,massV,sigmaCBVal,massE,sigmaCBErr);
+  TGraphErrors* gMeanBW = new TGraphErrors(maxMassBin,massV,meanBWVal,massE,meanBWErr);
+
+  gA->SetMarkerStyle(20);   gA->SetMarkerSize(1);
+  gN->SetMarkerStyle(20);   gN->SetMarkerSize(1);
+  gMeanCB->SetMarkerStyle(20);   gMeanCB->SetMarkerSize(1);
+  gSigmaCB->SetMarkerStyle(20);   gSigmaCB->SetMarkerSize(1);
+  gMeanBW->SetMarkerStyle(20);   gMeanBW->SetMarkerSize(1);
+
+
+  gA->SetTitle("");
+  gA->GetXaxis()->SetTitle("mass (GeV)");
+  gA->GetYaxis()->SetTitle("CB a-parameter");
+
+  gN->SetTitle("");
+  gN->GetXaxis()->SetTitle("mass (GeV)");
+  gN->GetYaxis()->SetTitle("CB n-parameter");
+
+  gMeanCB->SetTitle("");
+  gMeanCB->GetXaxis()->SetTitle("mass (GeV)");
+  gMeanCB->GetYaxis()->SetTitle("CB mean (GeV)");
+
+  gSigmaCB->SetTitle("");
+  gSigmaCB->GetXaxis()->SetTitle("mass (GeV)");
+  gSigmaCB->GetYaxis()->SetTitle("CB sigma (GeV)");
+
+
+  gStyle->SetOptFit(111111);
+  stringstream nameFile;
+  nameFile << "fitParams_" <<  getChannelSuffix(channel);
+  gA->Fit("pol0"); gA->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_aCB.pdf")).c_str()); Wait();
+  gN->Fit("pol1"); gN->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_nCB.pdf")).c_str()); Wait();
+  gMeanCB->Fit("pol1"); gMeanCB->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_meanCB.pdf")).c_str()); Wait();
+  gSigmaCB->Fit("pol1"); gSigmaCB->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_sigmaCB.pdf")).c_str()); Wait();
 
 }
 
@@ -207,8 +261,8 @@ void fitSignalShapeMR(int massBin, int channel,
   stringstream frameTitle;
   if(channel==of0j){frameTitle << "e#mu,0-j, m_{H} = ";}
   if(channel==of1j){frameTitle << "e#mu,1-j, m_{H} = ";}
-  if(channel==sf0j){frameTitle << "#ell#ell,0-j, m_{H} = ";}
-  if(channel==sf1j){frameTitle << "#ell#ell,1-j, m_{H} = ";}
+  if(channel==sf0j){frameTitle << "ee+#mu#mu,0-j, m_{H} = ";}
+  if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j, m_{H} = ";}
   frameTitle << massBin << " GeV";
 
   RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
@@ -217,7 +271,7 @@ void fitSignalShapeMR(int massBin, int channel,
   model.paramOn(xframe);
 
   stringstream nameFile;
-  nameFile << "fitM" << massBin << ".pdf";
+  nameFile << "fitM" << massBin << "_" << getChannelSuffix(channel) << ".pdf";
   xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
 
 
