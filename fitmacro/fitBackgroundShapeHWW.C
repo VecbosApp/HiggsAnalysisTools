@@ -66,12 +66,13 @@ string getStringChannel(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
-void fitWWShapeMR(int channel, string sample,
+void fitLandauShapeMR(int channel, string sample,
 		  double rangeLow, double rangeHigh,
 		  double fitValues[2], double fitErrors[2]);
 
 void allWW(int channel=0);
 void allTop(int channel=0);
+void allOthers(int channel=0);
                         
 void doAllChannels() {
   cout << "==> Fitting WW sample" << endl;
@@ -89,7 +90,7 @@ void allWW(int channel) {
   double fitValues[2];
   double fitErrors[2];
 
-  fitWWShapeMR(channel,"WW",xLow,xHigh,fitValues,fitErrors);
+  fitLandauShapeMR(channel,"WW",xLow,xHigh,fitValues,fitErrors);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
 }
@@ -101,14 +102,26 @@ void allTop(int channel) {
   double fitValues[2];
   double fitErrors[2];
 
-  fitWWShapeMR(channel,"top",xLow,xHigh,fitValues,fitErrors);
+  fitLandauShapeMR(channel,"top",xLow,xHigh,fitValues,fitErrors);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
 }
 
-void fitWWShapeMR(int channel, string sample,
-                  double rangeLow, double rangeHigh,
-                  double fitValues[2], double fitErrors[2]){
+void allOthers(int channel) {
+  double xLow, xHigh;
+  xLow = 50; xHigh = 500;
+
+  double fitValues[2];
+  double fitErrors[2];
+
+  fitLandauShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);
+  cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+  cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+}
+
+void fitLandauShapeMR(int channel, string sample,
+		      double rangeLow, double rangeHigh,
+		      double fitValues[2], double fitErrors[2]){
  // ------ root settings ---------
   gROOT->Reset();  
   gROOT->SetStyle("Plain");
@@ -165,7 +178,7 @@ void fitWWShapeMR(int channel, string sample,
 
 
   //--- Landau
-  RooRealVar mean("mean","mean",140,100,200) ;
+  RooRealVar mean("mean","mean",140,70,200) ;
   RooRealVar sigma("#sigma","width",50,10,100); 
   RooLandau landau("landau","landau",x,mean,sigma);
 
