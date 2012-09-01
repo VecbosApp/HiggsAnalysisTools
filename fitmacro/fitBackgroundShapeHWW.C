@@ -27,7 +27,7 @@
 #include "RooBreitWigner.h"
 #include "RooFFTConvPdf.h"
 #include "Math/MinimizerOptions.h"
-#include "../../HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h"
+#include "HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h"
 
 using namespace RooFit;
 
@@ -125,6 +125,7 @@ void allOthers(int channel) {
     cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
   } else {
     fitOthersSFShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);    
+    for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
   }
 }
 
@@ -312,7 +313,7 @@ void fitOthersSFShapeMR(int channel, string sample,
   RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
   dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
   othersSFPdf.plotOn(xframe);
-  othersSFPdf.paramOn(xframe);
+  //  othersSFPdf.paramOn(xframe);
 
   stringstream nameFile;
   nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
