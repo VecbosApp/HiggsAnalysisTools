@@ -66,31 +66,47 @@ string getStringChannel(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
-void fitWWShapeMR(int channel, 
+void fitWWShapeMR(int channel, string sample,
 		  double rangeLow, double rangeHigh,
 		  double fitValues[2], double fitErrors[2]);
-void all(int channel=0);
+
+void allWW(int channel=0);
+void allTop(int channel=0);
                         
 void doAllChannels() {
-  for(int i=0; i<4; ++i) all(i);
+  cout << "==> Fitting WW sample" << endl;
+  for(int i=0; i<4; ++i) allWW(i);
+
+  cout << "==> Fitting top sample" << endl;
+  for(int i=0; i<4; ++i) allTop(i);
+
 }
 
-void all(int channel) {
-
+void allWW(int channel) {
   double xLow, xHigh;
   xLow = 50; xHigh = 500;
 
   double fitValues[2];
   double fitErrors[2];
 
-  fitWWShapeMR(channel,xLow,xHigh,fitValues,fitErrors);
+  fitWWShapeMR(channel,"WW",xLow,xHigh,fitValues,fitErrors);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
-  
-
 }
 
-void fitWWShapeMR(int channel, 
+void allTop(int channel) {
+  double xLow, xHigh;
+  xLow = 50; xHigh = 500;
+
+  double fitValues[2];
+  double fitErrors[2];
+
+  fitWWShapeMR(channel,"top",xLow,xHigh,fitValues,fitErrors);
+  cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+  cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+}
+
+void fitWWShapeMR(int channel, string sample,
                   double rangeLow, double rangeHigh,
                   double fitValues[2], double fitErrors[2]){
  // ------ root settings ---------
@@ -110,7 +126,7 @@ void fitWWShapeMR(int channel,
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
   stringstream hFileName;
-  hFileName << "results/datasets_trees/WW_ll.root";
+  hFileName << "results/datasets_trees/" << sample << "_ll.root";
 
   cout << "Opening ROOT file: " << hFileName.str() << endl;
 
@@ -168,7 +184,7 @@ void fitWWShapeMR(int channel,
   landau.paramOn(xframe);
 
   stringstream nameFile;
-  nameFile << "fitWW_" << getChannelSuffix(channel) << ".pdf";
+  nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
   xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
 
 
