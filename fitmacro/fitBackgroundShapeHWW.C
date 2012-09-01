@@ -27,6 +27,7 @@
 #include "RooBreitWigner.h"
 #include "RooFFTConvPdf.h"
 #include "Math/MinimizerOptions.h"
+#include "../../HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h"
 
 using namespace RooFit;
 
@@ -67,8 +68,12 @@ string getStringChannel(int channel) {
 }
 
 void fitLandauShapeMR(int channel, string sample,
-		  double rangeLow, double rangeHigh,
-		  double fitValues[2], double fitErrors[2]);
+		      double rangeLow, double rangeHigh,
+		      double fitValues[2], double fitErrors[2]);
+
+void fitOthersSFShapeMR(int channel, string sample,
+			double rangeLow, double rangeHigh,
+			double fitValues[14], double fitErrors[14]);
 
 void allWW(int channel=0);
 void allTop(int channel=0);
@@ -111,12 +116,16 @@ void allOthers(int channel) {
   double xLow, xHigh;
   xLow = 50; xHigh = 500;
 
-  double fitValues[2];
-  double fitErrors[2];
+  double fitValues[14];
+  double fitErrors[14];
 
-  fitLandauShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);
-  cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
-  cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+  if(channel<2) {
+    fitLandauShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);
+    cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+    cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+  } else {
+    fitOthersSFShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);    
+  }
 }
 
 void fitLandauShapeMR(int channel, string sample,
@@ -209,6 +218,139 @@ void fitLandauShapeMR(int channel, string sample,
   if(fitErrors!=0){
     fitErrors[0] = mean.getError();
     fitErrors[1] = sigma.getError();
+  }
+
+  return;
+
+}
+
+
+void fitOthersSFShapeMR(int channel, string sample,
+			double rangeLow, double rangeHigh,
+			double fitValues[14], double fitErrors[14]){
+ // ------ root settings ---------
+  gROOT->Reset();  
+  gROOT->SetStyle("Plain");
+  gStyle->SetPadGridX(kTRUE);
+  gStyle->SetPadGridY(kTRUE);
+  //gStyle->SetOptStat("kKsSiourRmMen");
+  gStyle->SetOptStat("iourme");
+  //gStyle->SetOptStat("rme");
+  //gStyle->SetOptStat("");
+  gStyle->SetOptFit(11);
+  gStyle->SetPadLeftMargin(0.14);
+  gStyle->SetPadRightMargin(0.06);
+  // ------------------------------ 
+
+  ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
+
+  stringstream hFileName;
+  hFileName << "results/datasets_trees/" << sample << "_ll.root";
+
+  cout << "Opening ROOT file: " << hFileName.str() << endl;
+
+  TFile* hFile = TFile::Open(hFileName.str().c_str());
+  TTree* hTree = (TTree*) hFile->Get("latinoFitSkim");
+  
+  float mr, dphillr;
+  float puW,effW,baseW;
+
+  hTree->SetBranchAddress("mr",&mr);
+  hTree->SetBranchAddress("dphillr",&dphillr);
+  hTree->SetBranchAddress("puW",&puW);
+  hTree->SetBranchAddress("baseW",&baseW);
+  hTree->SetBranchAddress("effW",&effW);
+
+  //--- rooFit part
+  double xMin,xMax,xInit;
+  xInit = 140;
+  xMin = rangeLow;
+  xMax = rangeHigh ;
+  
+
+  TCut cut1 = getStringChannel(channel).c_str();
+  stringstream fitrangecut;
+  fitrangecut << "mr > " << xMin << " && mr < " << xMax;
+  TCut cut2 = fitrangecut.str().c_str();
+  TCut cut = cut1 && cut2;
+
+  RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
+  RooRealVar w("baseW","baseW",1.0,0.,1000.);
+  RooRealVar cha("channel","channel",0,-0.5,3.5);
+  RooRealVar njet("njet","njet",0,-0.5,10.);
+
+  RooArgSet varset(x,w,cha,njet);
+  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
+
+
+  //--- RooqqZZPdf
+  RooRealVar a0("a0","a0",100.,0.,200.);
+  RooRealVar a1("a1","a1",15.,0.,50.);
+  RooRealVar a2("a2","a2",120.,20.,200.);
+  RooRealVar a3("a3","a3",0.04,0.,1.);
+  RooRealVar a4("a4","a4",185.,100.,400.);
+  RooRealVar a5("a5","a5",10.,0.,150.);
+  RooRealVar a6("a6","a6",36.,0.,100.);
+  RooRealVar a7("a7","a7",0.11,0.,1.);
+  RooRealVar a8("a8","a8",60.,0.,150.);
+  RooRealVar a9("a9","a9",0.06,0.,1.);
+  RooRealVar a10("a10","a10",95.,20.,200.);
+  RooRealVar a11("a11","a11",-6.,-20.,20.);
+  RooRealVar a12("a12","a12",1000.,0.,10000.);
+  RooRealVar a13("a13","a13",0.1,0.,1.);
+  RooqqZZPdf_v2 othersSFPdf("othersSFPdf","othersSFPdf",x,a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13);
+
+  x.setBins(10000,"fft");
+  othersSFPdf.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
+
+  stringstream frameTitle;
+  if(channel==of0j){frameTitle << "e#mu,0-j";}
+  if(channel==of1j){frameTitle << "e#mu,1-j";}
+  if(channel==sf0j){frameTitle << "ee+#mu#mu,0-j";}
+  if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j";}
+
+  RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
+  dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
+  othersSFPdf.plotOn(xframe);
+  othersSFPdf.paramOn(xframe);
+
+  stringstream nameFile;
+  nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
+  xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
+
+
+  if(fitValues!=0){
+    fitValues[0] = a0.getVal();
+    fitValues[1] = a1.getVal();
+    fitValues[2] = a2.getVal();
+    fitValues[3] = a3.getVal();
+    fitValues[4] = a4.getVal();
+    fitValues[5] = a5.getVal();
+    fitValues[6] = a6.getVal();
+    fitValues[7] = a7.getVal();
+    fitValues[8] = a8.getVal();
+    fitValues[9] = a9.getVal();
+    fitValues[10] = a10.getVal();
+    fitValues[11] = a11.getVal();
+    fitValues[12] = a12.getVal();
+    fitValues[13] = a13.getVal();
+  }
+
+  if(fitErrors!=0){
+    fitErrors[0] = a0.getError();
+    fitErrors[1] = a1.getError();
+    fitErrors[2] = a2.getError();
+    fitErrors[3] = a3.getError();
+    fitErrors[4] = a4.getError();
+    fitErrors[5] = a5.getError();
+    fitErrors[6] = a6.getError();
+    fitErrors[7] = a7.getError();
+    fitErrors[8] = a8.getError();
+    fitErrors[9] = a9.getError();
+    fitErrors[10] = a10.getError();
+    fitErrors[11] = a11.getError();
+    fitErrors[12] = a12.getError();
+    fitErrors[13] = a13.getError();
   }
 
   return;
