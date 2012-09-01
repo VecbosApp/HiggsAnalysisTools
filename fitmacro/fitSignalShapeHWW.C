@@ -59,21 +59,17 @@ void all(int channel=0) {
   int mass[30]; double xLow[30]; double xHigh[30];  
   int maxMassBin;
 
-  mass[0] = 115; xLow[0] = 50; xHigh[0] = 200; bwSigma[0] = 3.1/1000.;
-  mass[1] = 120; xLow[1] = 50; xHigh[1] = 200; bwSigma[1] = 3.5/1000.;
-  mass[2] = 125; xLow[1] = 50; xHigh[1] = 200; bwSigma[1] = 3.5/1000.;
-  mass[3] = 130; xLow[2] = 50; xHigh[2] = 200; bwSigma[2] = 4.9/1000.;
-  mass[4] = 135; xLow[2] = 50; xHigh[2] = 200; bwSigma[2] = 4.9/1000.;
-  mass[5] = 140; xLow[3] = 50; xHigh[3] = 200; bwSigma[3] = 8.1/1000.;
-  mass[6] = 150; xLow[4] = 50; xHigh[4] = 250; bwSigma[4] = 1.7/100.;
-  mass[7] = 160; xLow[5] = 50; xHigh[5] = 250; bwSigma[5] = 8.3/100.;
-  mass[8] = 170; xLow[6] = 50; xHigh[6] = 250; bwSigma[6] = 3.8/10.;
-  mass[9] = 180; xLow[7] = 60; xHigh[7] = 300; bwSigma[7] = 6.3/10.;
-  mass[10] = 190; xLow[8] = 70; xHigh[8] = 300; bwSigma[8] = 1.04;
-  mass[11] = 200; xLow[9] = 80; xHigh[9] = 300; bwSigma[9] = 1.43;
-  mass[12] = 210; xLow[10] = 80; xHigh[10] = 350; bwSigma[10] = 1.85;
-  mass[13] = 220; xLow[11] = 80; xHigh[11] = 350; bwSigma[11] = 2.31;
-  maxMassBin = 14;
+  mass[0] = 115; xLow[0] = 50; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+  mass[1] = 120; xLow[1] = 50; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+  mass[2] = 125; xLow[2] = 50; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+  mass[3] = 130; xLow[3] = 60; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+  mass[4] = 135; xLow[4] = 60; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+  mass[5] = 140; xLow[5] = 70; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+  mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
+  mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+  mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
+  mass[9] = 180; xLow[9] = 80; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+  maxMassBin = 10;
 
   double massV[30],massE[30];
   for(int i=0; i<maxMassBin;++i){
@@ -96,9 +92,8 @@ void all(int channel=0) {
 //   if(channels==1) {extendL=0.90;extendH=1.05;}
 //   if(channels==2) {extendL=0.95;extendH=1.04;}
 
-//  for(int i=0; i<maxMassBin;++i){
+  for(int i=0; i<maxMassBin;++i){
   
-  for(int i=2; i<3;++i) {
     fitSignalShapeMR(mass[i],channel,xLow[i],xHigh[i],bwSigma[i],
 		    fitValues,fitErrors);  
   
@@ -164,8 +159,14 @@ void fitSignalShapeMR(int massBin, int channel,
   xInit = (double) massBin;
   xMin = rangeLow;
   xMax = rangeHigh ;
+  
 
-  TCut cut = getStringChannel(channel).c_str();
+  TCut cut1 = getStringChannel(channel).c_str();
+  stringstream fitrangecut;
+  fitrangecut << "mr > " << xMin << " && mr < " << xMax;
+  TCut cut2 = fitrangecut.str().c_str();
+  TCut cut = cut1 && cut2;
+
   RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
   RooRealVar w("baseW","baseW",1.0,0.,1000.);
   RooRealVar cha("channel","channel",0,-0.5,3.5);
@@ -174,11 +175,12 @@ void fitSignalShapeMR(int massBin, int channel,
   RooArgSet varset(x,w,cha,njet);
   RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
 
+
   //--- simple CrystalBall
-  RooRealVar mean("mean","mean of gaussian",0,-5.0,5.0) ;
-  RooRealVar sigma("sigma","width of gaussian",1.5,0.,30.); 
-  RooRealVar a("a","a",1.46,0.,4.);
-  RooRealVar n("n","n",1.92,0.,25.);   
+  RooRealVar mean("mean","mean of gaussian",0,-20.0,20.0) ;
+  RooRealVar sigma("sigma","width of gaussian",1.5,0.,50.); 
+  RooRealVar a("a","a",1.46,0.,10.);
+  RooRealVar n("n","n",1.92,0.,20.);   
   RooCBShape CBall("CBall","Crystal ball",x, mean,sigma, a,n);
   
 
