@@ -352,6 +352,70 @@ struct HiggsMassPointInfo {
       Otsfa13  = 0.0378662;
     }
 
+
+    std::string tevstr = "_8TeV"; 
     stringstream lumiss;
     lumiss << lumi;
     std::string lumistr = lumiss.str(); 
+
+    RooRealVar ww_mean (("bkg_ww_"+chstr+tevstr+"_mean" ).c_str(), "", WWme);
+    RooRealVar ww_sigma(("bkg_ww_"+chstr+tevstr+"_sigma").c_str(), "", WWsi);
+
+    RooRealVar top_mean (("bkg_top_"+chstr+tevstr+"_mean" ).c_str(), "", Topme);
+    RooRealVar top_sigma(("bkg_top_"+chstr+tevstr+"_sigma").c_str(), "", Topsi);
+
+    RooRealVar dyof_mean (("bkg_dy_"+chstr+tevstr+"_mean" ).c_str(), "", DYofme);
+    RooRealVar dyof_sigma(("bkg_dy_"+chstr+tevstr+"_sigma").c_str(), "", DYofsi);
+
+    RooRealVar wjof_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), "", WJofme);
+    RooRealVar wjof_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), "", WJofsi);
+
+    RooRealVar others_mean (("bkg_others_"+chstr+tevstr+"_mean" ).c_str(), "", Otofme);
+    RooRealVar others_sigma(("bkg_others_"+chstr+tevstr+"_sigma").c_str(), "", Otofsi);
+
+    RooRealVar dysf_a0 (("bkg_dy_"+chstr+tevstr+"_a0" ).c_str(), "", DYsfa0);
+    RooRealVar dysf_a1 (("bkg_dy_"+chstr+tevstr+"_a1" ).c_str(), "", DYsfa1);
+    RooRealVar dysf_a2 (("bkg_dy_"+chstr+tevstr+"_a2" ).c_str(), "", DYsfa2);
+    RooRealVar dysf_a3 (("bkg_dy_"+chstr+tevstr+"_a3" ).c_str(), "", DYsfa3);
+    RooRealVar dysf_a4 (("bkg_dy_"+chstr+tevstr+"_a4" ).c_str(), "", DYsfa4);
+    RooRealVar dysf_a5 (("bkg_dy_"+chstr+tevstr+"_a5" ).c_str(), "", DYsfa5);
+    RooRealVar dysf_a6 (("bkg_dy_"+chstr+tevstr+"_a6" ).c_str(), "", DYsfa6);
+    RooRealVar dysf_a7 (("bkg_dy_"+chstr+tevstr+"_a7" ).c_str(), "", DYsfa7);
+    RooRealVar dysf_a8 (("bkg_dy_"+chstr+tevstr+"_a8" ).c_str(), "", DYsfa8);
+    RooRealVar dysf_a9 (("bkg_dy_"+chstr+tevstr+"_a9" ).c_str(), "", DYsfa9);
+    RooRealVar dysf_a10 (("bkg_dy_"+chstr+tevstr+"_a10" ).c_str(), "", DYsfa10);
+    RooRealVar dysf_a11 (("bkg_dy_"+chstr+tevstr+"_a11" ).c_str(), "", DYsfa11);
+    RooRealVar dysf_a12 (("bkg_dy_"+chstr+tevstr+"_a12" ).c_str(), "", DYsfa12);
+    RooRealVar dysf_a13 (("bkg_dy_"+chstr+tevstr+"_a13" ).c_str(), "", DYsfa13);
+	
+    RooRealVar otherssf_a0 (("bkg_others_"+chstr+tevstr+"_a0" ).c_str(), "", Otsfa0);
+    RooRealVar otherssf_a1 (("bkg_others_"+chstr+tevstr+"_a1" ).c_str(), "", Otsfa1);
+    RooRealVar otherssf_a2 (("bkg_others_"+chstr+tevstr+"_a2" ).c_str(), "", Otsfa2);
+    RooRealVar otherssf_a3 (("bkg_others_"+chstr+tevstr+"_a3" ).c_str(), "", Otsfa3);
+    RooRealVar otherssf_a4 (("bkg_others_"+chstr+tevstr+"_a4" ).c_str(), "", Otsfa4);
+    RooRealVar otherssf_a5 (("bkg_others_"+chstr+tevstr+"_a5" ).c_str(), "", Otsfa5);
+    RooRealVar otherssf_a6 (("bkg_others_"+chstr+tevstr+"_a6" ).c_str(), "", Otsfa6);
+    RooRealVar otherssf_a7 (("bkg_others_"+chstr+tevstr+"_a7" ).c_str(), "", Otsfa7);
+    RooRealVar otherssf_a8 (("bkg_others_"+chstr+tevstr+"_a8" ).c_str(), "", Otsfa8);
+    RooRealVar otherssf_a9 (("bkg_others_"+chstr+tevstr+"_a9" ).c_str(), "", Otsfa9);
+    RooRealVar otherssf_a10 (("bkg_others_"+chstr+tevstr+"_a10" ).c_str(), "", Otsfa10);
+    RooRealVar otherssf_a11 (("bkg_others_"+chstr+tevstr+"_a11" ).c_str(), "", Otsfa11);
+    RooRealVar otherssf_a12 (("bkg_others_"+chstr+tevstr+"_a12" ).c_str(), "", Otsfa12);
+    RooRealVar otherssf_a13 (("bkg_others_"+chstr+tevstr+"_a13" ).c_str(), "", Otsfa13);
+	
+    RooRealVar wjsf_a0 (("bkg_wj_"+chstr+tevstr+"_a0" ).c_str(), "", WJsfa0);
+    RooRealVar wjsf_a1 (("bkg_wj_"+chstr+tevstr+"_a1" ).c_str(), "", WJsfa1);
+    RooRealVar wjsf_a2 (("bkg_wj_"+chstr+tevstr+"_a2" ).c_str(), "", WJsfa2);
+    RooRealVar wjsf_a3 (("bkg_wj_"+chstr+tevstr+"_a3" ).c_str(), "", WJsfa3);
+    RooRealVar wjsf_a4 (("bkg_wj_"+chstr+tevstr+"_a4" ).c_str(), "", WJsfa4);
+    RooRealVar wjsf_a5 (("bkg_wj_"+chstr+tevstr+"_a5" ).c_str(), "", WJsfa5);
+    RooRealVar wjsf_a6 (("bkg_wj_"+chstr+tevstr+"_a6" ).c_str(), "", WJsfa6);
+    RooRealVar wjsf_a7 (("bkg_wj_"+chstr+tevstr+"_a7" ).c_str(), "", WJsfa7);
+    RooRealVar wjsf_a8 (("bkg_wj_"+chstr+tevstr+"_a8" ).c_str(), "", WJsfa8);
+    RooRealVar wjsf_a9 (("bkg_wj_"+chstr+tevstr+"_a9" ).c_str(), "", WJsfa9);
+    RooRealVar wjsf_a10 (("bkg_wj_"+chstr+tevstr+"_a10" ).c_str(), "", WJsfa10);
+    RooRealVar wjsf_a11 (("bkg_wj_"+chstr+tevstr+"_a11" ).c_str(), "", WJsfa11);
+    RooRealVar wjsf_a12 (("bkg_wj_"+chstr+tevstr+"_a12" ).c_str(), "", WJsfa12);
+    RooRealVar wjsf_a13 (("bkg_wj_"+chstr+tevstr+"_a13" ).c_str(), "", WJsfa13);
+	
+    
