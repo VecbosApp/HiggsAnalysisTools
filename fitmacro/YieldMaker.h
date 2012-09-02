@@ -14,6 +14,16 @@
 #include <TFile.h>
 #include <TTree.h>
 
+enum channels { of0j, of1j, sf0j, sf1j };
+
+float getFitChannel(float channel, float njet) {
+  if((int)channel>=2 && (int)njet==0) return of0j;
+  if((int)channel>=2 && (int)njet==1) return of1j;
+  if((int)channel<2 && (int)njet==0) return sf0j;
+  if((int)channel<2 && (int)njet==1) return sf1j;
+  return -1;
+}
+
 class YieldMaker {
 
  protected:
@@ -130,8 +140,9 @@ class YieldMaker {
   }
 
   void fill(std::string filepath) {
+
     TFile *file = TFile::Open(filepath.c_str());
-    TTree *tree = (TTree*)file->Get("latinosFitSkim");
+    TTree *tree = (TTree*)file->Get("latinoFitSkim");
 
     float mr         = 0.0;
     float dphi       = 0.0;
@@ -140,6 +151,7 @@ class YieldMaker {
     float puweight   = 0.0;
     float ch         = 0.0;
     float proc       = 0.0;
+    float njet       = 0.0;
 
     tree->SetBranchAddress("mr",      &mr);
     tree->SetBranchAddress("dphillr", &dphi);
@@ -148,16 +160,18 @@ class YieldMaker {
     tree->SetBranchAddress("effW",    &effweight);
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
+    tree->SetBranchAddress("njet",    &njet);
     
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphi);
-      argset.setRealValue("channel", ch);
+      float channel = getFitChannel(ch,njet);
+      argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
-
       float weight = baseweight*effweight*puweight;
       argset.setRealValue("weight", weight);
+      if(channel<0) continue;
       dataset.add(argset);
     }
 
@@ -308,12 +322,13 @@ class WJetsYieldMaker {
 
   void fill(std::string filepath) {
     TFile *file = TFile::Open(filepath.c_str());
-    TTree *tree = (TTree*)file->Get("latinosFitSkim");
+    TTree *tree = (TTree*)file->Get("latinoFitSkim");
 
     float mr         = 0.0;
     float dphi       = 0.0;
     float fakeweight = 0.0;
     float ch         = 0.0;
+     float njet      = 0.0;
 
     tree->SetBranchAddress("mr",      &mr);
     tree->SetBranchAddress("dphillr", &dphi);
@@ -324,10 +339,11 @@ class WJetsYieldMaker {
       tree->GetEntry(i);
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphi);
-      argset.setRealValue("channel", ch);
-
+      float channel = getFitChannel(ch,njet);
+      argset.setRealValue("channel", channel);
       float weight = fakeweight;
       argset.setRealValue("weight", weight);
+      if(channel<0) continue;
       dataset.add(argset);
     }
 
@@ -426,22 +442,26 @@ class DataYieldMaker {
 
   void fill(std::string filepath) {
     TFile *file = TFile::Open(filepath.c_str());
-    TTree *tree = (TTree*)file->Get("latinosFitSkim");
+    TTree *tree = (TTree*)file->Get("latinoFitSkim");
 
     float mr         = 0.0;
     float dphi       = 0.0;
     float ch         = 0.0;
+    float njet       = 0.0;
 
     tree->SetBranchAddress("mr",      &mr);
     tree->SetBranchAddress("dphillr", &dphi);
     tree->SetBranchAddress("channel", &ch);
-    
+    tree->SetBranchAddress("njet",    &njet);
+
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphi);
-      argset.setRealValue("channel", ch);
+      float channel = getFitChannel(ch,njet);
+      argset.setRealValue("channel", channel);
       argset.setRealValue("weight",  1.0);
+      if(channel<0) continue;
       dataset.add(argset);
     }
 
