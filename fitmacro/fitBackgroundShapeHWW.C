@@ -71,21 +71,35 @@ void fitLandauShapeMR(int channel, string sample,
 		      double rangeLow, double rangeHigh,
 		      double fitValues[2], double fitErrors[2]);
 
+void fitGaussianShapeMR(int channel, string sample,
+                        double rangeLow, double rangeHigh,
+                        double fitValues[2], double fitErrors[2]);
+
 void fitOthersSFShapeMR(int channel, string sample,
 			double rangeLow, double rangeHigh,
 			double fitValues[14], double fitErrors[14]);
 
 void allWW(int channel=0);
 void allTop(int channel=0);
+void allDY(int channel=0);
 void allOthers(int channel=0);
                         
 void doAllChannels() {
-  cout << "==> Fitting WW sample" << endl;
+  cout << "==> Fitting WW sample..." << endl;
   for(int i=0; i<4; ++i) allWW(i);
+  cout << "### Done WW sample ###" << endl;
 
-  cout << "==> Fitting top sample" << endl;
+  cout << "==> Fitting top sample..." << endl;
   for(int i=0; i<4; ++i) allTop(i);
+  cout << "### Done top sample ###" << endl;
 
+  cout << "==> Fitting DY sample..." << endl;
+  for(int i=0; i<4; ++i) allDY(i);
+  cout << "### Done DY sample ###" << endl;
+
+  cout << "==> Fitting others sample..." << endl;
+  for(int i=0; i<4; ++i) allOthers(i);
+  cout << "### Done Others sample ###" << endl;
 }
 
 void allWW(int channel) {
@@ -128,6 +142,24 @@ void allOthers(int channel) {
     for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
   }
 }
+
+void allDY(int channel) {
+  double xLow, xHigh;
+  xLow = 50; xHigh = 500;
+
+  double fitValues[14];
+  double fitErrors[14];
+
+  if(channel<2) {
+    fitGaussianShapeMR(channel,"Zjets",xLow,xHigh,fitValues,fitErrors);
+    cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+    cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+  } else {
+    fitOthersSFShapeMR(channel,"Zjets",xLow,xHigh,fitValues,fitErrors);    
+    for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
+  }
+}
+
 
 void fitLandauShapeMR(int channel, string sample,
 		      double rangeLow, double rangeHigh,
@@ -205,6 +237,102 @@ void fitLandauShapeMR(int channel, string sample,
   dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
   landau.plotOn(xframe);
   landau.paramOn(xframe);
+
+  stringstream nameFile;
+  nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
+  xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
+
+
+  if(fitValues!=0){
+    fitValues[0] = mean.getVal();
+    fitValues[1] = sigma.getVal();
+  }
+
+  if(fitErrors!=0){
+    fitErrors[0] = mean.getError();
+    fitErrors[1] = sigma.getError();
+  }
+
+  return;
+
+}
+
+void fitGaussianShapeMR(int channel, string sample,
+                        double rangeLow, double rangeHigh,
+                        double fitValues[2], double fitErrors[2]){
+ // ------ root settings ---------
+  gROOT->Reset();  
+  gROOT->SetStyle("Plain");
+  gStyle->SetPadGridX(kTRUE);
+  gStyle->SetPadGridY(kTRUE);
+  //gStyle->SetOptStat("kKsSiourRmMen");
+  gStyle->SetOptStat("iourme");
+  //gStyle->SetOptStat("rme");
+  //gStyle->SetOptStat("");
+  gStyle->SetOptFit(11);
+  gStyle->SetPadLeftMargin(0.14);
+  gStyle->SetPadRightMargin(0.06);
+  // ------------------------------ 
+
+  ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
+
+  stringstream hFileName;
+  hFileName << "results/datasets_trees/" << sample << "_ll.root";
+
+  cout << "Opening ROOT file: " << hFileName.str() << endl;
+
+  TFile* hFile = TFile::Open(hFileName.str().c_str());
+  TTree* hTree = (TTree*) hFile->Get("latinoFitSkim");
+  
+  float mr, dphillr;
+  float puW,effW,baseW;
+
+  hTree->SetBranchAddress("mr",&mr);
+  hTree->SetBranchAddress("dphillr",&dphillr);
+  hTree->SetBranchAddress("puW",&puW);
+  hTree->SetBranchAddress("baseW",&baseW);
+  hTree->SetBranchAddress("effW",&effW);
+
+  //--- rooFit part
+  double xMin,xMax,xInit;
+  xInit = 140;
+  xMin = rangeLow;
+  xMax = rangeHigh ;
+  
+
+  TCut cut1 = getStringChannel(channel).c_str();
+  stringstream fitrangecut;
+  fitrangecut << "mr > " << xMin << " && mr < " << xMax;
+  TCut cut2 = fitrangecut.str().c_str();
+  TCut cut = cut1 && cut2;
+
+  RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
+  RooRealVar w("baseW","baseW",1.0,0.,1000.);
+  RooRealVar cha("channel","channel",0,-0.5,3.5);
+  RooRealVar njet("njet","njet",0,-0.5,10.);
+
+  RooArgSet varset(x,w,cha,njet);
+  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
+
+
+  //--- simple Gaussian
+  RooRealVar mean("mean","mean",140,100,200) ;
+  RooRealVar sigma("#sigma","width",50,10,100); 
+  RooGaussian gauss("gauss","gauss",x,mean,sigma);
+
+  x.setBins(30,"fft");
+  gauss.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
+
+  stringstream frameTitle;
+  if(channel==of0j){frameTitle << "e#mu,0-j";}
+  if(channel==of1j){frameTitle << "e#mu,1-j";}
+  if(channel==sf0j){frameTitle << "ee+#mu#mu,0-j";}
+  if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j";}
+
+  RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
+  dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
+  gauss.plotOn(xframe);
+  gauss.paramOn(xframe);
 
   stringstream nameFile;
   nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
