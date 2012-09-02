@@ -67,7 +67,7 @@ string getStringChannel(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
-void fitLandauShapeMR(int channel, string sample,
+void fitLandauShapeMR(int channel, string sample, bool looseloose,
 		      double rangeLow, double rangeHigh,
 		      double fitValues[2], double fitErrors[2]);
 
@@ -75,7 +75,7 @@ void fitGaussianShapeMR(int channel, string sample,
                         double rangeLow, double rangeHigh,
                         double fitValues[2], double fitErrors[2]);
 
-void fitOthersSFShapeMR(int channel, string sample,
+void fitOthersSFShapeMR(int channel, string sample, bool looseloose,
 			double rangeLow, double rangeHigh,
 			double fitValues[14], double fitErrors[14]);
 
@@ -83,6 +83,7 @@ void allWW(int channel=0);
 void allTop(int channel=0);
 void allDY(int channel=0);
 void allOthers(int channel=0);
+void allWjets(int channel=0);
                         
 void doAllChannels() {
   cout << "==> Fitting WW sample..." << endl;
@@ -100,6 +101,10 @@ void doAllChannels() {
   cout << "==> Fitting others sample..." << endl;
   for(int i=0; i<4; ++i) allOthers(i);
   cout << "### Done Others sample ###" << endl;
+
+  cout << "==> Fitting wjets sample..." << endl;
+  for(int i=0; i<4; ++i) allWjets(i);
+  cout << "### Done Wjets sample ###" << endl;
 }
 
 void allWW(int channel) {
@@ -109,7 +114,7 @@ void allWW(int channel) {
   double fitValues[2];
   double fitErrors[2];
 
-  fitLandauShapeMR(channel,"WW",xLow,xHigh,fitValues,fitErrors);
+  fitLandauShapeMR(channel,"WW",false,xLow,xHigh,fitValues,fitErrors);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
 }
@@ -121,7 +126,7 @@ void allTop(int channel) {
   double fitValues[2];
   double fitErrors[2];
 
-  fitLandauShapeMR(channel,"top",xLow,xHigh,fitValues,fitErrors);
+  fitLandauShapeMR(channel,"top",false,xLow,xHigh,fitValues,fitErrors);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
 }
@@ -134,11 +139,11 @@ void allOthers(int channel) {
   double fitErrors[14];
 
   if(channel<2) {
-    fitLandauShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);
+    fitLandauShapeMR(channel,"others",false,xLow,xHigh,fitValues,fitErrors);
     cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
     cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
   } else {
-    fitOthersSFShapeMR(channel,"others",xLow,xHigh,fitValues,fitErrors);    
+    fitOthersSFShapeMR(channel,"others",false,xLow,xHigh,fitValues,fitErrors);    
     for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
   }
 }
@@ -155,13 +160,29 @@ void allDY(int channel) {
     cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
     cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
   } else {
-    fitOthersSFShapeMR(channel,"Zjets",xLow,xHigh,fitValues,fitErrors);    
+    fitOthersSFShapeMR(channel,"Zjets",false,xLow,xHigh,fitValues,fitErrors);    
     for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
   }
 }
 
+void allWjets(int channel) {
+  double xLow, xHigh;
+  xLow = 50; xHigh = 500;
 
-void fitLandauShapeMR(int channel, string sample,
+  double fitValues[14];
+  double fitErrors[14];
+
+  if(channel<2) {
+    fitLandauShapeMR(channel,"wjets",true,xLow,xHigh,fitValues,fitErrors);
+    cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+    cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+  } else {
+    fitOthersSFShapeMR(channel,"wjets",true,xLow,xHigh,fitValues,fitErrors);    
+    for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
+  }
+}
+
+void fitLandauShapeMR(int channel, string sample, bool looseloose,
 		      double rangeLow, double rangeHigh,
 		      double fitValues[2], double fitErrors[2]){
  // ------ root settings ---------
@@ -181,7 +202,8 @@ void fitLandauShapeMR(int channel, string sample,
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
   stringstream hFileName;
-  hFileName << "results/datasets_trees/" << sample << "_ll.root";
+  if(!looseloose) hFileName << "results/datasets_trees/" << sample << "_ll.root";
+  else hFileName << "results_data/datasets_trees/dataset_looseloose_wwbits.root";
 
   cout << "Opening ROOT file: " << hFileName.str() << endl;
 
@@ -210,13 +232,16 @@ void fitLandauShapeMR(int channel, string sample,
   TCut cut2 = fitrangecut.str().c_str();
   TCut cut = cut1 && cut2;
 
+  stringstream weight;
+  if(!looseloose) weight << "baseW";
+  else weight << "fake2W";
   RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
-  RooRealVar w("baseW","baseW",1.0,0.,1000.);
+  RooRealVar w(weight.str().c_str(),weight.str().c_str(),1.0,-1000.,1000.);
   RooRealVar cha("channel","channel",0,-0.5,3.5);
   RooRealVar njet("njet","njet",0,-0.5,10.);
 
   RooArgSet varset(x,w,cha,njet);
-  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
+  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar(weight.str().c_str()),Cut(cut));
 
 
   //--- Landau
@@ -354,7 +379,7 @@ void fitGaussianShapeMR(int channel, string sample,
 }
 
 
-void fitOthersSFShapeMR(int channel, string sample,
+void fitOthersSFShapeMR(int channel, string sample, bool looseloose,
 			double rangeLow, double rangeHigh,
 			double fitValues[14], double fitErrors[14]){
  // ------ root settings ---------
@@ -374,7 +399,8 @@ void fitOthersSFShapeMR(int channel, string sample,
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
   stringstream hFileName;
-  hFileName << "results/datasets_trees/" << sample << "_ll.root";
+  if(!looseloose) hFileName << "results/datasets_trees/" << sample << "_ll.root";
+  else hFileName << "results_data/datasets_trees/dataset_looseloose_wwbits.root";
 
   cout << "Opening ROOT file: " << hFileName.str() << endl;
 
@@ -403,13 +429,17 @@ void fitOthersSFShapeMR(int channel, string sample,
   TCut cut2 = fitrangecut.str().c_str();
   TCut cut = cut1 && cut2;
 
+  stringstream weight;
+  if(!looseloose) weight << "baseW";
+  else weight << "fake2W";
+
   RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
-  RooRealVar w("baseW","baseW",1.0,0.,1000.);
+  RooRealVar w(weight.str().c_str(),weight.str().c_str(),1.0,-1000.,1000.); 
   RooRealVar cha("channel","channel",0,-0.5,3.5);
   RooRealVar njet("njet","njet",0,-0.5,10.);
 
   RooArgSet varset(x,w,cha,njet);
-  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
+  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar(weight.str().c_str()),Cut(cut));
 
 
   //--- RooqqZZPdf
