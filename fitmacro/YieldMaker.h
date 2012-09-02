@@ -21,6 +21,7 @@ class YieldMaker {
   RooRealVar rrmr     ;
   RooRealVar rrD     ;
   RooRealVar rrweight   ;
+  RooRealVar rrprocess  ;
   RooArgSet argset      ;
   RooDataSet dataset    ;
   
@@ -31,11 +32,12 @@ class YieldMaker {
     rrmr     (RooRealVar("mr",       "mr",      0., 10000000.)),
     rrD      (RooRealVar("dphillr",  "dphillr",      0., TMath::Pi())),
     rrweight (RooRealVar("weight",   "weight",    0., 10000000.)),
-    argset(RooArgSet(rrchannel, rrmr, rrD, rrweight, "argset")),
+    rrprocess(RooRealVar("dataset",  "dataset",   0., 10000000.)),
+    argset(RooArgSet(rrchannel, rrmr, rrD, rrweight, rrprocess, "argset")),
     dataset(RooDataSet("dataset", "dataset", argset))
       {}
 
-  float getYield(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
+  float getYield(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float procmin, float procmax) {
     
     float yield = 0.0;
     
@@ -44,59 +46,63 @@ class YieldMaker {
       float D      = dataset.get(i)->getRealValue("dphillr");
       float weight = dataset.get(i)->getRealValue("weight");
       float ch     = dataset.get(i)->getRealValue("channel");
+      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) yield += weight;
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && proc>=procmin && proc<=procmax) yield += weight;
     }
 
     return yield;
 
   }
 
-  float getCount(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
+  float getCount(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float procmin, float procmax) {
     
     float yield = 0.0;
     
     for (int i = 0; i < dataset.numEntries(); i++) {
-      float mr         = dataset.get(i)->getRealValue("mr");
-      float D          = dataset.get(i)->getRealValue("dphillr");
-      float ch         = dataset.get(i)->getRealValue("channel");
+      float mr     = dataset.get(i)->getRealValue("mr");
+      float D      = dataset.get(i)->getRealValue("dphillr");
+      float ch     = dataset.get(i)->getRealValue("channel");
+      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) yield += 1.0;
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && proc>=procmin && proc<=procmax) yield += 1.0;
     }
 
     return yield;
 
   }
 
-  void get1DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, TH1* hist) {
+  void get1DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float procmin, float procmax, TH1* hist) {
     
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float D      = dataset.get(i)->getRealValue("dphillr");
       float weight = dataset.get(i)->getRealValue("weight");
       float ch     = dataset.get(i)->getRealValue("channel");
+      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) hist->Fill(mr,weight);
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && proc>=procmin && proc<=procmax) hist->Fill(mr,weight);
     }
 
   }
 
 
-  void get2DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, TH2* hist) {
+  void get2DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float procmin, float procmax, TH2* hist) {
     
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float D      = dataset.get(i)->getRealValue("dphillr");
       float weight = dataset.get(i)->getRealValue("weight");
       float ch     = dataset.get(i)->getRealValue("channel");
+      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) hist->Fill(mr,D,weight);
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && proc>=procmin && proc<=procmax) hist->Fill(mr,D,weight);
     }
 
   }
 
 
-  RooDataSet getFitDataSet(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
+  RooDataSet getFitDataSet(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float procmin, float procmax) {
     RooRealVar mr("mr",   "mr",            100, 50, 1000,      "GeV/c^{2}");
     RooRealVar D("dphillr",   "dphillr",   100, 0,  TMath::Pi());
     RooRealVar w("weight", "weight", 0.,  -10.,  10000.);
@@ -108,9 +114,10 @@ class YieldMaker {
       float m      = dataset.get(i)->getRealValue("mr");
       float dphi   = dataset.get(i)->getRealValue("dphillr");
       float weight = dataset.get(i)->getRealValue("weight");
-      float ch         = dataset.get(i)->getRealValue("channel");
+      float ch     = dataset.get(i)->getRealValue("channel");
+      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && m>mrmin && m<mrmax && dphi>dphimin && dphi<dphimax) {
+      if (channel == (int)ch && m>mrmin && m<mrmax && dphi>dphimin && dphi<dphimax && proc>=procmin && proc<=procmax) {
 	aset.setRealValue("mr", m);
 	aset.setRealValue("D",  dphi);
 	aset.setRealValue("weight", weight);
@@ -132,6 +139,7 @@ class YieldMaker {
     float effweight  = 0.0;
     float puweight   = 0.0;
     float ch         = 0.0;
+    float proc       = 0.0;
 
     tree->SetBranchAddress("mr",      &mr);
     tree->SetBranchAddress("dphillr", &dphi);
@@ -139,12 +147,14 @@ class YieldMaker {
     tree->SetBranchAddress("puW",     &puweight);
     tree->SetBranchAddress("effW",    &effweight);
     tree->SetBranchAddress("channel", &ch);
+    tree->SetBranchAddress("dataset", &proc);
     
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphi);
       argset.setRealValue("channel", ch);
+      argset.setRealValue("dataset", proc);
 
       float weight = baseweight*effweight*puweight;
       argset.setRealValue("weight", weight);
