@@ -42,6 +42,17 @@ void cutMinimum(TH2F* h, float threshold) {
   }
 }
 
+void fakeAlternativeShapes(TH2F* h, TH2F *hUp, TH2F *hDn) {
+  for (int i = 1; i <= h->GetNbinsX(); ++i) { 
+    for(int j = 1; j <= h->GetNbinsY(); ++j) {
+      double alpha = 1.0 + 0.5*(j-0.5*h->GetNbinsY())/h->GetNbinsY();
+      double beta  = 1.0/pow(alpha,1.5);
+      hUp->SetBinContent(i,j, alpha*h->GetBinContent(i,j));
+      hDn->SetBinContent(i,j, beta*h->GetBinContent(i,j));
+    }
+  }
+}
+
 void smooth(TH2F* h, float threshold) {
     TH2F* hist = (TH2F*)(h->Clone((std::string(h->GetName())+"_temp").c_str()));
     for (int i = 1; i <= hist->GetNbinsX(); ++i) {
@@ -232,6 +243,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   normalize(bkg_wj);
   normalize(bkg_others);
 
+  
   // === SAVING ===
   TFile *fileOut = TFile::Open("hww2DShapes.root","update");
   fileOut->cd();
@@ -241,6 +253,41 @@ void all(int cha, float dphiMin, float dphiMax) {
   bkg_dy->Write();
   bkg_wj->Write();
   bkg_others->Write();
+
+  // === fake alternative shapes ===
+  TH2F *sig_higgs_up = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Up").c_str()));
+  TH2F *sig_higgs_dn = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Dn").c_str()));
+  TH2F *bkg_ww_up = (TH2F*)(bkg_ww->Clone((std::string(bkg_ww->GetName())+"_Up").c_str()));
+  TH2F *bkg_ww_dn = (TH2F*)(bkg_ww->Clone((std::string(bkg_ww->GetName())+"_Dn").c_str()));
+  TH2F *bkg_top_up = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Up").c_str()));
+  TH2F *bkg_top_dn = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Dn").c_str()));
+  TH2F *bkg_dy_up = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Up").c_str()));
+  TH2F *bkg_dy_dn = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Dn").c_str()));
+  TH2F *bkg_wj_up = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Up").c_str()));
+  TH2F *bkg_wj_dn = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Dn").c_str()));
+  TH2F *bkg_others_up = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Up").c_str()));
+  TH2F *bkg_others_dn = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Dn").c_str()));
+
+  fakeAlternativeShapes(sig_higgs,sig_higgs_up,sig_higgs_dn);
+  fakeAlternativeShapes(bkg_ww,bkg_ww_up,bkg_ww_dn);
+  fakeAlternativeShapes(bkg_top,bkg_top_up,bkg_top_dn);
+  fakeAlternativeShapes(bkg_wj,bkg_wj_up,bkg_wj_dn);
+  fakeAlternativeShapes(bkg_dy,bkg_dy_up,bkg_dy_dn);
+  fakeAlternativeShapes(bkg_others,bkg_others_up,bkg_others_dn);
+
+  sig_higgs_up->Write();
+  bkg_ww_up->Write();
+  bkg_top_up->Write();
+  bkg_dy_up->Write();
+  bkg_wj_up->Write();
+  bkg_others_up->Write();
+
+  sig_higgs_dn->Write();
+  bkg_ww_dn->Write();
+  bkg_top_dn->Write();
+  bkg_dy_dn->Write();
+  bkg_wj_dn->Write();
+  bkg_others_dn->Write();
 
   fileOut->Close();
 
