@@ -32,6 +32,15 @@ string getStringChannel(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
+void cutMinimum(TH2F* h, float threshold) {
+  TH2F* hist = (TH2F*)(h->Clone((std::string(h->GetName())+"_temp").c_str()));
+  for (int i = 1; i <= hist->GetNbinsX(); ++i) {
+     for(int j = 1; j <= hist->GetNbinsY(); ++j) {
+       float val = hist->GetBinContent(i,j);
+       if(val<threshold) h->SetBinContent(i,j,threshold);
+     }
+  }
+}
 
 void smooth(TH2F* h, float threshold) {
     TH2F* hist = (TH2F*)(h->Clone((std::string(h->GetName())+"_temp").c_str()));
@@ -131,7 +140,10 @@ void normalize(TH2F* hist) {
     }
 }
 
-void all(int cha, float mrMin, float mrMax, float dphiMin, float dphiMax) {
+void all(int cha, float dphiMin, float dphiMax) {
+
+  float mrMin=50;
+  float mrMax=500;
 
   gStyle->SetOptStat(0);
 
@@ -144,10 +156,20 @@ void all(int cha, float mrMin, float mrMax, float dphiMin, float dphiMax) {
   TString cutMC = TString("(")+cut1+TString(" && ")+cut2+TString(")*baseW*effW*puW");
   TString cutLooseLoose = TString("(")+cut1+TString(" && ")+cut2+TString(")*fake2W");
 
-  float mrBinSize = 5.0; // GeV
+  float mrBinSize = 10.0; // GeV
   float dphiBinSize = 5.0 * TMath::Pi() / 180.; // 5 degrees
-  int xNBins = (int)(abs(mrMax-mrMin))/mrBinSize;
   int yNBins = (int)(abs(dphiMax-dphiMin))/dphiBinSize;
+
+  int xNBins = 17;
+  Double_t xLowerEdges[xNBins];
+  xLowerEdges[0]=mrMin;
+  xLowerEdges[1]=70;
+  // do constant binning up to 210 GeV (last mass point mH=180 GeV)
+  //  for(Double_t x=0; x<=220; x+=mrBinSize) {
+  for(int e=2; e<=15; ++e) {
+    xLowerEdges[e] = 70 + ((e-1)*mrBinSize);
+  }
+  xLowerEdges[16]=mrMax;
 
   cout << "Filling the backgrounds now..." << endl;
 
@@ -164,11 +186,11 @@ void all(int cha, float mrMin, float mrMax, float dphiMin, float dphiMax) {
   TTree *treeOthers = (TTree*)fileOthers->Get("latinoFitSkim");
   TTree *treeTop = (TTree*)fileTop->Get("latinoFitSkim");
 
-  TH2F *bkg_ww     = new TH2F((string("hist2D_bkg_ww_")+getChannelSuffix(cha)).c_str(),    "",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_top    = new TH2F((string("hist2D_bkg_top_")+getChannelSuffix(cha)).c_str(),   "",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_ww     = new TH2F((string("hist2D_bkg_ww_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_top    = new TH2F((string("hist2D_bkg_top_")+getChannelSuffix(cha)).c_str(),   "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
 
   treeWW->Project(bkg_ww->GetName(),"dphillr:mr",cutMC.Data());
   treeTop->Project(bkg_top->GetName(),"dphillr:mr",cutMC.Data());
@@ -177,8 +199,7 @@ void all(int cha, float mrMin, float mrMax, float dphiMin, float dphiMax) {
   treeDataLooseLoose->Project(bkg_wj->GetName(),"dphillr:mr",cutLooseLoose.Data());
 
   // and now the signals
-  TH2F *sig_higgs = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),    "",xNBins,mrMin,mrMax,yNBins,dphiMin,dphiMax);
-
+  TH2F *sig_higgs     = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   int mH[13] = {110,115,120,125,130,135,140,145,150,155,160,170,180};
   for(int i=0; i<13;i++) {
     char higgssample[1000];
@@ -200,14 +221,16 @@ void all(int cha, float mrMin, float mrMax, float dphiMin, float dphiMax) {
   }
 
   // === SMOOTHING ===
+  smooth(bkg_dy,     1.0);
+  cutMinimum(bkg_wj, 0.0);
+  smooth(bkg_wj, 1.0);
+
   normalize(sig_higgs);
   normalize(bkg_ww);
   normalize(bkg_top);
   normalize(bkg_dy);
   normalize(bkg_wj);
   normalize(bkg_others);
-
-  smooth(bkg_dy,     1.0);
 
   // === SAVING ===
   TFile *fileOut = TFile::Open("hww2DShapes.root","update");
@@ -227,12 +250,11 @@ void make2DHistogram() {
   
   TFile *fileOut = TFile::Open("hww2DShapes.root","recreate");
   fileOut->Close();
-  float dphiMin, dphiMax, mrMin, mrMax;
+
+  float dphiMin, dphiMax;
   dphiMin = 0.0;
   dphiMax = TMath::Pi();
-  mrMin = 70;
-  mrMax = 250;
 
-  for(int i=0;i<4;++i) all(i,mrMin,mrMax,dphiMin,dphiMax);
+  for(int i=0;i<4;++i) all(i,dphiMin,dphiMax);
 
 }
