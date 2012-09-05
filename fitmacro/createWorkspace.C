@@ -105,10 +105,10 @@ public:
     std::string workspace = card_name+"_workspace.root";
 
     float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_ww     = ymaker_ww     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_dy     = ymaker_dy     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_ww     = ymaker_ww     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_dy     = ymaker_dy     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
 
     std::string card   = createCardTemplate(ch, do1D, workspace.c_str());
