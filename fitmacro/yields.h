@@ -9,10 +9,9 @@
 #include <sstream>
 
 using namespace std;
-enum channels { of0j, of1j, sf0j, sf1j };
 enum production { ggH, vbfH };
 
-class yields {
+class InterpolatedYields {
 
  protected:
   int channel_;
@@ -20,11 +19,11 @@ class yields {
 
  public:
  
- yields(int channel, int production):
+ InterpolatedYields(int channel, int production):
   channel_(channel), 
     production_(production) {}
   
-  virtual ~yields() {}
+  virtual ~InterpolatedYields() {}
 
   std::string getInterpolatedYieldString(float lumi) {
       stringstream fss;
