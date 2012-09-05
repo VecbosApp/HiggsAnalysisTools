@@ -1,4 +1,5 @@
 #include <RooArgList.h>
+#include <RooDataHist.h>
 #include <RooDataSet.h>
 #include <RooFitResult.h>
 #include <RooGenericPdf.h>
@@ -6,83 +7,86 @@
 #include <RooRealVar.h>
 #include <RooFormulaVar.h>
 #include <RooWorkspace.h>
+#include <RooGaussian.h>
 #include <RooLandau.h>
 #include <RooBreitWigner.h>
 #include <RooCBShape.h>
 #include <RooFFTConvPdf.h>
 #include <RooProdPdf.h>
 #include <RooHistFunc.h>
+#include "HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h"
+#include "HiggsAnalysis/CombinedLimit/interface/VerticalInterpHistPdf.h"
 
 #include "YieldMaker.h"
 #include "CardTemplate.h"
 #include "findAndReplace.h"
+#include "yields.h"
 
 using namespace RooFit;
 using namespace std;
 
-enum channels { of0j, of1j, sf0j, sf1j };
-enum production { ggH, vbfH };
+class HiggsMassPointInfo {
 
-struct HiggsMassPointInfo {
+public:
+  HiggsMassPointInfo() {}
+  ~HiggsMassPointInfo() {}
 
-    float lumi;
-    float dphiMin;
-    float dphiMax;
-    bool  do1D;
-    std::string treeFolder;
-    std::string hww2DShapesfilename;
-    
-    std::map<std::string, std::vector<float> > interpolationmap;
+  float lumi;
+  float dphiMin;
+  float dphiMax;
+  bool  do1D;
+  std::string treeFolder;
+  std::string hww2DShapesfilename;
 
-    DataYieldMaker  ymaker_dt;
-    YieldMaker      ymaker_hi;
-    YieldMaker      ymaker_ww;
-    YieldMaker      ymaker_to;
-    YieldMaker      ymaker_dy;
-    YieldMaker      ymaker_ot;
-    WJetsYieldMaker ymaker_wj;
+  DataYieldMaker  ymaker_data;
+  YieldMaker      ymaker_hi;
+  YieldMaker      ymaker_ww;
+  YieldMaker      ymaker_top;
+  YieldMaker      ymaker_dy;
+  YieldMaker      ymaker_others;
+  WJetsYieldMaker ymaker_wj;
 
- std::string getSignalCBMeanString(int ch) {
-   stringstream fss;
-   fss << "( ";  
-   if (ch == of0j) fss << "26.86 - 0.24065*@0";
-   if (ch == of1j) fss << "29.16 - 0.24410*@0";
-   if (ch == sf0j) fss << "49.28 - 0.36044*@0";
-   if (ch == sf1j) fss << "29.18 - 0.23906*@0";
-   fss << " ) + @0*@1";
-   return fss.str();
-}
+  std::string getSignalCBMeanString(int ch) {
+    stringstream fss;
+    fss << "( ";  
+    if (ch == of0j) fss << "26.86 - 0.24065*@0";
+    if (ch == of1j) fss << "29.16 - 0.24410*@0";
+    if (ch == sf0j) fss << "49.28 - 0.36044*@0";
+    if (ch == sf1j) fss << "29.18 - 0.23906*@0";
+    fss << " ) + @0*@1";
+    return fss.str();
+  }
 
- std::string getSignalCBSigmaString(int ch) {
-   stringstream fss;
-   fss << "( ";  
-   if (ch == of0j) fss << "-1.878 + 0.1887*@0";
-   if (ch == of1j) fss << " 3.154 + 0.1657*@0";
-   if (ch == sf0j) fss << "-4.480 + 0.1816*@0";
-   if (ch == sf1j) fss << "-0.771 + 0.1839*@0";
-   fss << " ) * (1+@1)";
-   return fss.str();
-}
+  std::string getSignalCBSigmaString(int ch) {
+    stringstream fss;
+    fss << "( ";  
+    if (ch == of0j) fss << "-1.878 + 0.1887*@0";
+    if (ch == of1j) fss << " 3.154 + 0.1657*@0";
+    if (ch == sf0j) fss << "-4.480 + 0.1816*@0";
+    if (ch == sf1j) fss << "-0.771 + 0.1839*@0";
+    fss << " ) * (1+@1)";
+    return fss.str();
+  }
 
- std::string getSignalCBAlphaString(int ch) {
-   stringstream fss;
-   fss << "( ";  
-   if (ch == of0j) fss << "9.572";
-   if (ch == of1j) fss << "8.718";
-   if (ch == sf0j) fss << "8.304";
-   if (ch == sf1j) fss << "4.050";
-   return fss.str();
-}
+  std::string getSignalCBAlphaString(int ch) {
+    stringstream fss;
+    fss << "( ";  
+    if (ch == of0j) fss << "9.572";
+    if (ch == of1j) fss << "8.718";
+    if (ch == sf0j) fss << "8.304";
+    if (ch == sf1j) fss << "4.050";
+    return fss.str();
+  }
 
- std::string getSignalCBNString(int ch) {
-   stringstream fss;
-   fss << "( ";  
-   if (ch == of0j) fss << "16.9 - 0.0637*@0";
-   if (ch == of1j) fss << "15.8 - 0.00064*@0";
-   if (ch == sf0j) fss << "-13.2 + 0.1470*@0";
-   if (ch == sf1j) fss << "17.7 - 0.0595*@0";
-   return fss.str();
-}
+  std::string getSignalCBNString(int ch) {
+    stringstream fss;
+    fss << "( ";  
+    if (ch == of0j) fss << "16.9 - 0.0637*@0";
+    if (ch == of1j) fss << "15.8 - 0.00064*@0";
+    if (ch == sf0j) fss << "-13.2 + 0.1470*@0";
+    if (ch == sf1j) fss << "17.7 - 0.0595*@0";
+    return fss.str();
+  }
 
   void createCard(float mass, float mrMin, float mrMax, int ch) {
 
@@ -102,12 +106,12 @@ struct HiggsMassPointInfo {
     card_name += chstr;
     std::string workspace = card_name+"_workspace.root";
 
-    float yield_dt = ymaker_dt.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_ww = ymaker_ww.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_to = ymaker_to.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_dy = ymaker_dy.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_ot = ymaker_ot.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_wj = ymaker_wj.getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_ww     = ymaker_ww     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_dy     = ymaker_dy     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
 
     std::string card   = createCardTemplate(ch, do1D, workspace.c_str());
 
@@ -117,15 +121,15 @@ struct HiggsMassPointInfo {
     if (ch == sf0j) binname = "sf_0j";
     if (ch == sf1j) binname = "sf_1j";
 
-    card = findAndReplace(card, "SIG_GGH_YIELD"   , hi);
-    card = findAndReplace(card, "SIG_VBF_YIELD"   , 0.); // to be changed
+    card = findAndReplace(card, "SIG_GGH_YIELD"   , 1);
+    card = findAndReplace(card, "SIG_VBF_YIELD"   , 1);
     card = findAndReplace(card, "BKG_WW_YIELD"    , yield_ww);
     card = findAndReplace(card, "BKG_TOP_YIELD"   , yield_top);
     card = findAndReplace(card, "BKG_DY_YIELD"    , yield_dy);
-    card = findAndReplace(card, "BKG_OTHERS_YIELD", yield_ot);
+    card = findAndReplace(card, "BKG_OTHERS_YIELD", yield_others);
     card = findAndReplace(card, "BKG_WJETS_YIELD" , yield_wj);
-    card = findAndReplace(card, "BIN"            , binname);
-    card = findAndReplace(card, "OBS"            , yield_dt);
+    card = findAndReplace(card, "BIN"             , binname);
+    card = findAndReplace(card, "OBS"             , yield_data);
 
     ofstream file;
     file.open ((card_name +".txt").c_str());
@@ -136,7 +140,7 @@ struct HiggsMassPointInfo {
     
     RooRealVar CMS_ww2l_dphi ("CMS_ww2l_dphi" , "#Delta #Phi" ,   0,       TMath::Pi(), "");
     RooRealVar CMS_ww2l_mr_1D("CMS_ww2l_mr_1D", "M_{R}",          mrMin,   mrMax,       "GeV/c^{2}");
-    if (doFFT) CMS_zz4l_mass_1D.setBins(100000, "fft");
+    CMS_ww2l_mr_1D.setBins(100000, "fft");
         
     if (do1D) {
       RooArgSet argset_obs(CMS_ww2l_mr_1D, "argset_obs");
@@ -151,7 +155,7 @@ struct HiggsMassPointInfo {
       RooArgSet argset_obs(CMS_ww2l_mr_1D, CMS_ww2l_dphi, "argset_obs");
       RooDataSet data_obs("data_obs", "data_obs", argset_obs);
             
-      ymaker_data.getDataSet2D(ch, z1min, z2min, mrMin, mrMax, dphiMin, dphiMax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi);
+      ymaker_data.getDataSet2D(ch, mrMin, mrMax, dphiMin, dphiMax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi);
 
       w.import(data_obs);
     }
@@ -423,8 +427,8 @@ struct HiggsMassPointInfo {
     
     RooRealVar masshiggs       ("MH", "", mass);
 
-    yields ggHy(ch,ggH);
-    yields qqHy(ch,qqH);
+    InterpolatedYields ggHy(ch,ggH);
+    InterpolatedYields qqHy(ch,vbfH);
 
     RooRealVar ggh_gamma_BW    (("sig_ggh_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
     RooFormulaVar ggh_mean_CB  (("sig_ggh_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , RooArgList(masshiggs, sig_mean_err));
@@ -514,9 +518,10 @@ struct HiggsMassPointInfo {
 
     RooLandau *bkg_ww_pdf = new RooLandau(bkg_ww_pdf_name,"",CMS_ww2l_mr_1D,ww_mean,ww_sigma);
 
-    RooLandau *bkg_top_pdf = new RooLandau(bkg_top_pdf_name,"",CMS_top2l_mr_1D,top_mean,top_sigma);
+    RooLandau *bkg_top_pdf = new RooLandau(bkg_top_pdf_name,"",CMS_ww2l_mr_1D,top_mean,top_sigma);
 
-    RooAbsPdf *bkg_dy_pdf;
+    RooAbsPdf *bkg_dy_pdf, *bkg_wj_pdf, *bkg_others_pdf;
+    bkg_dy_pdf=bkg_wj_pdf=bkg_others_pdf=0;
     if(ch == of0j || ch == of1j) {
       bkg_dy_pdf = new RooGaussian(bkg_dy_pdf_name,"",CMS_ww2l_mr_1D,dyof_mean,dyof_sigma);
       bkg_wj_pdf = new RooLandau(bkg_wj_pdf_name,"",CMS_ww2l_mr_1D,wjof_mean,wjof_sigma);
@@ -586,17 +591,17 @@ struct HiggsMassPointInfo {
     w.import(vbf_norm);
 
     if (do1D) { 
-      w.import(bkg_ww_pdf);
-      w.import(bkg_top_pdf);
-      w.import(bkg_dy_pdf);
-      w.import(bkg_wj_pdf);
-      w.import(bkg_others_pdf);
-      w.import(sig_ggH_pdf);
-      w.import(sig_qqH_pdf);
+      w.import(*bkg_ww_pdf);
+      w.import(*bkg_top_pdf);
+      w.import(*bkg_dy_pdf);
+      w.import(*bkg_wj_pdf);
+      w.import(*bkg_others_pdf);
+      w.import(*sig_ggH_pdf);
+      w.import(*sig_qqH_pdf);
     } 
 
     else {
-      TFile *shapes2DFile = TFile::Open(hww2DShapesfilename.c_str());
+      TFile *shapes2Dfile = TFile::Open(hww2DShapesfilename.c_str());
       RooArgList v2dList(CMS_ww2l_mr_1D, CMS_ww2l_dphi);
       RooArgSet  v2dSet (CMS_ww2l_mr_1D, CMS_ww2l_dphi);
       
@@ -643,14 +648,14 @@ struct HiggsMassPointInfo {
       FastVerticalInterpHistPdf2D plpdf_ggH    (("sig_ggH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggH)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_qqH    (("sig_qqH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqH)    ,RooArgList()                ,1.0,1);
 
-      RooProdPdf bkg_ww_pdf_2D     ("bkg_ww"     , "", bkg_ww_pdf     ,Conditional(plpdf_ww     , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf bkg_top_pdf_2D    ("bkg_top"    , "", bkg_top_pdf    ,Conditional(plpdf_top    , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf bkg_dy_pdf_2D     ("bkg_dy"     , "", bkg_dy_pdf     ,Conditional(plpdf_dy     , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf bkg_wj_pdf_2D     ("bkg_wj"     , "", bkg_wj_pdf     ,Conditional(plpdf_wj     , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf bkg_others_pdf_2D ("bkg_others" , "", bkg_others_pdf ,Conditional(plpdf_others , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_ww_pdf_2D     ("bkg_ww"     , "", *bkg_ww_pdf     ,Conditional(plpdf_ww     , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_top_pdf_2D    ("bkg_top"    , "", *bkg_top_pdf    ,Conditional(plpdf_top    , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_dy_pdf_2D     ("bkg_dy"     , "", *bkg_dy_pdf     ,Conditional(plpdf_dy     , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_wj_pdf_2D     ("bkg_wj"     , "", *bkg_wj_pdf     ,Conditional(plpdf_wj     , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_others_pdf_2D ("bkg_others" , "", *bkg_others_pdf ,Conditional(plpdf_others , RooArgSet(CMS_ww2l_dphi))); 
 	    
-      RooProdPdf sig_ggH_pdf_2D  ("ggH", "", sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf sig_qqH_pdf_2D  ("qqH", "", sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf sig_ggH_pdf_2D  ("ggH", "", *sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf sig_qqH_pdf_2D  ("qqH", "", *sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
 
       w.import(bkg_ww_pdf_2D); 
       w.import(bkg_top_pdf_2D); 
@@ -669,20 +674,23 @@ struct HiggsMassPointInfo {
 
 void createWorkspace() {
 
+  cout << "starting!" << endl;
   HiggsMassPointInfo hmpi8;
+  cout << "constructor done " << endl;
   hmpi8.lumi = 5.26;
   hmpi8.dphiMin = 0.;
   hmpi8.dphiMax = TMath::Pi();
   hmpi8.do1D = true;
-  hmpi8.treeFolder = "/Users/emanuele/Work/data/hww2l2nu/ichep12/datasets_trees/";
+  hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
 
-  hmpi8.ymaker_dt.fill(hmpi8.treeFolder+"dataset_ll.root");
-  hmpi8.ymaker_ww.fill(hmpi8.treeFolder+"WW_ll.root");
-  hmpi8.ymaker_to.fill(hmpi8.treeFolder+"top_ll.root");
-  hmpi8.ymaker_dy.fill(hmpi8.treeFolder+"Zjets_ll.root");
-  hmpi8.ymaker_wj.fill(hmpi8.treeFolder+"dataset_looseloose_wwbits.root");
-  hmpi8.ymaker_ot.fill(hmpi8.treeFolder+"others.root");
+  cout << "Filling the yielders..." << endl;
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"dataset_ll.root");
+  hmpi8.ymaker_ww     .fill(hmpi8.treeFolder+"WW_ll.root");
+  hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"top_ll.root");
+  hmpi8.ymaker_dy     .fill(hmpi8.treeFolder+"Zjets_ll.root");
+  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"dataset_looseloose_wwbits.root");
+  hmpi8.ymaker_others .fill(hmpi8.treeFolder+"others_ll.root");
   
   for (float i = 114.; i <= 180.; i += 1.) {
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
