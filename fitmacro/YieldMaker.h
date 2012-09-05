@@ -41,7 +41,7 @@ class YieldMaker {
   rrchannel  (RooRealVar("channel",  "channel",   0., 10.)), 
     rrmr     (RooRealVar("mr",       "mr",      0., 10000000.)),
     rrD      (RooRealVar("dphillr",  "dphillr",      0., TMath::Pi())),
-    rrweight (RooRealVar("weight",   "weight",    0., 10000000.)),
+    rrweight (RooRealVar("weight",   "weight",    -100000., 10000000.)),
     rrprocess(RooRealVar("dataset",  "dataset",   0., 10000000.)),
     argset(RooArgSet(rrchannel, rrmr, rrD, rrweight, rrprocess, "argset")),
     dataset(RooDataSet("dataset", "dataset", argset))
@@ -183,113 +183,11 @@ class YieldMaker {
 
 
 
-class WJetsYieldMaker {
+class WJetsYieldMaker : public YieldMaker {
 
- protected:
-  RooRealVar rrchannel  ;	
-  RooRealVar rrmr     ;
-  RooRealVar rrD     ;
-  RooRealVar rrweight   ;
-  RooArgSet argset      ;
-  RooDataSet dataset    ;
-  
  public :        
 
- WJetsYieldMaker():
-  rrchannel  (RooRealVar("channel", "channel", 0., 10.)), 
-    rrmr     (RooRealVar("mr",      "mr",      0., 10000000.)),
-    rrD      (RooRealVar("dphillr", "dphillr", 0., TMath::Pi())),
-    rrweight (RooRealVar("weight",  "weight",  -100000., 10000000.)),
-    argset(RooArgSet(rrchannel, rrmr, rrD, rrweight, "argset")),
-    dataset(RooDataSet("dataset", "dataset", argset))
-      {}
-
-  float getYield(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
-    
-    float yield = 0.0;
-    
-    for (int i = 0; i < dataset.numEntries(); i++) {
-      float mr     = dataset.get(i)->getRealValue("mr");
-      float D      = dataset.get(i)->getRealValue("dphillr");
-      float weight = dataset.get(i)->getRealValue("weight");
-      float ch     = dataset.get(i)->getRealValue("channel");
-
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) yield += weight;
-    }
-
-    return yield;
-
-  }
-
-  float getCount(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
-    
-    float yield = 0.0;
-    
-    for (int i = 0; i < dataset.numEntries(); i++) {
-      float mr = dataset.get(i)->getRealValue("mr");
-      float D  = dataset.get(i)->getRealValue("dphillr");
-      float ch = dataset.get(i)->getRealValue("channel");
-
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) yield += 1.0;
-    }
-
-    return yield;
-
-  }
-
-  void get1DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, TH1* hist) {
-    
-    for (int i = 0; i < dataset.numEntries(); i++) {
-      float mr     = dataset.get(i)->getRealValue("mr");
-      float D      = dataset.get(i)->getRealValue("dphillr");
-      float weight = dataset.get(i)->getRealValue("weight");
-      float ch     = dataset.get(i)->getRealValue("channel");
-
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) hist->Fill(mr,weight);
-    }
-
-  }
-
-
-  void get2DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, TH2* hist) {
-    
-    for (int i = 0; i < dataset.numEntries(); i++) {
-      float mr     = dataset.get(i)->getRealValue("mr");
-      float D      = dataset.get(i)->getRealValue("dphillr");
-      float weight = dataset.get(i)->getRealValue("weight");
-      float ch     = dataset.get(i)->getRealValue("channel");
-
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax) hist->Fill(mr,D,weight);
-    }
-
-  }
-
-
-  RooDataSet getFitDataSet(int channel, float mrmin, float mrmax, float dphimin, float dphimax) {
-    RooRealVar mr("mr",   "mr",            100, 50, 1000,      "GeV/c^{2}");
-    RooRealVar D("dphillr",   "dphillr",   100, 0,  TMath::Pi());
-    RooRealVar w("weight", "weight", 0.,  -1000.,  10000.);
-    RooArgSet  aset(mr, D, w, "aset");
-    RooDataSet dset("dataset","", aset);
-    
-
-    for (int i = 0; i < dataset.numEntries(); i++) {
-      float m      = dataset.get(i)->getRealValue("mr");
-      float dphi   = dataset.get(i)->getRealValue("dphillr");
-      float weight = dataset.get(i)->getRealValue("weight");
-      float ch     = dataset.get(i)->getRealValue("channel");
-
-      if (channel == (int)ch && m>mrmin && m<mrmax && dphi>dphimin && dphi<dphimax) {
-	aset.setRealValue("mr", m);
-	aset.setRealValue("D", dphi);
-	aset.setRealValue("weight", weight);
-	dset.add(aset);
-      }
-    }
-
-    return dset;
-
-  }
+  WJetsYieldMaker():YieldMaker(){}
 
   void fill(std::string filepath) {
 
@@ -302,19 +200,23 @@ class WJetsYieldMaker {
     float dphi       = 0.0;
     float fakeweight = 0.0;
     float ch         = 0.0;
-     float njet      = 0.0;
+    float proc       = 0.0;
+    float njet       = 0.0;
 
     tree->SetBranchAddress("mr",      &mr);
     tree->SetBranchAddress("dphillr", &dphi);
-    tree->SetBranchAddress("fake2W",  &fakeweight);
     tree->SetBranchAddress("channel", &ch);
-    
+    tree->SetBranchAddress("dataset", &proc);
+    tree->SetBranchAddress("njet",    &njet);
+    tree->SetBranchAddress("fake2W",  &fakeweight);
+
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphi);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
+      argset.setRealValue("dataset", proc);
       float weight = fakeweight;
       argset.setRealValue("weight", weight);
       if(channel<0) continue;
