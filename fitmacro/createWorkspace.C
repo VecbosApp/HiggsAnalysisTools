@@ -70,7 +70,6 @@ public:
 
   std::string getSignalCBAlphaString(int ch) {
     stringstream fss;
-    fss << "( ";  
     if (ch == of0j) fss << "9.572";
     if (ch == of1j) fss << "8.718";
     if (ch == sf0j) fss << "8.304";
@@ -80,7 +79,6 @@ public:
 
   std::string getSignalCBNString(int ch) {
     stringstream fss;
-    fss << "( ";  
     if (ch == of0j) fss << "16.9 - 0.0637*@0";
     if (ch == of1j) fss << "15.8 - 0.00064*@0";
     if (ch == sf0j) fss << "-13.2 + 0.1470*@0";
