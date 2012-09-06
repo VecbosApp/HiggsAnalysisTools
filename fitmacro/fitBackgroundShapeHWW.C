@@ -156,9 +156,12 @@ void allDY(int channel) {
   double fitErrors[14];
 
   if(channel<2) {
-    fitGaussianShapeMR(channel,"Zjets",xLow,xHigh,fitValues,fitErrors);
-    cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
-    cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+    fitGaussianShapeMR(channel,"dataset_embeddedtt",xLow,xHigh,fitValues,fitErrors);
+    cout << "mean1 value,error =  " << fitValues[0] << " , " << fitErrors[0] << endl;
+    cout << "sigmq1 value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
+    cout << "mean2 value,error =  " << fitValues[2] << " , " << fitErrors[2] << endl;
+    cout << "sigma2 value,error = " << fitValues[3] << " , " << fitErrors[3] << endl;
+    cout << "fsig value,error   = " << fitValues[4] << " , " << fitErrors[4] << endl;
   } else {
     fitOthersSFShapeMR(channel,"Zjets",false,xLow,xHigh,fitValues,fitErrors);    
     for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
@@ -284,7 +287,7 @@ void fitLandauShapeMR(int channel, string sample, bool looseloose,
 
 void fitGaussianShapeMR(int channel, string sample,
                         double rangeLow, double rangeHigh,
-                        double fitValues[2], double fitErrors[2]){
+                        double fitValues[5], double fitErrors[5]){
  // ------ root settings ---------
   gROOT->Reset();  
   gROOT->SetStyle("Plain");
@@ -340,13 +343,20 @@ void fitGaussianShapeMR(int channel, string sample,
   RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
 
 
-  //--- simple Gaussian
-  RooRealVar mean("mean","mean",140,100,200) ;
-  RooRealVar sigma("#sigma","width",50,10,100); 
+  //--- simple Gaussian 1
+  RooRealVar mean("mean_{1}","mean",140,50,200) ;
+  RooRealVar sigma("#sigma_{1}","width",20,10,30); 
   RooGaussian gauss("gauss","gauss",x,mean,sigma);
 
-  x.setBins(30,"fft");
-  gauss.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
+  RooRealVar mean2("mean_{2}","mean2",140,50,300) ;
+  RooRealVar sigma2("#sigma_{2}","width2",35,30,200); 
+  RooGaussian gauss2("gauss2","gauss2",x,mean2,sigma2);
+  RooRealVar fsig("f_{1}","signal fraction",0.95,0.7,1.);
+
+  RooAddPdf dgauss("dgauss","model",gauss,gauss2,fsig);
+
+  dgauss.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
+
 
   stringstream frameTitle;
   if(channel==of0j){frameTitle << "e#mu,0-j";}
@@ -356,8 +366,8 @@ void fitGaussianShapeMR(int channel, string sample,
 
   RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
   dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
-  gauss.plotOn(xframe);
-  gauss.paramOn(xframe);
+  dgauss.plotOn(xframe);
+  dgauss.paramOn(xframe);
 
   stringstream nameFile;
   nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
@@ -367,11 +377,17 @@ void fitGaussianShapeMR(int channel, string sample,
   if(fitValues!=0){
     fitValues[0] = mean.getVal();
     fitValues[1] = sigma.getVal();
+    fitValues[2] = mean2.getVal();
+    fitValues[3] = sigma2.getVal();
+    fitValues[4] = fsig.getVal();
   }
 
   if(fitErrors!=0){
     fitErrors[0] = mean.getError();
     fitErrors[1] = sigma.getError();
+    fitValues[2] = mean2.getError();
+    fitValues[3] = sigma2.getError();
+    fitValues[4] = fsig.getError();
   }
 
   return;
