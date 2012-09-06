@@ -13,6 +13,7 @@
 #include <RooCBShape.h>
 #include <RooFFTConvPdf.h>
 #include <RooProdPdf.h>
+#include <RooAddPdf.h>
 #include <RooHistFunc.h>
 #include "HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h"
 #include "HiggsAnalysis/CombinedLimit/interface/VerticalInterpHistPdf.h"
@@ -42,7 +43,8 @@ public:
   YieldMaker      ymaker_hi;
   YieldMaker      ymaker_ww;
   YieldMaker      ymaker_top;
-  YieldMaker      ymaker_dy;
+  YieldMaker      ymaker_dysf;
+  YieldMaker      ymaker_dyof;
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
 
@@ -107,7 +109,9 @@ public:
     float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
     float yield_ww     = ymaker_ww     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
-    float yield_dy     = ymaker_dy     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_dy     = 0.0; 
+    if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
 
@@ -165,8 +169,11 @@ public:
     float WWsi = 0.;
     float Topme = 0.;
     float Topsi = 0.;
-    float DYofme = 0.;
-    float DYofsi = 0.;
+    float DYofme1 = 0.;
+    float DYofsi1 = 0.;
+    float DYofme2 = 0.;
+    float DYofsi2 = 0.;
+    float DYoffrac = 0.;
     float DYsfa0  = 0.;
     float DYsfa1  = 0.;
     float DYsfa2  = 0.;
@@ -181,24 +188,10 @@ public:
     float DYsfa11 = 0.;
     float DYsfa12 = 0.;
     float DYsfa13 = 0.;
-    float WJofme = 0.;
-    float WJofsi = 0.;
-    float WJsfa0  = 0.;
-    float WJsfa1  = 0.;
-    float WJsfa2  = 0.;
-    float WJsfa3  = 0.;
-    float WJsfa4  = 0.;
-    float WJsfa5  = 0.;
-    float WJsfa6  = 0.;
-    float WJsfa7  = 0.;
-    float WJsfa8  = 0.;
-    float WJsfa9  = 0.;
-    float WJsfa10 = 0.;
-    float WJsfa11 = 0.;
-    float WJsfa12 = 0.;
-    float WJsfa13 = 0.;
-    float Otofme = 0.;
-    float Otofsi = 0.;
+    float WJme    = 0.;
+    float WJsi    = 0.;
+    float Otofme  = 0.;
+    float Otofsi  = 0.;
     float Otsfa0  = 0.;
     float Otsfa1  = 0.;
     float Otsfa2  = 0.;
@@ -213,7 +206,7 @@ public:
     float Otsfa11 = 0.;
     float Otsfa12 = 0.;
     float Otsfa13 = 0.;
-
+    
     if(ch == of0j) {
       WWme = 158.109;
       WWsi = 33.6625;
@@ -221,11 +214,14 @@ public:
       Topme = 193.609;
       Topsi = 46.473;
       
-      DYofme = 130.131;
-      DYofsi = 33.3977;
+      DYofme1 = 124.856;
+      DYofsi1 = 26.5499;
+      DYofme2 = 220.569;
+      DYofsi2 = 76.9832;
+      DYoffrac = 0.932033;
 
-      WJofme = 125.842;
-      WJofsi = 23.9167;
+      WJme = 125.842;
+      WJsi = 23.9167;
 
       Otofme = 100.089;
       Otofsi = 19.2616;
@@ -238,11 +234,14 @@ public:
       Topme = 183.549;
       Topsi = 42.8287;
 
-      DYofme = 100.007;
-      DYofsi = 53.6901;
+      DYofme1 = 102.968;
+      DYofsi1 = 39.2442;
+      DYofme2 = 199.588;
+      DYofsi2 = 100.708;
+      DYoffrac = 0.934821;
 
-      WJofme = 143.556;
-      WJofsi = 29.4511;
+      WJme = 143.556;
+      WJsi = 29.4511;
       
       Otofme = 123.646;
       Otofsi = 27.2714;
@@ -270,20 +269,8 @@ public:
       DYsfa12  = 4064.28;
       DYsfa13  = 0.00377819;
 
-      WJsfa0  = 98.8649;
-      WJsfa1  = 17.5007;
-      WJsfa2  = 72.1404;
-      WJsfa3  = 0.44289;
-      WJsfa4  = 209.894;
-      WJsfa5  = 52.3488;
-      WJsfa6  = 7.55082;
-      WJsfa7  = 0.241892;
-      WJsfa8  = 0.0841174;
-      WJsfa9  = 0.490682;
-      WJsfa10  = 195.594;
-      WJsfa11  = -0.68302;
-      WJsfa12  = 9927.89;
-      WJsfa13  = 0.00424511;
+      WJme = 125.842;
+      WJsi = 23.9167;
 
       Otsfa0  = 87.1441;
       Otsfa1  = 8.19755;
@@ -323,20 +310,8 @@ public:
       DYsfa12  = 754.799;
       DYsfa13  = 0.0958732;
 
-      WJsfa0  = 104.474;
-      WJsfa1  = 24.6371;
-      WJsfa2  = 82.8418;
-      WJsfa3  = 0.0475532;
-      WJsfa4  = 184.969;
-      WJsfa5  = 10.9556;
-      WJsfa6  = 25.4052;
-      WJsfa7  = 0.0580383;
-      WJsfa8  = 21.3376;
-      WJsfa9  = 0.0290728;
-      WJsfa10  = 48.1927;
-      WJsfa11  = -1.69871;
-      WJsfa12  = 9935.12;
-      WJsfa13  = 0.326497;
+      WJme = 143.556;
+      WJsi = 29.4511;
 
       Otsfa0  = 192.072;
       Otsfa1  = 10.1597;
@@ -366,11 +341,14 @@ public:
     RooRealVar top_mean (("bkg_top_"+chstr+tevstr+"_mean" ).c_str(), "", Topme);
     RooRealVar top_sigma(("bkg_top_"+chstr+tevstr+"_sigma").c_str(), "", Topsi);
 
-    RooRealVar dyof_mean (("bkg_dy_"+chstr+tevstr+"_mean" ).c_str(), "", DYofme);
-    RooRealVar dyof_sigma(("bkg_dy_"+chstr+tevstr+"_sigma").c_str(), "", DYofsi);
+    RooRealVar dyof_mean1 (("bkg_dy_"+chstr+tevstr+"_mean1" ).c_str(), "", DYofme1);
+    RooRealVar dyof_sigma1(("bkg_dy_"+chstr+tevstr+"_sigma1").c_str(), "", DYofsi1);
+    RooRealVar dyof_mean2 (("bkg_dy_"+chstr+tevstr+"_mean2" ).c_str(), "", DYofme2);
+    RooRealVar dyof_sigma2(("bkg_dy_"+chstr+tevstr+"_sigma2").c_str(), "", DYofsi2);
+    RooRealVar dyof_frac  (("bkg_dy_"+chstr+tevstr+"_frac").c_str(), "", DYoffrac);
 
-    RooRealVar wjof_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), "", WJofme);
-    RooRealVar wjof_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), "", WJofsi);
+    RooRealVar wj_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), "", WJme);
+    RooRealVar wj_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), "", WJsi);
 
     RooRealVar othersof_mean (("bkg_others_"+chstr+tevstr+"_mean" ).c_str(), "", Otofme);
     RooRealVar othersof_sigma(("bkg_others_"+chstr+tevstr+"_sigma").c_str(), "", Otofsi);
@@ -405,21 +383,6 @@ public:
     RooRealVar otherssf_a12 (("bkg_others_"+chstr+tevstr+"_a12" ).c_str(), "", Otsfa12);
     RooRealVar otherssf_a13 (("bkg_others_"+chstr+tevstr+"_a13" ).c_str(), "", Otsfa13);
 	
-    RooRealVar wjsf_a0 (("bkg_wj_"+chstr+tevstr+"_a0" ).c_str(), "", WJsfa0);
-    RooRealVar wjsf_a1 (("bkg_wj_"+chstr+tevstr+"_a1" ).c_str(), "", WJsfa1);
-    RooRealVar wjsf_a2 (("bkg_wj_"+chstr+tevstr+"_a2" ).c_str(), "", WJsfa2);
-    RooRealVar wjsf_a3 (("bkg_wj_"+chstr+tevstr+"_a3" ).c_str(), "", WJsfa3);
-    RooRealVar wjsf_a4 (("bkg_wj_"+chstr+tevstr+"_a4" ).c_str(), "", WJsfa4);
-    RooRealVar wjsf_a5 (("bkg_wj_"+chstr+tevstr+"_a5" ).c_str(), "", WJsfa5);
-    RooRealVar wjsf_a6 (("bkg_wj_"+chstr+tevstr+"_a6" ).c_str(), "", WJsfa6);
-    RooRealVar wjsf_a7 (("bkg_wj_"+chstr+tevstr+"_a7" ).c_str(), "", WJsfa7);
-    RooRealVar wjsf_a8 (("bkg_wj_"+chstr+tevstr+"_a8" ).c_str(), "", WJsfa8);
-    RooRealVar wjsf_a9 (("bkg_wj_"+chstr+tevstr+"_a9" ).c_str(), "", WJsfa9);
-    RooRealVar wjsf_a10 (("bkg_wj_"+chstr+tevstr+"_a10" ).c_str(), "", WJsfa10);
-    RooRealVar wjsf_a11 (("bkg_wj_"+chstr+tevstr+"_a11" ).c_str(), "", WJsfa11);
-    RooRealVar wjsf_a12 (("bkg_wj_"+chstr+tevstr+"_a12" ).c_str(), "", WJsfa12);
-    RooRealVar wjsf_a13 (("bkg_wj_"+chstr+tevstr+"_a13" ).c_str(), "", WJsfa13);
-	
     RooRealVar sig_mean_err    (("sig_"+chstr+"_mean_err"  +tevstr).c_str()  , "", 0., -10., 10.);
     RooRealVar sig_sigma_err   (("sig_"+chstr+"_sigma_err" +tevstr).c_str()  , "", 0., -10., 10.);
     
@@ -450,11 +413,14 @@ public:
     top_mean  .setConstant(kTRUE);
     top_sigma .setConstant(kTRUE);
 
-    dyof_mean  .setConstant(kTRUE);
-    dyof_sigma .setConstant(kTRUE);
+    dyof_mean1  .setConstant(kTRUE);
+    dyof_sigma1 .setConstant(kTRUE);
+    dyof_mean2  .setConstant(kTRUE);
+    dyof_sigma2 .setConstant(kTRUE);
+    dyof_frac   .setConstant(kTRUE);
 
-    wjof_mean  .setConstant(kTRUE);
-    wjof_sigma .setConstant(kTRUE);
+    wj_mean  .setConstant(kTRUE);
+    wj_sigma .setConstant(kTRUE);
 
     othersof_mean  .setConstant(kTRUE);
     othersof_sigma .setConstant(kTRUE);
@@ -489,21 +455,6 @@ public:
     otherssf_a12 .setConstant(kTRUE);
     otherssf_a13 .setConstant(kTRUE);
     
-    wjsf_a0  .setConstant(kTRUE);
-    wjsf_a1  .setConstant(kTRUE);
-    wjsf_a2  .setConstant(kTRUE);
-    wjsf_a3  .setConstant(kTRUE);
-    wjsf_a4  .setConstant(kTRUE);
-    wjsf_a5  .setConstant(kTRUE);
-    wjsf_a6  .setConstant(kTRUE);
-    wjsf_a7  .setConstant(kTRUE);
-    wjsf_a8  .setConstant(kTRUE);
-    wjsf_a9  .setConstant(kTRUE);
-    wjsf_a10 .setConstant(kTRUE);
-    wjsf_a11 .setConstant(kTRUE);
-    wjsf_a12 .setConstant(kTRUE);
-    wjsf_a13 .setConstant(kTRUE);
-
     ////////////////// Define the PDFs /////////////////////////////////
 
     const char* bkg_ww_pdf_name     = do1D ? "bkg_ww"     : "bkg_ww_1D" ;
@@ -518,11 +469,14 @@ public:
 
     RooLandau *bkg_top_pdf = new RooLandau(bkg_top_pdf_name,"",CMS_ww2l_mr_1D,top_mean,top_sigma);
 
-    RooAbsPdf *bkg_dy_pdf, *bkg_wj_pdf, *bkg_others_pdf;
-    bkg_dy_pdf=bkg_wj_pdf=bkg_others_pdf=0;
+    RooLandau *bkg_wj_pdf = new RooLandau(bkg_wj_pdf_name,"",CMS_ww2l_mr_1D,wj_mean,wj_sigma);
+
+    RooAbsPdf *bkg_dy_pdf, *bkg_others_pdf;
+    bkg_dy_pdf=bkg_others_pdf=0;
     if(ch == of0j || ch == of1j) {
-      bkg_dy_pdf = new RooGaussian(bkg_dy_pdf_name,"",CMS_ww2l_mr_1D,dyof_mean,dyof_sigma);
-      bkg_wj_pdf = new RooLandau(bkg_wj_pdf_name,"",CMS_ww2l_mr_1D,wjof_mean,wjof_sigma);
+      RooGaussian dygauss1("dygauss1","dygauss1",CMS_ww2l_mr_1D,dyof_mean1,dyof_sigma1);
+      RooGaussian dygauss2("dygauss2","dygauss2",CMS_ww2l_mr_1D,dyof_mean2,dyof_sigma2);
+      bkg_dy_pdf = new RooAddPdf(bkg_dy_pdf_name,"",dygauss1,dygauss2,dyof_frac);
       bkg_others_pdf = new RooLandau(bkg_others_pdf_name,"",CMS_ww2l_mr_1D,othersof_mean,othersof_sigma);
     }
     if(ch == sf0j || ch == sf1j) {
@@ -541,22 +495,6 @@ public:
 				     dysf_a11,
 				     dysf_a12,
 				     dysf_a13);
-
-      bkg_wj_pdf = new RooqqZZPdf_v2(bkg_wj_pdf_name,"",CMS_ww2l_mr_1D,
-				     wjsf_a0,
-				     wjsf_a1,
-				     wjsf_a2,
-				     wjsf_a3,
-				     wjsf_a4,
-				     wjsf_a5,
-				     wjsf_a6,
-				     wjsf_a7,
-				     wjsf_a8,
-				     wjsf_a9,
-				     wjsf_a10,
-				     wjsf_a11,
-				     wjsf_a12,
-				     wjsf_a13);
 
       bkg_others_pdf = new RooqqZZPdf_v2(bkg_others_pdf_name,"",CMS_ww2l_mr_1D,
 					 otherssf_a0,
@@ -608,7 +546,7 @@ public:
       TH2F* dphishape_dy = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_dy_"+chstr).c_str()));
       TH2F* dphishape_wj = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr).c_str()));
       TH2F* dphishape_others = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_others_"+chstr).c_str()));
-      TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_sig_"+chstr).c_str()));
+      TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_sig_"+chstr).c_str()));
 
       // fake for the moment
       // TH2F* dphishape_ww_up = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_ww_"+chstr).c_str()));
@@ -634,7 +572,6 @@ public:
       RooHistPdf rpdf_ggH    (("bkg_ggH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggH);
       RooHistPdf rpdf_qqH    (("bkg_qqH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqH);
 	    
-
       // will be used for syst
       // RooRealVar CMS_ww2l_bkg("CMS_ww2l_bkgDPHI" ,"" ,0,-10,10); 
 	
@@ -672,25 +609,24 @@ public:
 
 void createWorkspace() {
 
-  cout << "starting!" << endl;
   HiggsMassPointInfo hmpi8;
-  cout << "constructor done " << endl;
   hmpi8.lumi = 5.26;
   hmpi8.dphiMin = 0.;
   hmpi8.dphiMax = TMath::Pi();
-  hmpi8.do1D = true;
+  hmpi8.do1D = false;
   hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
 
-  cout << "Filling the yielders..." << endl;
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"dataset_ll.root");
   hmpi8.ymaker_ww     .fill(hmpi8.treeFolder+"WW_ll.root");
   hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"top_ll.root");
-  hmpi8.ymaker_dy     .fill(hmpi8.treeFolder+"Zjets_ll.root");
+  hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"Zjets_ll.root");
+  hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"dataset_embeddedtt_ll.root");
   hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"dataset_looseloose_wwbits.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"others_ll.root");
   
-  for (float i = 114.; i <= 180.; i += 1.) {
+  //for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
