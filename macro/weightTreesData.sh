@@ -25,4 +25,7 @@ echo "Adding weights to tight x tight..."
 make LatinosLooseLooseAnalyzer
 ./LatinosLooseLooseAnalyzer results_data/datasets_trees/dataset_looseloose.root
 
+make LatinosEmbeddedTauAnalyzer
+./LatinosEmbeddedTauAnalyzer results_data/datasets_trees/dataset_embeddedtt_ll.root
+
 echo "done weighting."

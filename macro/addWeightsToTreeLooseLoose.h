@@ -12,6 +12,8 @@
 #include <TChain.h>
 #include <TFile.h>
 
+enum samples { wjets, embeddedDYtt};
+
 class addWeightsToTreeLooseLoose {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -315,6 +317,10 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   virtual void     SetSample(int sample) {sample_ = sample;}
+   
+   int sample_;
+
 };
 
 #endif
@@ -330,7 +336,7 @@ addWeightsToTreeLooseLoose::addWeightsToTreeLooseLoose(TTree *tree)
          f = new TFile("results_data/datasets_trees/dataset_looseloose.root");
       }
       tree = (TTree*)gDirectory->Get("latino");
-
+      sample_=wjets;
    }
    Init(tree);
 }

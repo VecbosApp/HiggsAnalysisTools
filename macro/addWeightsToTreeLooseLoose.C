@@ -8,6 +8,7 @@
 #include <TVector3.h>
 #include <TLorentzVector.h>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -41,7 +42,11 @@ void addWeightsToTreeLooseLoose::Loop()
   float mr,mrnew,dphillr,ddphillr;
   float step[29];
 
-  TFile *fileNew = TFile::Open("results_data/datasets_trees/dataset_looseloose_wwbits.root","recreate");
+  stringstream fss;
+  if(sample_==wjets) fss << "results_data/datasets_trees/dataset_looseloose_wwbits.root";
+  else fss << "results_data/datasets_trees/dataset_embeddedtt_wwbits.root";
+
+  TFile *fileNew = TFile::Open(fss.str().c_str(),"recreate");
   TTree *treeNew = new TTree("latinobits","tree with only selected events");
   fChain->LoadTree(0);
 

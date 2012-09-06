@@ -46,3 +46,8 @@ LatinosLooseLooseAnalyzer: $(INCLUDEDIR)/LatinosLooseLooseAnalyzer.cc \
 	$(OUTLIB)addWeightsToTreeLooseLoose.o \
 	$(OUTLIB)HWWKinematics.o
 	$(CXX) $(CXXFLAGS) -o LatinosLooseLooseAnalyzer $(OUTLIB)/*o $(GLIBS) $ $<
+
+LatinosEmbeddedTauAnalyzer: $(INCLUDEDIR)/LatinosEmbeddedTauAnalyzer.cc \
+	$(OUTLIB)addWeightsToTreeLooseLoose.o \
+	$(OUTLIB)HWWKinematics.o
+	$(CXX) $(CXXFLAGS) -o LatinosEmbeddedTauAnalyzer $(OUTLIB)/*o $(GLIBS) $ $<
