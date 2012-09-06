@@ -71,6 +71,10 @@ void fitLandauShapeMR(int channel, string sample, bool looseloose,
 		      double rangeLow, double rangeHigh,
 		      double fitValues[2], double fitErrors[2]);
 
+void fitWJetsSFLandauShapeMR(int channel, string sample, bool looseloose,
+                             double rangeLow, double rangeHigh,
+                             double fitValues[2], double fitErrors[2]);
+
 void fitGaussianShapeMR(int channel, string sample,
                         double rangeLow, double rangeHigh,
                         double fitValues[2], double fitErrors[2]);
@@ -175,8 +179,9 @@ void allWjets(int channel) {
     cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
     cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
   } else {
-    fitOthersSFShapeMR(channel,"wjets",true,xLow,xHigh,fitValues,fitErrors);    
-    for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
+    fitWJetsSFLandauShapeMR(channel,"wjets",true,xLow,xHigh,fitValues,fitErrors);
+    cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
+    cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;    
   }
 }
 
@@ -239,6 +244,108 @@ void fitLandauShapeMR(int channel, string sample, bool looseloose,
   RooRealVar njet("njet","njet",0,-0.5,10.);
 
   RooArgSet varset(x,w,cha,njet);
+  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar(weight.str().c_str()),Cut(cut));
+
+
+  //--- Landau
+  RooRealVar mean("mean","mean",140,70,200) ;
+  RooRealVar sigma("#sigma","width",50,10,100); 
+  RooLandau landau("landau","landau",x,mean,sigma);
+
+  x.setBins(10000,"fft");
+  landau.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
+
+  stringstream frameTitle;
+  if(channel==of0j){frameTitle << "e#mu,0-j";}
+  if(channel==of1j){frameTitle << "e#mu,1-j";}
+  if(channel==sf0j){frameTitle << "ee+#mu#mu,0-j";}
+  if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j";}
+
+  RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
+  dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
+  landau.plotOn(xframe);
+  landau.paramOn(xframe);
+
+  stringstream nameFile;
+  nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
+  xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
+
+
+  if(fitValues!=0){
+    fitValues[0] = mean.getVal();
+    fitValues[1] = sigma.getVal();
+  }
+
+  if(fitErrors!=0){
+    fitErrors[0] = mean.getError();
+    fitErrors[1] = sigma.getError();
+  }
+
+  return;
+
+}
+
+void fitWJetsSFLandauShapeMR(int channel, string sample, bool looseloose,
+                             double rangeLow, double rangeHigh,
+                             double fitValues[2], double fitErrors[2]){
+ // ------ root settings ---------
+  gROOT->Reset();  
+  gROOT->SetStyle("Plain");
+  gStyle->SetPadGridX(kTRUE);
+  gStyle->SetPadGridY(kTRUE);
+  //gStyle->SetOptStat("kKsSiourRmMen");
+  gStyle->SetOptStat("iourme");
+  //gStyle->SetOptStat("rme");
+  //gStyle->SetOptStat("");
+  gStyle->SetOptFit(11);
+  gStyle->SetPadLeftMargin(0.14);
+  gStyle->SetPadRightMargin(0.06);
+  // ------------------------------ 
+
+  ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
+
+  stringstream hFileName;
+  if(!looseloose) hFileName << "results/datasets_trees/" << sample << "_ll.root";
+  else hFileName << "results_data/datasets_trees/dataset_looseloose_wwbits.root";
+
+  cout << "Opening ROOT file: " << hFileName.str() << endl;
+
+  TFile* hFile = TFile::Open(hFileName.str().c_str());
+  TTree* hTree = (TTree*) hFile->Get("latinoFitSkim");
+  
+  float mr, dphillr;
+  float puW,effW,baseW;
+
+  hTree->SetBranchAddress("mr",&mr);
+  hTree->SetBranchAddress("dphillr",&dphillr);
+  hTree->SetBranchAddress("puW",&puW);
+  hTree->SetBranchAddress("baseW",&baseW);
+  hTree->SetBranchAddress("effW",&effW);
+
+  //--- rooFit part
+  double xMin,xMax,xInit;
+  xInit = 140;
+  xMin = rangeLow;
+  xMax = rangeHigh ;
+  
+
+  TCut cut1 = getStringChannel(channel).c_str();
+  stringstream fitrangecut;
+  fitrangecut << "mr > " << xMin << " && mr < " << xMax;
+  TCut cut2 = fitrangecut.str().c_str();
+  TCut cut3 = "zveto";
+  TCut cut = cut1 && cut2 && cut3;
+
+  stringstream weight;
+  if(!looseloose) weight << "baseW";
+  else weight << "fake2W";
+  RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
+  RooRealVar w(weight.str().c_str(),weight.str().c_str(),1.0,-1000.,1000.);
+  RooRealVar cha("channel","channel",0,-0.5,3.5);
+  RooRealVar njet("njet","njet",0,-0.5,10.);
+  RooRealVar zveto("zveto","zveto",1,-0.5,1.5);
+
+  RooArgSet varset(x,w,cha,njet,zveto);
   RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar(weight.str().c_str()),Cut(cut));
 
 
