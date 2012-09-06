@@ -157,11 +157,6 @@ void allDY(int channel) {
 
   if(channel<2) {
     fitGaussianShapeMR(channel,"dataset_embeddedtt",xLow,xHigh,fitValues,fitErrors);
-    cout << "mean1 value,error =  " << fitValues[0] << " , " << fitErrors[0] << endl;
-    cout << "sigmq1 value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
-    cout << "mean2 value,error =  " << fitValues[2] << " , " << fitErrors[2] << endl;
-    cout << "sigma2 value,error = " << fitValues[3] << " , " << fitErrors[3] << endl;
-    cout << "fsig value,error   = " << fitValues[4] << " , " << fitErrors[4] << endl;
   } else {
     fitOthersSFShapeMR(channel,"Zjets",false,xLow,xHigh,fitValues,fitErrors);    
     for(int i=0;i<14;++i) cout << "a" << i << " value,error = " << fitValues[i] << " , " << fitErrors[i] << endl;
@@ -287,7 +282,7 @@ void fitLandauShapeMR(int channel, string sample, bool looseloose,
 
 void fitGaussianShapeMR(int channel, string sample,
                         double rangeLow, double rangeHigh,
-                        double fitValues[5], double fitErrors[5]){
+                        double fitValues[14], double fitErrors[14]){
  // ------ root settings ---------
   gROOT->Reset();  
   gROOT->SetStyle("Plain");
@@ -345,10 +340,10 @@ void fitGaussianShapeMR(int channel, string sample,
 
   //--- simple Gaussian 1
   RooRealVar mean("mean_{1}","mean",140,50,200) ;
-  RooRealVar sigma("#sigma_{1}","width",20,10,30); 
+  RooRealVar sigma("#sigma_{1}","width",20,10,40); 
   RooGaussian gauss("gauss","gauss",x,mean,sigma);
 
-  RooRealVar mean2("mean_{2}","mean2",140,50,300) ;
+  RooRealVar mean2("mean_{2}","mean2",140,0,300) ;
   RooRealVar sigma2("#sigma_{2}","width2",35,30,200); 
   RooGaussian gauss2("gauss2","gauss2",x,mean2,sigma2);
   RooRealVar fsig("f_{1}","signal fraction",0.95,0.7,1.);
@@ -373,6 +368,12 @@ void fitGaussianShapeMR(int channel, string sample,
   nameFile << "fit" << sample << "_" << getChannelSuffix(channel) << ".pdf";
   xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
 
+
+  cout << "mean1 = " << mean.getVal() << " +/-" << mean.getError() << endl;
+  cout << "sigma1 = " << sigma.getVal() << " +/-" << sigma.getError() << endl;
+  cout << "mean2 = " << mean2.getVal() << " +/-" << mean2.getError() << endl;
+  cout << "sigma2 = " << sigma2.getVal() << " +/-" << sigma2.getError() << endl;
+  cout << "frac = " << fsig.getVal() << " +/-" << fsig.getError() << endl;
 
   if(fitValues!=0){
     fitValues[0] = mean.getVal();
