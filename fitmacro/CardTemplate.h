@@ -32,8 +32,8 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
         card += "UEPS                      lnN        1.084    -       -        -        -        -        -        -\n";  
       }
         card += "QCDscale_ggH              lnN        GGH_QCD  -       -        -        -        -        -        -\n";
-        card += "QCDscale_ggH1in           lnN        GGH1_QCD -       -        -        -        -        -        -\n";
-        card += "QCDscale_ggH2in           lnN        GGH2_QCD -       -        -        -        -        -        -\n";
+        card += "QCDscale_ggH1in           lnN        GGH1_QCD  -       -        -        -        -        -        -\n";
+        card += "QCDscale_ggH2in           lnN        GGH2_QCD  -       -       -        -        -        -        -\n";
         card += "QCDscale_qqH              lnN        -        VBF_PDF -        -        -        -        -        -\n";
         card += "QCDscale_WW               lnN        -        -       1.00     -        -        -        -        -\n";
         card += "QCDscale_WW1in            lnN        -        -       1.00     -        -        -        -        -\n";
