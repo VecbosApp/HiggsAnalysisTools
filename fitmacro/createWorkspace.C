@@ -105,7 +105,7 @@ public:
         
     std::cout << "Creating datacard for " << mass_str << " GeV mass point and channel " << chstr << " ... " << std::endl;
     
-    std::string card_name   = do1D ? (std::string("card_1D_m")+mass_str+"_8TeV_") : (std::string("card_2D_m")+mass_str+"_8TeV");
+    std::string card_name   = do1D ? (std::string("card_1D_m")+mass_str+"_8TeV_") : (std::string("card_2D_m")+mass_str+"_8TeV_");
     card_name += chstr;
     std::string workspace = card_name+"_workspace.root";
 
@@ -509,9 +509,9 @@ public:
     RooAbsPdf *bkg_dy_pdf, *bkg_others_pdf;
     bkg_dy_pdf=bkg_others_pdf=0;
     if(ch == of0j || ch == of1j) {
-      RooGaussian dygauss1("dygauss1","dygauss1",CMS_ww2l_mr_1D,dyof_mean1,dyof_sigma1);
-      RooGaussian dygauss2("dygauss2","dygauss2",CMS_ww2l_mr_1D,dyof_mean2,dyof_sigma2);
-      bkg_dy_pdf = new RooAddPdf(bkg_dy_pdf_name,"",dygauss1,dygauss2,dyof_frac);
+      RooGaussian *dygauss1 = new RooGaussian("dygauss1","dygauss1",CMS_ww2l_mr_1D,dyof_mean1,dyof_sigma1);
+      RooGaussian *dygauss2 = new RooGaussian("dygauss2","dygauss2",CMS_ww2l_mr_1D,dyof_mean2,dyof_sigma2);
+      bkg_dy_pdf = new RooAddPdf(bkg_dy_pdf_name,"",*dygauss1,*dygauss2,dyof_frac);
       bkg_others_pdf = new RooLandau(bkg_others_pdf_name,"",CMS_ww2l_mr_1D,othersof_mean,othersof_sigma);
     }
     if(ch == sf0j || ch == sf1j) {
@@ -655,7 +655,7 @@ void createWorkspace() {
   hmpi8.lumi = 5.26;
   hmpi8.dphiMin = 0.;
   hmpi8.dphiMax = TMath::Pi();
-  hmpi8.do1D = false;
+  hmpi8.do1D = true;
   hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
   hmpi8.xsecProvider.initXsec();
@@ -672,6 +672,12 @@ void createWorkspace() {
   hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"dataset_looseloose_wwbits.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"others_ll.root");
   
+  //for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
+    for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
+  }
+
+  hmpi8.do1D = false;
   //for (float i = 114.; i <= 180.; i += 1.) {
   for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
