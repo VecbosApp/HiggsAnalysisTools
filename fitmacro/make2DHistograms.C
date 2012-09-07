@@ -165,7 +165,10 @@ void all(int cha, float dphiMin, float dphiMax) {
   TString cut2(fitrangecut.str().c_str());
   TString cutHiggsMC = TString("(")+cut1+TString(" && ")+cut2+TString(")*effW*puW");
   TString cutMC = TString("(")+cut1+TString(" && ")+cut2+TString(")*baseW*effW*puW");
+  TString cutggWWMC = TString("(")+cut1+TString(" && dataset==1 && ")+cut2+TString(")*baseW*effW*puW");
+  TString cutqqWWMC = TString("(")+cut1+TString(" && dataset==0 && ")+cut2+TString(")*baseW*effW*puW");
   TString cutLooseLoose = TString("(")+cut1+TString(" && ")+cut2+TString(")*fake2W");
+  TString cutEmbeddedTau = TString("(")+cut1+TString(" && ")+cut2+TString(")*baseW");
 
   float mrBinSize = 10.0; // GeV
   float dphiBinSize = 5.0 * TMath::Pi() / 180.; // 5 degrees
@@ -186,26 +189,31 @@ void all(int cha, float dphiMin, float dphiMax) {
 
   // input files and trees
   TFile *fileDataLooseLoose  = TFile::Open("results_data/datasets_trees/dataset_looseloose_wwbits.root");
-  TFile *fileWW  = TFile::Open("results/datasets_trees/WW_ll.root");
+  TFile *fileDataEmbTau      = TFile::Open("results_data/datasets_trees/dataset_embeddedtt_wwbits.root");
+  TFile *fileWW     = TFile::Open("results/datasets_trees/WW_ll.root");
   TFile *fileZjets  = TFile::Open("results/datasets_trees/Zjets_ll.root");
   TFile *fileOthers = TFile::Open("results/datasets_trees/others_ll.root");
-  TFile *fileTop = TFile::Open("results/datasets_trees/top_ll.root");
+  TFile *fileTop    = TFile::Open("results/datasets_trees/top_ll.root");
 
-  TTree *treeDataLooseLoose   = (TTree*)fileDataLooseLoose->Get("latinoFitSkim");
-  TTree *treeWW  = (TTree*)fileWW->Get("latinoFitSkim");
+  TTree *treeDataLooseLoose = (TTree*)fileDataLooseLoose->Get("latinoFitSkim");
+  TTree *treeDataEmbTau     = (TTree*)fileDataEmbTau->Get("latinoFitSkim");
+  TTree *treeWW     = (TTree*)fileWW->Get("latinoFitSkim");
   TTree *treeZjets  = (TTree*)fileZjets->Get("latinoFitSkim");
   TTree *treeOthers = (TTree*)fileOthers->Get("latinoFitSkim");
-  TTree *treeTop = (TTree*)fileTop->Get("latinoFitSkim");
+  TTree *treeTop    = (TTree*)fileTop->Get("latinoFitSkim");
 
-  TH2F *bkg_ww     = new TH2F((string("hist2D_bkg_ww_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_qqww   = new TH2F((string("hist2D_bkg_qqww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_ggww   = new TH2F((string("hist2D_bkg_ggww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_top    = new TH2F((string("hist2D_bkg_top_")+getChannelSuffix(cha)).c_str(),   "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
 
-  treeWW->Project(bkg_ww->GetName(),"dphillr:mr",cutMC.Data());
+  treeWW->Project(bkg_qqww->GetName(),"dphillr:mr",cutqqWWMC.Data());
+  treeWW->Project(bkg_ggww->GetName(),"dphillr:mr",cutggWWMC.Data());
   treeTop->Project(bkg_top->GetName(),"dphillr:mr",cutMC.Data());
-  treeZjets->Project(bkg_dy->GetName(),"dphillr:mr",cutMC.Data());
+  if(cha==sf0j || cha==sf1j) treeZjets->Project(bkg_dy->GetName(),"dphillr:mr",cutMC.Data());
+  if(cha==of0j || cha==of1j) treeDataEmbTau->Project(bkg_dy->GetName(),"dphillr:mr",cutEmbeddedTau.Data());
   treeOthers->Project(bkg_others->GetName(),"dphillr:mr",cutMC.Data());
   treeDataLooseLoose->Project(bkg_wj->GetName(),"dphillr:mr",cutLooseLoose.Data());
 
@@ -237,7 +245,8 @@ void all(int cha, float dphiMin, float dphiMax) {
   smooth(bkg_wj, 1.0);
 
   normalize(sig_higgs);
-  normalize(bkg_ww);
+  normalize(bkg_qqww);
+  normalize(bkg_ggww);
   normalize(bkg_top);
   normalize(bkg_dy);
   normalize(bkg_wj);
@@ -248,7 +257,8 @@ void all(int cha, float dphiMin, float dphiMax) {
   TFile *fileOut = TFile::Open("hww2DShapes.root","update");
   fileOut->cd();
   sig_higgs->Write();
-  bkg_ww->Write();
+  bkg_qqww->Write();
+  bkg_ggww->Write();
   bkg_top->Write();
   bkg_dy->Write();
   bkg_wj->Write();
@@ -257,8 +267,10 @@ void all(int cha, float dphiMin, float dphiMax) {
   // === fake alternative shapes ===
   TH2F *sig_higgs_up = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Up").c_str()));
   TH2F *sig_higgs_dn = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Dn").c_str()));
-  TH2F *bkg_ww_up = (TH2F*)(bkg_ww->Clone((std::string(bkg_ww->GetName())+"_Up").c_str()));
-  TH2F *bkg_ww_dn = (TH2F*)(bkg_ww->Clone((std::string(bkg_ww->GetName())+"_Dn").c_str()));
+  TH2F *bkg_qqww_up = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Up").c_str()));
+  TH2F *bkg_qqww_dn = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Dn").c_str()));
+  TH2F *bkg_ggww_up = (TH2F*)(bkg_ggww->Clone((std::string(bkg_ggww->GetName())+"_Up").c_str()));
+  TH2F *bkg_ggww_dn = (TH2F*)(bkg_ggww->Clone((std::string(bkg_ggww->GetName())+"_Dn").c_str()));
   TH2F *bkg_top_up = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Up").c_str()));
   TH2F *bkg_top_dn = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Dn").c_str()));
   TH2F *bkg_dy_up = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Up").c_str()));
@@ -269,21 +281,24 @@ void all(int cha, float dphiMin, float dphiMax) {
   TH2F *bkg_others_dn = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Dn").c_str()));
 
   fakeAlternativeShapes(sig_higgs,sig_higgs_up,sig_higgs_dn);
-  fakeAlternativeShapes(bkg_ww,bkg_ww_up,bkg_ww_dn);
+  fakeAlternativeShapes(bkg_qqww,bkg_qqww_up,bkg_qqww_dn);
+  fakeAlternativeShapes(bkg_ggww,bkg_ggww_up,bkg_ggww_dn);
   fakeAlternativeShapes(bkg_top,bkg_top_up,bkg_top_dn);
   fakeAlternativeShapes(bkg_wj,bkg_wj_up,bkg_wj_dn);
   fakeAlternativeShapes(bkg_dy,bkg_dy_up,bkg_dy_dn);
   fakeAlternativeShapes(bkg_others,bkg_others_up,bkg_others_dn);
 
   sig_higgs_up->Write();
-  bkg_ww_up->Write();
+  bkg_qqww_up->Write();
+  bkg_ggww_up->Write();
   bkg_top_up->Write();
   bkg_dy_up->Write();
   bkg_wj_up->Write();
   bkg_others_up->Write();
 
   sig_higgs_dn->Write();
-  bkg_ww_dn->Write();
+  bkg_qqww_dn->Write();
+  bkg_ggww_dn->Write();
   bkg_top_dn->Write();
   bkg_dy_dn->Write();
   bkg_wj_dn->Write();
