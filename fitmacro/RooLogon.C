@@ -69,4 +69,6 @@ void RooLogon() {
 
   gSystem->Load("libRooFit") ;
   gSystem->Load("/afs/cern.ch/work/e/emanuele/hww2l2nu/CMSSW_5_3_3/lib/slc5_amd64_gcc462/libHiggsAnalysisCombinedLimit.so");
+  gROOT->LoadMacro("XSecProvider.cc+");
+  gSystem->Load("XSecProvider_cc.so");
 }
