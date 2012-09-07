@@ -22,6 +22,7 @@
 #include "CardTemplate.h"
 #include "findAndReplace.h"
 #include "yields.h"
+#include "XSecProvider.h"
 
 using namespace RooFit;
 using namespace std;
@@ -41,14 +42,16 @@ public:
 
   DataYieldMaker  ymaker_data;
   YieldMaker      ymaker_hi;
-  YieldMaker      ymaker_ww;
+  YieldMaker      ymaker_qqww;
+  YieldMaker      ymaker_ggww;
   YieldMaker      ymaker_top;
   YieldMaker      ymaker_dysf;
   YieldMaker      ymaker_dyof;
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
-
-  std::string getSignalCBMeanString(int ch) {
+  XSecProvider xsecProvider;
+  
+ std::string getSignalCBMeanString(int ch) {
     stringstream fss;
     fss << "( ";  
     if (ch == of0j) fss << "26.86 - 0.24065*@0";
@@ -107,7 +110,8 @@ public:
     std::string workspace = card_name+"_workspace.root";
 
     float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_ww     = ymaker_ww     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 0, 0) * lumi;
+    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 1, 1) * lumi;
     float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_dy     = 0.0; 
     if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
@@ -123,9 +127,17 @@ public:
     if (ch == sf0j) binname = "sf_0j";
     if (ch == sf1j) binname = "sf_1j";
 
+    int jet = (ch == of0j || ch == sf0j) ? 0 : 1;
+    card = findAndReplace(card, "GGH_PDF"         , xsecProvider.get8TeVggHPDFDown(mass),            xsecProvider.get8TeVggHPDFUp(mass));
+    card = findAndReplace(card, "VBF_PDF"         , xsecProvider.get8TeVVBFPDFDown(mass),            xsecProvider.get8TeVVBFPDFUp(mass));
+    card = findAndReplace(card, "GGH_QCD"         , xsecProvider.get8TeVggHExclQCDDown(mass),        xsecProvider.get8TeVggHExclQCDUp(mass));
+    card = findAndReplace(card, "GGH1_QCD"        , xsecProvider.get8TeVggH1inExclQCDDown(mass,jet), xsecProvider.get8TeVggH1inExclQCDUp(mass,jet));
+    card = findAndReplace(card, "GGH2_QCD"        , xsecProvider.get8TeVggH2inExclQCDDown(mass,jet), xsecProvider.get8TeVggH2inExclQCDUp(mass,jet));
+    card = findAndReplace(card, "VBF_QCD"         , xsecProvider.get8TeVVBFQCDDown(mass),            xsecProvider.get8TeVVBFQCDUp(mass));
     card = findAndReplace(card, "SIG_GGH_YIELD"   , 1);
     card = findAndReplace(card, "SIG_VBF_YIELD"   , 1);
-    card = findAndReplace(card, "BKG_WW_YIELD"    , yield_ww);
+    card = findAndReplace(card, "BKG_qqWW_YIELD"  , yield_qqww);
+    card = findAndReplace(card, "BKG_ggWW_YIELD"  , yield_ggww);
     card = findAndReplace(card, "BKG_TOP_YIELD"   , yield_top);
     card = findAndReplace(card, "BKG_DY_YIELD"    , yield_dy);
     card = findAndReplace(card, "BKG_OTHERS_YIELD", yield_others);
@@ -165,8 +177,10 @@ public:
 
     ///////////////////// Define parameters //////////////////////////////////
     
-    float WWme = 0.;
-    float WWsi = 0.;
+    float qqWWme = 0.;
+    float qqWWsi = 0.;
+    float ggWWme = 0.;
+    float ggWWsi = 0.;
     float Topme = 0.;
     float Topsi = 0.;
     float DYofme1 = 0.;
@@ -208,9 +222,12 @@ public:
     float Otsfa13 = 0.;
     
     if(ch == of0j) {
-      WWme = 158.109;
-      WWsi = 33.6625;
-      
+      qqWWme = 158.149;
+      qqWWsi = 33.8333;
+
+      ggWWme = 158.483;
+      ggWWsi = 30.6908;
+
       Topme = 193.609;
       Topsi = 46.473;
       
@@ -228,9 +245,12 @@ public:
     }
 
     else if(ch == of1j) {
-      WWme = 170.113;
-      WWsi = 38.5888;
+      qqWWme = 170.588;
+      qqWWsi = 38.8822;
       
+      ggWWme = 159.846;
+      ggWWsi = 32.4088;
+
       Topme = 183.549;
       Topsi = 42.8287;
 
@@ -248,8 +268,11 @@ public:
     }
 
     else if(ch == sf0j) {
-      WWme = 166.081;
-      WWsi = 31.1662;
+      qqWWme = 166.184;
+      qqWWsi = 31.4472;
+
+      ggWWme = 165.034;
+      ggWWsi = 26.5768;
 
       Topme = 198.501;
       Topsi = 43.3945;
@@ -289,8 +312,11 @@ public:
     }
 
     else if(ch == sf1j) {
-      WWme = 173.194;
-      WWsi = 37.3955;
+      qqWWme = 173.467;
+      qqWWsi = 37.7352;
+      
+      ggWWme = 168.458;
+      ggWWsi = 30.4483;
 
       Topme = 185.053;
       Topsi = 40.3746;
@@ -335,8 +361,11 @@ public:
     lumiss << lumi;
     std::string lumistr = lumiss.str(); 
 
-    RooRealVar ww_mean (("bkg_ww_"+chstr+tevstr+"_mean" ).c_str(), "", WWme);
-    RooRealVar ww_sigma(("bkg_ww_"+chstr+tevstr+"_sigma").c_str(), "", WWsi);
+    RooRealVar qqww_mean (("bkg_qqww_"+chstr+tevstr+"_mean" ).c_str(), "", qqWWme);
+    RooRealVar qqww_sigma(("bkg_qqww_"+chstr+tevstr+"_sigma").c_str(), "", qqWWsi);
+
+    RooRealVar ggww_mean (("bkg_ggww_"+chstr+tevstr+"_mean" ).c_str(), "", ggWWme);
+    RooRealVar ggww_sigma(("bkg_ggww_"+chstr+tevstr+"_sigma").c_str(), "", ggWWsi);
 
     RooRealVar top_mean (("bkg_top_"+chstr+tevstr+"_mean" ).c_str(), "", Topme);
     RooRealVar top_sigma(("bkg_top_"+chstr+tevstr+"_sigma").c_str(), "", Topsi);
@@ -407,8 +436,11 @@ public:
       
     /////////// Set parameters to constant //////////////////
 
-    ww_mean  .setConstant(kTRUE);
-    ww_sigma .setConstant(kTRUE);
+    qqww_mean  .setConstant(kTRUE);
+    qqww_sigma .setConstant(kTRUE);
+
+    ggww_mean  .setConstant(kTRUE);
+    ggww_sigma .setConstant(kTRUE);
 
     top_mean  .setConstant(kTRUE);
     top_sigma .setConstant(kTRUE);
@@ -457,7 +489,8 @@ public:
     
     ////////////////// Define the PDFs /////////////////////////////////
 
-    const char* bkg_ww_pdf_name     = do1D ? "bkg_ww"     : "bkg_ww_1D" ;
+    const char* bkg_qqww_pdf_name   = do1D ? "bkg_qqww"   : "bkg_qqww_1D" ;
+    const char* bkg_ggww_pdf_name   = do1D ? "bkg_ggww"   : "bkg_ggww_1D" ;
     const char* bkg_top_pdf_name    = do1D ? "bkg_top"    : "bkg_top_1D" ;
     const char* bkg_dy_pdf_name     = do1D ? "bkg_dy"     : "bkg_dy_1D" ;
     const char* bkg_wj_pdf_name     = do1D ? "bkg_wj"     : "bkg_wj_1D" ;
@@ -465,7 +498,9 @@ public:
     const char* sig_ggH_pdf_name    = do1D ? "ggH"        : "ggH_1D"  ;
     const char* sig_qqH_pdf_name    = do1D ? "qqH"        : "qqH_1D"  ;
 
-    RooLandau *bkg_ww_pdf = new RooLandau(bkg_ww_pdf_name,"",CMS_ww2l_mr_1D,ww_mean,ww_sigma);
+    RooLandau *bkg_qqww_pdf = new RooLandau(bkg_qqww_pdf_name,"",CMS_ww2l_mr_1D,qqww_mean,qqww_sigma);
+
+    RooLandau *bkg_ggww_pdf = new RooLandau(bkg_ggww_pdf_name,"",CMS_ww2l_mr_1D,ggww_mean,ggww_sigma);
 
     RooLandau *bkg_top_pdf = new RooLandau(bkg_top_pdf_name,"",CMS_ww2l_mr_1D,top_mean,top_sigma);
 
@@ -527,7 +562,8 @@ public:
     w.import(vbf_norm);
 
     if (do1D) { 
-      w.import(*bkg_ww_pdf);
+      w.import(*bkg_qqww_pdf);
+      w.import(*bkg_ggww_pdf);
       w.import(*bkg_top_pdf);
       w.import(*bkg_dy_pdf);
       w.import(*bkg_wj_pdf);
@@ -541,7 +577,8 @@ public:
       RooArgList v2dList(CMS_ww2l_mr_1D, CMS_ww2l_dphi);
       RooArgSet  v2dSet (CMS_ww2l_mr_1D, CMS_ww2l_dphi);
       
-      TH2F* dphishape_ww = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_ww_"+chstr).c_str()));
+      TH2F* dphishape_qqww = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_qqww_"+chstr).c_str()));
+      TH2F* dphishape_ggww = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_ggww_"+chstr).c_str()));
       TH2F* dphishape_top = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_top_"+chstr).c_str()));
       TH2F* dphishape_dy = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_dy_"+chstr).c_str()));
       TH2F* dphishape_wj = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr).c_str()));
@@ -556,7 +593,8 @@ public:
       // TH2F* dphishape_others = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_others_"+chstr).c_str()));
       // TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_sig_"+chstr).c_str()));
 
-      RooDataHist rhist_ww     (("rhist_ww_" +chstr+tevstr).c_str(), "", v2dList, dphishape_ww);
+      RooDataHist rhist_qqww   (("rhist_qqww_" +chstr+tevstr).c_str(), "", v2dList, dphishape_qqww);
+      RooDataHist rhist_ggww   (("rhist_ggww_" +chstr+tevstr).c_str(), "", v2dList, dphishape_ggww);
       RooDataHist rhist_top    (("rhist_top_" +chstr+tevstr).c_str(), "", v2dList, dphishape_top);
       RooDataHist rhist_dy     (("rhist_dy_" +chstr+tevstr).c_str(), "", v2dList, dphishape_dy);
       RooDataHist rhist_wj     (("rhist_wj_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wj);
@@ -564,7 +602,8 @@ public:
       RooDataHist rhist_ggH    (("rhist_ggH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
       RooDataHist rhist_qqH    (("rhist_qqH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
 	    
-      RooHistPdf rpdf_ww     (("bkg_ww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ww);
+      RooHistPdf rpdf_qqww   (("bkg_qqww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqww);
+      RooHistPdf rpdf_ggww   (("bkg_ggww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggww);
       RooHistPdf rpdf_top    (("bkg_top_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_top);
       RooHistPdf rpdf_dy     (("bkg_dy_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_dy);
       RooHistPdf rpdf_wj     (("bkg_wj_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wj);
@@ -575,7 +614,8 @@ public:
       // will be used for syst
       // RooRealVar CMS_ww2l_bkg("CMS_ww2l_bkgDPHI" ,"" ,0,-10,10); 
 	
-      FastVerticalInterpHistPdf2D plpdf_ww     (("bkg_ww_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ww)     ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_qqww   (("bkg_qqww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqww)   ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_ggww   (("bkg_ggww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggww)   ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_top    (("bkg_top_FVIHP_" +chstr+tevstr).c_str(),    "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_top)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_dy     (("bkg_dy_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_dy)     ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_wj     (("bkg_wj_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wj)     ,RooArgList()                ,1.0,1);
@@ -583,7 +623,8 @@ public:
       FastVerticalInterpHistPdf2D plpdf_ggH    (("sig_ggH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggH)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_qqH    (("sig_qqH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqH)    ,RooArgList()                ,1.0,1);
 
-      RooProdPdf bkg_ww_pdf_2D     ("bkg_ww"     , "", *bkg_ww_pdf     ,Conditional(plpdf_ww     , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_qqww_pdf_2D   ("bkg_qqww"   , "", *bkg_qqww_pdf   ,Conditional(plpdf_qqww   , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_ggww_pdf_2D   ("bkg_ggww"   , "", *bkg_ggww_pdf   ,Conditional(plpdf_ggww   , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_top_pdf_2D    ("bkg_top"    , "", *bkg_top_pdf    ,Conditional(plpdf_top    , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_dy_pdf_2D     ("bkg_dy"     , "", *bkg_dy_pdf     ,Conditional(plpdf_dy     , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_wj_pdf_2D     ("bkg_wj"     , "", *bkg_wj_pdf     ,Conditional(plpdf_wj     , RooArgSet(CMS_ww2l_dphi))); 
@@ -592,7 +633,8 @@ public:
       RooProdPdf sig_ggH_pdf_2D  ("ggH", "", *sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf sig_qqH_pdf_2D  ("qqH", "", *sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
 
-      w.import(bkg_ww_pdf_2D); 
+      w.import(bkg_qqww_pdf_2D); 
+      w.import(bkg_ggww_pdf_2D); 
       w.import(bkg_top_pdf_2D); 
       w.import(bkg_dy_pdf_2D); 
       w.import(bkg_wj_pdf_2D); 
@@ -616,9 +658,14 @@ void createWorkspace() {
   hmpi8.do1D = false;
   hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
+  hmpi8.xsecProvider.initXsec();
+  hmpi8.xsecProvider.initQCDScale();
+  hmpi8.xsecProvider.initPDF();
+  hmpi8.xsecProvider.initJetBinFracs();
 
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"dataset_ll.root");
-  hmpi8.ymaker_ww     .fill(hmpi8.treeFolder+"WW_ll.root");
+  hmpi8.ymaker_qqww   .fill(hmpi8.treeFolder+"WW_ll.root");
+  hmpi8.ymaker_ggww   .fill(hmpi8.treeFolder+"WW_ll.root");
   hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"top_ll.root");
   hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"Zjets_ll.root");
   hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"dataset_embeddedtt_ll.root");
