@@ -16,7 +16,7 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
         card += "observation OBS\n";
         card += "------------\n";
         card += "bin     BIN           BIN            BIN           BIN           BIN           BIN           BIN            BIN\n";
-        card += "process ggH           qqH            bkg_qqww      bkg_ggww      bkg_top       bkg_wjets     bkg_others     bkg_dy\n";
+        card += "process ggH           qqH            bkg_qqww      bkg_ggww      bkg_top       bkg_wj        bkg_others     bkg_dy\n";
         card += "process -5            -4             1             2             3             4             5              6\n";
         card += "rate    SIG_GGH_YIELD SIG_VBF_YIELD  BKG_qqWW_YIELD  BKG_ggWW_YIELD  BKG_TOP_YIELD  BKG_WJETS_YIELD  BKG_OTHERS_YIELD  BKG_DY_YIELD\n";
         card += "------------\n";
