@@ -7514,22 +7514,22 @@ void XSecProvider::initJetBinFracs() {
   for(float mass=550.0; mass<=599.5; mass+=0.5) jetbin_k1[mass] = 1.18;
   for(float mass=600.0; mass<=1000.0; mass+=0.5) jetbin_k1[mass] = 1.18;
 
-  for(float mass=110.0; mass<=119.5; mass+=0.5) jetbin_f0[mass] = 1.10;
-  for(float mass=120.0; mass<=129.5; mass+=0.5) jetbin_f0[mass] = 1.09;
-  for(float mass=130.0; mass<=134.5; mass+=0.5) jetbin_f0[mass] = 1.10;
-  for(float mass=135.0; mass<=145.5; mass+=0.5) jetbin_f0[mass] = 1.10;
-  for(float mass=150.0; mass<=155.5; mass+=0.5) jetbin_f0[mass] = 1.12;
-  for(float mass=160.0; mass<=165.5; mass+=0.5) jetbin_f0[mass] = 1.12;
-  for(float mass=170.0; mass<=189.5; mass+=0.5) jetbin_f0[mass] = 1.14;
-  for(float mass=190.0; mass<=199.5; mass+=0.5) jetbin_f0[mass] = 1.15;
-  for(float mass=200.0; mass<=219.5; mass+=0.5) jetbin_f0[mass] = 1.15;
-  for(float mass=220.0; mass<=249.5; mass+=0.5) jetbin_f0[mass] = 1.16;
-  for(float mass=250.0; mass<=349.5; mass+=0.5) jetbin_f0[mass] = 1.18;
-  for(float mass=350.0; mass<=399.5; mass+=0.5) jetbin_f0[mass] = 1.19;
-  for(float mass=400.0; mass<=449.5; mass+=0.5) jetbin_f0[mass] = 1.19;
-  for(float mass=450.0; mass<=499.5; mass+=0.5) jetbin_f0[mass] = 1.19;
-  for(float mass=500.0; mass<=549.5; mass+=0.5) jetbin_f0[mass] = 1.20;
-  for(float mass=550.0; mass<=599.5; mass+=0.5) jetbin_f0[mass] = 1.20;
-  for(float mass=600.0; mass<=1000.0; mass+=0.5) jetbin_f0[mass] = 1.20;
+  for(float mass=110.0; mass<=119.5; mass+=0.5) jetbin_k2[mass] = 1.10;
+  for(float mass=120.0; mass<=129.5; mass+=0.5) jetbin_k2[mass] = 1.09;
+  for(float mass=130.0; mass<=134.5; mass+=0.5) jetbin_k2[mass] = 1.10;
+  for(float mass=135.0; mass<=145.5; mass+=0.5) jetbin_k2[mass] = 1.10;
+  for(float mass=150.0; mass<=155.5; mass+=0.5) jetbin_k2[mass] = 1.12;
+  for(float mass=160.0; mass<=165.5; mass+=0.5) jetbin_k2[mass] = 1.12;
+  for(float mass=170.0; mass<=189.5; mass+=0.5) jetbin_k2[mass] = 1.14;
+  for(float mass=190.0; mass<=199.5; mass+=0.5) jetbin_k2[mass] = 1.15;
+  for(float mass=200.0; mass<=219.5; mass+=0.5) jetbin_k2[mass] = 1.15;
+  for(float mass=220.0; mass<=249.5; mass+=0.5) jetbin_k2[mass] = 1.16;
+  for(float mass=250.0; mass<=349.5; mass+=0.5) jetbin_k2[mass] = 1.18;
+  for(float mass=350.0; mass<=399.5; mass+=0.5) jetbin_k2[mass] = 1.19;
+  for(float mass=400.0; mass<=449.5; mass+=0.5) jetbin_k2[mass] = 1.19;
+  for(float mass=450.0; mass<=499.5; mass+=0.5) jetbin_k2[mass] = 1.19;
+  for(float mass=500.0; mass<=549.5; mass+=0.5) jetbin_k2[mass] = 1.20;
+  for(float mass=550.0; mass<=599.5; mass+=0.5) jetbin_k2[mass] = 1.20;
+  for(float mass=600.0; mass<=1000.0; mass+=0.5) jetbin_k2[mass] = 1.20;
 
 }
