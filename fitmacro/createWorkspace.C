@@ -109,13 +109,15 @@ public:
     card_name += chstr;
     std::string workspace = card_name+"_workspace.root";
 
+    ScaleFactors sf(ch);
+
     float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 0, 0) * lumi;
-    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 1, 1) * lumi;
-    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 0, 0) * sf.getWW() * lumi;
+    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 1, 1) * sf.getWW() * lumi;
+    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * sf.getTop() * lumi;
     float yield_dy     = 0.0; 
     if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
+    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * sf.getDY() * lumi;
     float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
     float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
 
