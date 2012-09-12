@@ -37,6 +37,7 @@ public:
   float dphiMin;
   float dphiMax;
   bool  do1D;
+  bool  doFFT;
   std::string treeFolder;
   std::string hww2DShapesfilename;
 
@@ -54,6 +55,7 @@ public:
  std::string getSignalCBMeanString(int ch) {
     stringstream fss;
     fss << "( ";  
+    if (!doFFT) fss << "@0 + ";
     if (ch == of0j) fss << "26.86 - 0.24065*@0";
     if (ch == of1j) fss << "29.16 - 0.24410*@0";
     if (ch == sf0j) fss << "49.28 - 0.36044*@0";
@@ -156,7 +158,7 @@ public:
     
     RooRealVar CMS_ww2l_dphi ("CMS_ww2l_dphi" , "#Delta #Phi" ,   0,       TMath::Pi(), "");
     RooRealVar CMS_ww2l_mr_1D("CMS_ww2l_mr_1D", "M_{R}",          mrMin,   mrMax,       "GeV/c^{2}");
-    CMS_ww2l_mr_1D.setBins(100000, "fft");
+    if (doFFT) CMS_ww2l_mr_1D.setBins(100000, "fft");
         
     if (do1D) {
       RooArgSet argset_obs(CMS_ww2l_mr_1D, "argset_obs");
@@ -488,6 +490,11 @@ public:
     otherssf_a11 .setConstant(kTRUE);
     otherssf_a12 .setConstant(kTRUE);
     otherssf_a13 .setConstant(kTRUE);
+
+    masshiggs    .setConstant(kTRUE);
+    ggh_gamma_BW .setConstant(kTRUE);
+    vbf_gamma_BW .setConstant(kTRUE);
+
     
     ////////////////// Define the PDFs /////////////////////////////////
 
@@ -550,12 +557,12 @@ public:
 					 otherssf_a13);
     }
 
-    RooCBShape      signalCB_ggH   ("signalCB_ggH", "", CMS_ww2l_mr_1D, ggh_mean_CB,ggh_sigma_CB,ggh_alpha,ggh_n);
+    RooCBShape      signalCB_ggH  (doFFT ? "signalCB_ggH" : sig_ggH_pdf_name, "", CMS_ww2l_mr_1D, ggh_mean_CB,ggh_sigma_CB,ggh_alpha,ggh_n);
     RooBreitWigner  signalBW_ggH   ("signalBW_ggH", "", CMS_ww2l_mr_1D, masshiggs,ggh_gamma_BW);
     RooFFTConvPdf*  sig_ggH_pdf = new RooFFTConvPdf(sig_ggH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_ggH,signalCB_ggH,2);
     sig_ggH_pdf->setBufferFraction(0.2);
 
-    RooCBShape      signalCB_qqH   ("signalCB_qqH", "", CMS_ww2l_mr_1D, vbf_mean_CB,vbf_sigma_CB,vbf_alpha,vbf_n);
+    RooCBShape      signalCB_qqH   (doFFT? "signalCB_qqH" : sig_qqH_pdf_name, "", CMS_ww2l_mr_1D, vbf_mean_CB,vbf_sigma_CB,vbf_alpha,vbf_n);
     RooBreitWigner  signalBW_qqH   ("signalBW_qqH", "", CMS_ww2l_mr_1D, masshiggs,vbf_gamma_BW);
     RooFFTConvPdf*  sig_qqH_pdf = new RooFFTConvPdf(sig_qqH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_qqH,signalCB_qqH,2);
     sig_qqH_pdf->setBufferFraction(0.2);
@@ -570,8 +577,13 @@ public:
       w.import(*bkg_dy_pdf);
       w.import(*bkg_wj_pdf);
       w.import(*bkg_others_pdf);
-      w.import(*sig_ggH_pdf);
-      w.import(*sig_qqH_pdf);
+      if(doFFT) {
+        w.import(*sig_ggH_pdf);
+        w.import(*sig_qqH_pdf);
+      } else {
+        w.import(signalCB_ggH);
+        w.import(signalCB_qqH);
+      }
     } 
 
     else {
@@ -631,18 +643,33 @@ public:
       RooProdPdf bkg_dy_pdf_2D     ("bkg_dy"     , "", *bkg_dy_pdf     ,Conditional(plpdf_dy     , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_wj_pdf_2D     ("bkg_wj"     , "", *bkg_wj_pdf     ,Conditional(plpdf_wj     , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_others_pdf_2D ("bkg_others" , "", *bkg_others_pdf ,Conditional(plpdf_others , RooArgSet(CMS_ww2l_dphi))); 
-	    
-      RooProdPdf sig_ggH_pdf_2D  ("ggH", "", *sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
-      RooProdPdf sig_qqH_pdf_2D  ("qqH", "", *sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+	
+      if(doFFT) {
+        RooProdPdf sig_ggH_pdf_2D  ("ggH", "", *sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_qqH_pdf_2D  ("qqH", "", *sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+        
+        w.import(bkg_qqww_pdf_2D); 
+        w.import(bkg_ggww_pdf_2D); 
+        w.import(bkg_top_pdf_2D); 
+        w.import(bkg_dy_pdf_2D); 
+        w.import(bkg_wj_pdf_2D); 
+        w.import(bkg_others_pdf_2D); 
+        w.import(sig_ggH_pdf_2D); 
+        w.import(sig_qqH_pdf_2D); 
+      } else {
+        RooProdPdf sig_ggH_pdf_2D  ("ggH", "", signalCB_ggH   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_qqH_pdf_2D  ("qqH", "", signalCB_qqH   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+        
+        w.import(bkg_qqww_pdf_2D); 
+        w.import(bkg_ggww_pdf_2D); 
+        w.import(bkg_top_pdf_2D); 
+        w.import(bkg_dy_pdf_2D); 
+        w.import(bkg_wj_pdf_2D); 
+        w.import(bkg_others_pdf_2D); 
+        w.import(sig_ggH_pdf_2D); 
+        w.import(sig_qqH_pdf_2D); 
+      }
 
-      w.import(bkg_qqww_pdf_2D); 
-      w.import(bkg_ggww_pdf_2D); 
-      w.import(bkg_top_pdf_2D); 
-      w.import(bkg_dy_pdf_2D); 
-      w.import(bkg_wj_pdf_2D); 
-      w.import(bkg_others_pdf_2D); 
-      w.import(sig_ggH_pdf_2D); 
-      w.import(sig_qqH_pdf_2D); 
     }
 
     w.writeToFile(workspace.c_str());
@@ -658,6 +685,7 @@ void createWorkspace() {
   hmpi8.dphiMin = 0.;
   hmpi8.dphiMax = TMath::Pi();
   hmpi8.do1D = true;
+  hmpi8.doFFT = false;
   hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
   hmpi8.xsecProvider.initXsec();
