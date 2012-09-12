@@ -49,11 +49,11 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
         //                                            ggH      qqH     qqWW     ggWW     top      wj       ot       dy
     if(channel == of0j || channel == sf0j) {
         card += "CMS_hww_0j_ttbar          lnN        -         -       -       -        1.210    -        -        -\n";
-        card += "CMS_hww_0j_WW             lnN        -         -       -       -        1.080    -        -        -\n";
+        card += "CMS_hww_0j_WW             lnN        -         -       1.080   1.080    -        -        -        -\n";
     } 
     else if(channel == of1j || channel == sf1j) {
         card += "CMS_hww_1j_ttbar          lnN        -         -       -       -        1.061    -        -        -\n";
-        card += "CMS_hww_1j_WW             lnN        -         -       -       -        1.130    -        -        -\n";
+        card += "CMS_hww_1j_WW             lnN        -         -       1.130   1.130    -        -        -        -\n";
     } 
     if (channel == of0j) {
         card += "sig_of_0j_mean_err_7TeV   param      0        0.005                     \n";
