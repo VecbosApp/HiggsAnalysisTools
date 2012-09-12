@@ -491,10 +491,11 @@ public:
     otherssf_a12 .setConstant(kTRUE);
     otherssf_a13 .setConstant(kTRUE);
 
-    masshiggs    .setConstant(kTRUE);
-    ggh_gamma_BW .setConstant(kTRUE);
-    vbf_gamma_BW .setConstant(kTRUE);
-
+    masshiggs     .setConstant(kTRUE);
+    sig_mean_err  .setConstant(kTRUE);
+    sig_sigma_err .setConstant(kTRUE);
+    ggh_gamma_BW  .setConstant(kTRUE);
+    vbf_gamma_BW  .setConstant(kTRUE);
     
     ////////////////// Define the PDFs /////////////////////////////////
 
