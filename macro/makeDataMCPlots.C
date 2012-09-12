@@ -59,10 +59,10 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   scalefactor_datadriven[2][0] = "1.";     // here the data are used directly
   //  scalefactor_datadriven[2][0] = "1."; // if W+jets taken from MC
   scalefactor_datadriven[3][0] = "1.";      // taken from MC, + scale factor
-  scalefactor_datadriven[4][0] = "1.08";
-  scalefactor_datadriven[5][0] = "8.0"; // 
+  scalefactor_datadriven[4][0] = "1.3";
+  scalefactor_datadriven[5][0] = "4.0"; // 4.6: Zll
   scalefactor_datadriven[6][0] = "1."; // 4.0: Ztt
-  scalefactor_datadriven[7][0] = "1.07";
+  scalefactor_datadriven[7][0] = "1.12";
 
 
   scalefactor_datadriven[0][1] = "1.";
@@ -70,10 +70,10 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
   scalefactor_datadriven[2][1] = "1.";    // here the data are used directly 
   // scalefactor_datadriven[2][1] = "1."; // if W+jets taken from MC
   scalefactor_datadriven[3][1] = "1.";    // taken from MC + scalefactor
-  scalefactor_datadriven[4][1] = "1.03";
-  scalefactor_datadriven[5][1] = "1."; // 
+  scalefactor_datadriven[4][1] = "0.88";
+  scalefactor_datadriven[5][1] = "1.0"; // 3.5: Zll
   scalefactor_datadriven[6][1] = "1."; // 2.0: Ztt
-  scalefactor_datadriven[7][1] = "0.96";
+  scalefactor_datadriven[7][1] = "0.88";
 
   Color_t colors[NSPECIES];
   colors[0]=kBlack;
@@ -307,16 +307,16 @@ void makeDataMCPlots(int mH, const char *finalstate, float lumi, bool blindData=
 	      
               if(i>0) {
                 if(j>0 && j<5) { // scalefactors are valid from WW level on
-                  if(i!=2 && i!=5 && i!=6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]);
+                  if(i!=2 && i!=5 && i!=6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]);
                   if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("fake2W")); // W+jets uses the FR data weight only
-                  // if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]); // when usign Wjets MC
-		  if(i==5) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW*")+scalefactor_datadriven[i][jetbin]);
+                  // if(i==2) T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]); // when usign Wjets MC
+		  if(i==5) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1*")+scalefactor_datadriven[i][jetbin]);
 		  //if(i==6) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*(dataset==32 || dataset==35)*")+scalefactor_datadriven[i][jetbin]);
                 } else {
-                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*effW"));
+                  if(i!=2) T1[i]->Project(histoName,variables[z],cut[j]+TString(lumiwgt)+TString("baseW*puW*1"));
                   // fake2W is not good at 2l level. Do Not plot (W+jets is invisible) 
                   // T1[i]->Project(histoName,variables[z],cut[j]+TString("fake2W")); // W+jets uses the FR data weight only
-                  // else T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*effW")); // when usign Wjets MC 
+                  // else T1[i]->Project(histoName,variables[z],cut[j]+TString("baseW*puW*1")); // when usign Wjets MC 
                 }
               } else T1[i]->Project(histoName,variables[z],cut[j]+TString("1"));
 	      std::cout << "Done " << histoName << std::endl;
