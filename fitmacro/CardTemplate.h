@@ -56,23 +56,23 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
         card += "CMS_hww_1j_WW             lnN        -         -       1.130   1.130    -        -        -        -\n";
     } 
     if (channel == of0j) {
-        card += "sig_of_0j_mean_err_7TeV   param      0        0.005                     \n";
-        card += "sig_of_0j_sigma_err_7TeV  param      0        0.3                       \n";
+        card += "sig_of_0j_mean_err_8TeV   param      0        0.005                     \n";
+        card += "sig_of_0j_sigma_err_8TeV  param      0        0.3                       \n";
         card += "CMS_hwwof_0j_Z            lnN        -         -       -        -       -         -       -        1.10\n";
     }
     else if (channel == of1j) {
-        card += "sig_of_1j_mean_err_7TeV      param      0        0.004                     \n";
-        card += "sig_of_1j_sigma_err_7TeV     param      0        0.3                       \n";
+        card += "sig_of_1j_mean_err_8TeV      param      0        0.004                     \n";
+        card += "sig_of_1j_sigma_err_8TeV     param      0        0.3                       \n";
         card += "CMS_hwwof_1j_Z            lnN        -         -       -        -       -         -       -        1.10\n";
     }
     else if (channel == sf0j) {
-        card += "sig_sf_0j_mean_err_7TeV   param      0        0.005                      \n";
-        card += "sig_sf_0j_sigma_err_7TeV  param      0        0.3                        \n";
+        card += "sig_sf_0j_mean_err_8TeV   param      0        0.005                      \n";
+        card += "sig_sf_0j_sigma_err_8TeV  param      0        0.3                        \n";
         card += "CMS_hwwsf_0j_Z            lnN        -         -       -        -       -         -       -        1.45\n";
     }
     else if (channel == sf1j) {
-        card += "sig_sf_1j_mean_err_7TeV   param      0        0.005                      \n";
-        card += "sig_sf_1j_sigma_err_7TeV  param      0        0.3                        \n";
+        card += "sig_sf_1j_mean_err_8TeV   param      0        0.005                      \n";
+        card += "sig_sf_1j_sigma_err_8TeV  param      0        0.3                        \n";
         card += "CMS_hwwsf_1j_Z            lnN        -         -       -        -       -         -       -        1.185\n";
     }
     if (!do1D) {
