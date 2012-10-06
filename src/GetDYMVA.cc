@@ -14,8 +14,8 @@ GetDYMVA::GetDYMVA(int version):isInit(false),version_(version){
 	 "data/TMVA_1j_BDTB.weights.xml");
   } else if (version_==1) {
     init("BDTG", 
-	 "data/TMVA_BDTG_0j_MCtrain.weights.xml",  
-	 "data/TMVA_BDTG_1j_MCtrain.weights.xml");
+	 "data/TMVA_0j_metshift_BDTG.weights.xml",  
+	 "data/TMVA_1j_metshift_BDTG.weights.xml");
   } else {
     cerr << "version not supported: use 0 for data train and 1 for MC train" << endl;
   }
@@ -156,7 +156,7 @@ double GetDYMVA::getValue(int njets, double pmet, double pTrackMet, int nvtx, do
 //        << "dilpt = " << dilpt << "\t"
 //        << "ptjet1 = " << ptjet1 << "\t"
 //        << "metSig = " << metSig << "\t"
-//        << "dPhiDiLepJet1 = " << dPhiDiLepJet1 << "\t"
+//         << "dPhiDiLepJet1 = " << dPhiDiLepJet1 << "\t"
 //        << "dPhiDiLepMET = " << dPhiDiLepMET << "\t"
 //        << "dPhiJet1MET = " << dPhiJet1MET << "\t"
 //        << "recoil = " << recoil << "\t"
