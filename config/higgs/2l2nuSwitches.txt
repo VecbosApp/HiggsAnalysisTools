@@ -1,5 +1,5 @@
-isData                  0
-goodRunLS               0
+isData                  1
+goodRunLS               1
 asymmetricID		1
 applyBDTEleID           1
 MCtruth			0   

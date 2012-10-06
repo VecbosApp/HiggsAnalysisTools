@@ -11,8 +11,8 @@ muHcalIso               -10000          10000
 muEcalIso               -10000          10000
 looseMET                20              10000
 tightMET                40              10000
-dymva0j                 0.6             10
-dymva1j                 0.3             10
+dymva0j                 0.88             10
+dymva1j                 0.84             10
 projectedMET            20              10000
 metOverPtLL             0.6             10000
 mll                     12              10000
