@@ -27,6 +27,11 @@ public:
   typedef std::map< aRun, LSSegments > runsLSSegmentsMap;
   typedef std::pair < aRun, LSSegments > aRunsLSSegmentsMapElement;
 
+  enum samples { kDATA2011=0,
+                 kMC2011, 
+                 kDATA2012,
+                 kMC2012 };
+
   /// Class Constructor
   Higgs(TTree *tree=0);
   /// Class Destructor
@@ -66,6 +71,7 @@ public:
   double CalcMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcGammaMRstar(TLorentzVector ja, TLorentzVector jb);
   double CalcMRNEW(TLorentzVector P, TLorentzVector Q, TVector3 MET);
+  TVector3 XYCorrectedMet(TVector3 MET, int sample);
   std::vector<int> sortElectronsByPt(std::vector<int> electrnons);
   std::vector<int> sortMuonsByPt(std::vector<int> muons);
   TLorentzVector GetJESCorrected(TLorentzVector p4jet, const char *ScaleDirection);

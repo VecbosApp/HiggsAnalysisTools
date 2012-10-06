@@ -809,7 +809,11 @@ void HiggsMLSelection::Loop() {
     resetKinematics();
     
     // MET is an event variable. Independent o the channel
-    m_p3PFMET->SetXYZ(pxPFMet[0],pyPFMet[0],pzPFMet[0]);
+    TVector3 pfmet(pxPFMet[0],pyPFMet[0],pzPFMet[0]);
+    int sample=kMC2012;
+    if(_selectionEE->getSwitch("isData")) sample=kDATA2012;
+    TVector3 corrpfmet = XYCorrectedMet(pfmet,sample);
+    m_p3PFMET->SetXYZ(corrpfmet.x(),corrpfmet.y(),corrpfmet.z());
     m_theMET = m_p3PFMET->Pt();
 
     setKinematicsEE(theElectron, thePositron);
@@ -1006,7 +1010,7 @@ void HiggsMLSelection::Loop() {
     float ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
     myOutTreeEE->fillKFactor(kfW, genPtHiggs, ptLJ);
 
-    myOutTreeEE -> fillAll(m_chMet[ee], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+    myOutTreeEE -> fillAll(m_chMet[ee], GetPt(m_p3PFMET->x(),m_p3PFMET->y()), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[ee], m_deltaPhi[ee], m_deltaErre[ee], m_transvMass[ee], m_mll[ee], 
 			   hardestLeptonPt[ee], slowestLeptonPt[ee], m_deltaEtaLeptons[ee], nGoodPV,
 			   selUpToFinalLeptonsEE, selUpToJetVetoEE, selUpToUncorrJetVetoEE, selPreDeltaPhiEE, isSelectedEE);
@@ -1163,7 +1167,7 @@ void HiggsMLSelection::Loop() {
     ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
     myOutTreeMM->fillKFactor(kfW, genPtHiggs, ptLJ);
 
-    myOutTreeMM -> fillAll(m_chMet[mm], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+    myOutTreeMM -> fillAll(m_chMet[mm], GetPt(m_p3PFMET->x(),m_p3PFMET->y()), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[mm], m_deltaPhi[mm], m_deltaErre[mm], m_transvMass[mm], m_mll[mm], 
 			   hardestLeptonPt[mm], slowestLeptonPt[mm], m_deltaEtaLeptons[mm], nGoodPV,
 			   selUpToFinalLeptonsMM, selUpToJetVetoMM, selUpToUncorrJetVetoMM, selPreDeltaPhiMM, isSelectedMM);
@@ -1329,7 +1333,7 @@ void HiggsMLSelection::Loop() {
     ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
     myOutTreeEM->fillKFactor(kfW, genPtHiggs, ptLJ);
 
-    myOutTreeEM -> fillAll(m_chMet[em], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+    myOutTreeEM -> fillAll(m_chMet[em], GetPt(m_p3PFMET->x(),m_p3PFMET->y()), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[em], m_deltaPhi[em], m_deltaErre[em], m_transvMass[em], m_mll[em], 
 			   hardestLeptonPt[em], slowestLeptonPt[em], m_deltaEtaLeptons[em], nGoodPV,
 			   selUpToFinalLeptonsEM, selUpToJetVetoEM, selUpToUncorrJetVetoEM, selPreDeltaPhiEM, isSelectedEM);
@@ -1488,7 +1492,7 @@ void HiggsMLSelection::Loop() {
     ptLJ = sqrt(pxAK5PFPUcorrJet[theLJ]*pxAK5PFPUcorrJet[theLJ] + pyAK5PFPUcorrJet[theLJ]*pyAK5PFPUcorrJet[theLJ]);
     myOutTreeME->fillKFactor(kfW, genPtHiggs, ptLJ);
 
-    myOutTreeME -> fillAll(m_chMet[me], GetPt(pxPFMet[0],pyPFMet[0]), GetPt(pxMet[0],pyMet[0]), 
+    myOutTreeME -> fillAll(m_chMet[me], GetPt(m_p3PFMET->x(),m_p3PFMET->y()), GetPt(pxMet[0],pyMet[0]), 
 			   m_projectedMet[me], m_deltaPhi[me], m_deltaErre[me], m_transvMass[me], m_mll[me], 
 			   hardestLeptonPt[me], slowestLeptonPt[me], m_deltaEtaLeptons[me], nGoodPV,
 			   selUpToFinalLeptonsME, selUpToJetVetoME, selUpToUncorrJetVetoME, selPreDeltaPhiME, isSelectedME);

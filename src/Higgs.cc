@@ -356,6 +356,30 @@ double Higgs::CalcMTR(TLorentzVector ja, TLorentzVector jb, TVector3 met){
   return temp;
 }
 
+
+TVector3 Higgs::XYCorrectedMet(TVector3 MET, int sample){
+  float dmetx,dmety;
+  if(sample == kDATA2011) {
+    dmetx =  3.87339e-1 + 2.58294e-1 * nPV;
+    dmety = -7.83502e-1 - 2.88899e-1 * nPV;
+  } else if(sample==kMC2011) {
+    dmetx = -1.94451e-2 - 4.38986e-3 * nPV;
+    dmety = -4.31368e-1 - 1.90753e-1 * nPV;
+  } else if(sample==kDATA2012) {
+    dmetx =  3.54233e-01 + 2.65299e-01 * nPV;
+    dmety =  1.88923e-01 - 1.66425e-01 * nPV;
+  } else if(sample==kMC2012) {
+    dmetx = -2.99576e-02 - 6.61932e-02 * nPV;
+    dmety =  3.70819e-01 - 1.48617e-01 * nPV;
+  } else { // nochange
+    dmetx = 0;
+    dmety = 0;
+  }
+
+  TVector3 newmet(MET.x()-dmetx,MET.y()-dmety,0.);
+  return newmet;
+}
+
 std::vector<int> Higgs::sortElectronsByPt(std::vector<int> electrons) {
   int tmp;
   int max;
