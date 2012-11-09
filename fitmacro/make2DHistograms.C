@@ -172,7 +172,7 @@ void all(int cha, float dphiMin, float dphiMax) {
 
   float mrBinSize = 10.0; // GeV
   float dphiBinSize = 5.0 * TMath::Pi() / 180.; // 5 degrees
-  int yNBins = (int)(abs(dphiMax-dphiMin))/dphiBinSize;
+  int yNBins = (int)(fabs(dphiMax-dphiMin))/dphiBinSize;
 
   int xNBins = 17;
   Double_t xLowerEdges[xNBins];
