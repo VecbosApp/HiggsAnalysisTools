@@ -26,10 +26,9 @@
 #include "RooBreitWigner.h"
 #include "RooFFTConvPdf.h"
 #include "Math/MinimizerOptions.h"
+#include "YieldMaker.h"
 
 using namespace RooFit;
-
-
 
 #include <fstream>
 #include <iostream>
@@ -37,6 +36,12 @@ using namespace RooFit;
 #include <sstream>
 
 using namespace std;
+
+struct fitSelection {
+public:
+  float mrmin, mrmax, dphimin, dphimax, mtmin, mtmax;
+};
+
 
 int Wait() {
      cout << " Continue [<RET>|q]?  ";
@@ -46,9 +51,6 @@ int Wait() {
      return 0;
 }
 
-enum channels { of0j, of1j, sf0j, sf1j };
-
-  
 string getChannelSuffix(int channel) {
   if(channel==of0j) return string("of_0j");
   if(channel==of1j) return string("of_1j");
@@ -191,44 +193,33 @@ void fitSignalShapeMR(int massBin, int channel,
 
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
+  YieldMaker  ymaker_hi;
+
   stringstream hFileName;
-  hFileName << "results/datasets_trees/H" << massBin << "_ll.root";
+  hFileName << "latinos_tree_skim_of/nominals/latino_1" << massBin << "_ggToH" << massBin << "toWWTo2LAndTau2Nu.root";
+  cout << "ggH ==> Opening ROOT file: " << hFileName.str() << endl;
+  ymaker_hi.fill(hFileName.str().c_str());
 
-  cout << "Opening ROOT file: " << hFileName.str() << endl;
-
-  TFile* hFile = TFile::Open(hFileName.str().c_str());
-  TTree* hTree = (TTree*) hFile->Get("latinoFitSkim");
-  
-  float mr, dphillr;
-  float puW,effW,baseW;
-
-  hTree->SetBranchAddress("mr",&mr);
-  hTree->SetBranchAddress("dphillr",&dphillr);
-  hTree->SetBranchAddress("puW",&puW);
-  hTree->SetBranchAddress("baseW",&baseW);
-  hTree->SetBranchAddress("effW",&effW);
+  fitSelection sel;
+  sel.mrmin=0.0;
+  sel.mrmax=1000.;
+  sel.dphimin=0.0;
+  sel.dphimax=TMath::Pi();
+  sel.mtmin=80.;
+  sel.mtmax=massBin;
 
   //--- rooFit part
   double xMin,xMax,xInit;
   xInit = (double) massBin;
   xMin = rangeLow;
   xMax = rangeHigh ;
-  
-
-  TCut cut1 = getStringChannel(channel).c_str();
-  stringstream fitrangecut;
-  fitrangecut << "mr > " << xMin << " && mr < " << xMax;
-  TCut cut2 = fitrangecut.str().c_str();
-  TCut cut = cut1 && cut2;
 
   RooRealVar x("mr","M_{R}",xInit,xMin,xMax,"GeV");
-  RooRealVar w("baseW","baseW",1.0,0.,1000.);
-  RooRealVar cha("channel","channel",0,-0.5,3.5);
-  RooRealVar njet("njet","njet",0,-0.5,10.);
+  RooRealVar w("weight","weight",1.0,0.,1000.);
 
-  RooArgSet varset(x,w,cha,njet);
-  RooDataSet dataset("mass","mass",varset,Import(*hTree),WeightVar("baseW"),Cut(cut));
-
+  RooArgSet varset(x,w,"argset_obs");
+  RooDataSet dataset("dataset", "dataset", varset, WeightVar("weight"));
+  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w);
 
   //--- simple CrystalBall
   RooRealVar mean("mean","mean of gaussian",0,-20.0,20.0) ;
