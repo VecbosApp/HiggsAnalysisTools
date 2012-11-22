@@ -227,8 +227,12 @@ class YieldMaker {
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
     
+    cout << "Number of entries to process = " << tree->GetEntries() << endl;
+    
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
+
+      if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
@@ -315,8 +319,12 @@ class WJetsYieldMaker : public YieldMaker {
     tree->SetBranchAddress("njet",    &njet);
     tree->SetBranchAddress("fake2W",  &fakeweight);
 
+    cout << "Number of entries to process = " << tree->GetEntries() << endl;
+
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
+
+      if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
@@ -401,8 +409,12 @@ class DataYieldMaker : public YieldMaker {
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
 
+    cout << "Number of entries to process = " << tree->GetEntries() << endl;
+
     for (int i = 0; i < tree->GetEntries(); i++) {
       tree->GetEntry(i);
+
+      if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
