@@ -26,6 +26,7 @@
 #include "RooBreitWigner.h"
 #include "RooFFTConvPdf.h"
 #include "Math/MinimizerOptions.h"
+#include "FitSelection.hh"
 #include "YieldMaker.h"
 
 using namespace RooFit;
@@ -36,11 +37,6 @@ using namespace RooFit;
 #include <sstream>
 
 using namespace std;
-
-struct fitSelection {
-public:
-  float mrmin, mrmax, dphimin, dphimax, mtmin, mtmax;
-};
 
 
 int Wait() {
@@ -200,13 +196,7 @@ void fitSignalShapeMR(int massBin, int channel,
   cout << "ggH ==> Opening ROOT file: " << hFileName.str() << endl;
   ymaker_hi.fill(hFileName.str().c_str());
 
-  fitSelection sel;
-  sel.mrmin=0.0;
-  sel.mrmax=1000.;
-  sel.dphimin=0.0;
-  sel.dphimax=TMath::Pi();
-  sel.mtmin=80.;
-  sel.mtmax=massBin;
+  FitSelection sel;
 
   //--- rooFit part
   double xMin,xMax,xInit;
