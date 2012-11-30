@@ -25,6 +25,14 @@ float getFitChannel(float channel, float njet) {
   return -1;
 }
 
+std::string getStringFitChannel(float fitchannel) {
+  if(fitchannel==of0j) return std::string("of0j");
+  if(fitchannel==of1j) return std::string("of1j");
+  if(fitchannel==sf0j) return std::string("sf0j");
+  if(fitchannel==sf1j) return std::string("sf1j");
+  return std::string("wrongchannel");
+}
+
 class YieldMaker {
 
  protected:
@@ -280,7 +288,11 @@ class WJetsYieldMaker : public YieldMaker {
 
  public :        
 
-  WJetsYieldMaker():YieldMaker(){}
+  WJetsYieldMaker(int sigmaup):YieldMaker() {
+    _systematic=sigmaup;
+  }
+
+  int _systematic;
 
   void fill(std::string filepath) {
 
@@ -317,7 +329,9 @@ class WJetsYieldMaker : public YieldMaker {
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
-    tree->SetBranchAddress("fake2W",  &fakeweight);
+    if(_systematic==1)       tree->SetBranchAddress("fakeWUp",   &fakeweight);
+    else if(_systematic==-1) tree->SetBranchAddress("fakeWDown", &fakeweight);
+    else tree->SetBranchAddress("fakeW",   &fakeweight);
 
     cout << "Number of entries to process = " << tree->GetEntries() << endl;
 
