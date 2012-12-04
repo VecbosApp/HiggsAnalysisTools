@@ -17,6 +17,7 @@ public:
   vector<float> getGaussian(string channel, string process, string syst);
   vector<float> getDoubleGaussian(string channel, string process, string syst);
   float getRelUncertainty(string channel, string process, string param, string syst);
+  float getRelUncertainty(string channel, string process1, string process2, string param, string syst1, string syst2);
 
 private:
   vector<string> _pars;
@@ -119,6 +120,26 @@ float ConfigParser::getRelUncertainty(string channel, string process, string par
   stringstream param_nom, param_alt;
   param_nom << channel << "_" << process << "_" << param << "_nominals";
   param_alt << channel << "_" << process << "_" << param << "_" << syst;
+
+  for(int i=0; i<(int)_pars.size(); ++i) {
+    if(_pars[i].find(param_nom.str())!=string::npos) nominal=_values[i];
+    if(_pars[i].find(param_alt.str())!=string::npos) alt=_values[i];
+    if(nominal!=-999 && alt!=-999) break;
+  }
+  if(nominal==-999 || alt==-999) {
+    cout << "!!! SYSTEMATICS. CONFIGURATION PROBLEM: nominal value for " << param
+         << "  or systematics one: " << param_alt.str() << " not found in config file!!!" << endl;
+    return 0.;
+  }
+  return floor(fabs(nominal-alt)/nominal * 1e+4)/1e+4;
+}
+
+float ConfigParser::getRelUncertainty(string channel, string process1, string process2, string param, string syst1, string syst2) {
+  float nominal=-999.; 
+  float alt=-999.;
+  stringstream param_nom, param_alt;
+  param_nom << channel << "_" << process1 << "_" << param << "_" << syst1;
+  param_alt << channel << "_" << process2 << "_" << param << "_" << syst2;
 
   for(int i=0; i<(int)_pars.size(); ++i) {
     if(_pars[i].find(param_nom.str())!=string::npos) nominal=_values[i];
