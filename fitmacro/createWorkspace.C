@@ -23,6 +23,9 @@
 #include "findAndReplace.h"
 #include "yields.h"
 #include "XSecProvider.h"
+#include "FitSelection.hh"
+#include "ConfigParser.hh"
+#include "PdfSystematics.hh"
 
 using namespace RooFit;
 using namespace std;
@@ -34,8 +37,6 @@ public:
   ~HiggsMassPointInfo() {}
 
   float lumi;
-  float dphiMin;
-  float dphiMax;
   bool  do1D;
   bool  doFFT;
   std::string treeFolder;
@@ -51,6 +52,7 @@ public:
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
   XSecProvider xsecProvider;
+  FitSelection sel;
   
  std::string getSignalCBMeanString(int ch) {
     stringstream fss;
@@ -95,6 +97,10 @@ public:
 
   void createCard(float mass, float mrMin, float mrMax, int ch) {
 
+    ConfigParser cp("config/mrfit_of_hcp.txt");
+
+    std::string tevstr = "_8TeV"; 
+
     std::string chstr;
     if (ch == of0j) chstr = "of_0j";
     if (ch == of1j) chstr = "of_1j";
@@ -113,15 +119,15 @@ public:
 
     ScaleFactors sf(ch);
 
-    float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 0, 0) * sf.getWW() * lumi;
-    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, dphiMin, dphiMax, 1, 1) * sf.getWW() * lumi;
-    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * sf.getTop() * lumi;
+    float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
+    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getWW() * lumi;
+    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getWW() * lumi;
+    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getTop() * lumi;
     float yield_dy     = 0.0; 
-    if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
-    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * sf.getDY() * lumi;
-    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, dphiMin, dphiMax) * lumi;
-    float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, dphiMin, dphiMax);
+    if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
+    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getDY() * lumi;
+    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * lumi;
+    float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
 
     std::string card   = createCardTemplate(ch, do1D, workspace.c_str());
 
@@ -148,6 +154,92 @@ public:
     card = findAndReplace(card, "BKG_WJETS_YIELD" , yield_wj);
     card = findAndReplace(card, "BIN"             , binname);
     card = findAndReplace(card, "OBS"             , yield_data);
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_MC"),            cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_MC"),           cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-qcd"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-qcd"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-qcd"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-qcd"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-j"));
+
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-met"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-met"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-j"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-j"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-j"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-j"));
+
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-j"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-j"));
+
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-j"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-j"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-j"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-j"));
+
+    card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_mean_err_fakerateup"),       cp.getRelUncertainty(getStringFitChannel(ch),"wjets","me","fakerateup"));
+    card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_sigma_err_fakerateup"),      cp.getRelUncertainty(getStringFitChannel(ch),"wjets","si","fakerateup"));
+    card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_mean_err_fakeratedn"),       cp.getRelUncertainty(getStringFitChannel(ch),"wjets","me","fakeratedn"));
+    card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_sigma_err_fakeratedn"),      cp.getRelUncertainty(getStringFitChannel(ch),"wjets","si","fakeratedn"));
+
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-e"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-e"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-e"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-e"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-m"));
+
 
     ofstream file;
     file.open ((card_name +".txt").c_str());
@@ -158,13 +250,14 @@ public:
     
     RooRealVar CMS_ww2l_dphi ("CMS_ww2l_dphi" , "#Delta #Phi" ,   0,       TMath::Pi(), "");
     RooRealVar CMS_ww2l_mr_1D("CMS_ww2l_mr_1D", "M_{R}",          mrMin,   mrMax,       "GeV/c^{2}");
+    RooRealVar weight("weight","weight",1.0,-1000.,1000.);
     if (doFFT) CMS_ww2l_mr_1D.setBins(100000, "fft");
         
     if (do1D) {
       RooArgSet argset_obs(CMS_ww2l_mr_1D, "argset_obs");
       RooDataSet data_obs("data_obs", "data_obs", argset_obs);
       
-      ymaker_data.getDataSet1D(ch, mrMin, mrMax, dphiMin, dphiMax, data_obs, CMS_ww2l_mr_1D);
+      ymaker_data.getDataSet1D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, data_obs, CMS_ww2l_mr_1D, weight);
     
       w.import(data_obs);
     }
@@ -173,14 +266,14 @@ public:
       RooArgSet argset_obs(CMS_ww2l_mr_1D, CMS_ww2l_dphi, "argset_obs");
       RooDataSet data_obs("data_obs", "data_obs", argset_obs);
             
-      ymaker_data.getDataSet2D(ch, mrMin, mrMax, dphiMin, dphiMax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi);
+      ymaker_data.getDataSet2D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi, weight);
 
       w.import(data_obs);
     }
     
 
     ///////////////////// Define parameters //////////////////////////////////
-    
+
     float qqWWme = 0.;
     float qqWWsi = 0.;
     float ggWWme = 0.;
@@ -224,51 +317,28 @@ public:
     float Otsfa11 = 0.;
     float Otsfa12 = 0.;
     float Otsfa13 = 0.;
-    
-    if(ch == of0j) {
-      qqWWme = 158.149;
-      qqWWsi = 33.8333;
 
-      ggWWme = 158.483;
-      ggWWsi = 30.6908;
-
-      Topme = 193.609;
-      Topsi = 46.473;
+    if(ch == of0j || ch == of1j) {
+      qqWWme = cp.getLandau(getStringFitChannel(ch),"qqWWMadgraph","nominals")[0];
+      qqWWsi = cp.getLandau(getStringFitChannel(ch),"qqWWMadgraph","nominals")[1];
       
-      DYofme1 = 124.856;
-      DYofsi1 = 26.5499;
-      DYofme2 = 220.569;
-      DYofsi2 = 76.9832;
-      DYoffrac = 0.932033;
-
-      WJme = 125.842;
-      WJsi = 23.9167;
-
-      Otofme = 100.089;
-      Otofsi = 19.2616;
-    }
-
-    else if(ch == of1j) {
-      qqWWme = 170.588;
-      qqWWsi = 38.8822;
+      ggWWme = cp.getLandau(getStringFitChannel(ch),"ggWW","nominals")[0];
+      ggWWsi = cp.getLandau(getStringFitChannel(ch),"ggWW","nominals")[1];
       
-      ggWWme = 159.846;
-      ggWWsi = 32.4088;
-
-      Topme = 183.549;
-      Topsi = 42.8287;
-
-      DYofme1 = 102.968;
-      DYofsi1 = 39.2442;
-      DYofme2 = 199.588;
-      DYofsi2 = 100.708;
-      DYoffrac = 0.934821;
-
-      WJme = 143.556;
-      WJsi = 29.4511;
+      Topme = cp.getLandau(getStringFitChannel(ch),"Top","nominals")[0];
+      Topsi = cp.getLandau(getStringFitChannel(ch),"Top","nominals")[1];
       
-      Otofme = 123.646;
-      Otofsi = 27.2714;
+      DYofme1 = cp.getDoubleGaussian("of0j","embeddedtt","nominals")[0];
+      DYofsi1 = cp.getDoubleGaussian("of0j","embeddedtt","nominals")[1];
+      DYofme2 = cp.getDoubleGaussian("of0j","embeddedtt","nominals")[2];
+      DYofsi2 = cp.getDoubleGaussian("of0j","embeddedtt","nominals")[3];
+      DYoffrac = cp.getDoubleGaussian("of0j","embeddedtt","nominals")[4];
+      
+      WJme = cp.getLandau(getStringFitChannel(ch),"wjets","nominals")[0];
+      WJsi = cp.getLandau(getStringFitChannel(ch),"wjets","nominals")[1]; 
+      
+      Otofme = cp.getLandau(getStringFitChannel(ch),"Ot","nominals")[0];
+      Otofsi = cp.getLandau(getStringFitChannel(ch),"Ot","nominals")[1];
     }
 
     else if(ch == sf0j) {
@@ -360,19 +430,27 @@ public:
     }
 
 
-    std::string tevstr = "_8TeV"; 
     stringstream lumiss;
     lumiss << lumi;
     std::string lumistr = lumiss.str(); 
 
-    RooRealVar qqww_mean (("bkg_qqww_"+chstr+tevstr+"_mean" ).c_str(), "", qqWWme);
-    RooRealVar qqww_sigma(("bkg_qqww_"+chstr+tevstr+"_sigma").c_str(), "", qqWWsi);
+    WWSystematics qqwwsyst("bkg_qqww");
+    RooArgList qqww_mean_al  = qqwwsyst.getParSystematics("mean",chstr,tevstr,qqWWme);
+    RooArgList qqww_sigma_al = qqwwsyst.getParSystematics("sigma",chstr,tevstr,qqWWsi); 
+    RooFormulaVar qqww_mean (("bkg_qqww_"+chstr+tevstr+"_mean" ).c_str(), qqwwsyst.getFormulaSyst().c_str(), qqww_mean_al);
+    RooFormulaVar qqww_sigma(("bkg_qqww_"+chstr+tevstr+"_sigma").c_str(), qqwwsyst.getFormulaSyst().c_str(), qqww_sigma_al);
 
-    RooRealVar ggww_mean (("bkg_ggww_"+chstr+tevstr+"_mean" ).c_str(), "", ggWWme);
-    RooRealVar ggww_sigma(("bkg_ggww_"+chstr+tevstr+"_sigma").c_str(), "", ggWWsi);
+    WWSystematics ggwwsyst("bkg_ggww");
+    RooArgList ggww_mean_al  = ggwwsyst.getParSystematics("mean",chstr,tevstr,ggWWme);
+    RooArgList ggww_sigma_al = ggwwsyst.getParSystematics("sigma",chstr,tevstr,ggWWsi);
+    RooFormulaVar ggww_mean (("bkg_ggww_"+chstr+tevstr+"_mean" ).c_str(), ggwwsyst.getFormulaSyst().c_str(), ggww_mean_al);
+    RooFormulaVar ggww_sigma(("bkg_ggww_"+chstr+tevstr+"_sigma").c_str(), ggwwsyst.getFormulaSyst().c_str(), ggww_sigma_al);
 
-    RooRealVar top_mean (("bkg_top_"+chstr+tevstr+"_mean" ).c_str(), "", Topme);
-    RooRealVar top_sigma(("bkg_top_"+chstr+tevstr+"_sigma").c_str(), "", Topsi);
+    WWSystematics topsyst("bkg_top");
+    RooArgList top_mean_al  = topsyst.getParSystematics("mean",chstr,tevstr,Topme);
+    RooArgList top_sigma_al = topsyst.getParSystematics("sigma",chstr,tevstr,Topsi);
+    RooFormulaVar top_mean (("bkg_top_"+chstr+tevstr+"_mean" ).c_str(), topsyst.getFormulaSyst().c_str(), top_mean_al);
+    RooFormulaVar top_sigma(("bkg_top_"+chstr+tevstr+"_sigma").c_str(), topsyst.getFormulaSyst().c_str(), top_sigma_al);
 
     RooRealVar dyof_mean1 (("bkg_dy_"+chstr+tevstr+"_mean1" ).c_str(), "", DYofme1);
     RooRealVar dyof_sigma1(("bkg_dy_"+chstr+tevstr+"_sigma1").c_str(), "", DYofsi1);
@@ -380,11 +458,17 @@ public:
     RooRealVar dyof_sigma2(("bkg_dy_"+chstr+tevstr+"_sigma2").c_str(), "", DYofsi2);
     RooRealVar dyof_frac  (("bkg_dy_"+chstr+tevstr+"_frac").c_str(), "", DYoffrac);
 
-    RooRealVar wj_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), "", WJme);
-    RooRealVar wj_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), "", WJsi);
+    WJetsSystematics wjsyst("bkg_wj");
+    RooArgList wj_mean_al  = wjsyst.getParSystematics("mean",chstr,tevstr,WJme);
+    RooArgList wj_sigma_al = wjsyst.getParSystematics("sigma",chstr,tevstr,WJsi);    
+    RooFormulaVar wj_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), wjsyst.getFormulaSyst().c_str(), wj_mean_al);
+    RooFormulaVar wj_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), wjsyst.getFormulaSyst().c_str(), wj_sigma_al);
 
-    RooRealVar othersof_mean (("bkg_others_"+chstr+tevstr+"_mean" ).c_str(), "", Otofme);
-    RooRealVar othersof_sigma(("bkg_others_"+chstr+tevstr+"_sigma").c_str(), "", Otofsi);
+    WWSystematics otherssyst("bkg_others");
+    RooArgList others_mean_al  = otherssyst.getParSystematics("mean",chstr,tevstr,Otofme);
+    RooArgList others_sigma_al = otherssyst.getParSystematics("sigma",chstr,tevstr,Otofsi);    
+    RooFormulaVar othersof_mean (("bkg_others_"+chstr+tevstr+"_mean" ).c_str(), otherssyst.getFormulaSyst().c_str(), others_mean_al);
+    RooFormulaVar othersof_sigma(("bkg_others_"+chstr+tevstr+"_sigma").c_str(), otherssyst.getFormulaSyst().c_str(), others_sigma_al);
 
     RooRealVar dysf_a0 (("bkg_dy_"+chstr+tevstr+"_a0" ).c_str(), "", DYsfa0);
     RooRealVar dysf_a1 (("bkg_dy_"+chstr+tevstr+"_a1" ).c_str(), "", DYsfa1);
@@ -440,26 +524,11 @@ public:
       
     /////////// Set parameters to constant //////////////////
 
-    qqww_mean  .setConstant(kTRUE);
-    qqww_sigma .setConstant(kTRUE);
-
-    ggww_mean  .setConstant(kTRUE);
-    ggww_sigma .setConstant(kTRUE);
-
-    top_mean  .setConstant(kTRUE);
-    top_sigma .setConstant(kTRUE);
-
     dyof_mean1  .setConstant(kTRUE);
     dyof_sigma1 .setConstant(kTRUE);
     dyof_mean2  .setConstant(kTRUE);
     dyof_sigma2 .setConstant(kTRUE);
     dyof_frac   .setConstant(kTRUE);
-
-    wj_mean  .setConstant(kTRUE);
-    wj_sigma .setConstant(kTRUE);
-
-    othersof_mean  .setConstant(kTRUE);
-    othersof_sigma .setConstant(kTRUE);
 
     dysf_a0  .setConstant(kTRUE);
     dysf_a1  .setConstant(kTRUE);
@@ -683,34 +752,40 @@ void createWorkspace() {
 
   HiggsMassPointInfo hmpi8;
   hmpi8.lumi = 5.26;
-  hmpi8.dphiMin = 0.;
-  hmpi8.dphiMax = TMath::Pi();
   hmpi8.do1D = true;
   hmpi8.doFFT = false;
-  hmpi8.treeFolder = "/cmsrm/pc24_2/emanuele/data/Higgs5.2.X/MC_Summer12_TCHE_V1/datasets_trees/";
+  hmpi8.treeFolder = "latinos_tree_skim_of/";
   hmpi8.hww2DShapesfilename = "hww2DShapes.root";
   hmpi8.xsecProvider.initXsec();
   hmpi8.xsecProvider.initQCDScale();
   hmpi8.xsecProvider.initPDF();
   hmpi8.xsecProvider.initJetBinFracs();
 
-  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"dataset_ll.root");
-  hmpi8.ymaker_qqww   .fill(hmpi8.treeFolder+"WW_ll.root");
-  hmpi8.ymaker_ggww   .fill(hmpi8.treeFolder+"WW_ll.root");
-  hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"top_ll.root");
-  hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"Zjets_ll.root");
-  hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"dataset_embeddedtt_ll.root");
-  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"dataset_looseloose_wwbits.root");
-  hmpi8.ymaker_others .fill(hmpi8.treeFolder+"others_ll.root");
-  
-  for (float i = 114.; i <= 180.; i += 1.) {
-  //for (float i = 125.; i <= 125.; i += 1.) {  
+  /*
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunA_892pbinv.root");
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunB_4404pbinv.root");
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunC_6807pbinv.root");
+  hmpi8.ymaker_qqww   .fill(hmpi8.treeFolder+"/nominals/latino_000_WWJets2LMad.root");
+  hmpi8.ymaker_ggww   .fill(hmpi8.treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
+  hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
+  hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"/nominals/latino_011_TtWFullDR.root");
+  hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"/nominals/latino_012_TbartWFullDR.root");
+  hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_037_DY50toLLMad.root");
+  hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_036_DY10toLLMad.root");
+  hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
+  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"/wj/latino_RunABC_LooseLoose_skimww.root");
+  hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_074_WZJetsMad.root");
+  hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
+  */
+
+  // for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
-  for (float i = 114.; i <= 180.; i += 1.) {
-  //for (float i = 125.; i <= 125.; i += 1.) {  
+  // for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
