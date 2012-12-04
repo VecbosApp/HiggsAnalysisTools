@@ -288,7 +288,7 @@ class WJetsYieldMaker : public YieldMaker {
 
  public :        
 
-  WJetsYieldMaker(int sigmaup):YieldMaker() {
+  WJetsYieldMaker(int sigmaup=0):YieldMaker() {
     _systematic=sigmaup;
   }
 
