@@ -172,7 +172,11 @@ void allqqWW(ofstream& file, int channel, string syst) {
   file << fitLandauShapeMR(channel,"qqWWMadgraph",xLow,xHigh,fitValues,fitErrors,syst);
   cout << "mean value,error = " << fitValues[0] << " , " << fitErrors[0] << endl;
   cout << "sigma value,error = " << fitValues[1] << " , " << fitErrors[1] << endl;
-
+  if(syst.find("nominals")!=string::npos) {
+    file << fitLandauShapeMR(channel,"qqWWMCatNLONom",xLow,xHigh,fitValues,fitErrors,syst);
+    file << fitLandauShapeMR(channel,"qqWWMCatNLOUp",xLow,xHigh,fitValues,fitErrors,syst);
+    file << fitLandauShapeMR(channel,"qqWWMCatNLODown",xLow,xHigh,fitValues,fitErrors,syst);
+  }
 }
 
 void allggWW(ofstream& file, int channel, string syst) {
