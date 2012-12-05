@@ -13,7 +13,9 @@
 #include <map>
 #include <math.h>
 
-enum channels { of0j, of1j, sf0j, sf1j };
+#include "YieldMaker.h"
+#include "FitSelection.hh"
+
 using namespace std;
 
 string getChannelSuffix(int channel) {
@@ -153,22 +155,42 @@ void normalize(TH2F* hist) {
 
 void all(int cha, float dphiMin, float dphiMax) {
 
-  float mrMin=50;
-  float mrMax=500;
+  cout << "Filling 2D maps for channel " << cha << endl;
+
+  FitSelection sel;
+  sel.mrmin=50;
+  sel.mrmax=500;
+  sel.dphimin=dphiMin;
+  sel.dphimax=dphiMax;
 
   gStyle->SetOptStat(0);
 
-  TString cut1(getStringChannel(cha).c_str());
-  stringstream fitrangecut;
-  fitrangecut << "mr > " << mrMin << " && mr < " << mrMax;
-  fitrangecut << "&& dphillr > " << dphiMin << " && dphillr  < " << dphiMax;
-  TString cut2(fitrangecut.str().c_str());
-  TString cutHiggsMC = TString("(")+cut1+TString(" && ")+cut2+TString(")*effW*puW");
-  TString cutMC = TString("(")+cut1+TString(" && ")+cut2+TString(")*baseW*effW*puW");
-  TString cutggWWMC = TString("(")+cut1+TString(" && dataset==1 && ")+cut2+TString(")*baseW*effW*puW");
-  TString cutqqWWMC = TString("(")+cut1+TString(" && dataset==0 && ")+cut2+TString(")*baseW*effW*puW");
-  TString cutLooseLoose = TString("(")+cut1+TString(" && ")+cut2+TString(")*fake2W");
-  TString cutEmbeddedTau = TString("(")+cut1+TString(" && ")+cut2+TString(")*baseW");
+  DataYieldMaker  ymaker_data;
+  YieldMaker      ymaker_hi;
+  YieldMaker      ymaker_qqww;
+  YieldMaker      ymaker_ggww;
+  YieldMaker      ymaker_top;
+  YieldMaker      ymaker_dysf;
+  YieldMaker      ymaker_dyof;
+  YieldMaker      ymaker_others;
+  WJetsYieldMaker ymaker_wj;
+
+  string treeFolder("latinos_tree_skim_of");
+
+  ymaker_data   .fill(treeFolder+"/data/latino_RunA_892pbinv.root");
+  ymaker_data   .fill(treeFolder+"/data/latino_RunB_4404pbinv.root");
+  ymaker_data   .fill(treeFolder+"/data/latino_RunC_6807pbinv.root");
+  ymaker_qqww   .fill(treeFolder+"/nominals/latino_000_WWJets2LMad.root");
+  ymaker_ggww   .fill(treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
+  ymaker_top    .fill(treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
+  ymaker_top    .fill(treeFolder+"/nominals/latino_011_TtWFullDR.root");
+  ymaker_top    .fill(treeFolder+"/nominals/latino_012_TbartWFullDR.root");
+  ymaker_dysf   .fill(treeFolder+"/nominals/latino_037_DY50toLLMad.root");
+  ymaker_dysf   .fill(treeFolder+"/nominals/latino_036_DY10toLLMad.root");
+  ymaker_dyof   .fill(treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
+  ymaker_wj     .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+  ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
+  ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
   float mrBinSize = 10.0; // GeV
   float dphiBinSize = 5.0 * TMath::Pi() / 180.; // 5 degrees
@@ -176,31 +198,16 @@ void all(int cha, float dphiMin, float dphiMax) {
 
   int xNBins = 17;
   Double_t xLowerEdges[xNBins];
-  xLowerEdges[0]=mrMin;
+  xLowerEdges[0]=sel.mrmin;
   xLowerEdges[1]=70;
   // do constant binning up to 210 GeV (last mass point mH=180 GeV)
   //  for(Double_t x=0; x<=220; x+=mrBinSize) {
   for(int e=2; e<=15; ++e) {
     xLowerEdges[e] = 70 + ((e-1)*mrBinSize);
   }
-  xLowerEdges[16]=mrMax;
+  xLowerEdges[16]=sel.mrmax;
 
   cout << "Filling the backgrounds now..." << endl;
-
-  // input files and trees
-  TFile *fileDataLooseLoose  = TFile::Open("results_data/datasets_trees/dataset_looseloose_wwbits.root");
-  TFile *fileDataEmbTau      = TFile::Open("results_data/datasets_trees/dataset_embeddedtt_wwbits.root");
-  TFile *fileWW     = TFile::Open("results/datasets_trees/WW_ll.root");
-  TFile *fileZjets  = TFile::Open("results/datasets_trees/Zjets_ll.root");
-  TFile *fileOthers = TFile::Open("results/datasets_trees/others_ll.root");
-  TFile *fileTop    = TFile::Open("results/datasets_trees/top_ll.root");
-
-  TTree *treeDataLooseLoose = (TTree*)fileDataLooseLoose->Get("latinoFitSkim");
-  TTree *treeDataEmbTau     = (TTree*)fileDataEmbTau->Get("latinoFitSkim");
-  TTree *treeWW     = (TTree*)fileWW->Get("latinoFitSkim");
-  TTree *treeZjets  = (TTree*)fileZjets->Get("latinoFitSkim");
-  TTree *treeOthers = (TTree*)fileOthers->Get("latinoFitSkim");
-  TTree *treeTop    = (TTree*)fileTop->Get("latinoFitSkim");
 
   TH2F *bkg_qqww   = new TH2F((string("hist2D_bkg_qqww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_ggww   = new TH2F((string("hist2D_bkg_ggww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
@@ -208,36 +215,30 @@ void all(int cha, float dphiMin, float dphiMax) {
   TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *sig_higgs  = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),       "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
 
-  treeWW->Project(bkg_qqww->GetName(),"dphillr:mr",cutqqWWMC.Data());
-  treeWW->Project(bkg_ggww->GetName(),"dphillr:mr",cutggWWMC.Data());
-  treeTop->Project(bkg_top->GetName(),"dphillr:mr",cutMC.Data());
-  if(cha==sf0j || cha==sf1j) treeZjets->Project(bkg_dy->GetName(),"dphillr:mr",cutMC.Data());
-  if(cha==of0j || cha==of1j) treeDataEmbTau->Project(bkg_dy->GetName(),"dphillr:mr",cutEmbeddedTau.Data());
-  treeOthers->Project(bkg_others->GetName(),"dphillr:mr",cutMC.Data());
-  treeDataLooseLoose->Project(bkg_wj->GetName(),"dphillr:mr",cutLooseLoose.Data());
+  ymaker_qqww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww);
+  ymaker_ggww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_ggww);
+  ymaker_top.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_top);
+  if(cha==of0j || cha==of1j) ymaker_dyof.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
+  else ymaker_dysf.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
+  ymaker_wj.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wj);
+  ymaker_others.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
 
   // and now the signals
-  TH2F *sig_higgs     = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   int mH[13] = {110,115,120,125,130,135,140,145,150,155,160,170,180};
   for(int i=0; i<13;i++) {
-    char higgssample[1000];
-    sprintf(higgssample,"results/datasets_trees/H%d_ll.root",mH[i]);
-    TFile *fileHiggs  = TFile::Open(higgssample);
-    TTree *treeHiggs  = (TTree*)fileHiggs->Get("latinoFitSkim");
-
-    TH2F *sig_higgs_tmp = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_tmp").c_str()));
-
     cout << "Filling mass mH = " << mH[i] << "..." << endl;
-
-    // do not use the xsection to populate the 2D plane, since we need the dphi as a function of Higgs mass
-    // we will normalize slices in MR later to make the conditional PDF
-    treeHiggs->Project(sig_higgs_tmp->GetName(),"dphillr:mr",cutHiggsMC.Data()); 
-
-    sig_higgs->Add(sig_higgs_tmp);
-
-    delete sig_higgs_tmp;
+    char gghsample[1000], qqhsample[1000];
+    sprintf(gghsample,"%s/nominals/latino_1%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+    sprintf(qqhsample,"%s/nominals/latino_2%d_vbfToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+    ymaker_hi   .fill(gghsample); 
+    ymaker_hi   .fill(qqhsample);
   }
+
+  // do not use the xsection to populate the 2D plane, since we need the dphi as a function of Higgs mass
+  // we will normalize slices in MR later to make the conditional PDF
+  ymaker_hi.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,sig_higgs,false); 
 
   // === SMOOTHING ===
   smooth(bkg_dy,     1.0);
@@ -254,7 +255,9 @@ void all(int cha, float dphiMin, float dphiMax) {
 
   
   // === SAVING ===
-  TFile *fileOut = TFile::Open("hww2DShapes.root","update");
+  TFile *fileOut;
+  if(cha==0) fileOut = TFile::Open("hww2DShapes.root","recreate");
+  else fileOut = TFile::Open("hww2DShapes.root","update");
   fileOut->cd();
   sig_higgs->Write();
   bkg_qqww->Write();
