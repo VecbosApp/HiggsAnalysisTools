@@ -228,7 +228,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   if(cha==of0j || cha==of1j) ymaker_dyof.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
   else ymaker_dysf.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
   ymaker_wj.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wj);
-  ymaker_wgstar.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
+  ymaker_wgstar.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wgstar);
   ymaker_others.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
 
   // and now the signals
