@@ -41,6 +41,7 @@ class YieldMaker {
   RooRealVar rrD     ;
   RooRealVar rrmt    ;
   RooRealVar rrweight   ;
+  RooRealVar rrnoxsecweight ;
   RooRealVar rrprocess  ;
   RooArgSet argset      ;
   RooDataSet dataset    ;
@@ -53,8 +54,9 @@ class YieldMaker {
     rrD      (RooRealVar("dphillr",  "dphillr",      0., TMath::Pi())),
     rrmt     (RooRealVar("mt",       "mt",           0., 10000000.)),
     rrweight (RooRealVar("weight",   "weight",    -100000., 10000000.)),
+    rrnoxsecweight (RooRealVar("noxsecweight",  "noxsecweight", -100000., 10000000.)),
     rrprocess(RooRealVar("dataset",  "dataset",   0., 10000000.)),
-    argset(RooArgSet(rrchannel, rrmr, rrD, rrmt, rrweight, rrprocess, "argset")),
+    argset(RooArgSet(rrchannel, rrmr, rrD, rrmt, rrweight, rrnoxsecweight, rrprocess, "argset")),
     dataset(RooDataSet("dataset", "dataset", argset))
       {}
 
@@ -95,33 +97,33 @@ class YieldMaker {
 
   }
 
-   void get1DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float procmin, float procmax, TH1* hist) {
+   void get1DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, TH1* hist, bool usexsecweight=true) {
     
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float D      = dataset.get(i)->getRealValue("dphillr");
       float mt     = dataset.get(i)->getRealValue("mt");
       float weight = dataset.get(i)->getRealValue("weight");
+      float noxsecweight = dataset.get(i)->getRealValue("noxsecweight");
       float ch     = dataset.get(i)->getRealValue("channel");
-      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && proc>=procmin && proc<=procmax) hist->Fill(mr,weight);
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax) hist->Fill(mr,(usexsecweight) ? weight : noxsecweight);
     }
 
   }
 
 
-   void get2DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float procmin, float procmax, TH2* hist) {
+   void get2DHist(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, TH2* hist, bool usexsecweight=true) {
     
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float D      = dataset.get(i)->getRealValue("dphillr");
       float mt     = dataset.get(i)->getRealValue("mt");
       float weight = dataset.get(i)->getRealValue("weight");
+      float noxsecweight = dataset.get(i)->getRealValue("noxsecweight");
       float ch     = dataset.get(i)->getRealValue("channel");
-      float proc   = dataset.get(i)->getRealValue("dataset");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && proc>=procmin && proc<=procmax) hist->Fill(mr,D,weight);
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax) hist->Fill(mr,D,(usexsecweight) ? weight : noxsecweight);
     }
 
   }
@@ -274,6 +276,8 @@ class YieldMaker {
       argset.setRealValue("dataset", proc);
       float weight = baseweight*effweight*puweight;
       argset.setRealValue("weight", weight);
+      float noxsecweight = effweight*puweight;
+      argset.setRealValue("noxsecweight", noxsecweight);
       if(channel<0) continue;
       dataset.add(argset);
     }
@@ -372,6 +376,7 @@ class WJetsYieldMaker : public YieldMaker {
       argset.setRealValue("dataset", proc);
       float weight = fakeweight;
       argset.setRealValue("weight", weight);
+      argset.setRealValue("noxsecweight", weight);
       if(channel<0) continue;
       dataset.add(argset);
     }
@@ -461,6 +466,7 @@ class DataYieldMaker : public YieldMaker {
       argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
       argset.setRealValue("weight",  1.0);
+      argset.setRealValue("noxsecweight", 1.0);
       if(channel<0) continue;
       dataset.add(argset);
     }
