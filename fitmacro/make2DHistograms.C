@@ -172,6 +172,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   YieldMaker      ymaker_top;
   YieldMaker      ymaker_dysf;
   YieldMaker      ymaker_dyof;
+  YieldMaker      ymaker_wgstar;
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
 
@@ -189,6 +190,9 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_dysf   .fill(treeFolder+"/nominals/latino_036_DY10toLLMad.root");
   ymaker_dyof   .fill(treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
   ymaker_wj     .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+  ymaker_wgstar .fill(treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
+  ymaker_wgstar .fill(treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
+  ymaker_wgstar .fill(treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
   ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
   ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
@@ -215,6 +219,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_wgstar = new TH2F((string("hist2D_bkg_wgstar_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
   TH2F *sig_higgs  = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),       "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
 
   ymaker_qqww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww);
@@ -223,6 +228,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   if(cha==of0j || cha==of1j) ymaker_dyof.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
   else ymaker_dysf.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_dy);
   ymaker_wj.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wj);
+  ymaker_wgstar.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
   ymaker_others.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
 
   // and now the signals
@@ -251,6 +257,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   normalize(bkg_top);
   normalize(bkg_dy);
   normalize(bkg_wj);
+  normalize(bkg_wgstar);
   normalize(bkg_others);
 
   
@@ -265,6 +272,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   bkg_top->Write();
   bkg_dy->Write();
   bkg_wj->Write();
+  bkg_wgstar->Write();
   bkg_others->Write();
 
   // === fake alternative shapes ===
@@ -280,6 +288,8 @@ void all(int cha, float dphiMin, float dphiMax) {
   TH2F *bkg_dy_dn = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Dn").c_str()));
   TH2F *bkg_wj_up = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Up").c_str()));
   TH2F *bkg_wj_dn = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Dn").c_str()));
+  TH2F *bkg_wgstar_up = (TH2F*)(bkg_wgstar->Clone((std::string(bkg_wgstar->GetName())+"_Up").c_str()));
+  TH2F *bkg_wgstar_dn = (TH2F*)(bkg_wgstar->Clone((std::string(bkg_wgstar->GetName())+"_Dn").c_str()));
   TH2F *bkg_others_up = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Up").c_str()));
   TH2F *bkg_others_dn = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Dn").c_str()));
 
@@ -289,6 +299,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   fakeAlternativeShapes(bkg_top,bkg_top_up,bkg_top_dn);
   fakeAlternativeShapes(bkg_wj,bkg_wj_up,bkg_wj_dn);
   fakeAlternativeShapes(bkg_dy,bkg_dy_up,bkg_dy_dn);
+  fakeAlternativeShapes(bkg_wgstar,bkg_wgstar_up,bkg_wgstar_dn);
   fakeAlternativeShapes(bkg_others,bkg_others_up,bkg_others_dn);
 
   sig_higgs_up->Write();
@@ -297,6 +308,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   bkg_top_up->Write();
   bkg_dy_up->Write();
   bkg_wj_up->Write();
+  bkg_wgstar_up->Write();
   bkg_others_up->Write();
 
   sig_higgs_dn->Write();
@@ -305,6 +317,7 @@ void all(int cha, float dphiMin, float dphiMax) {
   bkg_top_dn->Write();
   bkg_dy_dn->Write();
   bkg_wj_dn->Write();
+  bkg_wgstar_dn->Write();
   bkg_others_dn->Write();
 
   fileOut->Close();
