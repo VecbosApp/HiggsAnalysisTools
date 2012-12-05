@@ -49,6 +49,7 @@ public:
   YieldMaker      ymaker_top;
   YieldMaker      ymaker_dysf;
   YieldMaker      ymaker_dyof;
+  YieldMaker      ymaker_wgstar;
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
   XSecProvider xsecProvider;
@@ -126,6 +127,7 @@ public:
     float yield_dy     = 0.0; 
     if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
     else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getDY() * lumi;
+    float yield_wgstar = ymaker_wgstar .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * lumi;
     float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * lumi;
     float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
 
@@ -150,75 +152,57 @@ public:
     card = findAndReplace(card, "BKG_ggWW_YIELD"  , yield_ggww);
     card = findAndReplace(card, "BKG_TOP_YIELD"   , yield_top);
     card = findAndReplace(card, "BKG_DY_YIELD"    , yield_dy);
+    card = findAndReplace(card, "BKG_WGSTAR_YIELD", yield_wgstar);
     card = findAndReplace(card, "BKG_OTHERS_YIELD", yield_others);
     card = findAndReplace(card, "BKG_WJETS_YIELD" , yield_wj);
     card = findAndReplace(card, "BIN"             , binname);
     card = findAndReplace(card, "OBS"             , yield_data);
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_MC"),            cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","me","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_MC"),           cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","si","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-qcd"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","me","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-qcd"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","si","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-qcd"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","me","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-qcd"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","si","nominals","nominals"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_MC"),             cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_MC"),            cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-qcd"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-qcd"),   cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-qcd"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","me","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-qcd"),   cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","si","nominals","nominals"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-e"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-e"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-e"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-m"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-j"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-j"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-j"));
     card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-j"));
 
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-met"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-met"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-met"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-met"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-e"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-e"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-e"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-e"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-m"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-m"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-m"));
-    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-m"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-j"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-j"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-j"));
     card = findAndReplace(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaledn-j"));
 
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-e"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-m"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-m"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-j"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaleup-j"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaledn-j"));
-    card = findAndReplace(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","scaledn-j"));
-
-    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
-    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
+    card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
     card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-j"));
     card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-j"));
     card = findAndReplace(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-j"));
@@ -228,6 +212,17 @@ public:
     card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_sigma_err_fakerateup"),      cp.getRelUncertainty(getStringFitChannel(ch),"wjets","si","fakerateup"));
     card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_mean_err_fakeratedn"),       cp.getRelUncertainty(getStringFitChannel(ch),"wjets","me","fakeratedn"));
     card = findAndReplace(card, ("BKG_WJ_"+chstr+tevstr+"_sigma_err_fakeratedn"),      cp.getRelUncertainty(getStringFitChannel(ch),"wjets","si","fakeratedn"));
+
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-met"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-met"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaleup-e"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-e"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-e"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaledn-e"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaleup-m"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-m"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-m"));
+    card = findAndReplace(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaledn-m"));
 
     card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
     card = findAndReplace(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
@@ -301,6 +296,8 @@ public:
     float DYsfa13 = 0.;
     float WJme    = 0.;
     float WJsi    = 0.;
+    float WGsme   = 0.;
+    float WGssi   = 0.;
     float Otofme  = 0.;
     float Otofsi  = 0.;
     float Otsfa0  = 0.;
@@ -336,6 +333,9 @@ public:
       
       WJme = cp.getLandau(getStringFitChannel(ch),"wjets","nominals")[0];
       WJsi = cp.getLandau(getStringFitChannel(ch),"wjets","nominals")[1]; 
+
+      WGsme = cp.getLandau(getStringFitChannel(ch),"WGstar","nominals")[0];
+      WGssi = cp.getLandau(getStringFitChannel(ch),"WGstar","nominals")[1];
       
       Otofme = cp.getLandau(getStringFitChannel(ch),"Ot","nominals")[0];
       Otofsi = cp.getLandau(getStringFitChannel(ch),"Ot","nominals")[1];
@@ -464,6 +464,12 @@ public:
     RooFormulaVar wj_mean (("bkg_wj_"+chstr+tevstr+"_mean" ).c_str(), wjsyst.getFormulaSyst().c_str(), wj_mean_al);
     RooFormulaVar wj_sigma(("bkg_wj_"+chstr+tevstr+"_sigma").c_str(), wjsyst.getFormulaSyst().c_str(), wj_sigma_al);
 
+    WWSystematics wgstarsyst("bkg_wgstar");
+    RooArgList wgstar_mean_al  = wgstarsyst.getParSystematics("mean",chstr,tevstr,WGsme);
+    RooArgList wgstar_sigma_al = wgstarsyst.getParSystematics("sigma",chstr,tevstr,WGssi);    
+    RooFormulaVar wgstar_mean (("bkg_wgstar_"+chstr+tevstr+"_mean" ).c_str(), wgstarsyst.getFormulaSyst().c_str(), wgstar_mean_al);
+    RooFormulaVar wgstar_sigma(("bkg_wgstar_"+chstr+tevstr+"_sigma").c_str(), wgstarsyst.getFormulaSyst().c_str(), wgstar_sigma_al);
+
     WWSystematics otherssyst("bkg_others");
     RooArgList others_mean_al  = otherssyst.getParSystematics("mean",chstr,tevstr,Otofme);
     RooArgList others_sigma_al = otherssyst.getParSystematics("sigma",chstr,tevstr,Otofsi);    
@@ -573,6 +579,7 @@ public:
     const char* bkg_top_pdf_name    = do1D ? "bkg_top"    : "bkg_top_1D" ;
     const char* bkg_dy_pdf_name     = do1D ? "bkg_dy"     : "bkg_dy_1D" ;
     const char* bkg_wj_pdf_name     = do1D ? "bkg_wj"     : "bkg_wj_1D" ;
+    const char* bkg_wgstar_pdf_name = do1D ? "bkg_wgstar" : "bkg_wgstar_1D" ;
     const char* bkg_others_pdf_name = do1D ? "bkg_others" : "bkg_others_1D" ;
     const char* sig_ggH_pdf_name    = do1D ? "ggH"        : "ggH_1D"  ;
     const char* sig_qqH_pdf_name    = do1D ? "qqH"        : "qqH_1D"  ;
@@ -584,6 +591,8 @@ public:
     RooLandau *bkg_top_pdf = new RooLandau(bkg_top_pdf_name,"",CMS_ww2l_mr_1D,top_mean,top_sigma);
 
     RooLandau *bkg_wj_pdf = new RooLandau(bkg_wj_pdf_name,"",CMS_ww2l_mr_1D,wj_mean,wj_sigma);
+
+    RooLandau *bkg_wgstar_pdf = new RooLandau(bkg_wgstar_pdf_name,"",CMS_ww2l_mr_1D,wgstar_mean,wgstar_sigma);
 
     RooAbsPdf *bkg_dy_pdf, *bkg_others_pdf;
     bkg_dy_pdf=bkg_others_pdf=0;
@@ -646,6 +655,7 @@ public:
       w.import(*bkg_top_pdf);
       w.import(*bkg_dy_pdf);
       w.import(*bkg_wj_pdf);
+      w.import(*bkg_wgstar_pdf);
       w.import(*bkg_others_pdf);
       if(doFFT) {
         w.import(*sig_ggH_pdf);
@@ -666,6 +676,7 @@ public:
       TH2F* dphishape_top = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_top_"+chstr).c_str()));
       TH2F* dphishape_dy = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_dy_"+chstr).c_str()));
       TH2F* dphishape_wj = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr).c_str()));
+      TH2F* dphishape_wgstar = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wgstar_"+chstr).c_str()));
       TH2F* dphishape_others = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_others_"+chstr).c_str()));
       TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_sig_"+chstr).c_str()));
 
@@ -682,6 +693,7 @@ public:
       RooDataHist rhist_top    (("rhist_top_" +chstr+tevstr).c_str(), "", v2dList, dphishape_top);
       RooDataHist rhist_dy     (("rhist_dy_" +chstr+tevstr).c_str(), "", v2dList, dphishape_dy);
       RooDataHist rhist_wj     (("rhist_wj_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wj);
+      RooDataHist rhist_wgstar (("rhist_wgstar_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wgstar);
       RooDataHist rhist_others (("rhist_others_" +chstr+tevstr).c_str(), "", v2dList, dphishape_others);
       RooDataHist rhist_ggH    (("rhist_ggH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
       RooDataHist rhist_qqH    (("rhist_qqH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
@@ -691,7 +703,8 @@ public:
       RooHistPdf rpdf_top    (("bkg_top_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_top);
       RooHistPdf rpdf_dy     (("bkg_dy_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_dy);
       RooHistPdf rpdf_wj     (("bkg_wj_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wj);
-      RooHistPdf rpdf_others (("bkg_others_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wj);
+      RooHistPdf rpdf_wgstar (("bkg_wgstar_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wgstar);
+      RooHistPdf rpdf_others (("bkg_others_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_others);
       RooHistPdf rpdf_ggH    (("bkg_ggH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggH);
       RooHistPdf rpdf_qqH    (("bkg_qqH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqH);
 	    
@@ -703,6 +716,7 @@ public:
       FastVerticalInterpHistPdf2D plpdf_top    (("bkg_top_FVIHP_" +chstr+tevstr).c_str(),    "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_top)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_dy     (("bkg_dy_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_dy)     ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_wj     (("bkg_wj_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wj)     ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_wgstar (("bkg_wgstar_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wgstar) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_others (("bkg_others_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_others) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_ggH    (("sig_ggH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggH)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_qqH    (("sig_qqH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqH)    ,RooArgList()                ,1.0,1);
@@ -712,6 +726,7 @@ public:
       RooProdPdf bkg_top_pdf_2D    ("bkg_top"    , "", *bkg_top_pdf    ,Conditional(plpdf_top    , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_dy_pdf_2D     ("bkg_dy"     , "", *bkg_dy_pdf     ,Conditional(plpdf_dy     , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_wj_pdf_2D     ("bkg_wj"     , "", *bkg_wj_pdf     ,Conditional(plpdf_wj     , RooArgSet(CMS_ww2l_dphi))); 
+      RooProdPdf bkg_wgstar_pdf_2D ("bkg_wgstar" , "", *bkg_wgstar_pdf ,Conditional(plpdf_wgstar , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_others_pdf_2D ("bkg_others" , "", *bkg_others_pdf ,Conditional(plpdf_others , RooArgSet(CMS_ww2l_dphi))); 
 	
       if(doFFT) {
@@ -723,6 +738,7 @@ public:
         w.import(bkg_top_pdf_2D); 
         w.import(bkg_dy_pdf_2D); 
         w.import(bkg_wj_pdf_2D); 
+        w.import(bkg_wgstar_pdf_2D); 
         w.import(bkg_others_pdf_2D); 
         w.import(sig_ggH_pdf_2D); 
         w.import(sig_qqH_pdf_2D); 
@@ -735,6 +751,7 @@ public:
         w.import(bkg_top_pdf_2D); 
         w.import(bkg_dy_pdf_2D); 
         w.import(bkg_wj_pdf_2D); 
+        w.import(bkg_wgstar_pdf_2D); 
         w.import(bkg_others_pdf_2D); 
         w.import(sig_ggH_pdf_2D); 
         w.import(sig_qqH_pdf_2D); 
@@ -751,17 +768,16 @@ public:
 void createWorkspace() {
 
   HiggsMassPointInfo hmpi8;
-  hmpi8.lumi = 5.26;
+  hmpi8.lumi = 12.1;
   hmpi8.do1D = true;
   hmpi8.doFFT = false;
   hmpi8.treeFolder = "latinos_tree_skim_of/";
-  hmpi8.hww2DShapesfilename = "hww2DShapes.root";
+  hmpi8.hww2DShapesfilename = "config/hww2DShapes.root";
   hmpi8.xsecProvider.initXsec();
   hmpi8.xsecProvider.initQCDScale();
   hmpi8.xsecProvider.initPDF();
   hmpi8.xsecProvider.initJetBinFracs();
 
-  /*
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunA_892pbinv.root");
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunB_4404pbinv.root");
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunC_6807pbinv.root");
@@ -773,19 +789,21 @@ void createWorkspace() {
   hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_037_DY50toLLMad.root");
   hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_036_DY10toLLMad.root");
   hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
-  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"/wj/latino_RunABC_LooseLoose_skimww.root");
+  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_074_WZJetsMad.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
-  */
+  hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
+  hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
+  hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
 
-  // for (float i = 114.; i <= 180.; i += 1.) {
-  for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
-  // for (float i = 114.; i <= 180.; i += 1.) {
-  for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
