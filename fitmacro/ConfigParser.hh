@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include "findAndReplace.h"
+
 using namespace std;
 
 class ConfigParser {
@@ -18,6 +20,7 @@ public:
   vector<float> getDoubleGaussian(string channel, string process, string syst);
   float getRelUncertainty(string channel, string process, string param, string syst);
   float getRelUncertainty(string channel, string process1, string process2, string param, string syst1, string syst2);
+  std::string updateCardShapeUncertainty(string card, string templateSyst, float relunc);
 
 private:
   vector<string> _pars;
@@ -152,4 +155,9 @@ float ConfigParser::getRelUncertainty(string channel, string process1, string pr
     return 0.;
   }
   return floor(fabs(nominal-alt)/nominal * 1e+4)/1e+4;
+}
+
+std::string ConfigParser::updateCardShapeUncertainty(string card, string templateSyst, float relunc) {
+  if(relunc>0) return findAndReplace(card, templateSyst, relunc);
+  else return findAndReplace(card, templateSyst, 0.0001);
 }
