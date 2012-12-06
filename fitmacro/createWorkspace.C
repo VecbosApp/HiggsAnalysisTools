@@ -771,7 +771,7 @@ void createWorkspace() {
   hmpi8.lumi = 12.1;
   hmpi8.do1D = true;
   hmpi8.doFFT = false;
-  hmpi8.treeFolder = "latinos_tree_skim_of/";
+  hmpi8.treeFolder = "latinos_tree_skim_of";
   hmpi8.hww2DShapesfilename = "config/hww2DShapes.root";
   hmpi8.xsecProvider.initXsec();
   hmpi8.xsecProvider.initQCDScale();
