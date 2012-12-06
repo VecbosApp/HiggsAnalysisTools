@@ -231,7 +231,7 @@ class YieldMaker {
     tree->SetBranchAddress("mth",     &mth);
     tree->SetBranchAddress("boostedMR",&boostedMR);
     tree->SetBranchAddress("baseW",   &baseweight);
-    tree->SetBranchAddress("puW",     &puweight);
+    tree->SetBranchAddress("puW60ABC",&puweight);
     tree->SetBranchAddress("effW",    &effweight);
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
