@@ -29,13 +29,27 @@ public:
     RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-mu").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-e").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-mu").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-mu").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-m").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-j").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-j").c_str(), "", 0., -10., 10.);
 
     WW_par->setVal(centralval);
     WW_par->setConstant(kTRUE);
+
+    // parm nuisances will be made floating by combine, if used. 
+    // if they are not used, they have to stay fixed
+    WW_par_err_MC->setConstant(kTRUE);
+    WW_par_err_scaleup->setConstant(kTRUE);
+    WW_par_err_scaledn->setConstant(kTRUE);
+    WW_par_err_resmet->setConstant(kTRUE);
+    WW_par_err_rese->setConstant(kTRUE);
+    WW_par_err_resmu->setConstant(kTRUE);
+    WW_par_err_scaleupe->setConstant(kTRUE);
+    WW_par_err_scaledne->setConstant(kTRUE);
+    WW_par_err_scaleupmu->setConstant(kTRUE);
+    WW_par_err_scaleupj->setConstant(kTRUE);
+    WW_par_err_scalednj->setConstant(kTRUE);
 
     RooArgList WW_par_err(*WW_par,
                           *WW_par_err_resmet,    *WW_par_err_rese, *WW_par_err_resmu, 
@@ -75,6 +89,11 @@ public:
 
     WJets_par->setVal(centralval);
     WJets_par->setConstant(kTRUE);
+
+    // parm nuisances will be made floating by combine, if used. 
+    // if they are not used, they have to stay fixed
+    WJets_par_err_fakerateup->setConstant(kTRUE);
+    WJets_par_err_fakeratedn->setConstant(kTRUE);
 
     RooArgList WJets_par_err(*WJets_par,
                              *WJets_par_err_fakerateup, *WJets_par_err_fakeratedn);
