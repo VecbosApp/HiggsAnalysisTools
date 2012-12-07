@@ -59,10 +59,10 @@ public:
     stringstream fss;
     fss << "( ";  
     if (!doFFT) fss << "@0 + ";
-    if (ch == of0j) fss << "26.86 - 0.24065*@0";
-    if (ch == of1j) fss << "29.16 - 0.24410*@0";
-    if (ch == sf0j) fss << "49.28 - 0.36044*@0";
-    if (ch == sf1j) fss << "29.18 - 0.23906*@0";
+    if (ch == of0j) fss << "35.49 - 0.28447*@0";
+    if (ch == of1j) fss << "31.49 - 0.24456*@0";
+    if (ch == sf0j) fss << "41.49 - 0.30977*@0";
+    if (ch == sf1j) fss << "40.37 - 0.30441*@0";
     fss << " ) + @0*@1";
     return fss.str();
   }
@@ -70,29 +70,29 @@ public:
   std::string getSignalCBSigmaString(int ch) {
     stringstream fss;
     fss << "( ";  
-    if (ch == of0j) fss << "-1.878 + 0.1887*@0";
-    if (ch == of1j) fss << " 3.154 + 0.1657*@0";
-    if (ch == sf0j) fss << "-4.480 + 0.1816*@0";
-    if (ch == sf1j) fss << "-0.771 + 0.1839*@0";
+    if (ch == of0j) fss << "-7.941 + 0.1912*@0";
+    if (ch == of1j) fss << "-6.378 + 0.1976*@0";
+    if (ch == sf0j) fss << "-9.072 + 0.1889*@0";
+    if (ch == sf1j) fss << " 2.593 + 0.1135*@0";
     fss << " ) * (1+@1)";
     return fss.str();
   }
 
   std::string getSignalCBAlphaString(int ch) {
     stringstream fss;
-    if (ch == of0j) fss << "9.572";
-    if (ch == of1j) fss << "8.718";
-    if (ch == sf0j) fss << "8.304";
-    if (ch == sf1j) fss << "4.050";
+    if (ch == of0j) fss << "8.115";
+    if (ch == of1j) fss << "9.628";
+    if (ch == sf0j) fss << "9.851";
+    if (ch == sf1j) fss << "3.452";
     return fss.str();
   }
 
   std::string getSignalCBNString(int ch) {
     stringstream fss;
-    if (ch == of0j) fss << "16.9 - 0.0637*@0";
-    if (ch == of1j) fss << "15.8 - 0.00064*@0";
-    if (ch == sf0j) fss << "-13.2 + 0.1470*@0";
-    if (ch == sf1j) fss << "17.7 - 0.0595*@0";
+    if (ch == of0j) fss << " 4.02 + 0.06445*@0";
+    if (ch == of1j) fss << "23.96 - 0.07549*@0";
+    if (ch == sf0j) fss << "49.06 - 0.25549*@0";
+    if (ch == sf1j) fss << "46.41 - 0.25461*@0";
     return fss.str();
   }
 
