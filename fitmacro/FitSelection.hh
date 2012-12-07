@@ -8,8 +8,8 @@ public:
 };
 
 FitSelection::FitSelection() {
-  mrmin=0.0;
-  mrmax=10000.;
+  mrmin=50.;
+  mrmax=500.;
   dphimin=0.0;
   dphimax=TMath::Pi();
   mtmin=80.;
