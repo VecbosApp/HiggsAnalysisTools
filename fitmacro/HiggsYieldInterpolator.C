@@ -17,6 +17,7 @@
 #include <TPad.h>
 
 #include "YieldMaker.h"
+#include "FitSelection.hh"
 
 #include <fstream>
 #include <iostream>
@@ -98,25 +99,18 @@ void allmasses(int prod, int cha, float lumi) {
 
 float getYield(int mH, int cha, int prod, float lumi, bool barecount) {
  stringstream hFileName;
- hFileName << "results/datasets_trees/H" << mH << "_ll.root";
+ if(prod==gg) hFileName << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
+ else if(prod==vbf) hFileName << "latinos_tree_skim_of/nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
  cout << "Opening ROOT file: " << hFileName.str() << endl;
+
+ FitSelection sel;
 
  YieldMaker ymaker_hi;
  ymaker_hi.fill(hFileName.str().c_str());
 
- float procmin,procmax;
- if(prod==gg) {
-   procmin = 9000;
-   procmax = 9999;
- } 
- else if(prod==vbf) {
-   procmin = 8000;
-   procmax = 8999;
- }
-
  float yield = 0.0;
- if(barecount) yield = ymaker_hi.getCount(cha,0,500,0,TMath::Pi(),procmin,procmax); 
- else yield = ymaker_hi.getYield(cha,0,500,0,TMath::Pi(),procmin,procmax) * lumi;
+ if(barecount) yield = ymaker_hi.getCount(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax); 
+ else yield = ymaker_hi.getYield(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax) * lumi;
 
  return yield;
 }
