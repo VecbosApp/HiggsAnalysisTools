@@ -204,6 +204,18 @@ public:
 
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-m"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-j"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-j"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-j"));
@@ -216,6 +228,10 @@ public:
 
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-met"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-e"));
@@ -224,18 +240,29 @@ public:
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-m"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-m"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaledn-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaleup-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaledn-j"));
 
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-met"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-m"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaleup-m"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaledn-m"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","scaledn-m"));
-
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-met"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-met"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaleup-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaleup-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaledn-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaledn-e"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaleup-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaleup-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-m"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaledn-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-m"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaledn-m"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaleup-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaleup-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaleup-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaledn-j"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaledn-j"));
+    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaledn-j"));
 
     ofstream file;
     file.open ((card_name +".txt").c_str());
