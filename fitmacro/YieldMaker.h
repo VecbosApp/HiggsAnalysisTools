@@ -124,7 +124,7 @@ class YieldMaker {
       float ch     = dataset.get(i)->getRealValue("channel");
 
       if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax) hist->Fill(mr,D,(usexsecweight) ? weight : noxsecweight);
-    }
+      }
 
   }
 
@@ -212,7 +212,7 @@ class YieldMaker {
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
-    float boostedMR  = 0.0;
+    float dphill     = 0.0;
     float baseweight = 0.0;
     float effweight  = 0.0;
     float puweight   = 0.0;
@@ -229,7 +229,7 @@ class YieldMaker {
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
-    tree->SetBranchAddress("boostedMR",&boostedMR);
+    tree->SetBranchAddress("dphill",  &dphill);
     tree->SetBranchAddress("baseW",   &baseweight);
     tree->SetBranchAddress("puW60ABC",&puweight);
     tree->SetBranchAddress("effW",    &effweight);
@@ -264,12 +264,12 @@ class YieldMaker {
       met.SetPtEtaPhi(pfmet,0.0,pfmetphi);
 
       HWWKinematics kine(l1,l2,met);
-      mr = 2*kine.CalcMRNEW(); // met is the smeared one...
-      // mr = 2*boostedMR;
+      mr = 2*kine.CalcMRNEW();
       dphillr = fabs(kine.CalcDeltaPhiRFRAME());
 
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphillr);
+      argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
@@ -314,7 +314,7 @@ class WJetsYieldMaker : public YieldMaker {
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
-    float boostedMR  = 0.0;
+    float dphill     = 0.0;
     float fakeweight = 0.0;
     float ch         = 0.0;
     float proc       = 0.0;
@@ -329,7 +329,7 @@ class WJetsYieldMaker : public YieldMaker {
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
-    tree->SetBranchAddress("boostedMR",&boostedMR);
+    tree->SetBranchAddress("dphill",  &dphill);
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
@@ -364,12 +364,12 @@ class WJetsYieldMaker : public YieldMaker {
       met.SetPtEtaPhi(pfmet,0.0,pfmetphi);
 
       HWWKinematics kine(l1,l2,met);
-      mr = 2*kine.CalcMRNEW(); // met is the smeared one... 
-      // mr = 2*boostedMR;
+      mr = 2*kine.CalcMRNEW();
       dphillr = fabs(kine.CalcDeltaPhiRFRAME());
 
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphillr);
+      argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
@@ -409,7 +409,7 @@ class DataYieldMaker : public YieldMaker {
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
-    float boostedMR  = 0.0;
+    float dphill     = 0.0;
     float ch         = 0.0;
     float proc       = 0.0;
     float njet       = 0.0;
@@ -423,7 +423,7 @@ class DataYieldMaker : public YieldMaker {
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
-    tree->SetBranchAddress("boostedMR",&boostedMR);
+    tree->SetBranchAddress("dphill",  &dphill);
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
@@ -455,12 +455,12 @@ class DataYieldMaker : public YieldMaker {
       met.SetPtEtaPhi(pfmet,0.0,pfmetphi);
 
       HWWKinematics kine(l1,l2,met);
-      mr = 2*kine.CalcMRNEW(); // met is the smeared one...
-      // mr = 2*boostedMR;
+      mr = 2*kine.CalcMRNEW();
       dphillr = fabs(kine.CalcDeltaPhiRFRAME());
 
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphillr);
+      argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
