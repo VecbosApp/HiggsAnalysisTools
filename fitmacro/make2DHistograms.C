@@ -196,31 +196,27 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
   ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
-  float mrBinSize = 10.0; // GeV
-  float dphiBinSize = 5.0 * TMath::Pi() / 180.; // 5 degrees
+  float dphiBinSize = 20.0 * TMath::Pi() / 180.; // 20 degrees = 9 bins
   int yNBins = (int)(fabs(dphiMax-dphiMin))/dphiBinSize;
 
-  int xNBins = 17;
-  Double_t xLowerEdges[xNBins];
+  int xNBins = 4;
+  Double_t xLowerEdges[xNBins+1];
   xLowerEdges[0]=sel.mrmin;
-  xLowerEdges[1]=70;
-  // do constant binning up to 210 GeV (last mass point mH=180 GeV)
-  //  for(Double_t x=0; x<=220; x+=mrBinSize) {
-  for(int e=2; e<=15; ++e) {
-    xLowerEdges[e] = 70 + ((e-1)*mrBinSize);
-  }
-  xLowerEdges[16]=sel.mrmax;
+  xLowerEdges[1]=150;
+  xLowerEdges[2]=200;
+  xLowerEdges[3]=250;
+  xLowerEdges[4]=sel.mrmax;
 
   cout << "Filling the backgrounds now..." << endl;
 
-  TH2F *bkg_qqww   = new TH2F((string("hist2D_bkg_qqww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_ggww   = new TH2F((string("hist2D_bkg_ggww_")+getChannelSuffix(cha)).c_str(),  "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_top    = new TH2F((string("hist2D_bkg_top_")+getChannelSuffix(cha)).c_str(),   "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *bkg_wgstar = new TH2F((string("hist2D_bkg_wgstar_")+getChannelSuffix(cha)).c_str(),"",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
-  TH2F *sig_higgs  = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),       "",xNBins-1,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_qqww   = new TH2F((string("hist2D_bkg_qqww_")+getChannelSuffix(cha)).c_str(),  "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_ggww   = new TH2F((string("hist2D_bkg_ggww_")+getChannelSuffix(cha)).c_str(),  "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_top    = new TH2F((string("hist2D_bkg_top_")+getChannelSuffix(cha)).c_str(),   "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_dy     = new TH2F((string("hist2D_bkg_dy_")+getChannelSuffix(cha)).c_str(),    "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_wj     = new TH2F((string("hist2D_bkg_wj_")+getChannelSuffix(cha)).c_str(),    "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_others = new TH2F((string("hist2D_bkg_others_")+getChannelSuffix(cha)).c_str(),"",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *bkg_wgstar = new TH2F((string("hist2D_bkg_wgstar_")+getChannelSuffix(cha)).c_str(),"",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
+  TH2F *sig_higgs  = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),       "",xNBins,xLowerEdges,yNBins,dphiMin,dphiMax);
 
   ymaker_qqww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww);
   ymaker_ggww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_ggww);
