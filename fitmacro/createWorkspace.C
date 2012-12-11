@@ -54,8 +54,23 @@ public:
   WJetsYieldMaker ymaker_wj;
   XSecProvider xsecProvider;
   FitSelection sel;
+
+ int getClosestMCMass(float mH) {
+   int masses[10] = {115,120,125,130,135,140,150,160,170,180};
+   if(mH<masses[0]) return masses[0];
+   if(mH>=masses[9]) return masses[9];
+   for(int i=0;i<9;++i) {
+     if(mH>=masses[i] && mH<masses[i+1]) {
+       float sx=mH-masses[i];
+       float dx=masses[i+1]-mH;
+       return (sx<=dx) ? masses[i] : masses[i+1];
+     }
+   }
+   return -999;
+ }
   
  std::string getSignalCBMeanString(int ch) {
+    HWWSystematics syst("sig",1);
     stringstream fss;
     fss << "( ";  
     if (!doFFT) fss << "@0 + ";
@@ -63,42 +78,52 @@ public:
     if (ch == of1j) fss << "31.49 - 0.24456*@0";
     if (ch == sf0j) fss << "41.49 - 0.30977*@0";
     if (ch == sf1j) fss << "40.37 - 0.30441*@0";
-    fss << " ) + @0*@1";
+    fss << " )";
+    fss << syst.getFormulaSyst();
     return fss.str();
   }
 
   std::string getSignalCBSigmaString(int ch) {
+    HWWSystematics syst("sig",1);
     stringstream fss;
     fss << "( ";  
     if (ch == of0j) fss << "-7.941 + 0.1912*@0";
     if (ch == of1j) fss << "-6.378 + 0.1976*@0";
     if (ch == sf0j) fss << "-9.072 + 0.1889*@0";
     if (ch == sf1j) fss << " 2.593 + 0.1135*@0";
-    fss << " ) * (1+@1)";
+    fss << " )";
+    fss << syst.getFormulaSyst();
     return fss.str();
   }
 
   std::string getSignalCBAlphaString(int ch) {
+    HWWSystematics syst("sig",1);
     stringstream fss;
     if (ch == of0j) fss << "8.115";
     if (ch == of1j) fss << "9.628";
     if (ch == sf0j) fss << "9.851";
     if (ch == sf1j) fss << "3.452";
+    fss << syst.getFormulaSyst();
     return fss.str();
   }
 
   std::string getSignalCBNString(int ch) {
+    HWWSystematics syst("sig",1);
     stringstream fss;
     if (ch == of0j) fss << " 4.02 + 0.06445*@0";
     if (ch == of1j) fss << "23.96 - 0.07549*@0";
     if (ch == sf0j) fss << "49.06 - 0.25549*@0";
     if (ch == sf1j) fss << "46.41 - 0.25461*@0";
+    fss << syst.getFormulaSyst();
     return fss.str();
   }
 
   void createCard(float mass, float mrMin, float mrMax, int ch) {
 
     ConfigParser cp("config/mrfit_of_hcp.txt");
+    stringstream sigfilename;
+    sigfilename << "config/sigParamsHWW_mH" << getClosestMCMass(mass) << ".txt";
+    ConfigParser sigcp(sigfilename.str());
 
     std::string tevstr = "_8TeV"; 
 
@@ -158,6 +183,39 @@ public:
     card = findAndReplace(card, "BIN"             , binname);
     card = findAndReplace(card, "OBS"             , yield_data);
 
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_res-met"),          sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","res-met"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_res-met"),         sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","res-met"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_res-met"),         sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","res-met"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_res-met"),             sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","res-met"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_res-e"),            sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","res-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_res-e"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","res-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_res-e"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","res-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_res-e"),               sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","res-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaleup-e"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaleup-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaleup-e"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaleup-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaleup-e"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaleup-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaleup-e"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaleup-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaledn-e"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaledn-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaledn-e"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaledn-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaledn-e"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaledn-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaledn-e"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaledn-e"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaleup-m"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaleup-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaleup-m"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaleup-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaleup-m"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaleup-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaleup-m"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaleup-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaledn-m"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaledn-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaledn-m"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaledn-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaledn-m"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaledn-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaledn-m"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaledn-m"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaleup-j"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaleup-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaleup-j"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaleup-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaleup-j"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaleup-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaleup-j"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaleup-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_scaledn-j"),        sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","scaledn-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_scaledn-j"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","scaledn-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_alpha_err_scaledn-j"),       sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","alpha","scaledn-j"));
+    card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_n_err_scaledn-j"),           sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","n","scaledn-j"));
+
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_MC"),             cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","me","nominals","nominals"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_MC"),            cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","qqWWMCatNLONom","si","nominals","nominals"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-qcd"),    cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLOUp","me","nominals","nominals"));
@@ -166,8 +224,6 @@ public:
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_scaledn-qcd"),   cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMCatNLONom","qqWWMCatNLODown","si","nominals","nominals"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-met"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_QQWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"qqWWMadgraph","me","scaleup-e"));
@@ -187,8 +243,6 @@ public:
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","si","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_GGWW_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"ggWW","me","scaledn-e"));
@@ -204,8 +258,6 @@ public:
 
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-met"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Top","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_TOP_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Top","me","scaleup-e"));
@@ -230,8 +282,6 @@ public:
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_sigma_err_scaleup-e"),     cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","si","scaleup-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_WGSTAR_"+chstr+tevstr+"_mean_err_scaledn-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"WGstar","me","scaledn-e"));
@@ -247,8 +297,6 @@ public:
 
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-met"),        cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-met"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-met"),       cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-met"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-e"));
-    card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_res-e"),          cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_res-e"),         cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","res-e"));
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_mean_err_scaleup-e"),      cp.getRelUncertainty(getStringFitChannel(ch),"Ot","me","scaleup-e"));
@@ -533,27 +581,30 @@ public:
     RooRealVar otherssf_a11 (("bkg_others_"+chstr+tevstr+"_a11" ).c_str(), "", Otsfa11);
     RooRealVar otherssf_a12 (("bkg_others_"+chstr+tevstr+"_a12" ).c_str(), "", Otsfa12);
     RooRealVar otherssf_a13 (("bkg_others_"+chstr+tevstr+"_a13" ).c_str(), "", Otsfa13);
-	
-    RooRealVar sig_mean_err    (("sig_"+chstr+"_mean_err"  +tevstr).c_str()  , "", 0., -10., 10.);
-    RooRealVar sig_sigma_err   (("sig_"+chstr+"_sigma_err" +tevstr).c_str()  , "", 0., -10., 10.);
-    
+
     RooRealVar masshiggs       ("MH", "", mass);
+
+    HWWSystematics sigsyst("sig",mass);
+    RooArgList sig_mean_al(masshiggs); sig_mean_al.add(sigsyst.getParSystematics("mean",chstr,tevstr));
+    RooArgList sig_sigma_al(masshiggs); sig_sigma_al.add(sigsyst.getParSystematics("sigma",chstr,tevstr));
+    RooArgList sig_alpha_al(masshiggs); sig_alpha_al.add(sigsyst.getParSystematics("alpha",chstr,tevstr));
+    RooArgList sig_n_al(masshiggs); sig_n_al.add(sigsyst.getParSystematics("n",chstr,tevstr));
 
     InterpolatedYields ggHy(ch,ggH);
     InterpolatedYields qqHy(ch,vbfH);
-
+    
     RooRealVar ggh_gamma_BW    (("sig_ggh_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
-    RooFormulaVar ggh_mean_CB  (("sig_ggh_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , RooArgList(masshiggs, sig_mean_err));
-    RooFormulaVar ggh_sigma_CB (("sig_ggh_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , RooArgList(masshiggs, sig_sigma_err));
-    RooFormulaVar ggh_alpha    (("sig_ggh_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , RooArgList(masshiggs));
-    RooFormulaVar ggh_n        (("sig_ggh_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , RooArgList(masshiggs));
+    RooFormulaVar ggh_mean_CB  (("sig_ggh_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , sig_mean_al);
+    RooFormulaVar ggh_sigma_CB (("sig_ggh_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , sig_sigma_al);
+    RooFormulaVar ggh_alpha    (("sig_ggh_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , sig_alpha_al);
+    RooFormulaVar ggh_n        (("sig_ggh_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , sig_n_al);
     RooFormulaVar ggh_norm     ("ggH_norm"                                    , (ggHy.getInterpolatedYieldString(lumi)).c_str()          , RooArgList(masshiggs));
     
     RooRealVar vbf_gamma_BW    (("sig_vbf_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
-    RooFormulaVar vbf_mean_CB  (("sig_vbf_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , RooArgList(masshiggs, sig_mean_err));
-    RooFormulaVar vbf_sigma_CB (("sig_vbf_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , RooArgList(masshiggs, sig_sigma_err));
-    RooFormulaVar vbf_alpha    (("sig_vbf_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , RooArgList(masshiggs));
-    RooFormulaVar vbf_n        (("sig_vbf_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , RooArgList(masshiggs));
+    RooFormulaVar vbf_mean_CB  (("sig_vbf_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , sig_mean_al);
+    RooFormulaVar vbf_sigma_CB (("sig_vbf_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , sig_sigma_al);
+    RooFormulaVar vbf_alpha    (("sig_vbf_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , sig_alpha_al);
+    RooFormulaVar vbf_n        (("sig_vbf_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , sig_n_al);
     RooFormulaVar vbf_norm     ("qqH_norm"                                    , (qqHy.getInterpolatedYieldString(lumi)).c_str()          , RooArgList(masshiggs));
       
     /////////// Set parameters to constant //////////////////
@@ -595,8 +646,6 @@ public:
     otherssf_a13 .setConstant(kTRUE);
 
     masshiggs     .setConstant(kTRUE);
-    sig_mean_err  .setConstant(kTRUE);
-    sig_sigma_err .setConstant(kTRUE);
     ggh_gamma_BW  .setConstant(kTRUE);
     vbf_gamma_BW  .setConstant(kTRUE);
     
