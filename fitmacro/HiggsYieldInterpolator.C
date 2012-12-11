@@ -26,7 +26,7 @@
 
 using namespace std;
 
-enum prodmode {gg, vbf};
+enum prodmode {gg, vbf, wztt};
 
 int Wait() {
      cout << " Continue [<RET>|q]?  ";
@@ -50,7 +50,7 @@ void allmasses(int prod, int cha, float lumi);
 
 void all(int lumi) {
   for(int i=0;i<4;++i) {
-    for(int j=0;j<2;++j) {
+    for(int j=0;j<3;++j) {
       allmasses(j,i,lumi);
     }
   }
@@ -92,7 +92,11 @@ void allmasses(int prod, int cha, float lumi) {
 
   gStyle->SetOptFit(111111);
   stringstream nameFile;
-  nameFile << "higgsYield_" <<  getChannelSuffix(cha) << (prod==gg ? "_ggH" : "_vbfH") << "_lumi" << lumi << "invfb";
+  nameFile << "higgsYield_" <<  getChannelSuffix(cha);
+  if(prod==gg) nameFile << "_ggH";
+  else if(prod==vbf) nameFile << "_vbfH";
+  else if(prod==wztt) nameFile << "_wzttH";
+  nameFile << "_lumi" << lumi << "invfb";
   gY->Fit("pol3"); gY->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string(".pdf")).c_str()); Wait();
 
 }
@@ -101,6 +105,7 @@ float getYield(int mH, int cha, int prod, float lumi, bool barecount) {
  stringstream hFileName;
  if(prod==gg) hFileName << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
  else if(prod==vbf) hFileName << "latinos_tree_skim_of/nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
+ else if(prod==wztt) hFileName << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
  cout << "Opening ROOT file: " << hFileName.str() << endl;
 
  FitSelection sel;
