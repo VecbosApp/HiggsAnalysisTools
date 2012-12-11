@@ -173,6 +173,7 @@ public:
     card = findAndReplace(card, "VBF_QCD"         , xsecProvider.get8TeVVBFQCDDown(mass),            xsecProvider.get8TeVVBFQCDUp(mass));
     card = findAndReplace(card, "SIG_GGH_YIELD"   , 1);
     card = findAndReplace(card, "SIG_VBF_YIELD"   , 1);
+    card = findAndReplace(card, "SIG_WZTT_YIELD"  , 1);
     card = findAndReplace(card, "BKG_qqWW_YIELD"  , yield_qqww);
     card = findAndReplace(card, "BKG_ggWW_YIELD"  , yield_ggww);
     card = findAndReplace(card, "BKG_TOP_YIELD"   , yield_top);
@@ -591,7 +592,8 @@ public:
     RooArgList sig_n_al(masshiggs); sig_n_al.add(sigsyst.getParSystematics("n",chstr,tevstr));
 
     InterpolatedYields ggHy(ch,ggH);
-    InterpolatedYields qqHy(ch,vbfH);
+    InterpolatedYields vbfHy(ch,vbfH);
+    InterpolatedYields wzttHy(ch,wzttH);
     
     RooRealVar ggh_gamma_BW    (("sig_ggh_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
     RooFormulaVar ggh_mean_CB  (("sig_ggh_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , sig_mean_al);
@@ -605,7 +607,14 @@ public:
     RooFormulaVar vbf_sigma_CB (("sig_vbf_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , sig_sigma_al);
     RooFormulaVar vbf_alpha    (("sig_vbf_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , sig_alpha_al);
     RooFormulaVar vbf_n        (("sig_vbf_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , sig_n_al);
-    RooFormulaVar vbf_norm     ("qqH_norm"                                    , (qqHy.getInterpolatedYieldString(lumi)).c_str()          , RooArgList(masshiggs));
+    RooFormulaVar vbf_norm     ("vbfH_norm"                                   , (vbfHy.getInterpolatedYieldString(lumi)).c_str()          , RooArgList(masshiggs));
+
+    RooRealVar wztt_gamma_BW    (("sig_wztt_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
+    RooFormulaVar wztt_mean_CB  (("sig_wztt_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , sig_mean_al);
+    RooFormulaVar wztt_sigma_CB (("sig_wztt_"+chstr+tevstr+"_sigma_CB" ).c_str(), getSignalCBSigmaString(ch).c_str() , sig_sigma_al);
+    RooFormulaVar wztt_alpha    (("sig_wztt_"+chstr+tevstr+"_alpha"    ).c_str(), getSignalCBAlphaString(ch).c_str() , sig_alpha_al);
+    RooFormulaVar wztt_n        (("sig_wztt_"+chstr+tevstr+"_n"        ).c_str(), getSignalCBNString(ch).c_str()     , sig_n_al);
+    RooFormulaVar wztt_norm     ("wzttH_norm"                                   , (wzttHy.getInterpolatedYieldString(lumi)).c_str()       , RooArgList(masshiggs));
       
     /////////// Set parameters to constant //////////////////
 
@@ -648,6 +657,7 @@ public:
     masshiggs     .setConstant(kTRUE);
     ggh_gamma_BW  .setConstant(kTRUE);
     vbf_gamma_BW  .setConstant(kTRUE);
+    wztt_gamma_BW .setConstant(kTRUE);
     
     ////////////////// Define the PDFs /////////////////////////////////
 
@@ -659,7 +669,8 @@ public:
     const char* bkg_wgstar_pdf_name = do1D ? "bkg_wgstar" : "bkg_wgstar_1D" ;
     const char* bkg_others_pdf_name = do1D ? "bkg_others" : "bkg_others_1D" ;
     const char* sig_ggH_pdf_name    = do1D ? "ggH"        : "ggH_1D"  ;
-    const char* sig_qqH_pdf_name    = do1D ? "qqH"        : "qqH_1D"  ;
+    const char* sig_vbfH_pdf_name   = do1D ? "vbfH"       : "vbfH_1D"  ;
+    const char* sig_wzttH_pdf_name  = do1D ? "wzttH"      : "wzttH_1D"  ;
 
     RooLandau *bkg_qqww_pdf = new RooLandau(bkg_qqww_pdf_name,"",CMS_ww2l_mr_1D,qqww_mean,qqww_sigma);
 
@@ -718,13 +729,19 @@ public:
     RooFFTConvPdf*  sig_ggH_pdf = new RooFFTConvPdf(sig_ggH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_ggH,signalCB_ggH,2);
     sig_ggH_pdf->setBufferFraction(0.2);
 
-    RooCBShape      signalCB_qqH   (doFFT? "signalCB_qqH" : sig_qqH_pdf_name, "", CMS_ww2l_mr_1D, vbf_mean_CB,vbf_sigma_CB,vbf_alpha,vbf_n);
-    RooBreitWigner  signalBW_qqH   ("signalBW_qqH", "", CMS_ww2l_mr_1D, masshiggs,vbf_gamma_BW);
-    RooFFTConvPdf*  sig_qqH_pdf = new RooFFTConvPdf(sig_qqH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_qqH,signalCB_qqH,2);
-    sig_qqH_pdf->setBufferFraction(0.2);
+    RooCBShape      signalCB_vbfH   (doFFT? "signalCB_vbfH" : sig_vbfH_pdf_name, "", CMS_ww2l_mr_1D, vbf_mean_CB,vbf_sigma_CB,vbf_alpha,vbf_n);
+    RooBreitWigner  signalBW_vbfH   ("signalBW_vbfH", "", CMS_ww2l_mr_1D, masshiggs,vbf_gamma_BW);
+    RooFFTConvPdf*  sig_vbfH_pdf = new RooFFTConvPdf(sig_vbfH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_vbfH,signalCB_vbfH,2);
+    sig_vbfH_pdf->setBufferFraction(0.2);
+
+    RooCBShape      signalCB_wzttH   (doFFT? "signalCB_wzttH" : sig_wzttH_pdf_name, "", CMS_ww2l_mr_1D, wztt_mean_CB,wztt_sigma_CB,wztt_alpha,wztt_n);
+    RooBreitWigner  signalBW_wzttH   ("signalBW_wzttH", "", CMS_ww2l_mr_1D, masshiggs,wztt_gamma_BW);
+    RooFFTConvPdf*  sig_wzttH_pdf = new RooFFTConvPdf(sig_wzttH_pdf_name, "", CMS_ww2l_mr_1D, signalBW_wzttH,signalCB_wzttH,2);
+    sig_wzttH_pdf->setBufferFraction(0.2);
 
     w.import(ggh_norm);
     w.import(vbf_norm);
+    w.import(wztt_norm);
 
     if (do1D) { 
       w.import(*bkg_qqww_pdf);
@@ -736,10 +753,12 @@ public:
       w.import(*bkg_others_pdf);
       if(doFFT) {
         w.import(*sig_ggH_pdf);
-        w.import(*sig_qqH_pdf);
+        w.import(*sig_vbfH_pdf);
+        w.import(*sig_wzttH_pdf);
       } else {
         w.import(signalCB_ggH);
-        w.import(signalCB_qqH);
+        w.import(signalCB_vbfH);
+        w.import(signalCB_wzttH);
       }
     } 
 
@@ -773,7 +792,8 @@ public:
       RooDataHist rhist_wgstar (("rhist_wgstar_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wgstar);
       RooDataHist rhist_others (("rhist_others_" +chstr+tevstr).c_str(), "", v2dList, dphishape_others);
       RooDataHist rhist_ggH    (("rhist_ggH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
-      RooDataHist rhist_qqH    (("rhist_qqH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
+      RooDataHist rhist_vbfH   (("rhist_vbfH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
+      RooDataHist rhist_wzttH  (("rhist_wzttH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
 	    
       RooHistPdf rpdf_qqww   (("bkg_qqww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqww);
       RooHistPdf rpdf_ggww   (("bkg_ggww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggww);
@@ -783,7 +803,8 @@ public:
       RooHistPdf rpdf_wgstar (("bkg_wgstar_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wgstar);
       RooHistPdf rpdf_others (("bkg_others_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_others);
       RooHistPdf rpdf_ggH    (("bkg_ggH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggH);
-      RooHistPdf rpdf_qqH    (("bkg_qqH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqH);
+      RooHistPdf rpdf_vbfH   (("bkg_vbfH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_vbfH);
+      RooHistPdf rpdf_wzttH  (("bkg_wzttH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wzttH);
 	    
       // will be used for syst
       // RooRealVar CMS_ww2l_bkg("CMS_ww2l_bkgDPHI" ,"" ,0,-10,10); 
@@ -796,7 +817,8 @@ public:
       FastVerticalInterpHistPdf2D plpdf_wgstar (("bkg_wgstar_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wgstar) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_others (("bkg_others_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_others) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_ggH    (("sig_ggH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggH)    ,RooArgList()                ,1.0,1);
-      FastVerticalInterpHistPdf2D plpdf_qqH    (("sig_qqH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqH)    ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_vbfH   (("sig_vbfH_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_vbfH)   ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_wzttH  (("sig_wzttH_FVIHP_" +chstr+tevstr).c_str(),  "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wzttH)  ,RooArgList()                ,1.0,1);
 
       RooProdPdf bkg_qqww_pdf_2D   ("bkg_qqww"   , "", *bkg_qqww_pdf   ,Conditional(plpdf_qqww   , RooArgSet(CMS_ww2l_dphi))); 
       RooProdPdf bkg_ggww_pdf_2D   ("bkg_ggww"   , "", *bkg_ggww_pdf   ,Conditional(plpdf_ggww   , RooArgSet(CMS_ww2l_dphi))); 
@@ -807,8 +829,9 @@ public:
       RooProdPdf bkg_others_pdf_2D ("bkg_others" , "", *bkg_others_pdf ,Conditional(plpdf_others , RooArgSet(CMS_ww2l_dphi))); 
 	
       if(doFFT) {
-        RooProdPdf sig_ggH_pdf_2D  ("ggH", "", *sig_ggH_pdf   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
-        RooProdPdf sig_qqH_pdf_2D  ("qqH", "", *sig_qqH_pdf   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_ggH_pdf_2D   ("ggH",   "", *sig_ggH_pdf    ,Conditional(plpdf_ggH   , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_vbfH_pdf_2D  ("vbfH",  "", *sig_vbfH_pdf   ,Conditional(plpdf_vbfH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_wzttH_pdf_2D ("wzttH", "", *sig_wzttH_pdf  ,Conditional(plpdf_wzttH , RooArgSet(CMS_ww2l_dphi))); 
         
         w.import(bkg_qqww_pdf_2D); 
         w.import(bkg_ggww_pdf_2D); 
@@ -818,10 +841,12 @@ public:
         w.import(bkg_wgstar_pdf_2D); 
         w.import(bkg_others_pdf_2D); 
         w.import(sig_ggH_pdf_2D); 
-        w.import(sig_qqH_pdf_2D); 
+        w.import(sig_vbfH_pdf_2D); 
+        w.import(sig_wzttH_pdf_2D); 
       } else {
-        RooProdPdf sig_ggH_pdf_2D  ("ggH", "", signalCB_ggH   ,Conditional(plpdf_ggH  , RooArgSet(CMS_ww2l_dphi))); 
-        RooProdPdf sig_qqH_pdf_2D  ("qqH", "", signalCB_qqH   ,Conditional(plpdf_qqH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_ggH_pdf_2D   ("ggH",  "", signalCB_ggH   ,Conditional(plpdf_ggH   , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_vbfH_pdf_2D  ("vbfH", "", signalCB_vbfH  ,Conditional(plpdf_vbfH  , RooArgSet(CMS_ww2l_dphi))); 
+        RooProdPdf sig_wzttH_pdf_2D ("wzttH","", signalCB_wzttH ,Conditional(plpdf_wzttH , RooArgSet(CMS_ww2l_dphi))); 
         
         w.import(bkg_qqww_pdf_2D); 
         w.import(bkg_ggww_pdf_2D); 
@@ -831,7 +856,8 @@ public:
         w.import(bkg_wgstar_pdf_2D); 
         w.import(bkg_others_pdf_2D); 
         w.import(sig_ggH_pdf_2D); 
-        w.import(sig_qqH_pdf_2D); 
+        w.import(sig_vbfH_pdf_2D); 
+        w.import(sig_wzttH_pdf_2D); 
       }
 
     }
