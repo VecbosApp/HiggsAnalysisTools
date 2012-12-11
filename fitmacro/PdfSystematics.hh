@@ -48,6 +48,7 @@ public:
     WW_par_err_scaleupe->setConstant(kTRUE);
     WW_par_err_scaledne->setConstant(kTRUE);
     WW_par_err_scaleupmu->setConstant(kTRUE);
+    WW_par_err_scalednmu->setConstant(kTRUE);
     WW_par_err_scaleupj->setConstant(kTRUE);
     WW_par_err_scalednj->setConstant(kTRUE);
 
@@ -104,3 +105,50 @@ private:
   string _process;
 };
 
+class HWWSystematics {
+public:
+  HWWSystematics(string process, int mH) { _process=process; _mH=mH; }
+  ~HWWSystematics() {}
+
+  string getFormulaSyst() {
+    stringstream fss;
+    fss << "*(1+@1+@2+@3+@4+@5+@6+@7+@8+@9)";
+    return fss.str();
+  }
+
+  RooArgList getParSystematics(string par, string chstr, string tevstr) {
+    RooRealVar *WW_par_err_resmet = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-met").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_rese = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-mu").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-j").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-j").c_str(), "", 0., -10., 10.);
+    
+    // parm nuisances will be made floating by combine, if used. 
+    // if they are not used, they have to stay fixed
+    WW_par_err_resmet->setConstant(kTRUE);
+    WW_par_err_rese->setConstant(kTRUE);
+    WW_par_err_resmu->setConstant(kTRUE);
+    WW_par_err_scaleupe->setConstant(kTRUE);
+    WW_par_err_scaledne->setConstant(kTRUE);
+    WW_par_err_scaleupmu->setConstant(kTRUE);
+    WW_par_err_scalednmu->setConstant(kTRUE);
+    WW_par_err_scaleupj->setConstant(kTRUE);
+    WW_par_err_scalednj->setConstant(kTRUE);
+
+    RooArgList WW_par_err(*WW_par_err_resmet,    *WW_par_err_rese, *WW_par_err_resmu, 
+                          *WW_par_err_scaleupe,  *WW_par_err_scaledne,
+                          *WW_par_err_scaleupmu, *WW_par_err_scalednmu);
+    WW_par_err.add(*WW_par_err_scaleupj); 
+    WW_par_err.add(*WW_par_err_scalednj);
+
+    return WW_par_err;
+  }
+
+private:
+  string _process;
+  int _mH;
+};
