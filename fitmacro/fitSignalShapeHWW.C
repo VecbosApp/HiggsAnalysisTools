@@ -63,10 +63,10 @@ string getStringChannel(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
-void fitSignalShapeMR(int massBin, int channel, 
-                      double rangeLow, double rangeHigh,
-                      double bwSigma,
-                      double fitValues[5], double fitErrors[5]);
+std::string fitSignalShapeMR(int massBin, int channel, 
+                             double rangeLow, double rangeHigh,
+                             double bwSigma,
+                             double fitValues[5], double fitErrors[5], string syst);
                         
 void all(int channel=0) {
   double bwSigma[30];
@@ -108,8 +108,7 @@ void all(int channel=0) {
 
   for(int i=0; i<maxMassBin;++i){
   
-    fitSignalShapeMR(mass[i],channel,xLow[i],xHigh[i],bwSigma[i],
-		    fitValues,fitErrors);  
+    fitSignalShapeMR(mass[i],channel,xLow[i],xHigh[i],bwSigma[i],fitValues,fitErrors,"nominals");  
   
     cout << "a value,error: " << fitValues[0] << " , " << fitErrors[0] << endl; 
     aVal[i]=fitValues[0]; aErr[i]=fitErrors[0];
@@ -169,10 +168,64 @@ void all(int channel=0) {
 
 }
 
-void fitSignalShapeMR(int massBin, int channel, 
-                     double rangeLow, double rangeHigh,
-		     double bwSigma,
-		     double fitValues[5], double fitErrors[5]){
+void signalSystematics() {
+
+  const char* e0 = "\033[44;37m";
+  const char* e1 = "\033[41;37m";
+  const char* en="\033[0m";
+
+  double bwSigma[30];
+  int mass[30]; double xLow[30]; double xHigh[30];  
+  int maxMassBin = 10;
+
+  mass[0] = 115; xLow[0] = 50; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+  mass[1] = 120; xLow[1] = 50; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+  mass[2] = 125; xLow[2] = 50; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+  mass[3] = 130; xLow[3] = 60; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+  mass[4] = 135; xLow[4] = 60; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+  mass[5] = 140; xLow[5] = 70; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+  mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
+  mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+  mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
+  mass[9] = 180; xLow[9] = 80; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+
+  double fitValues[5];
+  double fitErrors[5];
+
+  for(int i=0; i<maxMassBin;++i){
+
+    cout << e1 << "==> Fitting H->WW sample with mH = " << mass[i] << " ..." << en << endl;
+
+    ofstream fileParams;
+    stringstream filename;
+    filename << "sigParamsHWW_mH" << mass[i] << ".txt";
+    
+    fileParams.open(filename.str().c_str());
+    vector<string> systematics;
+    systematics.push_back("nominals");
+    systematics.push_back("res-met");
+    systematics.push_back("res-e");
+    systematics.push_back("scaleup-e");
+    systematics.push_back("scaledn-e");
+    systematics.push_back("scaleup-m");
+    systematics.push_back("scaledn-m");
+    systematics.push_back("scaleup-j");
+    systematics.push_back("scaledn-j");
+    
+    for(int s=0; s<(int)systematics.size(); ++s) {
+      cout << e0 << "%%% Parameterising samples with systematic " << systematics[s] << " ON..." << en << endl;
+      fileParams << "# qq->H->WW pdfs with systematics: " << systematics[s] << endl;
+      for(int ch=0; ch<4; ++ch) fileParams << fitSignalShapeMR(mass[i],ch,xLow[i],xHigh[i],bwSigma[i],fitValues,fitErrors,systematics[s]);
+    }
+
+  }
+
+}
+
+std::string fitSignalShapeMR(int massBin, int channel, 
+                             double rangeLow, double rangeHigh,
+                             double bwSigma,
+                             double fitValues[5], double fitErrors[5], string syst){
  // ------ root settings ---------
   gROOT->Reset();  
   gROOT->SetStyle("Plain");
@@ -189,10 +242,21 @@ void fitSignalShapeMR(int massBin, int channel,
 
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
+  string dir;
+  if(syst.find("res-e")!=string::npos) dir="electronResolution";
+  else if(syst.find("res-met")!=string::npos) dir="metResolution";
+  else if(syst.find("scaleup-e")!=string::npos) dir="electronScale_up";
+  else if(syst.find("scaledn-e")!=string::npos) dir="electronScale_down";
+  else if(syst.find("scaleup-m")!=string::npos) dir="muonScale_up";
+  else if(syst.find("scaledn-m")!=string::npos) dir="muonScale_down";
+  else if(syst.find("scaleup-j")!=string::npos) dir="jetEnergyScale_up";
+  else if(syst.find("scaledn-j")!=string::npos) dir="jetEnergyScale_down";
+  else dir="nominals";
+
   YieldMaker  ymaker_hi;
 
   stringstream hFileName;
-  hFileName << "latinos_tree_skim_of/nominals/latino_1" << massBin << "_ggToH" << massBin << "toWWTo2LAndTau2Nu.root";
+  hFileName << "latinos_tree_skim_of/"+dir+"/latino_1" << massBin << "_ggToH" << massBin << "toWWTo2LAndTau2Nu.root";
   cout << "ggH ==> Opening ROOT file: " << hFileName.str() << endl;
   ymaker_hi.fill(hFileName.str().c_str());
 
@@ -272,7 +336,17 @@ void fitSignalShapeMR(int massBin, int channel,
     fitErrors[4] = sigma.getError();
   }
 
-  return;
+  stringstream info;
+  info << getStringFitChannel(channel) << "_sig_me_" << syst
+       << " = " << mean.getVal() << " +/- " << mean.getError() << endl;
+  info << getStringFitChannel(channel) << "_sig_si_" << syst 
+       << " = " << sigma.getVal() << " +/- " << sigma.getError() << endl;
+  info << getStringFitChannel(channel) << "_sig_alpha_" << syst 
+       << " = " << a.getVal() << " +/- " << a.getError() << endl;
+  info << getStringFitChannel(channel) << "_sig_n_" << syst 
+       << " = " << n.getVal() << " +/- " << n.getError() << endl;
+
+  return info.str();
 
 }
 
