@@ -9,6 +9,7 @@ import hwwlimits
 
 indir  = os.getcwd()+'/datacards/'
 outdir = os.getcwd()+'/limits/'
+outdirsignif = os.getcwd()+'/significance/'
 def main():
 
     usage = '''usage: %prog [opts] dctag'''
@@ -17,7 +18,7 @@ def main():
     parser.add_option('-1',dest='minuit1',help='Minuit ', action='store_true', default=False)
     parser.add_option('-n',dest='dryrun',help='Dry run ', action='store_true', default=False)
     parser.add_option('-o',dest='observed',help='Observed only', action='store_true', default=False)
-    parser.add_option('-S','--significance',dest='significance',help='Compute the significance instead of the limit ', action='store_true', default=False)
+    parser.add_option('-S','--significance',dest='significance',help='Compute the expected significance instead of the limit ', action='store_true', default=False)
     parser.add_option('--prefix','-p',dest='prefix',help='prefix',default=None)
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
 
@@ -63,10 +64,11 @@ def main():
             flags = ' --minosAlgo stepping'+flags
         if opt.minuit1:
             flags = ' --minimizerAlgo Minuit'+flags
-        if opt.observed:
-            flags = ' --run observed'+flags
         if opt.significance:
-            flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 '+flags
+            if opt.observed:
+                flags = ' -M ProfileLikelihood --significance '+flags
+            else:
+                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 '+flags
         else:
             flags = ' -M Asymptotic '+flags
         if not opt.significance:
@@ -81,7 +83,7 @@ def main():
         if opt.dryrun: continue
         code = os.system(command)
         if opt.significance:
-            move = 'mv higgsCombine%s.ProfileLikelihood.mH%d.*.root %s' % (tagname,mass,outdir)
+            move = 'mv higgsCombine%s.ProfileLikelihood.mH%d*.root %s' % (tagname,mass,outdirsignif)
         else:
             move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
         print move
