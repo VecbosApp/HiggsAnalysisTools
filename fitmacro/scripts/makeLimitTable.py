@@ -12,7 +12,7 @@ import re
 
  
 tagname = 'comb_shape'
-basepath = os.getcwd()+'/../limits/'
+basepath = os.getcwd()+'/limits/'
 
 samplename = os.listdir(basepath)
 samplename.sort()
