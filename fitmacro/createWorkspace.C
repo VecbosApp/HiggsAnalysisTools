@@ -139,9 +139,10 @@ public:
         
     std::cout << "Creating datacard for " << mass_str << " GeV mass point and channel " << chstr << " ... " << std::endl;
     
-    std::string card_name   = do1D ? (std::string("card_1D_m")+mass_str+"_8TeV_") : (std::string("card_2D_m")+mass_str+"_8TeV_");
-    card_name += chstr;
-    std::string workspace = card_name+"_workspace.root";
+    stringstream card_name;
+    card_name << "hww-" << lumi << "fb.mH" << mass_str << "." << chstr << "_shape";
+    if(!do1D) card_name << "_2D"; 
+    std::string workspace = card_name.str()+"_workspace.root";
 
     ScaleFactors sf(ch);
 
@@ -314,7 +315,7 @@ public:
     card = cp.updateCardShapeUncertainty(card, ("BKG_OTHERS_"+chstr+tevstr+"_sigma_err_scaledn-j"),     cp.getRelUncertainty(getStringFitChannel(ch),"Ot","si","scaledn-j"));
 
     ofstream file;
-    file.open ((card_name +".txt").c_str());
+    file.open ((card_name.str() +".txt").c_str());
     file << card;
     file.close();
     
@@ -871,7 +872,7 @@ public:
 void createWorkspace() {
 
   HiggsMassPointInfo hmpi8;
-  hmpi8.lumi = 12.1;
+  hmpi8.lumi = 12.10;
   hmpi8.do1D = true;
   hmpi8.doFFT = false;
   hmpi8.treeFolder = "latinos_tree_skim_of";
