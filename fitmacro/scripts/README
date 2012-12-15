@@ -1,0 +1,18 @@
+--- run the limits ---
+./scripts/runLimits.py -p test0 -l 12.1 comb_0j1j
+
+- make limit tables, then plots -
+./scripts/makeLimitTable.py comb_0j1j
+./scripts/plotPlots.py -p test0 -l 12.1 -t comb_0j1j comb_0j1j (add -o to draw the observed)
+
+
+
+--- run the significance ---
+1. Expected:
+./scripts/runLimits.py -S -p test0 -l 12.1 comb_0j1j
+
+2. Observed:
+./scripts/runLimits.py -S -o -p test0 -l 12.1 comb_0j1j
+
+- make significance plot -
+./scripts/plotPlots.py -S -p test0 -l 12.1 -t comb_0j1j comb_0j1j (add -o to draw the observed)
