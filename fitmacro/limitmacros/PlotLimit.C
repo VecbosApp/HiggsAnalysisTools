@@ -112,7 +112,7 @@ void PlotLimit(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7teV_cut8
 
   // Draw
   //----------------------------------------------------------------------------
-  TString ctitle = Form("%s_from%.0fto%.0f_logx%d_logy%d",
+  TString ctitle = Form("%s_from%.0fto%.0f_logx%d_logy%d_limit",
 			outputPrefix.c_str(),
 			mhmin,
 			mhmax,
