@@ -5,7 +5,7 @@ source "$CMSSW_BASE/src/HWWAnalysis/ShapeAnalysis/test/env.sh"
 
 tail="_shape.txt"
 cwd=$PWD
-masses="110 115 120 130 140 150 160"
+masses="110 115 120 125 130 135 140 145 150 155 160 170 180"
 lumi=12.1
 
 function usage() {
