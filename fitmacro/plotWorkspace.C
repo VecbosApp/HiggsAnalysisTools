@@ -23,7 +23,11 @@
 #include <TH1F.h>
 #include <sstream>
 
+#include "YieldMaker.h"
+#include "DatacardParser.hh"
+
 using namespace RooFit;
+
 
 void plotWsp2D(const char *inputfile, const char *figfile) {
 
@@ -149,6 +153,75 @@ void plotMRAllSignals() {
   mrplot->Draw();
   legend->Draw();
   c1->SaveAs("severalHiggses.png");
+}
+
+void plotOneShapeSyst(string process, string syst, int ch) {
+
+  std::string chstr;
+  if (ch == of0j) chstr = "of_0j";
+  if (ch == of1j) chstr = "of_1j";
+  if (ch == sf0j) chstr = "sf_0j";
+  if (ch == sf1j) chstr = "sf_1j";
+
+  stringstream fss;
+  fss << "datacards/hww-12.1fb.mH125." << chstr << "_shape_workspace.root";
+
+  TFile *hww2l2nu = TFile::Open(fss.str().c_str());
+
+  RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
+
+  RooRealVar *mr = w->var("CMS_ww2l_mr_1D");
+  RooPlot *mrplot = mr->frame();
+
+  // take the pdfs from the workspace
+  RooAbsPdf *pdfnom = (RooAbsPdf*)w->pdf(process.c_str());
+  if(pdfnom==0) {
+    cout << "PDF for process: " << process << " not found." << endl;
+    return;
+  }
+  pdfnom->plotOn(mrplot,LineColor(kBlack));
+
+  string tevstr = "_8TeV";
+
+  // only special case where name in DC!=name in the workspace. A bit error prone... to be improved 
+  string systvar=syst;
+  if(syst.compare("scaleup-qcd")!=string::npos && syst.length()==11) systvar="scaleup";
+  if(syst.compare("scaledn-qcd")!=string::npos && syst.length()==11) systvar="scaledn";
+  
+  RooRealVar *WW_mean_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
+  RooRealVar *WW_sigma_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());
+
+  if(WW_mean_err==0 || WW_sigma_err==0) {
+    cout << WW_mean_err->GetName() << " not found " << endl;
+    cout << WW_sigma_err->GetName() << " not found " << endl;
+    return;
+  }
+
+  stringstream fdc;
+  fdc << "datacards/hww-12.1fb.mH125." << chstr << "_shape.txt";
+  DatacardParser dcp(fdc.str());
+
+  string dcm(WW_mean_err->GetName());
+  string dcs(WW_sigma_err->GetName());
+  if(syst.compare("qcd")==0) { dcm+="-qcd"; dcs+="-qcd"; }
+
+  float meanShift = dcp.getRelUncertainty(dcm);
+  float sigmaShift = dcp.getRelUncertainty(dcs);
+  cout << "Landau error on mean/sigma =  " << meanShift << " / " << sigmaShift << endl;
+  if(meanShift<-100 || sigmaShift<-100) {
+    cout << dcm << " or " << dcs << "  not found in the datacard txt file" << endl;
+    return;
+  }
+
+  WW_mean_err->setVal(meanShift);
+  WW_sigma_err->setVal(sigmaShift);
+
+  pdfnom->plotOn(mrplot,LineColor(kRed+1));
+
+  TCanvas *c1 = new TCanvas("c1","c1");
+  mrplot->Draw();
+  c1->SaveAs("syst.png");
+
 }
 
 void plotAll() {
