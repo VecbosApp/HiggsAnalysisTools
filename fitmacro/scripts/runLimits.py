@@ -10,6 +10,8 @@ import hwwlimits
 indir  = os.getcwd()+'/datacards/'
 outdir = os.getcwd()+'/limits/'
 outdirsignif = os.getcwd()+'/significance/'
+srcdir = os.getcwd()+'/src/'
+logdir = os.getcwd()+'/log/'
 def main():
 
     usage = '''usage: %prog [opts] dctag'''
@@ -20,6 +22,8 @@ def main():
     parser.add_option('-o',dest='observed',help='Observed only', action='store_true', default=False)
     parser.add_option('-S','--significance',dest='significance',help='Compute the expected significance instead of the limit ', action='store_true', default=False)
     parser.add_option('--prefix','-p',dest='prefix',help='prefix',default=None)
+    parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
+    parser.add_option('-q',dest='queue',help='run in batch in queue specified as option (default -q 8nh)', action='store_true', default='8nh')
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
 
     (opt, args) = parser.parse_args()
@@ -37,7 +41,7 @@ def main():
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tmpl = 'hww-{lumi:.1f}fb.mH{mass}.{tag}_shape.txt'
+    tmpl = 'hww-{lumi:.1f}fb.mH{mass}.{tag}_shape'+opt.suffix+'.txt'
     masses = [115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180]
 
     if opt.prefix:
@@ -56,7 +60,7 @@ def main():
 
     os.system('mkdir -p '+outdir)
 
-    tagname = 'HWW_'+tag+'_shape'
+    tagname = 'HWW_'+tag+'_shape'+opt.suffix
     for mass,card in allcards:
         exe  = 'combine '
         flags = ' -n %s -m %s %s'%(tagname,mass,card)
@@ -81,15 +85,30 @@ def main():
         print '-'*50
         print command
         if opt.dryrun: continue
-        code = os.system(command)
+        if not opt.queue: code = os.system(command)
         if opt.significance:
             move = 'mv higgsCombine%s.ProfileLikelihood.mH%d*.root %s' % (tagname,mass,outdirsignif)
         else:
             move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
         print move
-        os.system(move)
-        
-        if code: sys.exit(code)
+        if not opt.queue: os.system(move)
+        else:
+            os.system('mkdir -p '+srcdir)
+            os.system('mkdir -p '+logdir)
+            f = open(srcdir+'run-m'+str(mass)+'.src', 'w')
+            f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
+            f.write('eval `scram ru -sh` \n')
+            f.write('cd - \n')
+            f.write('source "$CMSSW_BASE/src/HWWAnalysis/ShapeAnalysis/test/env.sh"'+'\n')
+            f.write(command+'\n')
+            f.write(move+'\n')
+            f.close()
+            bsub = 'bsub -q %s -J mh%s -o %s/mh%s.log source %s/run-m%s.src' % (queue,mass,logdir,mass,srcdir,mass)
+            print bsub
+            os.system(bsub)
+            
+        if not opt.queue :
+            if code: sys.exit(code)
 
 if __name__ == '__main__':
     main()
