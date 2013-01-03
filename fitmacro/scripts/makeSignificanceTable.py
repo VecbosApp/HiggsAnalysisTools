@@ -66,6 +66,7 @@ def printTable(file, table):
 def main():
     usage = 'usage: %prog [dir] [cmd]'
     parser = optparse.OptionParser(usage)
+    parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
     (opt, args) = parser.parse_args()
     
     if len(args) != 1:
@@ -82,11 +83,11 @@ def main():
 
     table = odict.OrderedDict()
     for sample in samplename:
+        if not opt.suffix in sample:
+            continue
         if not '.root' in sample:
             continue
         if not tagname in sample:
-            continue
-        if '123456' in sample:
             continue
         line = {}
         print sample
@@ -94,10 +95,10 @@ def main():
         for point in points:
             if 'observed' in point:
                 path = basepath+'/'+sample
-            if 'mean' in point:
+            if 'mean' in point and '123456' in sample:
                 reBase = re.match('(.+)\.root',sample)
                 if reBase:
-                    path = basepath+'/'+reBase.group(1)+'.123456.root'
+                    path = basepath+'/'+reBase.group(1)+'.root'
             f = openTFile(path)
             reMass = re.compile('.+\.mH(\d+)\.(.*)root')
 
