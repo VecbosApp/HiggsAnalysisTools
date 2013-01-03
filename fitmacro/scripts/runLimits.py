@@ -72,7 +72,7 @@ def main():
             if opt.observed:
                 flags = ' -M ProfileLikelihood --significance '+flags
             else:
-                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 1000 '+flags
+                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 -s -1 '+flags
         else:
             flags = ' -M Asymptotic '+flags
         if not opt.significance:
@@ -94,16 +94,18 @@ def main():
         else:
             os.system('mkdir -p '+srcdir)
             os.system('mkdir -p '+logdir)
-            f = open(srcdir+'run-m'+str(mass)+'.src', 'w')
-            f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
-            f.write('eval `scram ru -sh` \n')
-            f.write('cd - \n')
-            f.write('source "$CMSSW_BASE/src/HWWAnalysis/ShapeAnalysis/test/env.sh"'+'\n')
-            f.write(command+'\n')
-            f.write(move+'\n')
-            f.close()
-            bsub = 'bsub -q %s -J mh%s -o %s/mh%s.log source %s/run-m%s.src' % (opt.queue,mass,logdir,mass,srcdir,mass)
-            os.system(bsub)
+            for j in range(50):
+                f = open(srcdir+'run-m'+str(mass)+'-j'+str(j)+'.src', 'w')
+                f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
+                f.write('eval `scram ru -sh` \n')
+                f.write('cd - \n')
+                f.write('source "$CMSSW_BASE/src/HWWAnalysis/ShapeAnalysis/test/env.sh"'+'\n')
+                f.write(command+'\n')
+                f.write(move+'\n')
+                f.close()
+                bsub = 'bsub -q %s -J mh%s%s-j%s -o %s/mh%s-j%s.log source %s/run-m%s-j%s.src' % (opt.queue,opt.suffix,mass,j,logdir,mass,j,srcdir,mass,j)
+                print '   job # '+str(j)
+                os.system(bsub)
             
         if not opt.queue :
             if code: sys.exit(code)
