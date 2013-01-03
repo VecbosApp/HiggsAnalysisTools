@@ -23,7 +23,7 @@ def main():
     parser.add_option('-S','--significance',dest='significance',help='Compute the expected significance instead of the limit ', action='store_true', default=False)
     parser.add_option('--prefix','-p',dest='prefix',help='prefix',default=None)
     parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
-    parser.add_option('-q',dest='queue',help='run in batch in queue specified as option (default -q 8nh)', action='store_true', default='8nh')
+    parser.add_option('--queue','-q',dest='queue',help='run in batch in queue specified as option (default -q 8nh)', default='8nh')
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
 
     (opt, args) = parser.parse_args()
@@ -72,7 +72,7 @@ def main():
             if opt.observed:
                 flags = ' -M ProfileLikelihood --significance '+flags
             else:
-                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 '+flags
+                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 1000 '+flags
         else:
             flags = ' -M Asymptotic '+flags
         if not opt.significance:
@@ -90,7 +90,6 @@ def main():
             move = 'mv higgsCombine%s.ProfileLikelihood.mH%d*.root %s' % (tagname,mass,outdirsignif)
         else:
             move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
-        print move
         if not opt.queue: os.system(move)
         else:
             os.system('mkdir -p '+srcdir)
@@ -103,8 +102,7 @@ def main():
             f.write(command+'\n')
             f.write(move+'\n')
             f.close()
-            bsub = 'bsub -q %s -J mh%s -o %s/mh%s.log source %s/run-m%s.src' % (queue,mass,logdir,mass,srcdir,mass)
-            print bsub
+            bsub = 'bsub -q %s -J mh%s -o %s/mh%s.log source %s/run-m%s.src' % (opt.queue,mass,logdir,mass,srcdir,mass)
             os.system(bsub)
             
         if not opt.queue :
