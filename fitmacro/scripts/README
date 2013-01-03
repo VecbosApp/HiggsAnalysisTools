@@ -6,21 +6,25 @@
 ./scripts/combcards.sh -p datacards -t
 
 --- run the limits ---
-./scripts/runLimits.py -p test0 -l 12.1 comb_0j1j
+1D: ./scripts/runLimits.py -q -p test0 -l 12.1 comb_0j1j2j
+2D: ./scripts/runLimits.py -q -p test0 -l 12.1 comb_0j1j2j -t _2D
 
 - make limit tables, then plots -
-./scripts/makeLimitTable.py comb_0j1j
-./scripts/plotPlots.py -p test0 -l 12.1 -t comb_0j1j comb_0j1j (add -o to draw the observed)
+./scripts/makeLimitTable.py comb_0j1j2j
+./scripts/plotPlots.py -p test0 -l 12.1 -t comb_0j1j2j comb_0j1j2j (add -o to draw the observed)
 
 
 
 --- run the significance ---
 1. Expected:
-./scripts/runLimits.py -S -p test0 -l 12.1 comb_0j1j
+1D: ./scripts/runLimits.py -q 8nh -S -p test0 -l 12.1 comb_0j1j2j
+2D: ./scripts/runLimits.py -q 8nh -S -p test0 -l 12.1 comb_0j1j2j -t _2D
 
 2. Observed:
-./scripts/runLimits.py -S -o -p test0 -l 12.1 comb_0j1j
+1D: ./scripts/runLimits.py -q 8nh -S -o -p test0 -l 12.1 comb_0j1j2j
+2D: ./scripts/runLimits.py -q 8nh -S -o -p test0 -l 12.1 comb_0j1j2j -t _2D
+
 
 - make significance plot -
-./scripts/makeSignificanceTable.py comb_0j1j 
-./scripts/plotPlots.py -S -p test0 -l 12.1 -t comb_0j1j comb_0j1j (add -o to draw the observed)
+./scripts/makeSignificanceTable.py comb_0j1j2j 
+./scripts/plotPlots.py -S -p test0 -l 12.1 -t comb_0j1j2j comb_0j1j2j (add -o to draw the observed)
