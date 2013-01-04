@@ -14,8 +14,7 @@ import re
 tagname = 'comb_shape'
 basepath = os.getcwd()+'/significance/'
 
-samplename = os.listdir(basepath)
-samplename.sort()
+masses = [115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180]
 
 points = ['mean', 'observed']
 
@@ -25,6 +24,9 @@ def openTFile(path, option=''):
         raise NameError('File '+path+' not open')
     return f
 
+def closeTFile(f):
+    f.Close()
+
 def getTree( file, tree ):
     t = file.Get(tree)
     if not t.__nonzero__():
@@ -32,13 +34,14 @@ def getTree( file, tree ):
     return t
 
 
-def getValue(file, q):
+def getValue(file, q, mass):
 
     cut = 'limit!=0 && limit<100'
     if q is 'mean':
         cut += ' && iToy>0'
     if q is 'observed':
         cut += ' && iToy==0'
+    cut += ' && mh=='+str(mass)
     tree = getTree(file,'limit')
     command = 'limit>>h'
     tree.Draw(command,cut,'goff')
@@ -82,36 +85,31 @@ def main():
     print tagname
 
     table = odict.OrderedDict()
-    for sample in samplename:
-        if not opt.suffix in sample:
-            continue
-        if not '.root' in sample:
-            continue
-        if not tagname in sample:
-            continue
+
+    if not os.path.exists(basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root'):
+        hadd = 'hadd '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.mH*.root'
+        print hadd
+        os.system(hadd)
+    
+    sample = basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root'
+    
+    if not opt.suffix in sample:
+        return
+    if not '.root' in sample:
+        return
+    if not tagname in sample:
+        return
+    print sample
+
+    for mass in masses:
         line = {}
-        print sample
-
         for point in points:
-            if 'observed' in point:
-                path = basepath+'/'+sample
-            if 'mean' in point and '123456' in sample:
-                reBase = re.match('(.+)\.root',sample)
-                if reBase:
-                    path = basepath+'/'+reBase.group(1)+'.root'
-            f = openTFile(path)
-            reMass = re.compile('.+\.mH(\d+)\.(.*)root')
-
-            value = getValue(f,point)
-            line[point] = value
-
-            m = reMass.match(sample)
-            if not m: 
-                raise ValueError('Mass label not found in '+sample)
+            f = openTFile(sample)
             
-            mass = int(m.group(1))
-
-            table[mass] = line
+            value = getValue(f,point,mass)
+            line[point] = value
+            closeTFile(f)
+        table[mass] = line
 
     latex = open(basepath+'/'+tagname+'.tex','w')
     printTable(latex,table)
