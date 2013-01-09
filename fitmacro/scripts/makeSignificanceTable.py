@@ -9,7 +9,6 @@ import hwwlimits
 import optparse
 import re
 
-
  
 tagname = 'comb_shape'
 basepath = os.getcwd()+'/significance/'
@@ -33,6 +32,14 @@ def getTree( file, tree ):
         raise NameError('Tree '+str(tree)+' doesn\'t exist in '+file.GetName())
     return t
 
+def getMedian( hist ):
+    integral=0
+    value=0
+    for bin in range(hist.GetNbinsX()):
+        if integral>0.5: break
+        integral += hist.GetBinContent(bin)/hist.Integral()
+        value = hist.GetBinCenter(bin)
+    return value
 
 def getValue(file, q, mass):
 
@@ -46,7 +53,8 @@ def getValue(file, q, mass):
     command = 'limit>>h'
     tree.Draw(command,cut,'goff')
     hist = gDirectory.Get("h")
-    value = hist.GetMean()
+    #value = hist.GetMean()
+    value = getMedian(hist)
     hist.Delete()
     return value
 
@@ -80,7 +88,7 @@ def main():
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tagname = tag+'_shape'
+    tagname = tag+'_shape'+opt.suffix
 
     print tagname
 
