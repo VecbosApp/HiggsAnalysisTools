@@ -18,6 +18,7 @@ def main():
     parser = optparse.OptionParser(usage)
     parser.add_option('-s','--stepping',dest='stepping',help='Switch stepping on ', action='store_true', default=False)
     parser.add_option('-1',dest='minuit1',help='Minuit ', action='store_true', default=False)
+    parser.add_option('--mlfit',dest='mlfit',help='Run toys with mlfit to check fit bias', action='store_true', default=False)
     parser.add_option('-n',dest='dryrun',help='Dry run ', action='store_true', default=False)
     parser.add_option('-o',dest='observed',help='Observed only', action='store_true', default=False)
     parser.add_option('-S','--significance',dest='significance',help='Compute the expected significance instead of the limit ', action='store_true', default=False)
@@ -94,7 +95,8 @@ def main():
         else:
             os.system('mkdir -p '+srcdir)
             os.system('mkdir -p '+logdir)
-            for j in range(50):
+            jobsperpoint = 1 if opt.observed else 50
+            for j in range(jobsperpoint):
                 f = open(srcdir+'run-m'+str(mass)+'-j'+str(j)+'.src', 'w')
                 f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
                 f.write('eval `scram ru -sh` \n')
