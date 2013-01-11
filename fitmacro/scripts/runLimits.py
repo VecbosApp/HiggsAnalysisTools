@@ -76,7 +76,7 @@ def main():
             else:
                 flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 -s -1 '+flags
         elif opt.mlfit:
-            flags = ' -M MaxLikelihoodFit --saveNormalizations --toysFrequentist --noErrors --minos none -t 5 -s -1 '+flags
+            flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --toysFrequentist --noErrors --minos none -t 5 -s -1 '+flags
         else:
             flags = ' -M Asymptotic '+flags
         if not opt.significance:
@@ -95,7 +95,7 @@ def main():
             move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
         os.system('mkdir -p '+srcdir)
         os.system('mkdir -p '+logdir)
-        jobsperpoint = 1 if opt.observed else (1000 if opt.mlfit else 50)
+        jobsperpoint = 1 if opt.observed else (200 if opt.mlfit else 50)
         for j in range(jobsperpoint):
             f = open(srcdir+'run-m'+str(mass)+'-j'+str(j)+'.src', 'w')
             f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
