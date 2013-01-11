@@ -40,8 +40,8 @@ public:
     // parm nuisances will be made floating by combine, if used. 
     // if they are not used, they have to stay fixed
     WW_par_err_MC->setConstant(kTRUE);
-    WW_par_err_scaleup_>setConstant(kTRUE);
-    WW_par_err_scaledn_>setConstant(kTRUE);
+    WW_par_err_scaleup->setConstant(kTRUE);
+    WW_par_err_scaledn->setConstant(kTRUE);
     WW_par_err_resmet->setConstant(kTRUE);
     WW_par_err_rese->setConstant(kTRUE);
     WW_par_err_resmu->setConstant(kTRUE);
