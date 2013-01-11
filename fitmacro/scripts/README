@@ -25,6 +25,9 @@
 2D: ./scripts/runLimits.py -q 8nh -S -o -p test0 -l 12.1 comb_0j1j2j -t _2D
 
 
+--- run the ML fits to study the fit ---
+./scripts/runLimits.py -q 8nh --mlfit -p test0 -l 12.1 comb_0j1j2j
+
 - make significance plot -
 ./scripts/makeSignificanceTable.py comb_0j1j2j 
 ./scripts/plotPlots.py -S -p test0 -l 12.1 -t comb_0j1j2j comb_0j1j2j (add -o to draw the observed)
