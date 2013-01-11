@@ -159,7 +159,7 @@ float ConfigParser::getRelUncertainty(string channel, string process1, string pr
 
 std::string ConfigParser::updateCardShapeUncertainty(string card, string templateSyst, float relunc) {
   if(relunc>0) {
-    if(relunc<0.4) return findAndReplace(card, templateSyst, relunc);
+    if(relunc<0.15) return findAndReplace(card, templateSyst, relunc);
     else {
       cout << "CONFIG WARNING! PARAMETER " << templateSyst << " has > 50% uncertanty. Check the fit. Automatically switching it off... " << endl;
       return findAndReplace(card, templateSyst, 0.0001);
