@@ -24,15 +24,15 @@ public:
     RooRealVar *WW_par_err_MC = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_MC").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scaleup = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup").c_str(), "", 0., -10., 10.);
     RooRealVar *WW_par_err_scaledn = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_resmet = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-met").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_rese = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-mu").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-m").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-m").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-j").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-j").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_resmet = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_met").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_rese = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_mu").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_j").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_j").c_str(), "", 0., -10., 10.);
 
     WW_par->setVal(centralval);
     WW_par->setConstant(kTRUE);
@@ -40,8 +40,8 @@ public:
     // parm nuisances will be made floating by combine, if used. 
     // if they are not used, they have to stay fixed
     WW_par_err_MC->setConstant(kTRUE);
-    WW_par_err_scaleup->setConstant(kTRUE);
-    WW_par_err_scaledn->setConstant(kTRUE);
+    WW_par_err_scaleup_>setConstant(kTRUE);
+    WW_par_err_scaledn_>setConstant(kTRUE);
     WW_par_err_resmet->setConstant(kTRUE);
     WW_par_err_rese->setConstant(kTRUE);
     WW_par_err_resmu->setConstant(kTRUE);
@@ -117,15 +117,15 @@ public:
   }
 
   RooArgList getParSystematics(string par, string chstr, string tevstr) {
-    RooRealVar *WW_par_err_resmet = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-met").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_rese = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res-mu").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-e").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-m").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-m").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup-j").c_str(), "", 0., -10., 10.);
-    RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn-j").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_resmet = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_met").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_rese = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_resmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_res_mu").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupe = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaledne = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_e").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednmu = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_m").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scaleupj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaleup_j").c_str(), "", 0., -10., 10.);
+    RooRealVar *WW_par_err_scalednj = new RooRealVar((_process+"_"+chstr+tevstr+"_"+par+"_err_scaledn_j").c_str(), "", 0., -10., 10.);
     
     // parm nuisances will be made floating by combine, if used. 
     // if they are not used, they have to stay fixed

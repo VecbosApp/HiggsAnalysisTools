@@ -106,7 +106,7 @@ void plotWsp2D(const char *inputfile, const char *figfile) {
 void plotMRAllSignals() {
 
   stringstream fss0;
-  fss0 << "datacards/card_1D_m114_8TeV_of_1j_workspace.root";
+  fss0 << "datacards/hww-12.1fb.mH114.of_0j_shape_workspace.root";
   
   TFile *hww2l2nu0 = TFile::Open(fss0.str().c_str());
   RooWorkspace *w = (RooWorkspace*)hww2l2nu0->Get("w");
@@ -130,7 +130,7 @@ void plotMRAllSignals() {
     j++;
 
     stringstream fss;
-    fss << "datacards/card_1D_m" << i << "_8TeV_of_1j_workspace.root";
+    fss << "datacards/hww-12.1fb.mH" << i << ".of_0j_shape_workspace.root";
 
     cout << "Opening file " << fss.str() << endl;
 
@@ -185,8 +185,8 @@ void plotOneShapeSyst(string process, string syst, int ch) {
 
   // only special case where name in DC!=name in the workspace. A bit error prone... to be improved 
   string systvar=syst;
-  if(syst.compare("scaleup-qcd")!=string::npos && syst.length()==11) systvar="scaleup";
-  if(syst.compare("scaledn-qcd")!=string::npos && syst.length()==11) systvar="scaledn";
+  if(syst.compare("scaleup_qcd")!=string::npos && syst.length()==11) systvar="scaleup";
+  if(syst.compare("scaledn_qcd")!=string::npos && syst.length()==11) systvar="scaledn";
   
   RooRealVar *WW_mean_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
   RooRealVar *WW_sigma_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());

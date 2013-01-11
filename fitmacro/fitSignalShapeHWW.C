@@ -203,14 +203,14 @@ void signalSystematics() {
     fileParams.open(filename.str().c_str());
     vector<string> systematics;
     systematics.push_back("nominals");
-    systematics.push_back("res-met");
-    systematics.push_back("res-e");
-    systematics.push_back("scaleup-e");
-    systematics.push_back("scaledn-e");
-    systematics.push_back("scaleup-m");
-    systematics.push_back("scaledn-m");
-    systematics.push_back("scaleup-j");
-    systematics.push_back("scaledn-j");
+    systematics.push_back("res_met");
+    systematics.push_back("res_e");
+    systematics.push_back("scaleup_e");
+    systematics.push_back("scaledn_e");
+    systematics.push_back("scaleup_m");
+    systematics.push_back("scaledn_m");
+    systematics.push_back("scaleup_j");
+    systematics.push_back("scaledn_j");
     
     for(int s=0; s<(int)systematics.size(); ++s) {
       cout << e0 << "%%% Parameterising samples with systematic " << systematics[s] << " ON..." << en << endl;
@@ -243,14 +243,14 @@ std::string fitSignalShapeMR(int massBin, int channel,
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
   string dir;
-  if(syst.find("res-e")!=string::npos) dir="electronResolution";
-  else if(syst.find("res-met")!=string::npos) dir="metResolution";
-  else if(syst.find("scaleup-e")!=string::npos) dir="electronScale_up";
-  else if(syst.find("scaledn-e")!=string::npos) dir="electronScale_down";
-  else if(syst.find("scaleup-m")!=string::npos) dir="muonScale_up";
-  else if(syst.find("scaledn-m")!=string::npos) dir="muonScale_down";
-  else if(syst.find("scaleup-j")!=string::npos) dir="jetEnergyScale_up";
-  else if(syst.find("scaledn-j")!=string::npos) dir="jetEnergyScale_down";
+  if(syst.find("res_e")!=string::npos) dir="electronResolution";
+  else if(syst.find("res_met")!=string::npos) dir="metResolution";
+  else if(syst.find("scaleup_e")!=string::npos) dir="electronScale_up";
+  else if(syst.find("scaledn_e")!=string::npos) dir="electronScale_down";
+  else if(syst.find("scaleup_m")!=string::npos) dir="muonScale_up";
+  else if(syst.find("scaledn_m")!=string::npos) dir="muonScale_down";
+  else if(syst.find("scaleup_j")!=string::npos) dir="jetEnergyScale_up";
+  else if(syst.find("scaledn_j")!=string::npos) dir="jetEnergyScale_down";
   else dir="nominals";
 
   YieldMaker  ymaker_hi;
