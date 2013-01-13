@@ -40,7 +40,7 @@ std::map<std::string, std::pair<double,double> > prevals_;
 std::map<std::string, std::pair<double,double> > bfvals_;
 std::map<std::string, std::pair<double,double> > bfvals_sb_;
 
-bool doPull(true);
+bool doPull(false);
 bool doLH(false);
 
 RooAbsReal *nll;
@@ -365,9 +365,9 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 	TCanvas *c = new TCanvas("c","",960,800);
 
 	std::string treename = tree_->GetName();
-	c->SaveAs(Form("%s.pdf[",treename.c_str()));
+	c->SaveAs(Form("%s_normresiduals.pdf[",treename.c_str()));
 	// File to store plots in 
-	TFile *fOut = new TFile(Form("%s.root",treename.c_str()),"RECREATE");
+	TFile *fOut = new TFile(Form("%s_normresiduals.root",treename.c_str()),"RECREATE");
 
 	for (int iobj=0;iobj<nBranches;iobj++){
 
@@ -388,20 +388,18 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		int nToysInTree = tree_->GetEntries();
 		// Find out if paramter is fitted value or constraint term.
                 bool isFitted = true;
-		if (doPull){
 			
-                  p_mean = prenorms_[name].first;	// toy initial parameters from the datacards
-                  std::cout << "******* "<< name << " *******"<<std::endl;
-                  std::cout << p_mean << std::endl;
-                  std::cout << "******************************" <<std::endl;
-
-                  const char* drawInput = Form("(%s-%f)/%f",name,p_mean,p_mean);
-                  tree_->Draw(Form("%s>>%s",drawInput,name),"");
-                  tree_->Draw(Form("%s>>%s_fail",drawInput,name),selectString.c_str(),"same");
-                  fitPull  = true;
-                  fitPullf = true;
+                p_mean = prenorms_[name].first;	// toy initial parameters from the datacards
+                std::cout << "******* "<< name << " *******"<<std::endl;
+                std::cout << p_mean << std::endl;
+                std::cout << "******************************" <<std::endl;
+                
+                const char* drawInput = Form("(%s-%f)/%f",name,p_mean,p_mean);
+                tree_->Draw(Form("%s>>%s",drawInput,name),"");
+                tree_->Draw(Form("%s>>%s_fail",drawInput,name),selectString.c_str(),"same");
+                fitPull  = true;
+                fitPullf = true;
                   
-		}
 
 		TH1F* bH  = (TH1F*) gROOT->FindObject(Form("%s",name))->Clone();
 		TH1F* bHf = (TH1F*) gROOT->FindObject(Form("%s_fail",name))->Clone();
@@ -413,6 +411,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		bH->GetYaxis()->SetTitleSize(0.05);
 		bH->GetXaxis()->SetTitleSize(0.05);
 		bH->GetXaxis()->SetTitle(Form("%s",name));
+                
 		
 		bH->SetTitle("");	
 
@@ -423,51 +422,19 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		if (fitPullf) {bHf->Fit("gaus"); bHf->GetFunction("gaus")->SetLineColor(2);}
 
 		c->Clear();
-		//TPad pad1("t1","",0.01,0.02,0.59,0.98);
-		// Pad 1 sizes depend on the parameter type ...
-		double pad1_x1,pad1_x2,pad1_y1,pad1_y2;
-		if ( !isFitted ) {
-			 pad1_x1 = 0.01; 
-			 pad1_x2 = 0.98; 
-			 pad1_y1 = 0.045; 
-			 pad1_y2 = 0.98; 
-		} else {
-			 pad1_x1 = 0.01; 
-			 pad1_x2 = 0.59; 
-			 pad1_y1 = 0.56; 
-			 pad1_y2 = 0.98; 
-		}
 		
-		TPad pad1("t1","",pad1_x1,pad1_y1,pad1_x2,pad1_y2);
-		TPad pad1a("t1a","",0.01,0.045,0.59,0.522);
-		TPad pad2("t2","",0.59,0.04,0.98,0.62);
-		TPad pad3("t3","",0.55,0.64,0.96,0.95);
+		TPad pad1("t1","",0.01,0.39,0.98,0.95);
+		TPad pad2("t2","",0.01,0.01,0.98,0.35);
 
-		pad1.SetNumber(1); pad2.SetNumber(2); pad3.SetNumber(3); pad1a.SetNumber(4);
+		pad1.SetNumber(1); pad2.SetNumber(2);
 
-		if ( isFitted ) {pad1a.Draw();pad2.Draw();pad3.Draw();}
+		if ( isFitted ) {pad2.Draw();}
 
 		pad1.Draw();
-		pad2.SetGrid(true);
+		pad1.SetGrid(true);
 
 
 		TLatex *titletext = new TLatex();titletext->SetNDC();
-
-		if ( isFitted ){
-			c->cd(4); 
-			tree_->Draw(Form("%s:%s_In>>%s_%s_2d",name,name,name,tree_->GetName()),""); 
-			//TH2D *h2d_corr = (TH2D*)gROOT->FindObject(Form("%s_2d",name));
-			//h2d_corr->SetMarkerColor(4);
-			//h2d_corr->SetTitle("");
-			//h2d_corr->GetXaxis()->SetTitle(Form("%s_In",name));
-			//h2d_corr->GetYaxis()->SetTitle(Form("%s",name));
-			titletext->SetTextAlign(11);
-			titletext->SetTextSize(0.05);
-			titletext->DrawLatex(0.05,0.02,Form("%s_In",name));
-			titletext->SetTextAngle(90);
-			titletext->DrawLatex(0.04,0.06,Form("%s",name));
-			titletext->SetTextAngle(0);
-		}
 
 		
 		c->cd(1); bH->Draw(); bHf->Draw("same");
@@ -478,7 +445,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		legend->Draw();
 
 		if (fitPull){
-			c->cd(3);
+			c->cd(2);
 			double gap;
 			TLatex *tlatex = new TLatex(); tlatex->SetNDC(); 
 			if (fitPullf) {tlatex->SetTextSize(0.09); gap=0.12;}
@@ -497,9 +464,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 			tlatex->SetTextSize(0.10);
 			tlatex->SetTextColor(1);
 				
-                        tlatex->DrawLatex(0.11,0.33,Form("Pre-fit: %.3f",prevals_[name].first));
-			tlatex->DrawLatex(0.11,0.18,Form("Best-fit (#theta_{B})  : %.3f ",p_mean));
-			tlatex->DrawLatex(0.11,0.03,Form("Best-fit (#theta_{S+B}): %.3f ",bfvals_sb_[name].first));
+                        tlatex->DrawLatex(0.11,0.33,Form("Pre-fit: %.3f",p_mean));
 			
 			pullSummaryMap[name]=std::make_pair<double,double>(bH->GetFunction("gaus")->GetParameter(1),bH->GetFunction("gaus")->GetParameter(2));
 			nPulls++;
@@ -508,12 +473,12 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 
 		double titleSize = isFitted ? 0.1 : 0.028;
 		titletext->SetTextSize(titleSize);titletext->SetTextAlign(21); titletext->DrawLatex(0.55,0.92,name);
-		c->SaveAs(Form("%s.pdf",treename.c_str()));
+		c->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
 		fOut->WriteObject(c,Form("%s_%s",treename.c_str(),name));
 		//c->SaveAs(Form("%s_%s.pdf",treename.c_str(),name));
 	}
 	
-	if (doPull && nPulls>0){
+	if (nPulls>0){
 	  
 	    std::cout << "Generating Pull Summaries" <<std::endl; 
 	    int nRemainingPulls = nPulls;
@@ -535,8 +500,8 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		}		
 
 		pullSummaryHist.SetMarkerStyle(21);pullSummaryHist.SetMarkerSize(1.5);pullSummaryHist.SetMarkerColor(2);pullSummaryHist.SetLabelSize(pullLabelSize);
-		pullSummaryHist.GetYaxis()->SetRangeUser(-3,3);pullSummaryHist.GetYaxis()->SetTitle("pull summary (n#sigma)");pullSummaryHist.Draw("E1");
-		hc->SaveAs(Form("%s.pdf",treename.c_str()));
+		pullSummaryHist.GetYaxis()->SetRangeUser(-1,1);pullSummaryHist.GetYaxis()->SetTitle("residual summary (relative)");pullSummaryHist.Draw("E1");
+		hc->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
 		fOut->WriteObject(hc,Form("comb_pulls_%s_%d",treename.c_str(),pullPlots));
 	//	hc->SaveAs(Form("comb_pulls_%s_%d.pdf",treename.c_str(),pullPlots));
 		pullPlots++;
@@ -545,7 +510,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 	    delete hc;
 	}
 
-	c->SaveAs(Form("%s.pdf]",treename.c_str()));
+	c->SaveAs(Form("%s_normresiduals.pdf]",treename.c_str()));
 	fOut->Close();
 	delete c;
 	return;
