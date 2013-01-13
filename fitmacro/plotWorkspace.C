@@ -22,6 +22,7 @@
 #include <TLegend.h>
 #include <TH1F.h>
 #include <sstream>
+#include <TStyle.h>
 
 #include "YieldMaker.h"
 #include "DatacardParser.hh"
@@ -29,7 +30,7 @@
 using namespace RooFit;
 
 
-void plotWsp2D(const char *inputfile, const char *figfile) {
+void plotWsp1D(const char *inputfile, const char *figfile) {
 
   TFile *hww2l2nu = TFile::Open(inputfile);
   RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
@@ -46,7 +47,7 @@ void plotWsp2D(const char *inputfile, const char *figfile) {
   RooAbsPdf *wgstar = (RooAbsPdf*)w->pdf("bkg_wgstar");
   RooAbsPdf *others = (RooAbsPdf*)w->pdf("bkg_others");
   RooAbsPdf *ggH = (RooAbsPdf*)w->pdf("ggH");
-  RooAbsPdf *qqH = (RooAbsPdf*)w->pdf("qqH");
+  RooAbsPdf *qqH = (RooAbsPdf*)w->pdf("vbfH");
 
   qqww->plotOn(mrplot,LineColor(kAzure+1));
   ggww->plotOn(mrplot,LineColor(kAzure+2));
@@ -57,7 +58,7 @@ void plotWsp2D(const char *inputfile, const char *figfile) {
   others->plotOn(mrplot,LineColor(kOrange+2));
   ggH->plotOn(mrplot,LineColor(kRed));
   qqH->plotOn(mrplot,LineColor(kRed));
-  
+
   // for the legend
   TH1F *hqqww = new TH1F("hqqww","",1,0,1);
   TH1F *hggww = new TH1F("hggww","",1,0,1);
@@ -90,7 +91,7 @@ void plotWsp2D(const char *inputfile, const char *figfile) {
   legend->AddEntry(htop,"top","l");
   legend->AddEntry(hdy,"DY","l");
   legend->AddEntry(hwj,"W+jets","l");
-  legend->AddEntry(hothers,"WW,ZZ,W#gamma","l");
+  legend->AddEntry(hothers,"WW,ZZ","l");
   legend->AddEntry(hwgstar,"W#gamma^{(*)}","l");
   legend->AddEntry(hothers,"WW,ZZ,W#gamma","l");
   legend->AddEntry(hggH,"qq,gg #rightarrow H","l");
@@ -100,6 +101,64 @@ void plotWsp2D(const char *inputfile, const char *figfile) {
   legend->Draw();
 
   c1->SaveAs(figfile);
+
+}
+
+void plotWsp2D(const char *inputfile, int nj) {
+
+  TFile *hww2l2nu = TFile::Open(inputfile);
+  RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
+
+  RooRealVar *mr = w->var("CMS_ww2l_mr_1D");
+  RooRealVar *dphi = w->var("CMS_ww2l_dphi");
+
+  // take the pdfs from the workspace
+  RooDataHist *rhist_qqww = (RooDataHist*) w->data(Form("rhist_qqww_of_%dj_8TeV",nj));
+  RooHistPdf pdf_qqww("pdf_qqww","pdf_qqww",RooArgSet(*mr,*dphi),*rhist_qqww);
+  TH2F *h_qqww = (TH2F*)pdf_qqww.createHistogram("h_qqww",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_ggww = (RooDataHist*) w->data(Form("rhist_ggww_of_%dj_8TeV",nj));
+  RooHistPdf pdf_ggww("pdf_ggww","pdf_ggww",RooArgSet(*mr,*dphi),*rhist_ggww);
+  TH2F *h_ggww = (TH2F*)pdf_ggww.createHistogram("h_ggww",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_top = (RooDataHist*) w->data(Form("rhist_top_of_%dj_8TeV",nj));
+  RooHistPdf pdf_top("pdf_top","pdf_top",RooArgSet(*mr,*dphi),*rhist_top);
+  TH2F *h_top = (TH2F*)pdf_top.createHistogram("h_top",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_dy = (RooDataHist*) w->data(Form("rhist_dy_of_%dj_8TeV",nj));
+  RooHistPdf pdf_dy("pdf_dy","pdf_dy",RooArgSet(*mr,*dphi),*rhist_dy);
+  TH2F *h_dy = (TH2F*)pdf_dy.createHistogram("h_dy",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_wj = (RooDataHist*) w->data(Form("rhist_wj_of_%dj_8TeV",nj));
+  RooHistPdf pdf_wj("pdf_wj","pdf_wj",RooArgSet(*mr,*dphi),*rhist_wj);
+  TH2F *h_wj = (TH2F*)pdf_wj.createHistogram("h_wj",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_wgstar = (RooDataHist*) w->data(Form("rhist_wgstar_of_%dj_8TeV",nj));
+  RooHistPdf pdf_wgstar("pdf_wgstar","pdf_wgstar",RooArgSet(*mr,*dphi),*rhist_wgstar);
+  TH2F *h_wgstar = (TH2F*)pdf_wgstar.createHistogram("h_wgstar",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_others = (RooDataHist*) w->data(Form("rhist_others_of_%dj_8TeV",nj));
+  RooHistPdf pdf_others("pdf_others","pdf_others",RooArgSet(*mr,*dphi),*rhist_others);
+  TH2F *h_others = (TH2F*)pdf_others.createHistogram("h_others",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_ggH = (RooDataHist*) w->data(Form("rhist_ggH_of_%dj_8TeV",nj));
+  RooHistPdf pdf_ggH("pdf_ggH","pdf_ggH",RooArgSet(*mr,*dphi),*rhist_ggH);
+  TH2F *h_ggH = (TH2F*)pdf_ggH.createHistogram("h_ggH",*mr,RooFit::YVar(*dphi));
+
+  RooDataHist *rhist_vbfH = (RooDataHist*) w->data(Form("rhist_vbfH_of_%dj_8TeV",nj));
+  RooHistPdf pdf_vbfH("pdf_vbfH","pdf_vbfH",RooArgSet(*mr,*dphi),*rhist_vbfH);
+  TH2F *h_vbfH = (TH2F*)pdf_vbfH.createHistogram("h_vbfH",*mr,RooFit::YVar(*dphi));
+
+  TCanvas *c1 = new TCanvas("c1","c1");
+  h_qqww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_qqww->GetName(),nj));
+  h_ggww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggww->GetName(),nj));
+  h_top->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_top->GetName(),nj));
+  h_dy->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_dy->GetName(),nj));
+  h_wj->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wj->GetName(),nj));
+  h_wgstar->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wgstar->GetName(),nj));
+  h_others->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_others->GetName(),nj));
+  h_ggH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggH->GetName(),nj));
+  h_vbfH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_vbfH->GetName(),nj));
 
 }
 
@@ -152,7 +211,7 @@ void plotMRAllSignals() {
 
   mrplot->Draw();
   legend->Draw();
-  c1->SaveAs("severalHiggses.png");
+  c1->SaveAs("severalHiggsesMR.pdf");
 }
 
 void plotOneShapeSyst(string process, string syst, int ch) {
@@ -226,8 +285,13 @@ void plotOneShapeSyst(string process, string syst, int ch) {
 
 void plotAll() {
   
-  plotWsp2D("datacards/card_1D_m125_8TeV_of_0j_workspace.root","pdfs_of_0j.pdf");
-  plotWsp2D("datacards/card_1D_m125_8TeV_of_1j_workspace.root","pdfs_of_1j.pdf");
+  gStyle->SetPalette(1);
+
+  plotWsp1D("datacards/hww-12.1fb.mH125.of_0j_shape_workspace.root","pdfs_of_0j.pdf");
+  plotWsp1D("datacards/hww-12.1fb.mH125.of_1j_shape_workspace.root","pdfs_of_1j.pdf");
   plotMRAllSignals();
+
+  plotWsp2D("datacards/hww-12.1fb.mH125.of_0j_shape_2D_workspace.root",0);
+  plotWsp2D("datacards/hww-12.1fb.mH125.of_1j_shape_2D_workspace.root",1);
 
 }
