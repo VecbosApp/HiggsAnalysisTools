@@ -95,7 +95,7 @@ def main():
     table = odict.OrderedDict()
 
     if not os.path.exists(basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root'):
-        hadd = 'hadd '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.mH*.root'
+        hadd = 'hadd -k '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.root '+basepath+'/higgsCombineHWW_'+tagname+'.ProfileLikelihood.mH*.root'
         print hadd
         os.system(hadd)
     
