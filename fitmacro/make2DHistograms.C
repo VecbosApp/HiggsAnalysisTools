@@ -196,6 +196,14 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
   ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
+  // === alternative shapes for 2D CondPdf ===
+  YieldMaker        ymaker_qqww_up, ymaker_qqww_dn;
+  WJetsYieldMaker   ymaker_wj_up(1), ymaker_wj_dn(-1);
+  ymaker_qqww_up .fill(treeFolder+"/nominals/latino_004_WWto2L2NuMCatNLOUp.root");
+  ymaker_qqww_dn .fill(treeFolder+"/nominals/latino_003_WWto2L2NuMCatNLODown.root");
+  ymaker_wj_up   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+  ymaker_wj_dn   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+
   int xNBins = 4;
   Double_t xLowerEdges[xNBins+1];
   xLowerEdges[0]=sel.mrmin;
@@ -222,6 +230,11 @@ void all(int cha, float dphiMin, float dphiMax) {
   TH2F *bkg_wgstar = new TH2F((string("hist2D_bkg_wgstar_")+getChannelSuffix(cha)).c_str(),"",xNBins,xLowerEdges,yNBins,yLowerEdges);
   TH2F *sig_higgs  = new TH2F((string("hist2D_sig_")+getChannelSuffix(cha)).c_str(),       "",xNBins,xLowerEdges,yNBins,yLowerEdges);
 
+  TH2F *bkg_qqww_up = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Up").c_str()));
+  TH2F *bkg_qqww_dn = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Dn").c_str()));
+  TH2F *bkg_wj_up   = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Up").c_str()));
+  TH2F *bkg_wj_dn   = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Dn").c_str()));
+
   ymaker_qqww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww);
   ymaker_ggww.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_ggww);
   ymaker_top.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_top);
@@ -246,10 +259,21 @@ void all(int cha, float dphiMin, float dphiMax) {
   // we will normalize slices in MR later to make the conditional PDF
   ymaker_hi.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,sig_higgs,false); 
 
+  // get the systematic 2D shapes
+  ymaker_qqww_up .get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww_up);
+  ymaker_qqww_dn .get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_qqww_dn);
+  ymaker_wj_up   .get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wj_up);
+  ymaker_wj_dn   .get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_wj_dn);
+
   // === SMOOTHING ===
   smooth(bkg_dy,     1.0);
   cutMinimum(bkg_wj, 0.0);
-  smooth(bkg_wj, 1.0);
+  smooth(bkg_wj,     1.0);
+  smooth(bkg_wgstar, 1.0);
+
+  // === SMOOTHING SYST ===
+  cutMinimum(bkg_wj_up, 0.0);  cutMinimum(bkg_wj_dn, 0.0);
+  smooth(bkg_wj_up,     1.0);  smooth(bkg_wj_dn,     1.0);     
 
   normalize(sig_higgs);
   normalize(bkg_qqww);
@@ -259,6 +283,9 @@ void all(int cha, float dphiMin, float dphiMax) {
   normalize(bkg_wj);
   normalize(bkg_wgstar);
   normalize(bkg_others);
+
+  normalize(bkg_qqww_up); normalize(bkg_qqww_dn);
+  normalize(bkg_wj_up);   normalize(bkg_wj_dn);
 
   
   // === SAVING ===
@@ -275,50 +302,8 @@ void all(int cha, float dphiMin, float dphiMax) {
   bkg_wgstar->Write();
   bkg_others->Write();
 
-  // === fake alternative shapes ===
-  TH2F *sig_higgs_up = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Up").c_str()));
-  TH2F *sig_higgs_dn = (TH2F*)(sig_higgs->Clone((std::string(sig_higgs->GetName())+"_Dn").c_str()));
-  TH2F *bkg_qqww_up = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Up").c_str()));
-  TH2F *bkg_qqww_dn = (TH2F*)(bkg_qqww->Clone((std::string(bkg_qqww->GetName())+"_Dn").c_str()));
-  TH2F *bkg_ggww_up = (TH2F*)(bkg_ggww->Clone((std::string(bkg_ggww->GetName())+"_Up").c_str()));
-  TH2F *bkg_ggww_dn = (TH2F*)(bkg_ggww->Clone((std::string(bkg_ggww->GetName())+"_Dn").c_str()));
-  TH2F *bkg_top_up = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Up").c_str()));
-  TH2F *bkg_top_dn = (TH2F*)(bkg_top->Clone((std::string(bkg_top->GetName())+"_Dn").c_str()));
-  TH2F *bkg_dy_up = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Up").c_str()));
-  TH2F *bkg_dy_dn = (TH2F*)(bkg_dy->Clone((std::string(bkg_dy->GetName())+"_Dn").c_str()));
-  TH2F *bkg_wj_up = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Up").c_str()));
-  TH2F *bkg_wj_dn = (TH2F*)(bkg_wj->Clone((std::string(bkg_wj->GetName())+"_Dn").c_str()));
-  TH2F *bkg_wgstar_up = (TH2F*)(bkg_wgstar->Clone((std::string(bkg_wgstar->GetName())+"_Up").c_str()));
-  TH2F *bkg_wgstar_dn = (TH2F*)(bkg_wgstar->Clone((std::string(bkg_wgstar->GetName())+"_Dn").c_str()));
-  TH2F *bkg_others_up = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Up").c_str()));
-  TH2F *bkg_others_dn = (TH2F*)(bkg_others->Clone((std::string(bkg_others->GetName())+"_Dn").c_str()));
-
-  fakeAlternativeShapes(sig_higgs,sig_higgs_up,sig_higgs_dn);
-  fakeAlternativeShapes(bkg_qqww,bkg_qqww_up,bkg_qqww_dn);
-  fakeAlternativeShapes(bkg_ggww,bkg_ggww_up,bkg_ggww_dn);
-  fakeAlternativeShapes(bkg_top,bkg_top_up,bkg_top_dn);
-  fakeAlternativeShapes(bkg_wj,bkg_wj_up,bkg_wj_dn);
-  fakeAlternativeShapes(bkg_dy,bkg_dy_up,bkg_dy_dn);
-  fakeAlternativeShapes(bkg_wgstar,bkg_wgstar_up,bkg_wgstar_dn);
-  fakeAlternativeShapes(bkg_others,bkg_others_up,bkg_others_dn);
-
-  sig_higgs_up->Write();
-  bkg_qqww_up->Write();
-  bkg_ggww_up->Write();
-  bkg_top_up->Write();
-  bkg_dy_up->Write();
-  bkg_wj_up->Write();
-  bkg_wgstar_up->Write();
-  bkg_others_up->Write();
-
-  sig_higgs_dn->Write();
-  bkg_qqww_dn->Write();
-  bkg_ggww_dn->Write();
-  bkg_top_dn->Write();
-  bkg_dy_dn->Write();
-  bkg_wj_dn->Write();
-  bkg_wgstar_dn->Write();
-  bkg_others_dn->Write();
+  bkg_qqww_up->Write(); bkg_qqww_dn->Write();
+  bkg_wj_up->Write();   bkg_wj_dn->Write();
 
   fileOut->Close();
 
