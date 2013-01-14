@@ -32,7 +32,8 @@ def loadAndCompile(macro,options='g'):
 def runTheShape():
     usage = 'usage: %prog -t tag -p prefix channel'
     parser = optparse.OptionParser(usage)
-    parser.add_option('--tag'   ,'-t', dest='tag'  , help='tag to identify the plots' , default=None)
+    parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
+    parser.add_option('--tag'   ,'-T', dest='tag'  , help='tag to identify the plots' , default=None)
     parser.add_option('--prefix','-p',dest='prefix', help='prefix', default='.')
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
     parser.add_option('-o',dest='observed',help='Observed only', action='store_true', default=False)
@@ -84,27 +85,27 @@ def runTheShape():
         ROOT.gROOT.SetBatch(True)
         ROOT.setTDRStyle()
         if opt.significance:
-            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape.summary".format(**pars),
-                                  os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars),
+            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+".summary",
+                                  os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
                                   110, 600, 0, 0, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'pdf')
-            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape.summary".format(**pars),
-                                  os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars),
+            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+".summary",
+                                  os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
                                   110, 600, 0, 0, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'png')
         else:
-            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape.summary".format(**pars),
-                           os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars),
+            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+".summary",
+                           os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars)+opt.suffix,
                            "{lumi} fb^{{-1}}".format(**pars), 
                            110, 600, 0, 1, 
                            "H #rightarrow WW #rightarrow 2l2#nu",
                            doObs, 0, 'pdf')
-            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape.summary".format(**pars),
-                           os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars),
+            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+".summary",
+                           os.getcwd()+"/plots/{tag}_{name}_{option}".format(**pars)+opt.suffix,
                            "{lumi} fb^{{-1}}".format(**pars), 
                            110, 600, 0, 1, 
                            "H #rightarrow WW #rightarrow 2l2#nu",
