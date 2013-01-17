@@ -75,8 +75,8 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
         card += "CMS_hwwsf_1j_Z            lnN        -         -       -        -       -         -       -       -        1.185    -\n";
     }
     if (!do1D) {
-      // TODO: shape syst on deltaphi
-      //        card += "CMS_ww2l_bkgMELA          param      0       1       [-3,3]             \n";
+      card += "CMS_ww2l_qqww2D          param      0       1       [-3,3]             \n";
+      card += "CMS_ww2l_wj2D            param      0       1       [-3,3]             \n";
     }
     // shape systematics here. Implemented only for OF 0/1 jet
     if (channel == of0j || channel == of1j) {
@@ -113,12 +113,12 @@ std::string createCardTemplate(int channel, bool do1D, std::string workspacefile
       card += "sig_"+chstr+"_8TeV_alpha_err_scaledn_j     param    0    SIG_"+chstr+"_8TeV_alpha_err_scaledn_j   [-3,3]    \n";
       card += "sig_"+chstr+"_8TeV_n_err_scaledn_j         param    0    SIG_"+chstr+"_8TeV_n_err_scaledn_j       [-3,3]    \n";
 
-      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_MC           param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_MC           [0,3]    \n";
-      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_MC          param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_MC          [0,3]    \n";
-      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_scaleup_qcd  param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_scaleup_qcd  [0,3]    \n";
-      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_scaleup_qcd param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_scaleup_qcd [0,3]    \n";
-      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_scaledn_qcd  param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_scaledn_qcd  [0,3]    \n";
-      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_scaledn_qcd param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_scaledn_qcd [0,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_MC           param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_MC           [-3,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_MC          param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_MC          [-3,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_scaleup_qcd  param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_scaleup_qcd  [-3,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_scaleup_qcd param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_scaleup_qcd [-3,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_mean_err_scaledn_qcd  param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_scaledn_qcd  [-3,3]    \n";
+      card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_scaledn_qcd param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_scaledn_qcd [-3,3]    \n";
       card += "bkg_qqww_"+chstr+"_8TeV_mean_err_res_met      param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_res_met      [-3,3]    \n";
       card += "bkg_qqww_"+chstr+"_8TeV_sigma_err_res_met     param    0    BKG_QQWW_"+chstr+"_8TeV_sigma_err_res_met     [-3,3]    \n";
       card += "bkg_qqww_"+chstr+"_8TeV_mean_err_res_e        param    0    BKG_QQWW_"+chstr+"_8TeV_mean_err_res_e        [-3,3]    \n";
