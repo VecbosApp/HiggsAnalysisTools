@@ -74,7 +74,7 @@ def main():
             if opt.observed:
                 flags = ' -M ProfileLikelihood --significance '+flags
             else:
-                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 100 -s -1 '+flags
+                flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 20 -s -1 '+flags
         elif opt.mlfit:
             flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --toysFrequentist --noErrors --minos none -t 5 -s -1 '+flags
         else:
