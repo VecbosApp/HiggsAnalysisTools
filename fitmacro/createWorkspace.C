@@ -777,13 +777,11 @@ public:
       TH2F* dphishape_others = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_others_"+chstr).c_str()));
       TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_sig_"+chstr).c_str()));
 
-      // fake for the moment
-      // TH2F* dphishape_ww_up = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_ww_"+chstr).c_str()));
-      // TH2F* dphishape_top = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_top_"+chstr).c_str()));
-      // TH2F* dphishape_dy = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_dy_"+chstr).c_str()));
-      // TH2F* dphishape_wj = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr).c_str()));
-      // TH2F* dphishape_others = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_others_"+chstr).c_str()));
-      // TH2F* dphishape_sig = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_sig_"+chstr).c_str()));
+      // 2D systematics
+      TH2F* dphishape_qqww_up = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_qqww_"+chstr+"_Up").c_str()));
+      TH2F* dphishape_qqww_dn = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_qqww_"+chstr+"_Dn").c_str()));
+      TH2F* dphishape_wj_up = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr+"_Up").c_str()));
+      TH2F* dphishape_wj_dn = (TH2F*)(shapes2Dfile->Get(("hist2D_bkg_wj_"+chstr+"_Dn").c_str()));
 
       RooDataHist rhist_qqww   (("rhist_qqww_" +chstr+tevstr).c_str(), "", v2dList, dphishape_qqww);
       RooDataHist rhist_ggww   (("rhist_ggww_" +chstr+tevstr).c_str(), "", v2dList, dphishape_ggww);
@@ -795,6 +793,10 @@ public:
       RooDataHist rhist_ggH    (("rhist_ggH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
       RooDataHist rhist_vbfH   (("rhist_vbfH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
       RooDataHist rhist_wzttH  (("rhist_wzttH_" +chstr+tevstr).c_str(), "", v2dList, dphishape_sig);
+      RooDataHist rhist_qqwwup (("rhist_qqwwup_" +chstr+tevstr).c_str(), "", v2dList, dphishape_qqww_up);
+      RooDataHist rhist_qqwwdn (("rhist_qqwwdn_" +chstr+tevstr).c_str(), "", v2dList, dphishape_qqww_dn);
+      RooDataHist rhist_wjup   (("rhist_wjup_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wj_up);
+      RooDataHist rhist_wjdn   (("rhist_wjdn_" +chstr+tevstr).c_str(), "", v2dList, dphishape_wj_dn);
 	    
       RooHistPdf rpdf_qqww   (("bkg_qqww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqww);
       RooHistPdf rpdf_ggww   (("bkg_ggww_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggww);
@@ -806,15 +808,31 @@ public:
       RooHistPdf rpdf_ggH    (("bkg_ggH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_ggH);
       RooHistPdf rpdf_vbfH   (("bkg_vbfH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_vbfH);
       RooHistPdf rpdf_wzttH  (("bkg_wzttH_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wzttH);
+      RooHistPdf rpdf_qqwwup (("bkg_qqwwup_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqwwup);
+      RooHistPdf rpdf_qqwwdn (("bkg_qqwwdn_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_qqwwdn);
+      RooHistPdf rpdf_wjup   (("bkg_wjup_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wjup);
+      RooHistPdf rpdf_wjdn   (("bkg_wjdn_dphi2D_pdf_" +chstr+tevstr).c_str(), "", v2dSet , rhist_wjdn);
+
+      RooArgList list_qqww;
+      list_qqww.add(rpdf_qqww);
+      list_qqww.add(rpdf_qqwwup);
+      list_qqww.add(rpdf_qqwwdn);
+
+      RooArgList list_wj;
+      list_wj.add(rpdf_wj);
+      list_wj.add(rpdf_wjup);
+      list_wj.add(rpdf_wjdn);
 	    
-      // will be used for syst
-      // RooRealVar CMS_ww2l_bkg("CMS_ww2l_bkgDPHI" ,"" ,0,-10,10); 
+      RooRealVar CMS_ww2l_qqww2D("CMS_ww2l_qqww2D" ,"" ,0,-10,10); 
+      RooRealVar CMS_ww2l_wj2D("CMS_ww2l_wj2D" ,"" ,0,-10,10); 
 	
-      FastVerticalInterpHistPdf2D plpdf_qqww   (("bkg_qqww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqww)   ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_qqww   (("bkg_qqww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,list_qqww               ,RooArgList(CMS_ww2l_qqww2D) ,1.0,1);
+      // FastVerticalInterpHistPdf2D plpdf_qqww   (("bkg_qqww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_qqww)   ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_ggww   (("bkg_ggww_FVIHP_" +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggww)   ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_top    (("bkg_top_FVIHP_" +chstr+tevstr).c_str(),    "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_top)    ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_dy     (("bkg_dy_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_dy)     ,RooArgList()                ,1.0,1);
-      FastVerticalInterpHistPdf2D plpdf_wj     (("bkg_wj_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wj)     ,RooArgList()                ,1.0,1);
+      FastVerticalInterpHistPdf2D plpdf_wj     (("bkg_wj_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,list_wj                 ,RooArgList(CMS_ww2l_wj2D)   ,1.0,1);
+      // FastVerticalInterpHistPdf2D plpdf_wj     (("bkg_wj_FVIHP_" +chstr+tevstr).c_str(),     "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wj)     ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_wgstar (("bkg_wgstar_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_wgstar) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_others (("bkg_others_FVIHP_" +chstr+tevstr).c_str(), "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_others) ,RooArgList()                ,1.0,1);
       FastVerticalInterpHistPdf2D plpdf_ggH    (("sig_ggH_FVIHP_"  +chstr+tevstr).c_str(),   "",CMS_ww2l_mr_1D,CMS_ww2l_dphi,true,RooArgList(rpdf_ggH)    ,RooArgList()                ,1.0,1);
@@ -900,15 +918,16 @@ void createWorkspace() {
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
 
+  
   for (float i = 114.; i <= 180.; i += 1.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
-    for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
+    for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
   for (float i = 114.; i <= 180.; i += 1.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
-    for(int j = 0; j < 4; ++j) hmpi8.createCard(i, 50, 500, j);
+    for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
 }
