@@ -204,20 +204,21 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_wj_up   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
   ymaker_wj_dn   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
 
-  int xNBins = 4;
+  int xNBins = 3;
   Double_t xLowerEdges[xNBins+1];
   xLowerEdges[0]=sel.mrmin;
   xLowerEdges[1]=150;
-  xLowerEdges[2]=200;
-  xLowerEdges[3]=250;
-  xLowerEdges[4]=sel.mrmax;
+  xLowerEdges[2]=250;
+  xLowerEdges[3]=sel.mrmax;
 
   float dphiBinSize = 20.0 * TMath::Pi() / 180.; // 20 degrees = 9 bins
-  int yNBins = 8;
+  int yNBins = 6;
   Double_t yLowerEdges[yNBins+1];
   yLowerEdges[0]=0.0;
-  for(int i=1;i<=7;++i) yLowerEdges[i]=yLowerEdges[i-1]+dphiBinSize;
-  yLowerEdges[8]=TMath::Pi();
+  for(int i=1;i<=3;++i) yLowerEdges[i]=yLowerEdges[i-1]+dphiBinSize;
+  yLowerEdges[4]=yLowerEdges[3]+dphiBinSize*2;
+  yLowerEdges[5]=yLowerEdges[4]+dphiBinSize*2;
+  yLowerEdges[6]=TMath::Pi();
 
   cout << "Filling the backgrounds now..." << endl;
 
@@ -245,8 +246,8 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_others.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
 
   // and now the signals
-  int mH[13] = {110,115,120,125,130,135,140,145,150,155,160,170,180};
-  for(int i=0; i<13;i++) {
+  int mH[21] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500};
+  for(int i=0; i<21;i++) {
     cout << "Filling mass mH = " << mH[i] << "..." << endl;
     char gghsample[1000], qqhsample[1000];
     sprintf(gghsample,"%s/nominals/latino_1%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
