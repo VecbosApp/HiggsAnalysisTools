@@ -369,6 +369,9 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 	// File to store plots in 
 	TFile *fOut = new TFile(Form("%s_normresiduals.root",treename.c_str()),"RECREATE");
 
+        TH1F *bHd = new TH1F("bHd","",50,-1.0,1.0);
+        TH1F *bHfd = new TH1F("bHfd","",50,-1.0,1.0);
+
 	for (int iobj=0;iobj<nBranches;iobj++){
 
 		TBranch *br =(TBranch*) l_branches->At(iobj);
@@ -393,6 +396,9 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
                 std::cout << "******* "<< name << " *******"<<std::endl;
                 std::cout << p_mean << std::endl;
                 std::cout << "******************************" <<std::endl;
+
+                TH1F* bH = (TH1F*)bHd->Clone(Form("%s",name));
+                TH1F* bHf = (TH1F*)bHfd->Clone(Form("%s_fail",name));
                 
                 const char* drawInput = Form("(%s-%f)/%f",name,p_mean,p_mean);
                 tree_->Draw(Form("%s>>%s",drawInput,name),"");
@@ -400,9 +406,6 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
                 fitPull  = true;
                 fitPullf = true;
                   
-
-		TH1F* bH  = (TH1F*) gROOT->FindObject(Form("%s",name))->Clone();
-		TH1F* bHf = (TH1F*) gROOT->FindObject(Form("%s_fail",name))->Clone();
 		bHf->SetLineColor(2);
 		bH->GetXaxis()->SetTitle(bH->GetTitle());
 		bH->GetYaxis()->SetTitle(Form("no toys (%d total)",nToysInTree));
@@ -423,12 +426,12 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 
 		c->Clear();
 		
-		TPad pad1("t1","",0.01,0.39,0.98,0.95);
-		TPad pad2("t2","",0.01,0.01,0.98,0.35);
+ 		TPad pad1("t1","",0.01,0.01,0.66,0.95);
+ 		TPad pad2("t2","",0.70,0.20,0.98,0.80);
 
 		pad1.SetNumber(1); pad2.SetNumber(2);
 
-		if ( isFitted ) {pad2.Draw();}
+                if ( isFitted ) {pad2.Draw();}
 
 		pad1.Draw();
 		pad1.SetGrid(true);
@@ -471,11 +474,11 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 
 		}
 
-		double titleSize = isFitted ? 0.1 : 0.028;
-		titletext->SetTextSize(titleSize);titletext->SetTextAlign(21); titletext->DrawLatex(0.55,0.92,name);
+		// double titleSize = isFitted ? 0.1 : 0.028;
+		//titletext->SetTextSize(titleSize);titletext->SetTextAlign(21); titletext->DrawLatex(0.55,0.92,name);
 		c->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
+                c->SaveAs(Form("mlfit/%s_residual_%s.pdf",name,treename.c_str()));
 		fOut->WriteObject(c,Form("%s_%s",treename.c_str(),name));
-		//c->SaveAs(Form("%s_%s.pdf",treename.c_str(),name));
 	}
 	
 	if (nPulls>0){
@@ -502,6 +505,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 		pullSummaryHist.SetMarkerStyle(21);pullSummaryHist.SetMarkerSize(1.5);pullSummaryHist.SetMarkerColor(2);pullSummaryHist.SetLabelSize(pullLabelSize);
 		pullSummaryHist.GetYaxis()->SetRangeUser(-1,1);pullSummaryHist.GetYaxis()->SetTitle("residual summary (relative)");pullSummaryHist.Draw("E1");
 		hc->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
+                hc->SaveAs(Form("mlfit/residual_summary_%d_%s.pdf",pullPlots,treename.c_str()));
 		fOut->WriteObject(hc,Form("comb_pulls_%s_%d",treename.c_str(),pullPlots));
 	//	hc->SaveAs(Form("comb_pulls_%s_%d.pdf",treename.c_str(),pullPlots));
 		pullPlots++;
@@ -657,3 +661,37 @@ void plotNormResidualsFromToys(std::string inputFile, std::string workspace, std
 
         
 }
+
+void plotMuFromToys(std::string inputFile, std::string selectString="fit_status==0"){
+
+	// Some Global preferences
+        gROOT->SetStyle("Plain");
+	gSystem->Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so");
+	gStyle->SetOptFit(1111);
+	gStyle->SetOptStat(0);
+	gStyle->SetPalette(1,0);
+
+	TFile *fi_ = TFile::Open(inputFile.c_str());
+        TTree *tree_sb = (TTree*) fi_->Get("tree_fit_sb");
+
+        TH1F *mures = new TH1F("mures","",25,-1.0,1.0);
+        
+        mures->SetLineColor(kBlue+3);
+        mures->SetLineWidth(2);
+        
+        mures->GetXaxis()->SetTitle("#mu");
+        mures->GetYaxis()->SetTitle(Form("no toys (%d total)",int(tree_sb->GetEntries())));
+        mures->GetYaxis()->SetTitleOffset(1.05);
+        mures->GetXaxis()->SetTitleOffset(0.9);
+        mures->GetYaxis()->SetTitleSize(0.05);
+        mures->GetXaxis()->SetTitleSize(0.05);
+
+       	TCanvas *c = new TCanvas("c","",960,800);
+        tree_sb->Draw("mu>>mures",selectString.c_str());
+        mures->Fit("gaus");
+        c->SaveAs("mlfit/mu_residual.pdf");
+}
+
+
+
+
