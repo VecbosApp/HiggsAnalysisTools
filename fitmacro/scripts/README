@@ -6,8 +6,8 @@
 ./scripts/combcards.sh -p datacards -t
 
 --- run the limits ---
-1D: ./scripts/runLimits.py -q -p test0 -l 12.1 comb_0j1j2j
-2D: ./scripts/runLimits.py -q -p test0 -l 12.1 comb_0j1j2j -t _2D
+1D: ./scripts/runLimits.py -q 8nh -p test0 -l 12.1 comb_0j1j2j
+2D: ./scripts/runLimits.py -q 8nh -p test0 -l 12.1 comb_0j1j2j -t _2D
 
 - make limit tables, then plots -
 ./scripts/makeLimitTable.py comb_0j1j2j
