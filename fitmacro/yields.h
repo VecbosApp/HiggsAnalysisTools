@@ -66,14 +66,14 @@ class ScaleFactors {
     virtual ~ScaleFactors() {}
 
     float getWW() {
-      if(channel_==of0j || channel_==sf0j) return 1.14; 
-      if(channel_==of1j || channel_==sf1j) return 0.90;
+      if(channel_==of0j || channel_==sf0j) return 1.16; 
+      if(channel_==of1j || channel_==sf1j) return 1.17;
       return 1.0;
     }
     float getTop() { 
       // from AN-12-378 v5
-      if(channel_==of0j || channel_==sf0j) return 0.95; 
-      if(channel_==of1j || channel_==sf1j) return 1.09;
+      if(channel_==of0j || channel_==sf0j) return 1.01; 
+      if(channel_==of1j || channel_==sf1j) return 1.08;
       return 1.0;
     }
     float getDY() {
