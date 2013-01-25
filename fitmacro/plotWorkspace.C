@@ -151,15 +151,15 @@ void plotWsp2D(const char *inputfile, int nj) {
 
   TCanvas *c1 = new TCanvas("c1","c1");
   gStyle->SetPaintTextFormat("1.2f");
-  h_qqww->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_qqww->GetName(),nj));
-  h_ggww->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggww->GetName(),nj));
-  h_top->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_top->GetName(),nj));
-  h_dy->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_dy->GetName(),nj));
-  h_wj->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wj->GetName(),nj));
-  h_wgstar->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wgstar->GetName(),nj));
-  h_others->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_others->GetName(),nj));
-  h_ggH->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggH->GetName(),nj));
-  h_vbfH->Draw("colz text"); c1->SaveAs(Form("%s_of_%dj.pdf",h_vbfH->GetName(),nj));
+  h_qqww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_qqww->GetName(),nj));
+  h_ggww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggww->GetName(),nj));
+  h_top->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_top->GetName(),nj));
+  h_dy->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_dy->GetName(),nj));
+  h_wj->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wj->GetName(),nj));
+  h_wgstar->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_wgstar->GetName(),nj));
+  h_others->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_others->GetName(),nj));
+  h_ggH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggH->GetName(),nj));
+  h_vbfH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.pdf",h_vbfH->GetName(),nj));
 
 }
 
