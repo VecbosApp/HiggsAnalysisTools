@@ -11,7 +11,7 @@
 
 - make limit tables, then plots -
 ./scripts/makeLimitTable.py comb_0j1j2j
-./scripts/plotPlots.py -p test0 -l 12.1 -t comb_0j1j2j comb_0j1j2j (add -o to draw the observed)
+./scripts/plotPlots.py -p test0 -l 12.1 comb_0j1j2j (add -o to draw the observed)
 
 
 
@@ -30,4 +30,4 @@
 
 - make significance plot -
 ./scripts/makeSignificanceTable.py comb_0j1j2j 
-./scripts/plotPlots.py -S -p test0 -l 12.1 --tag comb_0j1j2j comb_0j1j2j (add -o to draw the observed, -t _2D for 2D)
+./scripts/plotPlots.py -S -p test0 -l 12.1 comb_0j1j2j (add -o to draw the observed, -t _2D for 2D)
