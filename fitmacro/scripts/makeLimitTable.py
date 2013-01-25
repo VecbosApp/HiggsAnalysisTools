@@ -78,6 +78,7 @@ def printTable(file, table):
 def main():
     usage = 'usage: %prog [dir] [cmd]'
     parser = optparse.OptionParser(usage)
+    parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
     (opt, args) = parser.parse_args()
     
     if len(args) != 1:
@@ -88,7 +89,7 @@ def main():
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tagname = tag+'_shape'
+    tagname = tag+'_shape'+opt.suffix
 
     print tagname
 
