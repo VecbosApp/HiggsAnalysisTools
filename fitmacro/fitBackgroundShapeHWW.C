@@ -408,7 +408,7 @@ std::string fitWJetsLandauShapeMR(int channel, string sample,
   if(syst.find("fakeratedn")!=string::npos) ns=-1;
 
   WJetsYieldMaker  ymaker_wj(ns);
-  ymaker_wj.fill("latinos_tree_skim_of/wjets/latino_RunABC_LooseLoose_skimww.root"); 
+  ymaker_wj.fill("latinos_tree_skim_of/wjets/latino_LooseLoose_19.5fb.root"); 
 
   FitSelection sel;  
 
@@ -497,7 +497,8 @@ std::string fitGaussianShapeMR(int channel, string sample,
 
   YieldMaker  ymaker_hi;
   if(sample.find("embeddedtt")!=string::npos) { 
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_RunABC_DYtt_8fb.root"));
+    dir="dyTemplate";
+    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_19.5fb.root"));
   }
 
   FitSelection sel;
