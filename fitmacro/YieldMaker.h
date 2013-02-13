@@ -216,6 +216,7 @@ class YieldMaker {
     float baseweight = 0.0;
     float effweight  = 0.0;
     float puweight   = 0.0;
+    float kfweight   = 0.0;
     float ch         = 0.0;
     float proc       = 0.0;
     float njet       = 0.0;
@@ -231,8 +232,9 @@ class YieldMaker {
     tree->SetBranchAddress("mth",     &mth);
     tree->SetBranchAddress("dphill",  &dphill);
     tree->SetBranchAddress("baseW",   &baseweight);
-    tree->SetBranchAddress("puW60ABC",&puweight);
+    tree->SetBranchAddress("puW",     &puweight);
     tree->SetBranchAddress("effW",    &effweight);
+    tree->SetBranchAddress("kfW",     &kfweight);
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
@@ -274,9 +276,9 @@ class YieldMaker {
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
-      float weight = baseweight*effweight*puweight;
+      float weight = baseweight*effweight*puweight*kfweight;
       argset.setRealValue("weight", weight);
-      float noxsecweight = effweight*puweight;
+      float noxsecweight = effweight*puweight*kfweight;
       argset.setRealValue("noxsecweight", noxsecweight);
       if(channel<0) continue;
       dataset.add(argset);
