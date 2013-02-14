@@ -29,24 +29,24 @@ class InterpolatedYields {
       stringstream fss;
       fss << "( ";  
       if (channel_ == of0j) {
-	if(production_ == ggH) fss << "1071.72 - 24.4336*@0 + 0.180539*@0*@0 - 0.000425689*@0*@0*@0";
-	if(production_ == vbfH) fss << "14.81  - 0.33084*@0 + 0.002387*@0*@0 - 5.45931e-06*@0*@0*@0";
-        if(production_ == wzttH) fss << "5.95  - 0.16590*@0 + 0.001456*@0*@0 - 3.92114e-06*@0*@0*@0";
+	if(production_ == ggH) fss << "21821.6  - 503.955*@0 + 3.771120*@0*@0 - 0.008995620*@0*@0*@0";
+	if(production_ == vbfH) fss << "342.89  - 7.72813*@0 + 0.056292*@0*@0 - 0.000130115*@0*@0*@0";
+        if(production_ == wzttH) fss << "-21.08 - 0.83254*@0 + 0.015693*@0*@0 - 5.59119e-05*@0*@0*@0";
       }
       if (channel_ == of1j) {
-	if(production_ == ggH) fss << "466.12  - 10.5387*@0 + 0.077163*@0*@0 - 0.000179912*@0*@0*@0";
-	if(production_ == vbfH) fss << "52.18  - 1.17388*@0 + 0.008527*@0*@0 - 1.96117e-05*@0*@0*@0";
-        if(production_ == wzttH) fss << "18.08 - 0.44439*@0 + 0.003523*@0*@0 - 8.81346e-06*@0*@0*@0";
+	if(production_ == ggH) fss << "9729.7  - 221.505*@0 + 1.633110*@0*@0 - 0.003834270*@0*@0*@0";
+        if(production_ == vbfH) fss << "1191.9 - 26.8418*@0 + 0.195277*@0*@0 - 0.000450233*@0*@0*@0";
+        if(production_ == wzttH) fss << "345.8 - 9.15234*@0 + 0.076578*@0*@0 - 0.000197964*@0*@0*@0";
       }
       if (channel_ == sf0j) {
-	if(production_ == ggH) fss << "1153.17 - 26.4545*@0 + 0.196776*@0*@0 - 0.000467208*@0*@0*@0";
-	if(production_ == vbfH) fss << "32.95  - 0.7147*@0  + 0.005067*@0*@0 - 1.16101e-05*@0*@0*@0";
-        if(production_ == wzttH) fss << "1.53  - 0.0623*@0  + 0.000656*@0*@0 - 1.92932e-06*@0*@0*@0";
+	if(production_ == ggH) fss << "   22086.7 - 508.521*@0 + 3.79508*@0*@0 - 0.00903367*@0*@0*@0";
+	if(production_ == vbfH) fss << "   315.24 - 7.09028*@0 + 0.05150*@0*@0 - 0.00011855*@0*@0*@0";
+        if(production_ == wzttH) fss << "-51.4374 - 0.15662*@0 + 0.01095*@0*@0 - 4.5266e-05*@0*@0*@0";
       }
       if (channel_ == sf1j) {
-	if(production_ == ggH) fss << "517.843 - 11.7562*@0 + 0.0865359*@0*@0 - 0.000203278*@0*@0*@0";
-	if(production_ == vbfH) fss << "103.60 - 2.25182*@0 + 0.0159676*@0*@0 - 3.64287e-05*@0*@0*@0";
-        if(production_ == wzttH) fss << "11.81 - 0.28274*@0 + 0.0021916*@0*@0 - 5.39513e-06*@0*@0*@0";
+	if(production_ == ggH) fss << "8444.36 - 192.373*@0 + 1.4169100*@0*@0 - 0.003315*@0*@0*@0";
+	if(production_ == vbfH) fss << "968.52 - 21.7376*@0 + 0.1570710*@0*@0 - 0.000358*@0*@0*@0";
+        if(production_ == wzttH) fss << "572.1 - 14.1389*@0 + 0.1127810*@0*@0 - 0.000284*@0*@0*@0";
       }
       fss << " )*" << lumi;
       return fss.str();
@@ -66,13 +66,13 @@ class ScaleFactors {
     virtual ~ScaleFactors() {}
 
     float getWW() {
-      if(channel_==of0j || channel_==sf0j) return 1.16; 
-      if(channel_==of1j || channel_==sf1j) return 1.17;
+      if(channel_==of0j || channel_==sf0j) return 1.05; 
+      if(channel_==of1j || channel_==sf1j) return 0.90;
       return 1.0;
     }
     float getTop() { 
       // from AN-12-378 v5
-      if(channel_==of0j || channel_==sf0j) return 1.01; 
+      if(channel_==of0j || channel_==sf0j) return 0.98; 
       if(channel_==of1j || channel_==sf1j) return 1.08;
       return 1.0;
     }
