@@ -131,7 +131,7 @@ void doAllChannels() {
     fileParams << "# DY pdfs" << endl;
     for(int i=0; i<2; ++i) allDY(fileParams,i,systematics[s]);
     cout << e1 << "### Done DY sample ###" << en << endl;
-    
+
     cout << e1 << "==> Fitting Wg* sample..." << en << endl;
     fileParams << "# Wg* pdfs" << endl;
     for(int i=0; i<2; ++i) allWgstar(fileParams,i,systematics[s]);
@@ -205,7 +205,7 @@ void allTop(ofstream& file, int channel, string syst) {
 
 void allWgstar(ofstream& file, int channel, string syst) {
   double xLow, xHigh;
-  xLow = 50; xHigh = 500;
+  xLow = 70; xHigh = 500;
 
   double fitValues[2];
   double fitErrors[2];
@@ -336,14 +336,19 @@ std::string fitLandauShapeMR(int channel, string sample,
   RooDataSet dataset("dataset","dataset",varset,WeightVar(weight.str().c_str()));
   ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w);
 
+  float mPars[3]={140,70,200};
+  float sPars[3]={10,10,100};
+  if(sample.find("WGstar")!=string::npos && channel==0) {
+    mPars[0]=90; mPars[2]=98; 
+    sPars[0]=5; sPars[1]=1;
+  }
   //--- Landau
-  RooRealVar mean("mean","mean",140,70,200) ;
-  RooRealVar sigma("#sigma","width",10,10,100); 
+  RooRealVar mean("mean","mean",mPars[0],mPars[1],mPars[2]) ;
+  RooRealVar sigma("#sigma","width",sPars[0],sPars[1],sPars[2]); 
   RooLandau landau("landau","landau",x,mean,sigma);
 
   if(sample.find("wgstar")!=string::npos) sigma.setRange(1,20);
 
-  x.setBins(10000,"fft");
   landau.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
 
   stringstream frameTitle;
@@ -352,7 +357,7 @@ std::string fitLandauShapeMR(int channel, string sample,
   if(channel==sf0j){frameTitle << "ee+#mu#mu,0-j";}
   if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j";}
 
-  RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
+  RooPlot* xframe = x.frame(xMin,xMax,50) ;
   dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
   landau.plotOn(xframe);
   landau.paramOn(xframe);
