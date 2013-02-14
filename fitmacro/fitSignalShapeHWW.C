@@ -73,16 +73,16 @@ void all(int channel=0) {
   int mass[30]; double xLow[30]; double xHigh[30];  
   int maxMassBin;
 
-  mass[0] = 115; xLow[0] = 50; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
-  mass[1] = 120; xLow[1] = 50; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
-  mass[2] = 125; xLow[2] = 50; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
-  mass[3] = 130; xLow[3] = 60; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
-  mass[4] = 135; xLow[4] = 60; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
-  mass[5] = 140; xLow[5] = 70; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
-  mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
-  mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
-  mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
-  mass[9] = 180; xLow[9] = 80; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+  mass[0] = 115; xLow[0] = 85; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+  mass[1] = 120; xLow[1] = 85; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+  mass[2] = 125; xLow[2] = 85; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+  mass[3] = 130; xLow[3] = 85; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+  mass[4] = 135; xLow[4] = 85; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+  mass[5] = 140; xLow[5] = 85; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+  mass[6] = 150; xLow[6] = 85; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
+  mass[7] = 160; xLow[7] = 85; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+  mass[8] = 170; xLow[8] = 85; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
+  mass[9] = 180; xLow[9] = 85; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
   maxMassBin = 10;
 
   double massV[30],massE[30];
@@ -178,12 +178,12 @@ void signalSystematics() {
   int mass[30]; double xLow[30]; double xHigh[30];  
   int maxMassBin = 10;
 
-  mass[0] = 115; xLow[0] = 50; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
-  mass[1] = 120; xLow[1] = 50; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
-  mass[2] = 125; xLow[2] = 50; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
-  mass[3] = 130; xLow[3] = 60; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
-  mass[4] = 135; xLow[4] = 60; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
-  mass[5] = 140; xLow[5] = 70; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+  mass[0] = 115; xLow[0] = 80; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+  mass[1] = 120; xLow[1] = 80; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+  mass[2] = 125; xLow[2] = 80; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+  mass[3] = 130; xLow[3] = 80; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+  mass[4] = 135; xLow[4] = 80; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+  mass[5] = 140; xLow[5] = 80; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
   mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
   mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
   mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
@@ -277,9 +277,10 @@ std::string fitSignalShapeMR(int massBin, int channel,
 
   //--- simple CrystalBall
   RooRealVar mean("mean","mean of gaussian",0,-20.0,20.0) ;
-  RooRealVar sigma("sigma","width of gaussian",1.5,0.,50.); 
+  RooRealVar sigma("sigma","width of gaussian",15,10.,50.); 
   RooRealVar a("a","a",1.46,0.,10.);
-  RooRealVar n("n","n",1.92,0.,20.);   
+  //  RooRealVar n("n","n",1.92,0.,20.);   
+  RooRealVar n("n","n",5);
   RooCBShape CBall("CBall","Crystal ball",x, mean,sigma, a,n);
   
 
@@ -310,7 +311,7 @@ std::string fitSignalShapeMR(int massBin, int channel,
   if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j, m_{H} = ";}
   frameTitle << massBin << " GeV";
 
-  RooPlot* xframe = x.frame(Title(frameTitle.str().c_str() )) ;
+  RooPlot* xframe = x.frame(xMin,xMax,50) ;
   dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
   model.plotOn(xframe);
   model.paramOn(xframe);
