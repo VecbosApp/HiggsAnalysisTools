@@ -1,0 +1,15 @@
+# Wjets pdfs
+of0j_wjets_me_nominals = 129.322 +/- 2.17435
+of0j_wjets_si_nominals = 19.8241 +/- 1.23377
+of1j_wjets_me_nominals = 147.049 +/- 4.24948
+of1j_wjets_si_nominals = 24.5909 +/- 2.21672
+# Wjets pdfs
+of0j_wjets_me_fakerateup = 140 +/- 13.0016
+of0j_wjets_si_fakerateup = 15.6837 +/- 3.38819
+of1j_wjets_me_fakerateup = 140 +/- 13.0016
+of1j_wjets_si_fakerateup = 15.6837 +/- 3.38819
+# Wjets pdfs
+of0j_wjets_me_fakeratedn = 140 +/- 13.0016
+of0j_wjets_si_fakeratedn = 15.6837 +/- 3.38819
+of1j_wjets_me_fakeratedn = 140 +/- 13.0016
+of1j_wjets_si_fakeratedn = 15.6837 +/- 3.38819
