@@ -38,6 +38,7 @@ using namespace RooFit;
 
 using namespace std;
 
+bool do7TeV_;
 
 int Wait() {
      cout << " Continue [<RET>|q]?  ";
@@ -68,22 +69,35 @@ std::string fitSignalShapeMR(int massBin, int channel,
                              double bwSigma,
                              double fitValues[5], double fitErrors[5], string syst);
                         
-void all(int channel=0) {
+void all(int channel=0, bool do7TeV=false) {
   double bwSigma[30];
   int mass[30]; double xLow[30]; double xHigh[30];  
   int maxMassBin;
 
-  mass[0] = 115; xLow[0] = 85; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
-  mass[1] = 120; xLow[1] = 85; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
-  mass[2] = 125; xLow[2] = 85; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
-  mass[3] = 130; xLow[3] = 85; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
-  mass[4] = 135; xLow[4] = 85; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
-  mass[5] = 140; xLow[5] = 85; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
-  mass[6] = 150; xLow[6] = 85; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
-  mass[7] = 160; xLow[7] = 85; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
-  mass[8] = 170; xLow[8] = 85; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
-  mass[9] = 180; xLow[9] = 85; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
-  maxMassBin = 10;
+  do7TeV_=do7TeV;
+
+  if(do7TeV) {
+    mass[0] = 120; xLow[0] = 85; xHigh[0] = 180; bwSigma[0] = 3.5/1000.;
+    mass[1] = 130; xLow[1] = 85; xHigh[1] = 190; bwSigma[1] = 4.9/1000.;
+    mass[2] = 140; xLow[2] = 85; xHigh[2] = 190; bwSigma[2] = 8.1/1000.;
+    mass[3] = 150; xLow[3] = 85; xHigh[3] = 220; bwSigma[3] = 1.7/100.;
+    mass[4] = 160; xLow[4] = 85; xHigh[4] = 220; bwSigma[4] = 8.3/100.;
+    mass[5] = 170; xLow[5] = 85; xHigh[5] = 240; bwSigma[5] = 3.8/10.;
+    mass[6] = 180; xLow[6] = 85; xHigh[6] = 250; bwSigma[6] = 6.3/10.;
+    maxMassBin = 7;    
+  } else {
+    mass[0] = 115; xLow[0] = 85; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+    mass[1] = 120; xLow[1] = 85; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+    mass[2] = 125; xLow[2] = 85; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+    mass[3] = 130; xLow[3] = 85; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+    mass[4] = 135; xLow[4] = 85; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+    mass[5] = 140; xLow[5] = 85; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+    mass[6] = 150; xLow[6] = 85; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
+    mass[7] = 160; xLow[7] = 85; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+    mass[8] = 170; xLow[8] = 85; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
+    mass[9] = 180; xLow[9] = 85; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+    maxMassBin = 10;
+  }
 
   double massV[30],massE[30];
   for(int i=0; i<maxMassBin;++i){
@@ -160,7 +174,7 @@ void all(int channel=0) {
 
   gStyle->SetOptFit(111111);
   stringstream nameFile;
-  nameFile << "fitParams_" <<  getChannelSuffix(channel);
+  nameFile << "fitParams_" <<  getChannelSuffix(channel) << (do7TeV ? "_7TeV" : "_8TeV");
   gA->Fit("pol0"); gA->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_aCB.pdf")).c_str()); Wait();
   gN->Fit("pol1"); gN->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_nCB.pdf")).c_str()); Wait();
   gMeanCB->Fit("pol1"); gMeanCB->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_meanCB.pdf")).c_str()); Wait();
@@ -168,7 +182,7 @@ void all(int channel=0) {
 
 }
 
-void signalSystematics() {
+void signalSystematics(bool do7TeV=false) {
 
   const char* e0 = "\033[44;37m";
   const char* e1 = "\033[41;37m";
@@ -176,18 +190,32 @@ void signalSystematics() {
 
   double bwSigma[30];
   int mass[30]; double xLow[30]; double xHigh[30];  
-  int maxMassBin = 10;
+  int maxMassBin;
 
-  mass[0] = 115; xLow[0] = 80; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
-  mass[1] = 120; xLow[1] = 80; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
-  mass[2] = 125; xLow[2] = 80; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
-  mass[3] = 130; xLow[3] = 80; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
-  mass[4] = 135; xLow[4] = 80; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
-  mass[5] = 140; xLow[5] = 80; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
-  mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
-  mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
-  mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
-  mass[9] = 180; xLow[9] = 80; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+  do7TeV_=do7TeV;
+
+  if(do7TeV) {
+    mass[0] = 120; xLow[0] = 85; xHigh[0] = 180; bwSigma[0] = 3.5/1000.;
+    mass[1] = 130; xLow[1] = 85; xHigh[1] = 190; bwSigma[1] = 4.9/1000.;
+    mass[2] = 140; xLow[2] = 85; xHigh[2] = 190; bwSigma[2] = 8.1/1000.;
+    mass[3] = 150; xLow[3] = 85; xHigh[3] = 220; bwSigma[3] = 1.7/100.;
+    mass[4] = 160; xLow[4] = 85; xHigh[4] = 220; bwSigma[4] = 8.3/100.;
+    mass[5] = 170; xLow[5] = 85; xHigh[5] = 240; bwSigma[5] = 3.8/10.;
+    mass[6] = 180; xLow[6] = 85; xHigh[6] = 250; bwSigma[6] = 6.3/10.;
+    maxMassBin = 7;    
+  } else {
+    mass[0] = 115; xLow[0] = 80; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
+    mass[1] = 120; xLow[1] = 80; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
+    mass[2] = 125; xLow[2] = 80; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
+    mass[3] = 130; xLow[3] = 80; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
+    mass[4] = 135; xLow[4] = 80; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
+    mass[5] = 140; xLow[5] = 80; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+    mass[6] = 150; xLow[6] = 80; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
+    mass[7] = 160; xLow[7] = 80; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+    mass[8] = 170; xLow[8] = 80; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
+    mass[9] = 180; xLow[9] = 80; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+    maxMassBin = 10;
+  }
 
   double fitValues[5];
   double fitErrors[5];
@@ -255,10 +283,21 @@ std::string fitSignalShapeMR(int massBin, int channel,
 
   YieldMaker  ymaker_hi;
 
-  stringstream hFileName;
-  hFileName << "latinos_tree_skim_of/"+dir+"/latino_1" << massBin << "_ggToH" << massBin << "toWWTo2LAndTau2Nu.root";
-  cout << "ggH ==> Opening ROOT file: " << hFileName.str() << endl;
-  ymaker_hi.fill(hFileName.str().c_str());
+  stringstream hFileName1, hFileName2, hFileName3;
+  if(!do7TeV_) hFileName1 << "latinos_tree_skim_of/"+dir+"/latino_1" << massBin << "_ggToH" << massBin << "toWWTo2LAndTau2Nu.root";
+  else {
+    hFileName1 << "latinos_tree_skim_of/"+dir+"/latino_1" << massBin << "_ggToH" << massBin << "toWWto2L2Nu.root";
+    hFileName2 << "latinos_tree_skim_of/"+dir+"/latino_2" << massBin << "_ggToH" << massBin << "toWWtoLNuTauNu.root";
+    hFileName3 << "latinos_tree_skim_of/"+dir+"/latino_3" << massBin << "_ggToH" << massBin << "toWWto2Tau2Nu.root";
+  }
+  cout << "ggH ==> Opening ROOT file: " << hFileName1.str() << endl;
+  ymaker_hi.fill(hFileName1.str().c_str());
+  if(do7TeV_) {
+    cout << "ggH ==> Opening ROOT file: " << hFileName2.str() << endl;
+    ymaker_hi.fill(hFileName2.str().c_str());
+    cout << "ggH ==> Opening ROOT file: " << hFileName3.str() << endl;
+    ymaker_hi.fill(hFileName3.str().c_str());
+  }
 
   FitSelection sel;
 
