@@ -33,6 +33,8 @@
 
 using namespace RooFit;
 
+bool do7TeV_;
+
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -88,7 +90,9 @@ void allWgstar(ofstream& file, int channel, string syst);
 void allOthers(ofstream& file, int channel, string syst);
 void allWjets(ofstream& file, int channel, string syst);
                         
-void doAllChannels() {
+void doAllChannels(bool do7TeV) {
+
+  do7TeV_=do7TeV;
 
   ofstream fileParams;
   fileParams.open("paramsHWW.txt",ios_base::trunc);
@@ -142,7 +146,7 @@ void doAllChannels() {
     for(int i=0; i<2; ++i) allOthers(fileParams,i,systematics[s]);
     cout << e1 << "### Done Others sample ###" << en << endl;
   }
-  
+
   vector<string> systematics_fakerate;
   systematics_fakerate.push_back("nominals");
   systematics_fakerate.push_back("fakerateup");
@@ -413,7 +417,8 @@ std::string fitWJetsLandauShapeMR(int channel, string sample,
   if(syst.find("fakeratedn")!=string::npos) ns=-1;
 
   WJetsYieldMaker  ymaker_wj(ns);
-  ymaker_wj.fill("latinos_tree_skim_of/wjets/latino_LooseLoose_19.5fb.root"); 
+  if(do7TeV_) ymaker_wj.fill("latinos_tree_skim_of/wjets/WJetsEstimated_Full2011_added.root");
+  else ymaker_wj.fill("latinos_tree_skim_of/wjets/latino_LooseLoose_19.5fb.root"); 
 
   FitSelection sel;  
 
@@ -503,7 +508,8 @@ std::string fitGaussianShapeMR(int channel, string sample,
   YieldMaker  ymaker_hi;
   if(sample.find("embeddedtt")!=string::npos) { 
     dir="dyTemplate";
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_19.5fb.root"));
+    if(do7TeV_) ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_2011_added.root"));
+    else ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_19.5fb.root"));
   }
 
   FitSelection sel;
