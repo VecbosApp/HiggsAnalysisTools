@@ -38,6 +38,7 @@ public:
 
   float lumi;
   bool  do1D;
+  bool  do7TeV;
   bool  doFFT;
   std::string treeFolder;
   std::string hww2DShapesfilename;
@@ -54,30 +55,44 @@ public:
   WJetsYieldMaker ymaker_wj;
   XSecProvider xsecProvider;
   FitSelection sel;
-
- int getClosestMCMass(float mH) {
-   int masses[10] = {115,120,125,130,135,140,150,160,170,180};
-   if(mH<masses[0]) return masses[0];
-   if(mH>=masses[9]) return masses[9];
-   for(int i=0;i<9;++i) {
-     if(mH>=masses[i] && mH<masses[i+1]) {
-       float sx=mH-masses[i];
-       float dx=masses[i+1]-mH;
-       return (sx<=dx) ? masses[i] : masses[i+1];
-     }
-   }
-   return -999;
- }
   
- std::string getSignalCBMeanString(int ch) {
+  int getClosestMCMass(float mH) {
+    int masses[10];
+    int nMasses;
+    if(do7TeV) {
+      masses[0]=120; masses[1]=130; masses[2]=140; 
+      masses[3]=150; masses[4]=160; masses[5]=170;
+      masses[6]=180;
+      nMasses=7;
+    } else {
+      masses[0]=115; masses[1]=120; masses[2]=125; 
+      masses[3]=130; masses[4]=135; masses[5]=140;
+      masses[6]=150; masses[7]=160; masses[8]=170;
+      masses[9]=180; 
+      nMasses=10;
+    }
+    
+    if(mH<masses[0]) return masses[0];
+    if(mH>=masses[nMasses-1]) return masses[nMasses-1];
+    for(int i=0;i<nMasses-1;++i) {
+      if(mH>=masses[i] && mH<masses[i+1]) {
+        float sx=mH-masses[i];
+        float dx=masses[i+1]-mH;
+        return (sx<=dx) ? masses[i] : masses[i+1];
+      }
+    }
+    return -999;
+  }
+  
+  std::string getSignalCBMeanString(int ch) {
     HWWSystematics syst("sig",1);
     stringstream fss;
     fss << "( ";  
     if (!doFFT) fss << "@0 + ";
-    if (ch == of0j) fss << "35.49 - 0.28447*@0";
-    if (ch == of1j) fss << "31.49 - 0.24456*@0";
-    if (ch == sf0j) fss << "41.49 - 0.30977*@0";
-    if (ch == sf1j) fss << "40.37 - 0.30441*@0";
+    if (ch == of0j) fss << (do7TeV ? "27.47 - 0.240456*@0" : "28.84 - 0.23827*@0");
+    if (ch == of1j) fss << (do7TeV ? "30.60 - 0.252161*@0" : "37.06 - 0.28645*@0");
+    if (ch == sf0j) fss << (do7TeV ? "26.62 - 0.231642*@0" : "33.16 - 0.26653*@0");
+    if (ch == sf1j) fss << (do7TeV ? "31.95 - 0.261631*@0" : "37.77 - 0.29374*@0");
     fss << " )";
     fss << syst.getFormulaSyst();
     return fss.str();
@@ -87,10 +102,10 @@ public:
     HWWSystematics syst("sig",1);
     stringstream fss;
     fss << "( ";  
-    if (ch == of0j) fss << "-7.941 + 0.1912*@0";
-    if (ch == of1j) fss << "-6.378 + 0.1976*@0";
-    if (ch == sf0j) fss << "-9.072 + 0.1889*@0";
-    if (ch == sf1j) fss << " 2.593 + 0.1135*@0";
+    if (ch == of0j) fss << (do7TeV ? "-10.20 + 0.21738*@0" : "-12.45 + 0.2420*@0");
+    if (ch == of1j) fss << (do7TeV ? "-3.747 + 0.17468*@0" : "-2.825 + 0.1806*@0");
+    if (ch == sf0j) fss << (do7TeV ? "-15.77 + 0.25452*@0" : "-8.948 + 0.2127*@0");
+    if (ch == sf1j) fss << (do7TeV ? "1.265  + 0.13116*@0" : " 1.369 + 0.1438*@0");
     fss << " )";
     fss << syst.getFormulaSyst();
     return fss.str();
@@ -99,10 +114,10 @@ public:
   std::string getSignalCBAlphaString(int ch) {
     HWWSystematics syst("sig",1);
     stringstream fss;
-    if (ch == of0j) fss << "8.115";
-    if (ch == of1j) fss << "9.628";
-    if (ch == sf0j) fss << "9.851";
-    if (ch == sf1j) fss << "3.452";
+    if (ch == of0j) fss << (do7TeV ? "2.657" : "2.410");
+    if (ch == of1j) fss << (do7TeV ? "1.612" : "3.977");
+    if (ch == sf0j) fss << (do7TeV ? "3.150" : "2.843");
+    if (ch == sf1j) fss << (do7TeV ? "4.750" : "2.999");
     fss << syst.getFormulaSyst();
     return fss.str();
   }
@@ -110,22 +125,25 @@ public:
   std::string getSignalCBNString(int ch) {
     HWWSystematics syst("sig",1);
     stringstream fss;
-    if (ch == of0j) fss << " 4.02 + 0.06445*@0";
-    if (ch == of1j) fss << "23.96 - 0.07549*@0";
-    if (ch == sf0j) fss << "49.06 - 0.25549*@0";
-    if (ch == sf1j) fss << "46.41 - 0.25461*@0";
+    if (ch == of0j) fss << "5";
+    if (ch == of1j) fss << "5";
+    if (ch == sf0j) fss << "5";
+    if (ch == sf1j) fss << "5";
     fss << syst.getFormulaSyst();
     return fss.str();
   }
 
   void createCard(float mass, float mrMin, float mrMax, int ch) {
 
-    ConfigParser cp("config/mrfit_of_hcp.txt");
+    stringstream configfile;
+    if(do7TeV) configfile << "config/mrfit_of_7TeV.txt";
+    else configfile << "config/mrfit_of_8TeV.txt";
+    ConfigParser cp(configfile.str().c_str());
     stringstream sigfilename;
-    sigfilename << "config/sigParamsHWW_mH" << getClosestMCMass(mass) << ".txt";
+    sigfilename << "config/sigParamsHWW_mH" << getClosestMCMass(mass) << (do7TeV ? "_7TeV" : "_8TeV") << ".txt";
     ConfigParser sigcp(sigfilename.str());
 
-    std::string tevstr = "_8TeV"; 
+    std::string tevstr = do7TeV ? "_7TeV" : "_8TeV"; 
 
     std::string chstr;
     if (ch == of0j) chstr = "of_0j";
@@ -142,20 +160,21 @@ public:
     stringstream card_name;
     card_name << "hww-" << lumi << "fb.mH" << mass_str << "." << chstr << "_shape";
     if(!do1D) card_name << "_2D"; 
+    card_name << tevstr;
     std::string workspace = card_name.str()+"_workspace.root";
 
-    ScaleFactors sf(ch);
+    ScaleFactors sf(ch,do7TeV);
 
-    float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
-    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getWW() * lumi;
-    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getWW() * lumi;
-    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getTop() * lumi;
+    float yield_data   = ymaker_data   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax);
+    float yield_qqww   = ymaker_qqww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * sf.getWW() * lumi;
+    float yield_ggww   = ymaker_ggww   .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * sf.getWW() * lumi;
+    float yield_top    = ymaker_top    .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * sf.getTop() * lumi;
     float yield_dy     = 0.0; 
-    if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
-    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * sf.getDY() * lumi;
-    float yield_wgstar = ymaker_wgstar .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * lumi;
-    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax) * lumi;
-    float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax);
+    if(ch==of0j || ch==of1j) yield_dy = ymaker_dyof .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax);
+    else                     yield_dy = ymaker_dysf .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * sf.getDY() * lumi;
+    float yield_wgstar = ymaker_wgstar .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * lumi;
+    float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * lumi;
+    float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax);
 
     std::string card   = createCardTemplate(ch, do1D, workspace.c_str());
 
@@ -330,7 +349,7 @@ public:
       RooArgSet argset_obs(CMS_ww2l_mr_1D, "argset_obs");
       RooDataSet data_obs("data_obs", "data_obs", argset_obs);
       
-      ymaker_data.getDataSet1D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, data_obs, CMS_ww2l_mr_1D, weight);
+      ymaker_data.getDataSet1D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, data_obs, CMS_ww2l_mr_1D, weight);
     
       w.import(data_obs);
     }
@@ -339,7 +358,7 @@ public:
       RooArgSet argset_obs(CMS_ww2l_mr_1D, CMS_ww2l_dphi, "argset_obs");
       RooDataSet data_obs("data_obs", "data_obs", argset_obs);
             
-      ymaker_data.getDataSet2D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi, weight);
+      ymaker_data.getDataSet2D(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, data_obs, CMS_ww2l_mr_1D, CMS_ww2l_dphi, weight);
 
       w.import(data_obs);
     }
@@ -420,6 +439,7 @@ public:
     }
 
     else if(ch == sf0j) {
+      // not updated !!!
       qqWWme = 166.184;
       qqWWsi = 31.4472;
 
@@ -464,6 +484,7 @@ public:
     }
 
     else if(ch == sf1j) {
+      // not updated!!!
       qqWWme = 173.467;
       qqWWsi = 37.7352;
       
@@ -592,9 +613,9 @@ public:
     RooArgList sig_alpha_al(masshiggs); sig_alpha_al.add(sigsyst.getParSystematics("alpha",chstr,tevstr));
     RooArgList sig_n_al(masshiggs); sig_n_al.add(sigsyst.getParSystematics("n",chstr,tevstr));
 
-    InterpolatedYields ggHy(ch,ggH);
-    InterpolatedYields vbfHy(ch,vbfH);
-    InterpolatedYields wzttHy(ch,wzttH);
+    InterpolatedYields ggHy(ch,ggH,do7TeV);
+    InterpolatedYields vbfHy(ch,vbfH,do7TeV);
+    InterpolatedYields wzttHy(ch,wzttH,do7TeV);
     
     RooRealVar ggh_gamma_BW    (("sig_ggh_"+chstr+tevstr+"_gamma_BW" ).c_str(), "", 1.0);
     RooFormulaVar ggh_mean_CB  (("sig_ggh_"+chstr+tevstr+"_mean_CB"  ).c_str(), getSignalCBMeanString (ch).c_str() , sig_mean_al);
@@ -889,12 +910,78 @@ public:
 
 void createWorkspace() {
 
+  HiggsMassPointInfo hmpi7;
+  hmpi7.lumi = 5.1;
+  hmpi7.do1D = true;
+  hmpi7.do7TeV = true;
+  hmpi7.doFFT = false;
+  hmpi7.treeFolder = "latinos_tree_skim_of_7TeV";
+  hmpi7.hww2DShapesfilename = "config/hww2DShapes_7TeV.root";
+  hmpi7.xsecProvider.initXsec();
+  hmpi7.xsecProvider.initQCDScale();
+  hmpi7.xsecProvider.initPDF();
+  hmpi7.xsecProvider.initJetBinFracs();
+
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_100_SingleElectron2011Av4.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_101_SingleMuon2011Av4.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_102_DoubleElectron2011Av4.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_103_DoubleMuon2011Av4.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_104_MuEG2011Av4.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_120_SingleElectron2011Av6.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_121_SingleMuon2011Av6.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_122_DoubleElectron2011Av6.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_123_DoubleMuon2011Av6.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_124_MuEG2011Av6.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_140_SingleElectron2011Bv1a.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_141_SingleMuon2011Bv1a.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_142_DoubleElectron2011Bv1a.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_143_DoubleMuon2011Bv1a.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_144_MuEG2011Bv1a.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_150_SingleElectron2011AMay10.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_151_SingleMuon2011AMay10.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_152_DoubleMuon2011AMay10.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_153_DoubleElectron2011AMay10.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_154_MuEG2011AMay10.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_160_SingleElectron2011AAug05.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_161_SingleMuon2011AAug05.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_162_DoubleElectron2011AAug05.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_163_DoubleMuon2011AAug05.root");
+  hmpi7.ymaker_data   .fill(hmpi7.treeFolder+"/data/latino_164_MuEG2011AAug05.root");
+  hmpi7.ymaker_qqww   .fill(hmpi7.treeFolder+"/nominals/latino_000_WWJets2LMad.root");
+  hmpi7.ymaker_ggww   .fill(hmpi7.treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
+  hmpi7.ymaker_top    .fill(hmpi7.treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
+  hmpi7.ymaker_top    .fill(hmpi7.treeFolder+"/nominals/latino_011_TtWFullDR.root");
+  hmpi7.ymaker_top    .fill(hmpi7.treeFolder+"/nominals/latino_012_TbartWFullDR.root");
+  hmpi7.ymaker_dysf   .fill(hmpi7.treeFolder+"/nominals/latino_037_DY50toLLMad.root");
+  hmpi7.ymaker_dysf   .fill(hmpi7.treeFolder+"/nominals/latino_036_DY10toLLMad.root");
+  hmpi7.ymaker_dyof   .fill(hmpi7.treeFolder+"/dyTemplate/latino_DYtt_2011_added.root");
+  hmpi7.ymaker_wj     .fill(hmpi7.treeFolder+"/wjets/WJetsEstimated_Full2011_added.root");
+  hmpi7.ymaker_wgstar .fill(hmpi7.treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
+  hmpi7.ymaker_wgstar .fill(hmpi7.treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
+  hmpi7.ymaker_wgstar .fill(hmpi7.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
+  hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_074_WZJetsMad.root");
+  hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
+
+  //  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
+    for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
+  }
+
+  hmpi7.do1D = false;
+  // for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
+    for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
+  }
+
+
+
   HiggsMassPointInfo hmpi8;
-  hmpi8.lumi = 12.10;
+  hmpi8.lumi = 19.47;
   hmpi8.do1D = true;
+  hmpi8.do7TeV = false;
   hmpi8.doFFT = false;
-  hmpi8.treeFolder = "latinos_tree_skim_of";
-  hmpi8.hww2DShapesfilename = "config/hww2DShapes.root";
+  hmpi8.treeFolder = "latinos_tree_skim_of_8TeV";
+  hmpi8.hww2DShapesfilename = "config/hww2DShapes_8TeV.root";
   hmpi8.xsecProvider.initXsec();
   hmpi8.xsecProvider.initQCDScale();
   hmpi8.xsecProvider.initPDF();
@@ -902,7 +989,8 @@ void createWorkspace() {
 
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunA_892pbinv.root");
   hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunB_4404pbinv.root");
-  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunC_6807pbinv.root");
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunC_7032pbinv.root");
+  hmpi8.ymaker_data   .fill(hmpi8.treeFolder+"/data/latino_RunD_7274pbinv.root");
   hmpi8.ymaker_qqww   .fill(hmpi8.treeFolder+"/nominals/latino_000_WWJets2LMad.root");
   hmpi8.ymaker_ggww   .fill(hmpi8.treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
   hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
@@ -910,8 +998,8 @@ void createWorkspace() {
   hmpi8.ymaker_top    .fill(hmpi8.treeFolder+"/nominals/latino_012_TbartWFullDR.root");
   hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_037_DY50toLLMad.root");
   hmpi8.ymaker_dysf   .fill(hmpi8.treeFolder+"/nominals/latino_036_DY10toLLMad.root");
-  hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
-  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+  hmpi8.ymaker_dyof   .fill(hmpi8.treeFolder+"/nominals/latino_DYtt_19.5fb.root");
+  hmpi8.ymaker_wj     .fill(hmpi8.treeFolder+"/wjets/latino_LooseLoose_19.5fb.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_074_WZJetsMad.root");
   hmpi8.ymaker_others .fill(hmpi8.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
@@ -919,14 +1007,14 @@ void createWorkspace() {
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
 
   
-  for (float i = 114.; i <= 180.; i += 1.) {
-    // for (float i = 125.; i <= 125.; i += 1.) {  
+  //  for (float i = 114.; i <= 180.; i += 1.) {
+    for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
-  for (float i = 114.; i <= 180.; i += 1.) {
-    // for (float i = 125.; i <= 125.; i += 1.) {  
+  //  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
