@@ -4,7 +4,7 @@ class FitSelection {
 public:
   FitSelection();
   ~FitSelection() {}
-  float mrmin, mrmax, dphimin, dphimax, mtmin, mtmax;
+  float mrmin, mrmax, dphimin, dphimax, mtmin, mtmax, ptllmin, ptllmax;
 };
 
 FitSelection::FitSelection() {
@@ -12,6 +12,8 @@ FitSelection::FitSelection() {
   mrmax=500.;
   dphimin=0.0;
   dphimax=TMath::Pi();
-  mtmin=80.;
+  mtmin=60.;
   mtmax=10000.;
+  ptllmin=30.;
+  ptllmax=10000.;
 }
