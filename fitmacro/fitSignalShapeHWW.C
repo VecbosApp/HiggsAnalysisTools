@@ -312,7 +312,7 @@ std::string fitSignalShapeMR(int massBin, int channel,
 
   RooArgSet varset(x,w,"argset_obs");
   RooDataSet dataset("dataset", "dataset", varset, WeightVar("weight"));
-  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w);
+  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, dataset, x, w);
 
   //--- simple CrystalBall
   RooRealVar mean("mean","mean of gaussian",0,-20.0,20.0) ;

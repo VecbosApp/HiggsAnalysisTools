@@ -338,7 +338,7 @@ std::string fitLandauShapeMR(int channel, string sample,
 
   RooArgSet varset(x,w,"argset_obs");
   RooDataSet dataset("dataset","dataset",varset,WeightVar(weight.str().c_str()));
-  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w);
+  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, dataset, x, w);
 
   float mPars[3]={140,70,200};
   float sPars[3]={10,10,100};
@@ -435,7 +435,7 @@ std::string fitWJetsLandauShapeMR(int channel, string sample,
 
   RooArgSet varset(x,w,"argset_obs");
   RooDataSet dataset("dataset","dataset",varset,WeightVar(weight.str().c_str()));
-  ymaker_wj.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w);
+  ymaker_wj.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, dataset, x, w);
 
   //--- Landau
   RooRealVar mean("mean","mean",140,70,200) ;
@@ -525,7 +525,7 @@ std::string fitGaussianShapeMR(int channel, string sample,
 
   RooArgSet varset(x,w,"argset_obs");
   RooDataSet dataset("mass","mass",varset,WeightVar("baseW"));
-  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, dataset, x, w); 
+  ymaker_hi.getDataSet1D(channel, xMin, xMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax, dataset, x, w); 
 
   //--- simple Gaussian 1
   RooRealVar mean("mean_{1}","mean",140,50,200) ;
