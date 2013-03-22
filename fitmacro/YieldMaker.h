@@ -42,7 +42,7 @@ class YieldMaker {
   RooRealVar rrmt    ;
   RooRealVar rrweight   ;
   RooRealVar rrnoxsecweight ;
-  RooRealVar rrprocess  ;
+  RooRealVar rrptll  ;
   RooArgSet argset      ;
   RooDataSet dataset    ;
   
@@ -55,12 +55,12 @@ class YieldMaker {
     rrmt     (RooRealVar("mt",       "mt",           0., 10000000.)),
     rrweight (RooRealVar("weight",   "weight",    -100000., 10000000.)),
     rrnoxsecweight (RooRealVar("noxsecweight",  "noxsecweight", -100000., 10000000.)),
-    rrprocess(RooRealVar("dataset",  "dataset",   0., 10000000.)),
-    argset(RooArgSet(rrchannel, rrmr, rrD, rrmt, rrweight, rrnoxsecweight, rrprocess, "argset")),
+    rrptll(RooRealVar("ptll",  "ptll",   0., 10000000.)),
+    argset(RooArgSet(rrchannel, rrmr, rrD, rrmt, rrweight, rrnoxsecweight, rrptll, "argset")),
     dataset(RooDataSet("dataset", "dataset", argset))
       {}
 
-   float getYield(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float procmin=-100000, float procmax=100000) {
+   float getYield(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float ptllmin, float ptllmax) {
     
     float yield = 0.0;
     
@@ -70,16 +70,16 @@ class YieldMaker {
       float mt     = dataset.get(i)->getRealValue("mt");
       float weight = dataset.get(i)->getRealValue("weight");
       float ch     = dataset.get(i)->getRealValue("channel");
-      float proc   = dataset.get(i)->getRealValue("dataset");
+      float ptll   = dataset.get(i)->getRealValue("ptll");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && proc>=procmin && proc<=procmax) yield += weight;
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && ptll>=ptllmin && ptll<=ptllmax) yield += weight;
     }
 
     return yield;
 
   }
 
-   float getCount(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float procmin=-100000, float procmax=100000) {
+   float getCount(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float ptllmin, float ptllmax) {
     
     float yield = 0.0;
     
@@ -88,9 +88,9 @@ class YieldMaker {
       float D      = dataset.get(i)->getRealValue("dphillr");
       float mt     = dataset.get(i)->getRealValue("mt");
       float ch     = dataset.get(i)->getRealValue("channel");
-      float proc   = dataset.get(i)->getRealValue("dataset");
+      float ptll   = dataset.get(i)->getRealValue("ptll");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && proc>=procmin && proc<=procmax) yield += 1.0;
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && D>dphimin && D<dphimax && mt>mtmin && mt<mtmax && ptll>=ptllmin && ptll<=ptllmax) yield += 1.0;
     }
 
     return yield;
@@ -129,7 +129,7 @@ class YieldMaker {
   }
 
 
-   RooDataSet getFitDataSet(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float procmin=-100000, float procmax=100000) {
+   RooDataSet getFitDataSet(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float ptllmin, float ptllmax) {
     RooRealVar mr("mr",   "mr",            100, 50, 1000,      "GeV/c^{2}");
     RooRealVar D("dphillr",   "dphillr",   100, 0,  TMath::Pi());
     RooRealVar w("weight", "weight", 0.,  -10.,  10000.);
@@ -143,9 +143,9 @@ class YieldMaker {
       float mt     = dataset.get(i)->getRealValue("mt");
       float weight = dataset.get(i)->getRealValue("weight");
       float ch     = dataset.get(i)->getRealValue("channel");
-      float proc   = dataset.get(i)->getRealValue("dataset");
+      float ptll   = dataset.get(i)->getRealValue("ptll");
 
-      if (channel == (int)ch && m>mrmin && m<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax && proc>=procmin && proc<=procmax) {
+      if (channel == (int)ch && m>mrmin && m<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax && ptll>=ptllmin && ptll<=ptllmax) {
 	aset.setRealValue("mr", m);
 	aset.setRealValue("D",  dphi);
         aset.setRealValue("mt", mt);
@@ -158,16 +158,17 @@ class YieldMaker {
 
   }
 
-   void getDataSet1D(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, RooDataSet& dset, RooRealVar& m, RooRealVar& w) {
+   void getDataSet1D(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float ptllmin, float ptllmax, RooDataSet& dset, RooRealVar& m, RooRealVar& w) {
 
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float dphi   = dataset.get(i)->getRealValue("dphillr");
       float mt     = dataset.get(i)->getRealValue("mt");
       float ch     = dataset.get(i)->getRealValue("channel");
+      float ptll   = dataset.get(i)->getRealValue("ptll");
       float weight = dataset.get(i)->getRealValue("weight");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax) {
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax && ptll>=ptllmin && ptll<=ptllmax) {
 	m.setVal(mr);
         w.setVal(weight);
         RooArgSet aset(m, "argset_obs");
@@ -176,16 +177,17 @@ class YieldMaker {
     }
   }
 
-   void getDataSet2D(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, RooDataSet& dset, RooRealVar& m, RooRealVar& D, RooRealVar& w) {
+   void getDataSet2D(int channel, float mrmin, float mrmax, float dphimin, float dphimax, float mtmin, float mtmax, float ptllmin, float ptllmax, RooDataSet& dset, RooRealVar& m, RooRealVar& D, RooRealVar& w) {
 
     for (int i = 0; i < dataset.numEntries(); i++) {
       float mr     = dataset.get(i)->getRealValue("mr");
       float dphi   = dataset.get(i)->getRealValue("dphillr");
       float mt     = dataset.get(i)->getRealValue("mt");
       float ch     = dataset.get(i)->getRealValue("channel");
+      float ptll   = dataset.get(i)->getRealValue("ptll");
       float weight = dataset.get(i)->getRealValue("weight");
 
-      if (channel == (int)ch && mr>mrmin && mr<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax) {
+      if (channel == (int)ch && mr>mrmin && mr<mrmax && dphi>dphimin && dphi<dphimax && mt>mtmin && mt<mtmax && ptll>=ptllmin && ptll<=ptllmax) {
 	m.setVal(mr);
 	D.setVal(dphi);
         w.setVal(weight);
@@ -209,6 +211,7 @@ class YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
@@ -220,6 +223,7 @@ class YieldMaker {
     float ch         = 0.0;
     float proc       = 0.0;
     float njet       = 0.0;
+    UInt_t event     = 0.0;
 
     tree->SetBranchAddress("eta1",    &eta1);
     tree->SetBranchAddress("eta2",    &eta2);
@@ -227,6 +231,7 @@ class YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
@@ -238,7 +243,8 @@ class YieldMaker {
     tree->SetBranchAddress("channel", &ch);
     tree->SetBranchAddress("dataset", &proc);
     tree->SetBranchAddress("njet",    &njet);
-    
+    tree->SetBranchAddress("event",   &event);
+
     cout << "Number of entries to process = " << tree->GetEntries() << endl;
     
     for (int i = 0; i < tree->GetEntries(); i++) {
@@ -266,13 +272,17 @@ class YieldMaker {
       met.SetPtEtaPhi(pfmet,0.0,pfmetphi);
 
       HWWKinematics kine(l1,l2,met);
+      //float mrold = 2*kine.CalcMR();
       mr = 2*kine.CalcMRNEW();
       dphillr = fabs(kine.CalcDeltaPhiRFRAME());
+
+      //      cout << event << "," << mr << "," << dphillr << endl;
 
       argset.setRealValue("mr",      mr);
       argset.setRealValue("dphillr", dphillr);
       argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
+      argset.setRealValue("ptll", ptll);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
@@ -313,6 +323,7 @@ class WJetsYieldMaker : public YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
@@ -328,6 +339,7 @@ class WJetsYieldMaker : public YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
@@ -373,6 +385,7 @@ class WJetsYieldMaker : public YieldMaker {
       argset.setRealValue("dphillr", dphillr);
       argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
+      argset.setRealValue("ptll", ptll);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
@@ -408,6 +421,7 @@ class DataYieldMaker : public YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
     float mth        = 0.0;
@@ -422,6 +436,7 @@ class DataYieldMaker : public YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
     tree->SetBranchAddress("mth",     &mth);
@@ -464,6 +479,7 @@ class DataYieldMaker : public YieldMaker {
       argset.setRealValue("dphillr", dphillr);
       argset.setRealValue("dphill",  dphill);
       argset.setRealValue("mt", mth);
+      argset.setRealValue("ptll", ptll);
       float channel = getFitChannel(ch,njet);
       argset.setRealValue("channel", channel);
       argset.setRealValue("dataset", proc);
