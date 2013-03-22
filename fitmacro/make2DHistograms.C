@@ -153,7 +153,7 @@ void normalize(TH2F* hist) {
     }
 }
 
-void all(int cha, float dphiMin, float dphiMax) {
+void all(int cha, float dphiMin, float dphiMax, bool do7TeV) {
 
   cout << "Filling 2D maps for channel " << cha << endl;
 
@@ -178,31 +178,79 @@ void all(int cha, float dphiMin, float dphiMax) {
 
   string treeFolder("latinos_tree_skim_of");
 
-  ymaker_data   .fill(treeFolder+"/data/latino_RunA_892pbinv.root");
-  ymaker_data   .fill(treeFolder+"/data/latino_RunB_4404pbinv.root");
-  ymaker_data   .fill(treeFolder+"/data/latino_RunC_6807pbinv.root");
-  ymaker_qqww   .fill(treeFolder+"/nominals/latino_000_WWJets2LMad.root");
-  ymaker_ggww   .fill(treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
-  ymaker_top    .fill(treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
-  ymaker_top    .fill(treeFolder+"/nominals/latino_011_TtWFullDR.root");
-  ymaker_top    .fill(treeFolder+"/nominals/latino_012_TbartWFullDR.root");
-  ymaker_dysf   .fill(treeFolder+"/nominals/latino_037_DY50toLLMad.root");
-  ymaker_dysf   .fill(treeFolder+"/nominals/latino_036_DY10toLLMad.root");
-  ymaker_dyof   .fill(treeFolder+"/nominals/latino_RunABC_DYtt_8fb.root");
-  ymaker_wj     .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
-  ymaker_wgstar .fill(treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
-  ymaker_wgstar .fill(treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
-  ymaker_wgstar .fill(treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
-  ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
-  ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
+  if(do7TeV) {
+    ymaker_data   .fill(treeFolder+"/data/latino_100_SingleElectron2011Av4.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_101_SingleMuon2011Av4.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_102_DoubleElectron2011Av4.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_103_DoubleMuon2011Av4.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_104_MuEG2011Av4.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_120_SingleElectron2011Av6.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_121_SingleMuon2011Av6.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_122_DoubleElectron2011Av6.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_123_DoubleMuon2011Av6.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_124_MuEG2011Av6.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_140_SingleElectron2011Bv1a.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_141_SingleMuon2011Bv1a.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_142_DoubleElectron2011Bv1a.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_143_DoubleMuon2011Bv1a.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_144_MuEG2011Bv1a.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_150_SingleElectron2011AMay10.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_151_SingleMuon2011AMay10.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_152_DoubleMuon2011AMay10.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_153_DoubleElectron2011AMay10.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_154_MuEG2011AMay10.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_160_SingleElectron2011AAug05.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_161_SingleMuon2011AAug05.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_162_DoubleElectron2011AAug05.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_163_DoubleMuon2011AAug05.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_164_MuEG2011AAug05.root");
+    ymaker_qqww   .fill(treeFolder+"/nominals/latino_000_WWJets2LMad.root");
+    ymaker_ggww   .fill(treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_011_TtWFullDR.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_012_TbartWFullDR.root");
+    ymaker_dysf   .fill(treeFolder+"/nominals/latino_037_DY50toLLMad.root");
+    ymaker_dysf   .fill(treeFolder+"/nominals/latino_036_DY10toLLMad.root");
+    ymaker_dyof   .fill(treeFolder+"/dyTemplate/latino_DYtt_2011_added.root");
+    ymaker_wj     .fill(treeFolder+"/wjets/WJetsEstimated_Full2011_added.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
+    ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
+    ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
+  } else {
+    ymaker_data   .fill(treeFolder+"/data/latino_RunA_892pbinv.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_RunB_4404pbinv.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_RunC_7032pbinv.root");
+    ymaker_data   .fill(treeFolder+"/data/latino_RunD_7274pbinv.root");
+    ymaker_qqww   .fill(treeFolder+"/nominals/latino_000_WWJets2LMad.root");
+    ymaker_ggww   .fill(treeFolder+"/nominals/latino_001_GluGluToWWTo4L.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_019_TTTo2L2Nu2B.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_011_TtWFullDR.root");
+    ymaker_top    .fill(treeFolder+"/nominals/latino_012_TbartWFullDR.root");
+    ymaker_dysf   .fill(treeFolder+"/nominals/latino_037_DY50toLLMad.root");
+    ymaker_dysf   .fill(treeFolder+"/nominals/latino_036_DY10toLLMad.root");
+    ymaker_dyof   .fill(treeFolder+"/nominals/latino_DYtt_19.5fb.root");
+    ymaker_wj     .fill(treeFolder+"/wjets/latino_LooseLoose_19.5fb.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_082_WGstarToElNuMad.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
+    ymaker_wgstar .fill(treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
+    ymaker_others .fill(treeFolder+"/nominals/latino_074_WZJetsMad.root");
+    ymaker_others .fill(treeFolder+"/nominals/latino_075_ZZJetsMad.root");
+  }
 
   // === alternative shapes for 2D CondPdf ===
   YieldMaker        ymaker_qqww_up, ymaker_qqww_dn;
   WJetsYieldMaker   ymaker_wj_up(1), ymaker_wj_dn(-1);
   ymaker_qqww_up .fill(treeFolder+"/nominals/latino_004_WWto2L2NuMCatNLOUp.root");
   ymaker_qqww_dn .fill(treeFolder+"/nominals/latino_003_WWto2L2NuMCatNLODown.root");
-  ymaker_wj_up   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
-  ymaker_wj_dn   .fill(treeFolder+"/wjets/latino_RunABC_LooseLoose_skimww.root");
+  if(do7TeV) {
+    ymaker_wj_up   .fill(treeFolder+"/wjets/WJetsEstimated_Full2011_added.root");
+    ymaker_wj_dn   .fill(treeFolder+"/wjets/WJetsEstimated_Full2011_added.root");
+  } else {
+    ymaker_wj_up   .fill(treeFolder+"/wjets/latino_LooseLoose_19.5fb.root");
+    ymaker_wj_dn   .fill(treeFolder+"/wjets/latino_LooseLoose_19.5fb.root");
+  }
 
   int xNBins = 3;
   Double_t xLowerEdges[xNBins+1];
@@ -246,14 +294,30 @@ void all(int cha, float dphiMin, float dphiMax) {
   ymaker_others.get2DHist(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,bkg_others);
 
   // and now the signals
-  int mH[21] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500};
-  for(int i=0; i<21;i++) {
-    cout << "Filling mass mH = " << mH[i] << "..." << endl;
-    char gghsample[1000], qqhsample[1000];
-    sprintf(gghsample,"%s/nominals/latino_1%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
-    sprintf(qqhsample,"%s/nominals/latino_2%d_vbfToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
-    ymaker_hi   .fill(gghsample); 
-    ymaker_hi   .fill(qqhsample);
+  if(do7TeV) {
+    int mH[12] = {120,130,140,150,160,170,180,190,200,300,400,500};
+    for(int i=0; i<12;i++) {
+      cout << "Filling mass mH = " << mH[i] << "..." << endl;
+      char gghsample1[1000], gghsample2[1000], gghsample3[1000], qqhsample[1000];
+      sprintf(gghsample1,"%s/nominals/latino_1%d_ggToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+      sprintf(gghsample2,"%s/nominals/latino_2%d_ggToH%dtoWWtoLNuTauNu.root",treeFolder.c_str(),mH[i],mH[i]);
+      sprintf(gghsample3,"%s/nominals/latino_3%d_ggToH%dtoWWto2Tau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+      sprintf(qqhsample, "%s/nominals/latino_4%d_vbfToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+      ymaker_hi   .fill(gghsample1); 
+      ymaker_hi   .fill(gghsample2); 
+      ymaker_hi   .fill(gghsample3); 
+      ymaker_hi   .fill(qqhsample);
+    }
+  } else {
+    int mH[21] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500};
+    for(int i=0; i<21;i++) {
+      cout << "Filling mass mH = " << mH[i] << "..." << endl;
+      char gghsample[1000], qqhsample[1000];
+      sprintf(gghsample,"%s/nominals/latino_1%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+      sprintf(qqhsample,"%s/nominals/latino_2%d_vbfToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+      ymaker_hi   .fill(gghsample); 
+      ymaker_hi   .fill(qqhsample);
+    }
   }
 
   // do not use the xsection to populate the 2D plane, since we need the dphi as a function of Higgs mass
@@ -291,8 +355,13 @@ void all(int cha, float dphiMin, float dphiMax) {
   
   // === SAVING ===
   TFile *fileOut;
-  if(cha==0) fileOut = TFile::Open("hww2DShapes.root","recreate");
-  else fileOut = TFile::Open("hww2DShapes.root","update");
+  if(do7TeV) {
+    if(cha==0) fileOut = TFile::Open("hww2DShapes_7TeV.root","recreate");
+    else fileOut = TFile::Open("hww2DShapes_7TeV.root","update");
+  } else {
+    if(cha==0) fileOut = TFile::Open("hww2DShapes_8TeV.root","recreate");
+    else fileOut = TFile::Open("hww2DShapes_8TeV.root","update");
+  }
   fileOut->cd();
   sig_higgs->Write();
   bkg_qqww->Write();
@@ -310,15 +379,19 @@ void all(int cha, float dphiMin, float dphiMax) {
 
 }
 
-void make2DHistogram() {
+void make2DHistogram(bool do7TeV) {
   
-  TFile *fileOut = TFile::Open("hww2DShapes.root","recreate");
+  stringstream fileName;
+  if(do7TeV) fileName << "hww2DShapes_7TeV.root";
+  else fileName << "hww2DShapes_8TeV.root";
+
+  TFile *fileOut = TFile::Open(fileName.str().c_str(),"recreate");
   fileOut->Close();
 
   float dphiMin, dphiMax;
   dphiMin = 0.0;
   dphiMax = TMath::Pi();
 
-  for(int i=0;i<4;++i) all(i,dphiMin,dphiMax);
+  for(int i=0;i<4;++i) all(i,dphiMin,dphiMax,do7TeV);
 
 }

@@ -44,38 +44,49 @@ string getChannelSuffix(int channel) {
   return string("ERROR! Unclassified channel!");
 }
 
-float getYield(int mH, int cha, int prod, float lumi, bool barecount);
+float getYield(int mH, int cha, int prod, float lumi, bool barecount, bool do7TeV);
 float getYieldStatError(float yield, float n) { return yield/sqrt(n); }
-void allmasses(int prod, int cha, float lumi);
+void allmasses(int prod, int cha, float lumi, bool do7TeV);
 
-void all(int lumi) {
+void all(int lumi, bool do7TeV) {
   for(int i=0;i<4;++i) {
     for(int j=0;j<3;++j) {
-      allmasses(j,i,lumi);
+      allmasses(j,i,lumi,do7TeV);
     }
   }
 }
 
-void allmasses(int prod, int cha, float lumi) {
+void allmasses(int prod, int cha, float lumi, bool do7TeV) {
   int mass[30];
   float yieldV[30], yieldE[30];
   float massV[30], massE[30];
   int maxMassBin;
 
-  mass[0] = 115;
-  mass[1] = 120;
-  mass[2] = 125;
-  mass[3] = 130;
-  mass[4] = 135;
-  mass[5] = 140;
-  mass[6] = 150;
-  mass[7] = 160;
-  mass[8] = 170;
-  mass[9] = 180;
-  maxMassBin = 10;
+  if(do7TeV) {
+    mass[0] = 120;
+    mass[1] = 130;
+    mass[2] = 140;
+    mass[3] = 150;
+    mass[4] = 160;
+    mass[5] = 170;
+    mass[6] = 180;
+    maxMassBin = 7;
+  } else {
+    mass[0] = 115;
+    mass[1] = 120;
+    mass[2] = 125;
+    mass[3] = 130;
+    mass[4] = 135;
+    mass[5] = 140;
+    mass[6] = 150;
+    mass[7] = 160;
+    mass[8] = 170;
+    mass[9] = 180;
+    maxMassBin = 10;
+  }
 
   for(int i=0;i<maxMassBin;++i) {
-    yieldV[i] = getYield(mass[i],cha,prod,lumi,false);
+    yieldV[i] = getYield(mass[i],cha,prod,lumi,false,do7TeV);
     // stat error is negligible
     // float staterr = getYieldStatError(yieldV[i],getYield(mass[i],cha,prod,lumi,true));
     float systerr = 0.15 *  yieldV[i];
@@ -101,17 +112,30 @@ void allmasses(int prod, int cha, float lumi) {
 
 }
 
-float getYield(int mH, int cha, int prod, float lumi, bool barecount) {
- stringstream hFileName;
- if(prod==gg) hFileName << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
- else if(prod==vbf) hFileName << "latinos_tree_skim_of/nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
- else if(prod==wztt) hFileName << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
- cout << "Opening ROOT file: " << hFileName.str() << endl;
+float getYield(int mH, int cha, int prod, float lumi, bool barecount, bool do7TeV) {
+  stringstream hFileName1, hFileName2, hFileName3;
+ if(do7TeV) {
+   if(prod==gg) {
+     hFileName1 << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWto2L2Nu.root";
+     hFileName2 << "latinos_tree_skim_of/nominals/latino_2" << mH << "_ggToH" << mH << "toWWtoLNuTauNu.root";
+     hFileName3 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_ggToH" << mH << "toWWto2Tau2Nu.root";
+   } else if(prod==vbf) hFileName1 << "latinos_tree_skim_of/nominals/latino_4" << mH << "_vbfToH" << mH << "toWWto2L2Nu.root";
+   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
+} else {
+   if(prod==gg) hFileName1 << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
+   else if(prod==vbf) hFileName1 << "latinos_tree_skim_of/nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
+   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
+ }
 
  FitSelection sel;
 
  YieldMaker ymaker_hi;
- ymaker_hi.fill(hFileName.str().c_str());
+ cout << "Opening ROOT file: " << hFileName1.str() << endl;
+ ymaker_hi.fill(hFileName1.str().c_str());
+ if(do7TeV && prod==gg) {
+   ymaker_hi.fill(hFileName2.str().c_str());
+   ymaker_hi.fill(hFileName3.str().c_str());
+ }
 
  float yield = 0.0;
  if(barecount) yield = ymaker_hi.getCount(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax); 
