@@ -14,6 +14,7 @@
 #include <RooHistFunc.h>
 #include <TGraphErrors.h>
 #include <TStyle.h>
+#include <TF1.h>
 #include <TPad.h>
 
 #include "YieldMaker.h"
@@ -107,8 +108,24 @@ void allmasses(int prod, int cha, float lumi, bool do7TeV) {
   if(prod==gg) nameFile << "_ggH";
   else if(prod==vbf) nameFile << "_vbfH";
   else if(prod==wztt) nameFile << "_wzttH";
+  nameFile << (do7TeV ? "_7TeV" : "_8TeV");
   nameFile << "_lumi" << lumi << "invfb";
-  gY->Fit("pol3"); gY->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string(".pdf")).c_str()); Wait();
+  gY->Fit("pol3"); gY->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string(".pdf")).c_str());
+
+  TF1 *fY = (TF1*)gY->GetFunction("pol3");
+  std::stringstream ss;
+  
+  for (int i = 0; i < fY->GetNumberFreeParameters(); i++) {
+    if (i != 0) ss << " + (";
+    else ss << "(";
+    ss << fY->GetParameter(i);
+    for (int j = 0; j < i; j++) {
+      ss << "*@0";
+    }
+    ss << ")";
+  }
+  cout << "RooFormulaVar for signal yield = " << ss.str() << endl;
+  Wait();
 
 }
 
@@ -138,8 +155,8 @@ float getYield(int mH, int cha, int prod, float lumi, bool barecount, bool do7Te
  }
 
  float yield = 0.0;
- if(barecount) yield = ymaker_hi.getCount(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax); 
- else yield = ymaker_hi.getYield(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax) * lumi;
+ if(barecount) yield = ymaker_hi.getCount(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,sel.ptllmin,sel.ptllmax); 
+ else yield = ymaker_hi.getYield(cha,sel.mrmin,sel.mrmax,sel.dphimin,sel.dphimax,sel.mtmin,sel.mtmax,sel.ptllmin,sel.ptllmax) * lumi;
 
  return yield;
 }
