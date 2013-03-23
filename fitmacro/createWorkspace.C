@@ -89,10 +89,10 @@ public:
     stringstream fss;
     fss << "( ";  
     if (!doFFT) fss << "@0 + ";
-    if (ch == of0j) fss << (do7TeV ? "27.47 - 0.240456*@0" : "28.84 - 0.23827*@0");
-    if (ch == of1j) fss << (do7TeV ? "30.60 - 0.252161*@0" : "37.06 - 0.28645*@0");
-    if (ch == sf0j) fss << (do7TeV ? "26.62 - 0.231642*@0" : "33.16 - 0.26653*@0");
-    if (ch == sf1j) fss << (do7TeV ? "31.95 - 0.261631*@0" : "37.77 - 0.29374*@0");
+    if (ch == of0j) fss << (do7TeV ? "(23.5003) + (-0.229111*@0)" : "(27.252) + (-0.245363*@0)");
+    if (ch == of1j) fss << (do7TeV ? "(14.9959) + (-0.162208*@0)" : "(28.1494) + (-0.246974*@0)");
+    if (ch == sf0j) fss << (do7TeV ? "(27.3141) + (-0.241242*@0)" : "(32.2168) + (-0.265605*@0)");
+    if (ch == sf1j) fss << (do7TeV ? "(25.3767) + (-0.223649*@0)" : "(32.6065) + (-0.266415*@0)");
     fss << " )";
     fss << syst.getFormulaSyst();
     return fss.str();
@@ -102,10 +102,10 @@ public:
     HWWSystematics syst("sig",1);
     stringstream fss;
     fss << "( ";  
-    if (ch == of0j) fss << (do7TeV ? "-10.20 + 0.21738*@0" : "-12.45 + 0.2420*@0");
-    if (ch == of1j) fss << (do7TeV ? "-3.747 + 0.17468*@0" : "-2.825 + 0.1806*@0");
-    if (ch == sf0j) fss << (do7TeV ? "-15.77 + 0.25452*@0" : "-8.948 + 0.2127*@0");
-    if (ch == sf1j) fss << (do7TeV ? "1.265  + 0.13116*@0" : " 1.369 + 0.1438*@0");
+    if (ch == of0j) fss << (do7TeV ? "( 2.52826) + (0.141593*@0)" : "(-1.08658) + (0.168527*@0)");
+    if (ch == of1j) fss << (do7TeV ? "(-11.0486) + (0.238924*@0)" : "(-1.78201) + (0.186343*@0)");
+    if (ch == sf0j) fss << (do7TeV ? "( 3.05721) + (0.115459*@0)" : "(-9.03439) + (0.213851*@0)");
+    if (ch == sf1j) fss << (do7TeV ? "(-5.24940) + (0.189442*@0)" : "(3.73474) + (0.129752*@0)");
     fss << " )";
     fss << syst.getFormulaSyst();
     return fss.str();
@@ -114,10 +114,10 @@ public:
   std::string getSignalCBAlphaString(int ch) {
     HWWSystematics syst("sig",1);
     stringstream fss;
-    if (ch == of0j) fss << (do7TeV ? "2.657" : "2.410");
-    if (ch == of1j) fss << (do7TeV ? "1.612" : "3.977");
-    if (ch == sf0j) fss << (do7TeV ? "3.150" : "2.843");
-    if (ch == sf1j) fss << (do7TeV ? "4.750" : "2.999");
+    if (ch == of0j) fss << (do7TeV ? "(1.11326)" : "(4.63328)");
+    if (ch == of1j) fss << (do7TeV ? "(1.05557)" : "(5.49636)");
+    if (ch == sf0j) fss << (do7TeV ? "(1.26936)" : "(2.13613)");
+    if (ch == sf1j) fss << (do7TeV ? "(4.98803)" : "(4.21967)");
     fss << syst.getFormulaSyst();
     return fss.str();
   }
@@ -176,7 +176,7 @@ public:
     float yield_others = ymaker_others .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax) * lumi;
     float yield_wj     = ymaker_wj     .getYield(ch, mrMin, mrMax, sel.dphimin, sel.dphimax, sel.mtmin, sel.mtmax, sel.ptllmin, sel.ptllmax);
 
-    std::string card   = createCardTemplate(ch, do1D, workspace.c_str());
+    std::string card   = createCardTemplate(do7TeV, ch, do1D, workspace.c_str());
 
     std::string binname;
     if (ch == of0j) binname = "of_0j";
@@ -185,12 +185,21 @@ public:
     if (ch == sf1j) binname = "sf_1j";
 
     int jet = (ch == of0j || ch == sf0j) ? 0 : 1;
-    card = findAndReplace(card, "GGH_PDF"         , xsecProvider.get8TeVggHPDFDown(mass),            xsecProvider.get8TeVggHPDFUp(mass));
-    card = findAndReplace(card, "VBF_PDF"         , xsecProvider.get8TeVVBFPDFDown(mass),            xsecProvider.get8TeVVBFPDFUp(mass));
-    card = findAndReplace(card, "GGH_QCD"         , xsecProvider.get8TeVggHExclQCDDown(mass),        xsecProvider.get8TeVggHExclQCDUp(mass));
-    card = findAndReplace(card, "GGH1_QCD"        , xsecProvider.get8TeVggH1inExclQCDDown(mass,jet), xsecProvider.get8TeVggH1inExclQCDUp(mass,jet));
-    card = findAndReplace(card, "GGH2_QCD"        , xsecProvider.get8TeVggH2inExclQCDDown(mass,jet), xsecProvider.get8TeVggH2inExclQCDUp(mass,jet));
-    card = findAndReplace(card, "VBF_QCD"         , xsecProvider.get8TeVVBFQCDDown(mass),            xsecProvider.get8TeVVBFQCDUp(mass));
+    if(do7TeV) {
+      card = findAndReplace(card, "GGH_PDF"         , xsecProvider.get7TeVggHPDFDown(mass),            xsecProvider.get7TeVggHPDFUp(mass));
+      card = findAndReplace(card, "VBF_PDF"         , xsecProvider.get7TeVVBFPDFDown(mass),            xsecProvider.get7TeVVBFPDFUp(mass));
+      card = findAndReplace(card, "GGH_QCD"         , xsecProvider.get7TeVggHExclQCDDown(mass),        xsecProvider.get7TeVggHExclQCDUp(mass));
+      card = findAndReplace(card, "GGH1_QCD"        , xsecProvider.get7TeVggH1inExclQCDDown(mass,jet), xsecProvider.get7TeVggH1inExclQCDUp(mass,jet));
+      card = findAndReplace(card, "GGH2_QCD"        , xsecProvider.get7TeVggH2inExclQCDDown(mass,jet), xsecProvider.get7TeVggH2inExclQCDUp(mass,jet));
+      card = findAndReplace(card, "VBF_QCD"         , xsecProvider.get7TeVVBFQCDDown(mass),            xsecProvider.get7TeVVBFQCDUp(mass));
+    } else {
+      card = findAndReplace(card, "GGH_PDF"         , xsecProvider.get8TeVggHPDFDown(mass),            xsecProvider.get8TeVggHPDFUp(mass));
+      card = findAndReplace(card, "VBF_PDF"         , xsecProvider.get8TeVVBFPDFDown(mass),            xsecProvider.get8TeVVBFPDFUp(mass));
+      card = findAndReplace(card, "GGH_QCD"         , xsecProvider.get8TeVggHExclQCDDown(mass),        xsecProvider.get8TeVggHExclQCDUp(mass));
+      card = findAndReplace(card, "GGH1_QCD"        , xsecProvider.get8TeVggH1inExclQCDDown(mass,jet), xsecProvider.get8TeVggH1inExclQCDUp(mass,jet));
+      card = findAndReplace(card, "GGH2_QCD"        , xsecProvider.get8TeVggH2inExclQCDDown(mass,jet), xsecProvider.get8TeVggH2inExclQCDUp(mass,jet));
+      card = findAndReplace(card, "VBF_QCD"         , xsecProvider.get8TeVVBFQCDDown(mass),            xsecProvider.get8TeVVBFQCDUp(mass));
+    }
     card = findAndReplace(card, "SIG_GGH_YIELD"   , 1);
     card = findAndReplace(card, "SIG_VBF_YIELD"   , 1);
     card = findAndReplace(card, "SIG_WZTT_YIELD"  , 1);
@@ -203,6 +212,15 @@ public:
     card = findAndReplace(card, "BKG_WJETS_YIELD" , yield_wj);
     card = findAndReplace(card, "BIN"             , binname);
     card = findAndReplace(card, "OBS"             , yield_data);
+
+    DataDrivenStatErrors ddGmN(ch,do7TeV);
+    stringstream GmNchstr;
+    GmNchstr << (ch==of0j ? "0J" : "1J") << (do7TeV ? "7T" : "8T");
+    card = findAndReplace(card, ("NWW"+GmNchstr.str())  , ddGmN.getWW_stat());
+    card = findAndReplace(card, ("QQWW"+GmNchstr.str()) , yield_qqww/ddGmN.getWW_stat());
+    card = findAndReplace(card, ("GGWW"+GmNchstr.str()) , yield_ggww/ddGmN.getWW_stat());
+    card = findAndReplace(card, ("NTO"+GmNchstr.str())  , ddGmN.getTop_stat());
+    card = findAndReplace(card, ("TOP"+GmNchstr.str())  , yield_top/ddGmN.getTop_stat());
 
     card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_mean_err_res_met"),          sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","me","res_met"));
     card = sigcp.updateCardShapeUncertainty(card, ("SIG_"+chstr+tevstr+"_sigma_err_res_met"),         sigcp.getRelUncertainty(getStringFitChannel(ch),"sig","si","res_met"));
@@ -911,7 +929,7 @@ public:
 void createWorkspace() {
 
   HiggsMassPointInfo hmpi7;
-  hmpi7.lumi = 5.1;
+  hmpi7.lumi = 4.9;
   hmpi7.do1D = true;
   hmpi7.do7TeV = true;
   hmpi7.doFFT = false;
@@ -962,14 +980,14 @@ void createWorkspace() {
   hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_074_WZJetsMad.root");
   hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
-  //  for (float i = 114.; i <= 180.; i += 1.) {
-  for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
   }
 
   hmpi7.do1D = false;
-  // for (float i = 114.; i <= 180.; i += 1.) {
-  for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
   }
 
@@ -1006,15 +1024,14 @@ void createWorkspace() {
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
 
-  
-  //  for (float i = 114.; i <= 180.; i += 1.) {
-    for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
-  //  for (float i = 114.; i <= 180.; i += 1.) {
-  for (float i = 125.; i <= 125.; i += 1.) {  
+  for (float i = 114.; i <= 180.; i += 1.) {
+    // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 

@@ -123,5 +123,43 @@ class ScaleFactors {
 
 };
 
+
+class DataDrivenStatErrors {
+  
+ protected:
+  int channel_;
+  bool do7TeV_;
+
+ public:
+  DataDrivenStatErrors(int channel, bool do7TeV):
+    channel_(channel),
+    do7TeV_(do7TeV) {}
+
+    virtual ~DataDrivenStatErrors() {}
+
+    float getWW_stat() {
+      if(do7TeV_) {
+        if(channel_==of0j) return 485;
+        if(channel_==of1j) return 359; 
+      } else {
+        if(channel_==of0j) return 3119;
+        if(channel_==of1j) return 2014; 
+      }
+      return 0;
+    }
+
+    float getTop_stat() {
+      if(do7TeV_) {
+        if(channel_==of0j) return 193;
+        if(channel_==of1j) return 912; 
+      } else {
+        if(channel_==of0j) return 1313;
+        if(channel_==of1j) return 5783; 
+      }
+      return 0;
+    }
+
+};
+
 #endif
 
