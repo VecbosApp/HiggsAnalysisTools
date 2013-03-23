@@ -22,6 +22,7 @@
 #include "TCanvas.h"
 #include "RooPlot.h"
 #include "TAxis.h"
+#include "TPaveText.h"
 #include "RooAddPdf.h"
 #include "RooBreitWigner.h"
 #include "RooFFTConvPdf.h"
@@ -77,25 +78,25 @@ void all(int channel=0, bool do7TeV=false) {
   do7TeV_=do7TeV;
 
   if(do7TeV) {
-    mass[0] = 120; xLow[0] = 85; xHigh[0] = 180; bwSigma[0] = 3.5/1000.;
-    mass[1] = 130; xLow[1] = 85; xHigh[1] = 190; bwSigma[1] = 4.9/1000.;
-    mass[2] = 140; xLow[2] = 85; xHigh[2] = 190; bwSigma[2] = 8.1/1000.;
-    mass[3] = 150; xLow[3] = 85; xHigh[3] = 220; bwSigma[3] = 1.7/100.;
-    mass[4] = 160; xLow[4] = 85; xHigh[4] = 220; bwSigma[4] = 8.3/100.;
+    mass[0] = 120; xLow[0] = 70; xHigh[0] = 160; bwSigma[0] = 3.5/1000.;
+    mass[1] = 130; xLow[1] = 70; xHigh[1] = 170; bwSigma[1] = 4.9/1000.;
+    mass[2] = 140; xLow[2] = 70; xHigh[2] = 190; bwSigma[2] = 8.1/1000.;
+    mass[3] = 150; xLow[3] = 70; xHigh[3] = 210; bwSigma[3] = 1.7/100.;
+    mass[4] = 160; xLow[4] = 85; xHigh[4] = 210; bwSigma[4] = 8.3/100.;
     mass[5] = 170; xLow[5] = 85; xHigh[5] = 240; bwSigma[5] = 3.8/10.;
-    mass[6] = 180; xLow[6] = 85; xHigh[6] = 250; bwSigma[6] = 6.3/10.;
+    mass[6] = 180; xLow[6] = 90; xHigh[6] = 240; bwSigma[6] = 6.3/10.;
     maxMassBin = 7;    
   } else {
-    mass[0] = 115; xLow[0] = 85; xHigh[0] = 170; bwSigma[0] = 3.1/1000.;
-    mass[1] = 120; xLow[1] = 85; xHigh[1] = 180; bwSigma[1] = 3.5/1000.;
-    mass[2] = 125; xLow[2] = 85; xHigh[2] = 180; bwSigma[2] = 4.1/1000.;
-    mass[3] = 130; xLow[3] = 85; xHigh[3] = 190; bwSigma[3] = 4.9/1000.;
-    mass[4] = 135; xLow[4] = 85; xHigh[4] = 190; bwSigma[4] = 4.9/1000.;
-    mass[5] = 140; xLow[5] = 85; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
-    mass[6] = 150; xLow[6] = 85; xHigh[6] = 220; bwSigma[6] = 1.7/100.;
-    mass[7] = 160; xLow[7] = 85; xHigh[7] = 220; bwSigma[7] = 8.3/100.;
+    mass[0] = 115; xLow[0] = 70; xHigh[0] = 160; bwSigma[0] = 3.1/1000.;
+    mass[1] = 120; xLow[1] = 70; xHigh[1] = 160; bwSigma[1] = 3.5/1000.;
+    mass[2] = 125; xLow[2] = 70; xHigh[2] = 170; bwSigma[2] = 4.1/1000.;
+    mass[3] = 130; xLow[3] = 70; xHigh[3] = 170; bwSigma[3] = 4.9/1000.;
+    mass[4] = 135; xLow[4] = 70; xHigh[4] = 180; bwSigma[4] = 4.9/1000.;
+    mass[5] = 140; xLow[5] = 70; xHigh[5] = 190; bwSigma[5] = 8.1/1000.;
+    mass[6] = 150; xLow[6] = 70; xHigh[6] = 210; bwSigma[6] = 1.7/100.;
+    mass[7] = 160; xLow[7] = 85; xHigh[7] = 210; bwSigma[7] = 8.3/100.;
     mass[8] = 170; xLow[8] = 85; xHigh[8] = 240; bwSigma[8] = 3.8/10.;
-    mass[9] = 180; xLow[9] = 85; xHigh[9] = 250; bwSigma[9] = 6.3/10.;
+    mass[9] = 180; xLow[9] = 90; xHigh[9] = 240; bwSigma[9] = 6.3/10.;
     maxMassBin = 10;
   }
 
@@ -121,7 +122,7 @@ void all(int channel=0, bool do7TeV=false) {
 //   if(channels==2) {extendL=0.95;extendH=1.04;}
 
   for(int i=0; i<maxMassBin;++i){
-  
+
     fitSignalShapeMR(mass[i],channel,xLow[i],xHigh[i],bwSigma[i],fitValues,fitErrors,"nominals");  
   
     cout << "a value,error: " << fitValues[0] << " , " << fitErrors[0] << endl; 
@@ -179,6 +180,35 @@ void all(int channel=0, bool do7TeV=false) {
   gN->Fit("pol1"); gN->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_nCB.pdf")).c_str()); Wait();
   gMeanCB->Fit("pol1"); gMeanCB->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_meanCB.pdf")).c_str()); Wait();
   gSigmaCB->Fit("pol1"); gSigmaCB->Draw("Ap"); gPad->Update(); gPad->Print((nameFile.str()+string("_sigmaCB.pdf")).c_str()); Wait();
+
+  TF1 *fA = (TF1*)gA->GetFunction("pol0");
+  TF1 *fN = (TF1*)gN->GetFunction("pol1");
+  TF1 *fMeanCB = (TF1*)gMeanCB->GetFunction("pol1");
+  TF1 *fSigmaCB = (TF1*)gSigmaCB->GetFunction("pol1");
+
+  std::vector<string> names;
+  std::vector<TF1*> fcns;
+  fcns.push_back(fA);       names.push_back("fA");
+  fcns.push_back(fN);       names.push_back("fN");
+  fcns.push_back(fMeanCB);  names.push_back("fMeanCB");
+  fcns.push_back(fSigmaCB); names.push_back("fSigmaCB");
+
+  for(int fcn=0;fcn<(int)fcns.size();++fcn) {
+
+    std::stringstream ss;
+    
+    for (int i = 0; i < fcns[fcn]->GetNumberFreeParameters(); i++) {
+      if (i != 0) ss << " + (";
+      else ss << "(";
+      ss << fcns[fcn]->GetParameter(i);
+      for (int j = 0; j < i; j++) {
+        ss << "*@0";
+      }
+      ss << ")";
+    }
+    cout << "RooFormulaVar for " << names[fcn] << " = " << ss.str() << endl;
+  }
+
 
 }
 
@@ -338,8 +368,9 @@ std::string fitSignalShapeMR(int massBin, int channel,
 
   //RooAddPdf model("model","model",RooArgList(CBall,tailCatcher),fsig);
   //RooCBShape model("model","model",x, mean,sigma, a,n);
-  x.setBins(10000,"fft");
+  x.setBins(100000,"fft");
   RooFFTConvPdf model("model","model",x,bw,CBall);
+  model.setBufferFraction(0.2);
 
   model.fitTo(dataset,SumW2Error(1),Range(xMin,xMax),Strategy(2),NumCPU(8));
 
@@ -350,15 +381,83 @@ std::string fitSignalShapeMR(int massBin, int channel,
   if(channel==sf1j){frameTitle << "ee+#mu#mu,1-j, m_{H} = ";}
   frameTitle << massBin << " GeV";
 
+  int col;
+  if(channel==of0j) col=kOrange+7;
+  if(channel==of1j) col=kAzure+2;
+  if(channel==sf0j) col=kGreen+3;
+  if(channel==sf1j) col=kViolet+3;
+
+  TCanvas *c1 = new TCanvas("c1","c1",725,725);
+  c1->cd();
+
   RooPlot* xframe = x.frame(xMin,xMax,50) ;
-  dataset.plotOn(xframe,DataError(RooAbsData::SumW2) );
-  model.plotOn(xframe);
-  model.paramOn(xframe);
+  xframe->SetTitle("");
+  dataset.plotOn(xframe,DataError(RooAbsData::SumW2), MarkerStyle(kOpenCircle), MarkerSize(1.1) );
+  model.plotOn(xframe,LineColor(col));
+  //  model.paramOn(xframe, LineColor(col));
+
+  // cosmetics
+  TLegend *legend = new TLegend(0.20,0.45,0.45,0.60,NULL,"brNDC");
+  legend->SetBorderSize(     0);
+  legend->SetFillColor (     0);
+  legend->SetTextAlign (    12);
+  legend->SetTextFont  (    42);
+  legend->SetTextSize  (0.03);
+
+  TH1F *dummyPoints = new TH1F("dummyP","dummyP",1,0,1);
+  TH1F *dummyLine = new TH1F("dummyL","dummyL",1,0,1);
+  dummyPoints->SetMarkerStyle(kOpenCircle);
+  dummyPoints->SetMarkerSize(1.1);
+  dummyLine->SetLineColor(col);
+  
+  legend->AddEntry(dummyPoints, "Simulation", "pe");
+  legend->AddEntry(dummyLine, "Parametric Model", "l");
+  
+
+//   RooArgSet selParms(sigma);
+//   model.paramOn(xframe,Parameters(selParms));
+
+  TPaveText *text = new TPaveText(0.15,0.90,0.77,0.98,"brNDC");
+  text->AddText("CMS Simulation");
+  text->SetBorderSize(0);
+  text->SetFillStyle(0);
+  text->SetTextAlign(12);
+  text->SetTextFont(42);
+  text->SetTextSize(0.03);
+
+  TPaveText *titlet = new TPaveText(0.15,0.80,0.60,0.85,"brNDC");
+  titlet->AddText(frameTitle.str().c_str());
+  titlet->SetBorderSize(0);
+  titlet->SetFillStyle(0);
+  titlet->SetTextAlign(12);
+  titlet->SetTextFont(132);
+  titlet->SetTextSize(0.045);
+
+  TPaveText *sigmat = new TPaveText(0.15,0.65,0.77,0.78,"brNDC");
+  stringstream sigmaval0, sigmaval1;
+  sigmaval0 << fixed;
+  sigmaval0 << setprecision(1);
+  sigmaval0 << "m_{CB} = " << mean.getVal() + massBin << " GeV";
+  sigmaval1 << fixed;
+  sigmaval1 << setprecision(1);
+  sigmaval1 << "#sigma_{CB} = " << sigma.getVal() << " GeV";
+  sigmat->AddText(sigmaval0.str().c_str());
+  sigmat->AddText(sigmaval1.str().c_str());
+  sigmat->SetBorderSize(0);
+  sigmat->SetFillStyle(0);
+  sigmat->SetTextAlign(12);
+  sigmat->SetTextFont(132);
+  sigmat->SetTextSize(0.04);
+  
+  xframe->GetYaxis()->SetTitleOffset(1.5);
+
 
   stringstream nameFile;
-  nameFile << "fitM" << massBin << "_" << getChannelSuffix(channel) << ".pdf";
-  xframe->Draw(); gPad->Update(); gPad->Print(nameFile.str().c_str());
-
+  nameFile << "fitM" << massBin << "_" << getChannelSuffix(channel) << (do7TeV_ ? "_7TeV" : "_8TeV") << ".pdf";
+  xframe->Draw(); gPad->Update(); 
+  // legend->Draw(); 
+  text->Draw(); sigmat->Draw(); titlet->Draw();
+  gPad->Print(nameFile.str().c_str());
 
   if(fitValues!=0){
     fitValues[0] = a.getVal();
