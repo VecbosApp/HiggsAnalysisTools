@@ -929,7 +929,7 @@ public:
 void createWorkspace() {
 
   HiggsMassPointInfo hmpi7;
-  hmpi7.lumi = 4.9;
+  hmpi7.lumi = 4.94;
   hmpi7.do1D = true;
   hmpi7.do7TeV = true;
   hmpi7.doFFT = false;
@@ -990,7 +990,6 @@ void createWorkspace() {
     // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
   }
-
 
 
   HiggsMassPointInfo hmpi8;

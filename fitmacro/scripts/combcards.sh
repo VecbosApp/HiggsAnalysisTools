@@ -39,7 +39,7 @@ done
 lumi=
 if [[ $sqrts == 7 ]]
     then
-    lumi=4.9
+    lumi=4.94
     else 
     lumi=19.47
 fi
