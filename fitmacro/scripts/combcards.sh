@@ -1,21 +1,23 @@
 #!/bin/bash
-# set -x
+# combcards.sh 8 (7 for 7TeV)
 
 source "$CMSSW_BASE/src/HWWAnalysis/ShapeAnalysis/test/env.sh"
 
-tailsf="_shape.txt"
-tailof="_shape.txt"
+tailsf="_shape"
+tailof="_shape"
 cwd=$PWD
-masses="110 115 120 125 130 135 140 145 150 155 160 170 180"
-lumi=12.1
+masses="115 120 125 130 135 140 150 160 170 180"
+
 
 function usage() {
-	echo "$( basename $0) -p <prefix> -t (to use 2D OF)"
+	echo "$( basename $0) -p <prefix> -t (to use 2D OF) -s (7 or 8 for 7TeV or 8TeV)"
 }
 
+sqrts=
 prefix=
 suffix2D=
-while getopts "hp:t" OPTION
+twod=
+while getopts "hp:ts:" OPTION
 do
     case $OPTION in
         h)
@@ -26,10 +28,23 @@ do
             prefix=$OPTARG
             ;;
         t)
-            tailof="_shape_2D.txt"
+            twod="_2D"
+            ;;
+        s) 
+            sqrts=$OPTARG
             ;;
     esac
 done
+
+lumi=
+if [[ $sqrts == 7 ]]
+    then
+    lumi=4.9
+    else 
+    lumi=19.47
+fi
+tailof="_shape"$twod"_"$sqrts"TeV.txt"
+tailsf="_shape_"$sqrts"TeV.txt"
 
 echo `shape-config.py`
 eval `shape-config.py $lumi`
