@@ -26,9 +26,14 @@ def main():
     parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
     parser.add_option('--queue','-q',dest='queue',help='run in batch in queue specified as option (default -q 8nh)', default='8nh')
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
+    parser.add_option('-y', '--year'     , dest='year'        , help='Year'                                  , default=None   , type='float'   )    
 
     (opt, args) = parser.parse_args()
-    print 'Running with lumi',opt.lumi
+    print 'Running with lumi',opt.lumi,' for ',opt.year,' data'
+
+    tevstr='_8TeV'
+    if opt.year==2011:
+        tevstr='_7TeV'
     
     constraints = {
         '*':'--rMin=-5.0 --rMax=8.0'
@@ -42,8 +47,8 @@ def main():
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tmpl = 'hww-{lumi:.1f}fb.mH{mass}.{tag}_shape'+opt.suffix+'.txt'
-    masses = [115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180]
+    tmpl = 'hww-{lumi:.2f}fb.mH{mass}.{tag}_shape'+opt.suffix+tevstr+'.txt'
+    masses = [115, 120, 125, 130, 135, 140, 150, 160, 170, 180]
     if opt.mlfit: masses = [125]
 
     if opt.prefix:
@@ -62,7 +67,7 @@ def main():
 
     os.system('mkdir -p '+outdir)
 
-    tagname = 'HWW_'+tag+'_shape'+opt.suffix
+    tagname = 'HWW_'+tag+'_shape'+opt.suffix+tevstr
     for mass,card in allcards:
         exe  = 'combine '
         flags = ' -n %s -m %s %s'%(tagname,mass,card)
@@ -97,7 +102,7 @@ def main():
         os.system('mkdir -p '+logdir)
         jobsperpoint = 1 if opt.observed else (200 if opt.mlfit else 50)
         for j in range(jobsperpoint):
-            f = open(srcdir+'run-m'+str(mass)+'-j'+str(j)+'.src', 'w')
+            f = open(srcdir+'run'+tevstr+'-m'+str(mass)+'-j'+str(j)+'.src', 'w')
             f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
             f.write('eval `scram ru -sh` \n')
             f.write('cd - \n')
@@ -107,7 +112,7 @@ def main():
                 move = 'mv higgsCombine%s.MaxLikelihoodFit.mH%d*.root %s ; mv mlfit%s.root %s/mlfit.mh%d.job%d.root' % (tagname,mass,outdir,tagname,outdir,mass,j)
             f.write(move+'\n')
             f.close()
-            bsub = 'bsub -q %s -J mh%s%s-j%s -o %s/mh%s-j%s.log source %s/run-m%s-j%s.src' % (opt.queue,opt.suffix,mass,j,logdir,mass,j,srcdir,mass,j)
+            bsub = 'bsub -q %s -J mh%s%s-j%s -o %s/job%smh%s-j%s.log source %s/run%s-m%s-j%s.src' % (opt.queue,opt.suffix,mass,j,logdir,tevstr,mass,j,srcdir,tevstr,mass,j)
             print '   job # '+str(j)
             if not opt.dryrun: os.system(bsub)
             
