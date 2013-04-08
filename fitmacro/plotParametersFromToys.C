@@ -351,7 +351,7 @@ void plotTree(TTree *tree_, std::string whichfit, std::string selectString){
 
 }
 
-void plotTreeNorms(TTree *tree_, std::string selectString){
+void plotTreeNorms(TTree *tree_, std::string selectString, bool do7TeV){
 
 	// Create a map for plotting the pullsummaries:
 	std::map < const char*, std::pair <double,double> > pullSummaryMap;
@@ -476,8 +476,8 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 
 		// double titleSize = isFitted ? 0.1 : 0.028;
 		//titletext->SetTextSize(titleSize);titletext->SetTextAlign(21); titletext->DrawLatex(0.55,0.92,name);
-		c->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
-                c->SaveAs(Form("mlfit/%s_residual_%s.pdf",name,treename.c_str()));
+		c->SaveAs(Form("%s_normresiduals_%s.pdf",treename.c_str(),(do7TeV ? "7TeV": "8TeV")));
+                c->SaveAs(Form("mlfit/%s_residual_%s_%s.pdf",name,treename.c_str(),(do7TeV ? "7TeV": "8TeV")));
 		fOut->WriteObject(c,Form("%s_%s",treename.c_str(),name));
 	}
 	
@@ -504,8 +504,8 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 
 		pullSummaryHist.SetMarkerStyle(21);pullSummaryHist.SetMarkerSize(1.5);pullSummaryHist.SetMarkerColor(2);pullSummaryHist.SetLabelSize(pullLabelSize);
 		pullSummaryHist.GetYaxis()->SetRangeUser(-1,1);pullSummaryHist.GetYaxis()->SetTitle("residual summary (relative)");pullSummaryHist.Draw("E1");
-		hc->SaveAs(Form("%s_normresiduals.pdf",treename.c_str()));
-                hc->SaveAs(Form("mlfit/residual_summary_%d_%s.pdf",pullPlots,treename.c_str()));
+		hc->SaveAs(Form("%s_normresiduals_%s.pdf",treename.c_str(),(do7TeV ? "7TeV": "8TeV")));
+                hc->SaveAs(Form("mlfit/residual_summary_%d_%s_%s.pdf",pullPlots,treename.c_str(),(do7TeV ? "7TeV": "8TeV")));
 		fOut->WriteObject(hc,Form("comb_pulls_%s_%d",treename.c_str(),pullPlots));
 	//	hc->SaveAs(Form("comb_pulls_%s_%d.pdf",treename.c_str(),pullPlots));
 		pullPlots++;
@@ -514,7 +514,7 @@ void plotTreeNorms(TTree *tree_, std::string selectString){
 	    delete hc;
 	}
 
-	c->SaveAs(Form("%s_normresiduals.pdf]",treename.c_str()));
+	c->SaveAs(Form("%s_normresiduals_%s.pdf]",treename.c_str(),(do7TeV ? "7TeV": "8TeV")));
 	fOut->Close();
 	delete c;
 	return;
@@ -629,7 +629,7 @@ void plotParametersFromToys(std::string inputFile, std::string dataFits="", std:
 	
 }
 
-void plotNormResidualsFromToys(std::string inputFile, std::string workspace, std::string selectString="mu>0"){
+void plotNormResidualsFromToys(std::string inputFile, std::string workspace, std::string selectString="mu>0", bool do7TeV=false){
 
 	// Some Global preferences
 	gSystem->Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so");
@@ -652,8 +652,8 @@ void plotNormResidualsFromToys(std::string inputFile, std::string workspace, std
 
 	// create a plot for each branch (one per nuisance/global obs param)
 	// will also create a pull summary if datafit is available.
-	plotTreeNorms(tree_b,selectString);		// LH plot will be centered around B-only fit to data
-	plotTreeNorms(tree_sb,selectString);	// LH plot will be centered around S+B fit to data
+	plotTreeNorms(tree_b,selectString,do7TeV);		// LH plot will be centered around B-only fit to data
+	plotTreeNorms(tree_sb,selectString,do7TeV);	// LH plot will be centered around S+B fit to data
 
 	fi_->Close();
 	fw_->Close();
@@ -687,7 +687,7 @@ void plotMuFromToys(std::string inputFile, std::string selectString="fit_status=
         mures->GetXaxis()->SetTitleSize(0.05);
 
        	TCanvas *c = new TCanvas("c","",960,800);
-        tree_sb->Draw("mu>>mures",selectString.c_str());
+        tree_sb->Draw("mu-1>>mures",selectString.c_str());
         mures->Fit("gaus");
         c->SaveAs("mlfit/mu_residual.pdf");
 }
