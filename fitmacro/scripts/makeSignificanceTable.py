@@ -13,7 +13,7 @@ import re
 tagname = 'comb_shape'
 basepath = os.getcwd()+'/significance/'
 
-masses = [115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 170, 180]
+masses = [115, 120, 125, 130, 135, 140, 150, 160, 170, 180]
 
 points = ['mean', 'observed']
 
@@ -43,6 +43,7 @@ def getMedian( hist ):
 
 def getValue(file, q, mass):
 
+    print "mass = "+str(mass)+" for q = "+str(q)
     cut = 'limit!=0 && limit<100'
     if q is 'mean':
         cut += ' && iToy>0'
@@ -78,6 +79,7 @@ def main():
     usage = 'usage: %prog [dir] [cmd]'
     parser = optparse.OptionParser(usage)
     parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
+    parser.add_option('-y', '--year'     , dest='year'        , help='Year'                                  , default=None   , type='float'   )    
     (opt, args) = parser.parse_args()
     
     if len(args) != 1:
@@ -88,7 +90,11 @@ def main():
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tagname = tag+'_shape'+opt.suffix
+    tevstr='_8TeV'
+    if opt.year==2011:
+        tevstr='_7TeV'
+
+    tagname = tag+'_shape'+opt.suffix+tevstr
 
     print tagname
 
