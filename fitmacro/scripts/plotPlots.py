@@ -37,6 +37,7 @@ def runTheShape():
     parser.add_option('-l', '--lumi'     , dest='lumi'        , help='Luminosity'                            , default=None   , type='float'   )
     parser.add_option('-o',dest='observed',help='Observed only', action='store_true', default=False)
     parser.add_option('-S','--significance',dest='significance',help='Compute the expected significance instead of the limit ', action='store_true', default=False)
+    parser.add_option('-y', '--year'     , dest='year'        , help='Year'                                  , default=None   , type='float'   )    
     (opt, args) = parser.parse_args()
 
     if not args:
@@ -51,6 +52,9 @@ def runTheShape():
 
     name = opt.prefix if opt.prefix[-1] != '/' else opt.prefix[:-1] 
 
+    tevstr='_8TeV'
+    if opt.year==2011:
+        tevstr='_7TeV'
 
     macropath = os.path.join(os.path.dirname(mypath),'limitmacros')
 
@@ -78,26 +82,26 @@ def runTheShape():
         ROOT.gROOT.SetBatch(True)
         ROOT.setTDRStyle()
         if opt.significance:
-            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+".summary",
+            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                                   os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
                                   110, 600, 0, 0, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'pdf')
-            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+".summary",
+            ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                                   os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
                                   110, 600, 0, 0, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'png')
         else:
-            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+".summary",
+            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                            os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                            "{lumi} fb^{{-1}}".format(**pars), 
                            110, 600, 0, 1, 
                            "H #rightarrow WW #rightarrow 2l2#nu",
                            doObs, 0, 'pdf')
-            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+".summary",
+            ROOT.PlotLimit(os.getcwd()+"/../limits/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                            os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                            "{lumi} fb^{{-1}}".format(**pars), 
                            110, 600, 0, 1, 
