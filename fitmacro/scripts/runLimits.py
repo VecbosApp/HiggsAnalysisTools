@@ -102,7 +102,8 @@ def main():
         os.system('mkdir -p '+logdir)
         jobsperpoint = 1 if opt.observed else (200 if opt.mlfit else 50)
         for j in range(jobsperpoint):
-            f = open(srcdir+'run'+tevstr+'-m'+str(mass)+'-j'+str(j)+'.src', 'w')
+            runfile = srcdir+'run-mh'+str(mass)+'-'+tagname+'-j'+str(j)+'.src'
+            f = open(runfile, 'w')
             f.write('cd ~/workspace/hww2l2nu/CMSSW_5_3_3/\n')
             f.write('eval `scram ru -sh` \n')
             f.write('cd - \n')
@@ -112,7 +113,7 @@ def main():
                 move = 'mv higgsCombine%s.MaxLikelihoodFit.mH%d*.root %s ; mv mlfit%s.root %s/mlfit.mh%d.job%d.root' % (tagname,mass,outdir,tagname,outdir,mass,j)
             f.write(move+'\n')
             f.close()
-            bsub = 'bsub -q %s -J mh%s%s-j%s -o %s/job%smh%s-j%s.log source %s/run%s-m%s-j%s.src' % (opt.queue,opt.suffix,mass,j,logdir,tevstr,mass,j,srcdir,tevstr,mass,j)
+            bsub = 'bsub -q '+opt.queue+' -J mh'+str(mass)+opt.suffix+'-j'+str(j)+' -o '+logdir+'/job-mh'+str(mass)+tagname+'-j'+str(j)+'.log source '+runfile 
             print '   job # '+str(j)
             if not opt.dryrun: os.system(bsub)
             
