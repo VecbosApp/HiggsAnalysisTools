@@ -12,8 +12,8 @@ FitSelection::FitSelection() {
   mrmax=500.;
   dphimin=0.0;
   dphimax=TMath::Pi();
-  mtmin=60.;
+  mtmin=80.;
   mtmax=10000.;
-  ptllmin=30.;
+  ptllmin=45.;
   ptllmax=10000.;
 }
