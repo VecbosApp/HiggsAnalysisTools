@@ -131,17 +131,20 @@ void allmasses(int prod, int cha, float lumi, bool do7TeV) {
 
 float getYield(int mH, int cha, int prod, float lumi, bool barecount, bool do7TeV) {
   stringstream hFileName1, hFileName2, hFileName3;
- if(do7TeV) {
+  
+  string tevstr = (do7TeV ? "_7TeV/" : "_8TeV/");
+  
+  if(do7TeV) {
    if(prod==gg) {
-     hFileName1 << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWto2L2Nu.root";
-     hFileName2 << "latinos_tree_skim_of/nominals/latino_2" << mH << "_ggToH" << mH << "toWWtoLNuTauNu.root";
-     hFileName3 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_ggToH" << mH << "toWWto2Tau2Nu.root";
-   } else if(prod==vbf) hFileName1 << "latinos_tree_skim_of/nominals/latino_4" << mH << "_vbfToH" << mH << "toWWto2L2Nu.root";
-   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
+     hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_1" << mH << "_ggToH" << mH << "toWWto2L2Nu.root";
+     hFileName2 << "latinos_tree_skim_of"+tevstr+"nominals/latino_2" << mH << "_ggToH" << mH << "toWWtoLNuTauNu.root";
+     hFileName3 << "latinos_tree_skim_of"+tevstr+"nominals/latino_3" << mH << "_ggToH" << mH << "toWWto2Tau2Nu.root";
+   } else if(prod==vbf) hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_4" << mH << "_vbfToH" << mH << "toWWto2L2Nu.root";
+   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
 } else {
-   if(prod==gg) hFileName1 << "latinos_tree_skim_of/nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
-   else if(prod==vbf) hFileName1 << "latinos_tree_skim_of/nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
-   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of/nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
+   if(prod==gg) hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_1" << mH << "_ggToH" << mH << "toWWTo2LAndTau2Nu.root";
+   else if(prod==vbf) hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_2" << mH << "_vbfToH" << mH << "toWWTo2LAndTau2Nu.root";
+   else if(prod==wztt) hFileName1 << "latinos_tree_skim_of"+tevstr+"nominals/latino_3" << mH << "_wzttH" << mH << "ToWW.root";
  }
 
  FitSelection sel;
