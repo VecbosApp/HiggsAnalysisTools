@@ -980,17 +980,16 @@ void createWorkspace() {
   hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_074_WZJetsMad.root");
   hmpi7.ymaker_others .fill(hmpi7.treeFolder+"/nominals/latino_075_ZZJetsMad.root");
 
-  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 115.; i <= 180.; i += 5.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
   }
 
   hmpi7.do1D = false;
-  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 115.; i <= 180.; i += 5.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi7.createCard(i, 50, 500, j);
   }
-
 
   HiggsMassPointInfo hmpi8;
   hmpi8.lumi = 19.47;
@@ -1023,13 +1022,13 @@ void createWorkspace() {
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_083_WGstarToMuNuMad.root");
   hmpi8.ymaker_wgstar .fill(hmpi8.treeFolder+"/nominals/latino_084_WGstarToTauNuMad.root");
 
-  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 115.; i <= 180.; i += 5.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
 
   hmpi8.do1D = false;
-  for (float i = 114.; i <= 180.; i += 1.) {
+  for (float i = 115.; i <= 180.; i += 5.) {
     // for (float i = 125.; i <= 125.; i += 1.) {  
     for(int j = 0; j < 2; ++j) hmpi8.createCard(i, 50, 500, j);
   }
