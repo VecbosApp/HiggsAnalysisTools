@@ -95,7 +95,8 @@ void doAllChannels(bool do7TeV) {
   do7TeV_=do7TeV;
 
   ofstream fileParams;
-  fileParams.open("paramsHWW.txt",ios_base::trunc);
+  if(do7TeV_) fileParams.open("paramsHWW_7TeV.txt",ios_base::trunc);
+  else fileParams.open("paramsHWW_8TeV.txt",ios_base::trunc);
 
   vector<string> systematics;
   systematics.push_back("nominals");
@@ -296,31 +297,33 @@ std::string fitLandauShapeMR(int channel, string sample,
   else if(syst.find("scaledn_j")!=string::npos) dir="jetEnergyScale_down";
   else dir="nominals";
 
+  string tevstr = (do7TeV_ ? "_7TeV/" : "_8TeV/");
+
   YieldMaker  ymaker_hi;
   if(sample.find("qqWWMadgraph")!=string::npos) {
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_000_WWJets2LMad.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_000_WWJets2LMad.root"));
   } else if(sample.find("qqWWMCatNLONom")!=string::npos) {
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_002_WWto2L2NuMCatNLO.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_002_WWto2L2NuMCatNLO.root"));
   } else if(sample.find("qqWWMCatNLOUp")!=string::npos) {
-      ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_004_WWto2L2NuMCatNLOUp.root"));
+      ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_004_WWto2L2NuMCatNLOUp.root"));
   } else if(sample.find("qqWWMCatNLODown")!=string::npos) {
-      ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_003_WWto2L2NuMCatNLODown.root"));
+      ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_003_WWto2L2NuMCatNLODown.root"));
   } else if(sample.find("ggWW")!=string::npos) {
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_001_GluGluToWWTo4L.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_001_GluGluToWWTo4L.root"));
   } else if(sample.find("Top")!=string::npos) {
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_019_TTTo2L2Nu2B.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_011_TtWFullDR.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_012_TbartWFullDR.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_019_TTTo2L2Nu2B.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_011_TtWFullDR.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_012_TbartWFullDR.root"));
   } else if(sample.find("WGstar")!=string::npos) {
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_082_WGstarToElNuMad.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_083_WGstarToMuNuMad.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_084_WGstarToTauNuMad.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_082_WGstarToElNuMad.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_083_WGstarToMuNuMad.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_084_WGstarToTauNuMad.root"));
   } else if(sample.find("Ot")!=string::npos) {
     // remove those two: too few stat and large weights
-    // ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_085_WgammaToLNuG.root"));
-    // ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_086_ZgammaToLLuG.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_074_WZJetsMad.root"));
-    ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_075_ZZJetsMad.root"));
+    // ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_085_WgammaToLNuG.root"));
+    // ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_086_ZgammaToLLuG.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_074_WZJetsMad.root"));
+    ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_075_ZZJetsMad.root"));
   } 
 
   FitSelection sel;  
@@ -416,11 +419,13 @@ std::string fitWJetsLandauShapeMR(int channel, string sample,
   if(syst.find("fakerateup")!=string::npos) ns=1;
   if(syst.find("fakeratedn")!=string::npos) ns=-1;
 
-  WJetsYieldMaker  ymaker_wj(ns);
-  if(do7TeV_) ymaker_wj.fill("latinos_tree_skim_of/wjets/WJetsEstimated_Full2011_added.root");
-  else ymaker_wj.fill("latinos_tree_skim_of/wjets/latino_LooseLoose_19.5fb.root"); 
+  string tevstr = (do7TeV_ ? "_7TeV/" : "_8TeV/");
 
-  FitSelection sel;  
+  WJetsYieldMaker  ymaker_wj(ns);
+  if(do7TeV_) ymaker_wj.fill(string("latinos_tree_skim_of"+tevstr+"/wjets/WJetsEstimated_Full2011_added.root"));
+  else ymaker_wj.fill(string("latinos_tree_skim_of"+tevstr+"wjets/latino_LooseLoose_19.5fb.root")); 
+
+  FitSelection sel;
 
   //--- rooFit part
   double xMin,xMax,xInit;
@@ -504,12 +509,13 @@ std::string fitGaussianShapeMR(int channel, string sample,
   ROOT::Math::MinimizerOptions::SetDefaultTolerance( 1.E-7);
 
   string dir="nominals";
+  string tevstr = (do7TeV_ ? "_7TeV/" : "_8TeV/");
 
   YieldMaker  ymaker_hi;
   if(sample.find("embeddedtt")!=string::npos) { 
     dir="dyTemplate";
-    if(do7TeV_) ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_2011_added.root"));
-    else ymaker_hi.fill(string("latinos_tree_skim_of/"+dir+"/latino_DYtt_19.5fb.root"));
+    if(do7TeV_) ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_DYtt_2011_added.root"));
+    else ymaker_hi.fill(string("latinos_tree_skim_of"+tevstr+dir+"/latino_DYtt_19.5fb.root"));
   }
 
   FitSelection sel;
