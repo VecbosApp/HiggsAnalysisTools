@@ -668,18 +668,19 @@ void plotMuFromToys(std::string inputFile, std::string selectString="fit_status=
         gROOT->SetStyle("Plain");
 	gSystem->Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so");
 	gStyle->SetOptFit(1111);
-	gStyle->SetOptStat(0);
+	gStyle->SetOptStat(1111);
 	gStyle->SetPalette(1,0);
 
 	TFile *fi_ = TFile::Open(inputFile.c_str());
         TTree *tree_sb = (TTree*) fi_->Get("tree_fit_sb");
 
-        TH1F *mures = new TH1F("mures","",25,-1.0,1.0);
+        TH1F *mures = new TH1F("mures","",25,-2.,2.);
         
         mures->SetLineColor(kBlue+3);
+        mures->SetMarkerStyle(kOpenCircle);
         mures->SetLineWidth(2);
         
-        mures->GetXaxis()->SetTitle("#mu");
+        mures->GetXaxis()->SetTitle("#mu - 1");
         mures->GetYaxis()->SetTitle(Form("no toys (%d total)",int(tree_sb->GetEntries())));
         mures->GetYaxis()->SetTitleOffset(1.05);
         mures->GetXaxis()->SetTitleOffset(0.9);
@@ -687,8 +688,10 @@ void plotMuFromToys(std::string inputFile, std::string selectString="fit_status=
         mures->GetXaxis()->SetTitleSize(0.05);
 
        	TCanvas *c = new TCanvas("c","",960,800);
-        tree_sb->Draw("mu-1>>mures",selectString.c_str());
+        tree_sb->Draw("mu>>mures",selectString.c_str());
         mures->Fit("gaus");
+        mures->GetFunction("gaus")->SetLineColor(kCyan+3);
+        mures->Draw("pe1");
         c->SaveAs("mlfit/mu_residual.pdf");
 }
 
