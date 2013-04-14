@@ -264,7 +264,10 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   //----------------------------------------------------------------------------
   DrawTLatex(0.92, 0.850, 0.050, "CMS preliminary");
   DrawTLatex(0.92, 0.795, 0.035, title.c_str());
-  DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (8 TeV)").Data());
+  float lumif = atof(luminosity.c_str());
+  if(lumif<10) DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (7 TeV)").Data());
+  else if(lumif<20) DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (8 TeV)").Data());
+  else DrawTLatex(0.92, 0.740, 0.035, TString("L = 4.9 fb^{-1} (7 TeV) + 19.6 fb^{-1} (8 TeV)").Data());
 
   TLegend* leg = new TLegend(0.18, 0.66, 0.355, 0.88, "");
 
