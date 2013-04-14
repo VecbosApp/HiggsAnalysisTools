@@ -2,6 +2,7 @@
 1. make the 1D combined datacards:
 ./scripts/combcards.sh -p datacards -s 8 
 -> replace 8 with 7 to make the 7 TeV cards
+-> replace 8 with 78 to make the 7 + 8 TeV cards
 
 2. make the 2D (for OF 0/1 jet) datacards
 ./scripts/combcards.sh -p datacards -t -s 8
@@ -18,7 +19,8 @@
 
 
 --- run the significance ---
-in all the following, for 7 TeV replace l 19.47 -y 2012 => -l 4.94 -y 2011
+in all the following, for 7 TeV replace -l 19.47 -y 2012 => -l 4.94 -y 2011
+                      for 7+8 TeV    => -l 24.41 -y 20112012 
 
 1. Expected:
 1D: ./scripts/runLimits.py -q 8nh -S -p test0 -l 19.47 -y 2012 comb_0j1j
