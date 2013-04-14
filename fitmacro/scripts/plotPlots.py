@@ -55,6 +55,8 @@ def runTheShape():
     tevstr='_8TeV'
     if opt.year==2011:
         tevstr='_7TeV'
+    elif opt.year==20112012:
+        tevstr='_78TeV'
 
     macropath = os.path.join(os.path.dirname(mypath),'limitmacros')
 
