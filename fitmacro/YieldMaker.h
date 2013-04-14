@@ -211,6 +211,8 @@ class YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ch1        = 0.0;
+    float ch2        = 0.0;
     float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
@@ -231,6 +233,8 @@ class YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ch1",     &ch1);
+    tree->SetBranchAddress("ch2",     &ch2);
     tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
@@ -251,6 +255,8 @@ class YieldMaker {
       tree->GetEntry(i);
 
       if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
+
+      if(ch1*ch2>0) continue;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
@@ -323,6 +329,8 @@ class WJetsYieldMaker : public YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ch1        = 0.0;
+    float ch2        = 0.0;
     float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
@@ -339,6 +347,8 @@ class WJetsYieldMaker : public YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ch1",     &ch1);
+    tree->SetBranchAddress("ch2",     &ch2);
     tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
@@ -357,6 +367,8 @@ class WJetsYieldMaker : public YieldMaker {
       tree->GetEntry(i);
 
       if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
+
+      if(ch1*ch2>0) continue;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
@@ -421,6 +433,8 @@ class DataYieldMaker : public YieldMaker {
     float phi2       = 0.0;
     float pt1        = 0.0;
     float pt2        = 0.0;
+    float ch1        = 0.0;
+    float ch2        = 0.0;
     float ptll       = 0.0;
     float pfmet      = 0.0;
     float pfmetphi   = 0.0;
@@ -436,6 +450,8 @@ class DataYieldMaker : public YieldMaker {
     tree->SetBranchAddress("phi2",    &phi2);
     tree->SetBranchAddress("pt1",     &pt1);
     tree->SetBranchAddress("pt2",     &pt2);
+    tree->SetBranchAddress("ch1",     &ch1);
+    tree->SetBranchAddress("ch2",     &ch2);
     tree->SetBranchAddress("ptll",    &ptll);
     tree->SetBranchAddress("pfmet",   &pfmet);
     tree->SetBranchAddress("pfmetphi",&pfmetphi);
@@ -451,6 +467,8 @@ class DataYieldMaker : public YieldMaker {
       tree->GetEntry(i);
 
       if(i%10000 == 0) cout << ">>> Processing event # " << i << endl;
+
+      if(ch1*ch2>0) continue;
 
       float mr         = 0.0;
       float dphillr    = 0.0;
