@@ -35,9 +35,11 @@ def getTree( file, tree ):
 def getMedian( hist ):
     integral=0
     value=0
+    norm=hist.Integral()
     for bin in range(hist.GetNbinsX()):
+        if norm==0: return 0
         if integral>0.5: break
-        integral += hist.GetBinContent(bin)/hist.Integral()
+        integral += hist.GetBinContent(bin)/norm
         value = hist.GetBinCenter(bin)
     return value
 
@@ -93,6 +95,8 @@ def main():
     tevstr='_8TeV'
     if opt.year==2011:
         tevstr='_7TeV'
+    elif opt.year==20112012:
+        tevstr='_78TeV'
 
     tagname = tag+'_shape'+opt.suffix+tevstr
 
