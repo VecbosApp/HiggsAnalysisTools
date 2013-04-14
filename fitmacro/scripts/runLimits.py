@@ -34,6 +34,8 @@ def main():
     tevstr='_8TeV'
     if opt.year==2011:
         tevstr='_7TeV'
+    elif opt.year==20112012:
+        tevstr='_78TeV'
     
     constraints = {
         '*':'--rMin=-5.0 --rMax=8.0'
@@ -81,7 +83,7 @@ def main():
             else:
                 flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 20 -s -1 '+flags
         elif opt.mlfit:
-            flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --toysFrequentist --noErrors --minos none -t 5 -s -1 '+flags
+            flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --noErrors --minos none -t 1 -s -1 '+flags
         else:
             flags = ' -M Asymptotic '+flags
         if not opt.significance:
@@ -100,7 +102,7 @@ def main():
             move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
         os.system('mkdir -p '+srcdir)
         os.system('mkdir -p '+logdir)
-        jobsperpoint = 1 if opt.observed else (200 if opt.mlfit else 50)
+        jobsperpoint = 1 if opt.observed else (1000 if opt.mlfit else 100)
         for j in range(jobsperpoint):
             runfile = srcdir+'run-mh'+str(mass)+'-'+tagname+'-j'+str(j)+'.src'
             f = open(runfile, 'w')
