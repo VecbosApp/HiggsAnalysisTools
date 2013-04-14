@@ -176,7 +176,7 @@ void all(int cha, float dphiMin, float dphiMax, bool do7TeV) {
   YieldMaker      ymaker_others;
   WJetsYieldMaker ymaker_wj;
 
-  string treeFolder("latinos_tree_skim_of");
+  string treeFolder(do7TeV ? "latinos_tree_skim_of_7TeV" : "latinos_tree_skim_of_8TeV");
 
   if(do7TeV) {
     ymaker_data   .fill(treeFolder+"/data/latino_100_SingleElectron2011Av4.root");
@@ -295,22 +295,31 @@ void all(int cha, float dphiMin, float dphiMax, bool do7TeV) {
 
   // and now the signals
   if(do7TeV) {
-    int mH[12] = {120,130,140,150,160,170,180,190,200,300,400,500};
+    int mH[19] = {110,115,120,122,124,125,126,128,130,140,150,160,170,180,190,200,300,400,500};
     for(int i=0; i<12;i++) {
+      if(mH[i]!=125) continue;
       cout << "Filling mass mH = " << mH[i] << "..." << endl;
       char gghsample1[1000], gghsample2[1000], gghsample3[1000], qqhsample[1000];
-      sprintf(gghsample1,"%s/nominals/latino_1%d_ggToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
-      sprintf(gghsample2,"%s/nominals/latino_2%d_ggToH%dtoWWtoLNuTauNu.root",treeFolder.c_str(),mH[i],mH[i]);
-      sprintf(gghsample3,"%s/nominals/latino_3%d_ggToH%dtoWWto2Tau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
-      sprintf(qqhsample, "%s/nominals/latino_4%d_vbfToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
-      ymaker_hi   .fill(gghsample1); 
-      ymaker_hi   .fill(gghsample2); 
-      ymaker_hi   .fill(gghsample3); 
-      ymaker_hi   .fill(qqhsample);
+      if(mH[i]==110 || mH[i]==115 || mH[i]==122 || mH[i]==124 || mH[i]==125 || mH[i]==126 || mH[i]==128) {
+        sprintf(gghsample1,"%s/nominals/latino_9%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+        sprintf(qqhsample,"%s/nominals/latino_8%d_vbfToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+        ymaker_hi   .fill(gghsample1); 
+        ymaker_hi   .fill(qqhsample);
+      } else {
+        sprintf(gghsample1,"%s/nominals/latino_1%d_ggToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+        sprintf(gghsample2,"%s/nominals/latino_2%d_ggToH%dtoWWtoLNuTauNu.root",treeFolder.c_str(),mH[i],mH[i]);
+        sprintf(gghsample3,"%s/nominals/latino_3%d_ggToH%dtoWWto2Tau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+        sprintf(qqhsample, "%s/nominals/latino_4%d_vbfToH%dtoWWto2L2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
+        ymaker_hi   .fill(gghsample1); 
+        ymaker_hi   .fill(gghsample2); 
+        ymaker_hi   .fill(gghsample3); 
+        ymaker_hi   .fill(qqhsample);
+      }
     }
   } else {
     int mH[21] = {110,115,120,125,130,135,140,145,150,155,160,170,180,190,200,250,300,350,400,450,500};
     for(int i=0; i<21;i++) {
+      if(mH[i]!=125) continue;
       cout << "Filling mass mH = " << mH[i] << "..." << endl;
       char gghsample[1000], qqhsample[1000];
       sprintf(gghsample,"%s/nominals/latino_1%d_ggToH%dtoWWTo2LAndTau2Nu.root",treeFolder.c_str(),mH[i],mH[i]);
