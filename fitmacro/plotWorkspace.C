@@ -78,6 +78,15 @@ void plotWsp1D(const char *inputfile, const char *figfile) {
   hothers->SetLineColor(kOrange+2);
   hggH->SetLineColor(kRed);
 
+  hqqww->SetLineWidth(2);
+  hggww->SetLineWidth(2);
+  htop->SetLineWidth(2);
+  hdy->SetLineWidth(2);
+  hwj->SetLineWidth(2);
+  hwgstar->SetLineWidth(2);
+  hothers->SetLineWidth(2);
+  hggH->SetLineWidth(2);
+
   TLegend* legend = new TLegend(0.64, 0.24, 0.87, 0.90);
     
   legend->SetBorderSize(    0);
@@ -91,9 +100,8 @@ void plotWsp1D(const char *inputfile, const char *figfile) {
   legend->AddEntry(htop,"top","l");
   legend->AddEntry(hdy,"DY","l");
   legend->AddEntry(hwj,"W+jets","l");
-  legend->AddEntry(hothers,"WW,ZZ","l");
+  legend->AddEntry(hothers,"WZ,ZZ","l");
   legend->AddEntry(hwgstar,"W#gamma^{(*)}","l");
-  legend->AddEntry(hothers,"WW,ZZ,W#gamma","l");
   legend->AddEntry(hggH,"qq,gg #rightarrow H","l");
 
   TCanvas *c1 = new TCanvas("c1","c1");
@@ -226,7 +234,9 @@ void plotMRAllSignals(bool do7TeV) {
   c1->SaveAs("severalHiggsesMR.png");
 }
 
-void plotOneShapeSyst(string process, string syst, int ch) {
+void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
+
+  cout << "==>plotting syst " << syst << " for " << process << " for channel " << ch << endl;
 
   std::string chstr;
   if (ch == of0j) chstr = "of_0j";
@@ -235,13 +245,18 @@ void plotOneShapeSyst(string process, string syst, int ch) {
   if (ch == sf1j) chstr = "sf_1j";
 
   stringstream fss;
-  fss << "datacards/hww-12.1fb.mH125." << chstr << "_shape_workspace.root";
+  if(do7TeV) fss << "datacards/hww-4.94fb.mH125." << chstr << "_shape_7TeV_workspace.root";
+  else fss << "datacards/hww-19.47fb.mH125." << chstr << "_shape_8TeV_workspace.root";
 
   TFile *hww2l2nu = TFile::Open(fss.str().c_str());
 
   RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
 
   RooRealVar *mr = w->var("CMS_ww2l_mr_1D");
+  mr->setRange(50,250);
+  RooRealVar *MH = w->var("MH");
+  MH->setVal(125);
+
   RooPlot *mrplot = mr->frame();
 
   // take the pdfs from the workspace
@@ -252,6 +267,8 @@ void plotOneShapeSyst(string process, string syst, int ch) {
   }
   pdfnom->plotOn(mrplot,LineColor(kBlack));
 
+  cout << "\t nominal PDF taken" << endl;
+
   string tevstr = "_8TeV";
 
   // only special case where name in DC!=name in the workspace. A bit error prone... to be improved 
@@ -259,25 +276,51 @@ void plotOneShapeSyst(string process, string syst, int ch) {
   if(syst.compare("scaleup_qcd")!=string::npos && syst.length()==11) systvar="scaleup";
   if(syst.compare("scaledn_qcd")!=string::npos && syst.length()==11) systvar="scaledn";
   
-  RooRealVar *WW_mean_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
-  RooRealVar *WW_sigma_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());
+  RooRealVar *WW_mean_err, *WW_sigma_err, *WW_alpha_err, *WW_n_err;
+  if(process.compare("ggH")!=string::npos) {
+    WW_mean_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
+    WW_sigma_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());
+    WW_alpha_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_alpha_err_"+systvar).c_str()); 
+    WW_n_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_n_err_"+systvar).c_str()); 
+  } else {
+    WW_mean_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
+    WW_sigma_err = (RooRealVar*)w->var((process+"_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());
+  }
 
   if(WW_mean_err==0 || WW_sigma_err==0) {
     cout << WW_mean_err->GetName() << " not found " << endl;
     cout << WW_sigma_err->GetName() << " not found " << endl;
     return;
   }
+  if(process.compare("ggH")!=string::npos && (WW_alpha_err==0 || WW_sigma_err==0) ) {  
+    cout << WW_alpha_err->GetName() << " not found " << endl;
+    cout << WW_n_err->GetName() << " not found " << endl;
+    return;
+  }
+
+  cout << "\t systematic taken" << endl;
 
   stringstream fdc;
-  fdc << "datacards/hww-12.1fb.mH125." << chstr << "_shape.txt";
+  if(do7TeV) fdc << "datacards/hww-4.94fb.mH125." << chstr << "_shape_7TeV.txt";
+  else fdc << "datacards/hww-19.47fb.mH125." << chstr << "_shape_8TeV.txt";
   DatacardParser dcp(fdc.str());
 
   string dcm(WW_mean_err->GetName());
   string dcs(WW_sigma_err->GetName());
   if(syst.compare("qcd")==0) { dcm+="-qcd"; dcs+="-qcd"; }
+  string dca,dcn;
+  if(process.compare("ggH")!=string::npos) {
+    dca = WW_alpha_err->GetName();
+    dcn = WW_n_err->GetName();
+  }
 
   float meanShift = dcp.getRelUncertainty(dcm);
   float sigmaShift = dcp.getRelUncertainty(dcs);
+  float alphaShift, nShift;
+  if(process.compare("ggH")!=string::npos) {
+    alphaShift = dcp.getRelUncertainty(dca);
+    nShift = dcp.getRelUncertainty(dcn);
+  }
   cout << "Landau error on mean/sigma =  " << meanShift << " / " << sigmaShift << endl;
   if(meanShift<-100 || sigmaShift<-100) {
     cout << dcm << " or " << dcs << "  not found in the datacard txt file" << endl;
@@ -286,25 +329,71 @@ void plotOneShapeSyst(string process, string syst, int ch) {
 
   WW_mean_err->setVal(meanShift);
   WW_sigma_err->setVal(sigmaShift);
+  if(process.compare("ggH")!=string::npos) {  
+    WW_alpha_err->setVal(alphaShift);
+    WW_n_err->setVal(nShift);
+  }
 
-  pdfnom->plotOn(mrplot,LineColor(kRed+1));
+  pdfnom->plotOn(mrplot,LineColor(kRed+3),LineStyle(kDashed),LineWidth(2));
+
+  WW_mean_err->setVal(-1*meanShift);
+  WW_sigma_err->setVal(-1*sigmaShift);
+  if(process.compare("ggH")!=string::npos) {  
+    WW_alpha_err->setVal(-1*alphaShift);
+    WW_n_err->setVal(-1*nShift);
+  }
+
+  pdfnom->plotOn(mrplot,LineColor(kRed+1),LineStyle(kDashed),LineWidth(2));
+
+
+  TH1F *hNom = new TH1F("h1","",0,0,1);
+  TH1F *hP1S = new TH1F("h2","",0,0,1);
+  TH1F *hM1S = new TH1F("h3","",0,0,1);
+  hNom->SetLineColor(kBlack);
+  hP1S->SetLineColor(kRed+3);
+  hM1S->SetLineColor(kRed+1);
+  hP1S->SetLineStyle(kDashed);
+  hM1S->SetLineStyle(kDashed);
+  hNom->SetLineWidth(2);
+  hP1S->SetLineWidth(2);
+  hM1S->SetLineWidth(2);
+
+  float ymin = (process.compare("ggH")!=string::npos ? 0.65 : 0.20);
+  TLegend* legend = new TLegend(0.55, ymin, 0.90, ymin+0.25);
+  legend->SetBorderSize(    0);
+  legend->SetFillColor (    0);
+  legend->SetTextAlign (   12);
+  legend->SetTextFont  (   42);
+  legend->SetTextSize  ( 0.05);
+  legend->AddEntry(hNom, "nominal PDF","l");
+  legend->AddEntry(hP1S, "+1 #sigma PDF","l");
+  legend->AddEntry(hM1S, "-1 #sigma PDF","l");
 
   TCanvas *c1 = new TCanvas("c1","c1");
   mrplot->Draw();
-  c1->SaveAs("syst.png");
+  legend->Draw();
+
+  stringstream fileout;
+  fileout << "syst_mr_" << process << "_" << syst << "_" << chstr << (do7TeV ? "_7TeV" : "_8TeV");
+  stringstream pdffile,pngfile;
+  pdffile << fileout.str() << ".pdf";
+  pngfile << fileout.str() << ".png";
+  c1->SaveAs(pdffile.str().c_str());
+  c1->SaveAs(pngfile.str().c_str());
 
 }
+
 
 void plotAll(bool do7TeV) {
   
   gStyle->SetPalette(1);
 
   if(do7TeV) {
-    plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j.png");
-    plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j.png");
+    plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j_7TeV.pdf");
+    plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j_7TeV.pdf");
   } else {
-    plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j.png");
-    plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j.png");
+    plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j_8TeV.pdf");
+    plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j_8TeV.pdf");
   }
   plotMRAllSignals(do7TeV);
 
@@ -314,6 +403,49 @@ void plotAll(bool do7TeV) {
   } else {
     plotWsp2D("datacards/hww-19.47fb.mH125.of_0j_shape_2D_8TeV_workspace.root",0,do7TeV);
     plotWsp2D("datacards/hww-19.47fb.mH125.of_1j_shape_2D_8TeV_workspace.root",1,do7TeV);
+  }
+
+}
+
+void plotAllSyst(bool do7TeV) {
+  
+  vector<string> processes; 
+  processes.push_back("ggH");
+  processes.push_back("bkg_qqww");
+  processes.push_back("bkg_ggww");
+  processes.push_back("bkg_top");
+  //processes.push_back("bkg_dy");
+  processes.push_back("bkg_wgstar");
+  processes.push_back("bkg_others");
+
+  vector<string> systematics;
+  systematics.push_back("scaleup_qcd");
+  systematics.push_back("res_met");
+  systematics.push_back("res_e");
+  systematics.push_back("scaleup_e");
+  systematics.push_back("scaledn_e");
+  systematics.push_back("scaleup_m");
+  systematics.push_back("scaledn_m");
+  systematics.push_back("scaleup_j");
+  systematics.push_back("scaledn_j");
+
+  for(int ch=0;ch<2;++ch) {
+    for(int proc=0;proc<(int)processes.size();++proc) {
+      for(int syst=0;syst<(int)systematics.size();++syst) {
+        if(syst==0 && proc!=1) continue;
+        if(systematics[syst].compare("res_met")==0 && processes[proc].compare("bkg_dy")==0) continue;
+        plotOneShapeSyst(processes[proc], systematics[syst], ch, do7TeV);
+      }
+    }
+  }
+
+  vector<string> systematics_fakerate;
+  systematics_fakerate.push_back("fakerateup");
+  systematics_fakerate.push_back("fakeratedn");
+  for(int ch=0;ch<2;++ch) {
+    for(int syst=0;syst<(int)systematics_fakerate.size();++syst) { 
+      plotOneShapeSyst("bkg_wj", systematics_fakerate[syst], ch, do7TeV);
+    }
   }
 
 }
