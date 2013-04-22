@@ -25,6 +25,7 @@
 #include <TStyle.h>
 
 #include "YieldMaker.h"
+#include "FitSelection.hh"
 #include "DatacardParser.hh"
 
 using namespace RooFit;
@@ -114,6 +115,8 @@ void plotWsp1D(const char *inputfile, const char *figfile) {
 
 void plotWsp2D(const char *inputfile, int nj, bool do7TeV) {
 
+  gStyle->SetPaintTextFormat("1.2f");
+
   TFile *hww2l2nu = TFile::Open(inputfile);
   RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
 
@@ -161,22 +164,83 @@ void plotWsp2D(const char *inputfile, int nj, bool do7TeV) {
   RooDataHist *rhist_data = data->binnedClone("data_obs_hist","binned data_obs");
   RooHistPdf pdf_data("pdf_data","pdf_data",RooArgSet(*mr,*dphi),*rhist_data);
   TH2F *h_data = (TH2F*)pdf_data.createHistogram("h_data",*mr,RooFit::YVar(*dphi));
-  
+
+  vector<TH2F*> histos;
+  histos.push_back(h_qqww);
+  histos.push_back(h_ggww);
+  histos.push_back(h_top);
+  histos.push_back(h_dy);
+  histos.push_back(h_wj);
+  histos.push_back(h_wgstar);
+  histos.push_back(h_others);
+  histos.push_back(h_ggH);
+  histos.push_back(h_vbfH);
+  histos.push_back(h_data);
+
 
   TCanvas *c1 = new TCanvas("c1","c1");
-  gStyle->SetPaintTextFormat("1.2f");
-  h_qqww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_qqww->GetName(),nj));
-  h_ggww->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_ggww->GetName(),nj));
-  h_top->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_top->GetName(),nj));
-  h_dy->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_dy->GetName(),nj));
-  h_wj->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_wj->GetName(),nj));
-  h_wgstar->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_wgstar->GetName(),nj));
-  h_others->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_others->GetName(),nj));
-  h_ggH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_ggH->GetName(),nj));
-  h_vbfH->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_vbfH->GetName(),nj));
-  h_data->Draw("colz"); c1->SaveAs(Form("%s_of_%dj.png",h_data->GetName(),nj));
+  for(int i=0;i<(int)histos.size();++i) {
+    histos[i]->Draw("colz");
+    c1->SaveAs(Form("%s_of_%dj.png",histos[i]->GetName(),nj)); 
+    c1->SaveAs(Form("%s_of_%dj.pdf",histos[i]->GetName(),nj));
+  }
 
+
+  /*
+  h_qqww->Draw("colz"); h_qqww->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_qqww->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_qqww->GetName(),nj));
+  h_ggww->Draw("colz"); h_ggww->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_ggww->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggww->GetName(),nj));
+  h_top->Draw("colz"); h_top->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_top->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_top->GetName(),nj));
+  h_dy->Draw("colz"); h_dy->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_dy->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_dy->GetName(),nj));
+  h_wj->Draw("colz"); h_wj->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_wj->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_wj->GetName(),nj));
+  h_wgstar->Draw("colz"); h_wgstar->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_wgstar->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_wgstar->GetName(),nj));
+  h_others->Draw("colz"); h_others->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_others->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_others->GetName(),nj));
+  h_ggH->Draw("colz"); h_ggH->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_ggH->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_ggH->GetName(),nj));
+  h_vbfH->Draw("colz"); h_vbfH->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_vbfH->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_vbfH->GetName(),nj));
+  h_data->Draw("colz"); h_data->Draw("text same"); c1->SaveAs(Form("%s_of_%dj.png",h_data->GetName(),nj)); c1->SaveAs(Form("%s_of_%dj.pdf",h_data->GetName(),nj));
+  */
   
+
+}
+
+void plotWsp2DFromTH2D(const char *inputfile, int nj, bool do7TeV) {
+
+  gStyle->SetPaintTextFormat("1.2f");
+  gStyle->SetTextFont(62);
+  gStyle->SetTextSize(5);
+
+  TFile *hww2l2nu = TFile::Open(inputfile);
+  TH2F *h_qqww = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_qqww_of_%dj",nj));
+  TH2F *h_ggww = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_ggww_of_%dj",nj));
+  TH2F *h_top = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_top_of_%dj",nj));
+  TH2F *h_dy = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_dy_of_%dj",nj));
+  TH2F *h_wj = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_wj_of_%dj",nj));
+  TH2F *h_wgstar = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_wgstar_of_%dj",nj));
+  TH2F *h_others = (TH2F*)hww2l2nu->Get(Form("hist2D_bkg_others_of_%dj",nj));
+  TH2F *h_ggH = (TH2F*)hww2l2nu->Get(Form("hist2D_sig_of_%dj",nj));
+
+  vector<TH2F*> histos;
+  histos.push_back(h_qqww);
+  histos.push_back(h_ggww);
+  histos.push_back(h_top);
+  histos.push_back(h_dy);
+  histos.push_back(h_wj);
+  histos.push_back(h_wgstar);
+  histos.push_back(h_others);
+  histos.push_back(h_ggH);
+
+
+  TCanvas *c1 = new TCanvas("c1","c1");
+  for(int i=0;i<(int)histos.size();++i) {
+    for(int x=1;x<(int)histos[i]->GetNbinsX()+1;x++) {
+      for(int y=1;y<(int)histos[i]->GetNbinsY()+1;y++) {
+        if(histos[i]->GetBinContent(x,y)>0.99) histos[i]->SetBinContent(x,y,0.0); // means one bin with few entries
+      }
+    }
+    histos[i]->Draw("colz");
+    histos[i]->Draw("text same");
+    c1->SaveAs(Form("%s_%s.png",histos[i]->GetName(),(do7TeV ? "7TeV" : "8TeV"),nj)); 
+    c1->SaveAs(Form("%s_%s.pdf",histos[i]->GetName(),(do7TeV ? "7TeV" : "8TeV"),nj)); 
+  }
 
 }
 
@@ -253,7 +317,7 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
   RooWorkspace *w = (RooWorkspace*)hww2l2nu->Get("w");
 
   RooRealVar *mr = w->var("CMS_ww2l_mr_1D");
-  mr->setRange(50,250);
+  mr->setRange(50,500);
   RooRealVar *MH = w->var("MH");
   MH->setVal(125);
 
@@ -267,17 +331,15 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
   }
   pdfnom->plotOn(mrplot,LineColor(kBlack));
 
-  cout << "\t nominal PDF taken" << endl;
-
   string tevstr = "_8TeV";
 
   // only special case where name in DC!=name in the workspace. A bit error prone... to be improved 
   string systvar=syst;
   if(syst.compare("scaleup_qcd")!=string::npos && syst.length()==11) systvar="scaleup";
   if(syst.compare("scaledn_qcd")!=string::npos && syst.length()==11) systvar="scaledn";
-  
+
   RooRealVar *WW_mean_err, *WW_sigma_err, *WW_alpha_err, *WW_n_err;
-  if(process.compare("ggH")!=string::npos) {
+  if(process.compare("ggH")==0) {
     WW_mean_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_mean_err_"+systvar).c_str());
     WW_sigma_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_sigma_err_"+systvar).c_str());
     WW_alpha_err = (RooRealVar*)w->var(("sig_"+chstr+tevstr+"_alpha_err_"+systvar).c_str()); 
@@ -292,13 +354,12 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
     cout << WW_sigma_err->GetName() << " not found " << endl;
     return;
   }
-  if(process.compare("ggH")!=string::npos && (WW_alpha_err==0 || WW_sigma_err==0) ) {  
+
+  if(process.compare("ggH")==0 && (WW_alpha_err==0 || WW_sigma_err==0) ) {  
     cout << WW_alpha_err->GetName() << " not found " << endl;
     cout << WW_n_err->GetName() << " not found " << endl;
     return;
   }
-
-  cout << "\t systematic taken" << endl;
 
   stringstream fdc;
   if(do7TeV) fdc << "datacards/hww-4.94fb.mH125." << chstr << "_shape_7TeV.txt";
@@ -307,9 +368,9 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
 
   string dcm(WW_mean_err->GetName());
   string dcs(WW_sigma_err->GetName());
-  if(syst.compare("qcd")==0) { dcm+="-qcd"; dcs+="-qcd"; }
+  if(syst.compare("scaleup_qcd")==0 || syst.compare("scaledn_qcd")==0) { dcm+="_qcd"; dcs+="_qcd"; }
   string dca,dcn;
-  if(process.compare("ggH")!=string::npos) {
+  if(process.compare("ggH")==0) {
     dca = WW_alpha_err->GetName();
     dcn = WW_n_err->GetName();
   }
@@ -317,7 +378,7 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
   float meanShift = dcp.getRelUncertainty(dcm);
   float sigmaShift = dcp.getRelUncertainty(dcs);
   float alphaShift, nShift;
-  if(process.compare("ggH")!=string::npos) {
+  if(process.compare("ggH")==0) {
     alphaShift = dcp.getRelUncertainty(dca);
     nShift = dcp.getRelUncertainty(dcn);
   }
@@ -329,7 +390,7 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
 
   WW_mean_err->setVal(meanShift);
   WW_sigma_err->setVal(sigmaShift);
-  if(process.compare("ggH")!=string::npos) {  
+  if(process.compare("ggH")==0) {  
     WW_alpha_err->setVal(alphaShift);
     WW_n_err->setVal(nShift);
   }
@@ -338,7 +399,7 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
 
   WW_mean_err->setVal(-1*meanShift);
   WW_sigma_err->setVal(-1*sigmaShift);
-  if(process.compare("ggH")!=string::npos) {  
+  if(process.compare("ggH")==0) {  
     WW_alpha_err->setVal(-1*alphaShift);
     WW_n_err->setVal(-1*nShift);
   }
@@ -358,7 +419,8 @@ void plotOneShapeSyst(string process, string syst, int ch, bool do7TeV) {
   hP1S->SetLineWidth(2);
   hM1S->SetLineWidth(2);
 
-  float ymin = (process.compare("ggH")!=string::npos ? 0.65 : 0.20);
+  //float ymin = (process.compare("ggH")==0 ? 0.65 : 0.20);
+  float ymin = (process.compare("ggH")==0 ? 0.65 : 0.65);
   TLegend* legend = new TLegend(0.55, ymin, 0.90, ymin+0.25);
   legend->SetBorderSize(    0);
   legend->SetFillColor (    0);
@@ -388,21 +450,25 @@ void plotAll(bool do7TeV) {
   
   gStyle->SetPalette(1);
 
-  if(do7TeV) {
-    plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j_7TeV.pdf");
-    plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j_7TeV.pdf");
-  } else {
-    plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j_8TeV.pdf");
-    plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j_8TeV.pdf");
-  }
-  plotMRAllSignals(do7TeV);
+//   if(do7TeV) {
+//     plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j_7TeV.pdf");
+//     plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j_7TeV.pdf");
+//   } else {
+//     plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j_8TeV.pdf");
+//     plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j_8TeV.pdf");
+//   }
+//   plotMRAllSignals(do7TeV);
 
   if(do7TeV) {
-    plotWsp2D("datacards/hww-4.94fb.mH125.of_0j_shape_2D_7TeV_workspace.root",0,do7TeV);
-    plotWsp2D("datacards/hww-4.94fb.mH125.of_1j_shape_2D_7TeV_workspace.root",1,do7TeV);
+    //    plotWsp2D("datacards/hww-4.94fb.mH125.of_0j_shape_2D_7TeV_workspace.root",0,do7TeV);
+    //    plotWsp2D("datacards/hww-4.94fb.mH125.of_1j_shape_2D_7TeV_workspace.root",1,do7TeV);
+    plotWsp2DFromTH2D("config/hww2DShapes_8TeV.root",0,do7TeV);
+    plotWsp2DFromTH2D("config/hww2DShapes_8TeV.root",1,do7TeV);
   } else {
-    plotWsp2D("datacards/hww-19.47fb.mH125.of_0j_shape_2D_8TeV_workspace.root",0,do7TeV);
-    plotWsp2D("datacards/hww-19.47fb.mH125.of_1j_shape_2D_8TeV_workspace.root",1,do7TeV);
+    plotWsp2DFromTH2D("config/hww2DShapes_7TeV.root",0,do7TeV);
+    plotWsp2DFromTH2D("config/hww2DShapes_7TeV.root",1,do7TeV);    
+    //    plotWsp2D("datacards/hww-19.47fb.mH125.of_0j_shape_2D_8TeV_workspace.root",0,do7TeV);
+    //    plotWsp2D("datacards/hww-19.47fb.mH125.of_1j_shape_2D_8TeV_workspace.root",1,do7TeV);
   }
 
 }
@@ -420,6 +486,8 @@ void plotAllSyst(bool do7TeV) {
 
   vector<string> systematics;
   systematics.push_back("scaleup_qcd");
+  systematics.push_back("scaledn_qcd");
+  systematics.push_back("MC");
   systematics.push_back("res_met");
   systematics.push_back("res_e");
   systematics.push_back("scaleup_e");
@@ -432,7 +500,7 @@ void plotAllSyst(bool do7TeV) {
   for(int ch=0;ch<2;++ch) {
     for(int proc=0;proc<(int)processes.size();++proc) {
       for(int syst=0;syst<(int)systematics.size();++syst) {
-        if(syst==0 && proc!=1) continue;
+        if(syst<3 && proc!=1) continue;
         if(systematics[syst].compare("res_met")==0 && processes[proc].compare("bkg_dy")==0) continue;
         plotOneShapeSyst(processes[proc], systematics[syst], ch, do7TeV);
       }
