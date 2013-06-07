@@ -160,7 +160,7 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   ExpLim->GetYaxis()->SetTitleOffset(1.0);
   ExpLim->GetYaxis()->SetNdivisions(505);
 
-  ExpLim->SetLineStyle(2);
+  ExpLim->SetLineStyle(kDotted);
   ExpLim->SetLineWidth(2);
 
   ExpLim   ->Draw("apl");
@@ -186,7 +186,8 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
     }
 
     ObsLim = new TGraph(npoints, x, yObs);
-    ObsLim->SetLineWidth(4);
+    ObsLim->SetLineWidth(2);
+    ObsLim->SetLineColor(kBlue+1);
     ObsLim->SetMarkerStyle(kFullCircle);
     ObsLim->Draw("l");
   }
@@ -195,7 +196,7 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   // y-axis
   //----------------------------------------------------------------------------
   if (canvas->GetLogy())
-    ExpLim->GetYaxis()->SetRangeUser(0.6*min, max+220);
+    ExpLim->GetYaxis()->SetRangeUser(0.6*min, max+150);
   else
     ExpLim->GetYaxis()->SetRangeUser(min-1.5, max+7);
 
@@ -277,7 +278,7 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   leg->SetTextFont  (   42);
   leg->SetTextSize  (0.035);
 
-  leg->AddEntry(ExpLim,    " expected significance",      "l");
+  leg->AddEntry(ExpLim,    " expected",      "l");
 
   if ( drawObserved ) 
 	  leg->AddEntry(ObsLim,    " observed",             "l");
@@ -306,8 +307,11 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
     lineObs->SetLineColor(kGreen+1);
     lineDisc->SetLineWidth(2);
     lineObs->SetLineWidth(2);
-    lineDisc->Draw("same");
-    lineObs->Draw("same");
+    //    lineDisc->Draw("same");
+    //    lineObs->Draw("same");
+
+    canvas->SetGridx(kTRUE);
+    canvas->SetGridy(kTRUE);
 
     if ( drawObserved ) 
       ObsLim->Draw("same");
