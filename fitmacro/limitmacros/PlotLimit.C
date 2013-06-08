@@ -247,7 +247,7 @@ void PlotLimit(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7teV_cut8
   // y-axis
   //----------------------------------------------------------------------------
   if (canvas->GetLogy())
-    ExpBand95->GetYaxis()->SetRangeUser(0.6*min, max+220);
+    ExpBand95->GetYaxis()->SetRangeUser(0.04, max+220);
   else
     ExpBand95->GetYaxis()->SetRangeUser(min-1.5, max+7);
 
@@ -316,7 +316,10 @@ void PlotLimit(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7teV_cut8
   //----------------------------------------------------------------------------
   DrawTLatex(0.92, 0.850, 0.050, "CMS preliminary");
   DrawTLatex(0.92, 0.795, 0.035, title.c_str());
-  DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (8 TeV)").Data());
+  float lumif = atof(luminosity.c_str());
+  if(lumif<10) DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (7 TeV)").Data());
+  else if(lumif<20) DrawTLatex(0.92, 0.740, 0.035, TString("L = "+ luminosity+" (8 TeV)").Data());
+  else DrawTLatex(0.92, 0.740, 0.035, TString("L = 4.9 fb^{-1} (7 TeV) + 19.6 fb^{-1} (8 TeV)").Data());
 
   TLegend* leg = new TLegend(0.18, 0.66, 0.355, 0.88, "");
 
