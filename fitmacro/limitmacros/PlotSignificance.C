@@ -113,6 +113,8 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   canvas->SetRightMargin (2.10 * canvas->GetRightMargin());
   canvas->SetBottomMargin(1.35 * canvas->GetBottomMargin());
 
+  cout << "logy = " << setLogy << endl;
+
   canvas->SetLogx(setLogx);
   canvas->SetLogy(setLogy);
 
@@ -160,10 +162,11 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   ExpLim->GetYaxis()->SetTitleOffset(1.0);
   ExpLim->GetYaxis()->SetNdivisions(505);
 
-  ExpLim->SetLineStyle(kDotted);
-  ExpLim->SetLineWidth(2);
+  //  ExpLim->SetLineStyle(kDotted);
+  ExpLim->SetLineWidth(3);
+  ExpLim->SetLineColor(kMagenta+3);
 
-  ExpLim   ->Draw("apl");
+  ExpLim   ->Draw("ac");
 
 
   // Observed limit
@@ -186,7 +189,7 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
     }
 
     ObsLim = new TGraph(npoints, x, yObs);
-    ObsLim->SetLineWidth(2);
+    ObsLim->SetLineWidth(4);
     ObsLim->SetLineColor(kBlue+1);
     ObsLim->SetMarkerStyle(kFullCircle);
     ObsLim->Draw("l");
@@ -196,7 +199,7 @@ void PlotSignificance(string  limitFiles   = "inputs/ana_ICHEP_limits_nj_shape7t
   // y-axis
   //----------------------------------------------------------------------------
   if (canvas->GetLogy())
-    ExpLim->GetYaxis()->SetRangeUser(0.6*min, max+150);
+    ExpLim->GetYaxis()->SetRangeUser(0.5, max+150);
   else
     ExpLim->GetYaxis()->SetRangeUser(min-1.5, max+7);
 
