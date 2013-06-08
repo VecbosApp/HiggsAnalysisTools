@@ -87,13 +87,13 @@ def runTheShape():
             ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                                   os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
-                                  110, 600, 0, 0, 
+                                  110, 600, 0, 1, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'pdf')
             ROOT.PlotSignificance(os.getcwd()+"/../significance/{option}_shape".format(**pars)+opt.suffix+tevstr+".summary",
                                   os.getcwd()+"/plots/{name}_{option}".format(**pars)+opt.suffix,
                                   "{lumi} fb^{{-1}}".format(**pars), 
-                                  110, 600, 0, 0, 
+                                  110, 600, 0, 1, 
                                   "H #rightarrow WW #rightarrow 2l2#nu",
                                   doObs, 0, 'png')
         else:
