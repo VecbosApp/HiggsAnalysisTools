@@ -14,6 +14,8 @@ import re
 tagname = 'comb_shape'
 basepath = os.getcwd()+'/limits/'
 
+masses = [115, 120, 125, 130, 135, 140, 150, 160, 170, 180]
+
 samplename = os.listdir(basepath)
 samplename.sort()
 
@@ -25,6 +27,9 @@ def openTFile(path, option=''):
         raise NameError('File '+path+' not open')
     return f
 
+def closeTFile(f):
+    f.Close()
+
 def getTree( file, tree ):
     t = file.Get(tree)
     if not t.__nonzero__():
@@ -32,11 +37,12 @@ def getTree( file, tree ):
     return t
 
 
-def getValue(file, q):
+def getValue(file, q, mass):
     ## -1: observed limit
     ## 0.5: median expected
     ## 0.16/0.84: +- 1 sigma
     ## 0.025/0.975: +- 2 sigma
+    print "mass = "+str(mass)+" for q = "+str(q)
     cut = ''
     if q is 'median':
         cut = 'quantileExpected==0.5'
@@ -50,7 +56,8 @@ def getValue(file, q):
         cut = 'quantileExpected>0.83 && quantileExpected<0.86'
     if q is 'plus2sigma':
         cut = 'quantileExpected>0.97 && quantileExpected<0.98'
-        
+    cut += ' && mh=='+str(mass)
+    
     tree = getTree(file,'limit')
     command = 'limit>>h'
     tree.Draw(command,cut,'goff')
@@ -79,6 +86,7 @@ def main():
     usage = 'usage: %prog [dir] [cmd]'
     parser = optparse.OptionParser(usage)
     parser.add_option('--twodsuffix','-t',dest='suffix',help='suffix',default='')
+    parser.add_option('-y', '--year'     , dest='year'        , help='Year'                                  , default=None   , type='float'   )    
     (opt, args) = parser.parse_args()
     
     if len(args) != 1:
@@ -86,34 +94,42 @@ def main():
 
     tag = args[0]
 
+    tevstr='_8TeV'
+    if opt.year==2011:
+        tevstr='_7TeV'
+    elif opt.year==20112012:
+        tevstr='_78TeV'
+
     if tag not in hwwlimits.dcnames['all']:
         parser.error('Wrong tag: '+', '.join(sorted(hwwlimits.dcnames['all'])))
 
-    tagname = tag+'_shape'+opt.suffix
+    tagname = tag+'_shape'+opt.suffix+tevstr
 
     print tagname
 
-    reMass = re.compile('.+\.mH(\d+)\.(.*)root')
     table = odict.OrderedDict()
-    for sample in samplename:
-        if not '.root' in sample:
-            continue
-        if not tagname in sample:
-            continue
+    
+    if not os.path.exists(basepath+'/higgsCombineHWW_'+tagname+'.Asymptotic.root'):
+        hadd = 'hadd -k '+basepath+'/higgsCombineHWW_'+tagname+'.Asymptotic.root '+basepath+'/higgsCombineHWW_'+tagname+'.Asymptotic.mH*.root'
+        print hadd
+        os.system(hadd)
+    
+    sample = basepath+'/higgsCombineHWW_'+tagname+'.Asymptotic.root'
+    
+    if not opt.suffix in sample:
+        return
+    if not '.root' in sample:
+        return
+    if not tagname in sample:
+        return
+    print sample
+
+    for mass in masses:
         line = {}
-        print sample
-        path = basepath+'/'+sample
-        f = openTFile(path)
-
         for point in points:
-            value = getValue(f,point)
+            f = openTFile(sample)
+            value = getValue(f,point,mass)
             line[point] = value
-
-        m = reMass.match(sample)
-        if not m: 
-            raise ValueError('Mass label not found in '+sample)
-
-        mass = int(m.group(1))
 
         table[mass] = line
 
