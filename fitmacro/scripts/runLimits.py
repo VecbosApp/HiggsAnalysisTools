@@ -83,9 +83,9 @@ def main():
             else:
                 flags = ' -M ProfileLikelihood --significance --expectSignal=1 -t 20 -s -1 '+flags
         elif opt.mlfit:
-            flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --noErrors --minos none -t 1 -s -1 '+flags
+            flags = ' -M MaxLikelihoodFit --expectSignal=1 --saveNormalizations --noErrors --minos none -t 20 -s -1 '+flags
         else:
-            flags = ' -M Asymptotic '+flags
+            flags = ' -M Asymptotic -s -1 '+flags
         if not opt.significance:
             for c,flag in constraints.iteritems():
                 if fnmatch.fnmatch(str(mass),c):
@@ -99,10 +99,10 @@ def main():
         if opt.significance:
             move = 'mv higgsCombine%s.ProfileLikelihood.mH%d*.root %s' % (tagname,mass,outdirsignif)
         else:
-            move = 'mv higgsCombine%s.Asymptotic.mH%d.root %s' % (tagname,mass,outdir)
+            move = 'mv higgsCombine%s.Asymptotic.mH%d*.root %s' % (tagname,mass,outdir)
         os.system('mkdir -p '+srcdir)
         os.system('mkdir -p '+logdir)
-        jobsperpoint = 1 if opt.observed else (1000 if opt.mlfit else 100)
+        jobsperpoint = 1 if (opt.observed or "Asymptotic" in flags) else (1000 if opt.mlfit else 100)
         for j in range(jobsperpoint):
             runfile = srcdir+'run-mh'+str(mass)+'-'+tagname+'-j'+str(j)+'.src'
             f = open(runfile, 'w')
