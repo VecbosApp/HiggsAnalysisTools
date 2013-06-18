@@ -114,6 +114,10 @@ $(OUTLIB)kFactorEvaluator.o: $(INCLUDEDIR)/src/kFactorEvaluator.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)kFactorEvaluator.o $<
 $(OUTLIB)ElectronIDMVA.o: $(INCLUDEDIR)/src/ElectronIDMVA.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)ElectronIDMVA.o $<
+$(OUTLIB)IDForBsMVA.o: $(INCLUDEDIR)/src/IDForBsMVA.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)IDForBsMVA.o $<
+$(OUTLIB)tH_leptonMcCorrections.o: $(INCLUDEDIR)/src/tH_leptonMcCorrections.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)tH_leptonMcCorrections.o $<
 $(OUTLIB)GetDYMVA.o: $(INCLUDEDIR)/src/GetDYMVA.cc
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)GetDYMVA.o $<
 $(OUTLIB)RedHiggsTree.o: $(INCLUDEDIR)/src/RedHiggsTree.cc
@@ -180,6 +184,8 @@ HiggsApp:  $(INCLUDEDIR)/src/HiggsApp.C \
 	$(OUTLIBCOMMON)Utils.o \
 	$(OUTLIB)kFactorEvaluator.o \
 	$(OUTLIB)ElectronIDMVA.o \
+	$(OUTLIB)IDForBsMVA.o \
+	$(OUTLIB)tH_leptonMcCorrections.o \
 	$(OUTLIB)GetDYMVA.o \
 	$(OUTLIB)RedHiggsTree.o \
 	$(OUTLIB)RedTriggerTree.o \
