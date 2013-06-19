@@ -11,7 +11,7 @@
 #include <TTree.h>
 #include <TChain.h>
 
-#include "addWeightsToTree.hh"
+#include "addWeightsToTreetH.hh"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Processing sample " << fileName << ": weight for 1/fb = " << weight
             << "\tsample ID = " << sampleid << "\tchannel = " << channel << "\trelease = " << release << std::endl;
 
-  addWeightsToTree weighter(fileName,weight,sampleid,channel,release);
+  addWeightsToTreetH weighter(fileName,weight,sampleid,channel,release);
   weighter.addWeights();
 
   return 0;
