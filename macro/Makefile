@@ -28,11 +28,8 @@ OUTLIB	         = $(INCLUDEDIR)/lib/
 .SUFFIXES: .cc,.C,.hh,.h
 .PREFIXES: ./lib/
 
-#$(OUTLIB)addWeightsToTree.o: $(INCLUDEDIR)addWeightsToTree.cc
-#	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)addWeightsToTree.o $<
-
-$(OUTLIB)addWeightsToTreetH.o: $(INCLUDEDIR)addWeightsToTreetH.cc
-	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)addWeightsToTreetH.o $<
+$(OUTLIB)addWeightsToTree.o: $(INCLUDEDIR)addWeightsToTree.cc
+	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)addWeightsToTree.o $<
 
 $(OUTLIB)addWeightsToTreeLooseLoose.o: $(INCLUDEDIR)addWeightsToTreeLooseLoose.C
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIR) -o $(OUTLIB)addWeightsToTreeLooseLoose.o $<
@@ -41,7 +38,7 @@ $(OUTLIB)HWWKinematics.o: $(INCLUDEDIRCOMMON)HiggsAnalysisTools/src/HWWKinematic
 	$(CXX) $(CXXFLAGS) -c -I$(INCLUDEDIRCOMMON) -o $(OUTLIB)HWWKinematics.o $<
 
 LatinosAnalyzer: $(INCLUDEDIR)/LatinosAnalyzer.cc \
-	$(OUTLIB)addWeightsToTreetH.o \
+	$(OUTLIB)addWeightsToTree.o \
 	$(OUTLIB)HWWKinematics.o
 	$(CXX) $(CXXFLAGS) -o LatinosAnalyzer $(OUTLIB)/*o $(GLIBS) $ $<
 
