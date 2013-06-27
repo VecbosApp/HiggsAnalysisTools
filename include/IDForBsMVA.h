@@ -56,7 +56,8 @@ class IDForBsMVA {
   Float_t fMVAVar_jetBTagCSV_in;
   Float_t fMVAVar_sip3d;
   Float_t fMVAVar_mvaId;
-  Int_t fMVAVar_innerHits;
+  //Int_t fMVAVar_innerHits;
+  Float_t fMVAVar_innerHits;
   Float_t fMVAVar_logdxy;
   Float_t fMVAVar_logdz; 
 };
