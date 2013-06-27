@@ -42,23 +42,36 @@ void IDForBsMVA::Initialize( std::string Subdet0PtLowWeights ,
     fTMVAReader[i]->SetVerbose(kTRUE);
 
     // common variables
+    /*
     fTMVAReader[i]->AddVariable( "neuRelIso",      &fMVAVar_neuRelIso );
     fTMVAReader[i]->AddVariable( "chRelIso",       &fMVAVar_chRelIso );
     fTMVAReader[i]->AddVariable( "jetDR_in",       &fMVAVar_jetDR_in );
     fTMVAReader[i]->AddVariable( "jetPtRatio_in",  &fMVAVar_jetPtRatio_in );
     fTMVAReader[i]->AddVariable( "jetBTagCSV_in",  &fMVAVar_jetBTagCSV_in );
-    fTMVAReader[i]->AddVariable( "sip3d",          &fMVAVar_sip3d );
-    
+    */
+
+    fTMVAReader[i]->AddVariable( "relIso-chargedIso/pt",      &fMVAVar_neuRelIso );
+    fTMVAReader[i]->AddVariable( "chargedIso/pt"       ,      &fMVAVar_chRelIso );
+    fTMVAReader[i]->AddVariable( "min(dr_in,0.5)"      ,      &fMVAVar_jetDR_in );
+    fTMVAReader[i]->AddVariable( "min(ptf_in,1.5)"     ,      &fMVAVar_jetPtRatio_in );
+    fTMVAReader[i]->AddVariable( "max(CSV_in,0)"       ,      &fMVAVar_jetBTagCSV_in );
+    fTMVAReader[i]->AddVariable( "sip3d"               ,      &fMVAVar_sip3d );
+
+ 
     // variables only for electrons
     if (isEle) { 
       fTMVAReader[i]->AddVariable( "mvaId",      &fMVAVar_mvaId );
-      fTMVAReader[i]->AddVariable( "innerHits",  &fMVAVar_innerHits );
+      fTMVAReader[i]->AddVariable( "innerHits",  &(fMVAVar_innerHits) );
     }
 
     // variables only for muons
     if (!isEle) { 
+      /*
       fTMVAReader[i]->AddVariable( "logdxy",  &fMVAVar_logdxy );
       fTMVAReader[i]->AddVariable( "logdz",   &fMVAVar_logdz );
+      */
+      fTMVAReader[i]->AddVariable( "log(abs(dxy))",  &fMVAVar_logdxy );
+      fTMVAReader[i]->AddVariable( "log(abs(dz))" ,  &fMVAVar_logdz );
     }
 
     if (isEle) {
