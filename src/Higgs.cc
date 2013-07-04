@@ -701,10 +701,10 @@ bool Higgs::isPFIsolatedMuon2012(int muonIndex) {
   float bdtiso = mvaisoMuon[muonIndex];
 
   bool MUON_ISO_ICHEP2012 = (
-                             ( pt <= 20 && abseta >= 0.000 && abseta < 0.479 && bdtiso > 0.86 ) ||
-                             ( pt <= 20 && abseta >= 0.479 && abseta < 2.400 && bdtiso > 0.82 ) ||
-                             ( pt >  20 && abseta >= 0.000 && abseta < 0.479 && bdtiso > 0.82 ) ||
-                             ( pt >  20 && abseta >= 0.479 && abseta < 2.400 && bdtiso > 0.86 )
+                             ( pt <= 20 && abseta >= 0.000 && abseta < 1.479 && bdtiso > 0.86 ) ||
+                             ( pt <= 20 && abseta >= 1.479 && abseta < 2.400 && bdtiso > 0.82 ) ||
+                             ( pt >  20 && abseta >= 0.000 && abseta < 1.479 && bdtiso > 0.82 ) ||
+                             ( pt >  20 && abseta >= 1.479 && abseta < 2.400 && bdtiso > 0.86 )
                              );
 
   return MUON_ISO_ICHEP2012;
