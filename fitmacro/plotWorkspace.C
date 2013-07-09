@@ -177,7 +177,6 @@ void plotWsp2D(const char *inputfile, int nj, bool do7TeV) {
   histos.push_back(h_vbfH);
   histos.push_back(h_data);
 
-
   TCanvas *c1 = new TCanvas("c1","c1");
   for(int i=0;i<(int)histos.size();++i) {
     histos[i]->Draw("colz");
@@ -228,18 +227,25 @@ void plotWsp2DFromTH2D(const char *inputfile, int nj, bool do7TeV) {
   histos.push_back(h_others);
   histos.push_back(h_ggH);
 
+  TH2F* h_bkgsum = (TH2F*)h_qqww->Clone(Form("hist2D_bkg_sumall_of_%dj",nj));
+  for(int i=1;i<(int)histos.size();++i) h_qqww->Add(histos[i]);
+  histos.push_back(h_bkgsum);
 
   TCanvas *c1 = new TCanvas("c1","c1");
   for(int i=0;i<(int)histos.size();++i) {
     for(int x=1;x<(int)histos[i]->GetNbinsX()+1;x++) {
       for(int y=1;y<(int)histos[i]->GetNbinsY()+1;y++) {
         if(histos[i]->GetBinContent(x,y)>0.99) histos[i]->SetBinContent(x,y,0.0); // means one bin with few entries
+        if(histos[i]->GetBinContent(x,y)<0.005) histos[i]->SetBinContent(x,y,0.005); 
       }
     }
+    histos[i]->GetXaxis()->SetTitle("M_{R} (GeV/c^{2})");
+    histos[i]->GetYaxis()->SetTitle("#Delta#phi_{R}");
     histos[i]->Draw("colz");
     histos[i]->Draw("text same");
     c1->SaveAs(Form("%s_%s.png",histos[i]->GetName(),(do7TeV ? "7TeV" : "8TeV"),nj)); 
     c1->SaveAs(Form("%s_%s.pdf",histos[i]->GetName(),(do7TeV ? "7TeV" : "8TeV"),nj)); 
+    c1->SaveAs(Form("%s_%s.C",histos[i]->GetName(),(do7TeV ? "7TeV" : "8TeV"),nj)); 
   }
 
 }
@@ -256,10 +262,11 @@ void plotMRAllSignals(bool do7TeV) {
   TCanvas *c1 = new TCanvas("c1","c1");
   
   RooRealVar *mr = w->var("CMS_ww2l_mr_1D");
+  mr->setRange(50,250);
   RooPlot *mrplot = mr->frame();
   mrplot->Draw();
 
-  TLegend* legend = new TLegend(0.64, 0.64, 0.87, 0.90);
+  TLegend* legend = new TLegend(0.60, 0.64, 0.85, 0.90);
     
   legend->SetBorderSize(    0);
   legend->SetFillColor (    0);
@@ -267,8 +274,14 @@ void plotMRAllSignals(bool do7TeV) {
   legend->SetTextFont  (   42);
   legend->SetTextSize  ( 0.05);
 
+  vector<int> cols;
+  cols.push_back(kAzure+4);
+  cols.push_back(kRed+1);
+  cols.push_back(kMagenta+2);
+  cols.push_back(kGreen+3);
+
   int j=0;
-  for (float i = 115.; i <= 180.; i += 10.) {
+  for (float i = 115.; i <= 150.; i += 10.) {
     j++;
 
     stringstream fss;
@@ -282,10 +295,10 @@ void plotMRAllSignals(bool do7TeV) {
     
     // take the pdfs from the workspace
     RooAbsPdf *ggH = (RooAbsPdf*)w->pdf("ggH");
-    ggH->plotOn(mrplot,LineColor(kAzure+j));  
+    ggH->plotOn(mrplot,LineColor(cols[j-1]));  
 
     TH1F *h = new TH1F("h","h",0,0,1);
-    h->SetLineColor(kAzure+j);
+    h->SetLineColor(cols[j-1]);
 
     stringstream lab;
     lab << "m_{H}=" << i << " GeV";
@@ -295,6 +308,8 @@ void plotMRAllSignals(bool do7TeV) {
 
   mrplot->Draw();
   legend->Draw();
+  c1->SaveAs("severalHiggsesMR.C");
+  c1->SaveAs("severalHiggsesMR.pdf");
   c1->SaveAs("severalHiggsesMR.png");
 }
 
@@ -450,14 +465,14 @@ void plotAll(bool do7TeV) {
   
   gStyle->SetPalette(1);
 
-//   if(do7TeV) {
-//     plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j_7TeV.pdf");
-//     plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j_7TeV.pdf");
-//   } else {
-//     plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j_8TeV.pdf");
-//     plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j_8TeV.pdf");
-//   }
-//   plotMRAllSignals(do7TeV);
+  if(do7TeV) {
+    plotWsp1D("datacards/hww-4.94fb.mH125.of_0j_shape_7TeV_workspace.root","pdfs_of_0j_7TeV.pdf");
+    plotWsp1D("datacards/hww-4.94fb.mH125.of_1j_shape_7TeV_workspace.root","pdfs_of_1j_7TeV.pdf");
+  } else {
+    plotWsp1D("datacards/hww-19.47fb.mH125.of_0j_shape_8TeV_workspace.root","pdfs_of_0j_8TeV.pdf");
+    plotWsp1D("datacards/hww-19.47fb.mH125.of_1j_shape_8TeV_workspace.root","pdfs_of_1j_8TeV.pdf");
+  }
+  plotMRAllSignals(do7TeV);
 
   if(do7TeV) {
     //    plotWsp2D("datacards/hww-4.94fb.mH125.of_0j_shape_2D_7TeV_workspace.root",0,do7TeV);
